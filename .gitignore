@@ -30,3 +30,6 @@ proguard/
 #intellij project files
 *.iml
 *.idea
+
+#library crap
+java/com/watabou/
