@@ -1,16 +1,10 @@
-Shattered Pixel Dungeon
+Unpixel Dungeon
 =======================
 
-Fork of Pixel Dungeon, a traditional roguelike game with pixel-art graphics and simple interface.
+Fork of Shattered Pixel Dungeon, which is a fork of Pixel Dungeon, a traditional roguelike game with pixel-art graphics and simple interface.
 
-Shattered Pixel Dungeon on Google Play:
-https://play.google.com/store/apps/details?id=com.shatteredpixel.shatteredpixeldungeon
+The goal is to remove some of the "simple" and bridge the gap between Pixel Dungeon and Nethack in terms of how the game is played.
 
-Official web-site: 
-http://www.shatteredpixel.com
+To build the game you will need the modified PD-classes library:
+https://github.com/felayga/PD-classes
 
-Developer's blog: 
-http://shatteredpixel.tumblr.com/
-
-To build the game you will need my modified PD-classes library:
-https://github.com/00-Evan/PD-classes
