@@ -63,7 +63,9 @@ public class King extends Mob {
 	{
 		name = "King of Dwarves";
 		spriteClass = KingSprite.class;
-		
+
+		canOpenDoors = true;
+
 		HP = HT = 300;
 		EXP = 40;
 		defenseSkill = 25;

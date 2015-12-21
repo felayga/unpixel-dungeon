@@ -76,6 +76,8 @@ public abstract class Char extends Actor {
 	public int invisible		= 0;
 	
 	public int viewDistance	= 8;
+
+	public boolean canOpenDoors = false;
 	
 	private HashSet<Buff> buffs = new HashSet<Buff>();
 	
@@ -414,7 +416,7 @@ public abstract class Char extends Actor {
 		if (Level.adjacent( step, pos ) && buff( Vertigo.class ) != null) {
 			sprite.interruptMotion();
 			int newPos = pos + Level.NEIGHBOURS8[Random.Int( 8 )];
-			if (!(Level.passable[newPos] || Level.avoid[newPos]) || Actor.findChar( newPos ) != null)
+			if (!(Level.passable[newPos] || Level.pathable[newPos] || Level.avoid[newPos]) || Actor.findChar( newPos ) != null)
 				return;
 			else {
 				sprite.move(pos, newPos);
@@ -422,16 +424,17 @@ public abstract class Char extends Actor {
 			}
 		}
 
+		/*
 		if (Dungeon.level.map[pos] == Terrain.OPEN_DOOR) {
 			Door.leave( pos );
 		}
-
+		*/
 		pos = step;
-		
+		/*
 		if (flying && Dungeon.level.map[pos] == Terrain.DOOR) {
 			Door.enter( pos );
 		}
-		
+		*/
 		if (this != Dungeon.hero) {
 			sprite.visible = Dungeon.visible[pos];
 		}

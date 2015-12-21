@@ -46,6 +46,8 @@ public class Statue extends Mob {
 		name = "animated statue";
 		spriteClass = StatueSprite.class;
 
+		canOpenDoors = true;
+
 		EXP = 0;
 		state = PASSIVE;
 	}

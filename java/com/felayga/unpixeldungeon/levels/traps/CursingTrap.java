@@ -30,6 +30,7 @@ import com.felayga.unpixeldungeon.effects.CellEmitter;
 import com.felayga.unpixeldungeon.effects.particles.ShadowParticle;
 import com.felayga.unpixeldungeon.items.*;
 import com.felayga.unpixeldungeon.items.armor.Armor;
+import com.felayga.unpixeldungeon.items.tools.Tool;
 import com.felayga.unpixeldungeon.sprites.TrapSprite;
 import com.felayga.unpixeldungeon.utils.GLog;
 import com.watabou.noosa.audio.Sample;
@@ -58,16 +59,39 @@ public class CursingTrap extends Trap {
 		}
 
 		if (Dungeon.hero.pos == pos){
-			Hero hero = Dungeon.hero;
-			KindOfWeapon weapon = hero.belongings.weapon;
-			Armor armor = hero.belongings.armor;
-			KindofMisc misc1 = hero.belongings.misc1;
-			KindofMisc misc2 = hero.belongings.misc2;
+			Hero user = Dungeon.hero;
+
+			KindOfWeapon weapon = user.belongings.weapon;
+			KindOfWeapon offhand = user.belongings.offhand;
+			Tool tool1 = user.belongings.tool1;
+			Tool tool2 = user.belongings.tool2;
+
+			Armor armor = user.belongings.armor;
+			Armor gloves = user.belongings.gloves;
+			Armor boots = user.belongings.boots;
+			Armor cloak = user.belongings.cloak;
+
+			KindofMisc misc1 = user.belongings.ring1;
+			KindofMisc misc2 = user.belongings.ring2;
+			KindofMisc amulet = user.belongings.amulet;
+			KindofMisc face = user.belongings.face;
+
 			if (weapon != null) weapon.cursed = weapon.cursedKnown = true;
+			if (offhand != null) offhand.cursed = offhand.cursedKnown = true;
+			if (tool1 != null) tool1.cursed = tool1.cursedKnown = true;
+			if (tool2 != null) tool2.cursed = tool2.cursedKnown = true;
+
 			if (armor != null)  armor.cursed = armor.cursedKnown = true;
+			if (gloves != null) gloves.cursed = gloves.cursedKnown = true;
+			if (boots != null) boots.cursed = boots.cursedKnown = true;
+			if (cloak != null) cloak.cursed = cloak.cursedKnown = true;
+
 			if (misc1 != null)  misc1.cursed = misc1.cursedKnown = true;
 			if (misc2 != null)  misc2.cursed = misc2.cursedKnown = true;
-			EquipableItem.equipCursed(hero);
+			if (amulet != null) amulet.cursed = amulet.cursedKnown = true;
+			if (face != null) face.cursed = face.cursedKnown = true;
+
+			EquipableItem.equipCursed(user);
 			GLog.n("Your worn equipment becomes cursed!");
 		}
 	}

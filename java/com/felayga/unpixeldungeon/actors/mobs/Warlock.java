@@ -52,7 +52,9 @@ public class Warlock extends Mob implements Callback {
 	{
 		name = "dwarf warlock";
 		spriteClass = WarlockSprite.class;
-		
+
+		canOpenDoors = true;
+
 		HP = HT = 70;
 		defenseSkill = 18;
 		

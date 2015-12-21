@@ -48,7 +48,9 @@ public class Thief extends Mob {
 	{
 		name = "crazy thief";
 		spriteClass = ThiefSprite.class;
-		
+
+		canOpenDoors = true;
+
 		HP = HT = 20;
 		defenseSkill = 12;
 		

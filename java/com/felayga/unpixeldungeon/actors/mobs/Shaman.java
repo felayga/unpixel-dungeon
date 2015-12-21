@@ -50,7 +50,9 @@ public class Shaman extends Mob implements Callback {
 	{
 		name = "gnoll shaman";
 		spriteClass = ShamanSprite.class;
-		
+
+		canOpenDoors = true;
+
 		HP = HT = 18;
 		defenseSkill = 8;
 		

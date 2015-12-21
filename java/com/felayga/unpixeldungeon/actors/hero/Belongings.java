@@ -35,24 +35,33 @@ import com.felayga.unpixeldungeon.items.bags.Bag;
 import com.felayga.unpixeldungeon.items.keys.IronKey;
 import com.felayga.unpixeldungeon.items.keys.Key;
 import com.felayga.unpixeldungeon.items.scrolls.ScrollOfRemoveCurse;
+import com.felayga.unpixeldungeon.items.tools.Tool;
 import com.felayga.unpixeldungeon.items.wands.Wand;
 import com.watabou.utils.Bundle;
 import com.watabou.utils.Random;
 
 public class Belongings implements Iterable<Item> {
 
-	public static final int BACKPACK_SIZE	= 37; //original=19
+	public static final int BACKPACK_SIZE	= 43; //original=19
 	
 	private Hero owner;
 	
 	public Bag backpack;
 
 	public KindOfWeapon weapon = null;
+	public KindOfWeapon offhand = null;
+	public Tool tool1 = null;
+	public Tool tool2 = null;
+
 	public Armor armor = null;
-	public KindofMisc misc1 = null;
-	public KindofMisc misc2 = null;
-	public KindofMisc misc3 = null;
-	public KindofMisc misc4 = null;
+    public Armor gloves = null;
+    public Armor boots = null;
+    public Armor cloak = null;
+
+	public KindofMisc ring1 = null;
+	public KindofMisc ring2 = null;
+	public KindofMisc amulet = null;
+	public KindofMisc face = null;
 	
 	public Belongings( Hero owner ) {
 		this.owner = owner;
@@ -65,29 +74,79 @@ public class Belongings implements Iterable<Item> {
 	}
 	
 	private static final String WEAPON		= "weapon";
+    private static final String OFFHAND     = "offhand";
+    private static final String TOOL1       = "tool1";
+    private static final String TOOL2       = "tool2";
 	private static final String ARMOR		= "armor";
-	private static final String MISC1       = "misc1";
-	private static final String MISC2       = "misc2";
-	private static final String MISC3		= "misc3";
-    private static final String MISC4       = "misc4";
+    private static final String GLOVES      = "gloves";
+    private static final String BOOTS        = "boots";
+    private static final String CLOAK       = "cloak";
+	private static final String RING1       = "ring1";
+	private static final String RING2       = "ring2";
+	private static final String AMULET		= "amulet";
+    private static final String FACE        = "face";
 	
 	public void storeInBundle( Bundle bundle ) {
 		
 		backpack.storeInBundle( bundle );
 		
-		bundle.put( WEAPON, weapon );
+		bundle.put(WEAPON, weapon);
+        bundle.put(OFFHAND, offhand);
+        bundle.put(TOOL1, tool1);
+        bundle.put(TOOL2, tool2);
+
 		bundle.put(ARMOR, armor);
-		bundle.put(MISC1, misc1);
-		bundle.put( MISC2, misc2);
-        bundle.put(MISC3, misc3);
-        bundle.put(MISC4, misc4);
+        bundle.put(GLOVES, gloves);
+        bundle.put(BOOTS, boots);
+        bundle.put(CLOAK, cloak);
+
+		bundle.put(RING1, ring1);
+		bundle.put(RING2, ring2);
+        bundle.put(AMULET, amulet);
+        bundle.put(FACE, face);
 	}
 	
 	public void restoreFromBundle( Bundle bundle ) {
 		
 		backpack.clear();
-		backpack.restoreFromBundle( bundle );
+		backpack.restoreFromBundle(bundle);
 
+        weapon = (KindOfWeapon)bundle.get(WEAPON);
+        offhand = (KindOfWeapon)bundle.get(OFFHAND);
+        tool1 = (Tool)bundle.get(TOOL1);
+        tool2 = (Tool)bundle.get(TOOL2);
+
+        armor = (Armor)bundle.get(ARMOR);
+        gloves = (Armor)bundle.get(GLOVES);
+        boots = (Armor)bundle.get(BOOTS);
+        cloak = (Armor)bundle.get(CLOAK);
+
+        ring1 = (KindofMisc)bundle.get(RING1);
+        ring2 = (KindofMisc)bundle.get(RING2);
+        amulet = (KindofMisc)bundle.get(AMULET);
+        face = (KindofMisc)bundle.get(FACE);
+
+        if (weapon != null) {
+            weapon.activate(owner);
+        }
+        if (offhand != null) {
+            offhand.activate(owner);
+        }
+
+        if (ring1 != null) {
+            ring1.activate(owner);
+        }
+        if (ring2 != null) {
+            ring2.activate(owner);
+        }
+        if (amulet != null) {
+            amulet.activate(owner);
+        }
+        if (face != null) {
+            face.activate(owner);
+        }
+
+        /*
 		if (bundle.get( WEAPON ) instanceof Wand){
 			//handles the case of an equipped wand from pre-0.3.0
 			Wand item = (Wand) bundle.get(WEAPON);
@@ -125,6 +184,7 @@ public class Belongings implements Iterable<Item> {
         if (misc4 != null) {
             misc4.activate(owner);
         }
+        */
 	}
 	
 	@SuppressWarnings("unchecked")
@@ -173,25 +233,51 @@ public class Belongings implements Iterable<Item> {
 			weapon.identify();
 			Badges.validateItemLevelAquired( weapon );
 		}
+        if (offhand != null)
+        {
+            offhand.identify();
+            Badges.validateItemLevelAquired(offhand);
+        }
+        if (tool1 != null)
+        {
+            tool1.identify();
+            Badges.validateItemLevelAquired(tool1);
+        }
+        if (tool2 != null){
+            tool2.identify();
+            Badges.validateItemLevelAquired(tool2);
+        }
 		if (armor != null) {
 			armor.identify();
 			Badges.validateItemLevelAquired( armor );
 		}
-		if (misc1 != null) {
-			misc1.identify();
-			Badges.validateItemLevelAquired(misc1);
-		}
-		if (misc2 != null) {
-			misc2.identify();
-			Badges.validateItemLevelAquired(misc2);
-		}
-        if (misc3 != null) {
-            misc3.identify();
-            Badges.validateItemLevelAquired(misc3);
+        if (gloves != null) {
+            gloves.identify();
+            Badges.validateItemLevelAquired(gloves);
         }
-        if (misc4 != null) {
-            misc4.identify();
-            Badges.validateItemLevelAquired(misc4);
+        if (boots != null){
+            boots.identify();
+            Badges.validateItemLevelAquired(boots);
+        }
+        if (cloak != null){
+            cloak.identify();
+            Badges.validateItemLevelAquired(cloak);
+        }
+		if (ring1 != null) {
+			ring1.identify();
+			Badges.validateItemLevelAquired(ring1);
+		}
+		if (ring2 != null) {
+			ring2.identify();
+			Badges.validateItemLevelAquired(ring2);
+		}
+        if (amulet != null) {
+            amulet.identify();
+            Badges.validateItemLevelAquired(amulet);
+        }
+        if (face != null) {
+            face.identify();
+            Badges.validateItemLevelAquired(face);
         }
 		for (Item item : backpack) {
 			item.cursedKnown = true;
@@ -199,7 +285,7 @@ public class Belongings implements Iterable<Item> {
 	}
 	
 	public void uncurseEquipped() {
-		ScrollOfRemoveCurse.uncurse( owner, armor, weapon, misc1, misc2);
+		ScrollOfRemoveCurse.uncurse( owner, weapon, offhand, tool1, tool2, armor, gloves, boots, cloak, ring1, ring2, amulet, face);
 	}
 	
 	public Item randomUnequipped() {
@@ -229,27 +315,45 @@ public class Belongings implements Iterable<Item> {
 			weapon.cursed = false;
 			weapon.activate( owner );
 		}
+        if (offhand != null){
+            offhand.cursed = false;
+            offhand.activate(owner);
+        }
+        if (tool1 != null){
+            tool1.cursed = false;
+        }
+        if (tool2 != null) {
+            tool2.cursed=false;
+        }
 		
 		if (armor != null) {
 			armor.cursed = false;
 		}
-		
-		if (misc1 != null) {
-			misc1.cursed = false;
-			misc1.activate( owner );
-		}
-		if (misc2 != null) {
-			misc2.cursed = false;
-			misc2.activate( owner );
-		}
-        if (misc3 != null)
-        {
-            misc3.cursed=false;
-            misc3.activate(owner);
+        if (gloves!=null){
+            gloves.cursed=false;
         }
-        if (misc4 != null) {
-            misc4.cursed = false;
-            misc4.activate(owner);
+        if (boots != null) {
+            boots.cursed = false;
+        }
+        if (cloak != null) {
+            cloak.cursed = false;
+        }
+
+		if (ring1 != null) {
+			ring1.cursed = false;
+			ring1.activate( owner );
+		}
+		if (ring2 != null) {
+			ring2.cursed = false;
+			ring2.activate( owner );
+		}
+        if (amulet != null) {
+            amulet.cursed=false;
+            amulet.activate(owner);
+        }
+        if (face != null) {
+            face.cursed = false;
+            face.activate(owner);
         }
 	}
 	
@@ -302,7 +406,7 @@ public class Belongings implements Iterable<Item> {
 		
 		private Iterator<Item> backpackIterator = backpack.iterator();
 		
-		private Item[] equipped = {weapon, armor, misc1, misc2};
+		private Item[] equipped = {weapon, offhand, tool1, tool2, armor, gloves, boots, cloak, ring1, ring2, amulet, face};
 		private int backpackIndex = equipped.length;
 		
 		@Override
@@ -337,19 +441,37 @@ public class Belongings implements Iterable<Item> {
                     equipped[0] = weapon = null;
                     break;
                 case 1:
-                    equipped[1] = armor = null;
+                    equipped[1] = offhand = null;
                     break;
                 case 2:
-                    equipped[2] = misc1 = null;
+                    equipped[2] = tool1 = null;
                     break;
                 case 3:
-                    equipped[3] = misc2 = null;
+                    equipped[3] = tool2 = null;
                     break;
                 case 4:
-                    equipped[4] = misc3 = null;
+                    equipped[4] = armor = null;
                     break;
                 case 5:
-                    equipped[5] = misc4 = null;
+                    equipped[5] = gloves = null;
+                    break;
+                case 6:
+                    equipped[6] = boots = null;
+                    break;
+                case 7:
+                    equipped[7] = cloak = null;
+                    break;
+                case 8:
+                    equipped[8] = ring1 = null;
+                    break;
+                case 9:
+                    equipped[9] = ring2 = null;
+                    break;
+                case 10:
+                    equipped[10] = amulet = null;
+                    break;
+                case 11:
+                    equipped[11] = face = null;
                     break;
                 default:
                     backpackIterator.remove();

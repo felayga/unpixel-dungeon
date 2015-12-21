@@ -46,7 +46,9 @@ public class Skeleton extends Mob {
 	{
 		name = "skeleton";
 		spriteClass = SkeletonSprite.class;
-		
+
+		canOpenDoors = true;
+
 		HP = HT = 25;
 		defenseSkill = 9;
 		

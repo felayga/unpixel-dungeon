@@ -33,7 +33,9 @@ public class Gnoll extends Mob {
 	{
 		name = "gnoll scout";
 		spriteClass = GnollSprite.class;
-		
+
+		canOpenDoors = true;
+
 		HP = HT = 12;
 		defenseSkill = 4;
 		

@@ -79,6 +79,7 @@ public class Terrain {
 	public static final int PIT				= 0x80;
 	
 	public static final int UNSTITCHABLE	= 0x100;
+	public static final int PATHABLE 		= 0x200;
 	
 	public static final int[] flags = new int[256];
 	static {
@@ -88,7 +89,7 @@ public class Terrain {
 		flags[EMPTY_WELL]	= PASSABLE;
 		flags[WATER]		= PASSABLE | LIQUID 							| UNSTITCHABLE;
 		flags[WALL]			= LOS_BLOCKING | SOLID 							| UNSTITCHABLE;
-		flags[DOOR]			= PASSABLE | LOS_BLOCKING | FLAMABLE | SOLID	| UNSTITCHABLE;
+		flags[DOOR]			= /*PASSABLE | */ PATHABLE | LOS_BLOCKING | FLAMABLE | SOLID	| UNSTITCHABLE;
 		flags[OPEN_DOOR]	= PASSABLE | FLAMABLE 							| UNSTITCHABLE;
 		flags[ENTRANCE]		= PASSABLE/* | SOLID*/;
 		flags[EXIT]			= PASSABLE;

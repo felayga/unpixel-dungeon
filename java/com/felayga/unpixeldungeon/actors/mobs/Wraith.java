@@ -47,7 +47,10 @@ public class Wraith extends Mob {
 	{
 		name = "wraith";
 		spriteClass = WraithSprite.class;
-		
+
+		//todo: why should a ghost have to open doors, anyway?
+		canOpenDoors = true;
+
 		HP = HT = 1;
 		EXP = 0;
 		

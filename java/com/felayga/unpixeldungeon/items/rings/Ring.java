@@ -53,7 +53,7 @@ public class Ring extends KindofMisc {
 
 	private static final String TXT_UNEQUIP_TITLE = "Unequip one item";
 	private static final String TXT_UNEQUIP_MESSAGE =
-			"You can only wear two misc items at a time.";
+			"You can only wear two rings at a time.";
 	
 	protected Buff buff;
 	
@@ -126,19 +126,15 @@ public class Ring extends KindofMisc {
 	@Override
 	public boolean doEquip( final Hero hero ) {
 
-		if (hero.belongings.misc1 != null && hero.belongings.misc2 != null && hero.belongings.misc3 != null && hero.belongings.misc4 != null) {
+		if (hero.belongings.ring1 != null && hero.belongings.ring2 != null) {
 
-			final KindofMisc m1 = hero.belongings.misc1;
-			final KindofMisc m2 = hero.belongings.misc2;
-            final KindofMisc m3 = hero.belongings.misc3;
-            final KindofMisc m4 = hero.belongings.misc4;
+			final KindofMisc m1 = hero.belongings.ring1;
+			final KindofMisc m2 = hero.belongings.ring2;
 
 			ShatteredPixelDungeon.scene().add(
 					new WndOptions(TXT_UNEQUIP_TITLE, TXT_UNEQUIP_MESSAGE,
 							Utils.capitalize(m1.toString()),
-							Utils.capitalize(m2.toString()),
-                            Utils.capitalize(m3.toString()),
-                            Utils.capitalize(m4.toString())) {
+							Utils.capitalize(m2.toString())) {
 
 						@Override
 						protected void onSelect(int index) {
@@ -147,14 +143,8 @@ public class Ring extends KindofMisc {
                                 case 0:
                                     equipped = m1;
                                     break;
-                                case 1:
+								default:
                                     equipped = m2;
-                                    break;
-                                case 2:
-                                    equipped = m3;
-                                    break;
-                                default:
-                                    equipped = m4;
                                     break;
                             }
 							if (equipped.doUnequip(hero, true, false)) {
@@ -167,16 +157,11 @@ public class Ring extends KindofMisc {
 
 		} else {
 			
-			if (hero.belongings.misc1 == null) {
-				hero.belongings.misc1 = this;
-			} else if (hero.belongings.misc2 == null) {
-				hero.belongings.misc2 = this;
-			}
-			else if (hero.belongings.misc3 == null){
-                hero.belongings.misc3 = this;
+			if (hero.belongings.ring1 == null) {
+				hero.belongings.ring1 = this;
             }
             else {
-                hero.belongings.misc4 = this;
+                hero.belongings.ring2 = this;
             }
 
 			detach( hero.belongings.backpack );
@@ -205,16 +190,11 @@ public class Ring extends KindofMisc {
 	public boolean doUnequip( Hero hero, boolean collect, boolean single ) {
 		if (super.doUnequip( hero, collect, single )) {
 
-			if (hero.belongings.misc1 == this) {
-				hero.belongings.misc1 = null;
-			} else if (hero.belongings.misc2 == this) {
-				hero.belongings.misc2 = null;
-			}
-            else if (hero.belongings.misc3 == this){
-                hero.belongings.misc3 = null;
+			if (hero.belongings.ring1 == this) {
+				hero.belongings.ring1 = null;
             }
             else {
-                hero.belongings.misc4 = null;
+                hero.belongings.ring2 = null;
             }
 
 			hero.remove( buff );
@@ -231,7 +211,7 @@ public class Ring extends KindofMisc {
 	
 	@Override
 	public boolean isEquipped( Hero hero ) {
-		return hero.belongings.misc1 == this || hero.belongings.misc2 == this || hero.belongings.misc3 == this || hero.belongings.misc4 == this;
+		return hero.belongings.ring1 == this || hero.belongings.ring2 == this;
 	}
 	
 	@Override

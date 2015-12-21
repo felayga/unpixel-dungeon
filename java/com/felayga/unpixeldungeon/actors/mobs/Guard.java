@@ -48,6 +48,8 @@ public class Guard extends Mob {
 		name = "prison guard";
 		spriteClass = GuardSprite.class;
 
+		canOpenDoors = true;
+
 		HP = HT = 30;
 		defenseSkill = 10;
 

@@ -58,6 +58,7 @@ import com.felayga.unpixeldungeon.items.artifacts.DriedRose;
 import com.felayga.unpixeldungeon.items.artifacts.TimekeepersHourglass;
 import com.felayga.unpixeldungeon.items.scrolls.ScrollOfRecharging;
 import com.felayga.unpixeldungeon.items.scrolls.ScrollOfTeleportation;
+import com.felayga.unpixeldungeon.items.tools.Tool;
 import com.felayga.unpixeldungeon.items.weapon.missiles.MissileWeapon;
 import com.felayga.unpixeldungeon.levels.Level;
 import com.felayga.unpixeldungeon.levels.Terrain;
@@ -310,13 +311,35 @@ public class CursedWand {
 			//curses!
 			case 1:
 				KindOfWeapon weapon = user.belongings.weapon;
+				KindOfWeapon offhand = user.belongings.offhand;
+				Tool tool1 = user.belongings.tool1;
+				Tool tool2 = user.belongings.tool2;
+
 				Armor armor = user.belongings.armor;
-				KindofMisc misc1 = user.belongings.misc1;
-				KindofMisc misc2 = user.belongings.misc2;
+				Armor gloves = user.belongings.gloves;
+				Armor boots = user.belongings.boots;
+				Armor cloak = user.belongings.cloak;
+
+				KindofMisc misc1 = user.belongings.ring1;
+				KindofMisc misc2 = user.belongings.ring2;
+				KindofMisc amulet = user.belongings.amulet;
+				KindofMisc face = user.belongings.face;
+
 				if (weapon != null) weapon.cursed = weapon.cursedKnown = true;
+				if (offhand != null) offhand.cursed = offhand.cursedKnown = true;
+				if (tool1 != null) tool1.cursed = tool1.cursedKnown = true;
+				if (tool2 != null) tool2.cursed = tool2.cursedKnown = true;
+
 				if (armor != null)  armor.cursed = armor.cursedKnown = true;
+				if (gloves != null) gloves.cursed = gloves.cursedKnown = true;
+				if (boots != null) boots.cursed = boots.cursedKnown = true;
+				if (cloak != null) cloak.cursed = cloak.cursedKnown = true;
+
 				if (misc1 != null)  misc1.cursed = misc1.cursedKnown = true;
 				if (misc2 != null)  misc2.cursed = misc2.cursedKnown = true;
+				if (amulet != null) amulet.cursed = amulet.cursedKnown = true;
+				if (face != null) face.cursed = face.cursedKnown = true;
+
 				EquipableItem.equipCursed(user);
 				GLog.n("Your worn equipment becomes cursed!");
 				wand.wandUsed();

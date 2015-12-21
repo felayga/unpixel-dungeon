@@ -56,9 +56,17 @@ public class ScrollOfRemoveCurse extends Scroll {
 		boolean procced = uncurse( curUser, curUser.belongings.backpack.items.toArray( new Item[0] ) );
 		procced = uncurse( curUser,
 			curUser.belongings.weapon,
+            curUser.belongings.offhand,
+            curUser.belongings.tool1,
+            curUser.belongings.tool2,
 			curUser.belongings.armor,
-			curUser.belongings.misc1,
-			curUser.belongings.misc2) || procced;
+            curUser.belongings.gloves,
+            curUser.belongings.boots,
+            curUser.belongings.cloak,
+			curUser.belongings.ring1,
+			curUser.belongings.ring2,
+            curUser.belongings.amulet,
+            curUser.belongings.face) || procced;
 		
 		Weakness.detach( curUser, Weakness.class );
 		

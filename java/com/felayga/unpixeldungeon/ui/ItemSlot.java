@@ -54,8 +54,6 @@ public class ItemSlot extends Button {
 	private static final float ENABLED	= 1.0f;
 	private static final float DISABLED	= 0.3f;
 
-	private static final PointF FONTSCALE = new PointF(0.75f, 0.75f);
-	
 	protected ItemSprite icon;
 	protected BitmapText topLeft;
 	protected BitmapText topRight;
@@ -94,7 +92,15 @@ public class ItemSlot extends Button {
 	
 	public ItemSlot( Item item ) {
 		this();
-		item( item );
+		item(item);
+	}
+
+	protected PointF getFontScale() {
+		return new PointF(1.0f, 1.0f);
+	}
+
+	protected PointF getIconScale() {
+		return new PointF(1.0f, 1.0f);
 	}
 		
 	@Override
@@ -103,27 +109,28 @@ public class ItemSlot extends Button {
 		super.createChildren();
 		
 		icon = new ItemSprite();
-		add( icon );
+		icon.scale = getIconScale();
+		add(icon);
 		
-		topLeft = new BitmapText( PixelScene.pixelFont);
-		topLeft.scale = FONTSCALE;
+		topLeft = new BitmapText(PixelScene.pixelFont);
+		topLeft.scale = getFontScale();
 		add(topLeft);
 		
-		topRight = new BitmapText( PixelScene.pixelFont);
-		topRight.scale = FONTSCALE;
-		add( topRight );
+		topRight = new BitmapText(PixelScene.pixelFont);
+		topRight.scale = getFontScale();
+		add(topRight);
 		
-		bottomRight = new BitmapText( PixelScene.pixelFont);
-		bottomRight.scale = FONTSCALE;
-		add( bottomRight );
+		bottomRight = new BitmapText(PixelScene.pixelFont);
+		bottomRight.scale = getFontScale();
+		add(bottomRight);
 	}
 	
 	@Override
 	protected void layout() {
 		super.layout();
 		
-		icon.x = x + (width - icon.width) / 2;
-		icon.y = y + (height - icon.height) / 2;
+		icon.x = x + (width - icon.width * icon.scale.x) / 2;
+		icon.y = y + (height - icon.height * icon.scale.y) / 2;
 		
 		if (topLeft != null) {
 			topLeft.x = x;
@@ -137,7 +144,7 @@ public class ItemSlot extends Button {
 		
 		if (bottomRight != null) {
 			bottomRight.x = x + (width - bottomRight.width());
-			bottomRight.y = y + (height - bottomRight.height());
+			bottomRight.y = y + (height - bottomRight.height()) + 1;
 		}
 	}
 	

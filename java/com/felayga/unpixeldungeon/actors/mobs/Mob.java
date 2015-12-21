@@ -279,9 +279,17 @@ public abstract class Mob extends Char {
 		if (rooted) {
 			return false;
 		}
+
+		int len = Level.LENGTH;
+		boolean[] p = Level.passable;
+		boolean[] a = Level.pathable;
+		boolean[] passable = new boolean[len];
+		for (int i=0; i < len; i++) {
+			passable[i] = p[i] || a[i];
+		}
 		
 		int step = Dungeon.findPath( this, pos, target,
-			Level.passable,
+			passable,
 			Level.fieldOfView );
 		if (step != -1) {
 			move( step );
@@ -292,8 +300,16 @@ public abstract class Mob extends Char {
 	}
 	
 	protected boolean getFurther( int target ) {
+		int len = Level.LENGTH;
+		boolean[] p = Level.passable;
+		boolean[] a = Level.pathable;
+		boolean[] passable = new boolean[len];
+		for (int i=0; i < len; i++) {
+			passable[i] = p[i] || a[i];
+		}
+
 		int step = Dungeon.flee( this, pos, target,
-			Level.passable,
+			passable,
 			Level.fieldOfView );
 		if (step != -1) {
 			move( step );

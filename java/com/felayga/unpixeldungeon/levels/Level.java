@@ -139,6 +139,7 @@ public abstract class Level implements Bundlable {
 	public static boolean[] fieldOfView = new boolean[LENGTH];
 	
 	public static boolean[] passable	= new boolean[LENGTH];
+    public static boolean[] pathable    = new boolean[LENGTH];
 	public static boolean[] losBlocking	= new boolean[LENGTH];
 	public static boolean[] flamable	= new boolean[LENGTH];
 	public static boolean[] secret		= new boolean[LENGTH];
@@ -596,6 +597,7 @@ public abstract class Level implements Bundlable {
 		for (int i=0; i < LENGTH; i++) {
 			int flags = Terrain.flags[map[i]];
 			passable[i]		= (flags & Terrain.PASSABLE) != 0;
+            pathable[i]     = (flags & (Terrain.PASSABLE | Terrain.PATHABLE)) != 0;
 			losBlocking[i]	= (flags & Terrain.LOS_BLOCKING) != 0;
 			flamable[i]		= (flags & Terrain.FLAMABLE) != 0;
 			secret[i]		= (flags & Terrain.SECRET) != 0;
@@ -773,7 +775,7 @@ public abstract class Level implements Bundlable {
 		plant = seed.couch( pos );
 		plants.put( pos, plant );
 		
-		GameScene.add( plant );
+		GameScene.add(plant);
 		
 		return plant;
 	}
@@ -789,7 +791,7 @@ public abstract class Level implements Bundlable {
 			if(existingTrap.sprite != null) existingTrap.sprite.kill();
 		}
 		trap.set( pos );
-		traps.put( pos, trap );
+		traps.put(pos, trap);
 		GameScene.add(trap);
 		return trap;
 	}
@@ -832,30 +834,31 @@ public abstract class Level implements Bundlable {
 		Trap trap = null;
 		
 		switch (map[cell]) {
-		
-		case Terrain.SECRET_TRAP:
-			GLog.i( TXT_HIDDEN_PLATE_CLICKS );
-		case Terrain.TRAP:
-			trap = traps.get( cell );
-			break;
-			
-		case Terrain.HIGH_GRASS:
-			HighGrass.trample( this, cell, ch );
-			break;
-			
-		case Terrain.WELL:
-			WellWater.affectCell( cell );
-			break;
-			
-		case Terrain.ALCHEMY:
-			if (ch == null) {
-				Alchemy.transmute( cell );
-			}
-			break;
-			
-		case Terrain.DOOR:
-			Door.enter( cell );
-			break;
+
+			case Terrain.SECRET_TRAP:
+				GLog.i(TXT_HIDDEN_PLATE_CLICKS);
+			case Terrain.TRAP:
+				trap = traps.get(cell);
+				break;
+
+			case Terrain.HIGH_GRASS:
+				HighGrass.trample(this, cell, ch);
+				break;
+
+			case Terrain.WELL:
+				WellWater.affectCell(cell);
+				break;
+
+			case Terrain.ALCHEMY:
+				if (ch == null) {
+					Alchemy.transmute(cell);
+				}
+				break;
+			/*
+			case Terrain.DOOR:
+				Door.enter( cell );
+				break;
+			*/
 		}
 		
 		if (trap != null && !frozen) {
@@ -892,14 +895,15 @@ public abstract class Level implements Bundlable {
 		
 		Trap trap = null;
 		switch (map[cell]) {
-		
-		case Terrain.TRAP:
-			trap = traps.get( cell );
-			break;
-			
-		case Terrain.DOOR:
-			Door.enter( cell );
-			break;
+
+            case Terrain.TRAP:
+                trap = traps.get( cell );
+                break;
+            case Terrain.DOOR:
+                if (mob.canOpenDoors) {
+                    Door.open(cell);
+                }
+                break;
 		}
 		
 		if (trap != null) {
@@ -922,7 +926,7 @@ public abstract class Level implements Bundlable {
 		if (sighted) {
 			ShadowCaster.castShadow( cx, cy, fieldOfView, c.viewDistance );
 		} else {
-			Arrays.fill( fieldOfView, false );
+			Arrays.fill(fieldOfView, false);
 		}
 		
 		int sense = 1;

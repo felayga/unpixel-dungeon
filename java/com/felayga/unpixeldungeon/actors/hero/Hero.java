@@ -29,6 +29,7 @@ import com.felayga.unpixeldungeon.Bones;
 import com.felayga.unpixeldungeon.Dungeon;
 import com.felayga.unpixeldungeon.GamesInProgress;
 import com.felayga.unpixeldungeon.ResultDescriptions;
+import com.felayga.unpixeldungeon.ShatteredPixelDungeon;
 import com.felayga.unpixeldungeon.Statistics;
 import com.felayga.unpixeldungeon.actors.Actor;
 import com.felayga.unpixeldungeon.actors.Char;
@@ -66,6 +67,7 @@ import com.felayga.unpixeldungeon.items.Heap;
 import com.felayga.unpixeldungeon.items.Heap.Type;
 import com.felayga.unpixeldungeon.items.Item;
 import com.felayga.unpixeldungeon.items.KindOfWeapon;
+import com.felayga.unpixeldungeon.items.KindofMisc;
 import com.felayga.unpixeldungeon.items.armor.glyphs.Viscosity;
 import com.felayga.unpixeldungeon.items.artifacts.CapeOfThorns;
 import com.felayga.unpixeldungeon.items.artifacts.DriedRose;
@@ -96,6 +98,7 @@ import com.felayga.unpixeldungeon.levels.Level;
 import com.felayga.unpixeldungeon.levels.Terrain;
 import com.felayga.unpixeldungeon.levels.features.AlchemyPot;
 import com.felayga.unpixeldungeon.levels.features.Chasm;
+import com.felayga.unpixeldungeon.levels.features.Door;
 import com.felayga.unpixeldungeon.levels.features.Sign;
 import com.felayga.unpixeldungeon.plants.Earthroot;
 import com.felayga.unpixeldungeon.plants.Sungrass;
@@ -108,7 +111,9 @@ import com.felayga.unpixeldungeon.ui.AttackIndicator;
 import com.felayga.unpixeldungeon.ui.BuffIndicator;
 import com.felayga.unpixeldungeon.ui.QuickSlotButton;
 import com.felayga.unpixeldungeon.utils.GLog;
+import com.felayga.unpixeldungeon.utils.Utils;
 import com.felayga.unpixeldungeon.windows.WndMessage;
+import com.felayga.unpixeldungeon.windows.WndOptions;
 import com.felayga.unpixeldungeon.windows.WndResurrect;
 import com.felayga.unpixeldungeon.windows.WndTradeItem;
 import com.watabou.noosa.Camera;
@@ -222,12 +227,12 @@ public class Hero extends Char {
 		bundle.put( ATTACK, attackSkill );
 		bundle.put( DEFENSE, defenseSkill );
 		
-		bundle.put( STRENGTH, STR );
+		bundle.put(STRENGTH, STR);
 		
 		bundle.put( LEVEL, lvl );
 		bundle.put( EXPERIENCE, exp );
 
-		belongings.storeInBundle( bundle );
+		belongings.storeInBundle(bundle);
 	}
 	
 	@Override
@@ -411,7 +416,7 @@ public class Hero extends Char {
 	
 	public void spendAndNext( float time ) {
 		busy();
-		spend( time );
+		spend(time);
 		next();
 	}
 	
@@ -448,7 +453,7 @@ public class Hero extends Char {
 			ready = false;
 			
 			if (curAction instanceof HeroAction.Move) {
-				
+
 				return actMove( (HeroAction.Move)curAction );
 				
 			} else
@@ -533,14 +538,14 @@ public class Hero extends Char {
 	
 	private boolean actMove( HeroAction.Move action ) {
 
-		if (getCloser( action.dst )) {
-
+		if (getCloser(action.dst)) {
 			return true;
 
 		} else {
 			if (Dungeon.level.map[pos] == Terrain.SIGN) {
 				Sign.read(pos);
 			}
+
 			ready();
 
 			return false;
@@ -548,7 +553,7 @@ public class Hero extends Char {
 	}
 	
 	private boolean actInteract( HeroAction.Interact action ) {
-		
+
 		NPC npc = action.npc;
 
 		if (Level.adjacent( pos, npc.pos )) {
@@ -714,7 +719,7 @@ public class Hero extends Char {
 	}
 	
 	private boolean actUnlock( HeroAction.Unlock action ) {
-		int doorCell = action.dst;
+		final int doorCell = action.dst;
 		if (Level.adjacent( pos, doorCell )) {
 			
 			theKey = null;
@@ -723,24 +728,74 @@ public class Hero extends Char {
 			if (door == Terrain.LOCKED_DOOR) {
 				
 				theKey = belongings.getKey( IronKey.class, Dungeon.depth );
+
+                if (theKey != null) {
+                    spend( Key.TIME_TO_UNLOCK);
+                    sprite.operate(doorCell);
+                    Sample.INSTANCE.play(Assets.SND_UNLOCK);
+                }
+                else {
+                    ShatteredPixelDungeon.scene().add(
+                        new WndOptions("Locked Door", "This door appears to be locked.",
+                                "KICK",
+                                "PICK LOCK",
+                                "DO NOTHING") {
+
+                            @Override
+                            protected void onSelect(int index) {
+                                switch(index) {
+                                    case 0:
+                                        GLog.w("WHAMMM!!!");
+                                        spend(Key.TIME_TO_UNLOCK);
+                                        //todo: figure out how the callback shit here works and/or get this doing the attack animation only (NullPointerException happens)
+                                        sprite.attack(doorCell);
+                                        ready();
+                                        break;
+                                    case 1:
+                                        GLog.p("You pick the lock.");
+                                        spend(Key.TIME_TO_UNLOCK);
+                                        sprite.operate(doorCell);
+                                        break;
+                                    default:
+                                        //GLog.i("You leave the door alone.");
+                                        ready();
+                                        break;
+                                }
+                            }
+                        });
+                }
 				
 			} else if (door == Terrain.LOCKED_EXIT) {
 				
 				theKey = belongings.getKey( SkeletonKey.class, Dungeon.depth );
-				
-			}
+
+                if (theKey != null) {
+
+                    spend( Key.TIME_TO_UNLOCK );
+                    sprite.operate( doorCell );
+
+                    Sample.INSTANCE.play( Assets.SND_UNLOCK );
+
+                } else {
+                    GLog.w( TXT_LOCKED_DOOR );
+                    ready();
+                }
+
+			} else if (door == Terrain.DOOR){
+                Door.open(doorCell);
+                spend(Key.TIME_TO_UNLOCK);
+                sprite.operate(doorCell);
+                ready();
+                return true;
+            }
+            else if (door == Terrain.OPEN_DOOR){
+                Door.close(doorCell);
+                spend(Key.TIME_TO_UNLOCK);
+                sprite.operate(doorCell);
+                ready();
+                return true;
+            }
 			
-			if (theKey != null) {
-				
-				spend( Key.TIME_TO_UNLOCK );
-				sprite.operate( doorCell );
-				
-				Sample.INSTANCE.play( Assets.SND_UNLOCK );
-				
-			} else {
-				GLog.w( TXT_LOCKED_DOOR );
-				ready();
-			}
 
 			return false;
 
@@ -889,7 +944,7 @@ public class Hero extends Char {
 		
 		Earthroot.Armor armor = buff( Earthroot.Armor.class );
 		if (armor != null) {
-			damage = armor.absorb( damage );
+			damage = armor.absorb(damage);
 		}
 
 		Sungrass.Health health = buff( Sungrass.Health.class );
@@ -1012,25 +1067,30 @@ public class Hero extends Char {
 		} else {
 		
 			int len = Level.LENGTH;
-			boolean[] p = Level.passable;
+            boolean[] p = Level.passable;
+            boolean[] a = Level.pathable;
 			boolean[] v = Dungeon.level.visited;
 			boolean[] m = Dungeon.level.mapped;
 			boolean[] passable = new boolean[len];
 			for (int i=0; i < len; i++) {
-				passable[i] = p[i] && (v[i] || m[i]);
+				passable[i] = (p[i] || a[i]) && (v[i] || m[i]);
 			}
 			
 			step = Dungeon.findPath( this, pos, target, passable, Level.fieldOfView );
 		}
-		
+
 		if (step != -1) {
+            if (Level.passable[step]) {
+                sprite.move(pos, step);
+                move(step);
+                spend(1 / speed());
 
-			sprite.move(pos, step);
-			move(step);
-			spend( 1 / speed() );
-			
-			return true;
-
+                return true;
+            }
+            else {
+                GLog.w("Ouch! You bump into a door.");
+                return false;
+            }
 		} else {
 
 			return false;
@@ -1076,9 +1136,11 @@ public class Hero extends Char {
 			}
 			
 		} else if (Dungeon.level.map[cell] == Terrain.LOCKED_DOOR || Dungeon.level.map[cell] == Terrain.LOCKED_EXIT) {
-			
-			curAction = new HeroAction.Unlock( cell );
-			
+
+            curAction = new HeroAction.Unlock(cell);
+        }
+        else if (Dungeon.level.map[cell] == Terrain.DOOR || Dungeon.level.map[cell] == Terrain.OPEN_DOOR) {
+            curAction = new HeroAction.Unlock(cell);
 		} else if (cell == Dungeon.level.exit && Dungeon.depth < 26) {
 			
 			curAction = new HeroAction.Descend( cell );

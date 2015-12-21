@@ -42,7 +42,9 @@ public class Brute extends Mob {
 	{
 		name = "gnoll brute";
 		spriteClass = BruteSprite.class;
-		
+
+		canOpenDoors = true;
+
 		HP = HT = 40;
 		defenseSkill = 15;
 		

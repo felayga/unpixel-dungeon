@@ -169,7 +169,7 @@ public enum HeroClass {
 
 		hero.belongings.armor = (Armor)new PlateArmor().upgrade(20);
 		hero.belongings.weapon = (Weapon)new BattleAxe().upgrade(20);
-		hero.belongings.misc1 = (Ring)new RingOfWealth().upgrade(20);
+		hero.belongings.ring1 = (Ring)new RingOfWealth().upgrade(20);
 
 		new PotionBandolier().identify().collect();
 
@@ -210,8 +210,8 @@ public enum HeroClass {
 		(hero.belongings.weapon = new Dagger()).identify();
 
 		CloakOfShadows cloak = new CloakOfShadows();
-		(hero.belongings.misc1 = cloak).identify();
-		hero.belongings.misc1.activate( hero );
+		(hero.belongings.ring1 = cloak).identify();
+		hero.belongings.ring1.activate( hero );
 
 		Dart darts = new Dart( 8 );
 		darts.identify().collect();

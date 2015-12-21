@@ -57,6 +57,7 @@ import com.watabou.noosa.BitmapText;
 import com.watabou.noosa.ColorBlock;
 import com.watabou.noosa.Image;
 import com.watabou.noosa.audio.Sample;
+import com.watabou.utils.PointF;
 
 public class WndBag extends WndTabbed {
 	
@@ -172,17 +173,28 @@ public class WndBag extends WndTabbed {
 		// Equipped items
 		Belongings stuff = Dungeon.hero.belongings;
 		placeItem( stuff.weapon != null ? stuff.weapon : new Placeholder( ItemSpriteSheet.WEAPON ) );
+		placeItem( stuff.offhand != null ? stuff.offhand : new Placeholder( ItemSpriteSheet.WEAPON ) );
+
 		placeItem( stuff.armor != null ? stuff.armor : new Placeholder( ItemSpriteSheet.ARMOR ) );
-		placeItem( stuff.misc1 != null ? stuff.misc1 : new Placeholder( ItemSpriteSheet.RING ) );
-		placeItem( stuff.misc2 != null ? stuff.misc2 : new Placeholder( ItemSpriteSheet.RING ) );
-		placeItem( stuff.misc3 != null ? stuff.misc3 : new Placeholder( ItemSpriteSheet.RING ));
-        placeItem( stuff.misc4 != null ? stuff.misc4 : new Placeholder( ItemSpriteSheet.RING ));
+		placeItem( stuff.gloves != null ? stuff.gloves : new Placeholder( ItemSpriteSheet.ARMOR ) );
+
+        placeItem( stuff.ring1 != null ? stuff.ring1 : new Placeholder( ItemSpriteSheet.RING ) );
+        placeItem( stuff.ring2 != null ? stuff.ring2 : new Placeholder( ItemSpriteSheet.RING ) );
+
+        placeItem( stuff.tool1 != null ? stuff.tool1 : new Placeholder( ItemSpriteSheet.WEAPON ) );
+        placeItem( stuff.tool2 != null ? stuff.tool2 : new Placeholder( ItemSpriteSheet.WEAPON ) );
+
+        placeItem( stuff.boots != null ? stuff.boots : new Placeholder( ItemSpriteSheet.ARMOR ) );
+        placeItem( stuff.cloak != null ? stuff.cloak : new Placeholder( ItemSpriteSheet.ARMOR ) );
+
+		placeItem( stuff.amulet != null ? stuff.amulet : new Placeholder( ItemSpriteSheet.RING ) );
+		placeItem( stuff.face != null ? stuff.face : new Placeholder( ItemSpriteSheet.RING ) );
 
 		boolean backpack = (container == Dungeon.hero.belongings.backpack);
 		if (!backpack) {
 			count = nCols;
 			col = 0;
-			row = 1;
+			row = 2;
 		}
 
 		// Items in the bag
@@ -316,7 +328,16 @@ public class WndBag extends WndTabbed {
 	}
 	
 	private class ItemButton extends ItemSlot {
-		
+        @Override
+        protected PointF getFontScale() {
+            return new PointF(0.75f, 0.75f);
+        }
+
+        @Override
+        protected PointF getIconScale() {
+            return new PointF(0.75f, 0.75f);
+        }
+
 		private static final int NORMAL		= 0xFF4A4D44;
 		private static final int EQUIPPED	= 0xFF63665B;
 		
@@ -324,8 +345,7 @@ public class WndBag extends WndTabbed {
 		private ColorBlock bg;
 		
 		public ItemButton( Item item ) {
-			
-			super( item );
+            super( item );
 
 			this.item = item;
 			if (item instanceof Gold) {
@@ -338,7 +358,7 @@ public class WndBag extends WndTabbed {
 		@Override
 		protected void createChildren() {
 			bg = new ColorBlock( SLOT_SIZE, SLOT_SIZE, NORMAL );
-			add( bg );
+			add(bg);
 			
 			super.createChildren();
 		}

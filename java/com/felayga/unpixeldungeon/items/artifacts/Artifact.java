@@ -87,45 +87,33 @@ public class Artifact extends KindofMisc {
 	@Override
 	public boolean doEquip( final Hero hero ) {
 
-		if ((hero.belongings.misc1 != null && hero.belongings.misc1.getClass() == this.getClass())
-				|| (hero.belongings.misc2 != null && hero.belongings.misc2.getClass() == this.getClass())
-				|| (hero.belongings.misc3 != null && hero.belongings.misc3.getClass() == this.getClass())
-				|| (hero.belongings.misc4 != null && hero.belongings.misc4.getClass() == this.getClass())
+		if ((hero.belongings.ring1 != null && hero.belongings.ring1.getClass() == this.getClass())
+				|| (hero.belongings.ring2 != null && hero.belongings.ring2.getClass() == this.getClass())
 				){
 
 			GLog.w("you cannot wear two of the same artifact");
 			return false;
 
-		} else if (hero.belongings.misc1 != null && hero.belongings.misc2 != null && hero.belongings.misc3 != null && hero.belongings.misc4 != null) {
+		} else if (hero.belongings.ring1 != null && hero.belongings.ring2 != null) {
 
-			final KindofMisc m1 = hero.belongings.misc1;
-			final KindofMisc m2 = hero.belongings.misc2;
-            final KindofMisc m3 = hero.belongings.misc3;
-            final KindofMisc m4 = hero.belongings.misc4;
+			final KindofMisc m1 = hero.belongings.ring1;
+			final KindofMisc m2 = hero.belongings.ring2;
 			final Artifact art = this;
 
 			ShatteredPixelDungeon.scene().add(
 					new WndOptions(TXT_UNEQUIP_TITLE, TXT_UNEQUIP_MESSAGE,
 							Utils.capitalize(m1.toString()),
-							Utils.capitalize(m2.toString()),
-                            Utils.capitalize(m3.toString()),
-                            Utils.capitalize(m4.toString())) {
+							Utils.capitalize(m2.toString())) {
 
 						@Override
 						protected void onSelect(int index) {
 							KindofMisc equipped;
                             switch(index) {
-                                case 1:
-                                    equipped = m2;
-                                    break;
-                                case 2:
-                                    equipped = m3;
-                                    break;
-                                case 3:
-                                    equipped = m4;
+                                case 0:
+                                    equipped = m1;
                                     break;
                                 default:
-                                    equipped = m1;
+                                    equipped = m2;
                                     break;
                             }
 							if (equipped.doUnequip(hero, true, false)) {
@@ -143,16 +131,11 @@ public class Artifact extends KindofMisc {
 
 		} else {
 
-			if (hero.belongings.misc1 == null) {
-				hero.belongings.misc1 = this;
-			} else if (hero.belongings.misc2 == null) {
-				hero.belongings.misc2 = this;
+			if (hero.belongings.ring1 == null) {
+				hero.belongings.ring1 = this;
+			} else {
+				hero.belongings.ring2 = this;
 			}
-            else if (hero.belongings.misc3==null){
-                hero.belongings.misc3 = this;
-            }else {
-                hero.belongings.misc4 = this;
-            }
 
 			detach( hero.belongings.backpack );
 
@@ -181,17 +164,11 @@ public class Artifact extends KindofMisc {
 	public boolean doUnequip( Hero hero, boolean collect, boolean single ) {
 		if (super.doUnequip( hero, collect, single )) {
 
-		if (hero.belongings.misc1 == this) {
-			hero.belongings.misc1 = null;
-		} else if (hero.belongings.misc2 == this) {
-			hero.belongings.misc2 = null;
+		if (hero.belongings.ring1 == this) {
+			hero.belongings.ring1 = null;
+		} else {
+			hero.belongings.ring2 = null;
 		}
-        else if (hero.belongings.misc3 == this){
-            hero.belongings.misc3 = null;
-        }
-        else if (hero.belongings.misc4 == this){
-            hero.belongings.misc4 = null;
-        }
 
 		passiveBuff.detach();
 		passiveBuff = null;
@@ -212,7 +189,7 @@ public class Artifact extends KindofMisc {
 
 	@Override
 	public boolean isEquipped( Hero hero ) {
-		return hero.belongings.misc1 == this || hero.belongings.misc2 == this || hero.belongings.misc3 == this || hero.belongings.misc4 == this;
+		return hero.belongings.ring1 == this || hero.belongings.ring2 == this;
 	}
 
 	@Override
