@@ -159,7 +159,7 @@ public enum HeroClass {
 	}
 
 	private static void initWarrior( Hero hero ) {
-		hero.STR = hero.STR + 1;
+		//hero.STR = hero.STR + 1;
 
 		(hero.belongings.weapon = new ShortSword()).identify();
 		Dart darts = new Dart( 8 );

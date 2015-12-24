@@ -78,6 +78,7 @@ public abstract class Char extends Actor {
 	public int viewDistance	= 8;
 
 	public boolean canOpenDoors = false;
+	public boolean isEthereal = false;
 	
 	private HashSet<Buff> buffs = new HashSet<Buff>();
 	

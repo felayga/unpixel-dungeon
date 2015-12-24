@@ -35,6 +35,7 @@ import com.felayga.unpixeldungeon.items.rings.RingOfSharpshooting;
 import com.felayga.unpixeldungeon.items.weapon.enchantments.*;
 import com.felayga.unpixeldungeon.items.weapon.melee.MeleeWeapon;
 import com.felayga.unpixeldungeon.items.weapon.missiles.MissileWeapon;
+import com.felayga.unpixeldungeon.mechanics.AttributeType;
 import com.felayga.unpixeldungeon.sprites.ItemSprite;
 import com.felayga.unpixeldungeon.utils.GLog;
 import com.felayga.unpixeldungeon.utils.Utils;
@@ -51,15 +52,15 @@ public class Weapon extends KindOfWeapon {
 	private static final String TXT_INCOMPATIBLE	=
 		"Interaction of different types of magic has negated the enchantment on this weapon!";
 	private static final String TXT_TO_STRING		= "%s :%d";
-	
-	public int		STR	= 10;
-	public float	ACU	= 1;	// Accuracy modifier
-	public float	DLY	= 1f;	// Speed modifier
 
-	public enum Imbue {
-		NONE, LIGHT, HEAVY
-	}
-	public Imbue imbue = Imbue.NONE;
+	public int damageMin = 1;
+    public int damageMax = 4;
+
+    public int accuracy = 10;
+
+    public AttributeType primaryAttribute = AttributeType.STRCON;
+
+	public float	DLY	= 1f;	// Speed modifier
 
 	private int hitsToKnow = HITS_TO_KNOW;
 	
@@ -83,14 +84,16 @@ public class Weapon extends KindOfWeapon {
 
 	private static final String UNFAMILIRIARITY	= "unfamiliarity";
 	private static final String ENCHANTMENT		= "enchantment";
-	private static final String IMBUE			= "imbue";
+	//private static final String IMBUE			= "imbue";
+    private static final String ACCURACY        = "accuracy";
 
 	@Override
 	public void storeInBundle( Bundle bundle ) {
 		super.storeInBundle( bundle );
 		bundle.put( UNFAMILIRIARITY, hitsToKnow );
 		bundle.put( ENCHANTMENT, enchantment );
-		bundle.put( IMBUE, imbue );
+        bundle.put( ACCURACY, accuracy);
+		//bundle.put( IMBUE, imbue );
 	}
 	
 	@Override
@@ -100,12 +103,25 @@ public class Weapon extends KindOfWeapon {
 			hitsToKnow = HITS_TO_KNOW;
 		}
 		enchantment = (Enchantment)bundle.get( ENCHANTMENT );
-		imbue = bundle.getEnum( IMBUE, Imbue.class );
+		//imbue = bundle.getEnum( IMBUE, Imbue.class );
+        accuracy = bundle.getInt(ACCURACY, accuracy);
 	}
 	
 	@Override
 	public float acuracyFactor( Hero hero ) {
-		
+        int accuracy;
+        switch(primaryAttribute){
+            case STRCON:
+                accuracy = (hero.STRCON - this.accuracy) / 2;
+                break;
+            case DEXCHA:
+                accuracy = (hero.DEXCHA - this.accuracy) / 2;
+                break;
+            case INTWIS:
+                accuracy = (hero.INTWIS - this.accuracy) / 2;
+                break;
+        }
+		/*
 		int encumbrance = STR - hero.STR();
 
 		float ACU = this.ACU;
@@ -128,6 +144,7 @@ public class Weapon extends KindOfWeapon {
 		}
 
 		return encumbrance > 0 ? (float)(ACU / Math.pow( 1.5, encumbrance )) : ACU;
+		*/
 	}
 	
 	@Override

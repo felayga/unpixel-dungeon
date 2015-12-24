@@ -50,6 +50,7 @@ public class Wraith extends Mob {
 
 		//todo: why should a ghost have to open doors, anyway?
 		canOpenDoors = true;
+		isEthereal = true;
 
 		HP = HT = 1;
 		EXP = 0;

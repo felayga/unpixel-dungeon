@@ -152,7 +152,7 @@ public class Hero extends Char {
 	private static final String TXT_WAIT	= "...";
 	private static final String TXT_SEARCH	= "search";
 	
-	public static final int STARTING_STR = 10;
+	//public static final int STARTING_STR = 10;
 	
 	private static final float TIME_TO_REST		= 1f;
 	private static final float TIME_TO_SEARCH	= 2f;
@@ -177,7 +177,14 @@ public class Hero extends Char {
 	public MissileWeapon rangedWeapon = null;
 	public Belongings belongings;
 	
-	public int STR;
+	public int STRCON;
+	public int DEXCHA;
+	public int INTWIS;
+
+	public int STRCON_abuse;
+	public int DEXCHA_abuse;
+	public int INTWIS_abuse;
+
 	public boolean weakened = false;
 	
 	public float awareness;
@@ -192,7 +199,15 @@ public class Hero extends Char {
 		name = "you";
 		
 		HP = HT = 20;
-		STR = STARTING_STR;
+
+		STRCON = 10;
+		DEXCHA = 10;
+		INTWIS = 10;
+
+		STRCON_abuse = 64;
+		DEXCHA_abuse = 64;
+		INTWIS_abuse = 64;
+
 		awareness = 0.1f;
 		
 		belongings = new Belongings( this );
@@ -200,8 +215,8 @@ public class Hero extends Char {
 		visibleEnemies = new ArrayList<Mob>();
 	}
 
-	public int STR() {
-		int STR = this.STR;
+	private int STR() {
+		int STR = this.STRCON;
 
 		for (Buff buff : buffs(RingOfMight.Might.class)) {
 			STR += ((RingOfMight.Might)buff).level;
@@ -212,7 +227,9 @@ public class Hero extends Char {
 
 	private static final String ATTACK		= "attackSkill";
 	private static final String DEFENSE		= "defenseSkill";
-	private static final String STRENGTH	= "STR";
+	private static final String STRENGTHCONSTITUTION	= "STRCON";
+	private static final String DEXTERITYCHARISMA		= "DEXCHA";
+	private static final String INTELLIGENCEWISDOM		= "INTWIS";
 	private static final String LEVEL		= "lvl";
 	private static final String EXPERIENCE	= "exp";
 	
@@ -227,7 +244,9 @@ public class Hero extends Char {
 		bundle.put( ATTACK, attackSkill );
 		bundle.put( DEFENSE, defenseSkill );
 		
-		bundle.put(STRENGTH, STR);
+		bundle.put(STRENGTHCONSTITUTION, STRCON);
+		bundle.put(DEXTERITYCHARISMA, DEXCHA);
+		bundle.put(INTELLIGENCEWISDOM, INTWIS);
 		
 		bundle.put( LEVEL, lvl );
 		bundle.put( EXPERIENCE, exp );
@@ -245,7 +264,9 @@ public class Hero extends Char {
 		attackSkill = bundle.getInt( ATTACK );
 		defenseSkill = bundle.getInt( DEFENSE );
 		
-		STR = bundle.getInt( STRENGTH );
+		STRCON = bundle.getInt(STRENGTHCONSTITUTION);
+		DEXCHA = bundle.getInt(DEXTERITYCHARISMA);
+		INTWIS = bundle.getInt(INTELLIGENCEWISDOM);
 		updateAwareness();
 		
 		lvl = bundle.getInt( LEVEL );
@@ -1080,17 +1101,16 @@ public class Hero extends Char {
 		}
 
 		if (step != -1) {
-            if (Level.passable[step]) {
-                sprite.move(pos, step);
-                move(step);
-                spend(1 / speed());
-
-                return true;
-            }
-            else {
+            if (Dungeon.level.map[step] == Terrain.DOOR){
                 GLog.w("Ouch! You bump into a door.");
                 return false;
             }
+
+            sprite.move(pos, step);
+            move(step);
+            spend(1 / speed());
+
+            return true;
 		} else {
 
 			return false;

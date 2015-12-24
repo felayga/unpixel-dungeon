@@ -285,7 +285,7 @@ public abstract class Mob extends Char {
 		boolean[] a = Level.pathable;
 		boolean[] passable = new boolean[len];
 		for (int i=0; i < len; i++) {
-			passable[i] = p[i] || a[i];
+			passable[i] = p[i] || (a[i] && (canOpenDoors || isEthereal));
 		}
 		
 		int step = Dungeon.findPath( this, pos, target,
@@ -305,7 +305,7 @@ public abstract class Mob extends Char {
 		boolean[] a = Level.pathable;
 		boolean[] passable = new boolean[len];
 		for (int i=0; i < len; i++) {
-			passable[i] = p[i] || a[i];
+			passable[i] = p[i] || (a[i] && (canOpenDoors || isEthereal));
 		}
 
 		int step = Dungeon.flee( this, pos, target,
