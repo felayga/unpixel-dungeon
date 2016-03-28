@@ -27,33 +27,48 @@ import java.util.ArrayList;
 import java.util.HashSet;
 
 import com.felayga.unpixeldungeon.items.scrolls.ScrollOfTeleportation;
-import com.watabou.noosa.audio.Sample;
-import com.felayga.unpixeldungeon.Assets;
+import com.felayga.unpixeldungeon.items.weapon.melee.mob.CharmChance;
+import com.felayga.unpixeldungeon.mechanics.GameTime;
 import com.felayga.unpixeldungeon.actors.Actor;
-import com.felayga.unpixeldungeon.actors.Char;
-import com.felayga.unpixeldungeon.actors.buffs.Buff;
-import com.felayga.unpixeldungeon.actors.buffs.Charm;
 import com.felayga.unpixeldungeon.actors.buffs.Light;
 import com.felayga.unpixeldungeon.actors.buffs.Sleep;
-import com.felayga.unpixeldungeon.effects.Speck;
 import com.felayga.unpixeldungeon.items.scrolls.ScrollOfLullaby;
 import com.felayga.unpixeldungeon.items.weapon.enchantments.Leech;
 import com.felayga.unpixeldungeon.levels.Level;
 import com.felayga.unpixeldungeon.mechanics.Ballistica;
-import com.felayga.unpixeldungeon.sprites.SuccubusSprite;
+import com.felayga.unpixeldungeon.sprites.foocubus.IncubusSprite;
+import com.felayga.unpixeldungeon.sprites.foocubus.SuccubusSprite;
+import com.felayga.unpixeldungeon.windows.start.WndHeroInit;
 import com.watabou.utils.Random;
 
 public class Succubus extends Mob {
+	private static final String DESCRIPTION_FEMALE = "The succubi are demons that look like seductive (in a slightly gothic way) girls. Using its magic, the succubus " +
+			"can charm a hero, who will become unable to attack anything until the charm wears off.";
+	private static final String DESCRIPTION_MALE = "The incubi are demons that look like seductive (in a slightly gothic way) men. Using its magic, the incubus " +
+			"can charm a hero, who will become unable to attack anything until the charm wears off.";
 	
 	private static final int BLINK_DELAY	= 5;
 	
 	private int delay = 0;
-	
+
+	private String description;
+
+	public Succubus()
 	{
-		name = "succubus";
-		spriteClass = SuccubusSprite.class;
+		if (WndHeroInit.genderSelected == 0) {
+			name = "succubus";
+			spriteClass = SuccubusSprite.class;
+			description = DESCRIPTION_FEMALE;
+		}
+		else {
+			name = "incubus";
+			spriteClass = IncubusSprite.class;
+			description = DESCRIPTION_MALE;
+		}
 
 		canOpenDoors = true;
+
+		DEXCHA = 40;
 
 		HP = HT = 80;
 		defenseSkill = 25;
@@ -64,23 +79,8 @@ public class Succubus extends Mob {
 		
 		loot = new ScrollOfLullaby();
 		lootChance = 0.05f;
-	}
-	
-	@Override
-	public int damageRoll() {
-		return Random.NormalIntRange( 15, 25 );
-	}
-	
-	@Override
-	public int attackProc( Char enemy, int damage ) {
-		
-		if (Random.Int( 3 ) == 0) {
-			Buff.affect( enemy, Charm.class, Charm.durationFactor( enemy ) * Random.IntRange( 3, 7 ) ).object = id();
-			enemy.sprite.centerEmitter().start( Speck.factory( Speck.HEART ), 0.2f, 5 );
-			Sample.INSTANCE.play( Assets.SND_CHARMS );
-		}
-		
-		return damage;
+
+		belongings.weapon = new CharmChance(GameTime.TICK, 15, 25);
 	}
 	
 	@Override
@@ -88,7 +88,7 @@ public class Succubus extends Mob {
 		if (Level.fieldOfView[target] && Level.distance( pos, target ) > 2 && delay <= 0) {
 			
 			blink( target );
-			spend( -1 / speed() );
+			spend( -GameTime.TICK * GameTime.TICK / speed(), false );
 			return true;
 			
 		} else {
@@ -130,20 +130,8 @@ public class Succubus extends Mob {
 	}
 	
 	@Override
-	public int attackSkill( Char target ) {
-		return 40;
-	}
-	
-	@Override
-	public int dr() {
-		return 10;
-	}
-	
-	@Override
 	public String description() {
-		return
-			"The succubi are demons that look like seductive (in a slightly gothic way) girls. Using its magic, the succubus " +
-			"can charm a hero, who will become unable to attack anything until the charm wears off.";
+		return description;
 	}
 	
 	private static final HashSet<Class<?>> RESISTANCES = new HashSet<Class<?>>();

@@ -28,7 +28,9 @@ import com.felayga.unpixeldungeon.actors.Char;
 import com.felayga.unpixeldungeon.actors.blobs.Blob;
 import com.felayga.unpixeldungeon.actors.blobs.ToxicGas;
 import com.felayga.unpixeldungeon.actors.mobs.npcs.Wandmaker;
+import com.felayga.unpixeldungeon.items.weapon.melee.mob.MeleeMobAttack;
 import com.felayga.unpixeldungeon.levels.Terrain;
+import com.felayga.unpixeldungeon.mechanics.GameTime;
 import com.felayga.unpixeldungeon.scenes.GameScene;
 import com.felayga.unpixeldungeon.sprites.RotHeartSprite;
 
@@ -40,12 +42,16 @@ public class RotHeart extends Mob {
 		name = "rot heart";
 		spriteClass = RotHeartSprite.class;
 
+		DEXCHA = 0;
+
 		HP = HT = 80;
 		defenseSkill = 0;
 
 		EXP = 4;
 
 		state = PASSIVE;
+
+		belongings.weapon = new MeleeMobAttack(GameTime.TICK, 0, 0);
 	}
 
 	@Override
@@ -85,21 +91,6 @@ public class RotHeart extends Mob {
 	public void die(Object cause) {
 		super.die(cause);
 		Dungeon.level.drop( new Wandmaker.Rotberry.Seed(), pos ).sprite.drop();
-	}
-
-	@Override
-	public int damageRoll() {
-		return 0;
-	}
-
-	@Override
-	public int attackSkill( Char target ) {
-		return 0;
-	}
-
-	@Override
-	public int dr() {
-		return 5;
 	}
 
 	@Override

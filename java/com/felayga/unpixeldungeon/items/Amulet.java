@@ -53,15 +53,12 @@ public class Amulet extends Item {
 	}
 	
 	@Override
-	public void execute( Hero hero, String action ) {
-		if (action == AC_END) {
-			
+	public boolean execute( Hero hero, String action ) {
+		if (action.equals(AC_END)) {
 			showAmuletScene( false );
-			
+			return false;
 		} else {
-			
-			super.execute( hero, action );
-			
+			return super.execute( hero, action );
 		}
 	}
 	

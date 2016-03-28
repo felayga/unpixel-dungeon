@@ -35,7 +35,7 @@ public class CellEmitter {
 		PointF p = DungeonTilemap.tileToWorld( cell );
 		
 		Emitter emitter = GameScene.emitter();
-		emitter.pos( p.x, p.y, DungeonTilemap.SIZE, DungeonTilemap.SIZE );
+		emitter.pos( cell, p.x, p.y, DungeonTilemap.SIZE, DungeonTilemap.SIZE );
 		
 		return emitter;
 	}
@@ -45,7 +45,7 @@ public class CellEmitter {
 		PointF p = DungeonTilemap.tileToWorld( cell );
 		
 		Emitter emitter = GameScene.emitter();
-		emitter.pos( p.x + DungeonTilemap.SIZE / 2, p.y + DungeonTilemap.SIZE / 2 );
+		emitter.pos( cell, p.x + DungeonTilemap.SIZE / 2, p.y + DungeonTilemap.SIZE / 2 );
 		
 		return emitter;
 	}
@@ -55,7 +55,7 @@ public class CellEmitter {
 		PointF p = DungeonTilemap.tileToWorld( cell );
 		
 		Emitter emitter = GameScene.emitter();
-		emitter.pos( p.x, p.y + DungeonTilemap.SIZE, DungeonTilemap.SIZE, 0 );
+		emitter.pos( cell, p.x, p.y + DungeonTilemap.SIZE, DungeonTilemap.SIZE, 0 );
 		
 		return emitter;
 	}

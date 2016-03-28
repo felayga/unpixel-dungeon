@@ -27,7 +27,7 @@ import com.felayga.unpixeldungeon.Dungeon;
 import com.felayga.unpixeldungeon.actors.mobs.Mob;
 import com.felayga.unpixeldungeon.actors.mobs.RotHeart;
 import com.felayga.unpixeldungeon.actors.mobs.RotLasher;
-import com.felayga.unpixeldungeon.items.keys.IronKey;
+import com.felayga.unpixeldungeon.items.keys.IronOldKey;
 import com.felayga.unpixeldungeon.levels.Level;
 import com.felayga.unpixeldungeon.levels.Room;
 import com.felayga.unpixeldungeon.levels.Terrain;
@@ -39,7 +39,7 @@ public class RotGardenPainter extends Painter {
 
 		Room.Door entrance = room.entrance();
 		entrance.set(Room.Door.Type.LOCKED);
-		level.addItemToSpawn(new IronKey(Dungeon.depth));
+		level.addItemToSpawn(new IronOldKey(Dungeon.depth));
 
 		fill(level, room, Terrain.WALL);
 		fill(level, room, 1, Terrain.GRASS);

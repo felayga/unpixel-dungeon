@@ -23,51 +23,137 @@
  */
 package com.felayga.unpixeldungeon.items.tools;
 
+import com.felayga.unpixeldungeon.Dungeon;
 import com.felayga.unpixeldungeon.ShatteredPixelDungeon;
+import com.felayga.unpixeldungeon.actors.Actor;
 import com.felayga.unpixeldungeon.actors.Char;
 import com.felayga.unpixeldungeon.actors.hero.Hero;
 import com.felayga.unpixeldungeon.items.EquipableItem;
 import com.felayga.unpixeldungeon.items.KindofMisc;
+import com.felayga.unpixeldungeon.mechanics.BUCStatus;
+import com.felayga.unpixeldungeon.mechanics.Constant;
+import com.felayga.unpixeldungeon.mechanics.GameTime;
+import com.felayga.unpixeldungeon.scenes.CellSelector;
+import com.felayga.unpixeldungeon.scenes.GameScene;
 import com.felayga.unpixeldungeon.utils.GLog;
 import com.felayga.unpixeldungeon.utils.Utils;
 import com.felayga.unpixeldungeon.windows.WndOptions;
 
+import java.util.ArrayList;
+
 /**
  * Created by hello on 12/21/15.
  */
-public class Tool extends EquipableItem {
-    protected static final float TIME_TO_EQUIP = 1f;
+public abstract class Tool extends EquipableItem {
+    private static final String TXT_EQUIP_CURSED = "You become fixated with your %s and can't seem to put it away.";
+
+    protected static final long TIME_TO_EQUIP = GameTime.TICK;
 
     private static final String TXT_UNEQUIP_TITLE = "Unequip one tool";
-    private static final String TXT_UNEQUIP_MESSAGE =
-            "You can only have two tools readied at a time.";
+    private static final String TXT_UNEQUIP_MESSAGE = "You can only have two tools readied at a time.";
+
+    private static final String TXT_REPLACE_TITLE = "Replace tool";
+    private static final String TXT_REPLACE_MESSAGE_A = "You can only have one ";
+    private static final String TXT_REPLACE_MESSAGE_B = " equipped at a time.";
+
+    private static Tool curTool;
+
+
+    private boolean canApply;
+
+    public Tool(boolean canApply) {
+        this.canApply = canApply;
+
+        if (canApply) {
+            defaultAction = null;
+        }
+    }
 
     @Override
-    public boolean doEquip( final Hero hero ) {
+    public ArrayList<String> actions( Hero hero ) {
+        ArrayList<String> actions = super.actions( hero );
+        actions.add( isEquipped( hero ) ? AC_UNEQUIP : AC_EQUIP );
+        return actions;
+    }
 
-        if (hero.belongings.tool1 != null && hero.belongings.tool2 != null) {
+    @Override
+    public String status() {
+        return null;
+    }
 
-            final Tool m1 = hero.belongings.tool1;
-            final Tool m2 = hero.belongings.tool2;
+    public abstract String getToolClass();
 
+    @Override
+    public boolean doEquip( final Char hero ) {
+        final Tool tool1 = hero.belongings.tool1;
+        final Tool tool2 = hero.belongings.tool2;
+
+        if (tool1 != null && tool1.getToolClass() == getToolClass()) {
             ShatteredPixelDungeon.scene().add(
-                    new WndOptions(TXT_UNEQUIP_TITLE, TXT_UNEQUIP_MESSAGE,
-                            Utils.capitalize(m1.toString()),
-                            Utils.capitalize(m2.toString())) {
+                    new WndOptions(TXT_REPLACE_TITLE, TXT_REPLACE_MESSAGE_A + getToolClass() + TXT_REPLACE_MESSAGE_B,
+                            Utils.capitalize(tool1.getDisplayName()),
+                            Constant.TXT_CANCEL) {
 
                         @Override
                         protected void onSelect(int index) {
-                            Tool equipped;
+                            Tool equipped = null;
                             switch(index) {
                                 case 0:
-                                    equipped = m1;
-                                    break;
-                                default:
-                                    equipped = m2;
+                                    equipped = tool1;
                                     break;
                             }
-                            if (equipped.doUnequip(hero, true, false)) {
-                                doEquip(hero);
+                            if (equipped != null) {
+                                if (equipped.doUnequip(hero, true, false)) {
+                                    doEquip(hero);
+                                }
+                            }
+                        }
+                    });
+            return false;
+        } else if (tool2 != null && tool2.getToolClass() == getToolClass()) {
+            ShatteredPixelDungeon.scene().add(
+                    new WndOptions(TXT_REPLACE_TITLE, TXT_REPLACE_MESSAGE_A + getToolClass() + TXT_REPLACE_MESSAGE_B,
+                            Utils.capitalize(tool2.getDisplayName()),
+                            Constant.TXT_CANCEL) {
+
+                        @Override
+                        protected void onSelect(int index) {
+                            Tool equipped = null;
+                            switch(index) {
+                                case 0:
+                                    equipped = tool2;
+                                    break;
+                            }
+                            if (equipped != null) {
+                                if (equipped.doUnequip(hero, true, false)) {
+                                    doEquip(hero);
+                                }
+                            }
+                        }
+                    });
+            return false;
+        } else if (tool1 != null && tool2 != null) {
+            ShatteredPixelDungeon.scene().add(
+                    new WndOptions(TXT_UNEQUIP_TITLE, TXT_UNEQUIP_MESSAGE,
+                            Utils.capitalize(tool1.getDisplayName()),
+                            Utils.capitalize(tool2.getDisplayName()),
+                            Constant.TXT_CANCEL) {
+
+                        @Override
+                        protected void onSelect(int index) {
+                            Tool equipped = null;
+                            switch(index) {
+                                case 0:
+                                    equipped = tool1;
+                                    break;
+                                case 1:
+                                    equipped = tool2;
+                                    break;
+                            }
+                            if (equipped != null) {
+                                if (equipped.doUnequip(hero, true, false)) {
+                                    doEquip(hero);
+                                }
                             }
                         }
                     });
@@ -76,22 +162,34 @@ public class Tool extends EquipableItem {
 
         } else {
 
-            if (hero.belongings.tool1 == null) {
+            if (tool1 == null) {
                 hero.belongings.tool1 = this;
             }
             else {
                 hero.belongings.tool2 = this;
             }
 
-            detach(hero.belongings.backpack);
+            hero.belongings.detach(this);
 
-            cursedKnown = true;
-            if (cursed) {
+            if (bucStatus == BUCStatus.Cursed) {
+                bucStatusKnown = true;
                 equipCursed( hero );
-                GLog.n( "you become fixated by your " + this + " and can't seem to put it away" );
+                GLog.n( TXT_EQUIP_CURSED, this.getName() );
             }
 
-            hero.spendAndNext( TIME_TO_EQUIP );
+            hero.spend( TIME_TO_EQUIP, true );
+
+            if (canApply) {
+                defaultAction = AC_APPLY;
+
+                if (hero instanceof Hero) {
+                    int index = Dungeon.quickslot.getPlaceholder(this);
+                    if (index >= 0) {
+                        Dungeon.quickslot.setSlot(index, this);
+                    }
+                }
+            }
+
             return true;
 
         }
@@ -99,9 +197,8 @@ public class Tool extends EquipableItem {
     }
 
     @Override
-    public boolean doUnequip( Hero hero, boolean collect, boolean single ) {
+    public boolean doUnequip( Char hero, boolean collect, boolean single ) {
         if (super.doUnequip( hero, collect, single )) {
-
             if (hero.belongings.tool1 == this) {
                 hero.belongings.tool1 = null;
             }
@@ -109,17 +206,58 @@ public class Tool extends EquipableItem {
                 hero.belongings.tool2 = null;
             }
 
+            if (canApply) {
+                defaultAction = null;
+
+                if (hero instanceof Hero) {
+                    int index = Dungeon.quickslot.getSlot(this);
+                    if (index >= 0) {
+                        Dungeon.quickslot.convertToPlaceholder(this);
+                    }
+                }
+            }
+
             return true;
-
         } else {
-
             return false;
         }
     }
 
     @Override
-    public boolean isEquipped( Hero hero ) {
+    public boolean isEquipped( Char hero ) {
         return hero.belongings.tool1 == this || hero.belongings.tool2 == this;
     }
+
+
+    @Override
+    public boolean execute(Hero hero, String action) {
+        curUser = hero;
+        curTool = this;
+
+        if (action.equals(AC_APPLY)) {
+            GameScene.selectCell(applier);
+
+            return false;
+        }
+        else {
+            return super.execute(hero, action);
+        }
+    }
+
+    public abstract void apply(Hero hero, int target);
+
+    protected static CellSelector.Listener applier = new CellSelector.Listener() {
+        @Override
+        public void onSelect(Integer target) {
+            if (target != null) {
+                curTool.apply(curUser, target);
+            }
+        }
+
+        @Override
+        public String prompt() {
+            return "Apply " + curTool.getToolClass();
+        }
+    };
 
 }

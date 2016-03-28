@@ -97,7 +97,7 @@ public class HallsLevel extends RegularLevel {
 				
 				int count = 0;
 				for (int j=0; j < NEIGHBOURS8.length; j++) {
-					if ((Terrain.flags[map[i + NEIGHBOURS8[j]]] & Terrain.PASSABLE) > 0) {
+					if ((Terrain.flags[map[i + NEIGHBOURS8[j]]] & Terrain.FLAG_PASSABLE) > 0) {
 						count++;
 					}
 				}
@@ -168,14 +168,10 @@ public class HallsLevel extends RegularLevel {
 	
 	private static class Stream extends Group {
 		
-		private int pos;
-		
 		private float delay;
 		
 		public Stream( int pos ) {
-			super();
-			
-			this.pos = pos;
+			super(pos);
 			
 			delay = Random.Float( 2 );
 		}

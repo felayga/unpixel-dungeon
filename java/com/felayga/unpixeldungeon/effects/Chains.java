@@ -53,7 +53,7 @@ public class Chains extends Group {
 	}
 
 	public Chains(PointF from, PointF to, Callback callback){
-		super();
+		super(-1);
 
 		this.callback = callback;
 

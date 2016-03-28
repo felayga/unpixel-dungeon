@@ -23,15 +23,13 @@
  */
 package com.felayga.unpixeldungeon.scenes;
 
+import android.graphics.RectF;
+
 import java.io.IOException;
 import java.util.ArrayList;
 
 import com.felayga.unpixeldungeon.*;
 import com.felayga.unpixeldungeon.items.Honeypot;
-import com.felayga.unpixeldungeon.items.bags.PotionBandolier;
-import com.felayga.unpixeldungeon.items.bags.ScrollHolder;
-import com.felayga.unpixeldungeon.items.bags.SeedPouch;
-import com.felayga.unpixeldungeon.items.bags.WandHolster;
 import com.felayga.unpixeldungeon.items.potions.Potion;
 import com.felayga.unpixeldungeon.items.scrolls.ScrollOfTeleportation;
 import com.felayga.unpixeldungeon.levels.traps.Trap;
@@ -40,9 +38,12 @@ import com.felayga.unpixeldungeon.sprites.TrapSprite;
 import com.felayga.unpixeldungeon.ui.LootIndicator;
 import com.felayga.unpixeldungeon.ui.ResumeIndicator;
 import com.felayga.unpixeldungeon.windows.WndInfoTrap;
+import com.watabou.gltextures.SmartTexture;
+import com.watabou.glwrap.Texture;
 import com.watabou.noosa.Camera;
 import com.watabou.noosa.Game;
 import com.watabou.noosa.Group;
+import com.watabou.noosa.Image;
 import com.watabou.noosa.SkinnedBlock;
 import com.watabou.noosa.Visual;
 import com.watabou.noosa.audio.Music;
@@ -67,7 +68,7 @@ import com.felayga.unpixeldungeon.levels.features.Chasm;
 import com.felayga.unpixeldungeon.plants.Plant;
 import com.felayga.unpixeldungeon.sprites.CharSprite;
 import com.felayga.unpixeldungeon.sprites.DiscardedItemSprite;
-import com.felayga.unpixeldungeon.sprites.HeroSprite;
+import com.felayga.unpixeldungeon.sprites.hero.HeroSprite;
 import com.felayga.unpixeldungeon.sprites.ItemSprite;
 import com.felayga.unpixeldungeon.sprites.PlantSprite;
 import com.felayga.unpixeldungeon.ui.AttackIndicator;
@@ -81,9 +82,8 @@ import com.felayga.unpixeldungeon.ui.Toast;
 import com.felayga.unpixeldungeon.ui.Toolbar;
 import com.felayga.unpixeldungeon.ui.Window;
 import com.felayga.unpixeldungeon.utils.GLog;
-import com.felayga.unpixeldungeon.windows.WndBag.Mode;
 import com.felayga.unpixeldungeon.windows.WndGame;
-import com.felayga.unpixeldungeon.windows.WndBag;
+import com.felayga.unpixeldungeon.windows.WndBackpack;
 import com.felayga.unpixeldungeon.windows.WndHero;
 import com.felayga.unpixeldungeon.windows.WndInfoCell;
 import com.felayga.unpixeldungeon.windows.WndInfoItem;
@@ -97,8 +97,8 @@ import com.watabou.utils.Random;
 
 public class GameScene extends PixelScene {
 	
-	private static final String TXT_WELCOME			= "Welcome to the level %d of Pixel Dungeon!";
-	private static final String TXT_WELCOME_BACK	= "Welcome back to the level %d of Pixel Dungeon!";
+	private static final String TXT_WELCOME			= "Welcome to level %d of Pixel Dungeon!";
+	private static final String TXT_WELCOME_BACK	= "Welcome back to level %d of Pixel Dungeon!";
 	
 	private static final String TXT_CHASM	= "Your steps echo across the dungeon.";
 	private static final String TXT_WATER	= "You hear water splashing around you.";
@@ -109,8 +109,10 @@ public class GameScene extends PixelScene {
 	static GameScene scene;
 
 	private SkinnedBlock water;
+	private SkinnedBlock waterUnder;
 	private DungeonTilemap tiles;
 	private FogOfWar fog;
+	private Hallucination hallucination;
 	private HeroSprite hero;
 	
 	private GameLog log;
@@ -144,18 +146,26 @@ public class GameScene extends PixelScene {
 	@Override
 	public void create() {
 		
-		Music.INSTANCE.play( Assets.TUNE, true );
-		Music.INSTANCE.volume( ShatteredPixelDungeon.musicVol()/10f );
+		Music.INSTANCE.play(Assets.TUNE, true);
+		Music.INSTANCE.volume(ShatteredPixelDungeon.musicVol() / 10f);
 
 		ShatteredPixelDungeon.lastClass(Dungeon.hero.heroClass.ordinal());
 		
 		super.create();
-		Camera.main.zoom( GameMath.gate(minZoom, defaultZoom + ShatteredPixelDungeon.zoom(), maxZoom));
+		Camera.main.zoom(GameMath.gate(minZoom, defaultZoom + ShatteredPixelDungeon.zoom(), maxZoom));
 		
 		scene = this;
 
-		terrain = new Group();
+		terrain = new Group(-1);
 		add( terrain );
+
+
+		waterUnder = new SkinnedBlock(
+				Level.WIDTH * DungeonTilemap.SIZE,
+				Level.HEIGHT * DungeonTilemap.SIZE,
+				Dungeon.level.waterUnderTex() );
+		terrain.add(waterUnder);
+
 
 		water = new SkinnedBlock(
 			Level.WIDTH * DungeonTilemap.SIZE,
@@ -163,13 +173,13 @@ public class GameScene extends PixelScene {
 			Dungeon.level.waterTex() );
 		terrain.add( water );
 		
-		ripples = new Group();
+		ripples = new Group(-1);
 		terrain.add( ripples );
 		
 		tiles = new DungeonTilemap();
 		terrain.add( tiles );
 
-		customTiles = new Group();
+		customTiles = new Group(-1);
 		terrain.add(customTiles);
 
 		for( CustomTileVisual visual : Dungeon.level.customTiles){
@@ -179,15 +189,15 @@ public class GameScene extends PixelScene {
 		levelVisuals = Dungeon.level.addVisuals();
 		add(levelVisuals);
 
-		traps = new Group();
+		traps = new Group(-1);
 		add(traps);
 
 		int size = Dungeon.level.traps.size();
 		for (int i=0; i < size; i++) {
-			addTrapSprite( Dungeon.level.traps.valueAt( i ) );
+			addTrapSprite(Dungeon.level.traps.valueAt(i));
 		}
 		
-		plants = new Group();
+		plants = new Group(-1);
 		add( plants );
 		
 		size = Dungeon.level.plants.size();
@@ -195,7 +205,7 @@ public class GameScene extends PixelScene {
 			addPlantSprite( Dungeon.level.plants.valueAt( i ) );
 		}
 		
-		heaps = new Group();
+		heaps = new Group(-1);
 		add( heaps );
 		
 		size = Dungeon.level.heaps.size();
@@ -203,11 +213,11 @@ public class GameScene extends PixelScene {
 			addHeapSprite( Dungeon.level.heaps.valueAt( i ) );
 		}
 		
-		emitters = new Group();
-		effects = new Group();
-		emoicons = new Group();
+		emitters = new Group(-1);
+		effects = new Group(-1);
+		emoicons = new Group(-1);
 		
-		mobs = new Group();
+		mobs = new Group(-1);
 		add( mobs );
 		
 		for (Mob mob : Dungeon.level.mobs) {
@@ -220,7 +230,7 @@ public class GameScene extends PixelScene {
 		add( emitters );
 		add( effects );
 		
-		gases = new Group();
+		gases = new Group(-1);
 		add( gases );
 		
 		for (Blob blob : Dungeon.level.blobs.values()) {
@@ -228,23 +238,25 @@ public class GameScene extends PixelScene {
 			addBlobSprite( blob );
 		}
 
+		hallucination = new Hallucination(Level.WIDTH, Level.HEIGHT);
+		add(hallucination);
+
 		fog = new FogOfWar( Level.WIDTH, Level.HEIGHT );
-		fog.updateVisibility( Dungeon.visible, Dungeon.level.visited, Dungeon.level.mapped );
-		add( fog );
+		fog.updateVisibility(Dungeon.visible, Dungeon.level.visited, Dungeon.level.mapped);
+		add(fog);
 
-		brightness( ShatteredPixelDungeon.brightness() );
+		brightness(ShatteredPixelDungeon.brightness());
 
-		spells = new Group();
+		spells = new Group(-1);
 		add( spells );
 		
-		statuses = new Group();
+		statuses = new Group(-1);
 		add( statuses );
 
 		add( emoicons );
 		
-		hero = new HeroSprite();
-		hero.place( Dungeon.hero.pos );
-		hero.updateArmor();
+		hero = new HeroSprite(Dungeon.hero);
+		hero.place(Dungeon.hero.pos);
 		mobs.add( hero );
 
 		add( new HealthIndicator() );
@@ -279,12 +291,14 @@ public class GameScene extends PixelScene {
 
 		layoutTags();
 		
-		if (Dungeon.depth < Statistics.deepestFloor) {
+		if (Statistics.floorsVisited[Dungeon.depth]) {
 			GLog.i(TXT_WELCOME_BACK, Dungeon.depth);
 		} else {
 			GLog.i(TXT_WELCOME, Dungeon.depth);
 			if (InterlevelScene.mode == InterlevelScene.Mode.DESCEND) Sample.INSTANCE.play(Assets.SND_DESCEND);
 		}
+
+		Statistics.floorsVisited[Dungeon.depth] = true;
 
 		switch (Dungeon.level.feeling) {
 		case CHASM:
@@ -398,6 +412,9 @@ public class GameScene extends PixelScene {
 			return;
 		}
 
+		//hallucination.updateColor();
+		//hallucination.visible = false;
+
 		super.update();
 		
 		if (!freezeEmitters) water.offset( 0, -5 * Game.elapsed );
@@ -464,14 +481,14 @@ public class GameScene extends PixelScene {
 	@Override
 	protected void onBackPressed() {
 		if (!cancel()) {
-			add( new WndGame() );
+			add(new WndGame());
 		}
 	}
 	
 	@Override
 	protected void onMenuPressed() {
 		if (Dungeon.hero.ready) {
-			selectItem( null, WndBag.Mode.ALL, null );
+			selectItem( null, WndBackpack.Mode.ALL, null );
 		}
 	}
 	
@@ -484,6 +501,9 @@ public class GameScene extends PixelScene {
 
 		fog.am = 1f + shift;
 		fog.aa = 0f - shift;
+
+		hallucination.am = 1f + shift;
+		hallucination.aa = 0f - shift;
 	}
 
 	public void addCustomTile( CustomTileVisual visual){
@@ -501,7 +521,7 @@ public class GameScene extends PixelScene {
 		heap.sprite = (DiscardedItemSprite)heaps.recycle( DiscardedItemSprite.class );
 		heap.sprite.revive();
 		heap.sprite.link( heap );
-		heaps.add( heap.sprite );
+		heaps.add(heap.sprite);
 	}
 	
 	private void addPlantSprite( Plant plant ) {
@@ -521,7 +541,7 @@ public class GameScene extends PixelScene {
 	
 	private void addMobSprite( Mob mob ) {
 		CharSprite sprite = mob.sprite();
-		sprite.visible = Dungeon.visible[mob.pos];
+		sprite.visible = mob.visibilityOverride(Dungeon.visible[mob.pos]);
 		mobs.add( sprite );
 		sprite.link( mob );
 	}
@@ -557,58 +577,58 @@ public class GameScene extends PixelScene {
 
 	public static void add( Plant plant ) {
 		if (scene != null) {
-			scene.addPlantSprite( plant );
+			scene.addPlantSprite(plant);
 		}
 	}
 
 	public static void add( Trap trap ) {
 		if (scene != null) {
-			scene.addTrapSprite( trap );
+			scene.addTrapSprite(trap);
 		}
 	}
 	
 	public static void add( Blob gas ) {
 		Actor.add( gas );
 		if (scene != null) {
-			scene.addBlobSprite( gas );
+			scene.addBlobSprite(gas);
 		}
 	}
 	
 	public static void add( Heap heap ) {
 		if (scene != null) {
-			scene.addHeapSprite( heap );
+			scene.addHeapSprite(heap);
 		}
 	}
 	
 	public static void discard( Heap heap ) {
 		if (scene != null) {
-			scene.addDiscardedSprite( heap );
+			scene.addDiscardedSprite(heap);
 		}
 	}
 	
 	public static void add( Mob mob ) {
 		Dungeon.level.mobs.add( mob );
-		Actor.add( mob );
+		Actor.add(mob);
 		scene.addMobSprite( mob );
 	}
 	
-	public static void add( Mob mob, float delay ) {
+	public static void add( Mob mob, long delay ) {
 		Dungeon.level.mobs.add( mob );
-		Actor.addDelayed( mob, delay );
-		scene.addMobSprite( mob );
+		Actor.addDelayed(mob, delay);
+		scene.addMobSprite(mob);
 	}
 	
 	public static void add( EmoIcon icon ) {
-		scene.emoicons.add( icon );
+		scene.emoicons.add(icon);
 	}
 	
 	public static void effect( Visual effect ) {
-		scene.effects.add( effect );
+		scene.effects.add(effect);
 	}
 	
 	public static Ripple ripple( int pos ) {
 		Ripple ripple = (Ripple)scene.ripples.recycle( Ripple.class );
-		ripple.reset( pos );
+		ripple.reset(pos);
 		return ripple;
 	}
 	
@@ -636,26 +656,26 @@ public class GameScene extends PixelScene {
 
 	public static void resetMap() {
 		if (scene != null) {
-			scene.tiles.map(Dungeon.level.map, Level.WIDTH );
+			scene.tiles.map(Dungeon.level.map, Level.WIDTH);
 
 		}
 	}
 
 	public static void updateMap() {
 		if (scene != null) {
-			scene.tiles.updated.set( 0, 0, Level.WIDTH, Level.HEIGHT );
+			scene.tiles.updated.set(0, 0, Level.WIDTH, Level.HEIGHT);
 		}
 	}
 	
 	public static void updateMap( int cell ) {
 		if (scene != null) {
-			scene.tiles.updated.union( cell % Level.WIDTH, cell / Level.WIDTH );
+			scene.tiles.updated.union(cell % Level.WIDTH, cell / Level.WIDTH);
 		}
 	}
 	
 	public static void discoverTile( int pos, int oldValue ) {
 		if (scene != null) {
-			scene.tiles.discover( pos, oldValue );
+			scene.tiles.discover(pos, oldValue);
 		}
 	}
 	
@@ -669,13 +689,13 @@ public class GameScene extends PixelScene {
 			scene.fog.updateVisibility( Dungeon.visible, Dungeon.level.visited, Dungeon.level.mapped );
 			
 			for (Mob mob : Dungeon.level.mobs) {
-				mob.sprite.visible = Dungeon.visible[mob.pos];
+				mob.sprite.visible = mob.visibilityOverride(Dungeon.visible[mob.pos]);
 			}
 		}
 	}
 	
 	public static void flash( int color ) {
-		scene.fadeIn( 0xFF000000 | color, true );
+		scene.fadeIn(0xFF000000 | color, true);
 	}
 	
 	public static void gameOver() {
@@ -683,7 +703,7 @@ public class GameScene extends PixelScene {
 		gameOver.show( 0x000000, 1f );
 		scene.showBanner( gameOver );
 		
-		Sample.INSTANCE.play( Assets.SND_DEATH );
+		Sample.INSTANCE.play(Assets.SND_DEATH);
 	}
 	
 	public static void bossSlain() {
@@ -697,12 +717,12 @@ public class GameScene extends PixelScene {
 	}
 	
 	public static void handleCell( int cell ) {
-		cellSelector.select( cell );
+		cellSelector.select(cell);
 	}
 	
 	public static void selectCell( CellSelector.Listener listener ) {
 		cellSelector.listener = listener;
-		scene.prompt( listener.prompt() );
+		scene.prompt(listener.prompt());
 	}
 	
 	private static boolean cancelCellSelector() {
@@ -713,22 +733,30 @@ public class GameScene extends PixelScene {
 			return false;
 		}
 	}
-	
-	public static WndBag selectItem( WndBag.Listener listener, WndBag.Mode mode, String title ) {
-		cancelCellSelector();
-		
-		WndBag wnd =
-				mode == Mode.SEED ?
-					WndBag.getBag( SeedPouch.class, listener, mode, title ) :
-				mode == Mode.SCROLL ?
-					WndBag.getBag( ScrollHolder.class, listener, mode, title ) :
-				mode == Mode.POTION ?
-					WndBag.getBag( PotionBandolier.class, listener, mode, title ) :
-				mode == Mode.WAND ?
-					WndBag.getBag( WandHolster.class, listener, mode, title ) :
-				WndBag.lastBag( listener, mode, title );
 
-		scene.add( wnd );
+	public static WndBackpack selectItem( WndBackpack.Listener listener, WndBackpack.Mode mode, String title) {
+		return selectItem(listener, mode, title, null);
+	}
+	
+	public static WndBackpack selectItem( WndBackpack.Listener listener, WndBackpack.Mode mode, String title, Item excluded ) {
+		cancelCellSelector();
+
+		WndBackpack wnd = WndBackpack.lastBag(listener, mode, title, excluded);
+
+		/*
+		WndBackpack wnd =
+				mode == Mode.SEED ?
+					WndBackpack.getBag(SeedPouch.class, listener, mode, title) :
+				mode == Mode.SCROLL ?
+					WndBackpack.getBag(ScrollHolder.class, listener, mode, title) :
+				mode == Mode.POTION ?
+					WndBackpack.getBag(PotionBandolier.class, listener, mode, title) :
+				mode == Mode.WAND ?
+					WndBackpack.getBag(WandHolster.class, listener, mode, title) :
+				WndBackpack.lastBag(listener, mode, title);
+		*/
+
+		scene.add(wnd);
 		
 		return wnd;
 	}
@@ -797,7 +825,17 @@ public class GameScene extends PixelScene {
 			return;
 		}
 
-		GameScene.show( new WndInfoCell( cell ) );
+		GameScene.show(new WndInfoCell(cell));
+	}
+
+	public static void startHallucinating()
+	{
+		scene.hallucination.startHallucinating();
+	}
+
+	public static void stopHallucinating()
+	{
+		scene.hallucination.stopHallucinating();
 	}
 
 	

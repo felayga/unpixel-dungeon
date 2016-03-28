@@ -29,6 +29,7 @@ import com.felayga.unpixeldungeon.actors.buffs.Buff;
 import com.felayga.unpixeldungeon.actors.buffs.Roots;
 import com.felayga.unpixeldungeon.effects.BlobEmitter;
 import com.felayga.unpixeldungeon.effects.particles.WebParticle;
+import com.felayga.unpixeldungeon.mechanics.GameTime;
 
 public class Web extends Blob {
 	
@@ -46,7 +47,7 @@ public class Web extends Blob {
 				
 				Char ch = Actor.findChar( i );
 				if (ch != null) {
-					Buff.prolong( ch, Roots.class, TICK );
+					Buff.prolong( ch, Roots.class, GameTime.TICK );
 				}
 			}
 		}

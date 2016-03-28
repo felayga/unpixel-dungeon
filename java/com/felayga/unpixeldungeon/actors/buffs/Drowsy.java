@@ -23,7 +23,9 @@
  */
 package com.felayga.unpixeldungeon.actors.buffs;
 
+import com.felayga.unpixeldungeon.actors.Actor;
 import com.felayga.unpixeldungeon.actors.Char;
+import com.felayga.unpixeldungeon.mechanics.GameTime;
 import com.felayga.unpixeldungeon.ui.BuffIndicator;
 import com.watabou.utils.Random;
 
@@ -41,7 +43,7 @@ public class Drowsy extends Buff {
 	public boolean attachTo( Char target ) {
 		if (!target.immunities().contains(Sleep.class) && super.attachTo(target)) {
 			if (cooldown() == 0)
-				spend(Random.Int(3, 6));
+				spend(Random.Long(GameTime.TICK * 3, GameTime.TICK * 6), false);
 			return true;
 		}
 		return false;

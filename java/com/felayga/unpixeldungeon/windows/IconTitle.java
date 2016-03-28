@@ -52,7 +52,7 @@ public class IconTitle extends Component {
 	public IconTitle( Item item ) {
 		ItemSprite icon = new ItemSprite();
 		icon( icon );
-		label( Utils.capitalize( item.toString() ) );
+		label( Utils.capitalize( item.getDisplayName() ) );
 		icon.view( item );
 	}
 

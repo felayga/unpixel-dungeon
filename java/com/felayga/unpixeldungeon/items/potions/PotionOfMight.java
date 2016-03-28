@@ -41,12 +41,16 @@ public class PotionOfMight extends PotionOfStrength {
 	@Override
 	public void apply( Hero hero ) {
 		setKnown();
-		
+
+		/*
 		hero.STR++;
 		hero.HT += 5;
 		hero.HP += 5;
 		hero.sprite.showStatus( CharSprite.POSITIVE, "+1 str, +5 ht" );
 		GLog.p( "Newfound strength surges through your body." );
+		*/
+
+		GLog.p( "Nope." );
 
 		Badges.validateStrengthAttained();
 	}

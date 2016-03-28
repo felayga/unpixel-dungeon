@@ -94,7 +94,7 @@ public class SurfaceScene extends PixelScene {
 		viewport = new Camera( s.x, s.y, SKY_WIDTH, SKY_HEIGHT, defaultZoom );
 		Camera.add( viewport );
 		
-		Group window = new Group();
+		Group window = new Group(-1);
 		window.camera = viewport;
 		add( window );
 		
@@ -168,7 +168,7 @@ public class SurfaceScene extends PixelScene {
 			frame.hardlight( 0xDDEEFF );
 		}
 
-		RedButton gameOver = new RedButton( "Game Over" ) {
+		RedButton gameOver = new RedButton( "Game Over", true ) {
 			protected void onClick() {
 				Game.switchScene( TitleScene.class );
 			}

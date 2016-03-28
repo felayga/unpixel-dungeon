@@ -24,6 +24,7 @@
 package com.felayga.unpixeldungeon.actors.buffs;
 
 import com.felayga.unpixeldungeon.Dungeon;
+import com.felayga.unpixeldungeon.actors.Actor;
 import com.felayga.unpixeldungeon.actors.Char;
 import com.felayga.unpixeldungeon.actors.hero.Hero;
 import com.felayga.unpixeldungeon.actors.mobs.Thief;
@@ -33,6 +34,7 @@ import com.felayga.unpixeldungeon.items.food.MysteryMeat;
 import com.felayga.unpixeldungeon.items.potions.Potion;
 import com.felayga.unpixeldungeon.items.rings.RingOfElements.Resistance;
 import com.felayga.unpixeldungeon.levels.Level;
+import com.felayga.unpixeldungeon.mechanics.GameTime;
 import com.felayga.unpixeldungeon.sprites.CharSprite;
 import com.felayga.unpixeldungeon.ui.BuffIndicator;
 import com.felayga.unpixeldungeon.utils.GLog;
@@ -41,7 +43,7 @@ public class Frost extends FlavourBuff {
 
 	private static final String TXT_FREEZES = "%s freezes!";
 
-	private static final float DURATION	= 5f;
+	private static final long DURATION	= GameTime.TICK * 5;
 
 	{
 		type = buffType.NEGATIVE;
@@ -55,30 +57,21 @@ public class Frost extends FlavourBuff {
 			Buff.detach( target, Burning.class );
 			Buff.detach( target, Chill.class );
 
-			if (target instanceof Hero) {
+			Item item = target.belongings.randomUnequipped();
+			if (item instanceof Potion) {
 
-				Hero hero = (Hero)target;
-				Item item = hero.belongings.randomUnequipped();
-				if (item instanceof Potion) {
+				item = target.belongings.detach(item);
+				GLog.w(TXT_FREEZES, item.toString());
+				((Potion) item).shatter(target.pos);
 
-					item = item.detach( hero.belongings.backpack );
-					GLog.w(TXT_FREEZES, item.toString());
-					((Potion) item).shatter(hero.pos);
+			} else if (item instanceof MysteryMeat) {
 
-				} else if (item instanceof MysteryMeat) {
-
-					item = item.detach( hero.belongings.backpack );
-					FrozenCarpaccio carpaccio = new FrozenCarpaccio();
-					if (!carpaccio.collect( hero.belongings.backpack )) {
-						Dungeon.level.drop( carpaccio, target.pos ).sprite.drop();
-					}
-					GLog.w(TXT_FREEZES, item.toString());
-
+				item = target.belongings.detach(item);
+				FrozenCarpaccio carpaccio = new FrozenCarpaccio();
+				if (!target.belongings.collect(carpaccio)) {
+					Dungeon.level.drop( carpaccio, target.pos ).sprite.drop();
 				}
-			} else if (target instanceof Thief && ((Thief)target).item instanceof Potion) {
-
-				((Potion) ((Thief)target).item).shatter( target.pos );
-				((Thief) target).item = null;
+				GLog.w(TXT_FREEZES, item.toString());
 
 			}
 
@@ -95,7 +88,7 @@ public class Frost extends FlavourBuff {
 		if (target.paralysed > 0)
 			target.paralysed--;
 		if (Level.water[target.pos])
-			Buff.prolong(target, Chill.class, 4f);
+			Buff.prolong(target, Chill.class, GameTime.TICK * 4);
 	}
 	
 	@Override
@@ -124,8 +117,8 @@ public class Frost extends FlavourBuff {
 				"The freeze will last for " + dispTurns() + ", or until the target takes damage.\n";
 	}
 
-	public static float duration( Char ch ) {
+	public static long duration( Char ch ) {
 		Resistance r = ch.buff( Resistance.class );
-		return r != null ? r.durationFactor() * DURATION : DURATION;
+		return r != null ? r.durationFactor() * DURATION / GameTime.TICK : DURATION;
 	}
 }

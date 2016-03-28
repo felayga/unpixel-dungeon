@@ -25,7 +25,7 @@ package com.felayga.unpixeldungeon.windows;
 
 import java.util.Locale;
 
-import com.felayga.unpixeldungeon.sprites.HeroSprite;
+import com.felayga.unpixeldungeon.sprites.hero.HeroSprite;
 import com.felayga.unpixeldungeon.ui.Window;
 import com.watabou.gltextures.SmartTexture;
 import com.watabou.gltextures.TextureCache;
@@ -109,11 +109,12 @@ public class WndHero extends WndTabbed {
 		private float pos;
 		
 		public StatsTab() {
-			
+			super(-1);
+
 			Hero hero = Dungeon.hero;
 
 			IconTitle title = new IconTitle();
-			title.icon( HeroSprite.avatar(hero.heroClass, hero.tier()) );
+			title.icon( HeroSprite.avatar(0, 0) );
 			title.label(Utils.format( TXT_TITLE, hero.lvl, hero.className() ).toUpperCase( Locale.ENGLISH ), 9);
 			title.color(Window.SHPX_COLOR);
 			title.setRect( 0, 0, WIDTH, 0 );
@@ -152,7 +153,7 @@ public class WndHero extends WndTabbed {
 			pos += GAP;
 
 			statSlot( TXT_GOLD, Statistics.goldCollected );
-			statSlot( TXT_DEPTH, Statistics.deepestFloor );
+			statSlot( TXT_DEPTH, "nope" );
 
 			pos += GAP;
 		}
@@ -188,6 +189,8 @@ public class WndHero extends WndTabbed {
 		private float pos;
 		
 		public BuffsTab() {
+			super(-1);
+
 			for (Buff buff : Dungeon.hero.buffs()) {
 				if (buff.icon() != BuffIndicator.NONE) {
 					BuffSlot slot = new BuffSlot(buff);

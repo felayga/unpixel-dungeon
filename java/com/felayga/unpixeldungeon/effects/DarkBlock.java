@@ -31,7 +31,7 @@ public class DarkBlock extends Gizmo{
 	private CharSprite target;
 
 	public DarkBlock( CharSprite target ) {
-		super();
+		super(-1);
 
 		this.target = target;
 	}

@@ -23,14 +23,16 @@
  */
 package com.felayga.unpixeldungeon.actors.buffs;
 
+import com.felayga.unpixeldungeon.actors.Actor;
 import com.felayga.unpixeldungeon.actors.Char;
 import com.felayga.unpixeldungeon.items.rings.RingOfElements.Resistance;
+import com.felayga.unpixeldungeon.mechanics.GameTime;
 import com.felayga.unpixeldungeon.sprites.CharSprite;
 import com.felayga.unpixeldungeon.ui.BuffIndicator;
 
 public class Paralysis extends FlavourBuff {
 
-	private static final float DURATION	= 10f;
+	private static final long DURATION	= GameTime.TICK * 10;
 
 	{
 		type = buffType.NEGATIVE;
@@ -79,7 +81,7 @@ public class Paralysis extends FlavourBuff {
 				"This paralysis will last for " + dispTurns() + ", or until it is resisted through pain.\n";
 	}
 
-	public static float duration( Char ch ) {
+	public static long duration( Char ch ) {
 		Resistance r = ch.buff( Resistance.class );
 		return r != null ? r.durationFactor() * DURATION : DURATION;
 	}

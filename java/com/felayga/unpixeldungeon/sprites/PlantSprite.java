@@ -40,8 +40,6 @@ public class PlantSprite extends Image {
 	
 	private static TextureFilm frames;
 	
-	private int pos = -1;
-	
 	public PlantSprite() {
 		super( Assets.PLANTS );
 		

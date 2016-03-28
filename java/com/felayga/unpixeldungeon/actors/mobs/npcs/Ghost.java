@@ -28,13 +28,9 @@ import com.felayga.unpixeldungeon.Dungeon;
 import com.felayga.unpixeldungeon.Journal;
 import com.felayga.unpixeldungeon.actors.Char;
 import com.felayga.unpixeldungeon.actors.blobs.Blob;
-import com.felayga.unpixeldungeon.actors.blobs.Fire;
 import com.felayga.unpixeldungeon.actors.blobs.StenchGas;
 import com.felayga.unpixeldungeon.actors.buffs.Buff;
-import com.felayga.unpixeldungeon.actors.buffs.Burning;
-import com.felayga.unpixeldungeon.actors.buffs.Ooze;
 import com.felayga.unpixeldungeon.actors.buffs.Paralysis;
-import com.felayga.unpixeldungeon.actors.buffs.Poison;
 import com.felayga.unpixeldungeon.actors.buffs.Roots;
 import com.felayga.unpixeldungeon.actors.mobs.Crab;
 import com.felayga.unpixeldungeon.actors.mobs.Gnoll;
@@ -48,12 +44,15 @@ import com.felayga.unpixeldungeon.items.armor.Armor;
 import com.felayga.unpixeldungeon.items.food.MysteryMeat;
 import com.felayga.unpixeldungeon.items.wands.Wand;
 import com.felayga.unpixeldungeon.items.weapon.Weapon;
+import com.felayga.unpixeldungeon.items.weapon.melee.mob.AcidChance;
+import com.felayga.unpixeldungeon.items.weapon.melee.mob.ComboChance;
 import com.felayga.unpixeldungeon.items.weapon.missiles.CurareDart;
 import com.felayga.unpixeldungeon.items.weapon.missiles.MissileWeapon;
 import com.felayga.unpixeldungeon.levels.Level;
 import com.felayga.unpixeldungeon.levels.SewerLevel;
 import com.felayga.unpixeldungeon.levels.traps.LightningTrap;
 import com.felayga.unpixeldungeon.mechanics.Ballistica;
+import com.felayga.unpixeldungeon.mechanics.GameTime;
 import com.felayga.unpixeldungeon.scenes.GameScene;
 import com.felayga.unpixeldungeon.sprites.CharSprite;
 import com.felayga.unpixeldungeon.sprites.FetidRatSprite;
@@ -132,8 +131,8 @@ public class Ghost extends NPC {
 	}
 	
 	@Override
-	public float speed() {
-		return 0.5f;
+	public long speed() {
+		return GameTime.TICK / 2;
 	}
 	
 	@Override
@@ -334,7 +333,7 @@ public class Ghost extends NPC {
 				do {
 					weapon = Generator.randomWeapon(10);
 				} while (weapon instanceof MissileWeapon);
-				armor = Generator.randomArmor(10);
+				armor = Generator.randomArmor();
 
 				for (int i = 1; i <= 3; i++) {
 					Item another;
@@ -344,7 +343,7 @@ public class Ghost extends NPC {
 					if (another.level >= weapon.level) {
 						weapon = (Weapon) another;
 					}
-					another = Generator.randomArmor(10+i);
+					another = Generator.randomArmor();
 					if (another.level >= armor.level) {
 						armor = (Armor) another;
 					}
@@ -383,10 +382,15 @@ public class Ghost extends NPC {
 
 	
 	public static class FetidRat extends Rat {
-
+		public FetidRat()
 		{
+			super();
+
 			name = "fetid rat";
 			spriteClass = FetidRatSprite.class;
+
+			DEXCHA = 12;
+			nutrition = 30;
 			
 			HP = HT = 20;
 			defenseSkill = 5;
@@ -394,27 +398,10 @@ public class Ghost extends NPC {
 			EXP = 4;
 
 			state = WANDERING;
-		}
-		
-		@Override
-		public int attackSkill( Char target ) {
-			return 12;
-		}
-		
-		@Override
-		public int dr() {
-			return 2;
+
+			belongings.weapon = new AcidChance(attackDelay(belongings.weapon.delay_new), belongings.weapon.damageMin, belongings.weapon.damageMax);
 		}
 
-		@Override
-		public int attackProc( Char enemy, int damage ) {
-			if (Random.Int( 3 ) == 0) {
-				Buff.affect(enemy, Ooze.class);
-			}
-
-			return damage;
-		}
-		
 		@Override
 		public int defenseProc( Char enemy, int damage ) {
 			
@@ -454,9 +441,13 @@ public class Ghost extends NPC {
 
 
 	public static class GnollTrickster extends Gnoll {
+		ComboChance specialWeapon;
+
 		{
 			name = "gnoll trickster";
 			spriteClass = GnollTricksterSprite.class;
+
+			DEXCHA = 16;
 
 			HP = HT = 20;
 			defenseSkill = 5;
@@ -467,13 +458,9 @@ public class Ghost extends NPC {
 
 			loot = Generator.random(CurareDart.class);
 			lootChance = 1f;
-		}
 
-		private int combo = 0;
-
-		@Override
-		public int attackSkill( Char target ) {
-			return 16;
+			specialWeapon = new ComboChance(attackDelay(belongings.weapon.delay_new), belongings.weapon.damageMin, belongings.weapon.damageMax);
+			belongings.weapon = specialWeapon;
 		}
 
 		@Override
@@ -483,29 +470,8 @@ public class Ghost extends NPC {
 		}
 
 		@Override
-		public int attackProc( Char enemy, int damage ) {
-			//The gnoll's attacks get more severe the more the player lets it hit them
-			combo++;
-			int effect = Random.Int(4)+combo;
-
-			if (effect > 2) {
-
-				if (effect >=6 && enemy.buff(Burning.class) == null){
-
-					if (Level.flamable[enemy.pos])
-						GameScene.add( Blob.seed( enemy.pos, 4, Fire.class ) );
-					Buff.affect( enemy, Burning.class ).reignite( enemy );
-
-				} else
-					Buff.affect( enemy, Poison.class).set((effect-2) * Poison.durationFactor(enemy));
-
-			}
-			return damage;
-		}
-
-		@Override
 		protected boolean getCloser( int target ) {
-			combo = 0; //if he's moving, he isn't attacking, reset combo.
+			specialWeapon.combo = 0; //if he's moving, he isn't attacking, reset combo.
 			if (state == HUNTING) {
 				return enemySeen && getFurther( target );
 			} else {
@@ -535,13 +501,13 @@ public class Ghost extends NPC {
 		@Override
 		public void storeInBundle( Bundle bundle ) {
 			super.storeInBundle(bundle);
-			bundle.put(COMBO, combo);
+			bundle.put(COMBO, specialWeapon.combo);
 		}
 
 		@Override
 		public void restoreFromBundle( Bundle bundle ) {
 			super.restoreFromBundle( bundle );
-			combo = bundle.getInt( COMBO );
+			specialWeapon.combo = bundle.getInt( COMBO );
 		}
 
 	}
@@ -555,7 +521,7 @@ public class Ghost extends NPC {
 
 			HP = HT = 25;
 			defenseSkill = 0; //see damage()
-			baseSpeed = 1f;
+			movementSpeed = GameTime.TICK;
 
 			EXP = 6;
 

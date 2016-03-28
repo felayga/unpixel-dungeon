@@ -23,10 +23,10 @@
  */
 package com.felayga.unpixeldungeon.sprites;
 
+import com.felayga.unpixeldungeon.Assets;
+import com.felayga.unpixeldungeon.sprites.hero.HeroSprite;
 import com.watabou.noosa.TextureFilm;
-import com.felayga.unpixeldungeon.Dungeon;
 import com.felayga.unpixeldungeon.actors.Char;
-import com.felayga.unpixeldungeon.actors.mobs.npcs.MirrorImage;
 
 public class MirrorSprite extends MobSprite {
 	
@@ -36,7 +36,7 @@ public class MirrorSprite extends MobSprite {
 	public MirrorSprite() {
 		super();
 		
-		texture( Dungeon.hero.heroClass.spritesheet() );
+		texture(Assets.HERO_HEAD );
 		updateArmor( 0 );
 		idle();
 	}
@@ -44,7 +44,7 @@ public class MirrorSprite extends MobSprite {
 	@Override
 	public void link( Char ch ) {
 		super.link( ch );
-		updateArmor( ((MirrorImage)ch).tier );
+		updateArmor(0);
 	}
 	
 	public void updateArmor( int tier ) {

@@ -34,10 +34,13 @@ import com.felayga.unpixeldungeon.actors.buffs.Terror;
 import com.felayga.unpixeldungeon.effects.CellEmitter;
 import com.felayga.unpixeldungeon.effects.particles.PurpleParticle;
 import com.felayga.unpixeldungeon.items.Dewdrop;
+import com.felayga.unpixeldungeon.items.KindOfWeapon;
 import com.felayga.unpixeldungeon.items.wands.WandOfDisintegration;
 import com.felayga.unpixeldungeon.items.weapon.enchantments.Death;
 import com.felayga.unpixeldungeon.items.weapon.enchantments.Leech;
+import com.felayga.unpixeldungeon.items.weapon.melee.mob.MeleeMobAttack;
 import com.felayga.unpixeldungeon.mechanics.Ballistica;
+import com.felayga.unpixeldungeon.mechanics.GameTime;
 import com.felayga.unpixeldungeon.sprites.CharSprite;
 import com.felayga.unpixeldungeon.sprites.EyeSprite;
 import com.felayga.unpixeldungeon.utils.GLog;
@@ -51,7 +54,9 @@ public class Eye extends Mob {
 	{
 		name = "evil eye";
 		spriteClass = EyeSprite.class;
-		
+
+		DEXCHA = 30;
+
 		HP = HT = 100;
 		defenseSkill = 20;
 		viewDistance = Light.DISTANCE;
@@ -63,11 +68,8 @@ public class Eye extends Mob {
 		
 		loot = new Dewdrop();
 		lootChance = 0.5f;
-	}
-	
-	@Override
-	public int dr() {
-		return 10;
+
+		belongings.weapon = new MeleeMobAttack(GameTime.TICK * 16 / 10, 14, 20);
 	}
 	
 	private Ballistica beam;
@@ -81,20 +83,10 @@ public class Eye extends Mob {
 	}
 	
 	@Override
-	public int attackSkill( Char target ) {
-		return 30;
-	}
-	
-	@Override
-	protected float attackDelay() {
-		return 1.6f;
-	}
-	
-	@Override
-	protected boolean doAttack( Char enemy ) {
+	protected boolean doAttack( boolean thrown, Char enemy ) {
 
-		spend( attackDelay() );
-		
+		spend( attackDelay(belongings.weapon.delay_new), false );
+
 		boolean rayVisible = false;
 		
 		for (int i : beam.subPath(0, beam.dist)) {
@@ -107,14 +99,13 @@ public class Eye extends Mob {
 			sprite.attack( beam.collisionPos );
 			return false;
 		} else {
-			attack( enemy );
+			attack( belongings.weapon, thrown, enemy );
 			return true;
 		}
 	}
 	
 	@Override
-	public boolean attack( Char enemy ) {
-		
+	public boolean attack( KindOfWeapon weapon, boolean thrown, Char enemy ) {
 		for (int pos : beam.subPath(1, beam.dist)) {
 
 			Char ch = Actor.findChar( pos );
@@ -122,8 +113,8 @@ public class Eye extends Mob {
 				continue;
 			}
 			
-			if (hit( this, ch, true )) {
-				ch.damage( Random.NormalIntRange( 14, 20 ), this );
+			if (hit( this, weapon, true, ch, true )) {
+				ch.damage( weapon.damageRoll(), this );
 				
 				if (Dungeon.visible[pos]) {
 					ch.sprite.flash();

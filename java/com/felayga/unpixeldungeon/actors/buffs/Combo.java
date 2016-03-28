@@ -24,7 +24,9 @@
 package com.felayga.unpixeldungeon.actors.buffs;
 
 import com.felayga.unpixeldungeon.Badges;
+import com.felayga.unpixeldungeon.actors.Actor;
 import com.felayga.unpixeldungeon.actors.Char;
+import com.felayga.unpixeldungeon.mechanics.GameTime;
 import com.felayga.unpixeldungeon.ui.BuffIndicator;
 import com.felayga.unpixeldungeon.utils.GLog;
 
@@ -53,12 +55,12 @@ public class Combo extends Buff {
 			Badges.validateMasteryCombo( count );
 			
 			GLog.p( TXT_COMBO, count );
-			postpone( 1.41f - count / 10f );
+			postpone( GameTime.TICK * 141 / 100 - GameTime.TICK * count / 10 );
 			return (int)(damage * (count - 2) / 5f);
 			
 		} else {
 			
-			postpone( 1.1f );
+			postpone( GameTime.TICK * 11 / 10 );
 			return 0;
 			
 		}

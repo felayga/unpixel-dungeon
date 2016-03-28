@@ -37,10 +37,12 @@ import com.felayga.unpixeldungeon.items.Item;
 import com.felayga.unpixeldungeon.items.food.Blandfruit;
 import com.felayga.unpixeldungeon.items.food.Food;
 import com.felayga.unpixeldungeon.items.scrolls.ScrollOfRecharging;
+import com.felayga.unpixeldungeon.mechanics.BUCStatus;
+import com.felayga.unpixeldungeon.mechanics.GameTime;
 import com.felayga.unpixeldungeon.scenes.GameScene;
 import com.felayga.unpixeldungeon.sprites.ItemSpriteSheet;
 import com.felayga.unpixeldungeon.utils.GLog;
-import com.felayga.unpixeldungeon.windows.WndBag;
+import com.felayga.unpixeldungeon.windows.WndBackpack;
 import com.watabou.noosa.audio.Sample;
 
 import java.util.ArrayList;
@@ -62,7 +64,7 @@ public class HornOfPlenty extends Artifact {
 		defaultAction = AC_EAT;
 	}
 
-	private static final float TIME_TO_EAT	= 3f;
+	private static final long TIME_TO_EAT	= GameTime.TICK * 3;
 
 	private float energy = 36f;
 
@@ -70,28 +72,27 @@ public class HornOfPlenty extends Artifact {
 	public static final String AC_STORE = "STORE";
 
 	protected String inventoryTitle = "Select a piece of food";
-	protected WndBag.Mode mode = WndBag.Mode.FOOD;
+	protected WndBackpack.Mode mode = WndBackpack.Mode.FOOD;
 
 	@Override
 	public ArrayList<String> actions( Hero hero ) {
 		ArrayList<String> actions = super.actions( hero );
 		if (isEquipped( hero ) && charge > 0)
 			actions.add(AC_EAT);
-		if (isEquipped( hero ) && level < 30 && !cursed)
+		if (isEquipped( hero ) && level < 30 && bucStatus != BUCStatus.Cursed)
 			actions.add(AC_STORE);
 		return actions;
 	}
 
 	@Override
-	public void execute( Hero hero, String action ) {
-		super.execute(hero, action);
+	public boolean execute( Hero hero, String action ) {
+		boolean retval = super.execute(hero, action);
 
 		if (action.equals(AC_EAT)){
-
 			if (!isEquipped(hero)) GLog.i("You need to equip your horn to do that.");
 			else if (charge == 0)  GLog.i("Your horn has no food in it to eat!");
 			else {
-				((Hunger) hero.buff(Hunger.class)).satisfy(energy * charge);
+				((Hunger) hero.buff(Hunger.class)).satisfy_new((int)(energy * charge));
 
 				//if you get at least 100 food energy from the horn
 				if (charge >= 3) {
@@ -104,7 +105,7 @@ public class HornOfPlenty extends Artifact {
 							break;
 						case MAGE:
 							//1 charge
-							Buff.affect( hero, ScrollOfRecharging.Recharging.class, 4f );
+							Buff.affect( hero, ScrollOfRecharging.Recharging.class, GameTime.TICK * 4 );
 							ScrollOfRecharging.charge(hero);
 							break;
 						case ROGUE:
@@ -122,7 +123,7 @@ public class HornOfPlenty extends Artifact {
 				Sample.INSTANCE.play(Assets.SND_EAT);
 				GLog.i("You eat from the horn.");
 
-				hero.spend(TIME_TO_EAT);
+				hero.spend(TIME_TO_EAT, false);
 
 				Badges.validateFoodEaten();
 
@@ -130,11 +131,11 @@ public class HornOfPlenty extends Artifact {
 
 				updateQuickslot();
 			}
-
 		} else if (action.equals(AC_STORE)){
-
 			GameScene.selectItem(itemSelector, mode, inventoryTitle);
 		}
+
+		return retval;
 	}
 
 	@Override
@@ -158,7 +159,7 @@ public class HornOfPlenty extends Artifact {
 			desc += "The horn is overflowing! A delicious array of fruit and veg is filling the horn up to its brim.";
 
 		if ( isEquipped( Dungeon.hero ) ){
-			if (!cursed) {
+			if (bucStatus != BUCStatus.Cursed) {
 				desc += "\n\nThe horn rests at your side and is surprisingly lightweight, even with food in it.";
 
 				if (level < 15)
@@ -177,7 +178,7 @@ public class HornOfPlenty extends Artifact {
 		@Override
 		public boolean act() {
 			LockedFloor lock = target.buff(LockedFloor.class);
-			if (charge < chargeCap && !cursed && (lock == null || lock.regenOn())) {
+			if (charge < chargeCap && bucStatus != BUCStatus.Cursed && (lock == null || lock.regenOn())) {
 
 				//generates 0.25 food value every round, +0.015 value per level
 				//to a max of 0.70 food value per round (0.25+0.5, at level 30)
@@ -207,14 +208,14 @@ public class HornOfPlenty extends Artifact {
 			} else
 				partialCharge = 0;
 
-			spend( TICK );
+			spend( GameTime.TICK, false );
 
 			return true;
 		}
 
 	}
 
-	protected static WndBag.Listener itemSelector = new WndBag.Listener() {
+	protected static WndBackpack.Listener itemSelector = new WndBackpack.Listener() {
 		@Override
 		public void onSelect( Item item ) {
 			if (item != null && item instanceof Food) {
@@ -222,17 +223,18 @@ public class HornOfPlenty extends Artifact {
 					GLog.w("your horn rejects the unprepared blandfruit.");
 				} else {
 					Hero hero = Dungeon.hero;
-					hero.sprite.operate( hero.pos );
+					hero.sprite.operate(hero.pos);
 					hero.busy();
-					hero.spend( TIME_TO_EAT );
+					hero.spend(TIME_TO_EAT, false);
 
-					curItem.upgrade(((Food)item).hornValue);
+					curItem.upgrade(item, ((Food) item).hornValue);
 					if (curItem.level >= 30){
 						curItem.level = 30;
 						GLog.p("your horn has consumed all the food it can!");
-					} else
+					} else {
 						GLog.p("the horn consumes your food offering and grows in strength!");
-					item.detach(hero.belongings.backpack);
+					}
+					hero.belongings.detach(item);
 				}
 
 			}

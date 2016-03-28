@@ -30,8 +30,12 @@ import com.felayga.unpixeldungeon.Statistics;
 import com.felayga.unpixeldungeon.actors.Actor;
 import com.felayga.unpixeldungeon.items.Generator;
 import com.felayga.unpixeldungeon.levels.Level;
+import com.felayga.unpixeldungeon.mechanics.Constant;
+import com.felayga.unpixeldungeon.mechanics.GameTime;
+import com.felayga.unpixeldungeon.utils.GLog;
 import com.felayga.unpixeldungeon.windows.WndError;
 import com.felayga.unpixeldungeon.windows.WndStory;
+import com.felayga.unpixeldungeon.windows.start.WndHeroInit;
 import com.watabou.noosa.BitmapText;
 import com.watabou.noosa.Camera;
 import com.watabou.noosa.Game;
@@ -52,6 +56,7 @@ public class InterlevelScene extends PixelScene {
 	private static final String TXT_RETURNING	= "Returning...";
 	private static final String TXT_FALLING		= "Falling...";
 	private static final String TXT_RESETTING   = "Resetting...";
+	private static final String TXT_TELEPORTING	= "Teleporting...";
 	
 	private static final String ERR_FILE_NOT_FOUND	= "Save file not found. If this error persists after restarting, " +
 														"it may mean this save game is corrupted. Sorry about that.";
@@ -59,12 +64,15 @@ public class InterlevelScene extends PixelScene {
 														"it may mean this save game is corrupted. Sorry about that.";
 	
 	public static enum Mode {
-		DESCEND, ASCEND, CONTINUE, RESURRECT, RETURN, FALL, RESET
+		DESCEND, ASCEND, CONTINUE, RESURRECT, RETURN, FALL, RESET, TELEPORT
 	};
 	public static Mode mode;
 	
 	public static int returnDepth;
 	public static int returnPos;
+
+	public static int teleportDepth;
+	public static int teleportPos;
 	
 	public static boolean noStory = false;
 
@@ -87,27 +95,30 @@ public class InterlevelScene extends PixelScene {
 
 		String text = "";
 		switch (mode) {
-		case DESCEND:
-			text = TXT_DESCENDING;
-			break;
-		case ASCEND:
-			text = TXT_ASCENDING;
-			break;
-		case CONTINUE:
-			text = TXT_LOADING;
-			break;
-		case RESURRECT:
-			text = TXT_RESURRECTING;
-			break;
-		case RETURN:
-			text = TXT_RETURNING;
-			break;
-		case FALL:
-			text = TXT_FALLING;
-			break;
-		case RESET:
-			text = TXT_RESETTING;
-			break;
+			case DESCEND:
+				text = TXT_DESCENDING;
+				break;
+			case ASCEND:
+				text = TXT_ASCENDING;
+				break;
+			case CONTINUE:
+				text = TXT_LOADING;
+				break;
+			case RESURRECT:
+				text = TXT_RESURRECTING;
+				break;
+			case RETURN:
+				text = TXT_RETURNING;
+				break;
+			case FALL:
+				text = TXT_FALLING;
+				break;
+			case RESET:
+				text = TXT_RESETTING;
+				break;
+			case TELEPORT:
+				text = TXT_TELEPORTING;
+				break;
 		}
 		
 		message = PixelScene.createText( text, 9 );
@@ -128,27 +139,30 @@ public class InterlevelScene extends PixelScene {
 					Generator.reset();
 
 					switch (mode) {
-					case DESCEND:
-						descend();
-						break;
-					case ASCEND:
-						ascend();
-						break;
-					case CONTINUE:
-						restore();
-						break;
-					case RESURRECT:
-						resurrect();
-						break;
-					case RETURN:
-						returnTo();
-						break;
-					case FALL:
-						fall();
-						break;
-					case RESET:
-						reset();
-						break;
+						case DESCEND:
+							descend();
+							break;
+						case ASCEND:
+							ascend();
+							break;
+						case CONTINUE:
+							restore();
+							break;
+						case RESURRECT:
+							resurrect();
+							break;
+						case RETURN:
+							returnTo();
+							break;
+						case FALL:
+							fall();
+							break;
+						case RESET:
+							reset();
+							break;
+						case TELEPORT:
+							teleport();
+							break;
 					}
 					
 					if ((Dungeon.depth % 5) == 0) {
@@ -222,8 +236,7 @@ public class InterlevelScene extends PixelScene {
 	}
 
 	private void descend() throws IOException {
-
-		Actor.fixTime();
+		GameTime.fix();
 		if (Dungeon.hero == null) {
 			Dungeon.init();
 			if (noStory) {
@@ -235,66 +248,79 @@ public class InterlevelScene extends PixelScene {
 		}
 
 		Level level;
-		if (Dungeon.depth >= Statistics.deepestFloor) {
-			level = Dungeon.newLevel();
-		} else {
+		if (Statistics.floorsVisited[Dungeon.depth + 1]) {
 			Dungeon.depth++;
-			level = Dungeon.loadLevel( Dungeon.hero.heroClass );
+			level = Dungeon.loadLevel(WndHeroInit.savedGameIndex);
+		} else {
+			level = Dungeon.newLevel();
 		}
 		Dungeon.switchLevel( level, level.entrance );
 	}
 	
 	private void fall() throws IOException {
-
-		Actor.fixTime();
+		GameTime.fix();
 		Dungeon.saveLevel();
 
 		Level level;
-		if (Dungeon.depth >= Statistics.deepestFloor) {
-			level = Dungeon.newLevel();
-		} else {
+		if (Statistics.floorsVisited[Dungeon.depth + 1]) {
 			Dungeon.depth++;
-			level = Dungeon.loadLevel( Dungeon.hero.heroClass );
+			level = Dungeon.loadLevel(WndHeroInit.savedGameIndex);
+		} else {
+			level = Dungeon.newLevel();
 		}
 		Dungeon.switchLevel( level, fallIntoPit ? level.pitCell() : level.randomRespawnCell() );
 	}
 	
 	private void ascend() throws IOException {
-		Actor.fixTime();
+		GameTime.fix();
 		
 		Dungeon.saveLevel();
 		Dungeon.depth--;
-		Level level = Dungeon.loadLevel( Dungeon.hero.heroClass );
+
+		Level level = null;
+		if (Statistics.floorsVisited[Dungeon.depth]) {
+			level = Dungeon.loadLevel( WndHeroInit.savedGameIndex );
+		}
+		else {
+			Dungeon.depth--;
+			level = Dungeon.newLevel();
+		}
+
 		Dungeon.switchLevel( level, level.exit );
 	}
 	
 	private void returnTo() throws IOException {
-		
-		Actor.fixTime();
+		GameTime.fix();
 		
 		Dungeon.saveLevel();
 		Dungeon.depth = returnDepth;
-		Level level = Dungeon.loadLevel( Dungeon.hero.heroClass );
-		Dungeon.switchLevel( level, Level.resizingNeeded ? level.adjustPos( returnPos ) : returnPos );
+		Level level = Dungeon.loadLevel( WndHeroInit.savedGameIndex );
+		Dungeon.switchLevel(level, Level.resizingNeeded ? level.adjustPos(returnPos) : returnPos);
 	}
 	
 	private void restore() throws IOException {
-		
-		Actor.fixTime();
-		
-		Dungeon.loadGame( StartScene.curClass );
+		GameTime.fix();
+
+		Dungeon.loadGame(WndHeroInit.savedGameIndex);
 		if (Dungeon.depth == -1) {
-			Dungeon.depth = Statistics.deepestFloor;
-			Dungeon.switchLevel( Dungeon.loadLevel( StartScene.curClass ), -1 );
+			Dungeon.depth = 1;
+			for (int n = Dungeon.HIGHESTLEVEL - 1; n >= 1; n--)
+			{
+				if (Statistics.floorsVisited[n])
+				{
+					Dungeon.depth = n;
+					break;
+				}
+			}
+			Dungeon.switchLevel( Dungeon.loadLevel( WndHeroInit.savedGameIndex ), Constant.POS_EXIT);
 		} else {
-			Level level = Dungeon.loadLevel( StartScene.curClass );
+			Level level = Dungeon.loadLevel( WndHeroInit.savedGameIndex );
 			Dungeon.switchLevel( level, Level.resizingNeeded ? level.adjustPos( Dungeon.hero.pos ) : Dungeon.hero.pos );
 		}
 	}
 	
 	private void resurrect() throws IOException {
-		
-		Actor.fixTime();
+		GameTime.fix();
 		
 		if (Dungeon.level.locked) {
 			Dungeon.hero.resurrect( Dungeon.depth );
@@ -308,12 +334,28 @@ public class InterlevelScene extends PixelScene {
 	}
 
 	private void reset() throws IOException {
-
-		Actor.fixTime();
+		GameTime.fix();
 
 		Dungeon.depth--;
 		Level level = Dungeon.newLevel();
-		Dungeon.switchLevel( level, level.entrance );
+		Dungeon.switchLevel(level, level.entrance);
+	}
+
+	private void teleport() throws IOException {
+		GameTime.fix();
+
+		Level level = null;
+
+		if (Statistics.floorsVisited[teleportDepth]) {
+			Dungeon.depth = teleportDepth;
+			level = Dungeon.loadLevel( WndHeroInit.savedGameIndex );
+		}
+		else {
+			Dungeon.depth = teleportDepth-1;
+			level = Dungeon.newLevel();
+		}
+
+		Dungeon.switchLevel( level, teleportPos );
 	}
 	
 	@Override

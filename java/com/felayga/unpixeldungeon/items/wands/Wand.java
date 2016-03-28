@@ -26,23 +26,20 @@ package com.felayga.unpixeldungeon.items.wands;
 import java.util.ArrayList;
 
 import com.felayga.unpixeldungeon.Dungeon;
-import com.felayga.unpixeldungeon.actors.buffs.LockedFloor;
 import com.felayga.unpixeldungeon.actors.buffs.SoulMark;
 import com.felayga.unpixeldungeon.actors.hero.HeroClass;
 import com.felayga.unpixeldungeon.actors.hero.HeroSubClass;
-import com.felayga.unpixeldungeon.items.scrolls.ScrollOfRecharging;
-import com.felayga.unpixeldungeon.items.weapon.melee.MagesStaff;
+import com.felayga.unpixeldungeon.items.weapon.melee.simple.MagesStaff;
+import com.felayga.unpixeldungeon.mechanics.BUCStatus;
+import com.felayga.unpixeldungeon.mechanics.GameTime;
 import com.watabou.noosa.audio.Sample;
 import com.felayga.unpixeldungeon.Assets;
 import com.felayga.unpixeldungeon.actors.Actor;
 import com.felayga.unpixeldungeon.actors.Char;
-import com.felayga.unpixeldungeon.actors.buffs.Buff;
 import com.felayga.unpixeldungeon.actors.buffs.Invisibility;
 import com.felayga.unpixeldungeon.actors.hero.Hero;
 import com.felayga.unpixeldungeon.effects.MagicMissile;
 import com.felayga.unpixeldungeon.items.Item;
-import com.felayga.unpixeldungeon.items.bags.Bag;
-import com.felayga.unpixeldungeon.items.rings.RingOfMagic.Magic;
 import com.felayga.unpixeldungeon.mechanics.Ballistica;
 import com.felayga.unpixeldungeon.scenes.CellSelector;
 import com.felayga.unpixeldungeon.scenes.GameScene;
@@ -68,13 +65,13 @@ public abstract class Wand extends Item {
 
 	private static final String TXT_IDENTIFY    = "You are now familiar with your %s.";
 
-	private static final float TIME_TO_ZAP	= 1f;
+	private static final long TIME_TO_ZAP	= GameTime.TICK;
 	
 	public int maxCharges = initialCharges();
 	public int curCharges = maxCharges;
 	public float partialCharge = 0f;
 	
-	protected Charger charger;
+	//protected Charger charger;
 	
 	private boolean curChargeKnown = false;
 
@@ -99,17 +96,15 @@ public abstract class Wand extends Item {
 	}
 	
 	@Override
-	public void execute( Hero hero, String action ) {
+	public boolean execute( Hero hero, String action ) {
 		if (action.equals( AC_ZAP )) {
-			
 			curUser = hero;
 			curItem = this;
 			GameScene.selectCell( zapper );
-			
+
+			return false;
 		} else {
-			
-			super.execute( hero, action );
-			
+			return super.execute( hero, action );
 		}
 	}
 	
@@ -117,6 +112,7 @@ public abstract class Wand extends Item {
 
 	public abstract void onHit( MagesStaff staff, Char attacker, Char defender, int damage);
 
+	/*
 	@Override
 	public boolean collect( Bag container ) {
 		if (super.collect( container )) {
@@ -128,7 +124,9 @@ public abstract class Wand extends Item {
 			return false;
 		}
 	}
-	
+	*/
+
+	/*
 	public void charge( Char owner ) {
 		if (charger == null) charger = new Charger();
 		charger.attachTo( owner );
@@ -138,6 +136,7 @@ public abstract class Wand extends Item {
 		charge( owner );
 		charger.setScaleFactor( chargeScaleFactor );
 	}
+	*/
 
 	protected void processSoulMark(Char target, int chargesUsed){
 		if (target != Dungeon.hero &&
@@ -149,16 +148,21 @@ public abstract class Wand extends Item {
 
 	@Override
 	public void onDetach( ) {
+		/*
 		stopCharging();
+		*/
 	}
 
+	/*
 	public void stopCharging() {
 		if (charger != null) {
 			charger.detach();
 			charger = null;
 		}
 	}
-	
+	*/
+
+	/*
 	public int level() {
 		if (charger != null) {
 			Magic magic = charger.target.buff( Magic.class );
@@ -167,16 +171,16 @@ public abstract class Wand extends Item {
 			return level;
 		}
 	}
-	
-	@Override
-	public Item identify() {
+	*/
 
-		curChargeKnown = true;
-		super.identify();
+	@Override
+	public Item identify(boolean updateQuickslot) {
+		if (curChargeKnown != true) {
+			curChargeKnown = true;
+			updateQuickslot = true;
+		}
 		
-		updateQuickslot();
-		
-		return this;
+		return super.identify(updateQuickslot);
 	}
 	
 	@Override
@@ -194,7 +198,7 @@ public abstract class Wand extends Item {
 	
 	@Override
 	public String info() {
-		return (cursed && cursedKnown) ?
+		return (bucStatusKnown && bucStatus == BUCStatus.Cursed) ?
 				desc() + "\n\nThis wand is cursed, making its magic chaotic and random." :
 				desc();
 	}
@@ -214,22 +218,12 @@ public abstract class Wand extends Item {
 	}
 	
 	@Override
-	public Item upgrade() {
+	public Item upgrade(Item source, int n) {
 
-		super.upgrade();
+		super.upgrade(source, n);
 		
 		updateLevel();
 		curCharges = Math.min( curCharges + 1, maxCharges );
-		updateQuickslot();
-		
-		return this;
-	}
-	
-	@Override
-	public Item degrade() {
-		super.degrade();
-		
-		updateLevel();
 		updateQuickslot();
 		
 		return this;
@@ -262,17 +256,17 @@ public abstract class Wand extends Item {
 	}
 
 	protected void wandUsed() {
-		usagesToKnow -= cursed ? 1 : chargesPerCast();
-		curCharges -= cursed ? 1 : chargesPerCast();
+		usagesToKnow -= bucStatus == BUCStatus.Cursed ? 1 : chargesPerCast();
+		curCharges -= bucStatus == BUCStatus.Cursed ? 1 : chargesPerCast();
 		if (!isIdentified() && usagesToKnow <= 0) {
 			identify();
-			GLog.w( TXT_IDENTIFY, name() );
+			GLog.w( TXT_IDENTIFY, getDisplayName() );
 		} else {
 			if (curUser.heroClass == HeroClass.MAGE) levelKnown = true;
 			updateQuickslot();
 		}
 
-		curUser.spendAndNext( TIME_TO_ZAP );
+		curUser.spend( TIME_TO_ZAP, true );
 	}
 	
 	@Override
@@ -286,10 +280,10 @@ public abstract class Wand extends Item {
 			}
 		}
 
-		upgrade(n);
+		upgrade(null, n);
 		if (Random.Float() < 0.3f) {
-			cursed = true;
-			cursedKnown = false;
+			bucStatus = BUCStatus.Cursed;
+			bucStatusKnown = false;
 		}
 
 		return this;
@@ -298,7 +292,7 @@ public abstract class Wand extends Item {
 	@Override
 	public int price() {
 		int price = 75;
-		if (cursed && cursedKnown) {
+		if (bucStatus == BUCStatus.Cursed) {
 			price /= 2;
 		}
 		if (levelKnown) {
@@ -364,15 +358,15 @@ public abstract class Wand extends Item {
 				else
 					QuickSlotButton.target(Actor.findChar(cell));
 				
-				if (curWand.curCharges >= (curWand.cursed ? 1 : curWand.chargesPerCast())) {
+				if (curWand.curCharges >= (curWand.bucStatus == BUCStatus.Cursed ? 1 : curWand.chargesPerCast())) {
 					
 					curUser.busy();
 
-					if (curWand.cursed){
+					if (curWand.bucStatus == BUCStatus.Cursed){
 						CursedWand.cursedZap(curWand, curUser, new Ballistica( curUser.pos, target, Ballistica.MAGIC_BOLT));
-						if (!curWand.cursedKnown){
-							curWand.cursedKnown = true;
-							GLog.n("This " + curItem.name() + " is cursed!");
+						if (!curWand.bucStatusKnown){
+							curWand.bucStatusKnown = true;
+							GLog.n("This " + curItem.getDisplayName() + " is cursed!");
 						}
 					} else {
 						curWand.fx(shot, new Callback() {
@@ -399,7 +393,8 @@ public abstract class Wand extends Item {
 			return "Choose a location to zap";
 		}
 	};
-	
+
+	/*
 	protected class Charger extends Buff {
 		
 		private static final float BASE_CHARGE_DELAY = 10f;
@@ -453,4 +448,5 @@ public abstract class Wand extends Item {
 			this.scalingFactor = value;
 		}
 	}
+	*/
 }

@@ -23,10 +23,12 @@
  */
 package com.felayga.unpixeldungeon.items.weapon.enchantments;
 
+import com.felayga.unpixeldungeon.actors.Actor;
 import com.felayga.unpixeldungeon.actors.Char;
 import com.felayga.unpixeldungeon.actors.buffs.Buff;
 import com.felayga.unpixeldungeon.actors.buffs.Chill;
 import com.felayga.unpixeldungeon.items.weapon.Weapon;
+import com.felayga.unpixeldungeon.mechanics.GameTime;
 import com.felayga.unpixeldungeon.sprites.ItemSprite;
 import com.felayga.unpixeldungeon.sprites.ItemSprite.Glowing;
 import com.watabou.utils.Random;
@@ -47,7 +49,7 @@ public class Slow extends Weapon.Enchantment {
 		if (Random.Int( level + 4 ) >= 3) {
 			
 			Buff.affect( defender, Chill.class,
-				Random.Float( 1, 3f ) );
+				Random.Long(GameTime.TICK, GameTime.TICK * 3) );
 			
 			return true;
 		} else {

@@ -49,6 +49,10 @@ public class MagicMissile extends Emitter {
 	private float sx;
 	private float sy;
 	private float time;
+
+	public MagicMissile() {
+		super();
+	}
 	
 	public void reset( int from, int to, Callback callback ) {
 		this.callback = callback;

@@ -45,26 +45,22 @@ public class Gold extends Item {
 	private static final String TXT_INFO	= "A pile of %d gold coins. " + TXT_COLLECT;
 	private static final String TXT_INFO_1	= "One gold coin. " + TXT_COLLECT;
 	private static final String TXT_VALUE	= "%+d";
-	
+
+	public Gold(int quantity)
 	{
 		name = "gold";
 		image = ItemSpriteSheet.GOLD;
 		stackable = true;
+		hasBuc(false);
+
+		this.quantity = quantity;
 	}
 	
 	public Gold() {
 		this( 1 );
 	}
 	
-	public Gold( int value ) {
-		this.quantity = value;
-	}
-	
-	@Override
-	public ArrayList<String> actions( Hero hero ) {
-		return new ArrayList<String>();
-	}
-	
+	/*
 	@Override
 	public boolean doPickUp( Hero hero ) {
 		
@@ -78,13 +74,14 @@ public class Gold extends Item {
 
 		GameScene.pickUp( this );
 		hero.sprite.showStatus( CharSprite.NEUTRAL, TXT_VALUE, quantity );
-		hero.spendAndNext( TIME_TO_PICK_UP );
+		hero.spend( TIME_TO_PICK_UP, true );
 		
 		Sample.INSTANCE.play( Assets.SND_GOLD, 1, 1, Random.Float( 0.9f, 1.1f ) );
 		
 		return true;
 	}
-	
+	*/
+
 	@Override
 	public boolean isUpgradable() {
 		return false;
@@ -105,6 +102,12 @@ public class Gold extends Item {
 		default:
 			return Utils.format( TXT_INFO, quantity );
 		}
+	}
+
+	@Override
+	public String getDisplayName()
+	{
+		return quantity + " " + super.getDisplayName();
 	}
 	
 	@Override

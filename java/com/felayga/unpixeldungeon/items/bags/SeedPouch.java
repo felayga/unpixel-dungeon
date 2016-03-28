@@ -23,17 +23,22 @@
  */
 package com.felayga.unpixeldungeon.items.bags;
 
+import com.felayga.unpixeldungeon.actors.Char;
 import com.felayga.unpixeldungeon.items.Item;
 import com.felayga.unpixeldungeon.plants.Plant;
 import com.felayga.unpixeldungeon.sprites.ItemSpriteSheet;
 
 public class SeedPouch extends Bag {
 
+	public SeedPouch()
 	{
+		super(null);
+
 		name = "seed pouch";
 		image = ItemSpriteSheet.POUCH;
 		
-		size = 12;
+		size = 36;
+		priority = 8;
 	}
 	
 	@Override

@@ -31,13 +31,14 @@ import com.felayga.unpixeldungeon.actors.mobs.Bestiary;
 import com.felayga.unpixeldungeon.actors.mobs.Mob;
 import com.felayga.unpixeldungeon.items.scrolls.ScrollOfTeleportation;
 import com.felayga.unpixeldungeon.levels.Level;
+import com.felayga.unpixeldungeon.mechanics.GameTime;
 import com.felayga.unpixeldungeon.scenes.GameScene;
 import com.felayga.unpixeldungeon.sprites.TrapSprite;
 import com.watabou.utils.Random;
 
 public class SummoningTrap extends Trap {
 
-	private static final float DELAY = 2f;
+	private static final long DELAY = GameTime.TICK * 2;
 
 	{
 		name = "Summoning trap";

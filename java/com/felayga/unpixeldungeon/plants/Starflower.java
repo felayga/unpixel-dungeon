@@ -29,6 +29,7 @@ import com.felayga.unpixeldungeon.actors.Char;
 import com.felayga.unpixeldungeon.actors.buffs.Bless;
 import com.felayga.unpixeldungeon.actors.buffs.Buff;
 import com.felayga.unpixeldungeon.items.potions.PotionOfExperience;
+import com.felayga.unpixeldungeon.mechanics.GameTime;
 import com.felayga.unpixeldungeon.sprites.ItemSpriteSheet;
 import com.watabou.utils.Random;
 
@@ -47,7 +48,7 @@ public class Starflower extends Plant {
 	public void activate() {
 		Char ch = Actor.findChar(pos);
 
-		if (ch != null) Buff.prolong(ch, Bless.class, 30f);
+		if (ch != null) Buff.prolong(ch, Bless.class, GameTime.TICK * 30);
 
 		if (Random.Int(5) == 0){
 			Dungeon.level.drop(new Seed(), pos).sprite.drop();

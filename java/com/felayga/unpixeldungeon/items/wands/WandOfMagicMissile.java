@@ -28,8 +28,9 @@ import com.felayga.unpixeldungeon.actors.Char;
 import com.felayga.unpixeldungeon.actors.buffs.Buff;
 import com.felayga.unpixeldungeon.effects.SpellSprite;
 import com.felayga.unpixeldungeon.items.scrolls.ScrollOfRecharging;
-import com.felayga.unpixeldungeon.items.weapon.melee.MagesStaff;
+import com.felayga.unpixeldungeon.items.weapon.melee.simple.MagesStaff;
 import com.felayga.unpixeldungeon.mechanics.Ballistica;
+import com.felayga.unpixeldungeon.mechanics.GameTime;
 import com.felayga.unpixeldungeon.sprites.ItemSpriteSheet;
 import com.watabou.utils.Random;
 
@@ -46,7 +47,7 @@ public class WandOfMagicMissile extends Wand {
 		Char ch = Actor.findChar( bolt.collisionPos );
 		if (ch != null) {
 			
-			int level = level();
+			int level = 1;//level();
 
 			processSoulMark(ch, chargesPerCast());
 			ch.damage(Random.NormalIntRange(4 , 6 + level * 2), this);
@@ -60,7 +61,7 @@ public class WandOfMagicMissile extends Wand {
 	public void onHit(MagesStaff staff, Char attacker, Char defender, int damage) {
 		//gain 1 turn of recharging buff per level of the wand.
 		if (level > 0) {
-			Buff.prolong( attacker, ScrollOfRecharging.Recharging.class, (float)staff.level);
+			Buff.prolong( attacker, ScrollOfRecharging.Recharging.class, GameTime.TICK * staff.level);
 			SpellSprite.show(attacker, SpellSprite.CHARGE);
 		}
 	}

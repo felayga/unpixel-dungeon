@@ -37,14 +37,14 @@ abstract public class ClassArmor extends Armor {
 	
 	{
 		levelKnown = true;
-		cursedKnown = true;
+		bucStatusKnown = true;
 		defaultAction = special();
 
 		bones = false;
 	}
 	
-	public ClassArmor() {
-		super( 6 );
+	public ClassArmor(int armor, int armorBonusMaximum, long speedModifier, long equipTime, int spellFailure) {
+		super(armor, armorBonusMaximum, speedModifier, equipTime, spellFailure);
 	}
 	
 	public static ClassArmor upgrade ( Hero owner, Armor armor ) {
@@ -53,23 +53,20 @@ abstract public class ClassArmor extends Armor {
 		
 		switch (owner.heroClass) {
 		case WARRIOR:
-			classArmor = new WarriorArmor();
+			classArmor = new WarriorArmor(0, 0, 0, 0, 0);
 			break;
 		case ROGUE:
-			classArmor = new RogueArmor();
+			classArmor = new RogueArmor(0, 0, 0, 0, 0);
 			break;
 		case MAGE:
-			classArmor = new MageArmor();
+			classArmor = new MageArmor(0, 0, 0, 0, 0);
 			break;
 		case HUNTRESS:
-			classArmor = new HuntressArmor();
+			classArmor = new HuntressArmor(0, 0, 0, 0, 0);
 			break;
 		}
 		
-		classArmor.STR = armor.STR;
-		classArmor.DR = armor.DR;
-		
-		classArmor.inscribe( armor.glyph );
+		classArmor.enchant( armor.glyph );
 		
 		return classArmor;
 	}
@@ -80,15 +77,11 @@ abstract public class ClassArmor extends Armor {
 	@Override
 	public void storeInBundle( Bundle bundle ) {
 		super.storeInBundle( bundle );
-		bundle.put( ARMOR_STR, STR );
-		bundle.put( ARMOR_DR, DR );
 	}
 	
 	@Override
 	public void restoreFromBundle( Bundle bundle ) {
 		super.restoreFromBundle( bundle );
-		STR = bundle.getInt( ARMOR_STR );
-		DR = bundle.getInt( ARMOR_DR );
 	}
 	
 	@Override
@@ -101,9 +94,8 @@ abstract public class ClassArmor extends Armor {
 	}
 	
 	@Override
-	public void execute( Hero hero, String action ) {
+	public boolean execute( Hero hero, String action ) {
 		if (action == special()) {
-			
 			if (hero.HP < 3) {
 				GLog.w( TXT_LOW_HEALTH );
 			} else if (!isEquipped( hero )) {
@@ -113,9 +105,10 @@ abstract public class ClassArmor extends Armor {
 				Invisibility.dispel();
 				doSpecial();
 			}
-			
+
+			return false;
 		} else {
-			super.execute( hero, action );
+			return super.execute( hero, action );
 		}
 	}
 	

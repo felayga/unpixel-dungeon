@@ -24,6 +24,10 @@
 package com.felayga.unpixeldungeon.items;
 
 import com.felayga.unpixeldungeon.Dungeon;
+import com.felayga.unpixeldungeon.actors.Actor;
+import com.felayga.unpixeldungeon.actors.Char;
+import com.felayga.unpixeldungeon.mechanics.BUCStatus;
+import com.felayga.unpixeldungeon.mechanics.GameTime;
 import com.felayga.unpixeldungeon.utils.GLog;
 import com.watabou.noosa.audio.Sample;
 import com.felayga.unpixeldungeon.Assets;
@@ -32,36 +36,37 @@ import com.felayga.unpixeldungeon.effects.particles.ShadowParticle;
 
 public abstract class EquipableItem extends Item {
 
-	private static final String TXT_UNEQUIP_CURSED	= "You can't remove cursed %s!";
+	private static final String TXT_UNEQUIP_CANT	= "You can't remove the %s!";
 
 	public static final String AC_EQUIP		= "EQUIP";
 	public static final String AC_UNEQUIP	= "UNEQUIP";
 
+	public long equipTime;
+
+	public EquipableItem(long equipTime)
 	{
+		this.equipTime = equipTime;
+
 		bones = true;
 	}
 
 	@Override
-	public void execute( Hero hero, String action ) {
-		if (action.equals( AC_EQUIP )) {
-			//In addition to equipping itself, item reassigns itself to the quickslot
-			//This is a special case as the item is being removed from inventory, but is staying with the hero.
-			int slot = Dungeon.quickslot.getSlot( this );
-			doEquip(hero);
-			if (slot != -1) {
-				Dungeon.quickslot.setSlot( slot, this );
-				updateQuickslot();
-			}
-		} else if (action.equals( AC_UNEQUIP )) {
-			doUnequip( hero, true );
-		} else {
-			super.execute( hero, action );
+	public boolean execute( Hero hero, String action ) {
+		switch (action) {
+			case AC_EQUIP:
+				hero.belongings.equip(this);
+				return false;
+			case AC_UNEQUIP:
+				doUnequip(hero, true);
+				return false;
+			default:
+				return super.execute(hero, action);
 		}
 	}
 
 	@Override
 	public void doDrop( Hero hero ) {
-		if (!isEquipped( hero ) || doUnequip( hero, false, false )) {
+		if (!isEquipped( hero ) || doUnequip( hero, true, false )) {
 			super.doDrop( hero );
 		}
 	}
@@ -70,7 +75,7 @@ public abstract class EquipableItem extends Item {
 	public void cast( final Hero user, int dst ) {
 
 		if (isEquipped( user )) {
-			if (quantity == 1 && !this.doUnequip( user, false, false )) {
+			if (quantity == 1 && !this.doUnequip( user, true, false )) {
 				return;
 			}
 		}
@@ -78,41 +83,13 @@ public abstract class EquipableItem extends Item {
 		super.cast( user, dst );
 	}
 
-	public static void equipCursed( Hero hero ) {
+	public static void equipCursed( Char hero ) {
 		hero.sprite.emitter().burst( ShadowParticle.CURSE, 6 );
 		Sample.INSTANCE.play( Assets.SND_CURSED );
 	}
 
-	protected float time2equip( Hero hero ) {
-		return 1;
-	}
 
-	public abstract boolean doEquip( Hero hero );
-
-	public boolean doUnequip( Hero hero, boolean collect, boolean single ) {
-
-		if (cursed) {
-			GLog.w(TXT_UNEQUIP_CURSED, name());
-			return false;
-		}
-
-		if (single) {
-			hero.spendAndNext( time2equip( hero ) );
-		} else {
-			hero.spend( time2equip( hero ) );
-		}
-
-		if (collect && !collect( hero.belongings.backpack )) {
-			onDetach();
-			Dungeon.quickslot.clearItem(this);
-			updateQuickslot();
-			Dungeon.level.drop( this, hero.pos );
-		}
-
-		return true;
-	}
-
-	final public boolean doUnequip( Hero hero, boolean collect ) {
+	final public boolean doUnequip( Char hero, boolean collect ) {
 		return doUnequip( hero, collect, true );
 	}
 }

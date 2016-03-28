@@ -23,17 +23,22 @@
  */
 package com.felayga.unpixeldungeon.items.bags;
 
+import com.felayga.unpixeldungeon.actors.Char;
 import com.felayga.unpixeldungeon.items.Item;
 import com.felayga.unpixeldungeon.items.potions.Potion;
 import com.felayga.unpixeldungeon.sprites.ItemSpriteSheet;
 
 public class PotionBandolier extends Bag {
 
+	public PotionBandolier()
 	{
+		super(null);
+
 		name = "potion bandolier";
 		image = ItemSpriteSheet.BANDOLIER;
 
 		size = 36;
+		priority = 8;
 	}
 
 	@Override

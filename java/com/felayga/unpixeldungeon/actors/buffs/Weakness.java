@@ -23,14 +23,16 @@
  */
 package com.felayga.unpixeldungeon.actors.buffs;
 
+import com.felayga.unpixeldungeon.actors.Actor;
 import com.felayga.unpixeldungeon.actors.Char;
 import com.felayga.unpixeldungeon.actors.hero.Hero;
 import com.felayga.unpixeldungeon.items.rings.RingOfElements.Resistance;
+import com.felayga.unpixeldungeon.mechanics.GameTime;
 import com.felayga.unpixeldungeon.ui.BuffIndicator;
 
 public class Weakness extends FlavourBuff {
 
-	private static final float DURATION = 40f;
+	private static final long DURATION = GameTime.TICK * 40;
 
 	{
 		type = buffType.NEGATIVE;
@@ -65,7 +67,7 @@ public class Weakness extends FlavourBuff {
 		((Hero)target).weakened = false;
 	}
 	
-	public static float duration( Char ch ) {
+	public static long duration( Char ch ) {
 		Resistance r = ch.buff( Resistance.class );
 		return r != null ? r.durationFactor() * DURATION : DURATION;
 	}

@@ -56,7 +56,7 @@ public class Fireball extends Component {
 	@Override
 	protected void createChildren() {
 		
-		sparks = new Group();
+		sparks = new Group(-1);
 		add( sparks );
 		
 		bLight = new Image( Assets.FIREBALL );
@@ -92,7 +92,7 @@ public class Fireball extends Component {
 		bLight.x = x - bLight.width / 2;
 		bLight.y = y - bLight.height / 2;
 		
-		emitter.pos(
+		emitter.pos( -1,
 			x - bLight.width / 4,
 			y - bLight.height / 4,
 			bLight.width / 2,

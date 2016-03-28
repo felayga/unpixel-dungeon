@@ -27,8 +27,8 @@ import com.felayga.unpixeldungeon.Dungeon;
 import com.felayga.unpixeldungeon.items.Generator;
 import com.felayga.unpixeldungeon.items.Item;
 import com.felayga.unpixeldungeon.items.Heap.Type;
-import com.felayga.unpixeldungeon.items.keys.GoldenKey;
-import com.felayga.unpixeldungeon.items.keys.IronKey;
+import com.felayga.unpixeldungeon.items.keys.GoldenOldKey;
+import com.felayga.unpixeldungeon.items.keys.IronOldKey;
 import com.felayga.unpixeldungeon.levels.Level;
 import com.felayga.unpixeldungeon.levels.Room;
 import com.felayga.unpixeldungeon.levels.Terrain;
@@ -49,7 +49,7 @@ public class VaultPainter extends Painter {
 		
 		case 0:
 			level.drop( prize( level ), c ).type = Type.LOCKED_CHEST;
-			level.addItemToSpawn( new GoldenKey( Dungeon.depth ) );
+			level.addItemToSpawn( new GoldenOldKey( Dungeon.depth ) );
 			break;
 			
 		case 1:
@@ -60,7 +60,7 @@ public class VaultPainter extends Painter {
 			} while (i1.getClass() == i2.getClass());
 			level.drop( i1, c ).type = Type.CRYSTAL_CHEST;
 			level.drop( i2, c + Level.NEIGHBOURS8[Random.Int( 8 )]).type = Type.CRYSTAL_CHEST;
-			level.addItemToSpawn( new GoldenKey( Dungeon.depth ) );
+			level.addItemToSpawn( new GoldenOldKey( Dungeon.depth ) );
 			break;
 			
 		case 2:
@@ -70,7 +70,7 @@ public class VaultPainter extends Painter {
 		}
 		
 		room.entrance().set( Room.Door.Type.LOCKED );
-		level.addItemToSpawn( new IronKey( Dungeon.depth ) );
+		level.addItemToSpawn( new IronOldKey( Dungeon.depth ) );
 	}
 	
 	private static Item prize( Level level ) {

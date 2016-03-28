@@ -54,6 +54,11 @@ public class SewerLevel extends RegularLevel {
 	public String waterTex() {
 		return Assets.WATER_SEWERS;
 	}
+
+	@Override
+	public String waterUnderTex() {
+		return Assets.WATER_UNDERSEWERS;
+	}
 	
 	protected boolean[] water() {
 		return Patch.generate( feeling == Feeling.WATER ? 0.60f : 0.45f, 5 );
@@ -180,7 +185,6 @@ public class SewerLevel extends RegularLevel {
 	
 	private static class Sink extends Emitter {
 		
-		private int pos;
 		private float rippleDelay = 0;
 		
 		private static final Emitter.Factory factory = new Factory() {
@@ -194,11 +198,11 @@ public class SewerLevel extends RegularLevel {
 		
 		public Sink( int pos ) {
 			super();
-			
+
 			this.pos = pos;
 			
 			PointF p = DungeonTilemap.tileCenterToWorld( pos );
-			pos( p.x - 2, p.y + 1, 4, 0 );
+			pos( pos, p.x - 2, p.y + 1, 4, 0 );
 			
 			pour( factory, 0.05f );
 		}

@@ -25,6 +25,9 @@ package com.felayga.unpixeldungeon.actors.mobs;
 
 import java.util.HashSet;
 
+import com.felayga.unpixeldungeon.actors.Actor;
+import com.felayga.unpixeldungeon.items.weapon.melee.mob.MeleeMobAttack;
+import com.felayga.unpixeldungeon.mechanics.GameTime;
 import com.watabou.noosa.Camera;
 import com.felayga.unpixeldungeon.Dungeon;
 import com.felayga.unpixeldungeon.ResultDescriptions;
@@ -43,7 +46,7 @@ import com.watabou.utils.Random;
 
 public class Shaman extends Mob implements Callback {
 
-	private static final float TIME_TO_ZAP	= 1f;
+	private static final long TIME_TO_ZAP	= GameTime.TICK;
 	
 	private static final String TXT_LIGHTNING_KILLED = "%s's lightning bolt killed you...";
 	
@@ -53,6 +56,8 @@ public class Shaman extends Mob implements Callback {
 
 		canOpenDoors = true;
 
+		DEXCHA = 11;
+
 		HP = HT = 18;
 		defenseSkill = 8;
 		
@@ -61,21 +66,8 @@ public class Shaman extends Mob implements Callback {
 		
 		loot = Generator.Category.SCROLL;
 		lootChance = 0.33f;
-	}
-	
-	@Override
-	public int damageRoll() {
-		return Random.NormalIntRange( 2, 6 );
-	}
-	
-	@Override
-	public int attackSkill( Char target ) {
-		return 11;
-	}
-	
-	@Override
-	public int dr() {
-		return 4;
+
+		belongings.weapon = new MeleeMobAttack(GameTime.TICK, 2, 6);
 	}
 	
 	@Override
@@ -84,11 +76,11 @@ public class Shaman extends Mob implements Callback {
 	}
 	
 	@Override
-	protected boolean doAttack( Char enemy ) {
+	protected boolean doAttack( boolean thrown, Char enemy ) {
 
 		if (Level.distance( pos, enemy.pos ) <= 1) {
 			
-			return super.doAttack( enemy );
+			return super.doAttack( false, enemy );
 			
 		} else {
 			
@@ -97,16 +89,16 @@ public class Shaman extends Mob implements Callback {
 				((ShamanSprite)sprite).zap( enemy.pos );
 			}
 			
-			spend( TIME_TO_ZAP );
+			spend( TIME_TO_ZAP, false );
 			
-			if (hit( this, enemy, true )) {
+			if (hit( this, belongings.weapon, true, enemy, true )) {
 				int dmg = Random.Int( 2, 12 );
 				if (Level.water[enemy.pos] && !enemy.flying) {
 					dmg *= 1.5f;
 				}
 				enemy.damage( dmg, LightningTrap.LIGHTNING );
 				
-				enemy.sprite.centerEmitter().burst( SparkParticle.FACTORY, 3 );
+				enemy.sprite.centerEmitter(-1).burst( SparkParticle.FACTORY, 3 );
 				enemy.sprite.flash();
 				
 				if (enemy == Dungeon.hero) {

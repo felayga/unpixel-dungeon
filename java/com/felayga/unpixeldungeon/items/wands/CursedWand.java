@@ -64,7 +64,9 @@ import com.felayga.unpixeldungeon.levels.Level;
 import com.felayga.unpixeldungeon.levels.Terrain;
 import com.felayga.unpixeldungeon.levels.traps.LightningTrap;
 import com.felayga.unpixeldungeon.levels.traps.SummoningTrap;
+import com.felayga.unpixeldungeon.mechanics.BUCStatus;
 import com.felayga.unpixeldungeon.mechanics.Ballistica;
+import com.felayga.unpixeldungeon.mechanics.GameTime;
 import com.felayga.unpixeldungeon.plants.Plant;
 import com.felayga.unpixeldungeon.scenes.GameScene;
 import com.felayga.unpixeldungeon.scenes.InterlevelScene;
@@ -118,12 +120,12 @@ public class CursedWand {
 								case 0:
 									if (target != null)
 										Buff.affect(target, Burning.class).reignite(target);
-									Buff.affect(user, Frost.class, Frost.duration(user) * Random.Float(3f, 5f));
+									Buff.affect(user, Frost.class, Frost.duration(user) * Random.Long(GameTime.TICK * 3, GameTime.TICK * 5) / GameTime.TICK);
 									break;
 								case 1:
 									Buff.affect(user, Burning.class).reignite(user);
 									if (target != null)
-										Buff.affect(target, Frost.class, Frost.duration(target) * Random.Float(3f, 5f));
+										Buff.affect(target, Frost.class, Frost.duration(target) * Random.Long(GameTime.TICK * 3, GameTime.TICK * 5) / GameTime.TICK);
 									break;
 							}
 							wand.wandUsed();
@@ -152,7 +154,9 @@ public class CursedWand {
 			case 2:
 				switch(Random.Int(2)){
 					case 0:
-						ScrollOfTeleportation.teleportHero(user);
+						if (ScrollOfTeleportation.canTeleport(user)) {
+							ScrollOfTeleportation.doTeleport(user);
+						}
 						wand.wandUsed();
 						break;
 					case 1:
@@ -245,8 +249,8 @@ public class CursedWand {
 									target.sprite.emitter().burst(Speck.factory(Speck.HEALING), 3);
 									Sample.INSTANCE.play(Assets.SND_CURSED);
 									if (!user.isAlive()) {
-										Dungeon.fail(Utils.format(ResultDescriptions.ITEM, wand.name()));
-										GLog.n("You were killed by your own " + wand.name());
+										Dungeon.fail(Utils.format(ResultDescriptions.ITEM, wand.getDisplayName()));
+										GLog.n("You were killed by your own " + wand.getDisplayName());
 									}
 									break;
 							}
@@ -272,7 +276,7 @@ public class CursedWand {
 			//shock and recharge
 			case 3:
 				new LightningTrap().set( user.pos ).activate();
-				Buff.prolong(user, ScrollOfRecharging.Recharging.class, 20f);
+				Buff.prolong(user, ScrollOfRecharging.Recharging.class, GameTime.TICK * 20);
 				ScrollOfRecharging.charge(user);
 				SpellSprite.show(user, SpellSprite.CHARGE);
 				wand.wandUsed();
@@ -292,7 +296,7 @@ public class CursedWand {
 						//TODO: this is lazy, should think of a better way to ID bosses, or have this effect be more sophisticated.
 						if (ch != null && ch != user && !Dungeon.bossLevel()){
 							Sheep sheep = new Sheep();
-							sheep.lifespan = 10;
+							sheep.lifespan = GameTime.TICK * 10;
 							sheep.pos = ch.pos;
 							ch.destroy();
 							ch.sprite.killAndErase();
@@ -310,35 +314,7 @@ public class CursedWand {
 
 			//curses!
 			case 1:
-				KindOfWeapon weapon = user.belongings.weapon;
-				KindOfWeapon offhand = user.belongings.offhand;
-				Tool tool1 = user.belongings.tool1;
-				Tool tool2 = user.belongings.tool2;
-
-				Armor armor = user.belongings.armor;
-				Armor gloves = user.belongings.gloves;
-				Armor boots = user.belongings.boots;
-				Armor cloak = user.belongings.cloak;
-
-				KindofMisc misc1 = user.belongings.ring1;
-				KindofMisc misc2 = user.belongings.ring2;
-				KindofMisc amulet = user.belongings.amulet;
-				KindofMisc face = user.belongings.face;
-
-				if (weapon != null) weapon.cursed = weapon.cursedKnown = true;
-				if (offhand != null) offhand.cursed = offhand.cursedKnown = true;
-				if (tool1 != null) tool1.cursed = tool1.cursedKnown = true;
-				if (tool2 != null) tool2.cursed = tool2.cursedKnown = true;
-
-				if (armor != null)  armor.cursed = armor.cursedKnown = true;
-				if (gloves != null) gloves.cursed = gloves.cursedKnown = true;
-				if (boots != null) boots.cursed = boots.cursedKnown = true;
-				if (cloak != null) cloak.cursed = cloak.cursedKnown = true;
-
-				if (misc1 != null)  misc1.cursed = misc1.cursedKnown = true;
-				if (misc2 != null)  misc2.cursed = misc2.cursedKnown = true;
-				if (amulet != null) amulet.cursed = amulet.cursedKnown = true;
-				if (face != null) face.cursed = face.cursedKnown = true;
+				user.belongings.bucChange(true, BUCStatus.Cursed, true, true, true, false);
 
 				EquipableItem.equipCursed(user);
 				GLog.n("Your worn equipment becomes cursed!");
@@ -366,7 +342,9 @@ public class CursedWand {
 					Game.switchScene(InterlevelScene.class);
 
 				} else {
-					ScrollOfTeleportation.teleportHero(user);
+					if (ScrollOfTeleportation.canTeleport(user)) {
+						ScrollOfTeleportation.doTeleport(user);
+					}
 					wand.wandUsed();
 				}
 				break;
@@ -447,14 +425,14 @@ public class CursedWand {
 			//random transmogrification
 			case 3:
 				wand.wandUsed();
-				wand.detach(user.belongings.backpack);
+				user.belongings.detach(wand);
 				Item result;
 				do {
 					result = Generator.random(Random.oneOf(Generator.Category.WEAPON, Generator.Category.ARMOR,
 							Generator.Category.RING, Generator.Category.ARTIFACT));
 				} while (result.level < 0 && !(result instanceof MissileWeapon));
-				if (result.isUpgradable()) result.upgrade();
-				result.cursed = result.cursedKnown = true;
+				if (result.isUpgradable()) result.upgrade(null, 1);
+				result.bucStatus(BUCStatus.Cursed, true);
 				GLog.w("your wand transmogrifies into a different item!");
 				Dungeon.level.drop(result, user.pos).sprite.drop();
 				wand.wandUsed();

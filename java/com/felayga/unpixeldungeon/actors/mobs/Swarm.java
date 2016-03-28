@@ -35,9 +35,11 @@ import com.felayga.unpixeldungeon.actors.buffs.Poison;
 import com.felayga.unpixeldungeon.effects.Pushing;
 import com.felayga.unpixeldungeon.items.Item;
 import com.felayga.unpixeldungeon.items.potions.PotionOfHealing;
+import com.felayga.unpixeldungeon.items.weapon.melee.mob.MeleeMobAttack;
 import com.felayga.unpixeldungeon.levels.Level;
 import com.felayga.unpixeldungeon.levels.Terrain;
 import com.felayga.unpixeldungeon.levels.features.Door;
+import com.felayga.unpixeldungeon.mechanics.GameTime;
 import com.felayga.unpixeldungeon.scenes.GameScene;
 import com.felayga.unpixeldungeon.sprites.SwarmSprite;
 import com.watabou.utils.Bundle;
@@ -45,10 +47,13 @@ import com.watabou.utils.Random;
 
 public class Swarm extends Mob {
 
+	public Swarm()
 	{
 		name = "swarm of flies";
 		spriteClass = SwarmSprite.class;
-		
+
+		DEXCHA = 10;
+
 		HP = HT = 50;
 		defenseSkill = 5;
 
@@ -59,9 +64,11 @@ public class Swarm extends Mob {
 
 		loot = new PotionOfHealing();
 		lootChance = 0.1667f; //by default, see die()
+
+		belongings.weapon = new MeleeMobAttack(GameTime.TICK, 1, 3);
 	}
 	
-	private static final float SPLIT_DELAY	= 1f;
+	private static final long SPLIT_DELAY	= GameTime.TICK;
 	
 	int generation	= 0;
 	
@@ -78,11 +85,6 @@ public class Swarm extends Mob {
 		super.restoreFromBundle( bundle );
 		generation = bundle.getInt( GENERATION );
 		if (generation > 0) EXP = 0;
-	}
-	
-	@Override
-	public int damageRoll() {
-		return Random.NormalIntRange( 1, 3 );
 	}
 	
 	@Override
@@ -120,11 +122,6 @@ public class Swarm extends Mob {
 		}
 		
 		return super.defenseProc(enemy, damage);
-	}
-	
-	@Override
-	public int attackSkill( Char target ) {
-		return 10;
 	}
 	
 	@Override

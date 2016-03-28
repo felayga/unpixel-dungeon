@@ -25,20 +25,43 @@ package com.felayga.unpixeldungeon.items;
 
 import java.util.ArrayList;
 
+import com.felayga.unpixeldungeon.actors.Actor;
 import com.felayga.unpixeldungeon.actors.Char;
 import com.felayga.unpixeldungeon.actors.hero.Hero;
+import com.felayga.unpixeldungeon.mechanics.AttributeType;
+import com.felayga.unpixeldungeon.mechanics.BUCStatus;
+import com.felayga.unpixeldungeon.mechanics.GameTime;
 import com.felayga.unpixeldungeon.utils.GLog;
+import com.watabou.noosa.Game;
 import com.watabou.utils.Random;
 
 public class KindOfWeapon extends EquipableItem {
+	private static final String TXT_EQUIP_CURSED	= "The %s welds itself to your hand!";
+	
+	protected static final long TIME_TO_EQUIP = GameTime.TICK;
 
-	private static final String TXT_EQUIP_CURSED	= "you wince as your grip involuntarily tightens around your %s";
-	
-	protected static final float TIME_TO_EQUIP = 1f;
-	
-	public int		MIN	= 0;
-	public int		MAX = 1;
-	
+	public long delay_new = GameTime.TICK;
+    public int damageMin = 1;
+    public int damageMax = 4;
+
+    public int accuracy = 10;
+    public int damage = 10;
+
+	public int skillRequired = 0;
+	public int refined = 0;
+
+    public AttributeType accuracyAttribute = AttributeType.DEXCHA;
+	public int accuracyAttributeMaxBonus = 32767;
+    public AttributeType damageAttribute = AttributeType.STRCON;
+
+	public KindOfWeapon(long delay,  int damageMin, int damageMax)
+	{
+		this.delay_new = delay;
+
+		this.damageMin = damageMin;
+		this.damageMax = damageMax;
+	}
+
 	@Override
 	public ArrayList<String> actions( Hero hero ) {
 		ArrayList<String> actions = super.actions( hero );
@@ -47,15 +70,14 @@ public class KindOfWeapon extends EquipableItem {
 	}
 	
 	@Override
-	public boolean isEquipped( Hero hero ) {
+	public boolean isEquipped( Char hero ) {
 		return hero.belongings.weapon == this;
 	}
 	
 	@Override
-	public boolean doEquip( Hero hero ) {
+	public boolean doEquip( Char hero ) {
+		hero.belongings.detachAll(this);
 
-		detachAll( hero.belongings.backpack );
-		
 		if (hero.belongings.weapon == null || hero.belongings.weapon.doUnequip( hero, true )) {
 			
 			hero.belongings.weapon = this;
@@ -63,24 +85,23 @@ public class KindOfWeapon extends EquipableItem {
 
 			updateQuickslot();
 			
-			cursedKnown = true;
-			if (cursed) {
+			if (bucStatus == BUCStatus.Cursed) {
 				equipCursed( hero );
-				GLog.n( TXT_EQUIP_CURSED, name() );
+				GLog.n( TXT_EQUIP_CURSED, getDisplayName() );
+				bucStatusKnown = true;
 			}
 			
-			hero.spendAndNext( TIME_TO_EQUIP );
+			hero.spend( TIME_TO_EQUIP, true );
 			return true;
 			
 		} else {
-			
-			collect( hero.belongings.backpack );
+			hero.belongings.collect(this);
 			return false;
 		}
 	}
 
 	@Override
-	public boolean doUnequip( Hero hero, boolean collect, boolean single ) {
+	public boolean doUnequip( Char hero, boolean collect, boolean single ) {
 		if (super.doUnequip( hero, collect, single )) {
 
 			hero.belongings.weapon = null;
@@ -93,22 +114,25 @@ public class KindOfWeapon extends EquipableItem {
 		}
 	}
 	
-	public void activate( Hero hero ) {
+	public void activate( Char hero ) {
 	}
 	
-	public int damageRoll( Hero owner ) {
-		return Random.NormalIntRange( MIN, MAX );
+	public int damageRoll() {
+		return Random.NormalIntRange( damageMin, damageMax ) + this.level;
 	}
 	
-	public float acuracyFactor( Hero hero ) {
-		return 1f;
+	public int accuracyFactor() {
+		return this.level + this.refined;
 	}
-	
+
+	/*
 	public float speedFactor( Hero hero ) {
 		return 1f;
 	}
+	*/
 	
-	public void proc( Char attacker, Char defender, int damage ) {
+	public int proc( Char attacker, boolean thrown, Char defender, int damage ) {
+		return damage;
 	}
 	
 }

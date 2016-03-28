@@ -61,7 +61,7 @@ public class WndWandmaker extends Window {
 		
 		IconTitle titlebar = new IconTitle();
 		titlebar.icon(new ItemSprite(item.image(), null));
-		titlebar.label(Utils.capitalize(item.name()));
+		titlebar.label(Utils.capitalize(item.getDisplayName()));
 		titlebar.setRect(0, 0, WIDTH, 0);
 		add( titlebar );
 
@@ -80,7 +80,7 @@ public class WndWandmaker extends Window {
 		message.y = titlebar.bottom() + GAP;
 		add( message );
 		
-		RedButton btnWand1 = new RedButton( Wandmaker.Quest.wand1.name() ) {
+		RedButton btnWand1 = new RedButton( Wandmaker.Quest.wand1.getDisplayName() ) {
 			@Override
 			protected void onClick() {
 				selectReward( wandmaker, item, Wandmaker.Quest.wand1 );
@@ -89,7 +89,7 @@ public class WndWandmaker extends Window {
 		btnWand1.setRect(0, message.y + message.height() + GAP, WIDTH, BTN_HEIGHT);
 		add( btnWand1 );
 		
-		RedButton btnWand2 = new RedButton( Wandmaker.Quest.wand2.name() ) {
+		RedButton btnWand2 = new RedButton( Wandmaker.Quest.wand2.getDisplayName() ) {
 			@Override
 			protected void onClick() {
 				selectReward( wandmaker, item, Wandmaker.Quest.wand2 );
@@ -104,12 +104,12 @@ public class WndWandmaker extends Window {
 	private void selectReward( Wandmaker wandmaker, Item item, Wand reward ) {
 		
 		hide();
-		
-		item.detach( Dungeon.hero.belongings.backpack );
+
+		Dungeon.hero.belongings.detach(item);
 
 		reward.identify();
 		if (reward.doPickUp( Dungeon.hero )) {
-			GLog.i( Hero.TXT_YOU_NOW_HAVE, reward.name() );
+			GLog.i( Hero.TXT_YOU_NOW_HAVE, reward.getDisplayName() );
 		} else {
 			Dungeon.level.drop( reward, wandmaker.pos ).sprite.drop();
 		}

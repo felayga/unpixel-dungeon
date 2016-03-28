@@ -44,9 +44,11 @@ import com.felayga.unpixeldungeon.items.Generator;
 import com.felayga.unpixeldungeon.items.Heap;
 import com.felayga.unpixeldungeon.items.Item;
 import com.felayga.unpixeldungeon.items.rings.Ring;
-import com.felayga.unpixeldungeon.items.weapon.melee.MagesStaff;
+import com.felayga.unpixeldungeon.items.weapon.melee.simple.MagesStaff;
 import com.felayga.unpixeldungeon.levels.Terrain;
+import com.felayga.unpixeldungeon.mechanics.BUCStatus;
 import com.felayga.unpixeldungeon.mechanics.Ballistica;
+import com.felayga.unpixeldungeon.mechanics.GameTime;
 import com.felayga.unpixeldungeon.plants.Plant;
 import com.felayga.unpixeldungeon.scenes.GameScene;
 import com.felayga.unpixeldungeon.sprites.CharSprite;
@@ -129,14 +131,14 @@ public class WandOfTransfusion extends Wand {
 			//charms an enemy
 			} else {
 
-				float duration = 5+level;
-				Buff.affect(ch, Charm.class, Charm.durationFactor(ch) * duration).object = curUser.id();
+				long duration = GameTime.TICK * (5 + level);
+				Buff.affect(ch, Charm.class, Charm.durationFactor(ch) * duration / GameTime.TICK).object = curUser.id();
 
 				duration *= Random.Float(0.75f, 1f);
-				Buff.affect(curUser, Charm.class, Charm.durationFactor(ch) * duration).object = ch.id();
+				Buff.affect(curUser, Charm.class, Charm.durationFactor(ch) * duration / GameTime.TICK).object = ch.id();
 
-				ch.sprite.centerEmitter().start( Speck.factory( Speck.HEART ), 0.2f, 5 );
-				curUser.sprite.centerEmitter().start( Speck.factory( Speck.HEART ), 0.2f, 5 );
+				ch.sprite.centerEmitter(-1).start( Speck.factory( Speck.HEART ), 0.2f, 5 );
+				curUser.sprite.centerEmitter(-1).start( Speck.factory( Speck.HEART ), 0.2f, 5 );
 
 			}
 
@@ -147,15 +149,15 @@ public class WandOfTransfusion extends Wand {
 
 			//30% + 10%*lvl chance to uncurse the item and reset it to base level if degraded.
 			if (item != null && Random.Float() <= 0.3f+level*0.1f){
-				if (item.cursed){
-					item.cursed = false;
+				if (item.bucStatus() == BUCStatus.Cursed){
+					item.bucStatus(BUCStatus.Uncursed);
 					CellEmitter.get(cell).start( ShadowParticle.UP, 0.05f, 10 );
 					Sample.INSTANCE.play(Assets.SND_BURNING);
 				}
 
 				int lvldiffFromBase = item.level - (item instanceof Ring ? 1 : 0);
 				if (lvldiffFromBase < 0){
-					item.upgrade(-lvldiffFromBase);
+					item.upgrade(null, -lvldiffFromBase);
 					CellEmitter.get(cell).start(Speck.factory(Speck.UP), 0.2f, 3);
 					Sample.INSTANCE.play(Assets.SND_EVOKE);
 				}

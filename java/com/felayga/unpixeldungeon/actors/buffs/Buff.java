@@ -40,12 +40,12 @@ public class Buff extends Actor {
 
 	//determines how the buff is announced when it is shown.
 	//buffs that work behind the scenes, or have other visual indicators can usually be silent.
-	public enum buffType {POSITIVE, NEGATIVE, NEUTRAL, SILENT};
+	public enum buffType {POSITIVE, NEGATIVE, NEUTRAL, SILENT}
 	public buffType type = buffType.SILENT;
 
-	public HashSet<Class<?>> resistances = new HashSet<Class<?>>();
+	public HashSet<Class<?>> resistances = new HashSet<>();
 
-	public HashSet<Class<?>> immunities = new HashSet<Class<?>>();
+	public HashSet<Class<?>> immunities = new HashSet<>();
 	
 	public boolean attachTo( Char target ) {
 
@@ -70,7 +70,7 @@ public class Buff extends Actor {
 	
 	@Override
 	public boolean act() {
-		diactivate();
+		deactivate();
 		return true;
 	}
 	
@@ -80,14 +80,14 @@ public class Buff extends Actor {
 
 	public void fx(boolean on) {
 		//do nothing by default
-	};
+	}
 
 	public String desc(){
 		return "";
 	}
 
 	//to handle the common case of showing how many turns are remaining in a buff description.
-	protected String dispTurns(float input){
+	protected String dispTurns(double input){
 		return input == 1 ? "1 more turn" : new DecimalFormat("#.##").format(input) + " more turns";
 	}
 
@@ -102,9 +102,9 @@ public class Buff extends Actor {
 		}
 	}
 
-	public static<T extends FlavourBuff> T append( Char target, Class<T> buffClass, float duration ) {
+	public static<T extends FlavourBuff> T append( Char target, Class<T> buffClass, long duration ) {
 		T buff = append( target, buffClass );
-		buff.spend( duration );
+		buff.spend( duration, false );
 		return buff;
 	}
 
@@ -118,14 +118,14 @@ public class Buff extends Actor {
 		}
 	}
 	
-	public static<T extends FlavourBuff> T affect( Char target, Class<T> buffClass, float duration ) {
+	public static<T extends FlavourBuff> T affect( Char target, Class<T> buffClass, long duration ) {
 		T buff = affect( target, buffClass );
-		buff.spend( duration );
+		buff.spend( duration, false );
 		return buff;
 	}
 
 	//postpones an already active buff, or creates & attaches a new buff and delays that.
-	public static<T extends FlavourBuff> T prolong( Char target, Class<T> buffClass, float duration ) {
+	public static<T extends FlavourBuff> T prolong( Char target, Class<T> buffClass, long duration ) {
 		T buff = affect( target, buffClass );
 		buff.postpone( duration );
 		return buff;

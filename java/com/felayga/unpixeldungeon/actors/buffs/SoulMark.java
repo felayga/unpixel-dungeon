@@ -23,13 +23,15 @@
  */
 package com.felayga.unpixeldungeon.actors.buffs;
 
+import com.felayga.unpixeldungeon.actors.Actor;
 import com.felayga.unpixeldungeon.actors.Char;
 import com.felayga.unpixeldungeon.effects.particles.ShadowParticle;
+import com.felayga.unpixeldungeon.mechanics.GameTime;
 import com.felayga.unpixeldungeon.ui.BuffIndicator;
 
 public class SoulMark extends FlavourBuff {
 
-	public static final float DURATION	= 50f;
+	public static final long DURATION	= GameTime.TICK * 50;
 
 	{
 		type = buffType.NEGATIVE;

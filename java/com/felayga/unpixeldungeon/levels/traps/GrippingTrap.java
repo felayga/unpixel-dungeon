@@ -31,6 +31,7 @@ import com.felayga.unpixeldungeon.actors.buffs.Buff;
 import com.felayga.unpixeldungeon.actors.buffs.Cripple;
 import com.felayga.unpixeldungeon.actors.buffs.Roots;
 import com.felayga.unpixeldungeon.effects.Wound;
+import com.felayga.unpixeldungeon.mechanics.GameTime;
 import com.felayga.unpixeldungeon.sprites.TrapSprite;
 import com.watabou.utils.Random;
 
@@ -48,10 +49,10 @@ public class GrippingTrap extends Trap {
 		Char c = Actor.findChar( pos );
 
 		if (c != null) {
-			int damage = Math.max( 0,  (Dungeon.depth) - Random.IntRange( 0, c.dr() / 2 ) );
+			int damage = Math.max( 0,  (Dungeon.depth) );
 			Buff.affect( c, Bleeding.class ).set( damage );
-			Buff.prolong( c, Cripple.class, 15f);
-			Buff.prolong( c, Roots.class, 5f);
+			Buff.prolong( c, Cripple.class, GameTime.TICK * 15);
+			Buff.prolong( c, Roots.class, GameTime.TICK * 5);
 			Wound.hit( c );
 		} else {
 			Wound.hit( pos );

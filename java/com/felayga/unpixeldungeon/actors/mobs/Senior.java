@@ -27,6 +27,8 @@ import com.felayga.unpixeldungeon.Badges;
 import com.felayga.unpixeldungeon.actors.Char;
 import com.felayga.unpixeldungeon.actors.buffs.Buff;
 import com.felayga.unpixeldungeon.actors.buffs.Paralysis;
+import com.felayga.unpixeldungeon.items.weapon.melee.mob.DisarmParalyzeChance;
+import com.felayga.unpixeldungeon.mechanics.GameTime;
 import com.felayga.unpixeldungeon.sprites.SeniorSprite;
 import com.watabou.utils.Random;
 
@@ -35,19 +37,9 @@ public class Senior extends Monk {
 	{
 		name = "senior monk";
 		spriteClass = SeniorSprite.class;
-	}
-	
-	@Override
-	public int damageRoll() {
-		return Random.NormalIntRange( 12, 20 );
-	}
-	
-	@Override
-	public int attackProc( Char enemy, int damage ) {
-		if (Random.Int( 10 ) == 0) {
-			Buff.prolong( enemy, Paralysis.class, 1.1f );
-		}
-		return super.attackProc( enemy, damage );
+
+		specialWeapon = new DisarmParalyzeChance(GameTime.TICK / 2, 12, 20);
+		belongings.weapon = specialWeapon;
 	}
 	
 	@Override

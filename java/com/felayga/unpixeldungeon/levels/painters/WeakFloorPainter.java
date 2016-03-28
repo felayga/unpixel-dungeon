@@ -71,14 +71,17 @@ public class WeakFloorPainter extends Painter {
 			well = new Point( Random.Int( 2 ) == 0 ? room.left + 1 : room.right - 1, room.top+2 );
 		}
 		set(level, well, Terrain.CHASM);
-		CustomTileVisual vis = new HiddenWell();
+		CustomTileVisual vis = new HiddenWell(-1);
 		vis.pos(well.x, well.y);
 		level.customTiles.add(vis);
 	}
 
 	public static class HiddenWell extends CustomTileVisual{
 
+		public HiddenWell(int pos)
 		{
+			super(pos);
+
 			name = "Distant well";
 
 			tx = Assets.WEAK_FLOOR;

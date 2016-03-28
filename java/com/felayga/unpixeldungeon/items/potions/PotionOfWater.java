@@ -46,7 +46,7 @@ public class PotionOfWater extends Potion {
 	@Override
 	public void apply( Hero hero ) {
 		setKnown();
-		((Hunger) hero.buff(Hunger.class)).satisfy(Hunger.STARVING - Hunger.HUNGRY);
+		hero.buff(Hunger.class).satisfy_new(125);
 		GLog.p("That was refreshing.");
 	}
 	

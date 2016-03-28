@@ -33,6 +33,9 @@ import com.felayga.unpixeldungeon.actors.buffs.Poison;
 import com.felayga.unpixeldungeon.actors.buffs.Roots;
 import com.felayga.unpixeldungeon.actors.buffs.Terror;
 import com.felayga.unpixeldungeon.items.food.MysteryMeat;
+import com.felayga.unpixeldungeon.items.weapon.melee.mob.MeleeMobAttack;
+import com.felayga.unpixeldungeon.items.weapon.melee.mob.PoisonChance;
+import com.felayga.unpixeldungeon.mechanics.GameTime;
 import com.felayga.unpixeldungeon.scenes.GameScene;
 import com.felayga.unpixeldungeon.sprites.SpinnerSprite;
 import com.watabou.utils.Random;
@@ -42,6 +45,8 @@ public class Spinner extends Mob {
 	{
 		name = "cave spinner";
 		spriteClass = SpinnerSprite.class;
+
+		DEXCHA = 20;
 
 		HP = HT = 50;
 		defenseSkill = 14;
@@ -53,21 +58,8 @@ public class Spinner extends Mob {
 		lootChance = 0.125f;
 
 		FLEEING = new Fleeing();
-	}
 
-	@Override
-	public int damageRoll() {
-		return Random.NormalIntRange(12, 16);
-	}
-
-	@Override
-	public int attackSkill(Char target) {
-		return 20;
-	}
-
-	@Override
-	public int dr() {
-		return 6;
+		belongings.weapon = new PoisonChance(GameTime.TICK, 12, 16);
 	}
 
 	@Override
@@ -81,14 +73,8 @@ public class Spinner extends Mob {
 		return result;
 	}
 
-	@Override
-	public int attackProc(Char enemy, int damage) {
-		if (Random.Int(2) == 0) {
-			Buff.affect(enemy, Poison.class).set(Random.Int(7, 9) * Poison.durationFactor(enemy));
-			state = FLEEING;
-		}
-
-		return damage;
+	public void flee() {
+		state = FLEEING;
 	}
 
 	@Override

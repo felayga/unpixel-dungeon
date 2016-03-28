@@ -25,23 +25,20 @@ package com.felayga.unpixeldungeon.actors.mobs;
 
 import java.util.HashSet;
 
-import com.felayga.unpixeldungeon.Assets;
 import com.felayga.unpixeldungeon.actors.blobs.Blob;
 import com.felayga.unpixeldungeon.actors.blobs.GooWarn;
 import com.felayga.unpixeldungeon.actors.blobs.ToxicGas;
 import com.felayga.unpixeldungeon.actors.buffs.LockedFloor;
-import com.felayga.unpixeldungeon.effects.CellEmitter;
-import com.felayga.unpixeldungeon.effects.particles.ElmoParticle;
+import com.felayga.unpixeldungeon.items.KindOfWeapon;
+import com.felayga.unpixeldungeon.items.keys.SkeletonOldKey;
+import com.felayga.unpixeldungeon.items.weapon.melee.mob.AcidChance;
+import com.felayga.unpixeldungeon.mechanics.GameTime;
 import com.felayga.unpixeldungeon.ui.BossHealthBar;
-import com.watabou.noosa.Camera;
 import com.felayga.unpixeldungeon.Badges;
 import com.felayga.unpixeldungeon.Dungeon;
 import com.felayga.unpixeldungeon.actors.Char;
-import com.felayga.unpixeldungeon.actors.buffs.Buff;
-import com.felayga.unpixeldungeon.actors.buffs.Ooze;
 import com.felayga.unpixeldungeon.effects.Speck;
 import com.felayga.unpixeldungeon.items.artifacts.LloydsBeacon;
-import com.felayga.unpixeldungeon.items.keys.SkeletonKey;
 import com.felayga.unpixeldungeon.items.scrolls.ScrollOfPsionicBlast;
 import com.felayga.unpixeldungeon.items.weapon.enchantments.Death;
 import com.felayga.unpixeldungeon.levels.Level;
@@ -49,13 +46,17 @@ import com.felayga.unpixeldungeon.scenes.GameScene;
 import com.felayga.unpixeldungeon.sprites.CharSprite;
 import com.felayga.unpixeldungeon.sprites.GooSprite;
 import com.felayga.unpixeldungeon.utils.GLog;
-import com.watabou.noosa.audio.Sample;
 import com.watabou.utils.Bundle;
 import com.watabou.utils.Random;
 
 public class Goo extends Mob {
+	public AcidChance weapon;
+
 	{
 		name = "Goo";
+
+		DEXCHA = 15;
+
 		HP = HT = 100;
 		EXP = 10;
 		defenseSkill = 8;
@@ -63,10 +64,27 @@ public class Goo extends Mob {
 
 		loot = new LloydsBeacon().identify();
 		lootChance = 0.333f;
+
+		weapon = new AcidChance(GameTime.TICK, 2, 8);
+		belongings.weapon = weapon;
 	}
 
-	private int pumpedUp = 0;
+	public int pumpedUp = 0;
 
+	private boolean enraged = false;
+	private boolean enragedCheck()
+	{
+		if (enraged || HP >= HT / 2) {
+			return false;
+		}
+
+		enraged = true;
+		STRCON += 8;
+
+		return true;
+	}
+
+	/*
 	@Override
 	public int damageRoll() {
 		int min = (HP*2 <= HT) ? 3 : 2;
@@ -84,23 +102,11 @@ public class Goo extends Mob {
 			return Random.NormalIntRange( min, max );
 		}
 	}
-
-	@Override
-	public int attackSkill( Char target ) {
-		int attack = 10;
-		if (HP*2 <= HT) attack = 15;
-		if (pumpedUp > 0) attack *= 2;
-		return attack;
-	}
+	*/
 
 	@Override
 	public int defenseSkill(Char enemy) {
 		return (int)(super.defenseSkill(enemy) * ((HP*2 <= HT)? 1.5 : 1));
-	}
-
-	@Override
-	public int dr() {
-		return 2;
 	}
 
 	@Override
@@ -124,21 +130,7 @@ public class Goo extends Mob {
 	}
 
 	@Override
-	public int attackProc( Char enemy, int damage ) {
-		if (Random.Int( 3 ) == 0) {
-			Buff.affect( enemy, Ooze.class );
-			enemy.sprite.burst( 0x000000, 5 );
-		}
-
-		if (pumpedUp > 0) {
-			Camera.main.shake( 3, 0.2f );
-		}
-
-		return damage;
-	}
-
-	@Override
-	protected boolean doAttack( Char enemy ) {
+	protected boolean doAttack( boolean thrown, Char enemy ) {
 		if (pumpedUp == 1) {
 			((GooSprite)sprite).pumpUp();
 			for (int i = 0; i < Level.NEIGHBOURS9DIST2.length; i++) {
@@ -148,7 +140,7 @@ public class Goo extends Mob {
 			}
 			pumpedUp++;
 
-			spend( attackDelay() );
+			spend( attackDelay(weapon.delay_new), false );
 
 			return true;
 		} else if (pumpedUp >= 2 || Random.Int( (HP*2 <= HT) ? 2 : 5 ) > 0) {
@@ -162,10 +154,10 @@ public class Goo extends Mob {
 				else
 					sprite.attack( enemy.pos );
 			} else {
-				attack( enemy );
+				attack( weapon, false, enemy );
 			}
 
-			spend( attackDelay() );
+			spend( attackDelay(weapon.delay_new), false );
 
 			return !visible;
 
@@ -187,15 +179,15 @@ public class Goo extends Mob {
 				GLog.n( "Goo is pumping itself up!" );
 			}
 
-			spend( attackDelay() );
+			spend( attackDelay(weapon.delay_new), false );
 
 			return true;
 		}
 	}
 
 	@Override
-	public boolean attack( Char enemy ) {
-		boolean result = super.attack( enemy );
+	public boolean attack( KindOfWeapon weapon, boolean thrown, Char target ) {
+		boolean result = super.attack( weapon, thrown, target );
 		pumpedUp = 0;
 		return result;
 	}
@@ -222,7 +214,7 @@ public class Goo extends Mob {
 			sprite.showStatus(CharSprite.NEGATIVE, "enraged");
 			((GooSprite)sprite).spray(true);
 			yell("GLUUUURP!");
-			spend( TICK );
+			spend(GameTime.TICK, false );
 		}
 		LockedFloor lock = Dungeon.hero.buff(LockedFloor.class);
 		if (lock != null) lock.addTime(dmg*2);
@@ -236,7 +228,7 @@ public class Goo extends Mob {
 		Dungeon.level.unseal();
 		
 		GameScene.bossSlain();
-		Dungeon.level.drop( new SkeletonKey( Dungeon.depth ), pos ).sprite.drop();
+		Dungeon.level.drop( new SkeletonOldKey( Dungeon.depth ), pos ).sprite.drop();
 		
 		Badges.validateBossSlain();
 		
@@ -278,7 +270,7 @@ public class Goo extends Mob {
 		pumpedUp = bundle.getInt( PUMPEDUP );
 		if (state != SLEEPING) BossHealthBar.assignBoss(this);
 		if ((HP*2 <= HT)) BossHealthBar.bleed(true);
-
+		enragedCheck();
 	}
 	
 	private static final HashSet<Class<?>> RESISTANCES = new HashSet<Class<?>>();

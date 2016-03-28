@@ -23,17 +23,22 @@
  */
 package com.felayga.unpixeldungeon.items.bags;
 
+import com.felayga.unpixeldungeon.actors.Char;
 import com.felayga.unpixeldungeon.items.Item;
 import com.felayga.unpixeldungeon.items.scrolls.Scroll;
 import com.felayga.unpixeldungeon.sprites.ItemSpriteSheet;
 
 public class ScrollHolder extends Bag {
 
+	public ScrollHolder()
 	{
+		super(null);
+
 		name = "scroll holder";
 		image = ItemSpriteSheet.HOLDER;
 		
 		size = 12;
+		priority = 8;
 	}
 	
 	@Override

@@ -27,163 +27,351 @@ import com.felayga.unpixeldungeon.Badges;
 import com.felayga.unpixeldungeon.Challenges;
 import com.felayga.unpixeldungeon.Dungeon;
 import com.felayga.unpixeldungeon.ResultDescriptions;
+import com.felayga.unpixeldungeon.actors.Actor;
+import com.felayga.unpixeldungeon.actors.Char;
 import com.felayga.unpixeldungeon.actors.hero.Hero;
 import com.felayga.unpixeldungeon.actors.hero.HeroClass;
 import com.felayga.unpixeldungeon.items.artifacts.Artifact;
 import com.felayga.unpixeldungeon.items.artifacts.HornOfPlenty;
+import com.felayga.unpixeldungeon.mechanics.GameTime;
 import com.felayga.unpixeldungeon.ui.BuffIndicator;
 import com.felayga.unpixeldungeon.utils.GLog;
 import com.watabou.utils.Bundle;
+import com.watabou.utils.Random;
 
 public class Hunger extends Buff implements Hero.Doom {
+	private static final String TXT_INCREASETO_OVERSATIATED	= "You're eating too much!";
+	private static final String TXT_INCREASETO_SATIATED		= "You're having a hard time getting it all down.";
+	private static final String TXT_INCREASETO_NOTHUNGRY	= "You are no longer hungry.";
+	private static final String TXT_INCREASETO_HUNGRY		= "You only feel hungry now.";
+	private static final String TXT_INCREASETO_WEAK			= "You only feel weak now.";
 
-	private static final float STEP	= 10f;
+	private static final String TXT_DECREASETO_SATIATED		= "You feel satiated.";
+	private static final String TXT_DECREASETO_HUNGRY		= "You feel hungry.";
+	private static final String TXT_DECREASETO_WEAK			= "You are beginning to feel weak.";
+	private static final String TXT_DECREASETO_FAINTING		= "You are fainting from hunger!";
+	private static final String TXT_DECREASETO_DEAD			= "You die from starvation.";
 
-	public static final float HUNGRY	= 260f;
-	public static final float STARVING	= 360f;
+	private int level;
+	private int lifeRegenTick;
+	private int manaRegenTick;
+	private int trinketHungerTick;
 
-	private static final String TXT_HUNGRY		= "You are hungry.";
-	private static final String TXT_STARVING	= "You are starving!";
-	private static final String TXT_DEATH		= "You starved to death...";
+	private int hungerTickAmount;
 
-	private float level;
+	//todo: figure out what this is (viscosity glyph?)
 	private float partialDamage;
 
-	private static final String LEVEL			= "level";
-	private static final String PARTIALDAMAGE 	= "partialDamage";
+	private static final String LEVEL				= "level";
+	private static final String PARTIALDAMAGE 		= "partialDamage";
+	private static final String LIFEREGENTICK		= "lifeRegenTick";
+	private static final String MANAREGENTICK		= "manaRegenTick";
+	private static final String TRINKETHUNGERTICK	= "trinketHungerTick";
+	private static final String HUNGERTICKAMOUNT	= "hungerTickAmount";
+
+	public Hunger()
+	{
+		super();
+
+		level = 900;
+		lifeRegenTick = 0;
+		manaRegenTick = 0;
+		trinketHungerTick = 0;
+		hungerTickAmount = 1;
+	}
 
 	@Override
 	public void storeInBundle( Bundle bundle ) {
 		super.storeInBundle(bundle);
-		bundle.put( LEVEL, level );
+		bundle.put(LEVEL, level);
 		bundle.put( PARTIALDAMAGE, partialDamage );
+		bundle.put(LIFEREGENTICK, lifeRegenTick);
+		bundle.put(MANAREGENTICK, manaRegenTick);
+		bundle.put(TRINKETHUNGERTICK, trinketHungerTick);
+		bundle.put(HUNGERTICKAMOUNT, hungerTickAmount);
 	}
 
 	@Override
 	public void restoreFromBundle( Bundle bundle ) {
-		super.restoreFromBundle( bundle );
-		level = bundle.getFloat( LEVEL );
+		super.restoreFromBundle(bundle);
+		level = bundle.getInt( LEVEL );
 		partialDamage = bundle.getFloat(PARTIALDAMAGE);
+		lifeRegenTick = bundle.getInt(LIFEREGENTICK);
+		manaRegenTick = bundle.getInt(MANAREGENTICK);
+		trinketHungerTick = bundle.getInt(TRINKETHUNGERTICK);
+		hungerTickAmount = bundle.getInt(HUNGERTICKAMOUNT);
 	}
 
 	@Override
 	public boolean act() {
 
+		/*
+		//todo: no idea what this is
 		if (Dungeon.level.locked){
-			spend(STEP);
+			spend(STEP, false);
 			return true;
 		}
+		*/
 
 		if (target.isAlive()) {
-
 			Hero hero = (Hero)target;
 
-			if (isStarving()) {
+			int test;
 
-				partialDamage += target.HT/100f;
 
-				if (partialDamage > 1){
-					target.damage( (int)partialDamage, this);
-					partialDamage -= (int)partialDamage;
+			lifeRegenTick++;
+
+			if (hero.lvl >= 10)
+			{
+				test = 3;
+
+				if (lifeRegenTick >= test) {
+					lifeRegenTick = 0;
+
+					hero.HP += Random.Int(0, hero.STRCON) + 1;
 				}
-				
-			} else {
+			}
+			else {
+				test = 42 / (hero.lvl + 2) + 1;
 
-				float newLevel = level + STEP;
-				boolean statusUpdated = false;
-				if (newLevel >= STARVING) {
+				if (lifeRegenTick >= test) {
+					lifeRegenTick = 0;
 
-					GLog.n( TXT_STARVING );
-					hero.resting = false;
-					hero.damage( 1, this );
-					statusUpdated = true;
-
-					hero.interrupt();
-
-				} else if (newLevel >= HUNGRY && level < HUNGRY) {
-
-					GLog.w( TXT_HUNGRY );
-					statusUpdated = true;
-
+					hero.HP++;
 				}
-				level = newLevel;
-
-				if (statusUpdated) {
-					BuffIndicator.refreshHero();
-				}
-
 			}
 
-			float step = ((Hero)target).heroClass == HeroClass.ROGUE ? STEP * 1.2f : STEP;
-			spend( target.buff( Shadows.class ) == null ? step : step * 1.5f );
+			if (hero.HP > hero.HT) {
+				hero.HP = hero.HT;
+			}
 
+
+
+			test = 19 - hero.lvl / 2;
+			manaRegenTick++;
+
+			if (manaRegenTick >= test) {
+				manaRegenTick = 0;
+
+				test = 1 + hero.INTWIS / 7;
+				if (test > 1) {
+					hero.MP += Random.Int(0, test) + 1;
+				}
+				else {
+					hero.MP++;
+				}
+			}
+
+			if (hero.MP > hero.MT) {
+				hero.MP = hero.MT;
+			}
+
+
+			trinketHungerTick++;
+			if (trinketHungerTick >= 20) {
+				trinketHungerTick -= 20;
+
+				if (hero.belongings.ring1 != null) {
+					GLog.d("ring1");
+					hungerTickAmount++;
+				}
+				if (hero.belongings.ring2 != null) {
+					GLog.d("ring2");
+					hungerTickAmount++;
+				}
+				if (hero.belongings.amulet != null) {
+					GLog.d("amulet");
+					hungerTickAmount++;
+				}
+			}
+
+			if (satisfyDirect(-hungerTickAmount)) {
+				hero.interrupt();
+
+				if (HungerLevel.fromInt(level) == HungerLevel.DEAD) {
+					target.damage(target.HP, this);
+					target.sprite.die();
+				}
+				else {
+					if (Random.Int(8) == 0) {
+						Buff.prolong( target, Fainting.class, Random.Int(4) + 1 );
+					}
+				}
+			}
+
+			hungerTickAmount = 1;
+
+			long STEP = GameTime.TICK;
+			long step = ((Hero)target).heroClass == HeroClass.ROGUE ? STEP * 12 / 10 : STEP;
+			spend( target.buff( Shadows.class ) == null ? step : step * 3 / 2, false );
 		} else {
-
-			diactivate();
-
+			deactivate();
 		}
 
 		return true;
 	}
 
-	public void satisfy( float energy ) {
-
-		Artifact.ArtifactBuff buff = target.buff( HornOfPlenty.hornRecharge.class );
-		if (buff != null && buff.isCursed()){
-			energy *= 0.67f;
-			GLog.n("The cursed horn steals some of the food energy as you eat.");
+	public void satisfy_new( int amount ) {
+		if (amount > 0)
+		{
+			satisfyDirect(amount);
 		}
-
-		if (!Dungeon.isChallenged(Challenges.NO_FOOD))
-			reduceHunger( energy );
+		else {
+			hungerTickAmount -= amount;
+		}
 	}
 
-	//directly interacts with hunger, no checks.
-	public void reduceHunger( float energy ) {
+	private boolean satisfyDirect( int energy ) {
+		boolean interrupt = false;
 
-		level -= energy;
-		if (level < 0) {
-			level = 0;
-		} else if (level > STARVING) {
-			level = STARVING;
+		int oldlevel = level;
+		HungerLevel oldHunger = HungerLevel.fromInt(oldlevel);
+
+		level += energy;
+		HungerLevel newHunger = HungerLevel.fromInt(level);
+
+		if (oldHunger != newHunger) {
+			if (oldlevel < level) {
+				switch (newHunger) {
+					case OVERSATIATED:
+						GLog.w(TXT_INCREASETO_OVERSATIATED);
+						break;
+					case SATIATED:
+						GLog.w(TXT_INCREASETO_SATIATED);
+						break;
+					case NOTHUNGRY:
+						GLog.p(TXT_INCREASETO_NOTHUNGRY);
+						break;
+					case HUNGRY:
+						GLog.p(TXT_INCREASETO_HUNGRY);
+						break;
+					case WEAK:
+						GLog.p(TXT_INCREASETO_WEAK);
+						break;
+				}
+			} else {
+				switch (newHunger) {
+					case SATIATED:
+						GLog.p(TXT_DECREASETO_SATIATED);
+						break;
+					case HUNGRY:
+						GLog.w(TXT_DECREASETO_HUNGRY);
+						break;
+					case WEAK:
+						GLog.w(TXT_DECREASETO_WEAK);
+						interrupt = true;
+						break;
+					case FAINTING:
+						GLog.n(TXT_DECREASETO_FAINTING);
+						interrupt = true;
+						break;
+					case DEAD:
+						interrupt = true;
+						break;
+				}
+			}
+
+			BuffIndicator.refreshHero();
+		}
+		else if (newHunger == HungerLevel.FAINTING)
+		{
+			interrupt = true;
 		}
 
-		BuffIndicator.refreshHero();
+		return interrupt;
 	}
 
-	public boolean isStarving() {
-		return level >= STARVING;
+	public boolean isStarving()
+	{
+		return level < 0;
+	}
+	public boolean isStuffed() { return level >= 1500; }
+
+	public boolean choke(Char ch)
+	{
+		return Random.PassFail((level-1750) * 2 / ch.STRCON);
+	}
+
+	public enum HungerLevel {
+		OVERSATIATED,
+		SATIATED,
+		NOTHUNGRY,
+		HUNGRY,
+		WEAK,
+		FAINTING,
+		DEAD;
+
+		public static HungerLevel fromInt(int hunger) {
+			if (hunger >= 2000) {
+				return HungerLevel.OVERSATIATED;
+			} else if (hunger >= 1000) {
+				return HungerLevel.SATIATED;
+			} else if (hunger >= 150) {
+				return HungerLevel.NOTHUNGRY;
+			} else if (hunger >= 50) {
+				return HungerLevel.HUNGRY;
+			} else if (hunger >= 0) {
+				return HungerLevel.WEAK;
+			} else if (hunger >= -200) {
+				return HungerLevel.FAINTING;
+			} else {
+				return HungerLevel.DEAD;
+			}
+		}
 	}
 
 	@Override
 	public int icon() {
-		if (level < HUNGRY) {
-			return BuffIndicator.NONE;
-		} else if (level < STARVING) {
-			return BuffIndicator.HUNGER;
-		} else {
-			return BuffIndicator.STARVATION;
+		HungerLevel hunger = HungerLevel.fromInt(level);
+
+		switch(hunger)
+		{
+			case OVERSATIATED:
+				return BuffIndicator.HUNGER_OVERSATIATED;
+			case SATIATED:
+				return BuffIndicator.HUNGER_SATIATED;
+			case HUNGRY:
+				return BuffIndicator.HUNGER_HUNGRY;
+			case WEAK:
+				return BuffIndicator.HUNGER_WEAK;
+			case FAINTING:
+				return BuffIndicator.HUNGER_FAINTING;
 		}
+
+		return BuffIndicator.NONE;
 	}
 
 	@Override
 	public String toString() {
-		if (level < STARVING) {
-			return "Hungry";
-		} else {
-			return "Starving";
+		HungerLevel hunger = HungerLevel.fromInt(level);
+
+		switch(hunger)
+		{
+			case OVERSATIATED:
+				return "Oversatiated";
+			case SATIATED:
+				return "Satiated";
+			case HUNGRY:
+				return "Hungry";
+			case WEAK:
+				return "Weak";
+			case FAINTING:
+				return "Fainting";
 		}
+
+		return "Not hungry";
 	}
 
 	@Override
 	public String desc() {
-		String result;
+		String result = "";
+		/*
 		if (level < STARVING) {
 			result = "You can feel your stomach calling out for food, but it's not too urgent yet.\n\n";
 		} else {
 			result = "You're so hungry it hurts.\n\n";
 		}
-
+		*/
 		result += "Hunger slowly increases as you spend time in the dungeon, eventually you will begin to starve. " +
 				"While starving you will slowly lose health instead of regenerating it.\n" +
 				"\n" +
@@ -199,6 +387,6 @@ public class Hunger extends Buff implements Hero.Doom {
 		Badges.validateDeathFromHunger();
 
 		Dungeon.fail( ResultDescriptions.HUNGER );
-		GLog.n( TXT_DEATH );
+		GLog.n( TXT_DECREASETO_DEAD );
 	}
 }

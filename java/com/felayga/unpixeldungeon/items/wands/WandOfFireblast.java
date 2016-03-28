@@ -26,7 +26,8 @@ package com.felayga.unpixeldungeon.items.wands;
 import com.felayga.unpixeldungeon.actors.buffs.Cripple;
 import com.felayga.unpixeldungeon.actors.buffs.Paralysis;
 import com.felayga.unpixeldungeon.effects.MagicMissile;
-import com.felayga.unpixeldungeon.items.weapon.melee.MagesStaff;
+import com.felayga.unpixeldungeon.items.weapon.melee.simple.MagesStaff;
+import com.felayga.unpixeldungeon.mechanics.GameTime;
 import com.felayga.unpixeldungeon.sprites.ItemSpriteSheet;
 import com.watabou.noosa.audio.Sample;
 import com.felayga.unpixeldungeon.Assets;
@@ -62,7 +63,7 @@ public class WandOfFireblast extends Wand {
 	@Override
 	protected void onZap( Ballistica bolt ) {
 
-		if (Level.flamable[bolt.sourcePos]){
+		if (Level.wood[bolt.sourcePos]){
 			GameScene.add( Blob.seed( bolt.sourcePos, 2, Fire.class ) );
 		}
 
@@ -75,13 +76,13 @@ public class WandOfFireblast extends Wand {
 				Buff.affect( ch, Burning.class ).reignite( ch );
 				switch(chargesPerCast()){
 					case 1:
-						Buff.affect(ch, Cripple.class, 3f); break;
+						Buff.affect(ch, Cripple.class, GameTime.TICK * 3); break;
 					case 2:
-						Buff.affect(ch, Cripple.class, 6f); break;
+						Buff.affect(ch, Cripple.class, GameTime.TICK * 6); break;
 					case 3:
-						Buff.affect(ch, Paralysis.class, 3f); break;
+						Buff.affect(ch, Paralysis.class, GameTime.TICK * 3); break;
 					case 4:
-						Buff.affect(ch, Paralysis.class, 6f); break;
+						Buff.affect(ch, Paralysis.class, GameTime.TICK * 6); break;
 				}
 			}
 		}

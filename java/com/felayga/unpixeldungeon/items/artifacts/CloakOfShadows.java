@@ -26,10 +26,12 @@ package com.felayga.unpixeldungeon.items.artifacts;
 
 import com.felayga.unpixeldungeon.Assets;
 import com.felayga.unpixeldungeon.Dungeon;
+import com.felayga.unpixeldungeon.actors.Actor;
 import com.felayga.unpixeldungeon.actors.Char;
 import com.felayga.unpixeldungeon.actors.buffs.LockedFloor;
 import com.felayga.unpixeldungeon.actors.hero.Hero;
 import com.felayga.unpixeldungeon.items.Item;
+import com.felayga.unpixeldungeon.mechanics.GameTime;
 import com.felayga.unpixeldungeon.sprites.CharSprite;
 import com.felayga.unpixeldungeon.sprites.ItemSpriteSheet;
 import com.felayga.unpixeldungeon.ui.BuffIndicator;
@@ -75,16 +77,15 @@ public class CloakOfShadows extends Artifact {
 	}
 
 	@Override
-	public void execute( Hero hero, String action ) {
+	public boolean execute( Hero hero, String action ) {
 		if (action.equals( AC_STEALTH )) {
-
 			if (!stealthed){
 				if (!isEquipped(hero)) GLog.i("You need to equip your cloak to do that.");
 				else if (cooldown > 0) GLog.i("Your cloak needs " + cooldown + " more rounds to re-energize.");
 				else if (charge <= 1)  GLog.i("Your cloak hasn't recharged enough to be usable yet.");
 				else {
 					stealthed = true;
-					hero.spend( 1f );
+					hero.spend( GameTime.TICK, false );
 					hero.busy();
 					Sample.INSTANCE.play(Assets.SND_MELD);
 					activeBuff = activeBuff();
@@ -105,8 +106,10 @@ public class CloakOfShadows extends Artifact {
 				GLog.i("You return from underneath your cloak.");
 			}
 
-		} else
-			super.execute(hero, action);
+			return true;
+		} else {
+			return super.execute(hero, action);
+		}
 	}
 
 	@Override
@@ -119,7 +122,7 @@ public class CloakOfShadows extends Artifact {
 	}
 
 	@Override
-	public boolean doUnequip(Hero hero, boolean collect, boolean single) {
+	public boolean doUnequip(Char hero, boolean collect, boolean single) {
 		if (super.doUnequip(hero, collect, single)){
 			stealthed = false;
 			return true;
@@ -138,9 +141,9 @@ public class CloakOfShadows extends Artifact {
 	}
 
 	@Override
-	public Item upgrade() {
-		chargeCap++;
-		return super.upgrade();
+	public Item upgrade(Item source, int n) {
+		chargeCap += n;
+		return super.upgrade(source, n);
 	}
 
 	@Override
@@ -206,7 +209,7 @@ public class CloakOfShadows extends Artifact {
 
 			updateQuickslot();
 
-			spend( TICK );
+			spend( GameTime.TICK, false );
 
 			return true;
 		}
@@ -243,7 +246,7 @@ public class CloakOfShadows extends Artifact {
 			if (turnsToCost == 0) exp += 10 + ((Hero)target).lvl;
 
 			if (exp >= (level+1)*50 && level < levelCap) {
-				upgrade();
+				upgrade(null, 1);
 				exp -= level*50;
 				GLog.p("Your cloak grows stronger!");
 			}
@@ -252,7 +255,7 @@ public class CloakOfShadows extends Artifact {
 			else    turnsToCost--;
 			updateQuickslot();
 
-			spend( TICK );
+			spend( GameTime.TICK, false );
 
 			return true;
 		}
@@ -263,7 +266,7 @@ public class CloakOfShadows extends Artifact {
 			exp += 10 + ((Hero)target).lvl;
 
 			if (exp >= (level+1)*50 && level < levelCap) {
-				upgrade();
+				upgrade(null, 1);
 				exp -= level*50;
 				GLog.p("Your cloak grows stronger!");
 			}

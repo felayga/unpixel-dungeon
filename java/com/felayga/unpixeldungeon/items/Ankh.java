@@ -24,9 +24,11 @@
 package com.felayga.unpixeldungeon.items;
 
 import com.felayga.unpixeldungeon.Assets;
+import com.felayga.unpixeldungeon.actors.Actor;
 import com.felayga.unpixeldungeon.actors.hero.Hero;
 import com.felayga.unpixeldungeon.effects.CellEmitter;
 import com.felayga.unpixeldungeon.effects.Speck;
+import com.felayga.unpixeldungeon.mechanics.GameTime;
 import com.felayga.unpixeldungeon.sprites.ItemSpriteSheet;
 import com.felayga.unpixeldungeon.sprites.ItemSprite.Glowing;
 import com.felayga.unpixeldungeon.utils.GLog;
@@ -80,15 +82,14 @@ public class Ankh extends Item {
 	}
 
 	@Override
-	public void execute( final Hero hero, String action ) {
+	public boolean execute( final Hero hero, String action ) {
 		if (action.equals( AC_BLESS )) {
-
 			DewVial vial = hero.belongings.getItem(DewVial.class);
 			if (vial != null){
 				blessed = true;
 				vial.empty();
 				GLog.p( TXT_BLESS );
-				hero.spend( 1f );
+				hero.spend( GameTime.TICK, false );
 				hero.busy();
 
 
@@ -96,12 +97,11 @@ public class Ankh extends Item {
 				CellEmitter.get(hero.pos).start(Speck.factory(Speck.LIGHT), 0.2f, 3);
 				hero.sprite.operate( hero.pos );
 			}
+
+			return false;
 		} else {
-
-			super.execute( hero, action );
-
+			return super.execute( hero, action );
 		}
-
 	}
 	
 	@Override

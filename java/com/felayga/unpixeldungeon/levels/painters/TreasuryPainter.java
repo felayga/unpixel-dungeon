@@ -26,7 +26,8 @@ package com.felayga.unpixeldungeon.levels.painters;
 import com.felayga.unpixeldungeon.Dungeon;
 import com.felayga.unpixeldungeon.items.Gold;
 import com.felayga.unpixeldungeon.items.Heap;
-import com.felayga.unpixeldungeon.items.keys.IronKey;
+import com.felayga.unpixeldungeon.items.bags.TreasureChest;
+import com.felayga.unpixeldungeon.items.keys.IronOldKey;
 import com.felayga.unpixeldungeon.levels.Level;
 import com.felayga.unpixeldungeon.levels.Room;
 import com.felayga.unpixeldungeon.levels.Terrain;
@@ -49,7 +50,11 @@ public class TreasuryPainter extends Painter {
 			do {
 				pos = room.random();
 			} while (level.map[pos] != Terrain.EMPTY || level.heaps.get( pos ) != null);
-			level.drop( new Gold().random(), pos ).type = (Random.Int(20) == 0 && heapType == Heap.Type.CHEST ? Heap.Type.MIMIC : heapType);
+
+			TreasureChest chest = new TreasureChest();
+			chest.collect(new Gold().random());
+			level.drop(chest, pos);
+			//level.drop( new Gold().random(), pos ).type = (Random.Int(20) == 0 && heapType == Heap.Type.CHEST ? Heap.Type.MIMIC : heapType);
 		}
 		
 		if (heapType == Heap.Type.HEAP) {
@@ -63,6 +68,6 @@ public class TreasuryPainter extends Painter {
 		}
 		
 		room.entrance().set( Room.Door.Type.LOCKED );
-		level.addItemToSpawn( new IronKey( Dungeon.depth ) );
+		level.addItemToSpawn( new IronOldKey( Dungeon.depth ) );
 	}
 }

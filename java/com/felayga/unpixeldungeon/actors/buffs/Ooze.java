@@ -26,6 +26,7 @@ package com.felayga.unpixeldungeon.actors.buffs;
 import com.felayga.unpixeldungeon.Dungeon;
 import com.felayga.unpixeldungeon.ResultDescriptions;
 import com.felayga.unpixeldungeon.levels.Level;
+import com.felayga.unpixeldungeon.mechanics.GameTime;
 import com.felayga.unpixeldungeon.ui.BuffIndicator;
 import com.felayga.unpixeldungeon.utils.GLog;
 import com.watabou.utils.Random;
@@ -68,7 +69,7 @@ public class Ooze extends Buff {
 				Dungeon.fail( ResultDescriptions.OOZE );
 				GLog.n( TXT_HERO_KILLED, toString() );
 			}
-			spend( TICK );
+			spend(GameTime.TICK, false );
 		}
 		if (Level.water[target.pos]) {
 			detach();

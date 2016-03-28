@@ -33,7 +33,7 @@ import com.felayga.unpixeldungeon.effects.CellEmitter;
 import com.felayga.unpixeldungeon.effects.Beam;
 import com.felayga.unpixeldungeon.effects.particles.PurpleParticle;
 import com.felayga.unpixeldungeon.items.weapon.enchantments.Death;
-import com.felayga.unpixeldungeon.items.weapon.melee.MagesStaff;
+import com.felayga.unpixeldungeon.items.weapon.melee.simple.MagesStaff;
 import com.felayga.unpixeldungeon.levels.Level;
 import com.felayga.unpixeldungeon.levels.Terrain;
 import com.felayga.unpixeldungeon.mechanics.Ballistica;
@@ -56,11 +56,11 @@ public class WandOfDisintegration extends Wand {
 		
 		boolean terrainAffected = false;
 		
-		int level = level();
+		int level = 1;//level();
 		
 		int maxDistance = Math.min(distance(), beam.dist);
 		
-		ArrayList<Char> chars = new ArrayList<Char>();
+		ArrayList<Char> chars = new ArrayList<>();
 
 		int terrainPassed = 2, terrainBonus = 0;
 		for (int c : beam.subPath(1, maxDistance)) {
@@ -76,7 +76,7 @@ public class WandOfDisintegration extends Wand {
 				chars.add( ch );
 			}
 
-			if (Level.flamable[c]) {
+			if (Level.wood[c]) {
 				
 				Level.set( c, Terrain.EMBERS );
 				GameScene.updateMap( c );
@@ -100,7 +100,7 @@ public class WandOfDisintegration extends Wand {
 		for (Char ch : chars) {
 			processSoulMark(ch, chargesPerCast());
 			ch.damage( Random.NormalIntRange( dmgMin, dmgMax ), this );
-			ch.sprite.centerEmitter().burst( PurpleParticle.BURST, Random.IntRange( 1, 2 ) );
+			ch.sprite.centerEmitter(-1).burst( PurpleParticle.BURST, Random.IntRange( 1, 2 ) );
 			ch.sprite.flash();
 		}
 	}
@@ -113,7 +113,7 @@ public class WandOfDisintegration extends Wand {
 	}
 
 	private int distance() {
-		return level()*2 + 4;
+		return 1/*level()*/*2 + 4;
 	}
 	
 	@Override

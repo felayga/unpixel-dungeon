@@ -39,7 +39,10 @@ import com.felayga.unpixeldungeon.effects.Speck;
 import com.felayga.unpixeldungeon.effects.particles.ShaftParticle;
 import com.felayga.unpixeldungeon.items.Item;
 import com.felayga.unpixeldungeon.items.scrolls.ScrollOfPsionicBlast;
+import com.felayga.unpixeldungeon.items.weapon.melee.mob.MeleeMobAttack;
 import com.felayga.unpixeldungeon.levels.Level;
+import com.felayga.unpixeldungeon.mechanics.BUCStatus;
+import com.felayga.unpixeldungeon.mechanics.GameTime;
 import com.felayga.unpixeldungeon.scenes.GameScene;
 import com.felayga.unpixeldungeon.sprites.GhostSprite;
 import com.felayga.unpixeldungeon.sprites.ItemSpriteSheet;
@@ -83,19 +86,18 @@ public class DriedRose extends Artifact {
 	@Override
 	public ArrayList<String> actions( Hero hero ) {
 		ArrayList<String> actions = super.actions( hero );
-		if (isEquipped( hero ) && charge == chargeCap && !cursed)
+		if (isEquipped( hero ) && charge == chargeCap && bucStatus != BUCStatus.Cursed)
 			actions.add(AC_SUMMON);
 		return actions;
 	}
 
 	@Override
-	public void execute( Hero hero, String action ) {
+	public boolean execute( Hero hero, String action ) {
 		if (action.equals(AC_SUMMON)) {
-
 			if (spawned)                    GLog.n("sad ghost: \"I'm already here\"");
 			else if (!isEquipped( hero ))   GLog.i("You need to equip your rose to do that.");
 			else if (charge != chargeCap)   GLog.i("Your rose isn't fully charged yet.");
-			else if (cursed)                GLog.i("You cannot use a cursed rose.");
+			else if (bucStatus == BUCStatus.Cursed)                GLog.i("You cannot use a cursed rose.");
 			else {
 				ArrayList<Integer> spawnPoints = new ArrayList<Integer>();
 				for (int i = 0; i < Level.NEIGHBOURS8.length; i++) {
@@ -109,11 +111,11 @@ public class DriedRose extends Artifact {
 					GhostHero ghost = new GhostHero( level );
 					ghost.pos = Random.element(spawnPoints);
 
-					GameScene.add(ghost, 1f);
+					GameScene.add(ghost, GameTime.TICK);
 					CellEmitter.get(ghost.pos).start( ShaftParticle.FACTORY, 0.3f, 4 );
 					CellEmitter.get(ghost.pos).start( Speck.factory(Speck.LIGHT), 0.2f, 3 );
 
-					hero.spend(1f);
+					hero.spend(GameTime.TICK, false);
 					hero.busy();
 					hero.sprite.operate(hero.pos);
 
@@ -128,12 +130,14 @@ public class DriedRose extends Artifact {
 					charge = 0;
 					updateQuickslot();
 
-				} else
+				} else {
 					GLog.i("There is no free space near you.");
+				}
 			}
 
+			return true;
 		} else{
-			super.execute(hero, action);
+			return super.execute(hero, action);
 		}
 	}
 
@@ -144,7 +148,7 @@ public class DriedRose extends Artifact {
 				" perhaps it can be used to channel the energy of that lost warrior.";
 
 		if (isEquipped( Dungeon.hero )){
-			if (!cursed){
+			if (bucStatus != BUCStatus.Cursed){
 				desc += "\n\nThe rose rests in your hand, it feels strangely warm.";
 
 				if (level < 5)
@@ -169,7 +173,7 @@ public class DriedRose extends Artifact {
 	}
 
 	@Override
-	public Item upgrade() {
+	public Item upgrade(Item source, int n) {
 		if (level >= 9)
 			image = ItemSpriteSheet.ARTIFACT_ROSE3;
 		else if (level >= 4)
@@ -178,7 +182,7 @@ public class DriedRose extends Artifact {
 		//For upgrade transferring via well of transmutation
 		droppedPetals = Math.max( level, droppedPetals );
 
-		return super.upgrade();
+		return super.upgrade(source, n);
 	}
 
 	private static final String TALKEDTO =      "talkedto";
@@ -212,7 +216,7 @@ public class DriedRose extends Artifact {
 		public boolean act() {
 
 			LockedFloor lock = target.buff(LockedFloor.class);
-			if (charge < chargeCap && !cursed && (lock == null || lock.regenOn())) {
+			if (charge < chargeCap && bucStatus != BUCStatus.Cursed && (lock == null || lock.regenOn())) {
 				//TODO: investigate balancing on this.
 				partialCharge += 10/75f;
 				if (partialCharge > 1){
@@ -223,7 +227,7 @@ public class DriedRose extends Artifact {
 						GLog.p("Your rose is fully charged!");
 					}
 				}
-			} else if (cursed && Random.Int(100) == 0) {
+			} else if (bucStatus == BUCStatus.Cursed && Random.Int(100) == 0) {
 
 				ArrayList<Integer> spawnPoints = new ArrayList<Integer>();
 
@@ -243,7 +247,7 @@ public class DriedRose extends Artifact {
 
 			updateQuickslot();
 
-			spend( TICK );
+			spend( GameTime.TICK, false );
 
 			return true;
 		}
@@ -269,7 +273,7 @@ public class DriedRose extends Artifact {
 				return true;
 			} else {
 
-				rose.upgrade();
+				rose.upgrade(this, 1);
 				if (rose.level == rose.levelCap) {
 					GLog.p("The rose is completed!");
 					Sample.INSTANCE.play( Assets.SND_GHOST );
@@ -278,7 +282,7 @@ public class DriedRose extends Artifact {
 					GLog.i("You add the petal to the rose.");
 
 				Sample.INSTANCE.play( Assets.SND_DEWDROP );
-				hero.spendAndNext(TIME_TO_PICK_UP);
+				hero.spend(TIME_TO_PICK_UP, true);
 				return true;
 
 			}
@@ -310,11 +314,18 @@ public class DriedRose extends Artifact {
 
 			//double heroes defence skill
 			defenseSkill = (Dungeon.hero.lvl+4)*2;
+			DEXCHA = ((Dungeon.hero.lvl+4)/2)+5;
+
+			int lvl = (HT-10)/3;
+			belongings.weapon = new MeleeMobAttack(GameTime.TICK, lvl/2, 5+lvl );
 		}
 
 		public GhostHero(int roseLevel){
 			this();
 			HP = HT = 10+roseLevel*3;
+
+			int lvl = (HT-10)/3;
+			belongings.weapon = new MeleeMobAttack(GameTime.TICK, lvl/2, 5+lvl );
 		}
 
 		public void saySpawned(){
@@ -382,28 +393,9 @@ public class DriedRose extends Artifact {
 						enemies.add(mob);
 					}
 				}
-				enemy = enemies.size() > 0 ? Random.element( enemies ) : null;
+				enemy = enemies.size() > 0 ? Random.element(enemies) : null;
 			}
 			return enemy;
-		}
-
-		@Override
-		public int attackSkill(Char target) {
-			//same accuracy as the hero.
-			return (defenseSkill/2)+5;
-		}
-
-		@Override
-		public int damageRoll() {
-			//equivalent to N/2 to 5+N, where N is rose level.
-			int lvl = (HT-10)/3;
-			return Random.NormalIntRange( lvl/2, 5+lvl);
-		}
-
-		@Override
-		public int dr() {
-			//defence is equal to the level of rose.
-			return (HT-10)/3;
 		}
 
 		@Override
@@ -425,7 +417,7 @@ public class DriedRose extends Artifact {
 				Dungeon.hero.sprite.move( Dungeon.hero.pos, curPos );
 				Dungeon.hero.move( curPos );
 
-				Dungeon.hero.spend( 1 / Dungeon.hero.speed() );
+				Dungeon.hero.spend( GameTime.TICK * GameTime.TICK / Dungeon.hero.speed(), false );
 				Dungeon.hero.busy();
 			}
 		}

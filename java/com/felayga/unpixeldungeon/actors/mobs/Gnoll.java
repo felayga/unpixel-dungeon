@@ -25,6 +25,8 @@ package com.felayga.unpixeldungeon.actors.mobs;
 
 import com.felayga.unpixeldungeon.actors.Char;
 import com.felayga.unpixeldungeon.items.Gold;
+import com.felayga.unpixeldungeon.items.weapon.melee.mob.MeleeMobAttack;
+import com.felayga.unpixeldungeon.mechanics.GameTime;
 import com.felayga.unpixeldungeon.sprites.GnollSprite;
 import com.watabou.utils.Random;
 
@@ -36,6 +38,9 @@ public class Gnoll extends Mob {
 
 		canOpenDoors = true;
 
+		DEXCHA = 10;
+		nutrition = 100;
+
 		HP = HT = 12;
 		defenseSkill = 4;
 		
@@ -44,21 +49,8 @@ public class Gnoll extends Mob {
 		
 		loot = Gold.class;
 		lootChance = 0.5f;
-	}
-	
-	@Override
-	public int damageRoll() {
-		return Random.NormalIntRange( 2, 5 );
-	}
-	
-	@Override
-	public int attackSkill( Char target ) {
-		return 10;
-	}
-	
-	@Override
-	public int dr() {
-		return 2;
+
+		belongings.weapon = new MeleeMobAttack(GameTime.TICK, 2, 5);
 	}
 
 	@Override

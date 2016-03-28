@@ -171,7 +171,23 @@ public class ShatteredPixelDungeon extends Game {
 				Assets.SND_BONES,
 				Assets.SND_BEE,
 				Assets.SND_DEGRADE,
-				Assets.SND_MIMIC );
+				Assets.SND_MIMIC,
+
+				Assets.SND_DOOR_THUMP,
+				Assets.SND_DOOR_KICKOPEN,
+				Assets.SND_DOOR_SMASH,
+				Assets.SND_DOOR_CLOSE,
+				Assets.SND_ITEM_BLADE,
+				Assets.SND_ITEM_PAPER,
+				Assets.SND_ITEM_POTION,
+				Assets.SND_ITEM_WOOD,
+				Assets.SND_ITEM_KEY,
+				Assets.SND_ITEM_CLOTH,
+				Assets.SND_WALL_SMASH,
+				Assets.SND_ITEM_ROCK,
+				Assets.SND_BOULDER_SMASH,
+				Assets.SND_BOULDER_SCRAPE
+			);
 	}
 
 	@Override

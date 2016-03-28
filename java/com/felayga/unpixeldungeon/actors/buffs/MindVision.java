@@ -24,11 +24,13 @@
 package com.felayga.unpixeldungeon.actors.buffs;
 
 import com.felayga.unpixeldungeon.Dungeon;
+import com.felayga.unpixeldungeon.actors.Actor;
+import com.felayga.unpixeldungeon.mechanics.GameTime;
 import com.felayga.unpixeldungeon.ui.BuffIndicator;
 
 public class MindVision extends FlavourBuff {
 
-	public static final float DURATION = 20f;
+	public static final long DURATION = GameTime.TICK * 20;
 	
 	public int distance = 2;
 

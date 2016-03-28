@@ -37,10 +37,19 @@ public class RedButton extends Button {
 	protected NinePatch bg;
 	protected BitmapText text;
 	protected Image icon;
+
+	private boolean clickSounds;
+
+	public RedButton( String label )
+	{
+		this(label, true);
+	}
 			
-	public RedButton( String label ) {
+	public RedButton( String label, boolean clickSounds ) {
 		super();
-		
+
+		this.clickSounds = clickSounds;
+
 		text.text( label );
 		text.measure();
 	}
@@ -53,7 +62,7 @@ public class RedButton extends Button {
 		add( bg );
 		
 		text = PixelScene.createText( 9 );
-		add( text );
+		add(text);
 	}
 	
 	@Override
@@ -63,7 +72,7 @@ public class RedButton extends Button {
 		
 		bg.x = x;
 		bg.y = y;
-		bg.size( width, height );
+		bg.size(width, height);
 		
 		text.x = x + (width - text.width()) / 2;
 		text.y = y + (height - text.baseLine()) / 2;
@@ -77,7 +86,10 @@ public class RedButton extends Button {
 	@Override
 	protected void onTouchDown() {
 		bg.brightness( 1.2f );
-		Sample.INSTANCE.play( Assets.SND_CLICK );
+
+		if (clickSounds) {
+			Sample.INSTANCE.play(Assets.SND_CLICK);
+		}
 	}
 	
 	@Override

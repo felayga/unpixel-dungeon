@@ -29,6 +29,8 @@ import java.util.HashSet;
 import java.util.List;
 
 import com.felayga.unpixeldungeon.items.Generator;
+import com.felayga.unpixeldungeon.items.weapon.melee.mob.MeleeMobAttack;
+import com.felayga.unpixeldungeon.mechanics.GameTime;
 import com.watabou.noosa.audio.Sample;
 import com.felayga.unpixeldungeon.Assets;
 import com.felayga.unpixeldungeon.Dungeon;
@@ -75,22 +77,16 @@ public class Mimic extends Mob {
 		super.restoreFromBundle(bundle);
 	}
 	
-	@Override
-	public int damageRoll() {
-		return Random.NormalIntRange( HT / 10, HT / 4 );
-	}
-	
-	@Override
-	public int attackSkill( Char target ) {
-		return 9 + level;
-	}
-	
 	public void adjustStats( int level ) {
 		this.level = level;
+
+		DEXCHA = 9 + level;
 		
 		HP = HT = (1 + level) * 6;
 		EXP = 2 + 2 * (level - 1) / 5;
-		defenseSkill = attackSkill( null ) / 2;
+		defenseSkill = (9+level) / 2;
+
+		belongings.weapon = new MeleeMobAttack(GameTime.TICK, HT/10, HT/4);
 		
 		enemySeen = true;
 	}

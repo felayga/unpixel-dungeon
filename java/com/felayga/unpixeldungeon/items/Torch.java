@@ -25,6 +25,8 @@ package com.felayga.unpixeldungeon.items;
 
 import java.util.ArrayList;
 
+import com.felayga.unpixeldungeon.actors.Actor;
+import com.felayga.unpixeldungeon.mechanics.GameTime;
 import com.watabou.noosa.particles.Emitter;
 import com.felayga.unpixeldungeon.actors.buffs.Buff;
 import com.felayga.unpixeldungeon.actors.buffs.Light;
@@ -36,7 +38,7 @@ public class Torch extends Item {
 
 	public static final String AC_LIGHT	= "LIGHT";
 	
-	public static final float TIME_TO_LIGHT = 1;
+	public static final long TIME_TO_LIGHT = GameTime.TICK;
 	
 	{
 		name = "torch";
@@ -55,25 +57,23 @@ public class Torch extends Item {
 	}
 	
 	@Override
-	public void execute( Hero hero, String action ) {
-		
+	public boolean execute( Hero hero, String action ) {
 		if (action.equals( AC_LIGHT )) {
 			
-			hero.spend( TIME_TO_LIGHT );
+			hero.spend(TIME_TO_LIGHT, false);
 			hero.busy();
 			
-			hero.sprite.operate( hero.pos );
+			hero.sprite.operate(hero.pos);
+
+			hero.belongings.detach(this);
+			Buff.affect(hero, Light.class, Light.DURATION);
 			
-			detach( hero.belongings.backpack );
-			Buff.affect( hero, Light.class, Light.DURATION );
-			
-			Emitter emitter = hero.sprite.centerEmitter();
+			Emitter emitter = hero.sprite.centerEmitter(-1);
 			emitter.start( FlameParticle.FACTORY, 0.2f, 3 );
-			
+
+			return false;
 		} else {
-			
-			super.execute( hero, action );
-			
+			return super.execute( hero, action );
 		}
 	}
 	

@@ -23,6 +23,7 @@
  */
 package com.felayga.unpixeldungeon.scenes;
 
+import com.felayga.unpixeldungeon.windows.start.WndHeroInit;
 import com.watabou.noosa.BitmapTextMultiline;
 import com.watabou.noosa.Camera;
 import com.watabou.noosa.Game;
@@ -70,18 +71,18 @@ public class AmuletScene extends PixelScene {
 		amulet = new Image( Assets.AMULET );
 		add( amulet );
 		
-		RedButton btnExit = new RedButton( TXT_EXIT ) {
+		RedButton btnExit = new RedButton( TXT_EXIT, true ) {
 			@Override
 			protected void onClick() {
 				Dungeon.win( ResultDescriptions.WIN );
-				Dungeon.deleteGame( Dungeon.hero.heroClass, true );
+				Dungeon.deleteGame( WndHeroInit.savedGameIndex, false, true );
 				Game.switchScene( noText ? TitleScene.class : RankingsScene.class );
 			}
 		};
 		btnExit.setSize( WIDTH, BTN_HEIGHT );
 		add( btnExit );
 		
-		RedButton btnStay = new RedButton( TXT_STAY ) {
+		RedButton btnStay = new RedButton( TXT_STAY, true ) {
 			@Override
 			protected void onClick() {
 				onBackPressed();

@@ -28,6 +28,8 @@ import com.felayga.unpixeldungeon.actors.buffs.Buff;
 import com.felayga.unpixeldungeon.actors.buffs.Chill;
 import com.felayga.unpixeldungeon.actors.buffs.Frost;
 import com.felayga.unpixeldungeon.items.quest.Embers;
+import com.felayga.unpixeldungeon.items.weapon.melee.mob.IgniteChance;
+import com.felayga.unpixeldungeon.mechanics.GameTime;
 import com.felayga.unpixeldungeon.sprites.NewbornElementalSprite;
 
 public class NewbornElemental extends Elemental {
@@ -43,12 +45,8 @@ public class NewbornElemental extends Elemental {
 
 		EXP = 7;
 
+		belongings.weapon = new IgniteChance(GameTime.TICK, 8, 10);
 	}
-
-	@Override
-	public int damageRoll() {
-		return super.damageRoll()/2;
-	} //8-10
 
 	@Override
 	public void add(Buff buff) {

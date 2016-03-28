@@ -26,12 +26,17 @@ package com.felayga.unpixeldungeon.actors.mobs.npcs;
 import java.util.HashSet;
 
 import com.felayga.unpixeldungeon.Dungeon;
+import com.felayga.unpixeldungeon.actors.Actor;
 import com.felayga.unpixeldungeon.actors.Char;
 import com.felayga.unpixeldungeon.actors.blobs.ToxicGas;
 import com.felayga.unpixeldungeon.actors.buffs.Burning;
 import com.felayga.unpixeldungeon.actors.hero.Hero;
 import com.felayga.unpixeldungeon.actors.mobs.Mob;
+import com.felayga.unpixeldungeon.items.KindOfWeapon;
+import com.felayga.unpixeldungeon.items.weapon.melee.mob.MeleeMobAttack;
+import com.felayga.unpixeldungeon.items.weapon.melee.mob.SuicideAttack;
 import com.felayga.unpixeldungeon.levels.Level;
+import com.felayga.unpixeldungeon.mechanics.GameTime;
 import com.felayga.unpixeldungeon.sprites.CharSprite;
 import com.felayga.unpixeldungeon.sprites.MirrorSprite;
 import com.watabou.utils.Bundle;
@@ -45,57 +50,34 @@ public class MirrorImage extends NPC {
 		
 		state = HUNTING;
 
+		belongings.weapon = new SuicideAttack(GameTime.TICK, 1, 4);
 	}
 	
-	public int tier;
-	
-	private int attack;
-	private int damage;
-	
-	private static final String TIER	= "tier";
-	private static final String ATTACK	= "attack";
-	private static final String DAMAGE	= "damage";
+	private static final String TIER			= "tier";
+	private static final String STRCON_store	= "STRCON";
+	private static final String DEXCHA_store	= "DEXCHA";
+	private static final String INTWIS_store	= "INTWIS";
 	
 	@Override
 	public void storeInBundle( Bundle bundle ) {
-		super.storeInBundle( bundle );
-		bundle.put( TIER, tier );
-		bundle.put( ATTACK, attack );
-		bundle.put( DAMAGE, damage );
+		super.storeInBundle(bundle);
+		bundle.put( STRCON_store, STRCON );
+		bundle.put( DEXCHA_store, DEXCHA );
+		bundle.put( INTWIS_store, INTWIS );
 	}
 	
 	@Override
 	public void restoreFromBundle( Bundle bundle ) {
 		super.restoreFromBundle( bundle );
-		tier = bundle.getInt( TIER );
-		attack = bundle.getInt( ATTACK );
-		damage = bundle.getInt( DAMAGE );
+		STRCON = bundle.getInt( STRCON_store );
+		DEXCHA = bundle.getInt( DEXCHA_store );
+		INTWIS = bundle.getInt( INTWIS_store );
 	}
 	
 	public void duplicate( Hero hero ) {
-		tier = hero.tier();
-		attack = hero.attackSkill( hero );
-		damage = hero.damageRoll();
-	}
-	
-	@Override
-	public int attackSkill( Char target ) {
-		return attack;
-	}
-	
-	@Override
-	public int damageRoll() {
-		return damage;
-	}
-	
-	@Override
-	public int attackProc( Char enemy, int damage ) {
-		int dmg = super.attackProc( enemy, damage );
-
-		destroy();
-		sprite.die();
-		
-		return dmg;
+		STRCON = hero.STRCON;
+		DEXCHA = hero.DEXCHA;
+		INTWIS = hero.INTWIS;
 	}
 	
 	protected Char chooseEnemy() {
@@ -124,7 +106,7 @@ public class MirrorImage extends NPC {
 	@Override
 	public CharSprite sprite() {
 		CharSprite s = super.sprite();
-		((MirrorSprite)s).updateArmor( tier );
+		//((MirrorSprite)s).updateArmor( tier );
 		return s;
 	}
 
@@ -139,7 +121,7 @@ public class MirrorImage extends NPC {
 		Dungeon.hero.sprite.move( Dungeon.hero.pos, curPos );
 		Dungeon.hero.move( curPos );
 		
-		Dungeon.hero.spend( 1 / Dungeon.hero.speed() );
+		Dungeon.hero.spend( GameTime.TICK * GameTime.TICK / Dungeon.hero.speed(), false );
 		Dungeon.hero.busy();
 	}
 

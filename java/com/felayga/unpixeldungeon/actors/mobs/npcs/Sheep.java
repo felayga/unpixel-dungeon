@@ -23,6 +23,8 @@
  */
 package com.felayga.unpixeldungeon.actors.mobs.npcs;
 
+import com.felayga.unpixeldungeon.actors.Actor;
+import com.felayga.unpixeldungeon.mechanics.GameTime;
 import com.felayga.unpixeldungeon.sprites.SheepSprite;
 import com.watabou.utils.Random;
 
@@ -35,7 +37,7 @@ public class Sheep extends NPC {
 		spriteClass = SheepSprite.class;
 	}
 
-	public float lifespan;
+	public long lifespan;
 
 	private boolean initialized = false;
 
@@ -49,7 +51,7 @@ public class Sheep extends NPC {
 
 		} else {
 			initialized = true;
-			spend( lifespan + Random.Float(2) );
+			spend( lifespan + Random.Long(GameTime.TICK * 3), false );
 		}
 		return true;
 	}

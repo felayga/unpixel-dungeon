@@ -46,7 +46,7 @@ public class ScrollOfMirrorImage extends Scroll {
 	@Override
 	protected void doRead() {
 		
-		ArrayList<Integer> respawnPoints = new ArrayList<Integer>();
+		ArrayList<Integer> respawnPoints = new ArrayList<>();
 		
 		for (int i=0; i < Level.NEIGHBOURS8.length; i++) {
 			int p = curUser.pos + Level.NEIGHBOURS8[i];
@@ -75,7 +75,7 @@ public class ScrollOfMirrorImage extends Scroll {
 		Sample.INSTANCE.play( Assets.SND_READ );
 		Invisibility.dispel();
 		
-		curUser.spendAndNext( TIME_TO_READ );
+		curUser.spend( TIME_TO_READ, true );
 	}
 	
 	@Override

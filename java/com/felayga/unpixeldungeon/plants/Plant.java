@@ -27,6 +27,7 @@ import java.util.ArrayList;
 
 import com.felayga.unpixeldungeon.actors.Actor;
 import com.felayga.unpixeldungeon.items.artifacts.SandalsOfNature;
+import com.felayga.unpixeldungeon.mechanics.GameTime;
 import com.watabou.noosa.audio.Sample;
 import com.felayga.unpixeldungeon.Assets;
 import com.felayga.unpixeldungeon.Dungeon;
@@ -126,7 +127,7 @@ public abstract class Plant implements Bundlable {
 		
 		private static final String TXT_INFO = "Throw this seed to the place where you want to grow %s.\n\n%s";
 		
-		private static final float TIME_TO_PLANT = 1f;
+		private static final long TIME_TO_PLANT = GameTime.TICK;
 		
 		{
 			stackable = true;
@@ -155,19 +156,17 @@ public abstract class Plant implements Bundlable {
 		}
 		
 		@Override
-		public void execute( Hero hero, String action ) {
+		public boolean execute( Hero hero, String action ) {
 			if (action.equals( AC_PLANT )) {
-							
-				hero.spend( TIME_TO_PLANT );
+				hero.spend(TIME_TO_PLANT, false);
 				hero.busy();
-				((Seed)detach( hero.belongings.backpack )).onThrow( hero.pos );
-				
+				((Seed)hero.belongings.detach(this)).onThrow(hero.pos);
+
 				hero.sprite.operate( hero.pos );
-				
+
+				return false;
 			} else {
-				
-				super.execute (hero, action );
-				
+				return super.execute (hero, action );
 			}
 		}
 		

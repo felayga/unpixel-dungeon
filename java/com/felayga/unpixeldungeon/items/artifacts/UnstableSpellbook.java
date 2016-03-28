@@ -35,10 +35,12 @@ import com.felayga.unpixeldungeon.items.scrolls.Scroll;
 import com.felayga.unpixeldungeon.items.scrolls.ScrollOfIdentify;
 import com.felayga.unpixeldungeon.items.scrolls.ScrollOfMagicMapping;
 import com.felayga.unpixeldungeon.items.scrolls.ScrollOfRemoveCurse;
+import com.felayga.unpixeldungeon.mechanics.BUCStatus;
+import com.felayga.unpixeldungeon.mechanics.GameTime;
 import com.felayga.unpixeldungeon.scenes.GameScene;
 import com.felayga.unpixeldungeon.sprites.ItemSpriteSheet;
 import com.felayga.unpixeldungeon.utils.GLog;
-import com.felayga.unpixeldungeon.windows.WndBag;
+import com.felayga.unpixeldungeon.windows.WndBackpack;
 import com.watabou.noosa.audio.Sample;
 import com.watabou.utils.Bundle;
 import com.watabou.utils.Random;
@@ -68,7 +70,7 @@ public class UnstableSpellbook extends Artifact {
 	private final ArrayList<String> scrolls = new ArrayList<String>();
 
 	protected String inventoryTitle = "Select a scroll";
-	protected WndBag.Mode mode = WndBag.Mode.SCROLL;
+	protected WndBackpack.Mode mode = WndBackpack.Mode.SCROLL;
 
 	public UnstableSpellbook() {
 		super();
@@ -88,21 +90,20 @@ public class UnstableSpellbook extends Artifact {
 	@Override
 	public ArrayList<String> actions( Hero hero ) {
 		ArrayList<String> actions = super.actions( hero );
-		if (isEquipped( hero ) && charge > 0 && !cursed)
+		if (isEquipped( hero ) && charge > 0 && bucStatus != BUCStatus.Cursed)
 			actions.add(AC_READ);
-		if (isEquipped( hero ) && level < levelCap && !cursed)
+		if (isEquipped( hero ) && level < levelCap && bucStatus != BUCStatus.Cursed)
 			actions.add(AC_ADD);
 		return actions;
 	}
 
 	@Override
-	public void execute( Hero hero, String action ) {
+	public boolean execute( Hero hero, String action ) {
 		if (action.equals( AC_READ )) {
-
 			if (hero.buff( Blindness.class ) != null) GLog.w("You cannot read from the book while blinded.");
 			else if (!isEquipped( hero ))             GLog.i("You need to equip your spellbook to do that.");
 			else if (charge == 0)                     GLog.i("Your spellbook is out of energy for now.");
-			else if (cursed)                          GLog.i("Your cannot read from a cursed spellbook.");
+			else if (bucStatus == BUCStatus.Cursed)   GLog.i("Your cannot read from a cursed spellbook.");
 			else {
 				charge--;
 
@@ -118,11 +119,13 @@ public class UnstableSpellbook extends Artifact {
 				scroll.ownedByBook = true;
 				scroll.execute(hero, AC_READ);
 			}
-
+			return false;
 		} else if (action.equals( AC_ADD )) {
 			GameScene.selectItem(itemSelector, mode, inventoryTitle);
-		} else
-			super.execute( hero, action );
+			return false;
+		} else {
+			return super.execute(hero, action);
+		}
 	}
 
 	@Override
@@ -131,14 +134,14 @@ public class UnstableSpellbook extends Artifact {
 	}
 
 	@Override
-	public Item upgrade() {
+	public Item upgrade(Item source, int n) {
 		chargeCap = (((level+1)/2)+3);
 
 		//for artifact transmutation.
 		while (scrolls.size() > (levelCap-1-level))
 			scrolls.remove(0);
 
-		return super.upgrade();
+		return super.upgrade(source, n);
 	}
 
 	@Override
@@ -159,7 +162,7 @@ public class UnstableSpellbook extends Artifact {
 
 		if (isEquipped (Dungeon.hero)) {
 
-			if (!cursed)
+			if (bucStatus != BUCStatus.Cursed)
 				desc += "The book fits firmly at your side, sending you the occasional zip of static energy.";
 			else
 				desc += "The cursed book has bound itself to you, it is inhibiting your ability to use most scrolls.";
@@ -201,7 +204,7 @@ public class UnstableSpellbook extends Artifact {
 		@Override
 		public boolean act() {
 			LockedFloor lock = target.buff(LockedFloor.class);
-			if (charge < chargeCap && !cursed && (lock == null || lock.regenOn())) {
+			if (charge < chargeCap && bucStatus != BUCStatus.Cursed && (lock == null || lock.regenOn())) {
 				partialCharge += 1 / (150f - (chargeCap - charge)*15f);
 
 				if (partialCharge >= 1) {
@@ -216,13 +219,13 @@ public class UnstableSpellbook extends Artifact {
 
 			updateQuickslot();
 
-			spend( TICK );
+			spend(GameTime.TICK, false );
 
 			return true;
 		}
 	}
 
-	protected WndBag.Listener itemSelector = new WndBag.Listener() {
+	protected WndBackpack.Listener itemSelector = new WndBackpack.Listener() {
 		@Override
 		public void onSelect(Item item) {
 			if (item != null && item instanceof Scroll && item.isIdentified()){
@@ -230,16 +233,16 @@ public class UnstableSpellbook extends Artifact {
 				Hero hero = Dungeon.hero;
 				for (int i = 0; ( i <= 1 && i < scrolls.size() ); i++){
 					if (scrolls.get(i).equals(scroll)){
-						hero.sprite.operate( hero.pos );
+						hero.sprite.operate(hero.pos);
 						hero.busy();
-						hero.spend( 2f );
+						hero.spend(GameTime.TICK * 2, false );
 						Sample.INSTANCE.play(Assets.SND_BURNING);
-						hero.sprite.emitter().burst( ElmoParticle.FACTORY, 12 );
+						hero.sprite.emitter().burst(ElmoParticle.FACTORY, 12);
 
 						scrolls.remove(i);
-						item.detach(hero.belongings.backpack);
+						hero.belongings.detach(item);
 
-						upgrade();
+						upgrade(item, 1);
 						GLog.i("You infuse the scroll's energy into the book.");
 						return;
 					}

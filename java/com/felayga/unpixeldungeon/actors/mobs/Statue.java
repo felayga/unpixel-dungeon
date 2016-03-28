@@ -41,28 +41,32 @@ import com.watabou.utils.Bundle;
 import com.watabou.utils.Random;
 
 public class Statue extends Mob {
-	
+
+	public Weapon specialWeapon;
+
 	{
 		name = "animated statue";
 		spriteClass = StatueSprite.class;
 
 		canOpenDoors = true;
 
+		DEXCHA = 9 + Dungeon.depth;
+
 		EXP = 0;
 		state = PASSIVE;
 	}
-	
-	protected Weapon weapon;
 	
 	public Statue() {
 		super();
 		
 		do {
-			weapon = (Weapon)Generator.random( Generator.Category.WEAPON );
-		} while (!(weapon instanceof MeleeWeapon) || weapon.level < 0);
-		
-		weapon.identify();
-		weapon.enchant( Enchantment.random() );
+			specialWeapon = (Weapon)Generator.random( Generator.Category.WEAPON );
+		} while (!(specialWeapon instanceof MeleeWeapon) || specialWeapon.level < 0);
+
+		belongings.weapon = specialWeapon;
+
+		specialWeapon.identify();
+		specialWeapon.enchant( Enchantment.random() );
 		
 		HP = HT = 15 + Dungeon.depth * 5;
 		defenseSkill = 4 + Dungeon.depth;
@@ -73,13 +77,15 @@ public class Statue extends Mob {
 	@Override
 	public void storeInBundle( Bundle bundle ) {
 		super.storeInBundle( bundle );
-		bundle.put( WEAPON, weapon );
+		bundle.put( WEAPON, specialWeapon );
 	}
 	
 	@Override
 	public void restoreFromBundle( Bundle bundle ) {
 		super.restoreFromBundle( bundle );
-		weapon = (Weapon)bundle.get( WEAPON );
+
+		specialWeapon = (Weapon)bundle.get( WEAPON );
+		belongings.weapon = specialWeapon;
 	}
 	
 	@Override
@@ -88,26 +94,6 @@ public class Statue extends Mob {
 			Journal.add( Journal.Feature.STATUE );
 		}
 		return super.act();
-	}
-	
-	@Override
-	public int damageRoll() {
-		return Random.NormalIntRange( weapon.MIN, weapon.MAX );
-	}
-	
-	@Override
-	public int attackSkill( Char target ) {
-		return (int)((9 + Dungeon.depth) * weapon.ACU);
-	}
-	
-	@Override
-	protected float attackDelay() {
-		return weapon.DLY;
-	}
-	
-	@Override
-	public int dr() {
-		return Dungeon.depth;
 	}
 	
 	@Override
@@ -121,20 +107,8 @@ public class Statue extends Mob {
 	}
 	
 	@Override
-	public int attackProc( Char enemy, int damage ) {
-		weapon.proc( this, enemy, damage );
-		return damage;
-	}
-	
-	@Override
 	public void beckon( int cell ) {
 		// Do nothing
-	}
-	
-	@Override
-	public void die( Object cause ) {
-		Dungeon.level.drop( weapon, pos ).sprite.drop();
-		super.die( cause );
 	}
 	
 	@Override
@@ -153,7 +127,7 @@ public class Statue extends Mob {
 	public String description() {
 		return
 			"You would think that it's just another one of this dungeon's ugly statues, but its red glowing eyes give it away." +
-			"\n\nWhile the statue itself is made of stone, the _" + weapon.name() + "_, it's wielding, looks real.";
+			"\n\nWhile the statue itself is made of stone, the _" + belongings.weapon.getDisplayName() + "_, it's wielding, looks real.";
 	}
 	
 	private static final HashSet<Class<?>> RESISTANCES = new HashSet<Class<?>>();

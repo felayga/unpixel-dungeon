@@ -23,8 +23,15 @@
  */
 package com.felayga.unpixeldungeon.items.scrolls;
 
+import com.felayga.unpixeldungeon.ShatteredPixelDungeon;
 import com.felayga.unpixeldungeon.actors.Char;
+import com.felayga.unpixeldungeon.actors.mobs.Mob;
 import com.felayga.unpixeldungeon.effects.Speck;
+import com.felayga.unpixeldungeon.items.artifacts.DriedRose;
+import com.felayga.unpixeldungeon.mechanics.Constant;
+import com.felayga.unpixeldungeon.scenes.InterlevelScene;
+import com.felayga.unpixeldungeon.windows.WndOptions;
+import com.watabou.noosa.Game;
 import com.watabou.noosa.audio.Sample;
 import com.felayga.unpixeldungeon.Assets;
 import com.felayga.unpixeldungeon.Dungeon;
@@ -32,14 +39,15 @@ import com.felayga.unpixeldungeon.actors.buffs.Invisibility;
 import com.felayga.unpixeldungeon.actors.hero.Hero;
 import com.felayga.unpixeldungeon.utils.GLog;
 import com.watabou.noosa.tweeners.AlphaTweener;
+import com.watabou.utils.Random;
 
 public class ScrollOfTeleportation extends Scroll {
 
-	public static final String TXT_TELEPORTED =
-		"In a blink of an eye you were teleported to another location of the level.";
+	public static final String TXT_TELEPORTED = "In a blink of an eye you were teleported to another location of the level.";
 	
-	public static final String TXT_NO_TELEPORT =
-		"Strong magic aura of this place prevents you from teleporting!";
+	public static final String TXT_NO_TELEPORT = "A mysterious force prevents you from teleporting.";
+
+	public static final String TXT_MISSED_TELEPORT = "You feel disoriented for a moment.";
 	
 	{
 		name = "Scroll of Teleportation";
@@ -48,18 +56,70 @@ public class ScrollOfTeleportation extends Scroll {
 	
 	@Override
 	protected void doRead() {
-
-		Sample.INSTANCE.play( Assets.SND_READ );
+		Sample.INSTANCE.play(Assets.SND_READ);
 		Invisibility.dispel();
-		
-		teleportHero( curUser );
-		setKnown();
-		
-		curUser.spendAndNext( TIME_TO_READ );
-	}
-	
-	public static void teleportHero( Hero  hero ) {
 
+		setKnown();
+		curUser.spend(TIME_TO_READ, true);
+
+		if (canTeleport(curUser)) {
+			switch (bucStatus) {
+				case Cursed:
+					if (Random.Int(5) != 0) {
+						int target = Dungeon.depth;
+
+						while (target == Dungeon.depth) {
+							target = Random.Int(Dungeon.depth + 3) + 1;
+						}
+
+						GLog.d("cursed levelport to " + target);
+
+						for (Mob mob : Dungeon.level.mobs.toArray(new Mob[0]))
+							if (mob instanceof DriedRose.GhostHero) mob.destroy();
+
+						InterlevelScene.mode = InterlevelScene.Mode.TELEPORT;
+						InterlevelScene.teleportDepth = target;
+						InterlevelScene.teleportPos = Constant.POS_RANDOM;
+						Game.switchScene(InterlevelScene.class);
+					}
+					else {
+						GLog.w(TXT_MISSED_TELEPORT);
+					}
+					break;
+				case Uncursed:
+					doTeleport(curUser);
+					break;
+				case Blessed:
+					ShatteredPixelDungeon.scene().add(
+							new WndOptions(getName(), "Do you wish to teleport?",
+								"YES",
+								"NO") {
+
+							@Override
+							protected void onSelect(int index) {
+								switch(index) {
+									case 0:
+										doTeleport(curUser);
+										break;
+								}
+							}
+						});
+					break;
+			}
+		}
+	}
+
+	public static boolean canTeleport(Char user) {
+		if (Dungeon.bossLevel())
+		{
+			GLog.w(TXT_NO_TELEPORT);
+			return false;
+		}
+
+		return true;
+	}
+
+	public static void doTeleport( Char user ) {
 		int count = 10;
 		int pos;
 		do {
@@ -68,19 +128,18 @@ public class ScrollOfTeleportation extends Scroll {
 				break;
 			}
 		} while (pos == -1);
-		
-		if (pos == -1 || Dungeon.bossLevel()) {
-			
-			GLog.w( TXT_NO_TELEPORT );
-			
-		} else {
 
-			appear( hero, pos );
-			Dungeon.level.press( pos, hero );
-			Dungeon.observe();
-			
-			GLog.i( TXT_TELEPORTED );
-			
+		if (pos != -1) {
+			appear(user, pos);
+			Dungeon.level.press(pos, user);
+
+			if (user instanceof Hero) {
+				Dungeon.observe();
+			}
+
+			GLog.i(TXT_TELEPORTED);
+		} else {
+			GLog.w(TXT_MISSED_TELEPORT);
 		}
 	}
 

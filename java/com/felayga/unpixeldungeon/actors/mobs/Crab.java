@@ -23,41 +23,30 @@
  */
 package com.felayga.unpixeldungeon.actors.mobs;
 
-import com.felayga.unpixeldungeon.actors.Char;
 import com.felayga.unpixeldungeon.items.food.MysteryMeat;
+import com.felayga.unpixeldungeon.items.weapon.melee.mob.MeleeMobAttack;
+import com.felayga.unpixeldungeon.mechanics.GameTime;
 import com.felayga.unpixeldungeon.sprites.CrabSprite;
-import com.watabou.utils.Random;
 
 public class Crab extends Mob {
 
 	{
 		name = "sewer crab";
 		spriteClass = CrabSprite.class;
-		
+
+		DEXCHA = 12;
+
 		HP = HT = 15;
 		defenseSkill = 5;
-		baseSpeed = 2f;
+		movementSpeed = GameTime.TICK * 2;
 		
 		EXP = 4;
 		maxLvl = 9;
 		
 		loot = new MysteryMeat();
 		lootChance = 0.167f;
-	}
-	
-	@Override
-	public int damageRoll() {
-		return Random.NormalIntRange( 3, 6 );
-	}
-	
-	@Override
-	public int attackSkill( Char target ) {
-		return 12;
-	}
-	
-	@Override
-	public int dr() {
-		return 4;
+
+		belongings.weapon = new MeleeMobAttack(GameTime.TICK, 3, 6);
 	}
 	
 	@Override

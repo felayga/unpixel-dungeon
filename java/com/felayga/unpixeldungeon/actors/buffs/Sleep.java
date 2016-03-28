@@ -23,6 +23,9 @@
  */
 package com.felayga.unpixeldungeon.actors.buffs;
 
+import com.felayga.unpixeldungeon.actors.Actor;
+import com.felayga.unpixeldungeon.mechanics.GameTime;
+
 public class Sleep extends FlavourBuff {
 
 	@Override
@@ -30,6 +33,6 @@ public class Sleep extends FlavourBuff {
 		if (on) target.sprite.idle();
 	}
 
-	public static final float SWS	= 1.5f;
+	public static final long SWS	= GameTime.TICK * 3 / 2;
 	
 }

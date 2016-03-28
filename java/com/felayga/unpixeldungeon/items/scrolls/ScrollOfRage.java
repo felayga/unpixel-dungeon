@@ -23,9 +23,11 @@
  */
 package com.felayga.unpixeldungeon.items.scrolls;
 
+import com.felayga.unpixeldungeon.actors.Actor;
 import com.felayga.unpixeldungeon.actors.mobs.Mimic;
 import com.felayga.unpixeldungeon.items.Heap;
 import com.felayga.unpixeldungeon.levels.Level;
+import com.felayga.unpixeldungeon.mechanics.GameTime;
 import com.watabou.noosa.audio.Sample;
 import com.felayga.unpixeldungeon.Assets;
 import com.felayga.unpixeldungeon.Dungeon;
@@ -46,10 +48,10 @@ public class ScrollOfRage extends Scroll {
 	@Override
 	protected void doRead() {
 
-		for (Mob mob : Dungeon.level.mobs.toArray( new Mob[0] )) {
+		for (Mob mob : Dungeon.level.mobs.toArray( new Mob[Dungeon.level.mobs.size()] )) {
 			mob.beckon( curUser.pos );
 			if (Level.fieldOfView[mob.pos]) {
-				Buff.prolong(mob, Amok.class, 5f);
+				Buff.prolong(mob, Amok.class, GameTime.TICK * 5);
 			}
 		}
 
@@ -66,11 +68,11 @@ public class ScrollOfRage extends Scroll {
 		GLog.w( "The scroll emits an enraging roar that echoes throughout the dungeon!" );
 		setKnown();
 		
-		curUser.sprite.centerEmitter().start( Speck.factory( Speck.SCREAM ), 0.3f, 3 );
+		curUser.sprite.centerEmitter(-1).start( Speck.factory( Speck.SCREAM ), 0.3f, 3 );
 		Sample.INSTANCE.play( Assets.SND_CHALLENGE );
 		Invisibility.dispel();
 		
-		curUser.spendAndNext( TIME_TO_READ );
+		curUser.spend( TIME_TO_READ, true );
 	}
 	
 	@Override

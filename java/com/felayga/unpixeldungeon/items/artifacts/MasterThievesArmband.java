@@ -89,7 +89,7 @@ public class MasterThievesArmband extends Artifact {
 			}
 			while(exp >= 600 && level < levelCap) {
 				exp -= 600;
-				upgrade();
+				upgrade(null, 1);
 			}
 			return true;
 		}

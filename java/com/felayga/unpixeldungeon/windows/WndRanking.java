@@ -23,6 +23,7 @@ package com.felayga.unpixeldungeon.windows;
 import java.util.Locale;
 
 
+import com.felayga.unpixeldungeon.mechanics.BUCStatus;
 import com.watabou.noosa.BitmapText;
 import com.watabou.noosa.ColorBlock;
 import com.watabou.noosa.Game;
@@ -37,7 +38,7 @@ import com.felayga.unpixeldungeon.Statistics;
 import com.felayga.unpixeldungeon.actors.hero.Belongings;
 import com.felayga.unpixeldungeon.items.Item;
 import com.felayga.unpixeldungeon.scenes.PixelScene;
-import com.felayga.unpixeldungeon.sprites.HeroSprite;
+import com.felayga.unpixeldungeon.sprites.hero.HeroSprite;
 import com.felayga.unpixeldungeon.ui.BadgesList;
 import com.felayga.unpixeldungeon.ui.Icons;
 import com.felayga.unpixeldungeon.ui.ItemSlot;
@@ -166,14 +167,14 @@ public class WndRanking extends WndTabbed {
 		private static final String TXT_ANKHS	= "Ankhs Used";
 		
 		public StatsTab() {
-			super();
+			super(-1);
 
 			if (Dungeon.challenges > 0) GAP--;
 			
 			String heroClass = Dungeon.hero.className();
 			
 			IconTitle title = new IconTitle();
-			title.icon( HeroSprite.avatar( Dungeon.hero.heroClass, Dungeon.hero.tier() ) );
+			title.icon( HeroSprite.avatar( 0, 0 ) );
 			title.label( Utils.format( TXT_TITLE, Dungeon.hero.lvl, heroClass ).toUpperCase( Locale.ENGLISH ) );
 			title.color(Window.SHPX_COLOR);
 			title.setRect( 0, 0, WIDTH, 0 );
@@ -196,7 +197,7 @@ public class WndRanking extends WndTabbed {
 
 			pos += GAP + GAP;
 			
-			pos = statSlot( this, TXT_STR, Integer.toString( Dungeon.hero.STR ), pos );
+			pos = statSlot( this, TXT_STR, Integer.toString( Dungeon.hero.STRCON ), pos );
 			pos = statSlot( this, TXT_HEALTH, Integer.toString( Dungeon.hero.HT ), pos );
 			
 			pos += GAP;
@@ -205,7 +206,7 @@ public class WndRanking extends WndTabbed {
 			
 			pos += GAP;
 			
-			pos = statSlot( this, TXT_DEPTH, Integer.toString( Statistics.deepestFloor ), pos );
+			pos = statSlot( this, TXT_DEPTH, "nope", pos );
 			pos = statSlot( this, TXT_ENEMIES, Integer.toString( Statistics.enemiesSlain ), pos );
 			pos = statSlot( this, TXT_GOLD, Integer.toString( Statistics.goldCollected ), pos );
 			
@@ -237,7 +238,7 @@ public class WndRanking extends WndTabbed {
 		private float pos;
 		
 		public ItemsTab() {
-			super();
+			super(-1);
 			
 			Belongings stuff = Dungeon.hero.belongings;
 			if (stuff.weapon != null) {
@@ -308,7 +309,7 @@ public class WndRanking extends WndTabbed {
 	private class BadgesTab extends Group {
 		
 		public BadgesTab() {
-			super();
+			super(-1);
 			
 			camera = WndRanking.this.camera;
 			
@@ -336,13 +337,7 @@ public class WndRanking extends WndTabbed {
 			this.item = item;
 			
 			slot.item( item );
-			if (item.cursed && item.cursedKnown) {
-				bg.ra = +0.2f;
-				bg.ga = -0.1f;
-			} else if (!item.isIdentified()) {
-				bg.ra = 0.1f;
-				bg.ba = 0.1f;
-			}
+			BUCStatus.colorizeBackground(bg, item.visibleBucStatus());
 		}
 		
 		@Override
@@ -370,7 +365,7 @@ public class WndRanking extends WndTabbed {
 			name.x = slot.right() + 2;
 			name.y = y + (height - name.baseLine()) / 2;
 			
-			String str = Utils.capitalize( item.name() );
+			String str = Utils.capitalize( item.getDisplayName() );
 			name.text( str );
 			name.measure();
 			if (name.width() > width - name.x) {

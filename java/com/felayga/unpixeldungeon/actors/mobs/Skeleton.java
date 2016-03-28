@@ -25,6 +25,8 @@ package com.felayga.unpixeldungeon.actors.mobs;
 
 import java.util.HashSet;
 
+import com.felayga.unpixeldungeon.items.weapon.melee.mob.MeleeMobAttack;
+import com.felayga.unpixeldungeon.mechanics.GameTime;
 import com.watabou.noosa.audio.Sample;
 import com.felayga.unpixeldungeon.Assets;
 import com.felayga.unpixeldungeon.Dungeon;
@@ -49,6 +51,8 @@ public class Skeleton extends Mob {
 
 		canOpenDoors = true;
 
+		DEXCHA = 12;
+
 		HP = HT = 25;
 		defenseSkill = 9;
 		
@@ -57,11 +61,8 @@ public class Skeleton extends Mob {
 
 		loot = Generator.Category.WEAPON;
 		lootChance = 0.2f;
-	}
-	
-	@Override
-	public int damageRoll() {
-		return Random.NormalIntRange( 3, 8 );
+
+		belongings.weapon = new MeleeMobAttack(GameTime.TICK, 3, 8);
 	}
 	
 	@Override
@@ -73,7 +74,7 @@ public class Skeleton extends Mob {
 		for (int i=0; i < Level.NEIGHBOURS8.length; i++) {
 			Char ch = findChar( pos + Level.NEIGHBOURS8[i] );
 			if (ch != null && ch.isAlive()) {
-				int damage = Math.max( 0,  damageRoll() - Random.IntRange( 0, ch.dr() / 2 ) );
+				int damage = Math.max( 0,  belongings.weapon.damageRoll() );
 				ch.damage( damage, this );
 				if (ch == Dungeon.hero && !ch.isAlive()) {
 					heroKilled = true;
@@ -101,16 +102,6 @@ public class Skeleton extends Mob {
 			}
 		}
 		return loot;
-	}
-	
-	@Override
-	public int attackSkill( Char target ) {
-		return 12;
-	}
-	
-	@Override
-	public int dr() {
-		return 5;
 	}
 	
 	@Override

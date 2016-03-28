@@ -26,27 +26,24 @@ package com.felayga.unpixeldungeon.items.weapon.melee;
 import com.felayga.unpixeldungeon.Dungeon;
 import com.felayga.unpixeldungeon.items.Item;
 import com.felayga.unpixeldungeon.items.weapon.Weapon;
+import com.felayga.unpixeldungeon.mechanics.BUCStatus;
 import com.felayga.unpixeldungeon.utils.Utils;
 import com.watabou.utils.Random;
 
 public class MeleeWeapon extends Weapon {
-	
-	private int tier;
-	
-	public MeleeWeapon( int tier, float acu, float dly ) {
-		super();
+	public MeleeWeapon( long delay, int damageMin, int damageMax ) {
+		super(delay, damageMin, damageMax);
+
 		
-		this.tier = tier;
+		//ACU = acu;
+
+		//STR = typicalSTR();
 		
-		ACU = acu;
-		DLY = dly;
-		
-		STR = typicalSTR();
-		
-		MIN = min();
-		MAX = max();
+		//MIN = min();
+		//MAX = max();
 	}
-	
+
+	/*
 	private int min() {
 		return tier;
 	}
@@ -54,35 +51,7 @@ public class MeleeWeapon extends Weapon {
 	private int max() {
 		return (int)((tier * tier - tier + 10) / ACU * DLY);
 	}
-	
-	@Override
-	public Item upgrade() {
-		return upgrade( false );
-	}
-	
-	public Item upgrade( boolean enchant ) {
-		STR--;
-		MIN++;
-		MAX += tier;
-		
-		return super.upgrade( enchant );
-	}
-	
-	public Item safeUpgrade() {
-		return upgrade( enchantment != null );
-	}
-	
-	@Override
-	public Item degrade() {
-		STR++;
-		MIN--;
-		MAX -= tier;
-		return super.degrade();
-	}
-	
-	public int typicalSTR() {
-		return 8 + tier * 2;
-	}
+	*/
 	
 	@Override
 	public String info() {
@@ -93,9 +62,11 @@ public class MeleeWeapon extends Weapon {
 		
 		String quality = levelKnown && level != 0 ? (level > 0 ? "upgraded" : "degraded") : "";
 		info.append( p );
+		/*
 		info.append( "This " + name + " is " + Utils.indefinite( quality ) );
 		info.append( " tier-" + tier + " melee weapon. " );
-		
+		*/
+		/*
 		if (levelKnown) {
 			info.append( "Its average damage is " +
 				Math.round((MIN + (MAX - MIN) / 2)*(imbue == Imbue.LIGHT ? 0.7f : (imbue == Imbue.HEAVY ? 1.5f : 1)))
@@ -108,7 +79,8 @@ public class MeleeWeapon extends Weapon {
 				info.append( "Probably this weapon is too heavy for you. " );
 			}
 		}
-		
+		*/
+		/*
 		if (DLY != 1f) {
 			info.append( "This is a rather " + (DLY < 1f ? "fast" : "slow") );
 			if (ACU != 1f) {
@@ -132,11 +104,11 @@ public class MeleeWeapon extends Weapon {
 				break;
 			case NONE:
 		}
-		
+		*/
 		if (enchantment != null) {
 			info.append( "It is enchanted." );
 		}
-		
+		/*
 		if (levelKnown && Dungeon.hero.belongings.backpack.items.contains( this )) {
 			if (STR > Dungeon.hero.STR()) {
 				info.append( p );
@@ -151,13 +123,13 @@ public class MeleeWeapon extends Weapon {
 					"of your attack with this " + name + " is increased." );
 			}
 		}
-		
+		*/
 		if (isEquipped( Dungeon.hero )) {
 			info.append( p );
 			info.append( "You hold the " + name + " at the ready" +
-				(cursed ? ", and because it is cursed, you are powerless to let go." : ".") );
+				(bucStatus == BUCStatus.Cursed ? ", and because it is cursed, you are powerless to let go." : ".") );
 		} else {
-			if (cursedKnown && cursed) {
+			if (bucStatusKnown && bucStatus == BUCStatus.Cursed) {
 				info.append( p );
 				info.append( "You can feel a malevolent magic lurking within the " + name +"." );
 			}
@@ -168,11 +140,11 @@ public class MeleeWeapon extends Weapon {
 	
 	@Override
 	public int price() {
-		int price = 20 * (1 << (tier - 1));
+		int price = 20;
 		if (enchantment != null) {
 			price *= 1.5;
 		}
-		if (cursed && cursedKnown) {
+		if (bucStatus == BUCStatus.Cursed) {
 			price /= 2;
 		}
 		if (levelKnown) {

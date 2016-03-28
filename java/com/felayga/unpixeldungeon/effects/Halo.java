@@ -60,7 +60,6 @@ public class Halo extends Image {
 	}
 	
 	public Halo( float radius, int color, float brightness ) {
-		
 		this();
 		
 		hardlight( color );

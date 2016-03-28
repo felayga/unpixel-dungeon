@@ -23,6 +23,7 @@
  */
 package com.felayga.unpixeldungeon.items.scrolls;
 
+import com.felayga.unpixeldungeon.mechanics.BUCStatus;
 import com.watabou.noosa.audio.Sample;
 import com.felayga.unpixeldungeon.Assets;
 import com.felayga.unpixeldungeon.Dungeon;
@@ -34,49 +35,77 @@ import com.felayga.unpixeldungeon.levels.Level;
 import com.felayga.unpixeldungeon.levels.Terrain;
 import com.felayga.unpixeldungeon.scenes.GameScene;
 import com.felayga.unpixeldungeon.utils.GLog;
+import com.watabou.utils.Random;
 
 public class ScrollOfMagicMapping extends Scroll {
 
-	private static final String TXT_LAYOUT = "You are now aware of the level layout.";
-	
+	private static final String TXT_LAYOUT = "A map coalesces in your mind!";
+	private static final String TXT_LAYOUT_CURSED = "Unfortunately, you can't grasp the details.";
+
 	{
 		name = "Scroll of Magic Mapping";
 		initials = "MM";
+	}
+
+	private boolean discoverCell(int index, boolean allowDiscovery) {
+		int terr = Dungeon.level.map[index];
+
+		if (Level.discoverable[index]) {
+
+			Dungeon.level.mapped[index] = true;
+
+			if (allowDiscovery && (Terrain.flags[terr] & Terrain.FLAG_SECRET) != 0) {
+
+				Dungeon.level.discover(index);
+
+				if (Dungeon.visible[index]) {
+					GameScene.discoverTile(index, terr);
+					discover(index);
+
+					return true;
+				}
+			}
+		}
+
+		return false;
 	}
 	
 	@Override
 	protected void doRead() {
 		
 		int length = Level.LENGTH;
-		int[] map = Dungeon.level.map;
-		boolean[] mapped = Dungeon.level.mapped;
-		boolean[] discoverable = Level.discoverable;
 		
 		boolean noticed = false;
-		
-		for (int i=0; i < length; i++) {
-			
-			int terr = map[i];
-			
-			if (discoverable[i]) {
-				
-				mapped[i] = true;
-				if ((Terrain.flags[terr] & Terrain.SECRET) != 0) {
-					
-					Dungeon.level.discover( i );
-					
-					if (Dungeon.visible[i]) {
-						GameScene.discoverTile( i, terr );
-						discover( i );
-						
-						noticed = true;
-					}
-				}
+
+
+		if (bucStatus == BUCStatus.Cursed) {
+			for (int i=0;i<length/14;i++) {
+				int index = Random.Int(Level.WIDTH - 1) + Random.Int(Level.HEIGHT - 1) * Level.WIDTH;
+				noticed |= discoverCell(index, false);
+				noticed |= discoverCell(index+1, false);
+				noticed |= discoverCell(index+Level.WIDTH, false);
+				noticed |= discoverCell(index+Level.WIDTH+1, false);
 			}
+
+			GLog.n(TXT_LAYOUT + " " + TXT_LAYOUT_CURSED);
 		}
+		else if (bucStatus == BUCStatus.Blessed) {
+			for (int i = 0; i < length; i++) {
+				noticed |= discoverCell(i, true);
+			}
+
+			GLog.i( TXT_LAYOUT );
+		}
+		else {
+			for (int i = 0; i < length; i++) {
+				noticed |= discoverCell(i, false);
+			}
+
+			GLog.i( TXT_LAYOUT );
+		}
+
 		Dungeon.observe();
 		
-		GLog.i( TXT_LAYOUT );
 		if (noticed) {
 			Sample.INSTANCE.play( Assets.SND_SECRET );
 		}
@@ -87,7 +116,7 @@ public class ScrollOfMagicMapping extends Scroll {
 		
 		setKnown();
 		
-		curUser.spendAndNext( TIME_TO_READ );
+		curUser.spend( TIME_TO_READ, true );
 	}
 	
 	@Override

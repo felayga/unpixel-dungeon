@@ -23,16 +23,18 @@
  */
 package com.felayga.unpixeldungeon.actors.buffs;
 
+import com.felayga.unpixeldungeon.actors.Actor;
 import com.felayga.unpixeldungeon.actors.Char;
 import com.felayga.unpixeldungeon.actors.hero.Hero;
 import com.felayga.unpixeldungeon.actors.mobs.Mob;
+import com.felayga.unpixeldungeon.mechanics.GameTime;
 import com.felayga.unpixeldungeon.ui.BuffIndicator;
 import com.felayga.unpixeldungeon.utils.GLog;
 
 public class MagicalSleep extends Buff {
 
-	private static final float STEP = 1f;
-	public static final float SWS	= 1.5f;
+	private static final long STEP = GameTime.TICK;
+	public static final long SWS	= GameTime.TICK * 3 / 2;
 
 	@Override
 	public boolean attachTo( Char target ) {
@@ -67,7 +69,7 @@ public class MagicalSleep extends Buff {
 				detach();
 			}
 		}
-		spend( STEP );
+		spend( STEP, false );
 		return true;
 	}
 

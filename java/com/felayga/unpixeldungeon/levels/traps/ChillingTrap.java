@@ -31,6 +31,7 @@ import com.felayga.unpixeldungeon.actors.Char;
 import com.felayga.unpixeldungeon.actors.buffs.Chill;
 import com.felayga.unpixeldungeon.effects.Splash;
 import com.felayga.unpixeldungeon.items.Heap;
+import com.felayga.unpixeldungeon.mechanics.GameTime;
 import com.felayga.unpixeldungeon.sprites.TrapSprite;
 import com.felayga.unpixeldungeon.utils.GLog;
 import com.felayga.unpixeldungeon.utils.Utils;
@@ -57,7 +58,7 @@ public class ChillingTrap extends Trap{
 
 		Char ch = Actor.findChar( pos );
 		if (ch != null){
-			Chill.prolong(ch, Chill.class, 5f + Random.Int(Dungeon.depth));
+			Chill.prolong(ch, Chill.class, GameTime.TICK * (5 + Random.Long(Dungeon.depth)));
 			ch.damage(Random.NormalIntRange(1 , Dungeon.depth), this);
 			if (!ch.isAlive() && ch == Dungeon.hero){
 				Dungeon.fail( Utils.format(ResultDescriptions.TRAP, name) );

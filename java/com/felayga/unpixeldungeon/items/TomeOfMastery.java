@@ -25,6 +25,8 @@ package com.felayga.unpixeldungeon.items;
 
 import java.util.ArrayList;
 
+import com.felayga.unpixeldungeon.actors.Actor;
+import com.felayga.unpixeldungeon.mechanics.GameTime;
 import com.watabou.noosa.audio.Sample;
 import com.felayga.unpixeldungeon.Assets;
 import com.felayga.unpixeldungeon.Badges;
@@ -45,7 +47,7 @@ public class TomeOfMastery extends Item {
 
 	private static final String TXT_BLINDED	= "You can't read while blinded";
 	
-	public static final float TIME_TO_READ = 10;
+	public static final long TIME_TO_READ = GameTime.TICK * 10;
 	
 	public static final String AC_READ	= "READ";
 	
@@ -65,12 +67,11 @@ public class TomeOfMastery extends Item {
 	}
 	
 	@Override
-	public void execute( Hero hero, String action ) {
+	public boolean execute( Hero hero, String action ) {
 		if (action.equals( AC_READ )) {
-			
 			if (hero.buff( Blindness.class ) != null) {
 				GLog.w( TXT_BLINDED );
-				return;
+				return false;
 			}
 			
 			curUser = hero;
@@ -96,11 +97,10 @@ public class TomeOfMastery extends Item {
 				break;
 			}
 			GameScene.show( new WndChooseWay( this, way1, way2 ) );
-			
+
+			return false;
 		} else {
-			
-			super.execute( hero, action );
-			
+			return super.execute( hero, action );
 		}
 	}
 	
@@ -129,10 +129,9 @@ public class TomeOfMastery extends Item {
 	}
 	
 	public void choose( HeroSubClass way ) {
-		
-		detach( curUser.belongings.backpack );
-		
-		curUser.spend( TomeOfMastery.TIME_TO_READ );
+		curUser.belongings.detach(this);
+
+		curUser.spend( TomeOfMastery.TIME_TO_READ, false );
 		curUser.busy();
 		
 		curUser.subClass = way;

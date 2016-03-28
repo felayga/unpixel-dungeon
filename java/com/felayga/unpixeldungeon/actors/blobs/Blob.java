@@ -30,6 +30,7 @@ import com.felayga.unpixeldungeon.ShatteredPixelDungeon;
 import com.felayga.unpixeldungeon.actors.Actor;
 import com.felayga.unpixeldungeon.effects.BlobEmitter;
 import com.felayga.unpixeldungeon.levels.Level;
+import com.felayga.unpixeldungeon.mechanics.GameTime;
 import com.felayga.unpixeldungeon.utils.BArray;
 import com.watabou.utils.Bundle;
 
@@ -123,7 +124,7 @@ public class Blob extends Actor {
 	@Override
 	public boolean act() {
 		
-		spend( TICK );
+		spend(GameTime.TICK, false );
 		
 		if (volume > 0) {
 

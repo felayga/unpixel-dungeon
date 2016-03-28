@@ -26,9 +26,12 @@ package com.felayga.unpixeldungeon.items.artifacts;
 import com.felayga.unpixeldungeon.Assets;
 import com.felayga.unpixeldungeon.Dungeon;
 import com.felayga.unpixeldungeon.ResultDescriptions;
+import com.felayga.unpixeldungeon.actors.Actor;
 import com.felayga.unpixeldungeon.actors.hero.Hero;
 import com.felayga.unpixeldungeon.effects.particles.ShadowParticle;
 import com.felayga.unpixeldungeon.items.Item;
+import com.felayga.unpixeldungeon.mechanics.BUCStatus;
+import com.felayga.unpixeldungeon.mechanics.GameTime;
 import com.felayga.unpixeldungeon.plants.Earthroot;
 import com.felayga.unpixeldungeon.scenes.GameScene;
 import com.felayga.unpixeldungeon.sprites.ItemSpriteSheet;
@@ -64,14 +67,15 @@ public class ChaliceOfBlood extends Artifact {
 	@Override
 	public ArrayList<String> actions( Hero hero ) {
 		ArrayList<String> actions = super.actions( hero );
-		if (isEquipped( hero ) && level < levelCap && !cursed)
+		if (isEquipped( hero ) && level < levelCap && bucStatus != BUCStatus.Cursed)
 			actions.add(AC_PRICK);
 		return actions;
 	}
 
 	@Override
-	public void execute(Hero hero, String action ) {
-		super.execute(hero, action);
+	public boolean execute(Hero hero, String action ) {
+		boolean retval = super.execute(hero, action);
+
 		if (action.equals(AC_PRICK)){
 
 			int damage = 3*(level*level);
@@ -92,6 +96,8 @@ public class ChaliceOfBlood extends Artifact {
 				prick(hero);
 			}
 		}
+
+		return retval;
 	}
 
 	private void prick(Hero hero){
@@ -102,11 +108,9 @@ public class ChaliceOfBlood extends Artifact {
 			damage = armor.absorb(damage);
 		}
 
-		damage -= Random.IntRange(0, hero.dr());
-
 		hero.sprite.operate( hero.pos );
 		hero.busy();
-		hero.spend(3f);
+		hero.spend(GameTime.TICK * 3, false);
 		if (damage <= 0){
 			GLog.i("You prick yourself, and your blood drips into the chalice.");
 		} else if (damage < 25){
@@ -130,17 +134,17 @@ public class ChaliceOfBlood extends Artifact {
 			Dungeon.fail(Utils.format( ResultDescriptions.ITEM, name ));
 			GLog.n("The Chalice sucks your life essence dry...");
 		} else {
-			upgrade();
+			upgrade(null, 1);
 		}
 	}
 
 	@Override
-	public Item upgrade() {
+	public Item upgrade(Item source, int n) {
 		if (level >= 6)
 			image = ItemSpriteSheet.ARTIFACT_CHALICE3;
 		else if (level >= 2)
 			image = ItemSpriteSheet.ARTIFACT_CHALICE2;
-		return super.upgrade();
+		return super.upgrade(source, n);
 	}
 
 	@Override
@@ -158,7 +162,7 @@ public class ChaliceOfBlood extends Artifact {
 
 		if (isEquipped (Dungeon.hero)){
 			desc += "\n\n";
-			if (cursed)
+			if (bucStatus == BUCStatus.Cursed)
 				desc += "The cursed chalice has bound itself to your hand, and is slowly tugging at your life energy.";
 			else if (level == 0)
 				desc += "As you hold the chalice, you feel oddly compelled to prick yourself on the sharp gems.";

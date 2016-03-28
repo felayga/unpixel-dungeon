@@ -96,7 +96,7 @@ public class WndSettings extends WndTabbed {
 	private class ScreenTab extends Group {
 
 		public ScreenTab() {
-			super();
+			super(-1);
 
 			OptionSlider scale = new OptionSlider("Display Scale",
 					(int)Math.ceil(2* Game.density)+ "X",
@@ -156,7 +156,7 @@ public class WndSettings extends WndTabbed {
 	private class UITab extends Group {
 
 		public UITab(){
-			super();
+			super(-1);
 
 			BitmapText barDesc = PixelScene.createText("Toolbar Mode:", 9);
 			barDesc.measure();
@@ -234,6 +234,8 @@ public class WndSettings extends WndTabbed {
 	private class AudioTab extends Group {
 
 		public AudioTab() {
+			super(-1);
+
 			OptionSlider musicVol = new OptionSlider("Music Volume", "0", "10", 0, 10) {
 				@Override
 				protected void onChange() {

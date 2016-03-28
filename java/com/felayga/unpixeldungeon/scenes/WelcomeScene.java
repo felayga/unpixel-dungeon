@@ -176,7 +176,7 @@ public class WelcomeScene extends PixelScene {
 
 		content.setSize( panel.innerWidth(), text.height() );
 
-		RedButton okay = new RedButton("Okay!") {
+		RedButton okay = new RedButton("Okay!", true) {
 			@Override
 			protected void onClick() {
 

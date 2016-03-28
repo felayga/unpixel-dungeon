@@ -27,6 +27,8 @@ import com.felayga.unpixeldungeon.Badges;
 import com.felayga.unpixeldungeon.actors.Char;
 import com.felayga.unpixeldungeon.actors.buffs.Bleeding;
 import com.felayga.unpixeldungeon.actors.buffs.Buff;
+import com.felayga.unpixeldungeon.items.weapon.melee.mob.BleedChance;
+import com.felayga.unpixeldungeon.mechanics.GameTime;
 import com.felayga.unpixeldungeon.sprites.AlbinoSprite;
 import com.watabou.utils.Random;
 
@@ -37,6 +39,8 @@ public class Albino extends Rat {
 		spriteClass = AlbinoSprite.class;
 		
 		HP = HT = 15;
+
+		belongings.weapon = new BleedChance(GameTime.TICK, 1, 4);
 	}
 	
 	@Override
@@ -44,19 +48,9 @@ public class Albino extends Rat {
 		super.die( cause );
 		Badges.validateRare( this );
 	}
-	
-	@Override
-	public int attackProc( Char enemy, int damage ) {
-		if (Random.Int( 2 ) == 0) {
-			Buff.affect( enemy, Bleeding.class ).set( damage );
-		}
-		
-		return damage;
-	}
 
 	@Override
 	public String description() {
-		return
-				"This is a rare breed of marsupial rat, with pure white fur and jagged teeth.";
+		return "This is a rare breed of marsupial rat, with pure white fur and jagged teeth.";
 	}
 }

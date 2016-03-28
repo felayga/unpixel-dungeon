@@ -29,6 +29,8 @@ import com.felayga.unpixeldungeon.Dungeon;
 import com.felayga.unpixeldungeon.actors.Char;
 import com.felayga.unpixeldungeon.actors.buffs.Terror;
 import com.felayga.unpixeldungeon.items.Gold;
+import com.felayga.unpixeldungeon.items.weapon.melee.mob.MeleeMobAttack;
+import com.felayga.unpixeldungeon.mechanics.GameTime;
 import com.felayga.unpixeldungeon.sprites.BruteSprite;
 import com.felayga.unpixeldungeon.sprites.CharSprite;
 import com.felayga.unpixeldungeon.utils.GLog;
@@ -45,6 +47,8 @@ public class Brute extends Mob {
 
 		canOpenDoors = true;
 
+		DEXCHA = 20;
+
 		HP = HT = 40;
 		defenseSkill = 15;
 		
@@ -53,40 +57,35 @@ public class Brute extends Mob {
 		
 		loot = Gold.class;
 		lootChance = 0.5f;
+
+		belongings.weapon = new MeleeMobAttack(GameTime.TICK, 4, 18);
 	}
 	
 	private boolean enraged = false;
+	private boolean enragedCheck()
+	{
+		if (enraged || HP >= HT / 4) {
+			return false;
+		}
+
+		enraged = true;
+		STRCON += 32;
+
+		return true;
+	}
 	
 	@Override
 	public void restoreFromBundle( Bundle bundle ) {
 		super.restoreFromBundle( bundle );
-		enraged = HP < HT / 4;
-	}
-	
-	@Override
-	public int damageRoll() {
-		return enraged ?
-			Random.NormalIntRange( 10, 40 ) :
-			Random.NormalIntRange( 8, 18 );
-	}
-	
-	@Override
-	public int attackSkill( Char target ) {
-		return 20;
-	}
-	
-	@Override
-	public int dr() {
-		return 8;
+		enragedCheck();
 	}
 	
 	@Override
 	public void damage( int dmg, Object src ) {
 		super.damage( dmg, src );
 		
-		if (isAlive() && !enraged && HP < HT / 4) {
-			enraged = true;
-			spend( TICK );
+		if (isAlive() && enragedCheck()) {
+			spend(GameTime.TICK, false );
 			if (Dungeon.visible[pos]) {
 				GLog.w( TXT_ENRAGED, name );
 				sprite.showStatus( CharSprite.NEGATIVE, "enraged" );

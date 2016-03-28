@@ -30,6 +30,8 @@ import com.felayga.unpixeldungeon.actors.buffs.Amok;
 import com.felayga.unpixeldungeon.actors.buffs.Sleep;
 import com.felayga.unpixeldungeon.actors.buffs.Terror;
 import com.felayga.unpixeldungeon.actors.mobs.npcs.Imp;
+import com.felayga.unpixeldungeon.items.weapon.melee.mob.MeleeMobAttack;
+import com.felayga.unpixeldungeon.mechanics.GameTime;
 import com.felayga.unpixeldungeon.sprites.GolemSprite;
 import com.watabou.utils.Random;
 
@@ -41,31 +43,15 @@ public class Golem extends Mob {
 
 		canOpenDoors = true;
 
+		DEXCHA = 28;
+
 		HP = HT = 85;
 		defenseSkill = 18;
 		
 		EXP = 12;
 		maxLvl = 22;
-	}
-	
-	@Override
-	public int damageRoll() {
-		return Random.NormalIntRange( 20, 40 );
-	}
-	
-	@Override
-	public int attackSkill( Char target ) {
-		return 28;
-	}
-	
-	@Override
-	protected float attackDelay() {
-		return 1.5f;
-	}
-	
-	@Override
-	public int dr() {
-		return 12;
+
+		belongings.weapon = new MeleeMobAttack(GameTime.TICK * 3 / 2, 20, 40);
 	}
 	
 	@Override

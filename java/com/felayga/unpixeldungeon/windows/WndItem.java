@@ -20,6 +20,9 @@
  */
 package com.felayga.unpixeldungeon.windows;
 
+import com.felayga.unpixeldungeon.actors.hero.HeroAction;
+import com.felayga.unpixeldungeon.items.food.Food;
+import com.felayga.unpixeldungeon.utils.GLog;
 import com.watabou.noosa.BitmapTextMultiline;
 import com.felayga.unpixeldungeon.Dungeon;
 import com.felayga.unpixeldungeon.items.Item;
@@ -32,15 +35,14 @@ public class WndItem extends Window {
 
 	private static final float BUTTON_WIDTH		= 36;
 	private static final float BUTTON_HEIGHT	= 16;
-	
+
 	private static final float GAP	= 2;
-	
+
 	private static final int WIDTH = 120;
-	
-	public WndItem( final WndBag owner, final Item item ) {
-		
+
+	public WndItem( final WndBackpack owner, final Item item ) {
 		super();
-		
+
 		IconTitle titlebar = new IconTitle( item );
 		titlebar.setRect( 0, 0, WIDTH, 0 );
 		add( titlebar );
@@ -50,26 +52,34 @@ public class WndItem extends Window {
 		} else if (item.levelKnown && item.level < 0) {
 			titlebar.color( ItemSlot.DEGRADED );
 		}
-		
+
 		BitmapTextMultiline info = PixelScene.createMultiline( item.info(), 6 );
 		info.maxWidth = WIDTH;
 		info.measure();
 		info.x = titlebar.left();
 		info.y = titlebar.bottom() + GAP;
 		add( info );
-	
+
 		float y = info.y + info.height() + GAP;
 		float x = 0;
-		
+
 		if (Dungeon.hero.isAlive() && owner != null) {
 			for (final String action:item.actions( Dungeon.hero )) {
-				
 				RedButton btn = new RedButton( action ) {
 					@Override
 					protected void onClick() {
-						item.execute( Dungeon.hero, action );
 						hide();
 						owner.hide();
+
+						if (action == Food.AC_EAT) {
+							Dungeon.hero.curAction = new HeroAction.EatItem(item, action);
+							GLog.d("wnditem deposit action");
+							Dungeon.hero.spend(1, true);
+							//while (Dungeon.hero.act()) ;
+						}
+						else {
+							item.execute(Dungeon.hero, action);
+						}
 					};
 				};
 				btn.setSize( Math.max( BUTTON_WIDTH, btn.reqWidth() ), BUTTON_HEIGHT );
@@ -80,14 +90,63 @@ public class WndItem extends Window {
 				btn.setPos( x, y );
 				add( btn );
 
-				if (action == item.defaultAction) {
+				if (action.equals(item.defaultAction)) {
 					btn.textColor( TITLE_COLOR );
 				}
 
 				x += btn.width() + GAP;
 			}
 		}
-		
+
 		resize( WIDTH, (int)(y + (x > 0 ? BUTTON_HEIGHT : 0)) );
 	}
+
+	public WndItem( final WndBag owner, final Item item, final WndBackpack.Listener listener ) {
+		super();
+
+		IconTitle titlebar = new IconTitle( item );
+		titlebar.setRect( 0, 0, WIDTH, 0 );
+		add( titlebar );
+
+		if (item.levelKnown && item.level > 0) {
+			titlebar.color( ItemSlot.UPGRADED );
+		} else if (item.levelKnown && item.level < 0) {
+			titlebar.color( ItemSlot.DEGRADED );
+		}
+
+		BitmapTextMultiline info = PixelScene.createMultiline( item.info(), 6 );
+		info.maxWidth = WIDTH;
+		info.measure();
+		info.x = titlebar.left();
+		info.y = titlebar.bottom() + GAP;
+		add( info );
+
+		float y = info.y + info.height() + GAP;
+		float x = 0;
+
+		if (Dungeon.hero.isAlive() && owner != null) {
+			RedButton btn = new RedButton( "TAKE" ) {
+				@Override
+				protected void onClick() {
+					hide();
+					owner.hide();
+					listener.onSelect(item);
+				};
+			};
+			btn.setSize( Math.max( BUTTON_WIDTH, btn.reqWidth() ), BUTTON_HEIGHT );
+			if (x + btn.width() > WIDTH) {
+				x = 0;
+				y += BUTTON_HEIGHT + GAP;
+			}
+			btn.setPos( x, y );
+			add( btn );
+
+			btn.textColor( TITLE_COLOR );
+
+			x += btn.width() + GAP;
+		}
+
+		resize( WIDTH, (int)(y + (x > 0 ? BUTTON_HEIGHT : 0)) );
+	}
+
 }

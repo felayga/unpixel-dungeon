@@ -40,10 +40,11 @@ import com.felayga.unpixeldungeon.effects.Speck;
 import com.felayga.unpixeldungeon.effects.particles.RainbowParticle;
 import com.felayga.unpixeldungeon.effects.particles.ShadowParticle;
 import com.felayga.unpixeldungeon.items.scrolls.ScrollOfMagicMapping;
-import com.felayga.unpixeldungeon.items.weapon.melee.MagesStaff;
+import com.felayga.unpixeldungeon.items.weapon.melee.simple.MagesStaff;
 import com.felayga.unpixeldungeon.levels.Level;
 import com.felayga.unpixeldungeon.levels.Terrain;
 import com.felayga.unpixeldungeon.mechanics.Ballistica;
+import com.felayga.unpixeldungeon.mechanics.GameTime;
 import com.felayga.unpixeldungeon.scenes.GameScene;
 import com.felayga.unpixeldungeon.sprites.ItemSpriteSheet;
 import com.watabou.noosa.audio.Sample;
@@ -92,7 +93,7 @@ public class WandOfPrismaticLight extends Wand {
 		affectMap(beam);
 
 		if (curUser.viewDistance < 4)
-			Buff.prolong( curUser, Light.class, 10f+level*5);
+			Buff.prolong( curUser, Light.class, GameTime.TICK * (10 + level*5));
 	}
 
 	private void affectTarget(Char ch){
@@ -100,7 +101,7 @@ public class WandOfPrismaticLight extends Wand {
 
 		//three in (5+lvl) chance of failing
 		if (Random.Int(5+level) >= 3) {
-			Buff.prolong(ch, Blindness.class, 2f + (level * 0.34f));
+			Buff.prolong(ch, Blindness.class, GameTime.TICK * (2 + (level * 34 / 100)));
 			ch.sprite.emitter().burst(Speck.factory(Speck.LIGHT), 6 );
 		}
 
@@ -110,7 +111,7 @@ public class WandOfPrismaticLight extends Wand {
 
 			ch.damage((int)(dmg*1.5), this);
 		} else {
-			ch.sprite.centerEmitter().burst( RainbowParticle.BURST, 10+level );
+			ch.sprite.centerEmitter(-1).burst( RainbowParticle.BURST, 10+level );
 
 			ch.damage(dmg, this);
 		}
@@ -129,7 +130,7 @@ public class WandOfPrismaticLight extends Wand {
 					Dungeon.level.mapped[cell] = true;
 
 				int terr = Dungeon.level.map[cell];
-				if ((Terrain.flags[terr] & Terrain.SECRET) != 0) {
+				if ((Terrain.flags[terr] & Terrain.FLAG_SECRET) != 0) {
 
 					Dungeon.level.discover( cell );
 
@@ -158,7 +159,7 @@ public class WandOfPrismaticLight extends Wand {
 	@Override
 	public void onHit(MagesStaff staff, Char attacker, Char defender, int damage) {
 		//cripples enemy
-		Buff.prolong( defender, Cripple.class, 1f+staff.level);
+		Buff.prolong( defender, Cripple.class, GameTime.TICK * (1 + staff.level));
 	}
 
 	@Override

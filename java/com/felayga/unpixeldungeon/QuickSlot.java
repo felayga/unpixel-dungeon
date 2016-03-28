@@ -64,9 +64,25 @@ public class QuickSlot {
 
 	//utility methods, for easier use of the internal array.
 	public int getSlot(Item item) {
-		for (int i = 0; i < SIZE; i++)
-			if (getItem(i) == item)
+		for (int i = 0; i < SIZE; i++) {
+			if (getItem(i) == item) {
 				return i;
+			}
+		}
+		return -1;
+	}
+
+	public int getPlaceholder(Item item) {
+		for (int n=0;n<SIZE;n++) {
+			if (isPlaceholder(n)) {
+				Item subitem = getItem(n);
+
+				if (subitem.getClass() == item.getClass()) {
+					return n;
+				}
+			}
+		}
+
 		return -1;
 	}
 
@@ -79,8 +95,9 @@ public class QuickSlot {
 	}
 
 	public void clearItem(Item item){
-		if (contains(item))
+		if (contains(item)) {
 			clearSlot(getSlot(item));
+		}
 	}
 
 	public boolean contains(Item item){

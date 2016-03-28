@@ -23,8 +23,10 @@
  */
 package com.felayga.unpixeldungeon.items.scrolls;
 
+import com.felayga.unpixeldungeon.actors.Actor;
 import com.felayga.unpixeldungeon.actors.buffs.Buff;
 import com.felayga.unpixeldungeon.actors.buffs.FlavourBuff;
+import com.felayga.unpixeldungeon.mechanics.GameTime;
 import com.felayga.unpixeldungeon.ui.BuffIndicator;
 import com.watabou.noosa.audio.Sample;
 import com.felayga.unpixeldungeon.Assets;
@@ -36,7 +38,7 @@ import com.felayga.unpixeldungeon.utils.GLog;
 
 public class ScrollOfRecharging extends Scroll {
 
-	public static final float BUFF_DURATION = 30f;
+	public static final long BUFF_DURATION = GameTime.TICK * 30;
 
 	{
 		name = "Scroll of Recharging";
@@ -56,7 +58,7 @@ public class ScrollOfRecharging extends Scroll {
 		SpellSprite.show( curUser, SpellSprite.CHARGE );
 		setKnown();
 		
-		curUser.spendAndNext( TIME_TO_READ );
+		curUser.spend( TIME_TO_READ, true );
 	}
 	
 	@Override
@@ -67,7 +69,7 @@ public class ScrollOfRecharging extends Scroll {
 	}
 	
 	public static void charge( Hero hero ) {
-		hero.sprite.centerEmitter().burst( EnergyParticle.FACTORY, 15 );
+		hero.sprite.centerEmitter(-1).burst( EnergyParticle.FACTORY, 15 );
 	}
 	
 	@Override
@@ -93,7 +95,7 @@ public class ScrollOfRecharging extends Scroll {
 		//secondly, recall that buffs execute in random order, so this can cause a problem where we can't simply check
 		//if this buff is still attached, must instead directly check its remaining time, and act accordingly.
 		//otherwise this causes inconsistent behaviour where this may detach before, or after, a wand charger acts.
-		public float remainder() {
+		public double remainder() {
 			return Math.min(1f, this.cooldown());
 		}
 

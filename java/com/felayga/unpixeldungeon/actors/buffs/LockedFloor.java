@@ -24,6 +24,7 @@
 package com.felayga.unpixeldungeon.actors.buffs;
 
 import com.felayga.unpixeldungeon.Dungeon;
+import com.felayga.unpixeldungeon.mechanics.GameTime;
 import com.felayga.unpixeldungeon.ui.BuffIndicator;
 import com.watabou.utils.Bundle;
 
@@ -34,7 +35,7 @@ public class LockedFloor extends Buff {
 
 	@Override
 	public boolean act() {
-		spend(TICK);
+		spend(GameTime.TICK, false);
 
 		if (!Dungeon.level.locked)
 			detach();

@@ -25,8 +25,10 @@ import java.util.HashSet;
 import com.felayga.unpixeldungeon.actors.buffs.LockedFloor;
 import com.felayga.unpixeldungeon.actors.hero.HeroSubClass;
 import com.felayga.unpixeldungeon.items.artifacts.LloydsBeacon;
+import com.felayga.unpixeldungeon.items.weapon.melee.mob.MeleeMobAttack;
 import com.felayga.unpixeldungeon.levels.PrisonBossLevel;
 import com.felayga.unpixeldungeon.levels.traps.SpearTrap;
+import com.felayga.unpixeldungeon.mechanics.GameTime;
 import com.felayga.unpixeldungeon.ui.BossHealthBar;
 import com.felayga.unpixeldungeon.utils.GLog;
 import com.watabou.noosa.audio.Sample;
@@ -59,6 +61,8 @@ public class Tengu extends Mob {
 
 		canOpenDoors = true;
 
+		DEXCHA = 20;
+
 		HP = HT = 120;
 		EXP = 20;
 		defenseSkill = 20;
@@ -66,21 +70,8 @@ public class Tengu extends Mob {
 		HUNTING = new Hunting();
 
 		flying = true; //doesn't literally fly, but he is fleet-of-foot enough to avoid hazards
-	}
-	
-	@Override
-	public int damageRoll() {
-		return Random.NormalIntRange( 6, 15 );
-	}
-	
-	@Override
-	public int attackSkill( Char target ) {
-		return 20;
-	}
-	
-	@Override
-	public int dr() {
-		return 5;
+
+		belongings.weapon = new MeleeMobAttack(GameTime.TICK, 6, 15);
 	}
 
 	@Override
@@ -130,7 +121,7 @@ public class Tengu extends Mob {
 
 		LloydsBeacon beacon = Dungeon.hero.belongings.getItem(LloydsBeacon.class);
 		if (beacon != null) {
-			beacon.upgrade();
+			beacon.upgrade(null, 1);
 			GLog.p("Your beacon grows stronger!");
 		}
 		
@@ -144,11 +135,11 @@ public class Tengu extends Mob {
 
 	//tengu's attack is always visible
 	@Override
-	protected boolean doAttack(Char enemy) {
+	protected boolean doAttack(boolean thrown, Char enemy) {
 		sprite.attack( enemy.pos );
-		spend( attackDelay() );
+		spend( attackDelay(belongings.weapon.delay_new), false );
 		return true;
-}
+	}
 
 	private void jump() {
 
@@ -195,7 +186,7 @@ public class Tengu extends Mob {
 		if (Dungeon.visible[newPos]) CellEmitter.get( newPos ).burst( Speck.factory( Speck.WOOL ), 6 );
 		Sample.INSTANCE.play( Assets.SND_PUFF );
 		
-		spend( 1 / speed() );
+		spend( GameTime.TICK * GameTime.TICK / speed(), false );
 	}
 	
 	@Override
@@ -246,7 +237,7 @@ public class Tengu extends Mob {
 			enemySeen = enemyInFOV;
 			if (enemyInFOV && !isCharmedBy( enemy ) && canAttack( enemy )) {
 
-				return doAttack( enemy );
+				return doAttack( true, enemy );
 
 			} else {
 
@@ -254,7 +245,7 @@ public class Tengu extends Mob {
 					target = enemy.pos;
 				}
 
-				spend( TICK );
+				spend( GameTime.TICK, false );
 				return true;
 
 			}

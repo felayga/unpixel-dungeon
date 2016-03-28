@@ -20,13 +20,15 @@
  */
 package com.felayga.unpixeldungeon.actors.buffs;
 
+import com.felayga.unpixeldungeon.actors.Actor;
 import com.felayga.unpixeldungeon.actors.Char;
 import com.felayga.unpixeldungeon.items.rings.RingOfElements.Resistance;
+import com.felayga.unpixeldungeon.mechanics.GameTime;
 import com.felayga.unpixeldungeon.ui.BuffIndicator;
 
 public class Vertigo extends FlavourBuff {
 
-	public static final float DURATION	= 10f;
+	public static final long DURATION	= GameTime.TICK * 10;
 
 	{
 		type = buffType.NEGATIVE;
@@ -52,8 +54,8 @@ public class Vertigo extends FlavourBuff {
 				"This Vertigo effect with last for " + dispTurns() + ".";
 	}
 
-	public static float duration( Char ch ) {
+	public static long duration( Char ch ) {
 		Resistance r = ch.buff( Resistance.class );
-		return r != null ? r.durationFactor() * DURATION : DURATION;
+		return r != null ? r.durationFactor() * DURATION / GameTime.TICK : DURATION;
 	}
 }

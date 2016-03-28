@@ -25,12 +25,15 @@ package com.felayga.unpixeldungeon.items.artifacts;
 
 import com.felayga.unpixeldungeon.Assets;
 import com.felayga.unpixeldungeon.Dungeon;
+import com.felayga.unpixeldungeon.actors.Actor;
 import com.felayga.unpixeldungeon.actors.Char;
 import com.felayga.unpixeldungeon.actors.buffs.Hunger;
 import com.felayga.unpixeldungeon.actors.buffs.LockedFloor;
 import com.felayga.unpixeldungeon.actors.hero.Hero;
 import com.felayga.unpixeldungeon.actors.mobs.Mob;
 import com.felayga.unpixeldungeon.items.Item;
+import com.felayga.unpixeldungeon.mechanics.BUCStatus;
+import com.felayga.unpixeldungeon.mechanics.GameTime;
 import com.felayga.unpixeldungeon.scenes.GameScene;
 import com.felayga.unpixeldungeon.sprites.CharSprite;
 import com.felayga.unpixeldungeon.sprites.ItemSpriteSheet;
@@ -74,19 +77,18 @@ public class TimekeepersHourglass extends Artifact {
 	@Override
 	public ArrayList<String> actions( Hero hero ) {
 		ArrayList<String> actions = super.actions( hero );
-		if (isEquipped( hero ) && charge > 0 && !cursed)
+		if (isEquipped( hero ) && charge > 0 && bucStatus != BUCStatus.Cursed)
 			actions.add(AC_ACTIVATE);
 		return actions;
 	}
 
 	@Override
-	public void execute( Hero hero, String action ) {
+	public boolean execute( Hero hero, String action ) {
 		if (action.equals(AC_ACTIVATE)){
-
 			if (!isEquipped( hero ))        GLog.i("You need to equip your hourglass to do that.");
 			else if (activeBuff != null)    GLog.i("Your hourglass is already in use.");
 			else if (charge <= 1)           GLog.i("Your hourglass hasn't recharged enough to be usable yet.");
-			else if (cursed)                GLog.i("You cannot use a cursed hourglass.");
+			else if (bucStatus == BUCStatus.Cursed)                GLog.i("You cannot use a cursed hourglass.");
 			else GameScene.show(
 						new WndOptions(TXT_HGLASS, TXT_DESC, TXT_STASIS, TXT_FREEZE) {
 							@Override
@@ -109,8 +111,11 @@ public class TimekeepersHourglass extends Artifact {
 							};
 						}
 				);
-		} else
-			super.execute(hero, action);
+
+			return false;
+		} else {
+			return super.execute(hero, action);
+		}
 	}
 
 	@Override
@@ -121,7 +126,7 @@ public class TimekeepersHourglass extends Artifact {
 	}
 
 	@Override
-	public boolean doUnequip(Hero hero, boolean collect, boolean single) {
+	public boolean doUnequip(Char hero, boolean collect, boolean single) {
 		if (super.doUnequip(hero, collect, single)){
 			if (activeBuff != null){
 				activeBuff.detach();
@@ -138,14 +143,14 @@ public class TimekeepersHourglass extends Artifact {
 	}
 
 	@Override
-	public Item upgrade() {
-		chargeCap+= 2;
+	public Item upgrade(Item source, int n) {
+		chargeCap += 2 * n;
 
 		//for artifact transmutation.
 		while (level+1 > sandBags)
 			sandBags ++;
 
-		return super.upgrade();
+		return super.upgrade(source, n);
 	}
 
 	@Override
@@ -156,7 +161,7 @@ public class TimekeepersHourglass extends Artifact {
 				"surely invoking this magic would give you some power over time.";
 
 		if (isEquipped( Dungeon.hero )){
-			if (!cursed) {
+			if (bucStatus != BUCStatus.Cursed) {
 				desc += "\n\nThe hourglass rests at your side, the whisper of steadily pouring sand is reassuring.";
 
 				if (level < levelCap )
@@ -206,7 +211,7 @@ public class TimekeepersHourglass extends Artifact {
 		public boolean act() {
 
 			LockedFloor lock = target.buff(LockedFloor.class);
-			if (charge < chargeCap && !cursed && (lock == null || lock.regenOn())) {
+			if (charge < chargeCap && bucStatus != BUCStatus.Cursed && (lock == null || lock.regenOn())) {
 				partialCharge += 1 / (60f - (chargeCap - charge)*2f);
 
 				if (partialCharge >= 1) {
@@ -217,12 +222,12 @@ public class TimekeepersHourglass extends Artifact {
 						partialCharge = 0;
 					}
 				}
-			} else if (cursed && Random.Int(10) == 0)
-				((Hero) target).spend( TICK );
+			} else if (bucStatus == BUCStatus.Cursed && Random.Int(10) == 0)
+				((Hero) target).spend(GameTime.TICK, false );
 
 			updateQuickslot();
 
-			spend( TICK );
+			spend( GameTime.TICK, false );
 
 			return true;
 		}
@@ -233,13 +238,13 @@ public class TimekeepersHourglass extends Artifact {
 		@Override
 		public boolean attachTo(Char target) {
 			//buffs always act last, so the stasis buff should end a turn early.
-			spend(charge-1);
-			((Hero)target).spendAndNext(charge);
+			spend(GameTime.TICK * (charge-1), false);
+			((Hero)target).spend(GameTime.TICK * charge, true);
 
 			//shouldn't punish the player for going into stasis frequently
 			Hunger hunger = target.buff(Hunger.class);
 			if (hunger != null && !hunger.isStarving())
-				hunger.satisfy(charge);
+				hunger.satisfy_new(charge);
 
 			charge = 0;
 
@@ -274,7 +279,7 @@ public class TimekeepersHourglass extends Artifact {
 
 		ArrayList<Integer> presses = new ArrayList<Integer>();
 
-		public boolean processTime(float time){
+		public boolean processTime(double time){
 			partialTime += time;
 
 			while (partialTime >= 1f){
@@ -363,14 +368,14 @@ public class TimekeepersHourglass extends Artifact {
 		@Override
 		public boolean doPickUp( Hero hero ) {
 			TimekeepersHourglass hourglass = hero.belongings.getItem( TimekeepersHourglass.class );
-			if (hourglass != null && !hourglass.cursed) {
-				hourglass.upgrade();
+			if (hourglass != null && hourglass.bucStatus != BUCStatus.Cursed) {
+				hourglass.upgrade(this, 1);
 				Sample.INSTANCE.play( Assets.SND_DEWDROP );
 				if (hourglass.level == hourglass.levelCap)
 					GLog.p("Your hourglass is filled with magical sand!");
 				else
 					GLog.i("you add the sand to your hourglass.");
-				hero.spendAndNext(TIME_TO_PICK_UP);
+				hero.spend(TIME_TO_PICK_UP, true);
 				return true;
 			} else {
 				GLog.w("You have no hourglass to place this sand into.");

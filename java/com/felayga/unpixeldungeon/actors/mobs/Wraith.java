@@ -25,10 +25,11 @@ package com.felayga.unpixeldungeon.actors.mobs;
 
 import java.util.HashSet;
 
+import com.felayga.unpixeldungeon.items.weapon.melee.mob.MeleeMobAttack;
+import com.felayga.unpixeldungeon.mechanics.GameTime;
 import com.watabou.noosa.tweeners.AlphaTweener;
 import com.felayga.unpixeldungeon.Dungeon;
 import com.felayga.unpixeldungeon.actors.Actor;
-import com.felayga.unpixeldungeon.actors.Char;
 import com.felayga.unpixeldungeon.actors.buffs.Terror;
 import com.felayga.unpixeldungeon.effects.particles.ShadowParticle;
 import com.felayga.unpixeldungeon.items.weapon.enchantments.Death;
@@ -36,11 +37,10 @@ import com.felayga.unpixeldungeon.levels.Level;
 import com.felayga.unpixeldungeon.scenes.GameScene;
 import com.felayga.unpixeldungeon.sprites.WraithSprite;
 import com.watabou.utils.Bundle;
-import com.watabou.utils.Random;
 
 public class Wraith extends Mob {
 
-	private static final float SPAWN_DELAY	= 2f;
+	private static final long SPAWN_DELAY	= GameTime.TICK * 2;
 	
 	private int level;
 	
@@ -56,6 +56,8 @@ public class Wraith extends Mob {
 		EXP = 0;
 		
 		flying = true;
+
+		belongings.weapon = new MeleeMobAttack(GameTime.TICK, 1, 3+level);
 	}
 	
 	private static final String LEVEL = "level";
@@ -63,30 +65,23 @@ public class Wraith extends Mob {
 	@Override
 	public void storeInBundle( Bundle bundle ) {
 		super.storeInBundle( bundle );
-		bundle.put( LEVEL, level );
+		bundle.put(LEVEL, level);
 	}
 	
 	@Override
 	public void restoreFromBundle( Bundle bundle ) {
 		super.restoreFromBundle( bundle );
 		level = bundle.getInt( LEVEL );
-		adjustStats( level );
+		adjustStats(level);
 	}
-	
-	@Override
-	public int damageRoll() {
-		return Random.NormalIntRange( 1, 3 + level );
-	}
-	
-	@Override
-	public int attackSkill( Char target ) {
-		return 10 + level;
-	}
+
 	
 	public void adjustStats( int level ) {
 		this.level = level;
-		defenseSkill = attackSkill( null ) * 5;
+		DEXCHA = 10 + level;
+		defenseSkill = (10 + level) * 5;
 		enemySeen = true;
+		belongings.weapon = new MeleeMobAttack(GameTime.TICK, 1, 3+level);
 	}
 	
 	@Override

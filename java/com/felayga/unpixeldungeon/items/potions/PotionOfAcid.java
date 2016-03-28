@@ -66,7 +66,7 @@ public class PotionOfAcid extends Potion {
 		}
 
 		for (int offset : Level.NEIGHBOURS9){
-			if (Level.flamable[cell+offset]
+			if (Level.wood[cell+offset]
 					|| Actor.findChar(cell+offset) != null
 					|| Dungeon.level.heaps.get(cell+offset) != null) {
 

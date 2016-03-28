@@ -52,7 +52,7 @@ public class PotionOfBooze extends Potion {
 	public void apply( Hero hero ) {
 		setKnown();
 		GLog.p("Oof!  This tastes like liquid fire!");
-		((Hunger) hero.buff(Hunger.class)).satisfy(Hunger.STARVING - Hunger.HUNGRY);
+		hero.buff(Hunger.class).satisfy_new(125);
 		Buff.affect(Dungeon.hero, Vertigo.class, Vertigo.duration(Dungeon.hero));
 		switch (Random.Int(5)) {
 			case 0:

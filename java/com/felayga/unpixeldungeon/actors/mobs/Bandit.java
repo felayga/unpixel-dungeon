@@ -47,21 +47,6 @@ public class Bandit extends Thief {
 	}
 	
 	@Override
-	protected boolean steal( Hero hero ) {
-		if (super.steal( hero )) {
-			
-			Buff.prolong( hero, Blindness.class, Random.Int( 2, 5 ) );
-			Buff.affect( hero, Poison.class ).set(Random.Int(5, 7) * Poison.durationFactor(enemy));
-			Buff.prolong( hero, Cripple.class, Random.Int( 3, 8 ) );
-			Dungeon.observe();
-			
-			return true;
-		} else {
-			return false;
-		}
-	}
-	
-	@Override
 	public void die( Object cause ) {
 		super.die( cause );
 		Badges.validateRare( this );

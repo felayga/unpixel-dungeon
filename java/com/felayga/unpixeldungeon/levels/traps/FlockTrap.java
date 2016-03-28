@@ -30,6 +30,7 @@ import com.felayga.unpixeldungeon.actors.mobs.npcs.Sheep;
 import com.felayga.unpixeldungeon.effects.CellEmitter;
 import com.felayga.unpixeldungeon.effects.Speck;
 import com.felayga.unpixeldungeon.levels.Level;
+import com.felayga.unpixeldungeon.mechanics.GameTime;
 import com.felayga.unpixeldungeon.scenes.GameScene;
 import com.felayga.unpixeldungeon.sprites.TrapSprite;
 import com.watabou.noosa.audio.Sample;
@@ -57,7 +58,7 @@ public class FlockTrap extends Trap {
 					cell = pos + i;
 					if (Level.insideMap(cell) && Actor.findChar(cell) == null && !(Level.solid[cell] || Level.pit[cell])) {
 						Sheep sheep = new Sheep();
-						sheep.lifespan = 2 + Random.Int(Dungeon.depth + 10);
+						sheep.lifespan = GameTime.TICK * (2 + Random.Int(Dungeon.depth + 10));
 						sheep.pos = cell;
 						GameScene.add(sheep);
 					}

@@ -24,6 +24,7 @@
 package com.felayga.unpixeldungeon.plants;
 
 import com.felayga.unpixeldungeon.actors.Actor;
+import com.felayga.unpixeldungeon.mechanics.GameTime;
 import com.watabou.noosa.Camera;
 import com.felayga.unpixeldungeon.Dungeon;
 import com.felayga.unpixeldungeon.actors.Char;
@@ -87,7 +88,7 @@ public class Earthroot extends Plant {
 	
 	public static class Armor extends Buff {
 		
-		private static final float STEP = 1f;
+		private static final long STEP = GameTime.TICK;
 		
 		private int pos;
 		private int level;
@@ -107,7 +108,7 @@ public class Earthroot extends Plant {
 			if (target.pos != pos) {
 				detach();
 			}
-			spend( STEP );
+			spend( STEP, false );
 			return true;
 		}
 		

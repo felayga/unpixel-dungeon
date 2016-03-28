@@ -24,6 +24,7 @@
 package com.felayga.unpixeldungeon.levels.painters;
 
 import com.felayga.unpixeldungeon.Dungeon;
+import com.felayga.unpixeldungeon.actors.mobs.npcs.Boulder;
 import com.felayga.unpixeldungeon.items.Generator;
 import com.felayga.unpixeldungeon.items.Gold;
 import com.felayga.unpixeldungeon.items.Heap;
@@ -38,63 +39,63 @@ import com.watabou.utils.Random;
 public class StandardPainter extends Painter {
 
 	public static void paint( Level level, Room room ) {
-		
-		fill( level, room, Terrain.WALL );
+		fill(level, room, Terrain.WALL);
+
 		for (Room.Door door : room.connected.values()) {
-			door.set( Room.Door.Type.REGULAR );
+			door.set(Room.Door.Type.REGULAR);
 		}
-		
-		if (!Dungeon.bossLevel() && Random.Int( 5 ) == 0) {
-			switch (Random.Int( 6 )) {
-			case 0:
-				if (level.feeling != Level.Feeling.GRASS) {
-					if (Math.min( room.width(), room.height() ) >= 4 && Math.max( room.width(), room.height() ) >= 6) {
-						paintGraveyard( level, room );
+
+		if (!Dungeon.bossLevel() && Random.Int(5) == 0) {
+			switch (Random.Int(6)) {
+				case 0:
+					if (level.feeling != Level.Feeling.GRASS) {
+						if (Math.min(room.width(), room.height()) >= 4 && Math.max(room.width(), room.height()) >= 6) {
+							paintGraveyard(level, room);
+							return;
+						}
+						break;
+					} else {
+						// Burned room
+					}
+				case 1:
+					if (Dungeon.depth > 1) {
+						paintBurned(level, room);
 						return;
 					}
 					break;
-				} else {
-					// Burned room
-				}
-			case 1:
-				if (Dungeon.depth > 1) {
-					paintBurned( level, room );
-					return;
-				}
-				break;
-			case 2:
-				if (Math.max( room.width(), room.height() ) >= 4) {
-					paintStriped( level, room );
-					return;
-				}
-				break;
-			case 3:
-				if (room.width() >= 6 && room.height() >= 6) {
-					paintStudy( level, room );
-					return;
-				}
-				break;
-			case 4:
-				if (level.feeling != Level.Feeling.WATER) {
-					if (room.connected.size() == 2 && room.width() >= 4 && room.height() >= 4) {
-						paintBridge( level, room );
+				case 2:
+					if (Math.max(room.width(), room.height()) >= 4) {
+						paintStriped(level, room);
 						return;
 					}
 					break;
-				} else {
-					// Fissure
-				}
-			case 5:
-				if (!Dungeon.bossLevel() && !Dungeon.bossLevel( Dungeon.depth + 1 ) &&
-					Math.min( room.width(), room.height() ) >= 5) {
-					paintFissure( level, room );
-					return;
-				}
-				break;
+				case 3:
+					if (room.width() >= 6 && room.height() >= 6) {
+						paintStudy(level, room);
+						return;
+					}
+					break;
+				case 4:
+					if (level.feeling != Level.Feeling.WATER) {
+						if (room.connected.size() == 2 && room.width() >= 4 && room.height() >= 4) {
+							paintBridge(level, room);
+							return;
+						}
+						break;
+					} else {
+						// Fissure
+					}
+				case 5:
+					if (!Dungeon.bossLevel() && !Dungeon.bossLevel(Dungeon.depth + 1) &&
+							Math.min(room.width(), room.height()) >= 5) {
+						paintFissure(level, room);
+						return;
+					}
+					break;
 			}
 		}
-		
-		fill( level, room, 1, Terrain.EMPTY );
+
+		fill(level, room, 1, Terrain.EMPTY);
 	}
 	
 	private static void paintBurned( Level level, Room room ) {
@@ -179,14 +180,14 @@ public class StandardPainter extends Painter {
 		if (Random.Int(2) != 0){
 			Item prize = level.findPrizeItem();
 			if (prize != null) {
-				level.drop(prize, (room.center().x + center.y * level.WIDTH));
+				level.drop(prize, (room.center().x + center.y * Level.WIDTH));
 				return;
 			}
 		}
 
 		level.drop(Generator.random( Random.oneOf(
 				Generator.Category.POTION,
-				Generator.Category.SCROLL)), (room.center().x + center.y * level.WIDTH));
+				Generator.Category.SCROLL)), (room.center().x + center.y * Level.WIDTH));
 	}
 	
 	private static void paintBridge( Level level, Room room ) {

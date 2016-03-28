@@ -23,14 +23,18 @@
  */
 package com.felayga.unpixeldungeon.items.scrolls;
 
+import com.felayga.unpixeldungeon.Assets;
 import com.felayga.unpixeldungeon.Badges;
+import com.felayga.unpixeldungeon.actors.Actor;
 import com.felayga.unpixeldungeon.actors.buffs.Blindness;
 import com.felayga.unpixeldungeon.actors.hero.Hero;
 import com.felayga.unpixeldungeon.items.Item;
 import com.felayga.unpixeldungeon.items.ItemStatusHandler;
 import com.felayga.unpixeldungeon.items.artifacts.UnstableSpellbook;
+import com.felayga.unpixeldungeon.mechanics.GameTime;
 import com.felayga.unpixeldungeon.sprites.ItemSpriteSheet;
 import com.felayga.unpixeldungeon.utils.GLog;
+import com.watabou.noosa.audio.Sample;
 import com.watabou.utils.Bundle;
 
 import java.util.ArrayList;
@@ -45,7 +49,7 @@ public abstract class Scroll extends Item {
 	
 	public static final String AC_READ	= "READ";
 	
-	protected static final float TIME_TO_READ	= 1f;
+	protected static final long TIME_TO_READ	= GameTime.TICK;
 
 	protected String initials;
 
@@ -61,23 +65,67 @@ public abstract class Scroll extends Item {
 		ScrollOfLullaby.class,
 		ScrollOfMagicalInfusion.class,
 		ScrollOfPsionicBlast.class,
-		ScrollOfMirrorImage.class
+		ScrollOfMirrorImage.class,
+		BlankScroll.class
 	};
 	private static final String[] runes =
-		{"KAUNAN", "SOWILO", "LAGUZ", "YNGVI", "GYFU", "RAIDO", "ISAZ", "MANNAZ", "NAUDIZ", "BERKANAN", "ODAL", "TIWAZ"};
+		//{"KAUNAN", "SOWILO", "LAGUZ", "YNGVI", "GYFU", "RAIDO", "ISAZ", "MANNAZ", "NAUDIZ", "BERKANAN", "ODAL", "TIWAZ"};
+		{
+				"ZELGO MER",
+				"JUYED AWK YACC",
+				"NR 9",
+				"XIXAXA XOXAXA XUXAXA",
+				"PRATYAVAYAH",
+				"DAIYEN FOOELS",
+				"LEP GEX VEN ZEA",
+				"PRIRUTSENIE",
+				"ELBIB YLOH",
+				"VERR YED HORRE",
+				"VENZAR BORGAVVE",
+				"THARR",
+				"YUM YUM",
+				"KERNOD WEL",
+				"ELAM EBOW",
+				"DUAM XNAHT",
+				"ANDOVA BEGARIN",
+				"KIRJE",
+				"VE FORBRYDERNE",
+				"HACKEM MUCHE",
+				"VELOX NEB",
+				"FOOBIE BLETCH",
+				"TEMOV",
+				"GARVEN DEH",
+				"READ ME",
+				"blank"
+		};
 	private static final Integer[] images = {
-		ItemSpriteSheet.SCROLL_KAUNAN,
-		ItemSpriteSheet.SCROLL_SOWILO,
-		ItemSpriteSheet.SCROLL_LAGUZ,
-		ItemSpriteSheet.SCROLL_YNGVI,
-		ItemSpriteSheet.SCROLL_GYFU,
-		ItemSpriteSheet.SCROLL_RAIDO,
-		ItemSpriteSheet.SCROLL_ISAZ,
-		ItemSpriteSheet.SCROLL_MANNAZ,
-		ItemSpriteSheet.SCROLL_NAUDIZ,
-		ItemSpriteSheet.SCROLL_BERKANAN,
-		ItemSpriteSheet.SCROLL_ODAL,
-		ItemSpriteSheet.SCROLL_TIWAZ};
+			ItemSpriteSheet.SCROLL_01,
+			ItemSpriteSheet.SCROLL_02,
+			ItemSpriteSheet.SCROLL_03,
+			ItemSpriteSheet.SCROLL_04,
+			ItemSpriteSheet.SCROLL_05,
+			ItemSpriteSheet.SCROLL_06,
+			ItemSpriteSheet.SCROLL_07,
+			ItemSpriteSheet.SCROLL_08,
+			ItemSpriteSheet.SCROLL_09,
+			ItemSpriteSheet.SCROLL_10,
+			ItemSpriteSheet.SCROLL_11,
+			ItemSpriteSheet.SCROLL_12,
+			ItemSpriteSheet.SCROLL_13,
+			ItemSpriteSheet.SCROLL_14,
+			ItemSpriteSheet.SCROLL_15,
+			ItemSpriteSheet.SCROLL_16,
+			ItemSpriteSheet.SCROLL_17,
+			ItemSpriteSheet.SCROLL_18,
+			ItemSpriteSheet.SCROLL_19,
+			ItemSpriteSheet.SCROLL_20,
+			ItemSpriteSheet.SCROLL_21,
+			ItemSpriteSheet.SCROLL_22,
+			ItemSpriteSheet.SCROLL_23,
+			ItemSpriteSheet.SCROLL_24,
+			ItemSpriteSheet.SCROLL_25,
+			ItemSpriteSheet.SCROLL_BLANK
+	};
 	
 	private static ItemStatusHandler<Scroll> handler;
 	
@@ -92,7 +140,7 @@ public abstract class Scroll extends Item {
 	
 	@SuppressWarnings("unchecked")
 	public static void initLabels() {
-		handler = new ItemStatusHandler<Scroll>( (Class<? extends Scroll>[])scrolls, runes, images );
+		handler = new ItemStatusHandler<Scroll>( (Class<? extends Scroll>[])scrolls, runes, images, 1 );
 	}
 	
 	public static void save( Bundle bundle ) {
@@ -118,14 +166,13 @@ public abstract class Scroll extends Item {
 	@Override
 	public ArrayList<String> actions( Hero hero ) {
 		ArrayList<String> actions = super.actions( hero );
-		actions.add( AC_READ );
+		actions.add(AC_READ);
 		return actions;
 	}
 	
 	@Override
-	public void execute( Hero hero, String action ) {
+	public boolean execute( Hero hero, String action ) {
 		if (action.equals( AC_READ )) {
-			
 			if (hero.buff( Blindness.class ) != null) {
 				GLog.w( TXT_BLINDED );
 			} else if (hero.buff(UnstableSpellbook.bookRecharge.class) != null
@@ -133,41 +180,50 @@ public abstract class Scroll extends Item {
 					&& !(this instanceof ScrollOfRemoveCurse)) {
 				GLog.n( TXT_CURSED );
 			} else {
-				curUser = hero;
-				curItem = detach( hero.belongings.backpack );
+				prepareRead(hero);
 				doRead();
 			}
-			
+
+			return false;
 		} else {
-		
-			super.execute( hero, action );
-			
+			return super.execute( hero, action );
 		}
 	}
-	
+
+	protected void prepareRead(Hero hero) {
+		curUser = hero;
+		curItem = hero.belongings.detach(this);
+	}
+
 	abstract protected void doRead();
 	
 	public boolean isKnown() {
 		return handler.isKnown( this );
 	}
 	
-	public void setKnown() {
+	public boolean setKnown() {
 		if (!isKnown() && !ownedByBook) {
 			handler.know( this );
+
+			Badges.validateAllScrollsIdentified();
+
+			return true;
 		}
-		
-		Badges.validateAllScrollsIdentified();
+
+		return false;
 	}
 	
 	@Override
-	public Item identify() {
-		setKnown();
-		return super.identify();
+	public Item identify(boolean updateQuickslot) {
+		if (setKnown()) {
+			updateQuickslot = true;
+		}
+		return super.identify(updateQuickslot);
 	}
 	
 	@Override
-	public String name() {
-		return isKnown() ? name : "scroll \"" + rune + "\"";
+	public String getName() {
+		return isKnown() ? super.getName() : "scroll \"" + rune + "\"";
 	}
 	
 	@Override
@@ -175,13 +231,18 @@ public abstract class Scroll extends Item {
 		return isKnown() ?
 			desc() :
 			"This parchment is covered with indecipherable writing, and bears a title " +
-			"of rune " + rune + ". Who knows what it will do when read aloud?";
+			"of \"" + rune + "\". Who knows what it will do when read aloud?";
 	}
 
 	public String initials(){
 		return isKnown() ? initials : null;
 	}
-	
+
+	@Override
+	public void playPickupSound() {
+		Sample.INSTANCE.play( Assets.SND_ITEM_PAPER );
+	}
+
 	@Override
 	public boolean isUpgradable() {
 		return false;
@@ -189,7 +250,7 @@ public abstract class Scroll extends Item {
 	
 	@Override
 	public boolean isIdentified() {
-		return isKnown();
+		return super.isIdentified() && isKnown();
 	}
 	
 	public static HashSet<Class<? extends Scroll>> getKnown() {

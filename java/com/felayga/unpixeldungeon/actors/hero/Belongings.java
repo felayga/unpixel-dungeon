@@ -23,30 +23,185 @@
  */
 package com.felayga.unpixeldungeon.actors.hero;
 
+import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Iterator;
 
 import com.felayga.unpixeldungeon.Badges;
 import com.felayga.unpixeldungeon.Dungeon;
+import com.felayga.unpixeldungeon.actors.Char;
+import com.felayga.unpixeldungeon.items.EquipableItem;
+import com.felayga.unpixeldungeon.items.Gold;
+import com.felayga.unpixeldungeon.mechanics.IDecayable;
 import com.felayga.unpixeldungeon.items.KindofMisc;
 import com.felayga.unpixeldungeon.items.Item;
 import com.felayga.unpixeldungeon.items.KindOfWeapon;
 import com.felayga.unpixeldungeon.items.armor.Armor;
 import com.felayga.unpixeldungeon.items.bags.Bag;
-import com.felayga.unpixeldungeon.items.keys.IronKey;
-import com.felayga.unpixeldungeon.items.keys.Key;
-import com.felayga.unpixeldungeon.items.scrolls.ScrollOfRemoveCurse;
+import com.felayga.unpixeldungeon.items.bags.backpack.ConsumablesBackpack;
+import com.felayga.unpixeldungeon.items.bags.backpack.Spellbook;
+import com.felayga.unpixeldungeon.items.bags.backpack.UncategorizedBackpack;
+import com.felayga.unpixeldungeon.items.bags.backpack.EquipmentBackpack;
+import com.felayga.unpixeldungeon.items.keys.IronOldKey;
+import com.felayga.unpixeldungeon.items.keys.OldKey;
 import com.felayga.unpixeldungeon.items.tools.Tool;
 import com.felayga.unpixeldungeon.items.wands.Wand;
+import com.felayga.unpixeldungeon.items.weapon.missiles.Boomerang;
+import com.felayga.unpixeldungeon.levels.Level;
+import com.felayga.unpixeldungeon.mechanics.BUCStatus;
+import com.felayga.unpixeldungeon.utils.GLog;
+import com.watabou.utils.Bundlable;
 import com.watabou.utils.Bundle;
 import com.watabou.utils.Random;
 
-public class Belongings implements Iterable<Item> {
+public class Belongings implements Iterable<Item>, IDecayable {
 
-	public static final int BACKPACK_SIZE	= 43; //original=19
+	public static final int BACKPACK_SIZE	= 36; //original=19
 	
-	private Hero owner;
+	private Char owner;
 	
-	public Bag backpack;
+	public ConsumablesBackpack backpack1;
+	public UncategorizedBackpack backpack2;
+	public EquipmentBackpack backpack3;
+	public Spellbook backpack4;
+
+	public boolean collect(Item item) {
+		boolean retval = false;
+		if (backpack3.grab(item)) {
+			GLog.d("->bag3");
+			retval = backpack3.collect(item);
+		}
+		else if (backpack1.grab(item)) {
+			GLog.d("->bag1");
+			retval = backpack1.collect(item);
+		}
+		else if (backpack4.grab(item)) {
+			GLog.d("->bag4");
+			retval = backpack4.collect(item);
+		}
+		else {
+			GLog.d("->bag2");
+			retval = backpack2.collect(item);
+		}
+
+		GLog.d("collect "+item.getDisplayName()+" "+ retval);
+
+		return retval;
+	}
+
+	public final Item detach(Item detachItem) {
+		if (detachItem.quantity() <= 0) {
+			GLog.d("quantity<=0, return null");
+			return null;
+		} else if (detachItem.quantity() == 1) {
+			if (detachItem.stackable || detachItem instanceof Boomerang) {
+				Dungeon.quickslot.convertToPlaceholder(detachItem);
+			}
+
+			GLog.d("quantity==1, detachAll" );
+			return detachAll(detachItem);
+		} else {
+			detachItem.quantity(detachItem.quantity()-1);
+			detachItem.updateQuickslot();
+
+			try {
+				//todo: WHAT THE FLYING FUCK.
+				//pssh, who needs copy constructors?
+				Item detached = detachItem.getClass().newInstance();
+				Bundle copy = new Bundle();
+				detachItem.storeInBundle(copy);
+				GLog.d(copy.toString());
+				detached.restoreFromBundle(copy);
+				detached.quantity(1);
+				detached.onDetach();
+				return detached;
+			} catch (Exception e) {
+				return null;
+			}
+		}
+	}
+
+	public final Item detachAll(Item detachItem) {
+		Dungeon.quickslot.clearItem(detachItem);
+		detachItem.updateQuickslot();
+
+		if (backpack3.contains(detachItem))
+		{
+			return detachAll(backpack3, detachItem);
+		}
+		else if (backpack1.contains(detachItem))
+		{
+			return detachAll(backpack1, detachItem);
+		}
+		else if (backpack4.contains(detachItem))
+		{
+			return detachAll(backpack4, detachItem);
+		}
+		else if (backpack2.contains(detachItem))
+		{
+			return detachAll(backpack2, detachItem);
+		}
+
+		GLog.d("return null because not found");
+		return null;
+	}
+
+	private Item detachAll(Bag bag, Item detachItem)
+	{
+		Iterator<Item> iterator = bag.iterator(false);
+		while (iterator.hasNext()){
+			Item item = iterator.next();
+			if (item == detachItem) {
+				iterator.remove();
+				item.onDetach();
+				return item;
+			}
+		}
+
+		return null;
+	}
+
+	public boolean contains(Item item) {
+		return backpack3.contains(item)
+				|| backpack1.contains(item)
+				|| backpack4.contains(item)
+				|| backpack2.contains(item);
+	}
+
+	public boolean equip(EquipableItem item) {
+		//In addition to equipping itself, item reassigns itself to the quickslot
+		//This is a special case as the item is being removed from inventory, but is staying with the hero.
+		int slot = Dungeon.quickslot.getSlot(this);
+		doEquip(hero);
+		if (slot != -1) {
+			Dungeon.quickslot.setSlot(slot, this);
+			updateQuickslot();
+		}
+
+	}
+
+	public boolean unequip(EquipableItem item) {
+		if (bucStatus == BUCStatus.Cursed) {
+			GLog.w(TXT_UNEQUIP_CANT, getDisplayName());
+			bucStatusKnown = true;
+			return false;
+		}
+
+		if (single) {
+			hero.spend(time2equip(hero), true);
+		} else {
+			hero.spend( time2equip( hero ), false );
+		}
+
+		if (collect && !hero.belongings.collect(this)) {
+			onDetach();
+			Dungeon.quickslot.clearItem(this);
+			updateQuickslot();
+			Dungeon.level.drop( this, hero.pos );
+		}
+
+		return true;
+	}
 
 	public KindOfWeapon weapon = null;
 	public KindOfWeapon offhand = null;
@@ -63,16 +218,32 @@ public class Belongings implements Iterable<Item> {
 	public KindofMisc amulet = null;
 	public KindofMisc face = null;
 	
-	public Belongings( Hero owner ) {
+	public Belongings( Char owner ) {
 		this.owner = owner;
 		
-		backpack = new Bag() {{
-			name = "backpack";
+		backpack1 = new ConsumablesBackpack(owner) {{
+			name = "consumables";
 			size = BACKPACK_SIZE;
 		}};
-		backpack.owner = owner;
+		backpack2 = new UncategorizedBackpack(owner) {{
+			name = "valuables";
+			size = BACKPACK_SIZE;
+		}};
+		backpack3 = new EquipmentBackpack(owner) {{
+			name = "equipment";
+			size = BACKPACK_SIZE;
+		}};
+		backpack4 = new Spellbook(owner) {{
+			name = "spellbook";
+			size = BACKPACK_SIZE;
+		}};
 	}
-	
+
+	private static final String BACKPACK1	= "backpack1";
+	private static final String BACKPACK2	= "backpack2";
+	private static final String BACKPACK3	= "backpack3";
+	private static final String BACKPACK4	= "backpack4";
+
 	private static final String WEAPON		= "weapon";
     private static final String OFFHAND     = "offhand";
     private static final String TOOL1       = "tool1";
@@ -85,11 +256,24 @@ public class Belongings implements Iterable<Item> {
 	private static final String RING2       = "ring2";
 	private static final String AMULET		= "amulet";
     private static final String FACE        = "face";
-	
+
 	public void storeInBundle( Bundle bundle ) {
-		
-		backpack.storeInBundle( bundle );
-		
+		backpack1.storeInBundle(bundle, BACKPACK1);
+		backpack2.storeInBundle(bundle, BACKPACK2);
+		backpack3.storeInBundle(bundle, BACKPACK3);
+		backpack4.storeInBundle(bundle, BACKPACK4);
+		/*
+		bundle.put( BACKPACK1, backpack1.items );
+		bundle.put( BACKPACK2, backpack2.items );
+		bundle.put( BACKPACK3, backpack3.items );
+		bundle.put( BACKPACK4, backpack4.items );
+		*/
+		/*
+		backpack1.storeInBundle(bundle);
+		backpack2.storeInBundle(bundle);
+		backpack3.storeInBundle(bundle);
+		*/
+
 		bundle.put(WEAPON, weapon);
         bundle.put(OFFHAND, offhand);
         bundle.put(TOOL1, tool1);
@@ -107,44 +291,67 @@ public class Belongings implements Iterable<Item> {
 	}
 	
 	public void restoreFromBundle( Bundle bundle ) {
-		
-		backpack.clear();
-		backpack.restoreFromBundle(bundle);
+		backpack1.clear();
+		backpack2.clear();
+		backpack3.clear();
+		backpack4.clear();
 
-        weapon = (KindOfWeapon)bundle.get(WEAPON);
-        offhand = (KindOfWeapon)bundle.get(OFFHAND);
-        tool1 = (Tool)bundle.get(TOOL1);
-        tool2 = (Tool)bundle.get(TOOL2);
+		for (Bundlable item : bundle.getCollection(BACKPACK1)) {
+			if (item != null) backpack1.collect((Item) item);
+		}
 
-        armor = (Armor)bundle.get(ARMOR);
-        gloves = (Armor)bundle.get(GLOVES);
-        boots = (Armor)bundle.get(BOOTS);
-        cloak = (Armor)bundle.get(CLOAK);
+		for (Bundlable item : bundle.getCollection(BACKPACK2)) {
+			if (item != null) backpack2.collect((Item) item);
+		}
 
-        ring1 = (KindofMisc)bundle.get(RING1);
-        ring2 = (KindofMisc)bundle.get(RING2);
-        amulet = (KindofMisc)bundle.get(AMULET);
-        face = (KindofMisc)bundle.get(FACE);
+		for (Bundlable item : bundle.getCollection(BACKPACK3)) {
+			if (item != null) backpack3.collect((Item) item);
+		}
 
-        if (weapon != null) {
-            weapon.activate(owner);
-        }
-        if (offhand != null) {
-            offhand.activate(owner);
-        }
+		for (Bundlable item : bundle.getCollection(BACKPACK4)) {
+			if (item != null) backpack4.collect((Item) item);
+		}
 
-        if (ring1 != null) {
-            ring1.activate(owner);
-        }
-        if (ring2 != null) {
-            ring2.activate(owner);
-        }
-        if (amulet != null) {
-            amulet.activate(owner);
-        }
-        if (face != null) {
-            face.activate(owner);
-        }
+		/*
+		backpack1.restoreFromBundle(bundle);
+		backpack2.restoreFromBundle(bundle);
+		backpack3.restoreFromBundle(bundle);
+		*/
+
+		weapon = (KindOfWeapon) bundle.get(WEAPON);
+		offhand = (KindOfWeapon) bundle.get(OFFHAND);
+		tool1 = (Tool) bundle.get(TOOL1);
+		tool2 = (Tool) bundle.get(TOOL2);
+
+		armor = (Armor) bundle.get(ARMOR);
+		gloves = (Armor) bundle.get(GLOVES);
+		boots = (Armor) bundle.get(BOOTS);
+		cloak = (Armor) bundle.get(CLOAK);
+
+		ring1 = (KindofMisc) bundle.get(RING1);
+		ring2 = (KindofMisc) bundle.get(RING2);
+		amulet = (KindofMisc) bundle.get(AMULET);
+		face = (KindofMisc) bundle.get(FACE);
+
+		if (weapon != null) {
+			weapon.activate(this.owner);
+		}
+		if (offhand != null) {
+			offhand.activate(this.owner);
+		}
+
+		if (ring1 != null) {
+			ring1.activate(this.owner);
+		}
+		if (ring2 != null) {
+			ring2.activate(this.owner);
+		}
+		if (amulet != null) {
+			amulet.activate(this.owner);
+		}
+		if (face != null) {
+			face.activate(this.owner);
+		}
 
         /*
 		if (bundle.get( WEAPON ) instanceof Wand){
@@ -186,6 +393,94 @@ public class Belongings implements Iterable<Item> {
         }
         */
 	}
+
+	public Gold getGold()
+	{
+		Iterator<Item> items = iterator(false, true);
+
+		while (items.hasNext()) {
+			Item item = items.next();
+
+			if (item instanceof Gold) {
+				return (Gold) item;
+			}
+		}
+
+		return null;
+	}
+
+	public int removeGold(int quantity)
+	{
+		Gold gold = getGold();
+
+		if (gold != null)
+		{
+			int newQuantity = gold.quantity() - quantity;
+			if (newQuantity > 0)
+			{
+				gold.quantity(newQuantity);
+				return 0;
+			}
+			else {
+				detachAll(gold);
+
+				return -newQuantity;
+			}
+		}
+		else {
+			return 0;
+		}
+	}
+
+	public int goldQuantity()
+	{
+		Gold gold = getGold();
+
+		if (gold != null) {
+			return gold.quantity();
+		}
+
+		return 0;
+	}
+
+	public int getArmor(int currentBonus) {
+		Iterator<Item> iterator = iterator(true, false);
+		int armorAmount = 0;
+
+		while (iterator.hasNext()) {
+			Item item = iterator.next();
+
+			if (item instanceof Armor) {
+				Armor armor = (Armor)item;
+
+				armorAmount += armor.armor;
+
+				if (currentBonus > armor.armorBonusMaximum) {
+					currentBonus = armor.armorBonusMaximum;
+				}
+			}
+		}
+
+		return armorAmount + currentBonus;
+	}
+
+	public int getSpellFailure()
+	{
+		int spellFailure = 0;
+
+		Iterator<Item> iterator = iterator(true, false);
+
+		while (iterator.hasNext()) {
+			Item item = iterator.next();
+
+			if (item instanceof Armor) {
+				Armor armor = (Armor)item;
+				spellFailure += armor.spellFailure;
+			}
+		}
+
+		return spellFailure;
+	}
 	
 	@SuppressWarnings("unchecked")
 	public<T extends Item> T getItem( Class<T> itemClass ) {
@@ -200,10 +495,14 @@ public class Belongings implements Iterable<Item> {
 	}
 	
 	@SuppressWarnings("unchecked")
-	public <T extends Key> T getKey( Class<T> kind, int depth ) {
-		
-		for (Item item : backpack) {
-			if (item.getClass() == kind && ((Key)item).depth == depth) {
+	public <T extends OldKey> T getKey( Class<T> kind, int depth ) {
+		Iterator<Item> iterator = iterator(false, true);
+
+		while (iterator.hasNext())
+		{
+			Item item = iterator.next();
+
+			if (item.getClass() == kind && ((OldKey)item).depth == depth) {
 				return (T)item;
 			}
 		}
@@ -213,11 +512,15 @@ public class Belongings implements Iterable<Item> {
 
 	public void countIronKeys() {
 
-		IronKey.curDepthQuantity = 0;
+		IronOldKey.curDepthQuantity = 0;
 
-		for (Item item : backpack) {
-			if (item instanceof IronKey && ((IronKey)item).depth == Dungeon.depth) {
-				IronKey.curDepthQuantity += item.quantity();
+		Iterator<Item> iterator = iterator(false, true);
+
+		while (iterator.hasNext())
+		{
+			Item item = iterator.next();
+			if (item instanceof IronOldKey && ((IronOldKey)item).depth == Dungeon.depth) {
+				IronOldKey.curDepthQuantity += item.quantity();
 			}
 		}
 	}
@@ -279,24 +582,118 @@ public class Belongings implements Iterable<Item> {
             face.identify();
             Badges.validateItemLevelAquired(face);
         }
+
+		/*
 		for (Item item : backpack) {
-			item.cursedKnown = true;
+			//todo: should this be done here?
+			item.bucStatusKnown = true;
 		}
+		*/
 	}
 	
-	public void uncurseEquipped() {
-		ScrollOfRemoveCurse.uncurse( owner, weapon, offhand, tool1, tool2, armor, gloves, boots, cloak, ring1, ring2, amulet, face);
+	public int bucChange(boolean changeStatus, BUCStatus status, boolean changeStatusKnown, boolean statusKnown, boolean equippedItems, boolean backpackItems) {
+		Iterator<Item> items = iterator(equippedItems, backpackItems);
+		int itemsModified = 0;
+
+		while (items.hasNext()) {
+			Item item = items.next();
+
+			if (changeStatus) {
+				if (item.bucStatus() != status)
+				{
+					item.bucStatus(status);
+					itemsModified++;
+				}
+			}
+
+			if (changeStatusKnown) {
+				item.bucStatus(statusKnown);
+			}
+		}
+
+		return itemsModified;
 	}
-	
+
+	public int bucUncurse(boolean changeStatusKnown, boolean statusKnown, boolean equippedItems, boolean backpackItems) {
+		Iterator<Item> items = iterator(equippedItems, backpackItems);
+		int itemsModified = 0;
+
+		while (items.hasNext()) {
+			Item item = items.next();
+
+			switch(item.bucStatus())
+			{
+				case Cursed:
+					item.bucStatus(BUCStatus.Uncursed);
+					itemsModified++;
+					break;
+			}
+
+			if (changeStatusKnown) {
+				item.bucStatus(statusKnown);
+			}
+		}
+
+		return itemsModified;
+	}
+
+	public int identifyAll(boolean equippedItems, boolean backpackItems) {
+		Iterator<Item> items = iterator(equippedItems, backpackItems);
+		int itemsModified = 0;
+
+		while (items.hasNext()) {
+			Item item = items.next();
+
+			//GLog.d("do item=" + item.getDisplayName());
+
+			if (!item.isIdentified()) {
+				//GLog.d("  not identified");
+				item.identify();
+				itemsModified++;
+			}
+			else {
+				//GLog.d("  identified");
+			}
+		}
+
+		return itemsModified;
+	}
+
 	public Item randomUnequipped() {
-		return Random.element( backpack.items );
+		Item retval = null;
+		int bagstested = 0;
+
+		while (retval == null) {
+			if (bagstested == 7) {
+				return null;
+			}
+			Bag backpack;
+			switch(Random.Int(3)) {
+				case 0:
+					backpack = backpack1;
+					bagstested |= 1;
+					break;
+				case 1:
+					backpack = backpack2;
+					bagstested |= 2;
+					break;
+				default:
+					backpack = backpack3;
+					bagstested |= 4;
+					break;
+			}
+
+			retval = backpack.randomItem();
+		}
+
+		return retval;
 	}
 	
 	public void resurrect( int depth ) {
-
+		/*
 		for (Item item : backpack.items.toArray( new Item[0])) {
-			if (item instanceof Key) {
-				if (((Key)item).depth == depth) {
+			if (item instanceof OldKey) {
+				if (((OldKey)item).depth == depth) {
 					item.detachAll( backpack );
 				}
 			} else if (item.unique) {
@@ -310,7 +707,9 @@ public class Belongings implements Iterable<Item> {
 				item.detachAll( backpack );
 			}
 		}
-		
+		*/
+
+		/*
 		if (weapon != null) {
 			weapon.cursed = false;
 			weapon.activate( owner );
@@ -355,6 +754,7 @@ public class Belongings implements Iterable<Item> {
             face.cursed = false;
             face.activate(owner);
         }
+        */
 	}
 	
 	public int charge( boolean full) {
@@ -395,87 +795,237 @@ public class Belongings implements Iterable<Item> {
 		return count;
 	}
 
+	public void dropAll(int pos) {
+		ArrayList<Integer> passable = new ArrayList<Integer>();
+		for (Integer ofs : Level.NEIGHBOURS8) {
+			if (ofs==0) {
+				continue;
+			}
+
+			int cell = pos + ofs;
+
+			if ((Level.passable[cell] || Level.avoid[cell]) && Dungeon.level.heaps.get( cell ) == null) {
+				passable.add( cell );
+			}
+		}
+
+		boolean passableOrigin = Level.passable[pos];
+
+		Iterator<Item> items = iterator();
+
+		while (items.hasNext()) {
+			Collections.shuffle(passable);
+
+			if (passableOrigin && items.hasNext())
+			{
+				Item item = items.next();
+				if (item.droppable) {
+					Dungeon.level.drop(item, pos).sprite.drop(pos);
+				}
+			}
+
+			for (Integer cell : passable) {
+				if (!items.hasNext()) {
+					break;
+				}
+
+				Item item = items.next();
+				if (item.droppable) {
+					Dungeon.level.drop(item, cell).sprite.drop(pos);
+				}
+			}
+		}
+	}
+
+
+	public long decay() {
+		return 0;
+	}
+	public void decay(long amount, boolean updateTime, boolean fixTime) {
+		Iterator<Item> iterator = iterator();
+
+		while (iterator.hasNext()) {
+			Item next = iterator.next();
+
+			if (next instanceof IDecayable) {
+				IDecayable decayable = (IDecayable)next;
+
+				decayable.decay(amount, updateTime, fixTime);
+				if (decayable.decayed()) {
+					iterator.remove();
+				}
+			}
+		}
+	}
+	public boolean decayed() {
+		return false;
+	}
+
+
+	public Tool getEquippedTool(String type) {
+		if (tool1 != null && tool1.getToolClass() == type) {
+			return tool1;
+		}
+		else if (tool2 != null && tool2.getToolClass() == type) {
+			return tool2;
+		}
+
+		return null;
+	}
+
+
 	@Override
 	public Iterator<Item> iterator() {
 		return new ItemIterator();
+	}
+
+	public Iterator<Item> iterator(boolean equippedItems, boolean backpackItems) {
+		return new ItemIterator(equippedItems, backpackItems);
 	}
 	
 	private class ItemIterator implements Iterator<Item> {
 
 		private int index = 0;
-		
-		private Iterator<Item> backpackIterator = backpack.iterator();
-		
+
+
+		private Iterator<Item> backpack1Iterator = backpack1.iterator();
+		private Iterator<Item> backpack2Iterator = backpack2.iterator();
+		private Iterator<Item> backpack3Iterator = backpack3.iterator();
+		private Iterator<Item> backpack4Iterator = backpack4.iterator();
+		private int backpackIndex = -1;
+
 		private Item[] equipped = {weapon, offhand, tool1, tool2, armor, gloves, boots, cloak, ring1, ring2, amulet, face};
-		private int backpackIndex = equipped.length;
-		
+		private int equippedLength = equipped.length;
+
+		private boolean backpackItems;
+
+		public ItemIterator()
+		{
+			this(true, true);
+		}
+
+		public ItemIterator(boolean equippedItems, boolean backpackItems)
+		{
+			super();
+
+			if (!equippedItems)
+			{
+				index = equippedLength;
+			}
+
+			this.backpackItems = backpackItems;
+		}
+
+
+
 		@Override
 		public boolean hasNext() {
-			
-			for (int i=index; i < backpackIndex; i++) {
+			for (int i = index; i < equippedLength; i++) {
 				if (equipped[i] != null) {
 					return true;
 				}
 			}
-			
-			return backpackIterator.hasNext();
+
+			if (!backpackItems) {
+				return false;
+			}
+
+			return backpack1Iterator.hasNext() || backpack2Iterator.hasNext() || backpack3Iterator.hasNext() || backpack4Iterator.hasNext();
 		}
 
 		@Override
 		public Item next() {
-			
-			while (index < backpackIndex) {
+			while (index < equippedLength) {
 				Item item = equipped[index++];
 				if (item != null) {
 					return item;
 				}
 			}
-			
-			return backpackIterator.next();
+
+			if (backpackItems) {
+				if (backpack1Iterator.hasNext()) {
+					backpackIndex = 0;
+					return backpack1Iterator.next();
+				}
+				if (backpack2Iterator.hasNext()) {
+					backpackIndex = 1;
+					return backpack2Iterator.next();
+				}
+				if (backpack3Iterator.hasNext()) {
+					backpackIndex = 2;
+					return backpack3Iterator.next();
+				}
+				if (backpack4Iterator.hasNext()) {
+					backpackIndex = 3;
+					return backpack4Iterator.next();
+				}
+			}
+
+			return null;
 		}
 
 		@Override
 		public void remove() {
-			switch (index) {
-                case 0:
-                    equipped[0] = weapon = null;
-                    break;
-                case 1:
-                    equipped[1] = offhand = null;
-                    break;
-                case 2:
-                    equipped[2] = tool1 = null;
-                    break;
-                case 3:
-                    equipped[3] = tool2 = null;
-                    break;
-                case 4:
-                    equipped[4] = armor = null;
-                    break;
-                case 5:
-                    equipped[5] = gloves = null;
-                    break;
-                case 6:
-                    equipped[6] = boots = null;
-                    break;
-                case 7:
-                    equipped[7] = cloak = null;
-                    break;
-                case 8:
-                    equipped[8] = ring1 = null;
-                    break;
-                case 9:
-                    equipped[9] = ring2 = null;
-                    break;
-                case 10:
-                    equipped[10] = amulet = null;
-                    break;
-                case 11:
-                    equipped[11] = face = null;
-                    break;
-                default:
-                    backpackIterator.remove();
+			switch(backpackIndex)
+			{
+				case -1:
+					removeEquipped(index - 1);
+					break;
+				case 0:
+					backpack1Iterator.remove();
+					break;
+				case 1:
+					backpack2Iterator.remove();
+					break;
+				case 2:
+					backpack3Iterator.remove();
+					break;
+				case 3:
+					backpack4Iterator.remove();
+					break;
             }
+		}
+
+		private void removeEquipped(int index)
+		{
+			switch (index) {
+				case 0:
+					equipped[0] = weapon = null;
+					break;
+				case 1:
+					equipped[1] = offhand = null;
+					break;
+				case 2:
+					equipped[2] = tool1 = null;
+					break;
+				case 3:
+					equipped[3] = tool2 = null;
+					break;
+				case 4:
+					equipped[4] = armor = null;
+					break;
+				case 5:
+					equipped[5] = gloves = null;
+					break;
+				case 6:
+					equipped[6] = boots = null;
+					break;
+				case 7:
+					equipped[7] = cloak = null;
+					break;
+				case 8:
+					equipped[8] = ring1 = null;
+					break;
+				case 9:
+					equipped[9] = ring2 = null;
+					break;
+				case 10:
+					equipped[10] = amulet = null;
+					break;
+				case 11:
+					equipped[11] = face = null;
+					break;
+			}
 		}
 	}
 }

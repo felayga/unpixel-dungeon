@@ -26,6 +26,7 @@ package com.felayga.unpixeldungeon.items.food;
 import com.felayga.unpixeldungeon.Assets;
 import com.felayga.unpixeldungeon.Badges;
 import com.felayga.unpixeldungeon.Statistics;
+import com.felayga.unpixeldungeon.actors.Actor;
 import com.felayga.unpixeldungeon.actors.buffs.Barkskin;
 import com.felayga.unpixeldungeon.actors.buffs.Bleeding;
 import com.felayga.unpixeldungeon.actors.buffs.Buff;
@@ -44,6 +45,7 @@ import com.felayga.unpixeldungeon.effects.SpellSprite;
 import com.felayga.unpixeldungeon.items.Item;
 import com.felayga.unpixeldungeon.items.potions.*;
 import com.felayga.unpixeldungeon.items.scrolls.ScrollOfRecharging;
+import com.felayga.unpixeldungeon.mechanics.GameTime;
 import com.felayga.unpixeldungeon.plants.Blindweed;
 import com.felayga.unpixeldungeon.plants.Dreamfoil;
 import com.felayga.unpixeldungeon.plants.Earthroot;
@@ -73,7 +75,7 @@ public class Blandfruit extends Food {
 		name = "Blandfruit";
 		stackable = true;
 		image = ItemSpriteSheet.BLANDFRUIT;
-		energy = (Hunger.STARVING - Hunger.HUNGRY)/2;
+		energy = 250;
 		hornValue = 6; //only applies when blandfruit is cooked
 
 		bones = true;
@@ -94,14 +96,12 @@ public class Blandfruit extends Food {
 	}
 
 	@Override
-	public void execute( Hero hero, String action ) {
+	public boolean execute( Hero hero, String action ) {
 		if (action.equals( AC_EAT )){
-
 			if (potionAttrib == null) {
+				hero.belongings.detach(this);
 
-				detach(hero.belongings.backpack);
-
-				((Hunger) hero.buff(Hunger.class)).satisfy(energy);
+				((Hunger) hero.buff(Hunger.class)).satisfy_new(energy);
 				GLog.i(message);
 
 				hero.sprite.operate(hero.pos);
@@ -109,17 +109,16 @@ public class Blandfruit extends Food {
 				SpellSprite.show(hero, SpellSprite.FOOD);
 				Sample.INSTANCE.play(Assets.SND_EAT);
 
-				hero.spend(1f);
+				hero.spend(GameTime.TICK, false);
 
 				Statistics.foodEaten++;
 				Badges.validateFoodEaten();
 			} else {
+				((Hunger) hero.buff(Hunger.class)).satisfy_new(energy * 2);
 
-				((Hunger) hero.buff(Hunger.class)).satisfy(Hunger.HUNGRY);
+				hero.belongings.detach(this);
 
-				detach(hero.belongings.backpack);
-
-				hero.spend(1f);
+				hero.spend(GameTime.TICK, false);
 				hero.busy();
 
 				if (potionAttrib instanceof PotionOfFrost) {
@@ -173,7 +172,7 @@ public class Blandfruit extends Food {
 						break;
 					case MAGE:
 						//1 charge
-						Buff.affect(hero, ScrollOfRecharging.Recharging.class, 4f);
+						Buff.affect(hero, ScrollOfRecharging.Recharging.class, GameTime.TICK * 4);
 						ScrollOfRecharging.charge(hero);
 						break;
 					case ROGUE:
@@ -181,8 +180,10 @@ public class Blandfruit extends Food {
 						break;
 				}
 			}
+
+			return false;
 		} else {
-			super.execute(hero, action);
+			return super.execute(hero, action);
 		}
 	}
 
@@ -299,7 +300,7 @@ public class Blandfruit extends Food {
 				potionAttrib instanceof PotionOfLevitation ||
 				potionAttrib instanceof PotionOfPurity) {
 			potionAttrib.cast(user, dst);
-			detach( user.belongings.backpack );
+			user.belongings.detach(this);
 		} else {
 			super.cast(user, dst);
 		}

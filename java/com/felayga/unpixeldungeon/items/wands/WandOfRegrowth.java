@@ -28,7 +28,7 @@ import com.felayga.unpixeldungeon.actors.Char;
 import com.felayga.unpixeldungeon.actors.buffs.Buff;
 import com.felayga.unpixeldungeon.items.Dewdrop;
 import com.felayga.unpixeldungeon.items.Generator;
-import com.felayga.unpixeldungeon.items.weapon.melee.MagesStaff;
+import com.felayga.unpixeldungeon.items.weapon.melee.simple.MagesStaff;
 import com.felayga.unpixeldungeon.plants.BlandfruitBush;
 import com.felayga.unpixeldungeon.plants.Plant;
 import com.felayga.unpixeldungeon.plants.Starflower;

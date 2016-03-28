@@ -29,7 +29,7 @@ import com.felayga.unpixeldungeon.items.Heap;
 import com.felayga.unpixeldungeon.items.Item;
 import com.felayga.unpixeldungeon.items.food.Blandfruit;
 import com.felayga.unpixeldungeon.scenes.GameScene;
-import com.felayga.unpixeldungeon.windows.WndBag;
+import com.felayga.unpixeldungeon.windows.WndBackpack;
 import com.felayga.unpixeldungeon.windows.WndOptions;
 
 import java.util.Iterator;
@@ -69,7 +69,7 @@ public class AlchemyPot {
 								if (index == 0) {
 									curItem.cast( AlchemyPot.hero, AlchemyPot.pos );
 								} else
-									GameScene.selectItem(itemSelector, WndBag.Mode.SEED, TXT_SELECT_SEED);
+									GameScene.selectItem(itemSelector, WndBackpack.Mode.SEED, TXT_SELECT_SEED);
 							}
 						}
 					);
@@ -78,10 +78,10 @@ public class AlchemyPot {
 			}
 
 		if (!foundFruit)
-			GameScene.selectItem(itemSelector, WndBag.Mode.SEED, TXT_SELECT_SEED);
+			GameScene.selectItem(itemSelector, WndBackpack.Mode.SEED, TXT_SELECT_SEED);
 	}
 	
-	private static final WndBag.Listener itemSelector = new WndBag.Listener() {
+	private static final WndBackpack.Listener itemSelector = new WndBackpack.Listener() {
 		@Override
 		public void onSelect( Item item ) {
 		if (item != null) {

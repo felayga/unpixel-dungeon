@@ -32,8 +32,10 @@ import com.felayga.unpixeldungeon.effects.Pushing;
 import com.felayga.unpixeldungeon.items.Generator;
 import com.felayga.unpixeldungeon.items.Item;
 import com.felayga.unpixeldungeon.items.potions.PotionOfHealing;
+import com.felayga.unpixeldungeon.items.weapon.melee.mob.MeleeMobAttack;
 import com.felayga.unpixeldungeon.levels.Level;
 import com.felayga.unpixeldungeon.mechanics.Ballistica;
+import com.felayga.unpixeldungeon.mechanics.GameTime;
 import com.felayga.unpixeldungeon.sprites.GuardSprite;
 import com.watabou.utils.Bundle;
 import com.watabou.utils.Callback;
@@ -50,6 +52,8 @@ public class Guard extends Mob {
 
 		canOpenDoors = true;
 
+		DEXCHA = 14;
+
 		HP = HT = 30;
 		defenseSkill = 10;
 
@@ -58,11 +62,8 @@ public class Guard extends Mob {
 
 		loot = null;    //see createloot.
 		lootChance = 1;
-	}
 
-	@Override
-	public int damageRoll() {
-		return Random.NormalIntRange(4, 10);
+		belongings.weapon = new MeleeMobAttack(GameTime.TICK, 4, 10);
 	}
 
 	@Override
@@ -111,7 +112,7 @@ public class Guard extends Mob {
 						Actor.addDelayed(new Pushing(enemy, enemy.pos, newPosFinal), -1);
 						enemy.pos = newPosFinal;
 						Dungeon.level.press(newPosFinal, enemy);
-						Cripple.prolong(enemy, Cripple.class, 4f);
+						Cripple.prolong(enemy, Cripple.class, GameTime.TICK * 4);
 						if (enemy == Dungeon.hero) {
 							Dungeon.hero.interrupt();
 							Dungeon.observe();
@@ -123,16 +124,6 @@ public class Guard extends Mob {
 		}
 		chainsUsed = true;
 		return true;
-	}
-
-	@Override
-	public int attackSkill( Char target ) {
-		return 14;
-	}
-
-	@Override
-	public int dr() {
-		return 7;
 	}
 
 	@Override

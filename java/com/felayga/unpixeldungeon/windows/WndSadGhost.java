@@ -121,7 +121,7 @@ public class WndSadGhost extends Window {
 		hide();
 		
 		if (reward.doPickUp( Dungeon.hero )) {
-			GLog.i( Hero.TXT_YOU_NOW_HAVE, reward.name() );
+			GLog.i( Hero.TXT_YOU_NOW_HAVE, reward.getDisplayName() );
 		} else {
 			Dungeon.level.drop( reward, ghost.pos ).sprite.drop();
 		}

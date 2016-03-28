@@ -33,9 +33,9 @@ import com.felayga.unpixeldungeon.actors.Actor;
 import com.felayga.unpixeldungeon.actors.Char;
 import com.felayga.unpixeldungeon.items.Item;
 import com.felayga.unpixeldungeon.scenes.GameScene;
-import com.felayga.unpixeldungeon.windows.WndBag;
+import com.felayga.unpixeldungeon.windows.WndBackpack;
 
-public class QuickSlotButton extends Button implements WndBag.Listener {
+public class QuickSlotButton extends Button implements WndBackpack.Listener {
 
 	private static final String TXT_SELECT_ITEM = "Select an item to quickslot";
 	
@@ -130,12 +130,12 @@ public class QuickSlotButton extends Button implements WndBag.Listener {
 	
 	@Override
 	protected void onClick() {
-		GameScene.selectItem( this, WndBag.Mode.QUICKSLOT, TXT_SELECT_ITEM );
+		GameScene.selectItem( this, WndBackpack.Mode.QUICKSLOT, TXT_SELECT_ITEM );
 	}
 	
 	@Override
 	protected boolean onLongClick() {
-		GameScene.selectItem( this, WndBag.Mode.QUICKSLOT, TXT_SELECT_ITEM );
+		GameScene.selectItem( this, WndBackpack.Mode.QUICKSLOT, TXT_SELECT_ITEM );
 		return true;
 	}
 

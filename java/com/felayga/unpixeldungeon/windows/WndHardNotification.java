@@ -48,7 +48,7 @@ public class WndHardNotification extends WndTitledMessage{
 		timeLeft = time;
 		this.btnMessage = btnMessage;
 
-		btnOkay = new RedButton(btnMessage + " (" + time +")"){
+		btnOkay = new RedButton(btnMessage + " (" + time +")", true){
 			@Override
 			protected void onClick() {
 				hide();

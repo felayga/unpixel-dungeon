@@ -55,13 +55,16 @@ public class MerchantsBeacon extends Item {
 	}
 
 	@Override
-	public void execute(Hero hero, String action) {
+	public boolean execute(Hero hero, String action) {
 		if (action.equals(AC_USE)) {
-			detach( hero.belongings.backpack );
+			hero.belongings.detach(this);
 			Shopkeeper.sell();
 			Sample.INSTANCE.play( Assets.SND_BEACON );
-		} else
-			super.execute(hero, action);
+
+			return false;
+		} else {
+			return super.execute(hero, action);
+		}
 	}
 
 	@Override

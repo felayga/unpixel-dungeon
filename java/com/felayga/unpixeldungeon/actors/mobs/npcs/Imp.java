@@ -34,6 +34,7 @@ import com.felayga.unpixeldungeon.items.Generator;
 import com.felayga.unpixeldungeon.items.quest.DwarfToken;
 import com.felayga.unpixeldungeon.items.rings.Ring;
 import com.felayga.unpixeldungeon.levels.CityLevel;
+import com.felayga.unpixeldungeon.mechanics.BUCStatus;
 import com.felayga.unpixeldungeon.scenes.GameScene;
 import com.felayga.unpixeldungeon.sprites.ImpSprite;
 import com.felayga.unpixeldungeon.utils.Utils;
@@ -229,9 +230,9 @@ public class Imp extends NPC {
 				
 				do {
 					reward = (Ring)Generator.random( Generator.Category.RING );
-				} while (reward.cursed);
-				reward.upgrade( 2 );
-				reward.cursed = true;
+				} while (reward.bucStatus() == BUCStatus.Cursed);
+				reward.upgrade( null, 2 );
+				reward.bucStatus(BUCStatus.Cursed);
 			}
 		}
 		

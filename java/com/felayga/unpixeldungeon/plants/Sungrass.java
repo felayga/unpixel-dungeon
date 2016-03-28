@@ -32,6 +32,7 @@ import com.felayga.unpixeldungeon.effects.CellEmitter;
 import com.felayga.unpixeldungeon.effects.Speck;
 import com.felayga.unpixeldungeon.effects.particles.ShaftParticle;
 import com.felayga.unpixeldungeon.items.potions.PotionOfHealing;
+import com.felayga.unpixeldungeon.mechanics.GameTime;
 import com.felayga.unpixeldungeon.sprites.ItemSpriteSheet;
 import com.felayga.unpixeldungeon.ui.BuffIndicator;
 import com.watabou.utils.Bundle;
@@ -84,7 +85,7 @@ public class Sungrass extends Plant {
 	
 	public static class Health extends Buff {
 		
-		private static final float STEP = 1f;
+		private static final long STEP = GameTime.TICK;
 		
 		private int pos;
 		private int healCurr = 1;
@@ -128,7 +129,7 @@ public class Sungrass extends Plant {
 			}
 			if (level <= 0)
 				detach();
-			spend( STEP );
+			spend( STEP, false );
 			return true;
 		}
 

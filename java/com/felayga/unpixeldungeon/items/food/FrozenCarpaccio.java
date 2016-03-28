@@ -45,17 +45,15 @@ public class FrozenCarpaccio extends Food {
 	{
 		name = "frozen carpaccio";
 		image = ItemSpriteSheet.CARPACCIO;
-		energy = Hunger.STARVING - Hunger.HUNGRY;
+		energy = 125;
 		hornValue = 1;
 	}
 	
 	@Override
-	public void execute( Hero hero, String action ) {
-		
-		super.execute( hero, action );
+	public boolean execute( Hero hero, String action ) {
+		boolean retval = super.execute( hero, action );
 		
 		if (action.equals( AC_EAT )) {
-			
 			switch (Random.Int( 5 )) {
 			case 0:
 				GLog.i( "You see your hands turn invisible!" );
@@ -84,6 +82,8 @@ public class FrozenCarpaccio extends Food {
 				break;
 			}
 		}
+
+		return retval;
 	}
 	
 	@Override

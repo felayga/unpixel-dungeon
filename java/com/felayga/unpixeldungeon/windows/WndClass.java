@@ -106,7 +106,7 @@ public class WndClass extends WndTabbed {
 		public float width;
 
 		public PerksTab() {
-			super();
+			super(-1);
 
 			float dotWidth = 0;
 
@@ -158,7 +158,7 @@ public class WndClass extends WndTabbed {
 		public float width;
 
 		public MasteryTab() {
-			super();
+			super(-1);
 
 			String text = null;
 			switch (cl) {

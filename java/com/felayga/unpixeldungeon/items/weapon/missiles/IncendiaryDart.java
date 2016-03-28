@@ -31,44 +31,42 @@ import com.felayga.unpixeldungeon.actors.buffs.Buff;
 import com.felayga.unpixeldungeon.actors.buffs.Burning;
 import com.felayga.unpixeldungeon.items.Item;
 import com.felayga.unpixeldungeon.levels.Level;
+import com.felayga.unpixeldungeon.mechanics.GameTime;
 import com.felayga.unpixeldungeon.scenes.GameScene;
 import com.felayga.unpixeldungeon.sprites.ItemSpriteSheet;
 import com.watabou.utils.Random;
 
 public class IncendiaryDart extends MissileWeapon {
 
-	{
-		name = "incendiary dart";
-		image = ItemSpriteSheet.INCENDIARY_DART;
-		
-		STR = 12;
-		
-		MIN = 1;
-		MAX = 2;
-	}
-	
 	public IncendiaryDart() {
 		this( 1 );
 	}
 	
 	public IncendiaryDart( int number ) {
-		super();
-		quantity = number;
+		super(GameTime.TICK, 1, 2, number);
+
+		name = "incendiary dart";
+		image = ItemSpriteSheet.INCENDIARY_DART;
+
+		//STR = 12;
 	}
 	
 	@Override
 	protected void onThrow( int cell ) {
 		Char enemy = Actor.findChar( cell );
-		if ((enemy == null || enemy == curUser) && Level.flamable[cell])
+		if ((enemy == null || enemy == curUser) && Level.wood[cell])
 			GameScene.add( Blob.seed( cell, 4, Fire.class ) );
 		else
 			super.onThrow( cell );
 	}
 	
 	@Override
-	public void proc( Char attacker, Char defender, int damage ) {
+	public int proc( Char attacker, boolean thrown, Char defender, int damage ) {
+		damage = super.proc( attacker, thrown, defender, damage);
+
 		Buff.affect( defender, Burning.class ).reignite( defender );
-		super.proc( attacker, defender, damage );
+
+		return damage;
 	}
 	
 	@Override

@@ -21,6 +21,7 @@ package com.felayga.unpixeldungeon.mechanics;
  * Created by hello on 12/23/15.
  */
 public enum AttributeType {
+    NONE,
     STRCON,
     DEXCHA,
     INTWIS

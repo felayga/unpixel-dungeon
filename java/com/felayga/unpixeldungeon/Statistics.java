@@ -28,7 +28,7 @@ import com.watabou.utils.Bundle;
 public class Statistics {
 	
 	public static int goldCollected;
-	public static int deepestFloor;
+	public static boolean floorsVisited[];
 	public static int enemiesSlain;
 	public static int foodEaten;
 	public static int potionsCooked;
@@ -46,7 +46,12 @@ public class Statistics {
 	public static void reset() {
 		
 		goldCollected	= 0;
-		deepestFloor	= 0;
+		floorsVisited = new boolean[Dungeon.HIGHESTLEVEL];
+		for (int n=0;n<Dungeon.HIGHESTLEVEL;n++)
+		{
+			floorsVisited[n] = false;
+		}
+
 		enemiesSlain	= 0;
 		foodEaten		= 0;
 		potionsCooked	= 0;
@@ -62,20 +67,20 @@ public class Statistics {
 		
 	}
 	
-	private static final String GOLD		= "score";
-	private static final String DEEPEST		= "maxDepth";
-	private static final String SLAIN		= "enemiesSlain";
-	private static final String FOOD		= "foodEaten";
-	private static final String ALCHEMY		= "potionsCooked";
-	private static final String PIRANHAS	= "priranhas";
-	private static final String NIGHT		= "nightHunt";
-	private static final String ANKHS		= "ankhsUsed";
-	private static final String DURATION	= "duration";
-	private static final String AMULET		= "amuletObtained";
+	private static final String GOLD			= "score";
+	private static final String FLOORSVISITED	= "floorsVisited";
+	private static final String SLAIN			= "enemiesSlain";
+	private static final String FOOD			= "foodEaten";
+	private static final String ALCHEMY			= "potionsCooked";
+	private static final String PIRANHAS		= "priranhas";
+	private static final String NIGHT			= "nightHunt";
+	private static final String ANKHS			= "ankhsUsed";
+	private static final String DURATION		= "duration";
+	private static final String AMULET			= "amuletObtained";
 	
 	public static void storeInBundle( Bundle bundle ) {
 		bundle.put( GOLD,		goldCollected );
-		bundle.put( DEEPEST,	deepestFloor );
+		bundle.put( FLOORSVISITED,	floorsVisited );
 		bundle.put( SLAIN,		enemiesSlain );
 		bundle.put( FOOD,		foodEaten );
 		bundle.put( ALCHEMY,	potionsCooked );
@@ -88,7 +93,7 @@ public class Statistics {
 	
 	public static void restoreFromBundle( Bundle bundle ) {
 		goldCollected	= bundle.getInt( GOLD );
-		deepestFloor	= bundle.getInt( DEEPEST );
+		floorsVisited	= bundle.getBooleanArray( FLOORSVISITED );
 		enemiesSlain	= bundle.getInt( SLAIN );
 		foodEaten		= bundle.getInt( FOOD );
 		potionsCooked	= bundle.getInt( ALCHEMY );

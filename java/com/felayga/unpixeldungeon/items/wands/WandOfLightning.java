@@ -26,7 +26,7 @@ package com.felayga.unpixeldungeon.items.wands;
 import java.util.ArrayList;
 
 import com.felayga.unpixeldungeon.items.weapon.enchantments.Shock;
-import com.felayga.unpixeldungeon.items.weapon.melee.MagesStaff;
+import com.felayga.unpixeldungeon.items.weapon.melee.simple.MagesStaff;
 import com.felayga.unpixeldungeon.mechanics.Ballistica;
 import com.felayga.unpixeldungeon.sprites.ItemSpriteSheet;
 import com.watabou.noosa.Camera;
@@ -70,7 +70,7 @@ public class WandOfLightning extends Wand {
 			ch.damage(Math.round(Random.NormalIntRange(min, max) * multipler), LightningTrap.LIGHTNING);
 
 			if (ch == Dungeon.hero) Camera.main.shake( 2, 0.3f );
-			ch.sprite.centerEmitter().burst( SparkParticle.FACTORY, 3 );
+			ch.sprite.centerEmitter(-1).burst( SparkParticle.FACTORY, 3 );
 			ch.sprite.flash();
 		}
 

@@ -25,6 +25,7 @@ package com.felayga.unpixeldungeon.actors.buffs;
 
 import com.felayga.unpixeldungeon.actors.blobs.Blob;
 import com.felayga.unpixeldungeon.actors.blobs.ToxicGas;
+import com.felayga.unpixeldungeon.mechanics.GameTime;
 import com.felayga.unpixeldungeon.scenes.GameScene;
 import com.felayga.unpixeldungeon.ui.BuffIndicator;
 import com.watabou.utils.Bundle;
@@ -52,15 +53,15 @@ public class ToxicImbue extends Buff {
 
 	public void set( float duration ) {
 		this.left = duration;
-	};
+	}
 
 
 	@Override
 	public boolean act() {
 		GameScene.add(Blob.seed(target.pos, 50, ToxicGas.class));
 
-		spend(TICK);
-		left -= TICK;
+		spend(GameTime.TICK, false);
+		left -= GameTime.TICK;
 		if (left <= 0)
 			detach();
 

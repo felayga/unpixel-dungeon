@@ -33,9 +33,10 @@ import com.felayga.unpixeldungeon.actors.buffs.FlavourBuff;
 import com.felayga.unpixeldungeon.actors.buffs.Frost;
 import com.felayga.unpixeldungeon.effects.MagicMissile;
 import com.felayga.unpixeldungeon.items.Heap;
-import com.felayga.unpixeldungeon.items.weapon.melee.MagesStaff;
+import com.felayga.unpixeldungeon.items.weapon.melee.simple.MagesStaff;
 import com.felayga.unpixeldungeon.levels.Level;
 import com.felayga.unpixeldungeon.mechanics.Ballistica;
+import com.felayga.unpixeldungeon.mechanics.GameTime;
 import com.felayga.unpixeldungeon.sprites.ItemSpriteSheet;
 import com.watabou.noosa.audio.Sample;
 import com.watabou.utils.Callback;
@@ -66,7 +67,7 @@ public class WandOfFrost extends Wand {
 				return; //do nothing, can't affect a frozen target
 			}
 			if (ch.buff(Chill.class) != null){
-				damage = Math.round(damage * ch.buff(Chill.class).speedFactor());
+				damage = (int)Math.round(damage * ch.buff(Chill.class).speedFactor());
 			} else {
 				ch.sprite.burst( 0xFF99CCFF, level / 2 + 2 );
 			}
@@ -78,7 +79,7 @@ public class WandOfFrost extends Wand {
 				if (Level.water[ch.pos]){
 					//20+(10*level)% chance
 					if (Random.Int(10) >= 8-level )
-						Buff.affect(ch, Frost.class, Frost.duration(ch)*Random.Float(2f, 4f));
+						Buff.affect(ch, Frost.class, Frost.duration(ch)*Random.Long(GameTime.TICK * 2, GameTime.TICK * 4) / GameTime.TICK);
 					else
 						Buff.prolong(ch, Chill.class, 6+level);
 				} else {
@@ -103,7 +104,7 @@ public class WandOfFrost extends Wand {
 			new FlavourBuff(){
 				{actPriority = Integer.MIN_VALUE;}
 				public boolean act() {
-					Buff.affect(target, Frost.class, Frost.duration(target) * Random.Float(1f, 2f));
+					Buff.affect(target, Frost.class, Frost.duration(target) * Random.Long(GameTime.TICK, GameTime.TICK * 2) / GameTime.TICK);
 					return super.act();
 				}
 			}.attachTo(defender);

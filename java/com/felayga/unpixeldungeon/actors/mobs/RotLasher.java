@@ -24,13 +24,16 @@
 package com.felayga.unpixeldungeon.actors.mobs;
 
 import com.felayga.unpixeldungeon.Dungeon;
+import com.felayga.unpixeldungeon.actors.Actor;
 import com.felayga.unpixeldungeon.actors.Char;
 import com.felayga.unpixeldungeon.actors.blobs.ToxicGas;
 import com.felayga.unpixeldungeon.actors.buffs.Buff;
 import com.felayga.unpixeldungeon.actors.buffs.Cripple;
 import com.felayga.unpixeldungeon.items.Generator;
+import com.felayga.unpixeldungeon.items.weapon.melee.mob.CrippleChance;
 import com.felayga.unpixeldungeon.levels.Level;
 import com.felayga.unpixeldungeon.levels.Terrain;
+import com.felayga.unpixeldungeon.mechanics.GameTime;
 import com.felayga.unpixeldungeon.sprites.RotLasherSprite;
 import com.felayga.unpixeldungeon.utils.Utils;
 import com.watabou.utils.Random;
@@ -43,6 +46,8 @@ public class RotLasher extends Mob {
 		name = "rot lasher";
 		spriteClass = RotLasherSprite.class;
 
+		DEXCHA = 15;
+
 		HP = HT = 40;
 		defenseSkill = 0;
 
@@ -52,6 +57,8 @@ public class RotLasher extends Mob {
 		lootChance = 1f;
 
 		state = WANDERING = new Waiting();
+
+		belongings.weapon = new CrippleChance(GameTime.TICK, 4, 12, 1, GameTime.TICK * 2);
 	}
 
 	@Override
@@ -68,11 +75,6 @@ public class RotLasher extends Mob {
 		}
 	}
 
-	@Override
-	public int attackProc(Char enemy, int damage) {
-		Buff.affect( enemy, Cripple.class, 2f );
-		return super.attackProc(enemy, damage);
-	}
 
 	@Override
 	protected boolean getCloser(int target) {
@@ -82,21 +84,6 @@ public class RotLasher extends Mob {
 	@Override
 	protected boolean getFurther(int target) {
 		return true;
-	}
-
-	@Override
-	public int damageRoll() {
-		return Random.NormalIntRange(4, 12);
-	}
-
-	@Override
-	public int attackSkill( Char target ) {
-		return 15;
-	}
-
-	@Override
-	public int dr() {
-		return 8;
 	}
 
 	@Override

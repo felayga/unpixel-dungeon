@@ -29,6 +29,7 @@ import com.felayga.unpixeldungeon.items.Gold;
 import com.felayga.unpixeldungeon.items.Item;
 import com.felayga.unpixeldungeon.items.artifacts.Artifact;
 import com.felayga.unpixeldungeon.items.weapon.missiles.MissileWeapon;
+import com.felayga.unpixeldungeon.mechanics.BUCStatus;
 import com.watabou.noosa.Game;
 import com.watabou.utils.Bundle;
 import com.watabou.utils.Random;
@@ -54,7 +55,7 @@ public class Bones {
 		depth = Dungeon.depth;
 
 		//heroes which have won the game, who die far above their farthest depth, or who are challenged drop no bones.
-		if (Statistics.amuletObtained || (Statistics.deepestFloor - 5) >= depth || Dungeon.challenges > 0) {
+		if (Statistics.amuletObtained || /*(Statistics.deepestFloor - 5) >= depth ||*/ Dungeon.challenges > 0) {
 			depth = -1;
 			return;
 		}
@@ -122,7 +123,7 @@ public class Bones {
 				return pickItem(hero);
 		} else {
 
-			Iterator<Item> iterator = hero.belongings.backpack.iterator();
+			Iterator<Item> iterator = hero.belongings.iterator();
 			Item curItem;
 			ArrayList<Item> items = new ArrayList<Item>();
 			while (iterator.hasNext()){
@@ -143,11 +144,14 @@ public class Bones {
 			}
 		}
 		if (item == null) {
+			item = new Gold(Random.Int(50, 250));
+			/*
 			if (Dungeon.gold > 50) {
 				item = new Gold( Random.NormalIntRange( 50, Dungeon.gold ) );
 			} else {
 				item = new Gold( 50 );
 			}
+			*/
 		}
 		return item;
 	}
@@ -179,8 +183,7 @@ public class Bones {
 					if (Generator.removeArtifact((Artifact)item)) {
 						try {
 							Artifact artifact = (Artifact)item.getClass().newInstance();
-							artifact.cursed = true;
-							artifact.cursedKnown = true;
+							artifact.bucStatus(BUCStatus.Cursed, false);
 							//caps displayed artifact level
 							artifact.transferUpgrade(Math.min(
 									item.visiblyUpgraded(),
@@ -196,13 +199,12 @@ public class Bones {
 				}
 				
 				if (item.isUpgradable()) {
-					item.cursed = true;
-					item.cursedKnown = true;
+					item.bucStatus(BUCStatus.Cursed, true);
 					if (item.isUpgradable()) {
 						//gain 1 level every 3.333 floors down plus one additional level.
 						int lvl = 1 + ((Dungeon.depth * 3) / 10);
 						if (lvl < item.level) {
-							item.degrade( item.level - lvl );
+							item.upgrade( null, -(item.level - lvl) );
 						}
 						item.levelKnown = false;
 					}

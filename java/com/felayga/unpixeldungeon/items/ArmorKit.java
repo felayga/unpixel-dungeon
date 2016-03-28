@@ -25,6 +25,7 @@ package com.felayga.unpixeldungeon.items;
 
 import java.util.ArrayList;
 
+import com.felayga.unpixeldungeon.mechanics.GameTime;
 import com.watabou.noosa.audio.Sample;
 import com.felayga.unpixeldungeon.Assets;
 import com.felayga.unpixeldungeon.actors.hero.Hero;
@@ -32,17 +33,17 @@ import com.felayga.unpixeldungeon.effects.Speck;
 import com.felayga.unpixeldungeon.items.armor.Armor;
 import com.felayga.unpixeldungeon.items.armor.ClassArmor;
 import com.felayga.unpixeldungeon.scenes.GameScene;
-import com.felayga.unpixeldungeon.sprites.HeroSprite;
+import com.felayga.unpixeldungeon.sprites.hero.HeroSprite;
 import com.felayga.unpixeldungeon.sprites.ItemSpriteSheet;
 import com.felayga.unpixeldungeon.utils.GLog;
-import com.felayga.unpixeldungeon.windows.WndBag;
+import com.felayga.unpixeldungeon.windows.WndBackpack;
 
 public class ArmorKit extends Item {
 	
 	private static final String TXT_SELECT_ARMOR	= "Select an armor to upgrade";
 	private static final String TXT_UPGRADED		= "you applied the armor kit to upgrade your %s";
 	
-	private static final float TIME_TO_UPGRADE = 2;
+	private static final long TIME_TO_UPGRADE = GameTime.TICK * 2;
 	
 	private static final String AC_APPLY = "APPLY";
 	
@@ -61,16 +62,14 @@ public class ArmorKit extends Item {
 	}
 	
 	@Override
-	public void execute( Hero hero, String action ) {
-		if (action == AC_APPLY) {
-
+	public boolean execute( Hero hero, String action ) {
+		if (action.equals(AC_APPLY)) {
 			curUser = hero;
-			GameScene.selectItem( itemSelector, WndBag.Mode.ARMOR, TXT_SELECT_ARMOR );
-			
+			GameScene.selectItem( itemSelector, WndBackpack.Mode.ARMOR, TXT_SELECT_ARMOR );
+
+			return false;
 		} else {
-			
-			super.execute( hero, action );
-			
+			return super.execute( hero, action );
 		}
 	}
 	
@@ -86,25 +85,23 @@ public class ArmorKit extends Item {
 	
 	private void upgrade( Armor armor ) {
 		
-		detach( curUser.belongings.backpack );
+		curUser.belongings.detach(this);
 		
-		curUser.sprite.centerEmitter().start( Speck.factory( Speck.KIT ), 0.05f, 10 );
-		curUser.spend( TIME_TO_UPGRADE );
+		curUser.sprite.centerEmitter(-1).start( Speck.factory( Speck.KIT ), 0.05f, 10 );
+		curUser.spend( TIME_TO_UPGRADE, false );
 		curUser.busy();
 		
-		GLog.w( TXT_UPGRADED, armor.name() );
+		GLog.w( TXT_UPGRADED, armor.getDisplayName() );
 		
 		ClassArmor classArmor = ClassArmor.upgrade( curUser, armor );
 		if (curUser.belongings.armor == armor) {
 			
 			curUser.belongings.armor = classArmor;
-			((HeroSprite)curUser.sprite).updateArmor();
+			((HeroSprite)curUser.sprite).setArmor(classArmor.textureIndex);
 			
 		} else {
-			
-			armor.detach( curUser.belongings.backpack );
-			classArmor.collect( curUser.belongings.backpack );
-			
+			curUser.belongings.detach(armor);
+			curUser.belongings.collect(classArmor);
 		}
 		
 		curUser.sprite.operate( curUser.pos );
@@ -119,7 +116,7 @@ public class ArmorKit extends Item {
 			"depending on his class. No skills in tailoring, leatherworking or blacksmithing are required.";
 	}
 	
-	private final WndBag.Listener itemSelector = new WndBag.Listener() {
+	private final WndBackpack.Listener itemSelector = new WndBackpack.Listener() {
 		@Override
 		public void onSelect( Item item ) {
 			if (item != null) {

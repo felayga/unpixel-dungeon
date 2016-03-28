@@ -24,7 +24,7 @@ import com.felayga.unpixeldungeon.Dungeon;
 import com.felayga.unpixeldungeon.items.Generator;
 import com.felayga.unpixeldungeon.items.Item;
 import com.felayga.unpixeldungeon.items.Heap.Type;
-import com.felayga.unpixeldungeon.items.keys.IronKey;
+import com.felayga.unpixeldungeon.items.keys.IronOldKey;
 import com.felayga.unpixeldungeon.levels.Level;
 import com.felayga.unpixeldungeon.levels.Room;
 import com.felayga.unpixeldungeon.levels.Terrain;
@@ -58,7 +58,7 @@ public class PitPainter extends Painter {
 			remains = room.random();
 		}
 		
-		level.drop( new IronKey( Dungeon.depth ), remains ).type = Type.SKELETON;
+		level.drop( new IronOldKey( Dungeon.depth ), remains ).type = Type.SKELETON;
 		int loot = Random.Int( 3 );
 		if (loot == 0) {
 			level.drop( Generator.random( Generator.Category.RING ), remains );

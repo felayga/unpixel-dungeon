@@ -27,6 +27,7 @@ import java.util.HashSet;
 
 import com.felayga.unpixeldungeon.Dungeon;
 import com.felayga.unpixeldungeon.ResultDescriptions;
+import com.felayga.unpixeldungeon.actors.Actor;
 import com.felayga.unpixeldungeon.actors.Char;
 import com.felayga.unpixeldungeon.actors.buffs.Buff;
 import com.felayga.unpixeldungeon.actors.buffs.Weakness;
@@ -34,8 +35,10 @@ import com.felayga.unpixeldungeon.items.Generator;
 import com.felayga.unpixeldungeon.items.Item;
 import com.felayga.unpixeldungeon.items.potions.PotionOfHealing;
 import com.felayga.unpixeldungeon.items.weapon.enchantments.Death;
+import com.felayga.unpixeldungeon.items.weapon.melee.mob.MeleeMobAttack;
 import com.felayga.unpixeldungeon.levels.Level;
 import com.felayga.unpixeldungeon.mechanics.Ballistica;
+import com.felayga.unpixeldungeon.mechanics.GameTime;
 import com.felayga.unpixeldungeon.sprites.CharSprite;
 import com.felayga.unpixeldungeon.sprites.WarlockSprite;
 import com.felayga.unpixeldungeon.utils.GLog;
@@ -45,7 +48,7 @@ import com.watabou.utils.Random;
 
 public class Warlock extends Mob implements Callback {
 	
-	private static final float TIME_TO_ZAP	= 1f;
+	private static final long TIME_TO_ZAP	= GameTime.TICK;
 	
 	private static final String TXT_SHADOWBOLT_KILLED = "%s's shadow bolt killed you...";
 	
@@ -55,6 +58,8 @@ public class Warlock extends Mob implements Callback {
 
 		canOpenDoors = true;
 
+		DEXCHA = 25;
+
 		HP = HT = 70;
 		defenseSkill = 18;
 		
@@ -63,21 +68,8 @@ public class Warlock extends Mob implements Callback {
 		
 		loot = Generator.Category.POTION;
 		lootChance = 0.83f;
-	}
-	
-	@Override
-	public int damageRoll() {
-		return Random.NormalIntRange( 12, 20 );
-	}
-	
-	@Override
-	public int attackSkill( Char target ) {
-		return 25;
-	}
-	
-	@Override
-	public int dr() {
-		return 8;
+
+		belongings.weapon = new MeleeMobAttack(GameTime.TICK, 12, 20);
 	}
 	
 	@Override
@@ -85,11 +77,11 @@ public class Warlock extends Mob implements Callback {
 		return new Ballistica( pos, enemy.pos, Ballistica.MAGIC_BOLT).collisionPos == enemy.pos;
 	}
 	
-	protected boolean doAttack( Char enemy ) {
+	protected boolean doAttack( boolean thrown, Char enemy ) {
 
 		if (Level.adjacent( pos, enemy.pos )) {
 			
-			return super.doAttack( enemy );
+			return super.doAttack( thrown, enemy );
 			
 		} else {
 			
@@ -105,9 +97,9 @@ public class Warlock extends Mob implements Callback {
 	}
 	
 	private void zap() {
-		spend( TIME_TO_ZAP );
+		spend( TIME_TO_ZAP, false );
 		
-		if (hit( this, enemy, true )) {
+		if (hit( this, belongings.weapon, true, enemy, true )) {
 			if (enemy == Dungeon.hero && Random.Int( 2 ) == 0) {
 				Buff.prolong( enemy, Weakness.class, Weakness.duration( enemy ) );
 			}

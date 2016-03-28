@@ -23,17 +23,19 @@
  */
 package com.felayga.unpixeldungeon.actors.buffs;
 
+import com.felayga.unpixeldungeon.actors.Actor;
 import com.felayga.unpixeldungeon.actors.Char;
 import com.felayga.unpixeldungeon.effects.CellEmitter;
 import com.felayga.unpixeldungeon.effects.particles.EarthParticle;
+import com.felayga.unpixeldungeon.mechanics.GameTime;
 import com.felayga.unpixeldungeon.ui.BuffIndicator;
 
 public class EarthImbue extends FlavourBuff {
 
-	public static final float DURATION	= 30f;
+	public static final long DURATION	= GameTime.TICK * 30;
 
 	public void proc(Char enemy){
-		Buff.affect(enemy, Roots.class, 2);
+		Buff.affect(enemy, Roots.class, GameTime.TICK * 2);
 		CellEmitter.bottom(enemy.pos).start(EarthParticle.FACTORY, 0.05f, 8);
 	}
 

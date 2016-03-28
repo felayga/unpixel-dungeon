@@ -24,6 +24,7 @@
 package com.felayga.unpixeldungeon.actors.buffs;
 
 import com.felayga.unpixeldungeon.Dungeon;
+import com.felayga.unpixeldungeon.actors.Actor;
 import com.felayga.unpixeldungeon.actors.Char;
 import com.felayga.unpixeldungeon.actors.hero.Hero;
 import com.felayga.unpixeldungeon.actors.mobs.Thief;
@@ -31,6 +32,7 @@ import com.felayga.unpixeldungeon.items.Item;
 import com.felayga.unpixeldungeon.items.food.FrozenCarpaccio;
 import com.felayga.unpixeldungeon.items.food.MysteryMeat;
 import com.felayga.unpixeldungeon.items.potions.Potion;
+import com.felayga.unpixeldungeon.mechanics.GameTime;
 import com.felayga.unpixeldungeon.sprites.CharSprite;
 import com.felayga.unpixeldungeon.ui.BuffIndicator;
 import com.felayga.unpixeldungeon.utils.GLog;
@@ -55,31 +57,24 @@ public class Chill extends FlavourBuff {
 			Burning.detach( target, Burning.class );
 
 			//chance of potion breaking is the same as speed factor.
-			if (Random.Float(1f) > speedFactor() && target instanceof Hero) {
-
-				Hero hero = (Hero)target;
-				Item item = hero.belongings.randomUnequipped();
+			if (Random.Float(1f) > speedFactor()) {
+				Item item = target.belongings.randomUnequipped();
 				if (item instanceof Potion) {
 
-					item = item.detach( hero.belongings.backpack );
+					item = target.belongings.detach(item);
 					GLog.w(TXT_FREEZES, item.toString());
-					((Potion) item).shatter(hero.pos);
+					((Potion) item).shatter(target.pos);
 
 				} else if (item instanceof MysteryMeat) {
 
-					item = item.detach( hero.belongings.backpack );
+					item = target.belongings.detach(item);
 					FrozenCarpaccio carpaccio = new FrozenCarpaccio();
-					if (!carpaccio.collect( hero.belongings.backpack )) {
+					if (!target.belongings.collect(carpaccio)) {
 						Dungeon.level.drop( carpaccio, target.pos ).sprite.drop();
 					}
 					GLog.w(TXT_FREEZES, item.toString());
 
 				}
-			} else if (target instanceof Thief && ((Thief)target).item instanceof Potion) {
-
-				((Potion) ((Thief)target).item).shatter( target.pos );
-				((Thief) target).item = null;
-
 			}
 			return true;
 		} else {
@@ -88,8 +83,8 @@ public class Chill extends FlavourBuff {
 	}
 
 	//reduces speed by 10% for every turn remaining, capping at 50%
-	public float speedFactor(){
-		return Math.max(0.5f, 1 - cooldown()*0.1f);
+	public long speedFactor(){
+		return Math.max(GameTime.TICK, GameTime.TICK * (1 - cooldown()) / 10);
 	}
 
 	@Override

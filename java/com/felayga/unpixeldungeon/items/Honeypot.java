@@ -26,6 +26,7 @@ package com.felayga.unpixeldungeon.items;
 import java.util.ArrayList;
 
 import com.felayga.unpixeldungeon.actors.Char;
+import com.felayga.unpixeldungeon.mechanics.GameTime;
 import com.watabou.noosa.audio.Sample;
 import com.watabou.noosa.tweeners.AlphaTweener;
 import com.felayga.unpixeldungeon.Assets;
@@ -63,19 +64,19 @@ public class Honeypot extends Item {
 	}
 	
 	@Override
-	public void execute( final Hero hero, String action ) {
+	public boolean execute( final Hero hero, String action ) {
 		if (action.equals( AC_SHATTER )) {
-			
-			hero.sprite.zap( hero.pos );
-			
-			detach( hero.belongings.backpack );
+			hero.sprite.zap(hero.pos);
 
-			shatter( hero, hero.pos ).collect();
+			hero.belongings.detach(this);
+
+			hero.belongings.collect(shatter(hero, hero.pos));
 
 			hero.next();
-			
+
+			return false;
 		} else {
-			super.execute( hero, action );
+			return super.execute( hero, action );
 		}
 	}
 	
@@ -118,7 +119,7 @@ public class Honeypot extends Item {
 			bee.pos = newPos;
 			
 			GameScene.add( bee );
-			Actor.addDelayed( new Pushing( bee, pos, newPos ), -1f );
+			Actor.addDelayed( new Pushing( bee, pos, newPos ), -GameTime.TICK );
 			
 			bee.sprite.alpha( 0 );
 			bee.sprite.parent.add( new AlphaTweener( bee.sprite, 1, 0.15f ) );

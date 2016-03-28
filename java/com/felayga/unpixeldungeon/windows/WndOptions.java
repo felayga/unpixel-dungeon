@@ -30,9 +30,41 @@ public class WndOptions extends Window {
 	private static final int WIDTH			= 120;
 	private static final int MARGIN 		= 2;
 	private static final int BUTTON_HEIGHT	= 20;
+
+	private static boolean[] getClicky(String[] options)
+	{
+		boolean[] clicky = new boolean[options.length];
+		for (int n=0;n<clicky.length;n++) {
+			clicky[n] = true;
+		}
+		return clicky;
+	}
+
+	private static boolean[] jesusFuckingChristJava(Boolean[] options)
+	{
+		boolean[] retval = new boolean[options.length];
+
+		for (int n=0;n<options.length;n++)
+		{
+			retval[n] = options[n];
+		}
+
+		return retval;
+	}
+
+	public WndOptions( String title, String message, String... options)
+	{
+		this(title, message, options, getClicky(options));
+	}
+
+	public WndOptions(String title, String message, String[] options, Boolean[] optionClickSound) {
+		this(title, message, options, jesusFuckingChristJava(optionClickSound));
+	}
 	
-	public WndOptions( String title, String message, String... options ) {
+	public WndOptions( String title, String message, String[] options, boolean[] optionClickSound ) {
 		super();
+
+		selected = -1;
 		
 		BitmapTextMultiline tfTitle = PixelScene.createMultiline( title, 9 );
 		tfTitle.hardlight( TITLE_COLOR );
@@ -52,9 +84,10 @@ public class WndOptions extends Window {
 		
 		for (int i=0; i < options.length; i++) {
 			final int index = i;
-			RedButton btn = new RedButton( options[i] ) {
+			RedButton btn = new RedButton( options[i], optionClickSound[i] ) {
 				@Override
 				protected void onClick() {
+					selected = index;
 					hide();
 					onSelect( index );
 				}
@@ -67,6 +100,17 @@ public class WndOptions extends Window {
 		
 		resize( WIDTH, (int)pos );
 	}
-	
+
+	private int selected;
+
 	protected void onSelect( int index ) {};
+
+	@Override
+	public void hide() {
+		if (selected == -1) {
+			onSelect(-1);
+		}
+
+		super.hide();
+	}
 }

@@ -85,7 +85,11 @@ public class MassGravePainter extends Painter {
 	}
 
 	public static class Bones extends CustomTileVisual {
+
+		public Bones()
 		{
+			super(-1);
+
 			name = "Mass grave";
 
 			tx = Assets.PRISON_QUEST;

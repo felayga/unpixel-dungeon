@@ -24,6 +24,7 @@
 package com.felayga.unpixeldungeon.actors.blobs;
 
 import com.felayga.unpixeldungeon.items.potions.PotionOfFullHealing;
+import com.felayga.unpixeldungeon.mechanics.BUCStatus;
 import com.watabou.noosa.audio.Sample;
 import com.felayga.unpixeldungeon.Assets;
 import com.felayga.unpixeldungeon.Dungeon;
@@ -53,8 +54,8 @@ public class WaterOfHealth extends WellWater {
 		PotionOfFullHealing instance = new PotionOfFullHealing();
 		instance.heal(hero);
 		instance.cure(hero);
-		hero.belongings.uncurseEquipped();
-		((Hunger)hero.buff( Hunger.class )).satisfy( Hunger.STARVING );
+		hero.belongings.bucUncurse(false, false, true, false);
+		((Hunger)hero.buff( Hunger.class )).satisfy_new( 500 );
 		
 		CellEmitter.get( pos ).start( ShaftParticle.FACTORY, 0.2f, 3 );
 

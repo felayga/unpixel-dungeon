@@ -50,8 +50,10 @@ public class Fadeleaf extends Plant {
 		Char ch = Actor.findChar(pos);
 		
 		if (ch instanceof Hero) {
-			
-			ScrollOfTeleportation.teleportHero( (Hero)ch );
+
+			if (ScrollOfTeleportation.canTeleport(ch)) {
+				ScrollOfTeleportation.doTeleport(ch);
+			}
 			((Hero)ch).curAction = null;
 			
 		} else if (ch instanceof Mob) {

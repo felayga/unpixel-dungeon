@@ -26,8 +26,8 @@ package com.felayga.unpixeldungeon.ui;
 import com.felayga.unpixeldungeon.Dungeon;
 import com.felayga.unpixeldungeon.items.Item;
 import com.felayga.unpixeldungeon.items.armor.Armor;
-import com.felayga.unpixeldungeon.items.keys.Key;
-import com.felayga.unpixeldungeon.items.keys.SkeletonKey;
+import com.felayga.unpixeldungeon.items.keys.OldKey;
+import com.felayga.unpixeldungeon.items.keys.SkeletonOldKey;
 import com.felayga.unpixeldungeon.items.potions.Potion;
 import com.felayga.unpixeldungeon.items.potions.PotionOfMight;
 import com.felayga.unpixeldungeon.items.potions.PotionOfStrength;
@@ -171,26 +171,26 @@ public class ItemSlot extends Button {
 				
 				if (item.levelKnown || (isWeapon && !(item instanceof MeleeWeapon))) {
 					
-					int str = isArmor ? ((Armor)item).STR : ((Weapon)item).STR;
+					int str = 0;//isArmor ? ((Armor)item).STR : ((Weapon)item).STR;
 					topRight.text( Utils.format( TXT_STRENGTH, str ) );
-					if (str > Dungeon.hero.STR()) {
+					if (str > Dungeon.hero.STRCON) {
 						topRight.hardlight( DEGRADED );
 					} else {
 						topRight.resetColor();
 					}
 					
 				} else {
-					
+					/*
 					topRight.text( Utils.format( TXT_TYPICAL_STR, isArmor ?
 						((Armor)item).typicalSTR() :
 						((MeleeWeapon)item).typicalSTR() ) );
 					topRight.hardlight( WARNING );
-					
+					*/
 				}
 				topRight.measure();
 
-			} else if (item instanceof Key && !(item instanceof SkeletonKey)) {
-				topRight.text(Utils.format(TXT_KEY_DEPTH, ((Key) item).depth));
+			} else if (item instanceof OldKey && !(item instanceof SkeletonOldKey)) {
+				topRight.text(Utils.format(TXT_KEY_DEPTH, ((OldKey) item).depth));
 				topRight.measure();
 			} else {
 				

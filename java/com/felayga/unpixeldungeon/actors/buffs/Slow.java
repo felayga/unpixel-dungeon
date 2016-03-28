@@ -23,8 +23,10 @@
  */
 package com.felayga.unpixeldungeon.actors.buffs;
 
+import com.felayga.unpixeldungeon.actors.Actor;
 import com.felayga.unpixeldungeon.actors.Char;
 import com.felayga.unpixeldungeon.items.rings.RingOfElements.Resistance;
+import com.felayga.unpixeldungeon.mechanics.GameTime;
 import com.felayga.unpixeldungeon.ui.BuffIndicator;
 
 public class Slow extends FlavourBuff {
@@ -33,7 +35,7 @@ public class Slow extends FlavourBuff {
 		type = buffType.NEGATIVE;
 	}
 
-	private static final float DURATION = 10f;
+	private static final long DURATION = GameTime.TICK * 10;
 
 	@Override
 	public int icon() {
@@ -54,7 +56,7 @@ public class Slow extends FlavourBuff {
 				"This slow will last for " + dispTurns() + ".";
 	}
 
-	public static float duration( Char ch ) {
+	public static long duration( Char ch ) {
 		Resistance r = ch.buff( Resistance.class );
 		return r != null ? r.durationFactor() * DURATION : DURATION;
 	}

@@ -24,12 +24,14 @@
 package com.felayga.unpixeldungeon.actors.buffs;
 
 import com.felayga.unpixeldungeon.Dungeon;
+import com.felayga.unpixeldungeon.actors.Actor;
 import com.felayga.unpixeldungeon.actors.hero.Hero;
 import com.felayga.unpixeldungeon.items.artifacts.ChaliceOfBlood;
+import com.felayga.unpixeldungeon.mechanics.GameTime;
 
 public class Regeneration extends Buff {
 	
-	private static final float REGENERATION_DELAY = 10;
+	private static final long REGENERATION_DELAY = GameTime.TICK * 10;
 	
 	@Override
 	public boolean act() {
@@ -49,15 +51,15 @@ public class Regeneration extends Buff {
 
 			if (regenBuff != null)
 				if (regenBuff.isCursed())
-					spend( REGENERATION_DELAY * 1.5f );
+					spend( REGENERATION_DELAY * 3 / 2, false );
 				else
-					spend( REGENERATION_DELAY - regenBuff.level()*0.9f );
+					spend( REGENERATION_DELAY - regenBuff.level() * 9 / 10, false );
 			else
-				spend( REGENERATION_DELAY );
+				spend( REGENERATION_DELAY, false );
 			
 		} else {
 			
-			diactivate();
+			deactivate();
 			
 		}
 		

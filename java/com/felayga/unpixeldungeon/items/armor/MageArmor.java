@@ -23,6 +23,8 @@
  */
 package com.felayga.unpixeldungeon.items.armor;
 
+import com.felayga.unpixeldungeon.actors.Char;
+import com.felayga.unpixeldungeon.mechanics.GameTime;
 import com.watabou.noosa.audio.Sample;
 import com.felayga.unpixeldungeon.Assets;
 import com.felayga.unpixeldungeon.Dungeon;
@@ -43,8 +45,9 @@ public class MageArmor extends ClassArmor {
 	private static final String AC_SPECIAL = "MOLTEN EARTH";
 	
 	private static final String TXT_NOT_MAGE	= "Only mages can use this armor!";
-	
-	{
+
+	public MageArmor(int armor, int armorBonusMaximum, long speedModifier, long equipTime, int spellFailure) {
+		super(armor, armorBonusMaximum, speedModifier, equipTime, spellFailure);
 		name = "mage robe";
 		image = ItemSpriteSheet.ARMOR_MAGE;
 	}
@@ -73,16 +76,17 @@ public class MageArmor extends ClassArmor {
 
 		curUser.HP -= (curUser.HP / 3);
 		
-		curUser.spend( Actor.TICK );
+		curUser.spend( GameTime.TICK, false );
 		curUser.sprite.operate( curUser.pos );
 		curUser.busy();
 		
-		curUser.sprite.centerEmitter().start( ElmoParticle.FACTORY, 0.15f, 4 );
+		curUser.sprite.centerEmitter(-1).start( ElmoParticle.FACTORY, 0.15f, 4 );
 		Sample.INSTANCE.play( Assets.SND_READ );
 	}
-	
+
+	/*
 	@Override
-	public boolean doEquip( Hero hero ) {
+	public boolean doEquip( Char hero ) {
 		if (hero.heroClass == HeroClass.MAGE) {
 			return super.doEquip( hero );
 		} else {
@@ -90,4 +94,5 @@ public class MageArmor extends ClassArmor {
 			return false;
 		}
 	}
+	*/
 }

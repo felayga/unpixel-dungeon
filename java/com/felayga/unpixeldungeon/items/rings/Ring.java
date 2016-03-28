@@ -28,6 +28,7 @@ import java.util.ArrayList;
 import com.felayga.unpixeldungeon.Badges;
 import com.felayga.unpixeldungeon.Dungeon;
 import com.felayga.unpixeldungeon.ShatteredPixelDungeon;
+import com.felayga.unpixeldungeon.actors.Actor;
 import com.felayga.unpixeldungeon.items.KindofMisc;
 import com.felayga.unpixeldungeon.actors.Char;
 import com.felayga.unpixeldungeon.actors.buffs.Buff;
@@ -35,6 +36,9 @@ import com.felayga.unpixeldungeon.actors.hero.Hero;
 import com.felayga.unpixeldungeon.actors.hero.HeroClass;
 import com.felayga.unpixeldungeon.items.Item;
 import com.felayga.unpixeldungeon.items.ItemStatusHandler;
+import com.felayga.unpixeldungeon.mechanics.BUCStatus;
+import com.felayga.unpixeldungeon.mechanics.Constant;
+import com.felayga.unpixeldungeon.mechanics.GameTime;
 import com.felayga.unpixeldungeon.sprites.ItemSpriteSheet;
 import com.felayga.unpixeldungeon.utils.GLog;
 import com.felayga.unpixeldungeon.utils.Utils;
@@ -46,10 +50,10 @@ public class Ring extends KindofMisc {
 
 	private static final int TICKS_TO_KNOW    = 200;
 
-	private static final float TIME_TO_EQUIP = 1f;
+	private static final long TIME_TO_EQUIP = GameTime.TICK;
 	
 	private static final String TXT_IDENTIFY =
-		"you are now familiar enough with your %s to identify it. It is %s.";
+		"you are now familiar enough with your %s to identify it.";
 
 	private static final String TXT_UNEQUIP_TITLE = "Unequip one item";
 	private static final String TXT_UNEQUIP_MESSAGE =
@@ -124,7 +128,7 @@ public class Ring extends KindofMisc {
 	}
 	
 	@Override
-	public boolean doEquip( final Hero hero ) {
+	public boolean doEquip( final Char hero ) {
 
 		if (hero.belongings.ring1 != null && hero.belongings.ring2 != null) {
 
@@ -134,20 +138,23 @@ public class Ring extends KindofMisc {
 			ShatteredPixelDungeon.scene().add(
 					new WndOptions(TXT_UNEQUIP_TITLE, TXT_UNEQUIP_MESSAGE,
 							Utils.capitalize(m1.toString()),
-							Utils.capitalize(m2.toString())) {
+							Utils.capitalize(m2.toString()),
+							Constant.TXT_CANCEL) {
 
 						@Override
 						protected void onSelect(int index) {
-                            KindofMisc equipped;
+                            KindofMisc equipped = null;
+
                             switch(index) {
                                 case 0:
                                     equipped = m1;
                                     break;
-								default:
+								case 1:
                                     equipped = m2;
                                     break;
                             }
-							if (equipped.doUnequip(hero, true, false)) {
+
+							if (equipped != null && equipped.doUnequip(hero, true, false)) {
 								doEquip(hero);
 							}
 						}
@@ -164,17 +171,17 @@ public class Ring extends KindofMisc {
                 hero.belongings.ring2 = this;
             }
 
-			detach( hero.belongings.backpack );
-			
+			hero.belongings.detach(this);
+
 			activate( hero );
 			
-			cursedKnown = true;
-			if (cursed) {
+			if (bucStatus == BUCStatus.Cursed) {
+				bucStatusKnown = true;
 				equipCursed( hero );
 				GLog.n( "your " + this + " tightens around your finger painfully" );
 			}
 			
-			hero.spendAndNext( TIME_TO_EQUIP );
+			hero.spend(TIME_TO_EQUIP, true);
 			return true;
 			
 		}
@@ -187,7 +194,7 @@ public class Ring extends KindofMisc {
 	}
 
 	@Override
-	public boolean doUnequip( Hero hero, boolean collect, boolean single ) {
+	public boolean doUnequip( Char hero, boolean collect, boolean single ) {
 		if (super.doUnequip( hero, collect, single )) {
 
 			if (hero.belongings.ring1 == this) {
@@ -210,14 +217,14 @@ public class Ring extends KindofMisc {
 	}
 	
 	@Override
-	public boolean isEquipped( Hero hero ) {
+	public boolean isEquipped( Char hero ) {
 		return hero.belongings.ring1 == this || hero.belongings.ring2 == this;
 	}
 	
 	@Override
-	public Item upgrade() {
+	public Item upgrade(Item source, int n) {
 		
-		super.upgrade();
+		super.upgrade(source, n);
 		
 		if (buff != null) {
 			
@@ -235,17 +242,21 @@ public class Ring extends KindofMisc {
 		return handler.isKnown( this );
 	}
 	
-	protected void setKnown() {
+	protected boolean setKnown() {
 		if (!isKnown()) {
 			handler.know( this );
+
+			Badges.validateAllRingsIdentified();
+
+			return true;
 		}
-		
-		Badges.validateAllRingsIdentified();
+
+		return false;
 	}
 	
 	@Override
-	public String name() {
-		return isKnown() ? name : gem + " ring";
+	public String getName() {
+		return isKnown() ? super.getName() : gem + " ring";
 	}
 	
 	@Override
@@ -259,12 +270,12 @@ public class Ring extends KindofMisc {
 	public String info() {
 		if (isEquipped( Dungeon.hero )) {
 			
-			return desc() + "\n\n" + "The " + name() + " is on your finger" +
-				(cursed ? ", and because it is cursed, you are powerless to remove it." : "." );
+			return desc() + "\n\n" + "The " + getDisplayName() + " is on your finger" +
+				(bucStatus == BUCStatus.Cursed ? ", and because it is cursed, you are powerless to remove it." : "." );
 			
-		} else if (cursed && cursedKnown) {
+		} else if (bucStatusKnown && bucStatus == BUCStatus.Cursed) {
 			
-			return desc() + "\n\nYou can feel a malevolent magic lurking within the " + name() + ".";
+			return desc() + "\n\nYou can feel a malevolent magic lurking within the " + getDisplayName() + ".";
 			
 		} else {
 			
@@ -279,9 +290,12 @@ public class Ring extends KindofMisc {
 	}
 	
 	@Override
-	public Item identify() {
-		setKnown();
-		return super.identify();
+	public Item identify(boolean updateQuickslot) {
+		if (setKnown()) {
+			updateQuickslot = true;
+		}
+
+		return super.identify(updateQuickslot);
 	}
 	
 	@Override
@@ -296,7 +310,7 @@ public class Ring extends KindofMisc {
 
 		if (Random.Float() < 0.3f) {
 			level = -n;
-			cursed = true;
+			bucStatus = BUCStatus.Cursed;
 		} else
 			level = n;
 
@@ -310,7 +324,7 @@ public class Ring extends KindofMisc {
 	@Override
 	public int price() {
 		int price = 75;
-		if (cursed && cursedKnown) {
+		if (bucStatus == BUCStatus.Cursed) {
 			price /= 2;
 		}
 		if (levelKnown) {
@@ -360,7 +374,7 @@ public class Ring extends KindofMisc {
 
 			if (target instanceof Hero && ((Hero)target).heroClass == HeroClass.ROGUE && !isKnown()) {
 				setKnown();
-				GLog.i( TXT_KNOWN, name() );
+				GLog.i( TXT_KNOWN, getDisplayName() );
 				Badges.validateItemLevelAquired( Ring.this );
 			}
 			
@@ -371,13 +385,13 @@ public class Ring extends KindofMisc {
 		public boolean act() {
 			
 			if (!isIdentified() && --ticksToKnow <= 0) {
-				String gemName = name();
+				String gemName = getDisplayName();
 				identify();
-				GLog.w( TXT_IDENTIFY, gemName, Ring.this.toString() );
+				GLog.w( TXT_IDENTIFY, gemName, Ring.this.getDisplayName() );
 				Badges.validateItemLevelAquired( Ring.this );
 			}
 			
-			spend( TICK );
+			spend( GameTime.TICK, false );
 			
 			return true;
 		}

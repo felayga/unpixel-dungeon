@@ -24,12 +24,11 @@
 package com.felayga.unpixeldungeon.items.scrolls;
 
 import com.felayga.unpixeldungeon.Badges;
-import com.felayga.unpixeldungeon.Dungeon;
 import com.felayga.unpixeldungeon.actors.hero.Hero;
 import com.felayga.unpixeldungeon.effects.Speck;
 import com.felayga.unpixeldungeon.items.Item;
 import com.felayga.unpixeldungeon.utils.GLog;
-import com.felayga.unpixeldungeon.windows.WndBag;
+import com.felayga.unpixeldungeon.windows.WndBackpack;
 
 public class ScrollOfUpgrade extends InventoryScroll {
 
@@ -40,7 +39,7 @@ public class ScrollOfUpgrade extends InventoryScroll {
 		initials = "Up";
 
 		inventoryTitle = "Select an item to upgrade";
-		mode = WndBag.Mode.UPGRADEABLE;
+		mode = WndBackpack.Mode.UPGRADEABLE;
 
 		bones = true;
 	}
@@ -48,11 +47,10 @@ public class ScrollOfUpgrade extends InventoryScroll {
 	@Override
 	protected void onItemSelected( Item item ) {
 
-		ScrollOfRemoveCurse.uncurse( Dungeon.hero, item );
-		item.upgrade();
+		item.upgrade(this, 1);
 
 		upgrade( curUser );
-		GLog.p( TXT_LOOKS_BETTER, item.name() );
+		GLog.p( TXT_LOOKS_BETTER, item.getDisplayName() );
 		
 		Badges.validateItemLevelAquired( item );
 	}

@@ -25,7 +25,7 @@ package com.felayga.unpixeldungeon.actors.mobs;
 
 import java.util.HashSet;
 
-import com.felayga.unpixeldungeon.Dungeon;
+import com.felayga.unpixeldungeon.actors.Actor;
 import com.felayga.unpixeldungeon.actors.Char;
 import com.felayga.unpixeldungeon.actors.buffs.Buff;
 import com.felayga.unpixeldungeon.actors.buffs.Cripple;
@@ -35,8 +35,11 @@ import com.felayga.unpixeldungeon.items.Item;
 import com.felayga.unpixeldungeon.items.food.MysteryMeat;
 import com.felayga.unpixeldungeon.items.potions.PotionOfHealing;
 import com.felayga.unpixeldungeon.items.weapon.enchantments.Leech;
+import com.felayga.unpixeldungeon.items.weapon.melee.mob.CrippleChance;
+import com.felayga.unpixeldungeon.items.weapon.melee.mob.MeleeMobAttack;
 import com.felayga.unpixeldungeon.levels.Level;
 import com.felayga.unpixeldungeon.mechanics.Ballistica;
+import com.felayga.unpixeldungeon.mechanics.GameTime;
 import com.felayga.unpixeldungeon.sprites.ScorpioSprite;
 import com.watabou.utils.Random;
 
@@ -49,42 +52,22 @@ public class Scorpio extends Mob {
 		HP = HT = 95;
 		defenseSkill = 24;
 		viewDistance = Light.DISTANCE;
+
+		DEXCHA = 36;
 		
 		EXP = 14;
 		maxLvl = 25;
 		
 		loot = new PotionOfHealing();
 		lootChance = 0.2f;
-	}
-	
-	@Override
-	public int damageRoll() {
-		return Random.NormalIntRange( 20, 32 );
-	}
-	
-	@Override
-	public int attackSkill( Char target ) {
-		return 36;
-	}
-	
-	@Override
-	public int dr() {
-		return 16;
+
+		belongings.weapon = new CrippleChance(GameTime.TICK, 20, 32, 2, Cripple.DURATION);
 	}
 	
 	@Override
 	protected boolean canAttack( Char enemy ) {
 		Ballistica attack = new Ballistica( pos, enemy.pos, Ballistica.PROJECTILE);
 		return !Level.adjacent( pos, enemy.pos ) && attack.collisionPos == enemy.pos;
-	}
-	
-	@Override
-	public int attackProc( Char enemy, int damage ) {
-		if (Random.Int( 2 ) == 0) {
-			Buff.prolong( enemy, Cripple.class, Cripple.DURATION );
-		}
-		
-		return damage;
 	}
 	
 	@Override

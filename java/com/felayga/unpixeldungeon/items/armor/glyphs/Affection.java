@@ -23,6 +23,7 @@
  */
 package com.felayga.unpixeldungeon.items.armor.glyphs;
 
+import com.felayga.unpixeldungeon.actors.Actor;
 import com.felayga.unpixeldungeon.actors.Char;
 import com.felayga.unpixeldungeon.actors.buffs.Buff;
 import com.felayga.unpixeldungeon.actors.buffs.Charm;
@@ -30,6 +31,7 @@ import com.felayga.unpixeldungeon.effects.Speck;
 import com.felayga.unpixeldungeon.items.armor.Armor;
 import com.felayga.unpixeldungeon.items.armor.Armor.Glyph;
 import com.felayga.unpixeldungeon.levels.Level;
+import com.felayga.unpixeldungeon.mechanics.GameTime;
 import com.felayga.unpixeldungeon.sprites.ItemSprite;
 import com.felayga.unpixeldungeon.sprites.ItemSprite.Glowing;
 import com.watabou.utils.GameMath;
@@ -48,15 +50,15 @@ public class Affection extends Glyph {
 		
 		if (Level.adjacent( attacker.pos, defender.pos ) && Random.Int( level / 2 + 5 ) >= 4) {
 			
-			int duration = Random.IntRange( 3, 7 );
+			long duration = Random.LongRange(GameTime.TICK * 3, GameTime.TICK * 7);
 
-			Buff.affect( attacker, Charm.class, Charm.durationFactor( attacker ) * duration ).object = defender.id();
-			attacker.sprite.centerEmitter().start( Speck.factory( Speck.HEART ), 0.2f, 5 );
+			Buff.affect( attacker, Charm.class, Charm.durationFactor( attacker ) * duration / GameTime.TICK ).object = defender.id();
+			attacker.sprite.centerEmitter(-1).start( Speck.factory( Speck.HEART ), 0.2f, 5 );
 
-			duration *= Random.Float( 0.5f, 1 );
+			duration *= Random.Long(GameTime.TICK/2, GameTime.TICK) / GameTime.TICK;
 
-			Buff.affect( defender, Charm.class, Charm.durationFactor( defender ) * duration ).object = attacker.id();
-			defender.sprite.centerEmitter().start( Speck.factory( Speck.HEART ), 0.2f, 5 );
+			Buff.affect( defender, Charm.class, Charm.durationFactor( defender ) * duration / GameTime.TICK ).object = attacker.id();
+			defender.sprite.centerEmitter(-1).start( Speck.factory( Speck.HEART ), 0.2f, 5 );
 		}
 		
 		return damage;

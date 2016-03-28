@@ -30,7 +30,10 @@ import com.felayga.unpixeldungeon.actors.Actor;
 import com.felayga.unpixeldungeon.actors.Char;
 import com.felayga.unpixeldungeon.actors.buffs.Amok;
 import com.felayga.unpixeldungeon.actors.buffs.Poison;
+import com.felayga.unpixeldungeon.items.weapon.melee.mob.MeleeMobAttack;
+import com.felayga.unpixeldungeon.items.weapon.melee.mob.TauntChance;
 import com.felayga.unpixeldungeon.levels.Level;
+import com.felayga.unpixeldungeon.mechanics.GameTime;
 import com.felayga.unpixeldungeon.sprites.BeeSprite;
 import com.watabou.utils.Bundle;
 import com.watabou.utils.Random;
@@ -45,6 +48,8 @@ public class Bee extends Mob {
 		
 		flying = true;
 		state = WANDERING;
+
+		belongings.weapon = new TauntChance(GameTime.TICK, 1, 4);
 	}
 
 	private int level;
@@ -79,6 +84,7 @@ public class Bee extends Mob {
 		
 		HT = (2 + level) * 4;
 		defenseSkill = 9 + level;
+		DEXCHA = 9 + level;
 	}
 
 	public void setPotInfo(int potPos, Char potHolder){
@@ -87,24 +93,6 @@ public class Bee extends Mob {
 			this.potHolder = -1;
 		else
 			this.potHolder = potHolder.id();
-	}
-	
-	@Override
-	public int attackSkill( Char target ) {
-		return defenseSkill;
-	}
-	
-	@Override
-	public int damageRoll() {
-		return Random.NormalIntRange( HT / 10, HT / 4 );
-	}
-	
-	@Override
-	public int attackProc( Char enemy, int damage ) {
-		if (enemy instanceof Mob) {
-			((Mob)enemy).aggro( this );
-		}
-		return damage;
 	}
 
 	@Override

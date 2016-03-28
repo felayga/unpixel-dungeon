@@ -39,7 +39,7 @@ import com.felayga.unpixeldungeon.items.Item;
 import com.felayga.unpixeldungeon.items.potions.Potion;
 import com.felayga.unpixeldungeon.items.rings.Ring;
 import com.felayga.unpixeldungeon.items.scrolls.Scroll;
-import com.felayga.unpixeldungeon.items.weapon.melee.MagesStaff;
+import com.felayga.unpixeldungeon.items.weapon.melee.simple.MagesStaff;
 import com.felayga.unpixeldungeon.levels.CavesBossLevel;
 import com.felayga.unpixeldungeon.levels.CavesLevel;
 import com.felayga.unpixeldungeon.levels.CityBossLevel;
@@ -55,12 +55,15 @@ import com.felayga.unpixeldungeon.levels.PrisonLevel;
 import com.felayga.unpixeldungeon.levels.Room;
 import com.felayga.unpixeldungeon.levels.SewerBossLevel;
 import com.felayga.unpixeldungeon.levels.SewerLevel;
+import com.felayga.unpixeldungeon.levels.Terrain;
+import com.felayga.unpixeldungeon.mechanics.Constant;
+import com.felayga.unpixeldungeon.mechanics.GameTime;
 import com.felayga.unpixeldungeon.scenes.GameScene;
-import com.felayga.unpixeldungeon.scenes.StartScene;
 import com.felayga.unpixeldungeon.ui.QuickSlotButton;
 import com.felayga.unpixeldungeon.utils.BArray;
 import com.felayga.unpixeldungeon.utils.Utils;
 import com.felayga.unpixeldungeon.windows.WndResurrect;
+import com.felayga.unpixeldungeon.windows.start.WndHeroInit;
 import com.watabou.noosa.Game;
 import com.watabou.utils.Bundlable;
 import com.watabou.utils.Bundle;
@@ -76,6 +79,7 @@ import java.util.Arrays;
 import java.util.HashSet;
 
 public class Dungeon {
+	public static final int HIGHESTLEVEL = 27;
 
 	public static int transmutation;	// depth number for a well of transmutation
 
@@ -129,7 +133,8 @@ public class Dungeon {
 	public static QuickSlot quickslot = new QuickSlot();
 	
 	public static int depth;
-	public static int gold;
+	//public static int gold;
+
 	// Reason of death
 	public static String resultDescription;
 	
@@ -150,7 +155,7 @@ public class Dungeon {
 		Actor.clear();
 		Actor.resetNextID();
 		
-		PathFinder.setMapSize( Level.WIDTH, Level.HEIGHT );
+		PathFinder.setMapSize(Level.WIDTH, Level.HEIGHT);
 		
 		Scroll.initLabels();
 		Potion.initColors();
@@ -163,7 +168,7 @@ public class Dungeon {
 		QuickSlotButton.reset();
 		
 		depth = 0;
-		gold = 0;
+		//gold = 0;
 
 		droppedItems = new SparseArray<ArrayList<Item>>();
 
@@ -186,8 +191,10 @@ public class Dungeon {
 		hero.live();
 		
 		Badges.reset();
-		
-		StartScene.curClass.initHero( hero );
+
+		HeroClass.toHeroClass(WndHeroInit.heroClassSelected).initHero(hero);
+		//todo: fart
+		//StartScene.curClass.initHero( hero );
 	}
 
 	public static boolean isChallenged( int mask ) {
@@ -200,6 +207,8 @@ public class Dungeon {
 		Actor.clear();
 		
 		depth++;
+
+		/*
 		if (depth > Statistics.deepestFloor) {
 			Statistics.deepestFloor = depth;
 			
@@ -209,7 +218,8 @@ public class Dungeon {
 				Statistics.completedWithNoKilling = false;
 			}
 		}
-		
+		*/
+
 		Arrays.fill( visible, false );
 		
 		Level level;
@@ -266,7 +276,9 @@ public class Dungeon {
 			break;
 		default:
 			level = new DeadEndLevel();
+			/*
 			Statistics.deepestFloor--;
+			*/
 		}
 		
 		level.create();
@@ -309,7 +321,25 @@ public class Dungeon {
 			Actor.add( level.respawner() );
 		}
 
-		hero.pos = pos != -1 ? pos : level.exit;
+		if (pos == Constant.POS_EXIT)
+		{
+			hero.pos = level.exit;
+		}
+		else if (pos == Constant.POS_ENTRANCE)
+		{
+			hero.pos = level.entrance;
+		}
+		else if (pos == Constant.POS_RANDOM)
+		{
+			while (pos < 0 || (Terrain.flags[level.map[pos]] & Terrain.FLAG_PASSABLE) == 0) {
+				pos = Random.Int(level.WIDTH - 1) + 1 + (Random.Int(level.HEIGHT - 1) + 1) * level.WIDTH;
+			}
+
+			hero.pos = pos;
+		}
+		else {
+			hero.pos = pos;
+		}
 		
 		Light light = hero.buff( Light.class );
 		hero.viewDistance = light == null ? level.viewDistance : Math.max( Light.DISTANCE, level.viewDistance );
@@ -318,7 +348,7 @@ public class Dungeon {
 		if (Dungeon.version <= 38 && Dungeon.hero.heroClass == HeroClass.MAGE){
 			MagesStaff staff = new MagesStaff();
 			staff.identify();
-			if (!staff.collect(Dungeon.hero.belongings.backpack)){
+			if (!Dungeon.hero.belongings.collect(staff)){
 				Dungeon.level.drop(staff, Dungeon.hero.pos);
 			}
 		}
@@ -382,9 +412,7 @@ public class Dungeon {
 	
 	private static final String VERSION		= "version";
 	private static final String CHALLENGES	= "challenges";
-	private static final String HERO		= "hero";
 	private static final String GOLD		= "gold";
-	private static final String DEPTH		= "depth";
 	private static final String DROPPED     = "dropped%d";
 	private static final String LEVEL		= "level";
 	private static final String LIMDROPS    = "limiteddrops";
@@ -394,35 +422,20 @@ public class Dungeon {
 	private static final String QUESTS		= "quests";
 	private static final String BADGES		= "badges";
 
+	public static final String HERO			= "hero";
+	public static final String DEPTH		= "depth";
+
 	//TODO: to support pre-0.2.3 saves, remove when needed
 	private static final String POS			= "potionsOfStrength";
 	private static final String SOU			= "scrollsOfEnhancement";
 	private static final String AS			= "arcaneStyli";
 	
-	public static String gameFile( HeroClass cl ) {
-		switch (cl) {
-		case WARRIOR:
-			return WR_GAME_FILE;
-		case MAGE:
-			return MG_GAME_FILE;
-		case HUNTRESS:
-			return RN_GAME_FILE;
-		default:
-			return RG_GAME_FILE;
-		}
+	public static String gameFile( int index ) {
+		return "SAVE" + index + ".DAT";
 	}
 	
-	private static String depthFile( HeroClass cl ) {
-		switch (cl) {
-		case WARRIOR:
-			return WR_DEPTH_FILE;
-		case MAGE:
-			return MG_DEPTH_FILE;
-		case HUNTRESS:
-			return RN_DEPTH_FILE;
-		default:
-			return RG_DEPTH_FILE;
-		}
+	private static String depthFile( int index ) {
+		return "SAVE" + index + "L%d.DAT";
 	}
 	
 	public static void saveGame( String fileName ) throws IOException {
@@ -433,8 +446,16 @@ public class Dungeon {
 			bundle.put( VERSION, version );
 			bundle.put( CHALLENGES, challenges );
 			bundle.put( HERO, hero );
-			bundle.put( GOLD, gold );
+			//bundle.put( GOLD, gold );
 			bundle.put( DEPTH, depth );
+
+			GamesInProgress.Info info = GamesInProgress.check(WndHeroInit.savedGameIndex);
+			if (info == null) {
+				info = new GamesInProgress.Info();
+				info.fromWndHeroInit();
+			}
+
+			info.storeInBundle(bundle);
 
 			for (int d : droppedItems.keyArray()) {
 				bundle.put(String.format(DROPPED, d), droppedItems.get(d));
@@ -485,7 +506,7 @@ public class Dungeon {
 			
 		} catch (IOException e) {
 
-			GamesInProgress.setUnknown( hero.heroClass );
+			GamesInProgress.setUnknown( WndHeroInit.savedGameIndex );
 		}
 	}
 	
@@ -494,19 +515,19 @@ public class Dungeon {
 		bundle.put( LEVEL, level );
 		
 		OutputStream output = Game.instance.openFileOutput(
-			Utils.format( depthFile( hero.heroClass ), depth ), Game.MODE_PRIVATE );
+			Utils.format( depthFile( WndHeroInit.savedGameIndex ), depth ), Game.MODE_PRIVATE );
 		Bundle.write( bundle, output );
 		output.close();
 	}
 	
 	public static void saveAll() throws IOException {
 		if (hero.isAlive()) {
-			
-			Actor.fixTime();
-			saveGame( gameFile( hero.heroClass ) );
+
+			GameTime.fix();
+			saveGame( gameFile( WndHeroInit.savedGameIndex ) );
 			saveLevel();
 
-			GamesInProgress.set( hero.heroClass, depth, hero.lvl, challenges != 0 );
+			GamesInProgress.set( WndHeroInit.savedGameIndex, hero.heroClass, hero.lvl, depth );
 
 		} else if (WndResurrect.instance != null) {
 			
@@ -516,8 +537,8 @@ public class Dungeon {
 		}
 	}
 	
-	public static void loadGame( HeroClass cl ) throws IOException {
-		loadGame( gameFile( cl ), true );
+	public static void loadGame( int index ) throws IOException {
+		loadGame( gameFile( index ), true );
 	}
 
 	public static void loadGame( String fileName ) throws IOException {
@@ -605,7 +626,7 @@ public class Dungeon {
 		hero = null;
 		hero = (Hero)bundle.get( HERO );
 		
-		gold = bundle.getInt( GOLD );
+		//gold = bundle.getInt( GOLD );
 		depth = bundle.getInt( DEPTH );
 		
 		Statistics.restoreFromBundle( bundle );
@@ -613,7 +634,7 @@ public class Dungeon {
 		Generator.restoreFromBundle( bundle );
 
 		droppedItems = new SparseArray<ArrayList<Item>>();
-		for (int i=2; i <= Statistics.deepestFloor + 1; i++) {
+		for (int i=2; i < Dungeon.HIGHESTLEVEL; i++) {
 			ArrayList<Item> dropped = new ArrayList<Item>();
 			for (Bundlable b : bundle.getCollection( String.format( DROPPED, i ) ) ) {
 				dropped.add( (Item)b );
@@ -623,6 +644,7 @@ public class Dungeon {
 			}
 		}
 
+		/*
 		//logic for pre 0.2.4 bags, remove when no longer supporting those saves.
 		if (version <= 32){
 			int deepest = Statistics.deepestFloor;
@@ -630,32 +652,38 @@ public class Dungeon {
 			if (deepest > 10) limitedDrops.scrollBag.count = 1;
 			if (deepest > 5)  limitedDrops.seedBag.count = 1;
 		}
+		*/
 	}
 	
-	public static Level loadLevel( HeroClass cl ) throws IOException {
+	public static Level loadLevel( int index ) throws IOException {
 		
 		Dungeon.level = null;
 		Actor.clear();
 		
-		InputStream input = Game.instance.openFileInput( Utils.format( depthFile( cl ), depth ) ) ;
+		InputStream input = Game.instance.openFileInput( Utils.format( depthFile( index ), depth ) ) ;
 		Bundle bundle = Bundle.read( input );
 		input.close();
 		
 		return (Level)bundle.get( "level" );
 	}
 	
-	public static void deleteGame( HeroClass cl, boolean deleteLevels ) {
-		
-		Game.instance.deleteFile( gameFile( cl ) );
-		
+	public static void deleteGame( int index, boolean dead, boolean deleteLevels ) {
+		GamesInProgress.delete(index);
+
+		try {
+			saveGame(gameFile(index));
+		}
+		catch (IOException whocares) {
+			Game.instance.deleteFile(gameFile(index));
+		}
+
 		if (deleteLevels) {
 			int depth = 1;
-			while (Game.instance.deleteFile( Utils.format( depthFile( cl ), depth ) )) {
+			while (Game.instance.deleteFile( Utils.format( depthFile( index ), depth ) )) {
 				depth++;
 			}
 		}
 		
-		GamesInProgress.delete( cl );
 	}
 	
 	public static Bundle gameBundle( String fileName ) throws IOException {
@@ -665,15 +693,6 @@ public class Dungeon {
 		input.close();
 		
 		return bundle;
-	}
-	
-	public static void preview( GamesInProgress.Info info, Bundle bundle ) {
-		info.depth = bundle.getInt( DEPTH );
-		info.challenges = (bundle.getInt( CHALLENGES ) != 0);
-		if (info.depth == -1) {
-			info.depth = bundle.getInt( "maxDepth" );	// FIXME
-		}
-		Hero.preview( info, bundle.getBundle( HERO ) );
 	}
 	
 	public static void fail( String desc ) {

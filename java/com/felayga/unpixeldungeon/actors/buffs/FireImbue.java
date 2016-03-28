@@ -27,6 +27,7 @@ import com.felayga.unpixeldungeon.Dungeon;
 import com.felayga.unpixeldungeon.actors.Char;
 import com.felayga.unpixeldungeon.effects.particles.FlameParticle;
 import com.felayga.unpixeldungeon.levels.Terrain;
+import com.felayga.unpixeldungeon.mechanics.GameTime;
 import com.felayga.unpixeldungeon.scenes.GameScene;
 import com.felayga.unpixeldungeon.ui.BuffIndicator;
 import com.watabou.utils.Bundle;
@@ -55,7 +56,7 @@ public class FireImbue extends Buff {
 
 	public void set( float duration ) {
 		this.left = duration;
-	};
+	}
 
 	@Override
 	public boolean act() {
@@ -64,8 +65,8 @@ public class FireImbue extends Buff {
 			GameScene.updateMap(target.pos);
 		}
 
-		spend(TICK);
-		left -= TICK;
+		spend(GameTime.TICK, false);
+		left -= GameTime.TICK;
 		if (left <= 0)
 			detach();
 

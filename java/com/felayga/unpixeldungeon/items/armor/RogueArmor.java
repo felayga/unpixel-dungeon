@@ -23,7 +23,9 @@
  */
 package com.felayga.unpixeldungeon.items.armor;
 
+import com.felayga.unpixeldungeon.actors.Char;
 import com.felayga.unpixeldungeon.items.scrolls.ScrollOfTeleportation;
+import com.felayga.unpixeldungeon.mechanics.GameTime;
 import com.watabou.noosa.audio.Sample;
 import com.felayga.unpixeldungeon.Assets;
 import com.felayga.unpixeldungeon.Dungeon;
@@ -47,8 +49,9 @@ public class RogueArmor extends ClassArmor {
 	private static final String TXT_NOT_ROGUE	= "Only rogues can use this armor!";
 	
 	private static final String AC_SPECIAL = "SMOKE BOMB";
-	
-	{
+
+	public RogueArmor(int armor, int armorBonusMaximum, long speedModifier, long equipTime, int spellFailure) {
+		super(armor, armorBonusMaximum, speedModifier, equipTime, spellFailure);
 		name = "rogue garb";
 		image = ItemSpriteSheet.ARMOR_ROGUE;
 	}
@@ -62,9 +65,10 @@ public class RogueArmor extends ClassArmor {
 	public void doSpecial() {
 		GameScene.selectCell( teleporter );
 	}
-	
+
+	/*
 	@Override
-	public boolean doEquip( Hero hero ) {
+	public boolean doEquip( Char hero ) {
 		if (hero.heroClass == HeroClass.ROGUE) {
 			return super.doEquip( hero );
 		} else {
@@ -72,7 +76,8 @@ public class RogueArmor extends ClassArmor {
 			return false;
 		}
 	}
-	
+	*/
+
 	@Override
 	public String desc() {
 		return
@@ -110,7 +115,7 @@ public class RogueArmor extends ClassArmor {
 				Dungeon.level.press( target, curUser );
 				Dungeon.observe();
 				
-				curUser.spendAndNext( Actor.TICK );
+				curUser.spend( GameTime.TICK, true );
 			}
 		}
 		

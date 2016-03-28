@@ -32,6 +32,8 @@ import com.felayga.unpixeldungeon.actors.mobs.Mob;
 import com.felayga.unpixeldungeon.actors.mobs.Wraith;
 import com.felayga.unpixeldungeon.items.Item;
 import com.felayga.unpixeldungeon.levels.Level;
+import com.felayga.unpixeldungeon.mechanics.BUCStatus;
+import com.felayga.unpixeldungeon.mechanics.GameTime;
 import com.felayga.unpixeldungeon.sprites.ItemSpriteSheet;
 import com.felayga.unpixeldungeon.utils.GLog;
 import com.watabou.noosa.audio.Sample;
@@ -45,10 +47,10 @@ public class CorpseDust extends Item {
 	{
 		name = "corpse dust";
 		image = ItemSpriteSheet.DUST;
-		
-		cursed = true;
-		cursedKnown = true;
-		
+
+		bucStatus = BUCStatus.Cursed;
+		bucStatusKnown = true;
+
 		unique = true;
 	}
 
@@ -78,7 +80,7 @@ public class CorpseDust extends Item {
 	}
 
 	@Override
-	protected void onDetach() {
+	public void onDetach() {
 		DustGhostSpawner spawner = Dungeon.hero.buff(DustGhostSpawner.class);
 		if (spawner != null){
 			spawner.dispel();
@@ -119,7 +121,7 @@ public class CorpseDust extends Item {
 				Sample.INSTANCE.play(Assets.SND_CURSED);
 			}
 
-			spend(TICK);
+			spend(GameTime.TICK, false);
 			return true;
 		}
 

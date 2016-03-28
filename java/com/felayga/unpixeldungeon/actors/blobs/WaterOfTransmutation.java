@@ -40,6 +40,17 @@ import com.felayga.unpixeldungeon.items.scrolls.ScrollOfUpgrade;
 import com.felayga.unpixeldungeon.items.scrolls.ScrollOfMagicalInfusion;
 import com.felayga.unpixeldungeon.items.wands.Wand;
 import com.felayga.unpixeldungeon.items.weapon.melee.*;
+import com.felayga.unpixeldungeon.items.weapon.melee.martial.BattleAxe;
+import com.felayga.unpixeldungeon.items.weapon.melee.martial.Glaive;
+import com.felayga.unpixeldungeon.items.weapon.melee.martial.Longsword;
+import com.felayga.unpixeldungeon.items.weapon.melee.martial.Sword;
+import com.felayga.unpixeldungeon.items.weapon.melee.martial.WarHammer;
+import com.felayga.unpixeldungeon.items.weapon.melee.simple.Dagger;
+import com.felayga.unpixeldungeon.items.weapon.melee.simple.Knuckles;
+import com.felayga.unpixeldungeon.items.weapon.melee.simple.Mace;
+import com.felayga.unpixeldungeon.items.weapon.melee.simple.Quarterstaff;
+import com.felayga.unpixeldungeon.items.weapon.melee.simple.Spear;
+import com.felayga.unpixeldungeon.mechanics.BUCStatus;
 import com.felayga.unpixeldungeon.plants.Plant;
 
 public class WaterOfTransmutation extends WellWater {
@@ -117,16 +128,16 @@ public class WaterOfTransmutation extends WellWater {
 			
 			int level = w.level;
 			if (level > 0) {
-				n.upgrade( level );
+				n.upgrade( null, level );
 			} else if (level < 0) {
-				n.degrade( -level );
+				n.upgrade( null, level );
 			}
 
 			n.enchantment = w.enchantment;
 			n.levelKnown = w.levelKnown;
-			n.cursedKnown = w.cursedKnown;
-			n.cursed = w.cursed;
-			n.imbue = w.imbue;
+			n.bucStatus(w);
+			n.refined = w.refined;
+			//n.imbue = w.imbue;
 			
 			return n;
 		} else {
@@ -144,15 +155,14 @@ public class WaterOfTransmutation extends WellWater {
 		
 		int level = r.level;
 		if (level > 0) {
-			n.upgrade( level );
+			n.upgrade( null, level );
 		} else if (level < 0) {
-			n.degrade( -level );
+			n.upgrade( null, level );
 		}
 		
 		n.levelKnown = r.levelKnown;
-		n.cursedKnown = r.cursedKnown;
-		n.cursed = r.cursed;
-		
+		n.bucStatus(r);
+
 		return n;
 	}
 
@@ -160,8 +170,7 @@ public class WaterOfTransmutation extends WellWater {
 		Artifact n = Generator.randomArtifact();
 
 		if (n != null){
-			n.cursedKnown = a.cursedKnown;
-			n.cursed = a.cursed;
+			n.bucStatus(a);
 			n.levelKnown = a.levelKnown;
 			n.transferUpgrade(a.visiblyUpgraded());
 		}
@@ -178,11 +187,10 @@ public class WaterOfTransmutation extends WellWater {
 		
 		n.level = 0;
 		n.updateLevel();
-		n.upgrade( w.level );
+		n.upgrade( null, w.level );
 		
 		n.levelKnown = w.levelKnown;
-		n.cursedKnown = w.cursedKnown;
-		n.cursed = w.cursed;
+		n.bucStatus(w);
 		
 		return n;
 	}

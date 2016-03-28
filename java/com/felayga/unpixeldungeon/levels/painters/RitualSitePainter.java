@@ -57,7 +57,10 @@ public class RitualSitePainter extends Painter {
 
 	public static class RitualMarker extends CustomTileVisual{
 
+		public RitualMarker()
 		{
+			super(-1);
+
 			name = "Ritual marker";
 
 			tx = Assets.PRISON_QUEST;

@@ -30,6 +30,7 @@ import com.felayga.unpixeldungeon.actors.Char;
 import com.felayga.unpixeldungeon.actors.buffs.Buff;
 import com.felayga.unpixeldungeon.items.armor.Armor;
 import com.felayga.unpixeldungeon.items.armor.Armor.Glyph;
+import com.felayga.unpixeldungeon.mechanics.GameTime;
 import com.felayga.unpixeldungeon.sprites.CharSprite;
 import com.felayga.unpixeldungeon.sprites.ItemSprite;
 import com.felayga.unpixeldungeon.sprites.ItemSprite.Glowing;
@@ -104,7 +105,7 @@ public class Viscosity extends Glyph {
 		@Override
 		public boolean attachTo( Char target ) {
 			if (super.attachTo( target )) {
-				postpone( TICK );
+				postpone(GameTime.TICK );
 				return true;
 			} else {
 				return false;
@@ -138,7 +139,7 @@ public class Viscosity extends Glyph {
 					
 					Badges.validateDeathFromGlyph();
 				}
-				spend( TICK );
+				spend( GameTime.TICK, false );
 				
 				if (--damage <= 0) {
 					detach();

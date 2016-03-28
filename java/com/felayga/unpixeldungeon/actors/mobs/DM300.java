@@ -29,6 +29,8 @@ import com.felayga.unpixeldungeon.actors.buffs.LockedFloor;
 import com.felayga.unpixeldungeon.actors.buffs.Terror;
 import com.felayga.unpixeldungeon.items.artifacts.CapeOfThorns;
 import com.felayga.unpixeldungeon.items.artifacts.LloydsBeacon;
+import com.felayga.unpixeldungeon.items.weapon.melee.mob.MeleeMobAttack;
+import com.felayga.unpixeldungeon.mechanics.GameTime;
 import com.felayga.unpixeldungeon.ui.BossHealthBar;
 import com.watabou.noosa.Camera;
 import com.watabou.noosa.audio.Sample;
@@ -44,7 +46,7 @@ import com.felayga.unpixeldungeon.actors.buffs.Paralysis;
 import com.felayga.unpixeldungeon.effects.CellEmitter;
 import com.felayga.unpixeldungeon.effects.Speck;
 import com.felayga.unpixeldungeon.effects.particles.ElmoParticle;
-import com.felayga.unpixeldungeon.items.keys.SkeletonKey;
+import com.felayga.unpixeldungeon.items.keys.SkeletonOldKey;
 import com.felayga.unpixeldungeon.items.scrolls.ScrollOfPsionicBlast;
 import com.felayga.unpixeldungeon.items.weapon.enchantments.Death;
 import com.felayga.unpixeldungeon.levels.Level;
@@ -60,28 +62,17 @@ public class DM300 extends Mob {
 	{
 		name = "DM-300";
 		spriteClass = DM300Sprite.class;
-		
+
+		DEXCHA = 28;
+
 		HP = HT = 200;
 		EXP = 30;
 		defenseSkill = 18;
 		
 		loot = new CapeOfThorns().identify();
 		lootChance = 0.333f;
-	}
-	
-	@Override
-	public int damageRoll() {
-		return Random.NormalIntRange( 18, 24 );
-	}
-	
-	@Override
-	public int attackSkill( Char target ) {
-		return 28;
-	}
-	
-	@Override
-	public int dr() {
-		return 10;
+
+		belongings.weapon = new MeleeMobAttack(GameTime.TICK, 18, 24);
 	}
 	
 	@Override
@@ -147,13 +138,13 @@ public class DM300 extends Mob {
 		super.die( cause );
 		
 		GameScene.bossSlain();
-		Dungeon.level.drop( new SkeletonKey( Dungeon.depth  ), pos ).sprite.drop();
+		Dungeon.level.drop( new SkeletonOldKey( Dungeon.depth  ), pos ).sprite.drop();
 		
 		Badges.validateBossSlain();
 
 		LloydsBeacon beacon = Dungeon.hero.belongings.getItem(LloydsBeacon.class);
 		if (beacon != null) {
-			beacon.upgrade();
+			beacon.upgrade(null, 1);
 			GLog.p("Your beacon grows stronger!");
 		}
 		

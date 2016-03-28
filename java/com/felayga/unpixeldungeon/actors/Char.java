@@ -27,14 +27,15 @@ import com.felayga.unpixeldungeon.Assets;
 import com.felayga.unpixeldungeon.Dungeon;
 import com.felayga.unpixeldungeon.ResultDescriptions;
 import com.felayga.unpixeldungeon.actors.buffs.*;
-import com.felayga.unpixeldungeon.actors.hero.Hero;
-import com.felayga.unpixeldungeon.actors.hero.HeroSubClass;
+import com.felayga.unpixeldungeon.actors.hero.Belongings;
 import com.felayga.unpixeldungeon.actors.mobs.Bestiary;
 import com.felayga.unpixeldungeon.actors.mobs.Yog;
+import com.felayga.unpixeldungeon.items.KindOfWeapon;
 import com.felayga.unpixeldungeon.items.armor.glyphs.Bounce;
+import com.felayga.unpixeldungeon.items.food.Corpse;
 import com.felayga.unpixeldungeon.levels.Level;
-import com.felayga.unpixeldungeon.levels.Terrain;
-import com.felayga.unpixeldungeon.levels.features.Door;
+import com.felayga.unpixeldungeon.mechanics.AttributeType;
+import com.felayga.unpixeldungeon.mechanics.GameTime;
 import com.felayga.unpixeldungeon.sprites.CharSprite;
 import com.felayga.unpixeldungeon.utils.GLog;
 import com.felayga.unpixeldungeon.utils.Utils;
@@ -61,13 +62,45 @@ public abstract class Char extends Actor {
 	public int pos = 0;
 	
 	public CharSprite sprite;
-	
+
 	public String name = "mob";
 	
 	public int HT;
 	public int HP;
-	
-	protected float baseSpeed	= 1;
+
+	public int STRCON;
+	public int DEXCHA;
+	public int INTWIS;
+
+	public int nutrition;
+
+	public int getAttributeModifier(AttributeType type) {
+		int retval = 0;
+
+		switch(type)
+		{
+			case STRCON:
+				retval = STRCON;
+				break;
+			case DEXCHA:
+				retval = DEXCHA;
+				break;
+			case INTWIS:
+				retval = INTWIS;
+				break;
+		}
+
+		return (retval - 8) / 2;
+	}
+
+	public Belongings belongings;
+
+	protected long movementSpeed = GameTime.TICK;
+	protected long attackSpeed = GameTime.TICK;
+
+	public long attackDelay(long weaponAttackSpeed) {
+		return attackSpeed * weaponAttackSpeed / GameTime.TICK;
+	}
 	
 	public int paralysed	    = 0;
 	public boolean rooted		= false;
@@ -81,9 +114,25 @@ public abstract class Char extends Actor {
 	public boolean isEthereal = false;
 	
 	private HashSet<Buff> buffs = new HashSet<Buff>();
+
+	public Char()
+	{
+		belongings = new Belongings(this);
+		nutrition = 0;
+
+		STRCON = 8;
+		DEXCHA = 8;
+		INTWIS = 8;
+	}
+
+	public boolean visibilityOverride(boolean state)
+	{
+		return state;
+	}
 	
 	@Override
 	protected boolean act() {
+		belongings.decay(getTime(), true, false);
 		Dungeon.level.updateFieldOfView( this );
 		return false;
 	}
@@ -107,7 +156,7 @@ public abstract class Char extends Actor {
 	@Override
 	public void restoreFromBundle( Bundle bundle ) {
 		
-		super.restoreFromBundle( bundle );
+		super.restoreFromBundle(bundle);
 		
 		pos = bundle.getInt( POS );
 		HP = bundle.getInt( TAG_HP );
@@ -120,25 +169,35 @@ public abstract class Char extends Actor {
 		}
 	}
 	
-	public boolean attack( Char enemy ) {
-		
+	public boolean attack( KindOfWeapon weapon, boolean thrown, Char enemy ) {
+		GLog.d("Char.attack()");
 		boolean visibleFight = Dungeon.visible[pos] || Dungeon.visible[enemy.pos];
 		boolean retval = false;
 
-		if (hit( this, enemy, false )) {
-			
+		if (hit( this, weapon, thrown, enemy, false )) {
+			GLog.d("  hit");
 			if (visibleFight) {
 				GLog.i( TXT_HIT, name, enemy.name );
 			}
-			
-			// FIXME
-			int dr = this instanceof Hero && ((Hero)this).rangedWeapon != null && ((Hero)this).subClass ==
-				HeroSubClass.SNIPER ? 0 : Random.IntRange( 0, enemy.dr() );
-			
-			int dmg = damageRoll();
-			int effectiveDamage = Math.max( dmg - dr, 0 );
-			
-			effectiveDamage = attackProc( enemy, effectiveDamage );
+
+			int effectiveDamage;
+
+			if (weapon != null) {
+				effectiveDamage = weapon.damageRoll();
+				effectiveDamage += getAttributeModifier(weapon.damageAttribute);
+			}
+			else {
+				effectiveDamage = Random.IntRange(1,4);
+				effectiveDamage += getAttributeModifier(AttributeType.STRCON);
+			}
+
+			if (effectiveDamage < 0) {
+				effectiveDamage = 0;
+			}
+
+			if (weapon != null) {
+				effectiveDamage = weapon.proc(this, thrown, enemy, effectiveDamage);
+			}
 			effectiveDamage = enemy.defenseProc( this, effectiveDamage );
 
 			if (visibleFight) {
@@ -151,13 +210,19 @@ public abstract class Char extends Actor {
 				retval = true;
 			}
 			else {
+				if (effectiveDamage < 0) {
+					effectiveDamage = 0;
+				}
+
 				//TODO: consider revisiting this and shaking in more cases.
 				float shake = 0f;
-				if (enemy == Dungeon.hero)
+				if (enemy == Dungeon.hero) {
 					shake = effectiveDamage / (enemy.HT / 4);
+				}
 
-				if (shake > 1f)
+				if (shake > 1f) {
 					Camera.main.shake(GameMath.gate(1, shake, 5), 0.3f);
+				}
 
 				enemy.damage(effectiveDamage, this);
 
@@ -217,44 +282,48 @@ public abstract class Char extends Actor {
 		return retval;
 	}
 	
-	public static boolean hit( Char attacker, Char defender, boolean magic ) {
+	public static boolean hit( Char attacker, KindOfWeapon weapon, boolean thrown, Char defender, boolean magic ) {
+		int roll = Random.Int(1, 16);
+        int skill = attacker.attackSkill(weapon, thrown, defender);
+        int defense = defender.defenseSkill(attacker);
+
+        GLog.n("roll=" + roll + " + " + skill + " >= " + defense + "?");
+
+        return roll + skill >= defense;
+
+        /*
 		float acuRoll = Random.Float( attacker.attackSkill( defender ) );
 		float defRoll = Random.Float( defender.defenseSkill( attacker ) );
 		if (attacker.buff(Bless.class) != null) acuRoll *= 1.20f;
 		if (defender.buff(Bless.class) != null) defRoll *= 1.20f;
 		return (magic ? acuRoll * 2 : acuRoll) >= defRoll;
+		*/
 	}
 	
-	public int attackSkill( Char target ) {
+	public int attackSkill( KindOfWeapon weapon, boolean thrown, Char target )
+	{
+		if (thrown && Level.distance(pos, target.pos) == 1)
+		{
+			return -4;
+		}
+
 		return 0;
 	}
 	
 	public int defenseSkill( Char enemy ) {
-		return 0;
+		return 10 + belongings.getArmor(getAttributeModifier(AttributeType.DEXCHA));
 	}
 	
 	public String defenseVerb() {
 		return "dodged";
 	}
 	
-	public int dr() {
-		return 0;
-	}
-	
-	public int damageRoll() {
-		return 1;
-	}
-	
-	public int attackProc( Char enemy, int damage ) {
-		return damage;
-	}
-	
 	public int defenseProc( Char enemy, int damage ) {
 		return damage;
 	}
 	
-	public float speed() {
-		return buff( Cripple.class ) == null ? baseSpeed : baseSpeed * 0.5f;
+	public long speed() {
+		return buff( Cripple.class ) == null ? movementSpeed : movementSpeed / 2;
 	}
 	
 	public void damage( int dmg, Object src ) {
@@ -299,10 +368,17 @@ public abstract class Char extends Actor {
 	
 	public void destroy() {
 		HP = 0;
-		Actor.remove( this );
+		Actor.remove(this);
 	}
 	
 	public void die( Object src ) {
+		if (nutrition > 0 && Random.Int(2) == 0)
+		{
+			Dungeon.level.drop(new Corpse(this), pos);
+		}
+
+		belongings.dropAll(pos);
+
 		destroy();
 		sprite.die();
 	}
@@ -312,20 +388,20 @@ public abstract class Char extends Actor {
 	}
 	
 	@Override
-	protected void spend( float time ) {
+	public void spend( long time, boolean andnext ) {
 		
-		float timeScale = 1f;
+		long timeScale = GameTime.TICK;
 		if (buff( Slow.class ) != null) {
-			timeScale *= 0.5f;
+			timeScale *= 2;
 			//slowed and chilled do not stack
 		} else if (buff( Chill.class ) != null) {
-			timeScale *= buff( Chill.class ).speedFactor();
+			timeScale = timeScale * GameTime.TICK / buff( Chill.class ).speedFactor();
 		}
 		if (buff( Speed.class ) != null) {
-			timeScale *= 2.0f;
+			timeScale /= 2;
 		}
 		
-		super.spend( time / timeScale );
+		super.spend( time * timeScale / GameTime.TICK, andnext);
 	}
 	
 	public HashSet<Buff> buffs() {
@@ -437,7 +513,7 @@ public abstract class Char extends Actor {
 		}
 		*/
 		if (this != Dungeon.hero) {
-			sprite.visible = Dungeon.visible[pos];
+			sprite.visible = visibilityOverride(Dungeon.visible[pos]);
 		}
 	}
 	

@@ -32,6 +32,7 @@ import com.felayga.unpixeldungeon.effects.CellEmitter;
 import com.felayga.unpixeldungeon.effects.particles.SnowParticle;
 import com.felayga.unpixeldungeon.items.Heap;
 import com.felayga.unpixeldungeon.levels.Level;
+import com.felayga.unpixeldungeon.mechanics.GameTime;
 import com.watabou.utils.Random;
 
 public class Freezing {
@@ -42,9 +43,9 @@ public class Freezing {
 		Char ch = Actor.findChar( cell );
 		if (ch != null) {
 			if (Level.water[ch.pos]){
-				Buff.prolong(ch, Frost.class, Frost.duration(ch) * Random.Float(5f, 7.5f));
+				Buff.prolong(ch, Frost.class, Frost.duration(ch) * Random.Long(GameTime.TICK * 5, GameTime.TICK * 15 / 2) / GameTime.TICK);
 			} else {
-				Buff.prolong(ch, Frost.class, Frost.duration(ch) * Random.Float(1.0f, 1.5f));
+				Buff.prolong(ch, Frost.class, Frost.duration(ch) * Random.Long(GameTime.TICK, GameTime.TICK * 3 / 2) / GameTime.TICK);
 			}
 		}
 		

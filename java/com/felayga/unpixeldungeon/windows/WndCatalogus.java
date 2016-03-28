@@ -57,7 +57,7 @@ public class WndCatalogus extends WndTabbed {
 	private BitmapText txtTitle;
 	private ScrollPane list;
 	
-	private ArrayList<ListItem> items = new ArrayList<WndCatalogus.ListItem>();
+	private ArrayList<ListItem> items = new ArrayList<>();
 	
 	private static boolean showPotions = true;
 	
@@ -97,14 +97,14 @@ public class WndCatalogus extends WndTabbed {
 					super.select( value );
 					WndCatalogus.showPotions = value;
 					updateList();
-				};
+				}
 			},
 			new LabeledTab( TXT_SCROLLS ) {
 				protected void select( boolean value ) {
 					super.select( value );
 					WndCatalogus.showPotions = !value;
 					updateList();
-				};
+				}
 			}
 		};
 		for (Tab tab : tabs) {
@@ -162,13 +162,14 @@ public class WndCatalogus extends WndTabbed {
 			super();
 			
 			try {
+				//todo: WHAT THE FUCK IS THIS SHIT
 				item = cl.newInstance();
 				if (identified = item.isIdentified()) {
 					sprite.view( item.image(), null );
-					label.text( item.name() );
+					label.text( "WHAT THE FUCK IS THIS SHIT" ); //item.name()
 				} else {
 					sprite.view( 127, null );
-					label.text( item.trueName() );
+					label.text( "WHAT THE FUCK IS THIS SHIT TOO" ); //item.trueName()
 					label.hardlight( 0xCCCCCC );
 				}
 			} catch (Exception e) {

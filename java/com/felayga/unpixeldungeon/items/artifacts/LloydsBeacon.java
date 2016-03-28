@@ -41,7 +41,9 @@ import com.felayga.unpixeldungeon.effects.MagicMissile;
 import com.felayga.unpixeldungeon.items.Item;
 import com.felayga.unpixeldungeon.items.scrolls.ScrollOfTeleportation;
 import com.felayga.unpixeldungeon.levels.Level;
+import com.felayga.unpixeldungeon.mechanics.BUCStatus;
 import com.felayga.unpixeldungeon.mechanics.Ballistica;
+import com.felayga.unpixeldungeon.mechanics.GameTime;
 import com.felayga.unpixeldungeon.scenes.CellSelector;
 import com.felayga.unpixeldungeon.scenes.GameScene;
 import com.felayga.unpixeldungeon.scenes.InterlevelScene;
@@ -76,7 +78,7 @@ public class LloydsBeacon extends Artifact {
 	private static final String TXT_SET =
 		"\n\nThis beacon was set somewhere on the level %d of Pixel Dungeon.";
 	
-	public static final float TIME_TO_USE = 1;
+	public static final long TIME_TO_USE = GameTime.TICK;
 
 	public static final String AC_ZAP       = "ZAP";
 	public static final String AC_SET		= "SET";
@@ -130,26 +132,23 @@ public class LloydsBeacon extends Artifact {
 	}
 	
 	@Override
-	public void execute( Hero hero, String action ) {
-
+	public boolean execute( Hero hero, String action ) {
 		if (action == AC_SET || action == AC_RETURN) {
-			
 			if (Dungeon.bossLevel()) {
-				hero.spend( LloydsBeacon.TIME_TO_USE );
+				hero.spend( LloydsBeacon.TIME_TO_USE, false );
 				GLog.w( TXT_PREVENTING );
-				return;
+				return true;
 			}
 			
 			for (int i=0; i < Level.NEIGHBOURS8.length; i++) {
 				if (Actor.findChar( hero.pos + Level.NEIGHBOURS8[i] ) != null) {
 					GLog.w( TXT_CREATURES );
-					return;
+					return true;
 				}
 			}
 		}
 
 		if (action == AC_ZAP ){
-
 			curUser = hero;
 			int chargesToUse = Dungeon.depth > 20 ? 2 : 1;
 
@@ -158,20 +157,17 @@ public class LloydsBeacon extends Artifact {
 			else {
 				GameScene.selectCell(zapper);
 			}
-
 		} else if (action == AC_SET) {
-			
 			returnDepth = Dungeon.depth;
 			returnPos = hero.pos;
 			
-			hero.spend( LloydsBeacon.TIME_TO_USE );
+			hero.spend( LloydsBeacon.TIME_TO_USE, false );
 			hero.busy();
 			
 			hero.sprite.operate( hero.pos );
 			Sample.INSTANCE.play( Assets.SND_BEACON );
 			
 			GLog.i( TXT_RETURN );
-			
 		} else if (action == AC_RETURN) {
 			
 			if (returnDepth == Dungeon.depth) {
@@ -191,13 +187,11 @@ public class LloydsBeacon extends Artifact {
 				InterlevelScene.returnPos = returnPos;
 				Game.switchScene( InterlevelScene.class );
 			}
-			
-			
 		} else {
-			
-			super.execute( hero, action );
-			
+			return super.execute( hero, action );
 		}
+
+		return false;
 	}
 
 	protected CellSelector.Listener zapper = new  CellSelector.Listener() {
@@ -212,15 +206,19 @@ public class LloydsBeacon extends Artifact {
 			updateQuickslot();
 
 			if (Actor.findChar(target) == curUser){
-				ScrollOfTeleportation.teleportHero(curUser);
-				curUser.spendAndNext(1f);
+				if (ScrollOfTeleportation.canTeleport(curUser)) {
+					ScrollOfTeleportation.doTeleport(curUser);
+				}
+				curUser.spend(GameTime.TICK, true);
 			} else {
 				final Ballistica bolt = new Ballistica( curUser.pos, target, Ballistica.MAGIC_BOLT );
 				final Char ch = Actor.findChar(bolt.collisionPos);
 
 				if (ch == curUser){
-					ScrollOfTeleportation.teleportHero(curUser);
-					curUser.spendAndNext( 1f );
+					if (ScrollOfTeleportation.canTeleport(curUser)) {
+						ScrollOfTeleportation.doTeleport(curUser);
+					}
+					curUser.spend(GameTime.TICK, true);
 				} else {
 					Sample.INSTANCE.play( Assets.SND_ZAP );
 					curUser.sprite.zap(bolt.collisionPos);
@@ -259,7 +257,7 @@ public class LloydsBeacon extends Artifact {
 
 								}
 							}
-							curUser.spendAndNext(1f);
+							curUser.spend(GameTime.TICK, true);
 						}
 					});
 
@@ -282,10 +280,10 @@ public class LloydsBeacon extends Artifact {
 	}
 
 	@Override
-	public Item upgrade() {
-		chargeCap ++;
+	public Item upgrade(Item source, int n) {
+		chargeCap+=n;
 
-		return super.upgrade();
+		return super.upgrade(source, n);
 	}
 
 	@Override
@@ -308,7 +306,7 @@ public class LloydsBeacon extends Artifact {
 		@Override
 		public boolean act() {
 			LockedFloor lock = target.buff(LockedFloor.class);
-			if (charge < chargeCap && !cursed && (lock == null || lock.regenOn())) {
+			if (charge < chargeCap && bucStatus != BUCStatus.Cursed && (lock == null || lock.regenOn())) {
 				partialCharge += 1 / (100f - (chargeCap - charge)*10f);
 
 				if (partialCharge >= 1) {
@@ -322,7 +320,7 @@ public class LloydsBeacon extends Artifact {
 			}
 
 			updateQuickslot();
-			spend( TICK );
+			spend( GameTime.TICK, false );
 			return true;
 		}
 	}

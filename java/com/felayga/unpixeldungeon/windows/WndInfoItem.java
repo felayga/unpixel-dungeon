@@ -72,7 +72,7 @@ public class WndInfoItem extends Window {
 			} else if (item.levelKnown && item.level < 0) {
 				color = ItemSlot.DEGRADED;
 			}
-			fillFields( item.image(), item.glowing(), color, item.toString(), item.info() );
+			fillFields( item.image(), item.glowing(), color, item.getDisplayName(), item.info() );
 			
 		} else {
 			
@@ -100,7 +100,7 @@ public class WndInfoItem extends Window {
 				else if (heap.peek() instanceof Ring)
 					info = Utils.format( TXT_INSIDE, "a ring" );
 				else
-					info = Utils.format( TXT_INSIDE, Utils.indefinite( heap.peek().name() ) );
+					info = Utils.format( TXT_INSIDE, Utils.indefinite( heap.peek().getDisplayName() ) );
 			} else {
 				title = TTL_LOCKED_CHEST;
 				info = TXT_NEED_KEY;

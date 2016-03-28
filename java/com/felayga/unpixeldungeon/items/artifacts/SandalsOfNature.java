@@ -31,12 +31,14 @@ import com.felayga.unpixeldungeon.actors.hero.Hero;
 import com.felayga.unpixeldungeon.effects.CellEmitter;
 import com.felayga.unpixeldungeon.effects.particles.EarthParticle;
 import com.felayga.unpixeldungeon.items.Item;
+import com.felayga.unpixeldungeon.mechanics.BUCStatus;
+import com.felayga.unpixeldungeon.mechanics.GameTime;
 import com.felayga.unpixeldungeon.plants.Earthroot;
 import com.felayga.unpixeldungeon.plants.Plant;
 import com.felayga.unpixeldungeon.scenes.GameScene;
 import com.felayga.unpixeldungeon.sprites.ItemSpriteSheet;
 import com.felayga.unpixeldungeon.utils.GLog;
-import com.felayga.unpixeldungeon.windows.WndBag;
+import com.felayga.unpixeldungeon.windows.WndBackpack;
 import com.watabou.noosa.Camera;
 import com.watabou.noosa.audio.Sample;
 import com.watabou.utils.Bundle;
@@ -65,14 +67,14 @@ public class SandalsOfNature extends Artifact {
 	public static final String AC_ROOT = "ROOT";
 
 	protected String inventoryTitle = "Select a seed";
-	protected WndBag.Mode mode = WndBag.Mode.SEED;
+	protected WndBackpack.Mode mode = WndBackpack.Mode.SEED;
 
 	public ArrayList<String> seeds = new ArrayList<String>();
 
 	@Override
 	public ArrayList<String> actions( Hero hero ) {
 		ArrayList<String> actions = super.actions( hero );
-		if (isEquipped( hero ) && level < 3 && !cursed)
+		if (isEquipped( hero ) && level < 3 && bucStatus != BUCStatus.Cursed)
 			actions.add(AC_FEED);
 		if (isEquipped( hero ) && charge > 0)
 			actions.add(AC_ROOT);
@@ -80,12 +82,12 @@ public class SandalsOfNature extends Artifact {
 	}
 
 	@Override
-	public void execute( Hero hero, String action ) {
-		super.execute(hero, action);
+	public boolean execute( Hero hero, String action ) {
+		boolean retval = super.execute(hero, action);
+
 		if (action.equals(AC_FEED)){
 			GameScene.selectItem(itemSelector, mode, inventoryTitle);
 		} else if (action.equals(AC_ROOT) && level > 0){
-
 			if (!isEquipped( hero )) GLog.i("You need to equip them to do that.");
 			else if (charge == 0)    GLog.i("They have no energy right now.");
 			else {
@@ -97,6 +99,8 @@ public class SandalsOfNature extends Artifact {
 				updateQuickslot();
 			}
 		}
+
+		return retval;
 	}
 
 	@Override
@@ -125,7 +129,7 @@ public class SandalsOfNature extends Artifact {
 		if ( isEquipped ( Dungeon.hero ) ){
 			desc += "\n\n";
 			if (level == 0) {
-				if (!cursed)
+				if (bucStatus != BUCStatus.Cursed)
 					desc += "The sandals wrap snugly around your feet, they seem happy to be worn.";
 				else
 					desc += "The cursed sandals wrap tightly around your feet.";
@@ -137,7 +141,7 @@ public class SandalsOfNature extends Artifact {
 			else
 				desc += "The greaves are thick and weighty, but very easy to move in, as if they are moving with you.";
 
-			if (!cursed)
+			if (bucStatus != BUCStatus.Cursed)
 				desc += " You feel more attuned with nature while wearing them.";
 			else
 				desc += " They are blocking any attunement with nature.";
@@ -161,7 +165,7 @@ public class SandalsOfNature extends Artifact {
 	}
 
 	@Override
-	public Item upgrade() {
+	public Item upgrade(Item source, int n) {
 		if (level < 0)
 			image = ItemSpriteSheet.ARTIFACT_SANDALS;
 		else if (level == 0)
@@ -171,7 +175,7 @@ public class SandalsOfNature extends Artifact {
 		else if (level >= 2)
 			image = ItemSpriteSheet.ARTIFACT_GREAVES;
 		name = NAMES[level+1];
-		return super.upgrade();
+		return super.upgrade(source, n);
 	}
 
 
@@ -203,23 +207,23 @@ public class SandalsOfNature extends Artifact {
 		}
 	}
 
-	protected WndBag.Listener itemSelector = new WndBag.Listener() {
+	protected WndBackpack.Listener itemSelector = new WndBackpack.Listener() {
 		@Override
 		public void onSelect( Item item ) {
 			if (item != null && item instanceof Plant.Seed) {
-				if (seeds.contains(item.name())){
+				if (seeds.contains(item.getDisplayName())){
 					GLog.w("Your " + name + " have already gained nutrients from that seed recently.");
 				} else {
-					seeds.add(item.name());
+					seeds.add(item.getDisplayName());
 
 					Hero hero = Dungeon.hero;
-					hero.sprite.operate( hero.pos );
-					Sample.INSTANCE.play( Assets.SND_PLANT );
+					hero.sprite.operate(hero.pos);
+					Sample.INSTANCE.play(Assets.SND_PLANT);
 					hero.busy();
-					hero.spend( 2f );
+					hero.spend(GameTime.TICK * 2, false);
 					if (seeds.size() >= 5+(level*2)){
 						seeds.clear();
-						upgrade();
+						upgrade(item, 1);
 						if (level >= 1 && level <= 3) {
 							GLog.p("Your " + NAMES[level-1] + " surge in size, they are now " + NAMES[level] + "!");
 						}
@@ -227,7 +231,7 @@ public class SandalsOfNature extends Artifact {
 					} else {
 						GLog.i("Your " + name + " absorb the seed, they seem healthier.");
 					}
-					item.detach(hero.belongings.backpack);
+					hero.belongings.detach(item);
 				}
 			}
 		}

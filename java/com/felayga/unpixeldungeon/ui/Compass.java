@@ -34,18 +34,17 @@ public class Compass extends Image {
 	private static final float RAD_2_G	= 180f / 3.1415926f;
 	private static final float RADIUS	= 12;
 	
-	private int cell;
 	private PointF cellCenter;
 	
 	private PointF lastScroll = new PointF();
 	
 	public Compass( int cell ) {
-		
 		super();
+		this.pos = cell;
+
 		copy( Icons.COMPASS.get() );
 		origin.set( width / 2, RADIUS );
 		
-		this.cell = cell;
 		cellCenter = DungeonTilemap.tileCenterToWorld( cell );
 		visible = false;
 	}
@@ -55,7 +54,7 @@ public class Compass extends Image {
 		super.update();
 		
 		if (!visible) {
-			visible = Dungeon.level.visited[cell] || Dungeon.level.mapped[cell];
+			visible = Dungeon.level.visited[pos] || Dungeon.level.mapped[pos];
 		}
 		
 		if (visible) {

@@ -32,14 +32,13 @@ import com.felayga.unpixeldungeon.Statistics;
 import com.felayga.unpixeldungeon.actors.blobs.Blob;
 import com.felayga.unpixeldungeon.actors.buffs.Buff;
 import com.felayga.unpixeldungeon.actors.mobs.Mob;
+import com.felayga.unpixeldungeon.utils.GLog;
 import com.watabou.utils.Bundlable;
 import com.watabou.utils.Bundle;
 
 public abstract class Actor implements Bundlable {
-	
-	public static final float TICK	= 1f;
-
-	private float time;
+	private long time;
+	public long getTime() { return time; }
 
 	private int id = 0;
 
@@ -49,22 +48,22 @@ public abstract class Actor implements Bundlable {
 
 	protected abstract boolean act();
 	
-	protected void spend( float time ) {
+	protected void spend( long time, boolean andnext ) {
 		this.time += time;
 	}
 	
-	protected void postpone( float time ) {
+	protected void postpone( long time ) {
 		if (this.time < now + time) {
 			this.time = now + time;
 		}
 	}
 	
-	protected float cooldown() {
+	protected long cooldown() {
 		return time - now;
 	}
 	
-	protected void diactivate() {
-		time = Float.MAX_VALUE;
+	protected void deactivate() {
+		time = Long.MAX_VALUE;
 	}
 	
 	protected void onAdd() {}
@@ -82,8 +81,8 @@ public abstract class Actor implements Bundlable {
 
 	@Override
 	public void restoreFromBundle( Bundle bundle ) {
-		time = bundle.getFloat( TIME );
-		id = bundle.getInt( ID );
+		time = bundle.getLong(TIME);
+		id = bundle.getInt(ID);
 	}
 
 	private static int nextID = 1;
@@ -104,7 +103,7 @@ public abstract class Actor implements Bundlable {
 
 	private static SparseArray<Actor> ids = new SparseArray<>();
 
-	private static float now = 0;
+	private static long now = 0;
 	
 	public static void clear() {
 		
@@ -116,27 +115,32 @@ public abstract class Actor implements Bundlable {
 		ids.clear();
 	}
 	
-	public static void fixTime() {
-		
+	public static final long fixTime_new() {
 		if (Dungeon.hero != null && all.contains( Dungeon.hero )) {
 			Statistics.duration += now;
 		}
-		
-		float min = Float.MAX_VALUE;
+
+		long min = Long.MAX_VALUE;
 		for (Actor a : all) {
-			if (a.time < min) {
+			if (min > a.time) {
 				min = a.time;
 			}
 		}
 		for (Actor a : all) {
 			a.time -= min;
+			if (a instanceof Char) {
+				Char c = (Char)a;
+				c.belongings.decay(min, true, false);
+			}
 		}
 		now = 0;
+
+		return min;
 	}
 	
 	public static void init() {
 		
-		addDelayed( Dungeon.hero, -Float.MIN_VALUE );
+		addDelayed( Dungeon.hero, -1 ); //originally float.minvalue
 		
 		for (Mob mob : Dungeon.level.mobs) {
 			add( mob );
@@ -168,33 +172,31 @@ public abstract class Actor implements Bundlable {
 			current = null;
 		}
 	}
-	
+
 	public static void process() {
-		
 		if (current != null) {
 			return;
 		}
 	
 		boolean doNext;
 
+		//GLog.d("process start");
 		do {
-			now = Float.MAX_VALUE;
+			now = Long.MAX_VALUE;
 			current = null;
 
 			
 			for (Actor actor : all) {
-
 				//some actors will always go before others if time is equal.
-				if (actor.time < now ||
-						actor.time == now && (current == null || actor.actPriority < current.actPriority)) {
+				if (actor.time < now || actor.time == now && (current == null || actor.actPriority < current.actPriority)) {
 					now = actor.time;
 					current = actor;
 				}
 
 			}
 
-			if  (current != null) {
 
+			if  (current != null) {
 				if (current instanceof Char && ((Char)current).sprite.isMoving) {
 					// If it's character's turn to act, but its sprite
 					// is moving, wait till the movement is over
@@ -210,19 +212,24 @@ public abstract class Actor implements Bundlable {
 			} else {
 				doNext = false;
 			}
+
+			if (Dungeon.level != null) {
+				Dungeon.level.decay(now, true, false);
+			}
 			
 		} while (doNext);
+		//GLog.d("process end");
 	}
 	
 	public static void add( Actor actor ) {
 		add( actor, now );
 	}
 	
-	public static void addDelayed( Actor actor, float delay ) {
+	public static void addDelayed( Actor actor, long delay ) {
 		add( actor, now + delay );
 	}
 	
-	private static void add( Actor actor, float time ) {
+	private static void add( Actor actor, long time ) {
 		
 		if (all.contains( actor )) {
 			return;

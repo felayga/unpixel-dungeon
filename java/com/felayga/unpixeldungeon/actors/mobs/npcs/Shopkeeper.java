@@ -29,9 +29,10 @@ import com.felayga.unpixeldungeon.effects.CellEmitter;
 import com.felayga.unpixeldungeon.effects.particles.ElmoParticle;
 import com.felayga.unpixeldungeon.items.Heap;
 import com.felayga.unpixeldungeon.items.Item;
+import com.felayga.unpixeldungeon.mechanics.GameTime;
 import com.felayga.unpixeldungeon.scenes.GameScene;
 import com.felayga.unpixeldungeon.sprites.ShopkeeperSprite;
-import com.felayga.unpixeldungeon.windows.WndBag;
+import com.felayga.unpixeldungeon.windows.WndBackpack;
 import com.felayga.unpixeldungeon.windows.WndTradeItem;
 
 public class Shopkeeper extends NPC {
@@ -57,7 +58,7 @@ public class Shopkeeper extends NPC {
 		throwItem();
 		
 		sprite.turnTo( pos, Dungeon.hero.pos );
-		spend( TICK );
+		spend(GameTime.TICK, false );
 		return true;
 	}
 	
@@ -97,15 +98,15 @@ public class Shopkeeper extends NPC {
 			"than for a dungeon. His prices explain why he prefers to do business here.";
 	}
 	
-	public static WndBag sell() {
-		return GameScene.selectItem( itemSelector, WndBag.Mode.FOR_SALE, "Select an item to sell" );
+	public static WndBackpack sell() {
+		return GameScene.selectItem( itemSelector, WndBackpack.Mode.FOR_SALE, "Select an item to sell" );
 	}
 	
-	private static WndBag.Listener itemSelector = new WndBag.Listener() {
+	private static WndBackpack.Listener itemSelector = new WndBackpack.Listener() {
 		@Override
 		public void onSelect( Item item ) {
 			if (item != null) {
-				WndBag parentWnd = sell();
+				WndBackpack parentWnd = sell();
 				GameScene.show( new WndTradeItem( item, parentWnd ) );
 			}
 		}

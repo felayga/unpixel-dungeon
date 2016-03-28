@@ -56,9 +56,9 @@ public class WndTradeItem extends Window {
 	private static final String TXT_BOUGHT	= "You've bought %s for %dg";
 	private static final String TXT_STOLE	= "You've stolen the %s";
 	
-	private WndBag owner;
+	private WndBackpack owner;
 	
-	public WndTradeItem( final Item item, WndBag owner ) {
+	public WndTradeItem( final Item item, WndBackpack owner ) {
 		
 		super();
 		
@@ -138,7 +138,7 @@ public class WndTradeItem extends Window {
 				}
 			};
 			btnBuy.setRect( 0, pos + GAP, WIDTH, BTN_HEIGHT );
-			btnBuy.enable( price <= Dungeon.gold );
+			btnBuy.enable( price <= Dungeon.hero.belongings.goldQuantity() );
 			add( btnBuy );
 
 			RedButton btnCancel = new RedButton( TXT_CANCEL ) {
@@ -157,7 +157,7 @@ public class WndTradeItem extends Window {
 						if(thievery.steal(price)){
 							Hero hero = Dungeon.hero;
 							Item item = heap.pickUp();
-							GLog.i( TXT_STOLE, item.name());
+							GLog.i( TXT_STOLE, item.getDisplayName());
 							hide();
 
 							if (!item.doPickUp( hero )) {
@@ -240,12 +240,12 @@ public class WndTradeItem extends Window {
 		if (item.isEquipped( hero ) && !((EquipableItem)item).doUnequip( hero, false )) {
 			return;
 		}
-		item.detachAll( hero.belongings.backpack );
-		
+		hero.belongings.detach(item);
+
 		int price = item.price();
 		
 		new Gold( price ).doPickUp( hero );
-		GLog.i( TXT_SOLD, item.name(), price );
+		GLog.i( TXT_SOLD, item.getDisplayName(), price );
 	}
 	
 	private void sellOne( Item item ) {
@@ -256,11 +256,11 @@ public class WndTradeItem extends Window {
 			
 			Hero hero = Dungeon.hero;
 			
-			item = item.detach( hero.belongings.backpack );
+			item = hero.belongings.detach(item);
 			int price = item.price();
 			
 			new Gold( price ).doPickUp( hero );
-			GLog.i( TXT_SOLD, item.name(), price );
+			GLog.i( TXT_SOLD, item.getDisplayName(), price );
 		}
 	}
 	
@@ -275,9 +275,9 @@ public class WndTradeItem extends Window {
 		Item item = heap.pickUp();
 		
 		int price = price( item );
-		Dungeon.gold -= price;
-		
-		GLog.i( TXT_BOUGHT, item.name(), price );
+		Dungeon.hero.belongings.removeGold(price);
+
+		GLog.i( TXT_BOUGHT, item.getDisplayName(), price );
 		
 		if (!item.doPickUp( hero )) {
 			Dungeon.level.drop( item, heap.pos ).sprite.drop();

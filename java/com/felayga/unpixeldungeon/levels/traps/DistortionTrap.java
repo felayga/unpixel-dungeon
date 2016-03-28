@@ -25,7 +25,7 @@ package com.felayga.unpixeldungeon.levels.traps;
 
 import com.felayga.unpixeldungeon.Dungeon;
 import com.felayga.unpixeldungeon.items.Item;
-import com.felayga.unpixeldungeon.items.keys.Key;
+import com.felayga.unpixeldungeon.items.keys.OldKey;
 import com.felayga.unpixeldungeon.scenes.InterlevelScene;
 import com.felayga.unpixeldungeon.sprites.TrapSprite;
 import com.watabou.noosa.Game;
@@ -41,11 +41,15 @@ public class DistortionTrap extends Trap{
 	@Override
 	public void activate() {
 		InterlevelScene.returnDepth = Dungeon.depth;
-		for (Item item : Dungeon.hero.belongings.backpack.items.toArray( new Item[0])){
-			if (item instanceof Key && ((Key)item).depth == Dungeon.depth){
+
+		/*
+		//todo: seems pointless now
+		for (Item item : Dungeon.hero.belongings.backpack.items.toArray( new Item[Dungeon.hero.belongings.backpack.items.size()])){
+			if (item instanceof OldKey && ((OldKey)item).depth == Dungeon.depth){
 				item.detachAll(Dungeon.hero.belongings.backpack);
 			}
 		}
+		*/
 		InterlevelScene.mode = InterlevelScene.Mode.RESET;
 		Game.switchScene(InterlevelScene.class);
 	}

@@ -32,7 +32,7 @@ import com.felayga.unpixeldungeon.actors.mobs.Mob;
 import com.felayga.unpixeldungeon.actors.mobs.Tengu;
 import com.felayga.unpixeldungeon.items.Heap;
 import com.felayga.unpixeldungeon.items.Item;
-import com.felayga.unpixeldungeon.items.keys.IronKey;
+import com.felayga.unpixeldungeon.items.keys.IronOldKey;
 import com.felayga.unpixeldungeon.levels.traps.SpearTrap;
 import com.felayga.unpixeldungeon.levels.traps.Trap;
 import com.felayga.unpixeldungeon.scenes.GameScene;
@@ -145,7 +145,7 @@ public class PrisonBossLevel extends Level {
 
 	@Override
 	protected void createItems() {
-		drop(new IronKey(10), randomPrisonCell());
+		drop(new IronOldKey(10), randomPrisonCell());
 	}
 
 	private int randomPrisonCell(){
@@ -315,7 +315,7 @@ public class PrisonBossLevel extends Level {
 			case FIGHT_ARENA:
 				unseal();
 
-				CustomTileVisual vis = new exitVisual();
+				CustomTileVisual vis = new exitVisual(-1);
 				vis.pos(7, 7);
 				customTiles.add(vis);
 				((GameScene)ShatteredPixelDungeon.scene()).addCustomTile(vis);
@@ -502,7 +502,10 @@ public class PrisonBossLevel extends Level {
 
 	public static class exitVisual extends CustomTileVisual{
 
+		public exitVisual(int pos)
 		{
+			super(pos);
+
 			name = "prison exit";
 
 			tx = Assets.PRISON_EXIT;

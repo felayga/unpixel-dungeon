@@ -30,6 +30,7 @@ import com.felayga.unpixeldungeon.actors.hero.Hero;
 import com.felayga.unpixeldungeon.actors.hero.HeroClass;
 import com.felayga.unpixeldungeon.actors.mobs.Mob;
 import com.felayga.unpixeldungeon.items.Item;
+import com.felayga.unpixeldungeon.items.KindOfWeapon;
 import com.felayga.unpixeldungeon.items.weapon.missiles.Shuriken;
 import com.felayga.unpixeldungeon.levels.Level;
 import com.felayga.unpixeldungeon.sprites.ItemSpriteSheet;
@@ -43,13 +44,14 @@ public class HuntressArmor extends ClassArmor {
 	private static final String TXT_NOT_HUNTRESS	= "Only huntresses can use this armor!";
 	
 	private static final String AC_SPECIAL = "SPECTRAL BLADES";
-	
-	{
+
+	public HuntressArmor(int armor, int armorBonusMaximum, long speedModifier, long equipTime, int spellFailure) {
+		super(armor, armorBonusMaximum, speedModifier, equipTime, spellFailure);
 		name = "huntress cloak";
 		image = ItemSpriteSheet.ARMOR_HUNTRESS;
 	}
 	
-	private HashMap<Callback, Mob> targets = new HashMap<Callback, Mob>();
+	private HashMap<Callback, Mob> targets = new HashMap<>();
 	
 	@Override
 	public String special() {
@@ -58,19 +60,19 @@ public class HuntressArmor extends ClassArmor {
 	
 	@Override
 	public void doSpecial() {
-		
-		Item proto = new Shuriken();
-		
+		final KindOfWeapon proto = new Shuriken();
+
 		for (Mob mob : Dungeon.level.mobs) {
 			if (Level.fieldOfView[mob.pos]) {
 				
 				Callback callback = new Callback() {
 					@Override
 					public void call() {
-						curUser.attack( targets.get( this ) );
+						curUser.attack( proto, true, targets.get( this ) );
 						targets.remove( this );
 						if (targets.isEmpty()) {
-							curUser.spendAndNext( curUser.attackDelay() );
+							//todo: attack delay, this should probably disappear anyway
+							curUser.spend(proto.delay_new, true);
 						}
 					}
 				};
@@ -92,7 +94,8 @@ public class HuntressArmor extends ClassArmor {
 		curUser.sprite.zap( curUser.pos );
 		curUser.busy();
 	}
-	
+
+	/*
 	@Override
 	public boolean doEquip( Hero hero ) {
 		if (hero.heroClass == HeroClass.HUNTRESS) {
@@ -102,7 +105,8 @@ public class HuntressArmor extends ClassArmor {
 			return false;
 		}
 	}
-	
+	*/
+
 	@Override
 	public String desc() {
 		return

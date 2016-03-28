@@ -23,24 +23,30 @@
  */
 package com.felayga.unpixeldungeon.items.bags;
 
+import com.felayga.unpixeldungeon.actors.Char;
 import com.felayga.unpixeldungeon.items.Item;
 import com.felayga.unpixeldungeon.items.wands.Wand;
 import com.felayga.unpixeldungeon.sprites.ItemSpriteSheet;
 
 public class WandHolster extends Bag {
 
+	public WandHolster()
 	{
+		super(null);
+
 		name = "wand holster";
 		image = ItemSpriteSheet.HOLSTER;
 		
 		size = 12;
+		priority = 8;
 	}
 	
 	@Override
 	public boolean grab( Item item ) {
 		return item instanceof Wand;
 	}
-	
+
+	/*
 	@Override
 	public boolean collect( Bag container ) {
 		if (super.collect( container )) {
@@ -54,7 +60,9 @@ public class WandHolster extends Bag {
 			return false;
 		}
 	}
+	*/
 
+	/*
 	@Override
 	public void onDetach( ) {
 		super.onDetach();
@@ -62,7 +70,8 @@ public class WandHolster extends Bag {
 			((Wand)item).stopCharging();
 		}
 	}
-	
+	*/
+
 	@Override
 	public int price() {
 		return 50;

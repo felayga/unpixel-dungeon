@@ -50,8 +50,9 @@ public class WarriorArmor extends ClassArmor {
 	private static final String AC_SPECIAL = "HEROIC LEAP";
 	
 	private static final String TXT_NOT_WARRIOR	= "Only warriors can use this armor!";
-	
-	{
+
+	public WarriorArmor(int armor, int armorBonusMaximum, long speedModifier, long equipTime, int spellFailure) {
+		super(armor, armorBonusMaximum, speedModifier, equipTime, spellFailure);
 		name = "warrior suit of armor";
 		image = ItemSpriteSheet.ARMOR_WARRIOR;
 	}
@@ -65,7 +66,8 @@ public class WarriorArmor extends ClassArmor {
 	public void doSpecial() {
 		GameScene.selectCell( leaper );
 	}
-	
+
+	/*
 	@Override
 	public boolean doEquip( Hero hero ) {
 		if (hero.heroClass == HeroClass.WARRIOR) {
@@ -75,7 +77,8 @@ public class WarriorArmor extends ClassArmor {
 			return false;
 		}
 	}
-	
+	*/
+
 	@Override
 	public String desc() {
 		return
@@ -123,7 +126,7 @@ public class WarriorArmor extends ClassArmor {
 						CellEmitter.center(dest).burst(Speck.factory(Speck.DUST), 10);
 						Camera.main.shake(2, 0.5f);
 
-						curUser.spendAndNext(LEAP_TIME);
+						curUser.spend(LEAP_TIME, true);
 					}
 				});
 			}

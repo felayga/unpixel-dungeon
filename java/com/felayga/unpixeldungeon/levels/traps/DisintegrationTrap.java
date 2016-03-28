@@ -74,6 +74,9 @@ public class DisintegrationTrap extends Trap {
 					GLog.n("You were killed by the disintegration trap...");
 				} else {
 					Item item = hero.belongings.randomUnequipped();
+
+					/*
+					//todo: trap needs to be overhauled
 					Bag bag = hero.belongings.backpack;
 					//bags do not protect against this trap
 					if (item instanceof Bag){
@@ -83,13 +86,14 @@ public class DisintegrationTrap extends Trap {
 					if (item.level > 0 || item.unique) return;
 					if (!item.stackable){
 						item.detachAll(bag);
-						GLog.w("the trap disintegrates your " + item.name() + "!");
+						GLog.w("the trap disintegrates your " + item.getDisplayName() + "!");
 					} else {
 						int n = Random.NormalIntRange(1, (item.quantity()+1)/2);
 						for(int i = 1; i <= n; i++)
 							item.detach(bag);
-						GLog.w("the trap disintegrates some of your " + item.name() + "!");
+						GLog.w("the trap disintegrates some of your " + item.getDisplayName() + "!");
 					}
+					*/
 				}
 			}
 		}

@@ -27,34 +27,32 @@ import com.felayga.unpixeldungeon.actors.Char;
 import com.felayga.unpixeldungeon.actors.buffs.Buff;
 import com.felayga.unpixeldungeon.actors.buffs.Cripple;
 import com.felayga.unpixeldungeon.items.Item;
+import com.felayga.unpixeldungeon.mechanics.GameTime;
 import com.felayga.unpixeldungeon.sprites.ItemSpriteSheet;
 import com.watabou.utils.Random;
 
 public class Javelin extends MissileWeapon {
 
-	{
-		name = "javelin";
-		image = ItemSpriteSheet.JAVELIN;
-		
-		STR = 15;
-		
-		MIN = 2;
-		MAX = 15;
-	}
-	
 	public Javelin() {
 		this( 1 );
 	}
 	
 	public Javelin( int number ) {
-		super();
-		quantity = number;
+		super(GameTime.TICK, 2, 15, number);
+
+		name = "javelin";
+		image = ItemSpriteSheet.JAVELIN;
+
+		//STR = 15;
 	}
 	
 	@Override
-	public void proc( Char attacker, Char defender, int damage ) {
-		super.proc( attacker, defender, damage );
+	public int proc( Char attacker, boolean thrown, Char defender, int damage ) {
+		damage = super.proc( attacker, thrown, defender, damage );
+
 		Buff.prolong( defender, Cripple.class, Cripple.DURATION );
+
+		return damage;
 	}
 	
 	@Override

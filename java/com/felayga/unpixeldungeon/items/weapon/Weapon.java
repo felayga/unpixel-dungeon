@@ -23,6 +23,7 @@
  */
 package com.felayga.unpixeldungeon.items.weapon;
 
+import com.felayga.unpixeldungeon.Assets;
 import com.felayga.unpixeldungeon.Badges;
 import com.felayga.unpixeldungeon.actors.Char;
 import com.felayga.unpixeldungeon.actors.buffs.Buff;
@@ -36,9 +37,12 @@ import com.felayga.unpixeldungeon.items.weapon.enchantments.*;
 import com.felayga.unpixeldungeon.items.weapon.melee.MeleeWeapon;
 import com.felayga.unpixeldungeon.items.weapon.missiles.MissileWeapon;
 import com.felayga.unpixeldungeon.mechanics.AttributeType;
+import com.felayga.unpixeldungeon.mechanics.BUCStatus;
+import com.felayga.unpixeldungeon.mechanics.GameTime;
 import com.felayga.unpixeldungeon.sprites.ItemSprite;
 import com.felayga.unpixeldungeon.utils.GLog;
 import com.felayga.unpixeldungeon.utils.Utils;
+import com.watabou.noosa.audio.Sample;
 import com.watabou.utils.Bundlable;
 import com.watabou.utils.Bundle;
 import com.watabou.utils.Random;
@@ -48,38 +52,39 @@ public class Weapon extends KindOfWeapon {
 	private static final int HITS_TO_KNOW    = 20;
 
 	private static final String TXT_IDENTIFY		=
-		"You are now familiar enough with your %s to identify it. It is %s.";
+		"You are now familiar enough with your %s to identify it.";
 	private static final String TXT_INCOMPATIBLE	=
 		"Interaction of different types of magic has negated the enchantment on this weapon!";
 	private static final String TXT_TO_STRING		= "%s :%d";
 
-	public int damageMin = 1;
-    public int damageMax = 4;
 
-    public int accuracy = 10;
-
-    public AttributeType primaryAttribute = AttributeType.STRCON;
-
-	public float	DLY	= 1f;	// Speed modifier
+	public long delay = GameTime.TICK;
 
 	private int hitsToKnow = HITS_TO_KNOW;
-	
+
 	public Enchantment enchantment;
-	
+
+	public Weapon(long delay, int damageMin, int damageMax) {
+		super(delay, damageMin, damageMax);
+	}
+
 	@Override
-	public void proc( Char attacker, Char defender, int damage ) {
-		
+	public int proc( Char attacker, boolean thrown, Char defender, int damage ) {
+		damage = super.proc(attacker, thrown, defender, damage);
+
 		if (enchantment != null) {
 			enchantment.proc( this, attacker, defender, damage );
 		}
-		
-		if (!levelKnown) {
+
+		if (attacker instanceof Hero && !levelKnown) {
 			if (--hitsToKnow <= 0) {
 				levelKnown = true;
-				GLog.i( TXT_IDENTIFY, name(), toString() );
+				GLog.i( TXT_IDENTIFY, getDisplayName() );
 				Badges.validateItemLevelAquired( this );
 			}
 		}
+
+		return damage;
 	}
 
 	private static final String UNFAMILIRIARITY	= "unfamiliarity";
@@ -90,7 +95,7 @@ public class Weapon extends KindOfWeapon {
 	@Override
 	public void storeInBundle( Bundle bundle ) {
 		super.storeInBundle( bundle );
-		bundle.put( UNFAMILIRIARITY, hitsToKnow );
+		bundle.put(UNFAMILIRIARITY, hitsToKnow);
 		bundle.put( ENCHANTMENT, enchantment );
         bundle.put( ACCURACY, accuracy);
 		//bundle.put( IMBUE, imbue );
@@ -104,49 +109,10 @@ public class Weapon extends KindOfWeapon {
 		}
 		enchantment = (Enchantment)bundle.get( ENCHANTMENT );
 		//imbue = bundle.getEnum( IMBUE, Imbue.class );
-        accuracy = bundle.getInt(ACCURACY, accuracy);
+        accuracy = bundle.getInt(ACCURACY);
 	}
-	
-	@Override
-	public float acuracyFactor( Hero hero ) {
-        int accuracy;
-        switch(primaryAttribute){
-            case STRCON:
-                accuracy = (hero.STRCON - this.accuracy) / 2;
-                break;
-            case DEXCHA:
-                accuracy = (hero.DEXCHA - this.accuracy) / 2;
-                break;
-            case INTWIS:
-                accuracy = (hero.INTWIS - this.accuracy) / 2;
-                break;
-        }
-		/*
-		int encumbrance = STR - hero.STR();
 
-		float ACU = this.ACU;
-		
-		if (this instanceof MissileWeapon) {
-			switch (hero.heroClass) {
-			case WARRIOR:
-				encumbrance += 3;
-				break;
-			case HUNTRESS:
-				encumbrance -= 2;
-				break;
-			default:
-			}
-			int bonus = 0;
-			for (Buff buff : hero.buffs(RingOfSharpshooting.Aim.class)) {
-				bonus += ((RingOfSharpshooting.Aim)buff).level;
-			}
-			ACU *= (float)(Math.pow(1.1, bonus));
-		}
-
-		return encumbrance > 0 ? (float)(ACU / Math.pow( 1.5, encumbrance )) : ACU;
-		*/
-	}
-	
+    /*
 	@Override
 	public float speedFactor( Hero hero ) {
 
@@ -167,47 +133,43 @@ public class Weapon extends KindOfWeapon {
 		return
 				(encumrance > 0 ? (float)(DLY * Math.pow( 1.2, encumrance )) : DLY);
 	}
+	*/
+
 	
 	@Override
-	public int damageRoll( Hero hero ) {
-		
-		int damage = super.damageRoll( hero );
-		
-		if (this instanceof MeleeWeapon || (this instanceof MissileWeapon && hero.heroClass == HeroClass.HUNTRESS)) {
-			int exStr = hero.STR() - STR;
-			if (exStr > 0) {
-				damage += Random.IntRange( 0, exStr );
+	public String getName() {
+		String name = super.getName();
+
+		if (enchantment != null)
+		{
+			name = enchantment.name(name);
+		}
+
+		return name;
+	}
+
+	@Override
+	public String getDisplayName()
+	{
+		String name = super.getDisplayName();
+
+		if (hasLevels && levelKnown) {
+			if (level >= 0) {
+				name = "+" + level + " " + name;
+			} else {
+				name = level + " " + name;
 			}
 		}
-		
-		return Math.round(damage * (imbue == Imbue.LIGHT ? 0.7f : (imbue == Imbue.HEAVY ? 1.5f : 1f)));
+
+		return name;
 	}
-	
-	public Item upgrade( boolean enchant ) {
-		if (enchantment != null) {
-			if (!enchant && Random.Int( level ) > 0) {
-				GLog.w( TXT_INCOMPATIBLE );
-				enchant( null );
-			}
-		} else {
-			if (enchant) {
-				enchant( );
-			}
-		}
-		
-		return super.upgrade();
-	}
-	
+
+
 	@Override
-	public String toString() {
-		return levelKnown ? Utils.format( TXT_TO_STRING, super.toString(), STR ) : super.toString();
+	public void playPickupSound() {
+		Sample.INSTANCE.play( Assets.SND_ITEM_BLADE );
 	}
-	
-	@Override
-	public String name() {
-		return enchantment == null ? super.name() : enchantment.name( super.name() );
-	}
-	
+
 	@Override
 	public Item random() {
 		if (Random.Float() < 0.4) {
@@ -219,10 +181,10 @@ public class Weapon extends KindOfWeapon {
 				}
 			}
 			if (Random.Int( 2 ) == 0) {
-				upgrade( n );
+				upgrade( null, n );
 			} else {
-				degrade( n );
-				cursed = true;
+				upgrade(null, -n);
+				bucStatus = BUCStatus.Cursed;
 			}
 		}
 		return this;
@@ -234,7 +196,6 @@ public class Weapon extends KindOfWeapon {
 	}
 
 	public Weapon enchant() {
-
 		Class<? extends Enchantment> oldEnchantment = enchantment != null ? enchantment.getClass() : null;
 		Enchantment ench = Enchantment.random();
 		while (ench.getClass() == oldEnchantment) {

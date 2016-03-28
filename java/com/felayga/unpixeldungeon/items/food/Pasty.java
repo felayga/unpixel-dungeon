@@ -31,7 +31,7 @@ public class Pasty extends Food {
 	{
 		name = "pasty";
 		image = ItemSpriteSheet.PASTY;
-		energy = Hunger.STARVING;
+		energy = 750;
 		hornValue = 5;
 
 		bones = true;

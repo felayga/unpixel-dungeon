@@ -23,59 +23,125 @@
  */
 package com.felayga.unpixeldungeon;
 
+import com.felayga.unpixeldungeon.actors.hero.Hero;
 import com.felayga.unpixeldungeon.actors.hero.HeroClass;
+import com.felayga.unpixeldungeon.utils.GLog;
+import com.felayga.unpixeldungeon.windows.WndHero;
+import com.felayga.unpixeldungeon.windows.start.WndHeroInit;
+import com.watabou.utils.Bundlable;
 import com.watabou.utils.Bundle;
 
 import java.util.HashMap;
 
 public class GamesInProgress {
+	public static final int MAXIMUM = 4;
 
-	private static HashMap<HeroClass, Info> state = new HashMap<HeroClass, Info>();
+	private static HashMap<Integer, Info> state = new HashMap<Integer, Info>();
 	
-	public static Info check( HeroClass cl ) {
-		
-		if (state.containsKey( cl )) {
-			
-			return state.get( cl );
-			
+	public static Info check( int index ) {
+		if (state.containsKey( index )) {
+			return state.get( index );
 		} else {
 			
 			Info info;
 			try {
-				
-				Bundle bundle = Dungeon.gameBundle( Dungeon.gameFile( cl ) );
+				Bundle bundle = Dungeon.gameBundle( Dungeon.gameFile( index ) );
 				info = new Info();
-				Dungeon.preview( info, bundle );
-
+				info.restoreFromBundle(bundle);
 			} catch (Exception e) {
 				info = null;
 			}
 			
-			state.put( cl, info );
+			state.put( index, info );
 			return info;
 			
 		}
 	}
 
-	public static void set( HeroClass cl, int depth, int level, boolean challenges ) {
+	public static void set( int index, HeroClass heroClass, int level, int depth ) {
 		Info info = new Info();
-		info.depth = depth;
+		info.heroClass = HeroClass.toInt(heroClass);
+		info.gender = WndHeroInit.genderSelected;
+		info.hair = WndHeroInit.hairSelected;
+		info.hairFace = WndHeroInit.hairFaceSelected;
+		info.hairColor = WndHeroInit.hairColorSelected;
 		info.level = level;
-		info.challenges = challenges;
-		state.put( cl, info );
+		info.depth = depth;
+		info.dead = false;
+		state.put( index, info );
 	}
 	
-	public static void setUnknown( HeroClass cl ) {
-		state.remove( cl );
+	public static void setUnknown( int index ) {
+		Info test = state.get(index);
+		if (test != null) {
+			test.dead = true;
+		}
 	}
 	
-	public static void delete( HeroClass cl ) {
-		state.put( cl, null );
+	public static void delete( int index ) {
+		Info test = state.get(index);
+		if (test != null) {
+			test.dead = true;
+		}
 	}
 	
-	public static class Info {
-		public int depth;
+	public static class Info implements Bundlable {
+		public int heroClass;
+		public int gender;
+		public int hair;
+		public int hairFace;
+		public int hairColor;
+
 		public int level;
-		public boolean challenges;
+		public int depth;
+		public boolean dead;
+
+		public void toWndHeroInit()
+		{
+			WndHeroInit.heroClassSelected = heroClass;
+			WndHeroInit.genderSelected = gender;
+			WndHeroInit.hairSelected = hair;
+			WndHeroInit.hairFaceSelected = hairFace;
+			WndHeroInit.hairColorSelected = hairColor;
+		}
+
+		public void fromWndHeroInit() {
+			heroClass = WndHeroInit.heroClassSelected;
+			gender = WndHeroInit.genderSelected;
+			hair = WndHeroInit.hairSelected;
+			hairFace = WndHeroInit.hairFaceSelected;
+			hairColor = WndHeroInit.hairColorSelected;
+		}
+
+		private static final String CLASS		= "hero_class";
+		private static final String GENDER		= "hero_gender";
+		private static final String HAIR		= "hero_hair";
+		private static final String HAIRFACE	= "hero_hairFace";
+		private static final String HAIRCOLOR	= "hero_hairColor";
+		private static final String DEAD		= "hero_dead";
+
+		public void storeInBundle( Bundle bundle ) {
+			bundle.put(CLASS, heroClass);
+			bundle.put(GENDER, gender);
+			bundle.put(HAIR, hair);
+			bundle.put(HAIRFACE, hairFace);
+			bundle.put(HAIRCOLOR, hairColor);
+		}
+
+		public void restoreFromBundle( Bundle bundle ) {
+			heroClass = bundle.getInt( CLASS );
+			gender = bundle.getInt( GENDER );
+			hair = bundle.getInt( HAIR );
+			hairFace = bundle.getInt( HAIRFACE );
+			hairColor = bundle.getInt( HAIRCOLOR );
+
+			Hero.preview(this, bundle.getBundle(Dungeon.HERO));
+			depth = bundle.getInt( Dungeon.DEPTH );
+			dead = bundle.getBoolean( DEAD );
+
+			if (depth == -1) {
+				depth = bundle.getInt( "maxDepth" );
+			}
+		}
 	}
 }

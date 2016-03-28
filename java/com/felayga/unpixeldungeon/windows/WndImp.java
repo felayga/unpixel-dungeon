@@ -54,7 +54,7 @@ public class WndImp extends Window {
 		
 		IconTitle titlebar = new IconTitle();
 		titlebar.icon( new ItemSprite( tokens.image(), null ) );
-		titlebar.label( Utils.capitalize( tokens.name() ) );
+		titlebar.label( Utils.capitalize( tokens.getDisplayName() ) );
 		titlebar.setRect( 0, 0, WIDTH, 0 );
 		add( titlebar );
 		
@@ -79,12 +79,12 @@ public class WndImp extends Window {
 	private void takeReward( Imp imp, DwarfToken tokens, Item reward ) {
 		
 		hide();
-		
-		tokens.detachAll( Dungeon.hero.belongings.backpack );
+
+		Dungeon.hero.belongings.detach(tokens);
 
 		reward.identify();
 		if (reward.doPickUp( Dungeon.hero )) {
-			GLog.i( Hero.TXT_YOU_NOW_HAVE, reward.name() );
+			GLog.i( Hero.TXT_YOU_NOW_HAVE, reward.getDisplayName() );
 		} else {
 			Dungeon.level.drop( reward, imp.pos ).sprite.drop();
 		}

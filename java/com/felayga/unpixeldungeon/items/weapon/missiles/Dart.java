@@ -24,28 +24,23 @@
 package com.felayga.unpixeldungeon.items.weapon.missiles;
 
 import com.felayga.unpixeldungeon.items.Item;
+import com.felayga.unpixeldungeon.mechanics.GameTime;
 import com.felayga.unpixeldungeon.sprites.ItemSpriteSheet;
 import com.watabou.utils.Random;
 
 public class Dart extends MissileWeapon {
 
-	{
-		name = "dart";
-		image = ItemSpriteSheet.DART;
-		
-		MIN = 1;
-		MAX = 4;
-
-		bones = false; //Finding them in bones would be semi-frequent and disappointing.
-	}
-	
 	public Dart() {
 		this( 1 );
 	}
 	
 	public Dart( int number ) {
-		super();
-		quantity = number;
+		super(GameTime.TICK, 1, 4, number);
+
+		name = "dart";
+		image = ItemSpriteSheet.DART;
+
+		bones = false; //Finding them in bones would be semi-frequent and disappointing.
 	}
 	
 	@Override

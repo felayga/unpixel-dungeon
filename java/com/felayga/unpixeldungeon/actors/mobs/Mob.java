@@ -43,11 +43,13 @@ import com.felayga.unpixeldungeon.effects.Surprise;
 import com.felayga.unpixeldungeon.effects.Wound;
 import com.felayga.unpixeldungeon.items.Generator;
 import com.felayga.unpixeldungeon.items.Item;
+import com.felayga.unpixeldungeon.items.KindOfWeapon;
 import com.felayga.unpixeldungeon.items.artifacts.TimekeepersHourglass;
 import com.felayga.unpixeldungeon.items.rings.RingOfAccuracy;
 import com.felayga.unpixeldungeon.items.rings.RingOfWealth;
 import com.felayga.unpixeldungeon.levels.Level;
 import com.felayga.unpixeldungeon.levels.Level.Feeling;
+import com.felayga.unpixeldungeon.mechanics.GameTime;
 import com.felayga.unpixeldungeon.sprites.CharSprite;
 import com.felayga.unpixeldungeon.utils.GLog;
 import com.felayga.unpixeldungeon.utils.Utils;
@@ -88,7 +90,7 @@ public abstract class Mob extends Char {
 	protected boolean enemySeen;
 	protected boolean alerted = false;
 
-	protected static final float TIME_TO_WAKE_UP = 1f;
+	protected static final long TIME_TO_WAKE_UP = GameTime.TICK;
 	
 	public boolean hostile = true;
 	public boolean ally = false;
@@ -100,7 +102,7 @@ public abstract class Mob extends Char {
 	@Override
 	public void storeInBundle( Bundle bundle ) {
 		
-		super.storeInBundle( bundle );
+		super.storeInBundle(bundle);
 
 		if (state == SLEEPING) {
 			bundle.put( STATE, Sleeping.TAG );
@@ -120,7 +122,7 @@ public abstract class Mob extends Char {
 	@Override
 	public void restoreFromBundle( Bundle bundle ) {
 		
-		super.restoreFromBundle( bundle );
+		super.restoreFromBundle(bundle);
 
 		String state = bundle.getString( STATE );
 		if (state.equals( Sleeping.TAG )) {
@@ -135,7 +137,7 @@ public abstract class Mob extends Char {
 			this.state = PASSIVE;
 		}
 
-		enemySeen = bundle.getBoolean( SEEN );
+		enemySeen = bundle.getBoolean(SEEN);
 
 		target = bundle.getInt( TARGET );
 	}
@@ -161,7 +163,7 @@ public abstract class Mob extends Char {
 		
 		if (paralysed > 0) {
 			enemySeen = false;
-			spend( TICK );
+			spend( GameTime.TICK, false );
 			return true;
 		}
 		
@@ -234,7 +236,6 @@ public abstract class Mob extends Char {
 	}
 
 	protected boolean moveSprite( int from, int to ) {
-
 		if (sprite.isVisible() && (Dungeon.visible[from] || Dungeon.visible[to])) {
 			sprite.move( from, to );
 			return true;
@@ -246,7 +247,7 @@ public abstract class Mob extends Char {
 	
 	@Override
 	public void add( Buff buff ) {
-		super.add( buff );
+		super.add(buff);
 		if (buff instanceof Amok) {
 			if (sprite != null) {
 				sprite.showStatus( CharSprite.NEGATIVE, TXT_RAGE );
@@ -263,7 +264,7 @@ public abstract class Mob extends Char {
 	
 	@Override
 	public void remove( Buff buff ) {
-		super.remove( buff );
+		super.remove(buff);
 		if (buff instanceof Terror) {
 			sprite.showStatus( CharSprite.NEGATIVE, TXT_RAGE );
 			state = HUNTING;
@@ -273,9 +274,16 @@ public abstract class Mob extends Char {
 	protected boolean canAttack( Char enemy ) {
 		return Level.adjacent( pos, enemy.pos );
 	}
+
+	protected boolean canTouch( Char enemy ) {
+		return Level.adjacent(pos, enemy.pos);
+	}
+
+	protected boolean shouldTouch( Char enemy) {
+		return false;
+	}
 	
 	protected boolean getCloser( int target ) {
-		
 		if (rooted) {
 			return false;
 		}
@@ -288,9 +296,9 @@ public abstract class Mob extends Char {
 			passable[i] = p[i] || (a[i] && (canOpenDoors || isEthereal));
 		}
 		
-		int step = Dungeon.findPath( this, pos, target,
-			passable,
-			Level.fieldOfView );
+		int step = Dungeon.findPath(this, pos, target,
+				passable,
+				Level.fieldOfView);
 		if (step != -1) {
 			move( step );
 			return true;
@@ -328,38 +336,34 @@ public abstract class Mob extends Char {
 
 	@Override
 	public void move( int step ) {
-		super.move( step );
+		super.move(step);
 		
 		if (!flying) {
 			Dungeon.level.mobPress( this );
 		}
 	}
 	
-	protected float attackDelay() {
-		return 1f;
-	}
-	
-	protected boolean doAttack( Char enemy ) {
-		
+	protected boolean doAttack( boolean thrown, Char enemy ) {
 		boolean visible = Dungeon.visible[pos];
 		
 		if (visible) {
 			sprite.attack( enemy.pos );
 		} else {
-			attack( enemy );
+			attack( belongings.weapon, thrown, enemy );
 		}
 				
-		spend( attackDelay() );
+		spend( attackDelay(belongings.weapon.delay_new), false );
 		
 		return !visible;
 	}
 	
 	@Override
 	public void onAttackComplete() {
-		attack( enemy );
+		attack( belongings.weapon, false, enemy );
 		super.onAttackComplete();
 	}
-	
+
+
 	@Override
 	public int defenseSkill( Char enemy ) {
 		if (enemySeen && paralysed == 0) {
@@ -397,7 +401,7 @@ public abstract class Mob extends Char {
 
 		if (buff(SoulMark.class) != null) {
 			int restoration = Math.max(damage, HP);
-			Dungeon.hero.buff(Hunger.class).satisfy(restoration*0.5f);
+			Dungeon.hero.buff(Hunger.class).satisfy_new(restoration);
 			Dungeon.hero.HP = (int)Math.ceil(Math.min(Dungeon.hero.HT, Dungeon.hero.HP+(restoration*0.25f)));
 			Dungeon.hero.sprite.emitter().burst( Speck.factory(Speck.HEALING), 1 );
 		}
@@ -414,7 +418,6 @@ public abstract class Mob extends Char {
 
 	@Override
 	public void damage( int dmg, Object src ) {
-
 		Terror.recover( this );
 
 		if (state == SLEEPING) {
@@ -428,7 +431,6 @@ public abstract class Mob extends Char {
 	
 	@Override
 	public void destroy() {
-		
 		super.destroy();
 		
 		Dungeon.level.mobs.remove( this );
@@ -457,7 +459,6 @@ public abstract class Mob extends Char {
 	
 	@Override
 	public void die( Object cause ) {
-		
 		super.die( cause );
 
 		float lootChance = this.lootChance;
@@ -506,7 +507,6 @@ public abstract class Mob extends Char {
 	}
 	
 	public void beckon( int cell ) {
-		
 		notice();
 		
 		if (state != HUNTING) {
@@ -538,7 +538,6 @@ public abstract class Mob extends Char {
 	}
 
 	protected class Sleeping implements AiState {
-
 		public static final String TAG	= "SLEEPING";
 
 		@Override
@@ -559,13 +558,13 @@ public abstract class Mob extends Char {
 					}
 				}
 
-				spend( TIME_TO_WAKE_UP );
+				spend( TIME_TO_WAKE_UP, false );
 
 			} else {
 
 				enemySeen = false;
 
-				spend( TICK );
+				spend( GameTime.TICK, false );
 
 			}
 			return true;
@@ -578,7 +577,6 @@ public abstract class Mob extends Char {
 	}
 
 	protected class Wandering implements AiState {
-
 		public static final String TAG	= "WANDERING";
 
 		@Override
@@ -597,11 +595,11 @@ public abstract class Mob extends Char {
 
 				int oldPos = pos;
 				if (target != -1 && getCloser( target )) {
-					spend( 1 / speed() );
+					spend( GameTime.TICK * GameTime.TICK / speed(), false );
 					return moveSprite( oldPos, pos );
 				} else {
 					target = Dungeon.level.randomDestination();
-					spend( TICK );
+					spend( GameTime.TICK, false );
 				}
 
 			}
@@ -615,7 +613,6 @@ public abstract class Mob extends Char {
 	}
 
 	protected class Hunting implements AiState {
-
 		public static final String TAG	= "HUNTING";
 
 		@Override
@@ -623,7 +620,7 @@ public abstract class Mob extends Char {
 			enemySeen = enemyInFOV;
 			if (enemyInFOV && !isCharmedBy( enemy ) && canAttack( enemy )) {
 
-				return doAttack( enemy );
+				return doAttack( false, enemy );
 
 			} else {
 
@@ -634,12 +631,12 @@ public abstract class Mob extends Char {
 				int oldPos = pos;
 				if (target != -1 && getCloser( target )) {
 
-					spend( 1 / speed() );
+					spend( GameTime.TICK * GameTime.TICK / speed(), false );
 					return moveSprite( oldPos,  pos );
 
 				} else {
 
-					spend( TICK );
+					spend( GameTime.TICK, false );
 					state = WANDERING;
 					target = Dungeon.level.randomDestination();
 					return true;
@@ -654,7 +651,6 @@ public abstract class Mob extends Char {
 	}
 
 	protected class Fleeing implements AiState {
-
 		public static final String TAG	= "FLEEING";
 
 		@Override
@@ -670,12 +666,12 @@ public abstract class Mob extends Char {
 			int oldPos = pos;
 			if (target != -1 && getFurther( target )) {
 
-				spend( 1 / speed() );
+				spend( GameTime.TICK * GameTime.TICK / speed(), false );
 				return moveSprite( oldPos, pos );
 
 			} else {
 
-				spend( TICK );
+				spend( GameTime.TICK, false );
 				nowhereToRun();
 
 				return true;
@@ -692,13 +688,12 @@ public abstract class Mob extends Char {
 	}
 
 	protected class Passive implements AiState {
-
 		public static final String TAG	= "PASSIVE";
 
 		@Override
 		public boolean act( boolean enemyInFOV, boolean justAlerted ) {
 			enemySeen = false;
-			spend( TICK );
+			spend( GameTime.TICK, false );
 			return true;
 		}
 

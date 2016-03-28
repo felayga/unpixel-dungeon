@@ -24,7 +24,9 @@
 package com.felayga.unpixeldungeon.actors.buffs;
 
 import com.felayga.unpixeldungeon.Dungeon;
+import com.felayga.unpixeldungeon.actors.Actor;
 import com.felayga.unpixeldungeon.actors.hero.Hero;
+import com.felayga.unpixeldungeon.mechanics.GameTime;
 import com.felayga.unpixeldungeon.ui.BuffIndicator;
 import com.watabou.utils.Bundle;
 
@@ -83,8 +85,8 @@ public class Venom extends Poison implements Hero.Doom {
 				damage++;
 
 			//want it to act after the cloud of venom it came from.
-			spend( TICK+0.1f );
-			if ((left -= TICK) <= 0) {
+			spend(GameTime.TICK + 1, false );
+			if ((left -= GameTime.TICK) <= 0) {
 				detach();
 			}
 		} else {

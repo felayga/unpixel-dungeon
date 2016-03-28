@@ -86,8 +86,8 @@ public class GuardianTrap extends Trap {
 		public Guardian(){
 			super();
 
-			weapon.enchant(null);
-			weapon.degrade(weapon.level);
+			specialWeapon.enchant(null);
+			specialWeapon.upgrade(null, -belongings.weapon.level);
 		}
 
 		@Override
@@ -104,7 +104,7 @@ public class GuardianTrap extends Trap {
 		@Override
 		public String description() {
 			return "This blue apparition seems to be a summoned echo of one of the dungeon's stone guardians." +
-					"\n\nWhile the statue itself is almost incorporeal, the _" + weapon.name() + "_, it's wielding, looks real.";
+					"\n\nWhile the statue itself is almost incorporeal, the _" + belongings.weapon.getDisplayName() + "_, it's wielding, looks real.";
 		}
 	}
 

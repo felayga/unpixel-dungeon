@@ -25,6 +25,7 @@ package com.felayga.unpixeldungeon.items.rings;
 
 import java.util.HashSet;
 
+import com.felayga.unpixeldungeon.actors.Actor;
 import com.felayga.unpixeldungeon.actors.blobs.ToxicGas;
 import com.felayga.unpixeldungeon.actors.buffs.Burning;
 import com.felayga.unpixeldungeon.actors.buffs.Poison;
@@ -32,6 +33,7 @@ import com.felayga.unpixeldungeon.actors.mobs.Eye;
 import com.felayga.unpixeldungeon.actors.mobs.Warlock;
 import com.felayga.unpixeldungeon.actors.mobs.Yog;
 import com.felayga.unpixeldungeon.levels.traps.LightningTrap;
+import com.felayga.unpixeldungeon.mechanics.GameTime;
 import com.watabou.utils.Random;
 
 public class RingOfElements extends Ring {
@@ -76,8 +78,8 @@ public class RingOfElements extends Ring {
 			}
 		}
 		
-		public float durationFactor() {
-			return level < 0 ? 1 : (1 + 0.5f * level) / (1 + level);
+		public long durationFactor() {
+			return level < 0 ? GameTime.TICK : (GameTime.TICK + GameTime.TICK * level / 2) / (1 + level);
 		}
 	}
 }

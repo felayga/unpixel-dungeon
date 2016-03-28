@@ -55,7 +55,7 @@ public class ScrollOfPsionicBlast extends Scroll {
 		Sample.INSTANCE.play( Assets.SND_BLAST );
 		Invisibility.dispel();
 		
-		for (Mob mob : Dungeon.level.mobs.toArray( new Mob[0] )) {
+		for (Mob mob : Dungeon.level.mobs.toArray( new Mob[Dungeon.level.mobs.size()] )) {
 			if (Level.fieldOfView[mob.pos]) {
 				mob.damage(mob.HT, this );
 			}
@@ -68,7 +68,7 @@ public class ScrollOfPsionicBlast extends Scroll {
 		
 		setKnown();
 		
-		curUser.spendAndNext( TIME_TO_READ );
+		curUser.spend( TIME_TO_READ, true );
 
 		if (!curUser.isAlive()) {
 			Dungeon.fail( Utils.format(ResultDescriptions.ITEM, name ));

@@ -40,7 +40,7 @@ public class Luck extends Weapon.Enchantment {
 		
 		int dmg = damage;
 		for (int i=1; i <= level+1; i++) {
-			dmg = Math.max( dmg, attacker.damageRoll() - i );
+			dmg = Math.max( dmg, weapon.damageRoll() - i );
 		}
 		
 		if (dmg > damage) {

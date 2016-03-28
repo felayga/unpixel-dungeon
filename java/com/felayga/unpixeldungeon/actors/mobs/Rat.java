@@ -24,34 +24,27 @@
 package com.felayga.unpixeldungeon.actors.mobs;
 
 import com.felayga.unpixeldungeon.actors.Char;
+import com.felayga.unpixeldungeon.items.weapon.melee.mob.MeleeMobAttack;
+import com.felayga.unpixeldungeon.mechanics.GameTime;
 import com.felayga.unpixeldungeon.sprites.RatSprite;
 import com.watabou.utils.Random;
 
 public class Rat extends Mob {
 
+	public Rat()
 	{
 		name = "marsupial rat";
 		spriteClass = RatSprite.class;
-		
+
+		DEXCHA = 8;
+		nutrition = 30;
+
 		HP = HT = 8;
 		defenseSkill = 2;
 		
 		maxLvl = 5;
-	}
-	
-	@Override
-	public int damageRoll() {
-		return Random.NormalIntRange( 1, 4 );
-	}
-	
-	@Override
-	public int attackSkill( Char target ) {
-		return 8;
-	}
-	
-	@Override
-	public int dr() {
-		return 1;
+
+		belongings.weapon = new MeleeMobAttack(GameTime.TICK, 1, 4);
 	}
 	
 	@Override

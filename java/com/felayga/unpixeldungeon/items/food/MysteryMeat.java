@@ -40,18 +40,15 @@ public class MysteryMeat extends Food {
 	{
 		name = "mystery meat";
 		image = ItemSpriteSheet.MEAT;
-		energy = Hunger.STARVING - Hunger.HUNGRY;
-		message = "That food tasted... strange.";
+		energy = 125;
 		hornValue = 1;
 	}
 	
 	@Override
-	public void execute( Hero hero, String action ) {
-		
-		super.execute( hero, action );
+	public boolean execute( Hero hero, String action ) {
+		boolean retval = super.execute( hero, action );
 		
 		if (action.equals( AC_EAT )) {
-			
 			switch (Random.Int( 5 )) {
 			case 0:
 				GLog.w( "Oh it's hot!" );
@@ -71,11 +68,18 @@ public class MysteryMeat extends Food {
 				break;
 			}
 		}
+
+		return retval;
 	}
 	
 	@Override
 	public String info() {
 		return "Eat at your own risk!";
+	}
+
+	@Override
+	public String message() {
+		return "That food tasted... strange.";
 	}
 	
 	public int price() {

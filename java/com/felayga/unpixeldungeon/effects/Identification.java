@@ -48,7 +48,8 @@ public class Identification extends Group {
 	};
 	
 	public Identification( PointF p ) {
-		
+		super(-1);
+
 		for (int i=0; i < DOTS.length; i += 2) {
 			add( new Speck( p.x, p.y, DOTS[i], DOTS[i+1] ) );
 			add( new Speck( p.x, p.y, DOTS[i], DOTS[i+1] ) );

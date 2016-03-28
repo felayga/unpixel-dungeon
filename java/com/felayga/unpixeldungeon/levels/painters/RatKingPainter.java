@@ -76,11 +76,11 @@ public class RatKingPainter extends Painter {
 			if (prize instanceof MissileWeapon) {
 				prize.quantity( 1 );
 			} else {
-				prize.degrade( Random.Int( 3 ) );
+				prize.upgrade( null, -Random.Int( 3 ) );
 			}
 			break;
 		case 1:
-			prize = Generator.random( Generator.Category.ARMOR ).degrade( Random.Int( 3 ) );
+			prize = Generator.random( Generator.Category.ARMOR ).upgrade( null, -Random.Int( 3 ) );
 			break;
 		default:
 			prize = new Gold( Random.IntRange( 1, 5 ) );

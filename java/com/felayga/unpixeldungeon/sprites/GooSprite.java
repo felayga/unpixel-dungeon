@@ -67,7 +67,7 @@ public class GooSprite extends MobSprite {
 		
 		play(idle);
 
-		spray = centerEmitter();
+		spray = centerEmitter(-1);
 		spray.autoKill = false;
 		spray.pour( GooParticle.FACTORY, 0.04f );
 		spray.on = false;
@@ -98,7 +98,7 @@ public class GooSprite extends MobSprite {
 	@Override
 	public void update() {
 		super.update();
-		spray.pos(center());
+		spray.pos(-1, center());
 		spray.visible = visible;
 	}
 

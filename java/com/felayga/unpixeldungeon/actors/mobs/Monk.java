@@ -25,29 +25,26 @@ package com.felayga.unpixeldungeon.actors.mobs;
 
 import java.util.HashSet;
 
-import com.felayga.unpixeldungeon.Dungeon;
-import com.felayga.unpixeldungeon.actors.Char;
 import com.felayga.unpixeldungeon.actors.buffs.Amok;
 import com.felayga.unpixeldungeon.actors.buffs.Terror;
-import com.felayga.unpixeldungeon.actors.hero.Hero;
 import com.felayga.unpixeldungeon.actors.mobs.npcs.Imp;
-import com.felayga.unpixeldungeon.items.KindOfWeapon;
 import com.felayga.unpixeldungeon.items.food.Food;
-import com.felayga.unpixeldungeon.items.weapon.melee.Knuckles;
+import com.felayga.unpixeldungeon.items.weapon.melee.mob.DisarmChance;
+import com.felayga.unpixeldungeon.mechanics.GameTime;
 import com.felayga.unpixeldungeon.sprites.MonkSprite;
-import com.felayga.unpixeldungeon.utils.GLog;
 import com.watabou.utils.Bundle;
-import com.watabou.utils.Random;
 
 public class Monk extends Mob {
 
-	public static final String TXT_DISARM	= "%s has knocked the %s from your hands!";
-	
+	DisarmChance specialWeapon;
+
 	{
 		name = "dwarf monk";
 		spriteClass = MonkSprite.class;
 
 		canOpenDoors = true;
+
+		DEXCHA = 30;
 
 		HP = HT = 70;
 		defenseSkill = 30;
@@ -57,26 +54,9 @@ public class Monk extends Mob {
 		
 		loot = new Food();
 		lootChance = 0.083f;
-	}
-	
-	@Override
-	public int damageRoll() {
-		return Random.NormalIntRange( 12, 16 );
-	}
-	
-	@Override
-	public int attackSkill( Char target ) {
-		return 30;
-	}
-	
-	@Override
-	protected float attackDelay() {
-		return 0.5f;
-	}
-	
-	@Override
-	public int dr() {
-		return 2;
+
+		specialWeapon = new DisarmChance(GameTime.TICK / 2, 12, 16);
+		belongings.weapon = specialWeapon;
 	}
 	
 	@Override
@@ -89,32 +69,6 @@ public class Monk extends Mob {
 		Imp.Quest.process( this );
 		
 		super.die( cause );
-	}
-
-	private int hitsToDisarm = 0;
-	
-	@Override
-	public int attackProc( Char enemy, int damage ) {
-		
-		if (enemy == Dungeon.hero) {
-			
-			Hero hero = Dungeon.hero;
-			KindOfWeapon weapon = hero.belongings.weapon;
-			
-			if (weapon != null && !(weapon instanceof Knuckles) && !weapon.cursed) {
-				if (hitsToDisarm == 0) hitsToDisarm = Random.NormalIntRange(4, 8);
-
-				if (--hitsToDisarm == 0) {
-					hero.belongings.weapon = null;
-					Dungeon.quickslot.clearItem(weapon);
-					weapon.updateQuickslot();
-					Dungeon.level.drop(weapon, hero.pos).sprite.drop();
-					GLog.w(TXT_DISARM, name, weapon.name());
-				}
-			}
-		}
-		
-		return damage;
 	}
 	
 	@Override
@@ -140,12 +94,12 @@ public class Monk extends Mob {
 	@Override
 	public void storeInBundle(Bundle bundle) {
 		super.storeInBundle(bundle);
-		bundle.put(DISARMHITS, hitsToDisarm);
+		bundle.put(DISARMHITS, specialWeapon.hitsToDisarm);
 	}
 
 	@Override
 	public void restoreFromBundle(Bundle bundle) {
 		super.restoreFromBundle(bundle);
-		hitsToDisarm = bundle.getInt(DISARMHITS);
+		specialWeapon.hitsToDisarm = bundle.getInt(DISARMHITS);
 	}
 }

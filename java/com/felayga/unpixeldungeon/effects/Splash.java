@@ -43,7 +43,7 @@ public class Splash {
 		}
 		
 		Emitter emitter = GameScene.emitter();
-		emitter.pos( p );
+		emitter.pos( -1, p );
 		
 		FACTORY.color = color;
 		FACTORY.dir = -3.1415926f / 2;
@@ -58,7 +58,7 @@ public class Splash {
 		}
 		
 		Emitter emitter = GameScene.emitter();
-		emitter.pos( p );
+		emitter.pos( -1, p );
 		
 		FACTORY.color = color;
 		FACTORY.dir = dir;

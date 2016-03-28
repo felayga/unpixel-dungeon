@@ -76,14 +76,15 @@ public class Bomb extends Item {
 	}
 
 	@Override
-	public void execute(Hero hero, String action) {
+	public boolean execute(Hero hero, String action) {
 		if (action.equals( AC_LIGHTTHROW )){
 			lightingFuse = true;
 			action = AC_THROW;
-		} else
+		} else {
 			lightingFuse = false;
+		}
 
-		super.execute(hero, action);
+		return super.execute(hero, action);
 	}
 
 	@Override
@@ -129,7 +130,7 @@ public class Bomb extends Item {
 					CellEmitter.get( c ).burst( SmokeParticle.FACTORY, 4 );
 				}
 
-				if (Level.flamable[c]) {
+				if (Level.wood[c]) {
 					Level.set( c, Terrain.EMBERS );
 					GameScene.updateMap( c );
 					terrainAffected = true;
@@ -146,7 +147,7 @@ public class Bomb extends Item {
 					int minDamage = c == cell ? Dungeon.depth+5 : 1;
 					int maxDamage = 10 + Dungeon.depth * 2;
 
-					int dmg = Random.NormalIntRange( minDamage, maxDamage ) - Random.Int( ch.dr() );
+					int dmg = Random.NormalIntRange( minDamage, maxDamage );
 					if (dmg > 0) {
 						ch.damage( dmg, this );
 					}

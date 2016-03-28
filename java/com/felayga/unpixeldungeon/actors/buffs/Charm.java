@@ -23,8 +23,10 @@
  */
 package com.felayga.unpixeldungeon.actors.buffs;
 
+import com.felayga.unpixeldungeon.actors.Actor;
 import com.felayga.unpixeldungeon.actors.Char;
 import com.felayga.unpixeldungeon.items.rings.RingOfElements.Resistance;
+import com.felayga.unpixeldungeon.mechanics.GameTime;
 import com.felayga.unpixeldungeon.ui.BuffIndicator;
 import com.watabou.utils.Bundle;
 
@@ -60,9 +62,9 @@ public class Charm extends FlavourBuff {
 		return "Charmed";
 	}
 	
-	public static float durationFactor( Char ch ) {
+	public static long durationFactor( Char ch ) {
 		Resistance r = ch.buff( Resistance.class );
-		return r != null ? r.durationFactor() : 1;
+		return r != null ? r.durationFactor() : GameTime.TICK;
 	}
 
 	@Override

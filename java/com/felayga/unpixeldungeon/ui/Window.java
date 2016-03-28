@@ -60,7 +60,7 @@ public class Window extends Group implements Signal.Listener<Key> {
 	}
 			
 	public Window( int width, int height, NinePatch chrome ) {
-		super();
+		super(-1);
 		
 		blocker = new TouchArea( 0, 0, PixelScene.uiCamera.width, PixelScene.uiCamera.height ) {
 			@Override

@@ -32,6 +32,7 @@ import com.felayga.unpixeldungeon.actors.buffs.Chill;
 import com.felayga.unpixeldungeon.actors.buffs.Frost;
 import com.felayga.unpixeldungeon.effects.Splash;
 import com.felayga.unpixeldungeon.items.Heap;
+import com.felayga.unpixeldungeon.mechanics.GameTime;
 import com.felayga.unpixeldungeon.sprites.TrapSprite;
 import com.felayga.unpixeldungeon.utils.GLog;
 import com.felayga.unpixeldungeon.utils.Utils;
@@ -60,7 +61,7 @@ public class FrostTrap extends Trap {
 		Char ch = Actor.findChar(pos);
 		if (ch != null){
 			ch.damage(Random.NormalIntRange(1 , Dungeon.depth), this);
-			Chill.prolong(ch, Frost.class, 10f + Random.Int(Dungeon.depth));
+			Chill.prolong(ch, Frost.class, GameTime.TICK * (10 + Random.Long(Dungeon.depth)));
 			if (!ch.isAlive() && ch == Dungeon.hero){
 				Dungeon.fail( Utils.format(ResultDescriptions.TRAP, name) );
 				GLog.n("You succumb to the freezing trap...");

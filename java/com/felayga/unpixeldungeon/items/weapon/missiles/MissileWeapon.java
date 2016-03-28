@@ -36,6 +36,7 @@ import com.felayga.unpixeldungeon.items.Item;
 import com.felayga.unpixeldungeon.items.rings.RingOfSharpshooting;
 import com.felayga.unpixeldungeon.items.weapon.Weapon;
 import com.felayga.unpixeldungeon.scenes.GameScene;
+import com.felayga.unpixeldungeon.utils.GLog;
 import com.felayga.unpixeldungeon.windows.WndOptions;
 import com.watabou.utils.Random;
 
@@ -46,10 +47,14 @@ public class MissileWeapon extends Weapon {
 	private static final String TXT_NO			= "No, I changed my mind";
 	private static final String TXT_R_U_SURE	=
 		"Do you really want to equip it as a melee weapon?";
-	
+
+	public MissileWeapon(long delay, int damageMin, int damageMax, int quantity)
 	{
+		super(delay, damageMin, damageMax);
+
 		stackable = true;
 		levelKnown = true;
+		this.quantity = quantity;
 
 		defaultAction = AC_THROW;
 		usesTargeting = true;
@@ -103,24 +108,33 @@ public class MissileWeapon extends Weapon {
 	}
 	
 	@Override
-	public void proc( Char attacker, Char defender, int damage ) {
-		
-		super.proc( attacker, defender, damage );
-		
-		Hero hero = (Hero)attacker;
-		if (hero.rangedWeapon == null && stackable) {
-			if (quantity == 1) {
-				doUnequip( hero, false, false );
-			} else {
-				detach( null );
+	public int proc( Char attacker, boolean thrown, Char defender, int damage ) {
+		damage = super.proc( attacker, thrown, defender, damage );
+
+		if (attacker instanceof Hero) {
+			Hero hero = (Hero) attacker;
+			if (stackable) {
+				GLog.d("this="+name+" quantity="+quantity);
+
+				quantity--;
+				/*
+				if (quantity == 1) {
+					GLog.d("MissileWeapon:doUnequip()");
+					doUnequip(hero, false, false);
+				} else {
+					GLog.d("MissileWeapon:detach()");
+					detach(null);
+				}*/
 			}
 		}
+
+		return damage;
 	}
 	
 	@Override
-	public boolean doEquip( final Hero hero ) {
+	public boolean doEquip( final Char hero ) {
 		GameScene.show(
-			new WndOptions( TXT_MISSILES, TXT_R_U_SURE, TXT_YES, TXT_NO ) {
+			new WndOptions( TXT_MISSILES, TXT_R_U_SURE, TXT_YES, TXT_NO) {
 				@Override
 				protected void onSelect(int index) {
 					if (index == 0) {
@@ -153,8 +167,9 @@ public class MissileWeapon extends Weapon {
 		
 		StringBuilder info = new StringBuilder( desc() );
 		
-		info.append( "\n\nAverage damage of this weapon equals to " + (MIN + (MAX - MIN) / 2) + " points per hit. " );
-		
+		info.append( "\n\nAverage damage of this weapon equals to " + (damageMin + (damageMax - damageMin) / 2) + " points per hit. " );
+
+		/*
 		if (Dungeon.hero.belongings.backpack.items.contains( this )) {
 			if (STR > Dungeon.hero.STR()) {
 				info.append(
@@ -167,7 +182,7 @@ public class MissileWeapon extends Weapon {
 					"of your attack with this " + name + " is increased." );
 			}
 		}
-
+		*/
 		info.append( "\n\nAs this weapon is designed to be used at a distance, it is much less accurate if used at melee range.");
 		
 		if (isEquipped( Dungeon.hero )) {

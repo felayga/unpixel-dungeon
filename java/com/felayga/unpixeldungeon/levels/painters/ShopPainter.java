@@ -38,41 +38,38 @@ import com.felayga.unpixeldungeon.items.MerchantsBeacon;
 import com.felayga.unpixeldungeon.items.Stylus;
 import com.felayga.unpixeldungeon.items.Torch;
 import com.felayga.unpixeldungeon.items.Weightstone;
-import com.felayga.unpixeldungeon.items.armor.LeatherArmor;
-import com.felayga.unpixeldungeon.items.armor.MailArmor;
-import com.felayga.unpixeldungeon.items.armor.PlateArmor;
-import com.felayga.unpixeldungeon.items.armor.ScaleArmor;
+import com.felayga.unpixeldungeon.items.armor.light.LeatherArmor;
+import com.felayga.unpixeldungeon.items.armor.medium.MailArmor;
+import com.felayga.unpixeldungeon.items.armor.heavy.HalfPlateArmor;
+import com.felayga.unpixeldungeon.items.armor.medium.ScaleArmor;
 import com.felayga.unpixeldungeon.items.artifacts.TimekeepersHourglass;
 import com.felayga.unpixeldungeon.items.bags.PotionBandolier;
 import com.felayga.unpixeldungeon.items.bags.ScrollHolder;
 import com.felayga.unpixeldungeon.items.bags.SeedPouch;
 import com.felayga.unpixeldungeon.items.bags.WandHolster;
 import com.felayga.unpixeldungeon.items.food.OverpricedRation;
-import com.felayga.unpixeldungeon.items.potions.Potion;
 import com.felayga.unpixeldungeon.items.potions.PotionOfHealing;
-import com.felayga.unpixeldungeon.items.scrolls.Scroll;
 import com.felayga.unpixeldungeon.items.scrolls.ScrollOfIdentify;
 import com.felayga.unpixeldungeon.items.scrolls.ScrollOfMagicMapping;
 import com.felayga.unpixeldungeon.items.scrolls.ScrollOfRemoveCurse;
-import com.felayga.unpixeldungeon.items.wands.Wand;
-import com.felayga.unpixeldungeon.items.weapon.melee.BattleAxe;
-import com.felayga.unpixeldungeon.items.weapon.melee.Glaive;
-import com.felayga.unpixeldungeon.items.weapon.melee.Longsword;
-import com.felayga.unpixeldungeon.items.weapon.melee.Mace;
-import com.felayga.unpixeldungeon.items.weapon.melee.Quarterstaff;
-import com.felayga.unpixeldungeon.items.weapon.melee.Spear;
-import com.felayga.unpixeldungeon.items.weapon.melee.Sword;
-import com.felayga.unpixeldungeon.items.weapon.melee.WarHammer;
+import com.felayga.unpixeldungeon.items.weapon.melee.martial.BattleAxe;
+import com.felayga.unpixeldungeon.items.weapon.melee.martial.Glaive;
+import com.felayga.unpixeldungeon.items.weapon.melee.martial.Longsword;
+import com.felayga.unpixeldungeon.items.weapon.melee.simple.Mace;
+import com.felayga.unpixeldungeon.items.weapon.melee.simple.Quarterstaff;
+import com.felayga.unpixeldungeon.items.weapon.melee.simple.Spear;
+import com.felayga.unpixeldungeon.items.weapon.melee.martial.Sword;
+import com.felayga.unpixeldungeon.items.weapon.melee.martial.WarHammer;
 import com.felayga.unpixeldungeon.items.weapon.missiles.CurareDart;
 import com.felayga.unpixeldungeon.items.weapon.missiles.IncendiaryDart;
 import com.felayga.unpixeldungeon.items.weapon.missiles.Javelin;
 import com.felayga.unpixeldungeon.items.weapon.missiles.Shuriken;
-import com.felayga.unpixeldungeon.items.weapon.missiles.Tamahawk;
+import com.felayga.unpixeldungeon.items.weapon.missiles.Tomahawk;
 import com.felayga.unpixeldungeon.levels.LastShopLevel;
 import com.felayga.unpixeldungeon.levels.Level;
 import com.felayga.unpixeldungeon.levels.Room;
 import com.felayga.unpixeldungeon.levels.Terrain;
-import com.felayga.unpixeldungeon.plants.Plant;
+import com.felayga.unpixeldungeon.mechanics.BUCStatus;
 import com.watabou.utils.Point;
 import com.watabou.utils.Random;
 
@@ -157,8 +154,8 @@ public class ShopPainter extends Painter {
 			itemsToSpawn.add( Random.Int( 2 ) == 0 ? new Glaive().identify() : new WarHammer().identify() );
 			itemsToSpawn.add( Random.Int(2) == 0 ?
 					new Javelin().quantity(Random.NormalIntRange(4, 7)) :
-					new Tamahawk().quantity(Random.NormalIntRange(4, 7)));
-			itemsToSpawn.add( new PlateArmor().identify() );
+					new Tomahawk().quantity(Random.NormalIntRange(4, 7)));
+			itemsToSpawn.add( new HalfPlateArmor().identify() );
 			itemsToSpawn.add( new Torch() );
 			itemsToSpawn.add( new Torch() );
 			break;
@@ -237,7 +234,7 @@ public class ShopPainter extends Painter {
 		switch (Random.Int(10)){
 			case 0:
 				rare = Generator.random( Generator.Category.WAND );
-				if (rare.level > 0 ) rare.degrade( rare.level );
+				if (rare.level > 0 ) rare.upgrade(null, -rare.level);
 				break;
 			case 1:
 				rare = Generator.random(Generator.Category.RING);
@@ -249,7 +246,14 @@ public class ShopPainter extends Painter {
 			default:
 				rare = new Stylus();
 		}
-		rare.cursed = rare.cursedKnown = false;
+		if (Random.Int(4) == 0)
+		{
+			rare.bucStatus(BUCStatus.Blessed, false);
+		}
+		else {
+			rare.bucStatus(BUCStatus.Uncursed, false);
+		}
+
 		itemsToSpawn.add( rare );
 
 		//this is a hard limit, level gen allows for at most an 8x5 room, can't fit more than 39 items + 1 shopkeeper.
@@ -264,6 +268,7 @@ public class ShopPainter extends Painter {
 		int seeds = 0, scrolls = 0, potions = 0, wands = 0;
 
 		//count up items in the main bag, for bags which haven't yet been dropped.
+		/*
 		for (Item item : pack.backpack.items) {
 			if (!Dungeon.limitedDrops.seedBag.dropped() && item instanceof Plant.Seed)
 				seeds++;
@@ -274,6 +279,7 @@ public class ShopPainter extends Painter {
 			else if (!Dungeon.limitedDrops.wandBag.dropped() && item instanceof Wand)
 				wands++;
 		}
+		*/
 
 		//then pick whichever valid bag has the most items available to put into it.
 		//note that the order here gives a perference if counts are otherwise equal

@@ -47,7 +47,7 @@ public class WndChooseWay extends Window {
 		
 		IconTitle titlebar = new IconTitle();
 		titlebar.icon( new ItemSprite( tome.image(), null ) );
-		titlebar.label( tome.name() );
+		titlebar.label( tome.getDisplayName() );
 		titlebar.setRect( 0, 0, WIDTH, 0 );
 		add( titlebar );
 		
@@ -94,7 +94,7 @@ public class WndChooseWay extends Window {
 		btnWay2.setRect( btnWay1.right() + GAP, btnWay1.top(), btnWay1.width(), BTN_HEIGHT );
 		add( btnWay2 );
 		
-		RedButton btnCancel = new RedButton( TXT_CANCEL ) {
+		RedButton btnCancel = new RedButton( TXT_CANCEL, true ) {
 			@Override
 			protected void onClick() {
 				hide();

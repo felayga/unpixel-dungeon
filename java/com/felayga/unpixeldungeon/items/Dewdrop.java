@@ -73,7 +73,7 @@ public class Dewdrop extends Item {
 		}
 		
 		Sample.INSTANCE.play( Assets.SND_DEWDROP );
-		hero.spendAndNext( TIME_TO_PICK_UP );
+		hero.spend( TIME_TO_PICK_UP, true );
 		
 		return true;
 	}

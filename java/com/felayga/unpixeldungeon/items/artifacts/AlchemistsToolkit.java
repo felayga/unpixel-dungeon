@@ -29,10 +29,12 @@ import com.felayga.unpixeldungeon.actors.hero.Hero;
 import com.felayga.unpixeldungeon.items.Generator;
 import com.felayga.unpixeldungeon.items.Item;
 import com.felayga.unpixeldungeon.items.potions.Potion;
+import com.felayga.unpixeldungeon.mechanics.BUCStatus;
+import com.felayga.unpixeldungeon.mechanics.GameTime;
 import com.felayga.unpixeldungeon.scenes.GameScene;
 import com.felayga.unpixeldungeon.sprites.ItemSpriteSheet;
 import com.felayga.unpixeldungeon.utils.GLog;
-import com.felayga.unpixeldungeon.windows.WndBag;
+import com.felayga.unpixeldungeon.windows.WndBackpack;
 import com.watabou.noosa.audio.Sample;
 import com.watabou.utils.Bundle;
 import com.watabou.utils.Random;
@@ -53,9 +55,9 @@ public class AlchemistsToolkit extends Artifact {
 	public static final String AC_BREW = "BREW";
 
 	//arrays used in containing potion collections for mix logic.
-	public final ArrayList<String> combination = new ArrayList<String>();
-	public ArrayList<String> curGuess = new ArrayList<String>();
-	public ArrayList<String> bstGuess = new ArrayList<String>();
+	public final ArrayList<String> combination = new ArrayList<>();
+	public ArrayList<String> curGuess = new ArrayList<>();
+	public ArrayList<String> bstGuess = new ArrayList<>();
 
 	public int numWrongPlace = 0;
 	public int numRight = 0;
@@ -63,7 +65,7 @@ public class AlchemistsToolkit extends Artifact {
 	private int seedsToPotion = 0;
 
 	protected String inventoryTitle = "Select a potion";
-	protected WndBag.Mode mode = WndBag.Mode.POTION;
+	protected WndBackpack.Mode mode = WndBackpack.Mode.POTION;
 
 	public AlchemistsToolkit() {
 		super();
@@ -82,17 +84,19 @@ public class AlchemistsToolkit extends Artifact {
 	@Override
 	public ArrayList<String> actions( Hero hero ) {
 		ArrayList<String> actions = super.actions( hero );
-		if (isEquipped( hero ) && level < levelCap && !cursed)
+		if (isEquipped( hero ) && level < levelCap && bucStatus != BUCStatus.Cursed)
 			actions.add(AC_BREW);
 		return actions;
 	}
 
 	@Override
-	public void execute(Hero hero, String action ) {
+	public boolean execute(Hero hero, String action ) {
 		if (action.equals(AC_BREW)){
 			GameScene.selectItem(itemSelector, mode, inventoryTitle);
+
+			return true;
 		} else {
-			super.execute(hero, action);
+			return super.execute(hero, action);
 		}
 	}
 
@@ -132,7 +136,7 @@ public class AlchemistsToolkit extends Artifact {
 			this.numWrongPlace = numWrongPlace;
 
 			if (level == 10){
-				bstGuess = new ArrayList<String>();
+				bstGuess = new ArrayList<>();
 				GLog.p("The mixture you've created seems perfect, you don't think there is any way to improve it!");
 			} else {
 				GLog.w("you finish mixing potions, " + brewDesc(numWrongPlace, numRight) +
@@ -144,7 +148,7 @@ public class AlchemistsToolkit extends Artifact {
 			GLog.w("you finish mixing potions, " + brewDesc(numWrongPlace, numRight) +
 					". This brew isn't as good as the current one, you throw it away.");
 		}
-		curGuess = new ArrayList<String>();
+		curGuess = new ArrayList<>();
 
 	}
 
@@ -172,7 +176,7 @@ public class AlchemistsToolkit extends Artifact {
 				"cooking potions.\n\n";
 
 		if (isEquipped(Dungeon.hero))
-			if (cursed)
+			if (bucStatus == BUCStatus.Cursed)
 				result += "The cursed toolkit has bound itself to your side, and refuses to let you use alchemy.\n\n";
 			else
 				result += "The toolkit rests on your hip, the various tools inside make a light jingling sound as you move.\n\n";
@@ -258,25 +262,25 @@ public class AlchemistsToolkit extends Artifact {
 
 	}
 
-	protected WndBag.Listener itemSelector = new WndBag.Listener() {
+	protected WndBackpack.Listener itemSelector = new WndBackpack.Listener() {
 		@Override
 		public void onSelect(Item item) {
 			if (item != null && item instanceof Potion && item.isIdentified()){
 				if (!curGuess.contains(convertName(item.getClass().getSimpleName()))) {
 
 					Hero hero = Dungeon.hero;
-					hero.sprite.operate( hero.pos );
+					hero.sprite.operate(hero.pos);
 					hero.busy();
-					hero.spend( 2f );
+					hero.spend(GameTime.TICK * 2, false);
 					Sample.INSTANCE.play(Assets.SND_DRINK);
 
-					item.detach(hero.belongings.backpack);
+					hero.belongings.detach(item);
 
 					curGuess.add(convertName(item.getClass().getSimpleName()));
 					if (curGuess.size() == 3){
 						guessBrew();
 					} else {
-						GLog.i("You mix the " + item.name() + " into your current brew.");
+						GLog.i("You mix the " + item.getDisplayName() + " into your current brew.");
 					}
 				} else {
 					GLog.w("Your current brew already contains that potion.");

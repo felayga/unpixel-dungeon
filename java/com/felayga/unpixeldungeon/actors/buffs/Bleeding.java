@@ -26,6 +26,7 @@ package com.felayga.unpixeldungeon.actors.buffs;
 import com.felayga.unpixeldungeon.Dungeon;
 import com.felayga.unpixeldungeon.ResultDescriptions;
 import com.felayga.unpixeldungeon.effects.Splash;
+import com.felayga.unpixeldungeon.mechanics.GameTime;
 import com.felayga.unpixeldungeon.ui.BuffIndicator;
 import com.felayga.unpixeldungeon.utils.GLog;
 import com.watabou.utils.Bundle;
@@ -57,7 +58,7 @@ public class Bleeding extends Buff {
 	
 	public void set( int level ) {
 		this.level = level;
-	};
+	}
 	
 	@Override
 	public int icon() {
@@ -86,7 +87,7 @@ public class Bleeding extends Buff {
 					GLog.n( "You bled to death..." );
 				}
 				
-				spend( TICK );
+				spend(GameTime.TICK, false );
 			} else {
 				detach();
 			}

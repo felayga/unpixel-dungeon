@@ -32,6 +32,7 @@ import com.felayga.unpixeldungeon.effects.BlobEmitter;
 import com.felayga.unpixeldungeon.effects.particles.LeafParticle;
 import com.felayga.unpixeldungeon.levels.Level;
 import com.felayga.unpixeldungeon.levels.Terrain;
+import com.felayga.unpixeldungeon.mechanics.GameTime;
 import com.felayga.unpixeldungeon.scenes.GameScene;
 
 public class Regrowth extends Blob {
@@ -61,7 +62,7 @@ public class Regrowth extends Blob {
 					
 					Char ch = Actor.findChar( i );
 					if (ch != null && cur[i] > 1) {
-						Buff.prolong( ch, Roots.class, TICK );
+						Buff.prolong( ch, Roots.class, GameTime.TICK );
 					}
 				}
 			}

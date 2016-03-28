@@ -22,7 +22,7 @@ package com.felayga.unpixeldungeon.levels.painters;
 
 import com.felayga.unpixeldungeon.Dungeon;
 import com.felayga.unpixeldungeon.actors.mobs.Statue;
-import com.felayga.unpixeldungeon.items.keys.IronKey;
+import com.felayga.unpixeldungeon.items.keys.IronOldKey;
 import com.felayga.unpixeldungeon.levels.Level;
 import com.felayga.unpixeldungeon.levels.Room;
 import com.felayga.unpixeldungeon.levels.Terrain;
@@ -42,7 +42,7 @@ public class StatuePainter extends Painter {
 		Room.Door door = room.entrance();
 		
 		door.set( Room.Door.Type.LOCKED );
-		level.addItemToSpawn( new IronKey( Dungeon.depth ) );
+		level.addItemToSpawn( new IronOldKey( Dungeon.depth ) );
 		
 		if (door.x == room.left) {
 			
