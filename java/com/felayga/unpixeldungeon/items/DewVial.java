@@ -26,7 +26,9 @@ package com.felayga.unpixeldungeon.items;
 import java.util.ArrayList;
 
 import com.felayga.unpixeldungeon.Dungeon;
+import com.felayga.unpixeldungeon.actors.Actor;
 import com.felayga.unpixeldungeon.actors.hero.HeroClass;
+import com.felayga.unpixeldungeon.mechanics.GameTime;
 import com.watabou.noosa.audio.Sample;
 import com.felayga.unpixeldungeon.Assets;
 import com.felayga.unpixeldungeon.actors.hero.Hero;
@@ -43,7 +45,7 @@ public class DewVial extends Item {
 
 	private static final String AC_DRINK	= "DRINK";
 
-	private static final float TIME_TO_DRINK = 1f;
+	private static final long TIME_TO_DRINK = GameTime.TICK;
 
 	private static final String TXT_VALUE	= "%+dHP";
 	private static final String TXT_STATUS	= "%d/%d";
@@ -88,11 +90,9 @@ public class DewVial extends Item {
 	}
 
 	@Override
-	public void execute( final Hero hero, String action ) {
+	public boolean execute( final Hero hero, String action ) {
 		if (action.equals( AC_DRINK )) {
-
 			if (volume > 0) {
-
 				int value = 1 + (Dungeon.depth - 1) / 5;
 				if (hero.heroClass == HeroClass.HUNTRESS) {
 					value++;
@@ -108,23 +108,20 @@ public class DewVial extends Item {
 
 				volume = 0;
 
-				hero.spend( TIME_TO_DRINK );
+				hero.spend( TIME_TO_DRINK, false );
 				hero.busy();
 
 				Sample.INSTANCE.play( Assets.SND_DRINK );
 				hero.sprite.operate( hero.pos );
 
 				updateQuickslot();
-
-
 			} else {
 				GLog.w( TXT_EMPTY );
 			}
 
+			return false;
 		} else {
-
-			super.execute( hero, action );
-
+			return super.execute( hero, action );
 		}
 	}
 

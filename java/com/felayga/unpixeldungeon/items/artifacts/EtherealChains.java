@@ -33,7 +33,9 @@ import com.felayga.unpixeldungeon.actors.hero.Hero;
 import com.felayga.unpixeldungeon.effects.Chains;
 import com.felayga.unpixeldungeon.effects.Pushing;
 import com.felayga.unpixeldungeon.levels.Level;
+import com.felayga.unpixeldungeon.mechanics.BUCStatus;
 import com.felayga.unpixeldungeon.mechanics.Ballistica;
+import com.felayga.unpixeldungeon.mechanics.GameTime;
 import com.felayga.unpixeldungeon.scenes.CellSelector;
 import com.felayga.unpixeldungeon.scenes.GameScene;
 import com.felayga.unpixeldungeon.sprites.ItemSpriteSheet;
@@ -64,26 +66,27 @@ public class EtherealChains extends Artifact {
 	@Override
 	public ArrayList<String> actions(Hero hero) {
 		ArrayList<String> actions = super.actions( hero );
-		if (isEquipped(hero) && charge > 0 && !cursed)
+		if (isEquipped(hero) && charge > 0 && bucStatus != BUCStatus.Cursed)
 			actions.add(AC_CAST);
 		return actions;
 	}
 
 	@Override
-	public void execute(Hero hero, String action) {
+	public boolean execute(Hero hero, String action) {
 		if (action.equals(AC_CAST)){
-
 			curUser = hero;
 
 			if      (!isEquipped( hero ))       GLog.i("You need to equip the chains to do that.");
 			else if (charge < 1)                GLog.i("Your chains do not have any available charge.");
-			else if (cursed)                    GLog.w("You can't use cursed chains.");
+			else if (bucStatus == BUCStatus.Cursed)                    GLog.w("You can't use cursed chains.");
 			else {
 				GameScene.selectCell(caster);
 			}
 
-		} else
-			super.execute(hero, action);
+			return true;
+		} else {
+			return super.execute(hero, action);
+		}
 	}
 
 	private CellSelector.Listener caster = new CellSelector.Listener(){
@@ -126,7 +129,7 @@ public class EtherealChains extends Artifact {
 								Actor.add(new Pushing(affected, affected.pos, newMobPos));
 								affected.pos = newMobPos;
 								Dungeon.observe();
-								curUser.spendAndNext(1f);
+								curUser.spend(GameTime.TICK, true);
 								Dungeon.level.press(newMobPos, affected);
 							}
 						}));
@@ -161,7 +164,7 @@ public class EtherealChains extends Artifact {
 										Dungeon.level.press(newHeroPos, curUser);
 									}
 								}));
-								curUser.spendAndNext(1f);
+								curUser.spend(GameTime.TICK, true);
 								curUser.pos = newHeroPos;
 								Dungeon.observe();
 							}
@@ -195,7 +198,7 @@ public class EtherealChains extends Artifact {
 				"extend and pull targets through walls!";
 
 		if (isEquipped( Dungeon.hero )){
-			if (!cursed) {
+			if (bucStatus != BUCStatus.Cursed) {
 				desc += "\n\nThe chains rest around your side, slowly siphoning the spiritual energy of those you defeat. " +
 						"Each charge is a link in the chain, which will extend out exactly one tile.";
 
@@ -211,10 +214,10 @@ public class EtherealChains extends Artifact {
 		public boolean act() {
 			int chargeTarget = 5+(level*2);
 			LockedFloor lock = target.buff(LockedFloor.class);
-			if (charge < chargeTarget && !cursed && (lock == null || lock.regenOn())) {
+			if (charge < chargeTarget && bucStatus != BUCStatus.Cursed && (lock == null || lock.regenOn())) {
 				partialCharge += 1 / (40f - (chargeTarget - charge)*2f);
-			} else if (cursed && Random.Int(100) == 0){
-				Buff.prolong( target, Cripple.class, 10f);
+			} else if (bucStatus == BUCStatus.Cursed && Random.Int(100) == 0){
+				Buff.prolong( target, Cripple.class, GameTime.TICK * 10);
 			}
 
 			if (partialCharge >= 1) {
@@ -224,13 +227,13 @@ public class EtherealChains extends Artifact {
 
 			updateQuickslot();
 
-			spend( TICK );
+			spend( GameTime.TICK, false );
 
 			return true;
 		}
 
 		public void gainExp( float levelPortion ) {
-			if (cursed) return;
+			if (bucStatus == BUCStatus.Cursed) return;
 
 			exp += Math.round(levelPortion*100);
 
@@ -243,7 +246,7 @@ public class EtherealChains extends Artifact {
 			if (exp > 100+level*50 && level < levelCap){
 				exp -= 100+level*50;
 				GLog.p("Your chains grow stronger!");
-				upgrade();
+				upgrade(null, 1);
 			}
 
 		}

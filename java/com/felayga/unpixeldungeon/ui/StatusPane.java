@@ -23,6 +23,7 @@
  */
 package com.felayga.unpixeldungeon.ui;
 
+import com.felayga.unpixeldungeon.items.keys.IronOldKey;
 import com.watabou.input.Touchscreen.Touch;
 import com.watabou.noosa.BitmapText;
 import com.watabou.noosa.Camera;
@@ -37,10 +38,9 @@ import com.felayga.unpixeldungeon.Assets;
 import com.felayga.unpixeldungeon.Dungeon;
 import com.felayga.unpixeldungeon.effects.Speck;
 import com.felayga.unpixeldungeon.effects.particles.BloodParticle;
-import com.felayga.unpixeldungeon.items.keys.IronKey;
 import com.felayga.unpixeldungeon.scenes.GameScene;
 import com.felayga.unpixeldungeon.scenes.PixelScene;
-import com.felayga.unpixeldungeon.sprites.HeroSprite;
+import com.felayga.unpixeldungeon.sprites.hero.HeroSprite;
 import com.felayga.unpixeldungeon.windows.WndGame;
 import com.felayga.unpixeldungeon.windows.WndHero;
 
@@ -53,6 +53,7 @@ public class StatusPane extends Component {
 	private int lastTier = 0;
 
 	private Image hp;
+	private Image mp;
 	private Image exp;
 
 	private BossHealthBar bossHP;
@@ -90,7 +91,7 @@ public class StatusPane extends Component {
 		btnMenu = new MenuButton();
 		add( btnMenu );
 
-		avatar = HeroSprite.avatar( Dungeon.hero.heroClass, lastTier );
+		avatar = HeroSprite.avatar( 0, lastTier );
 		add( avatar );
 
 		blood = new Emitter();
@@ -105,6 +106,9 @@ public class StatusPane extends Component {
 
 		hp = new Image( Assets.HP_BAR );
 		add( hp );
+
+		mp = new Image( Assets.MP_BAR );
+		add( mp );
 
 		exp = new Image( Assets.XP_BAR );
 		add( exp );
@@ -149,6 +153,9 @@ public class StatusPane extends Component {
 		hp.x = 30;
 		hp.y = 3;
 
+		mp.x = 30;
+		mp.y = 8;
+
 		bossHP.setPos( 6 + (width - bossHP.width())/2, 20);
 
 		depth.x = width - 24 - depth.width()    - 18;
@@ -158,7 +165,7 @@ public class StatusPane extends Component {
 
 		danger.setPos( width - danger.width(), 20 );
 
-		buffs.setPos( 31, 9 );
+		buffs.setPos( 30, 11 );
 
 		btnMenu.setPos( width - btnMenu.width(), 1 );
 	}
@@ -168,6 +175,7 @@ public class StatusPane extends Component {
 		super.update();
 
 		float health = (float)Dungeon.hero.HP / Dungeon.hero.HT;
+		float mana = (float)Dungeon.hero.MP / Dungeon.hero.MT;
 
 		if (health == 0) {
 			avatar.tint( 0x000000, 0.6f );
@@ -181,6 +189,7 @@ public class StatusPane extends Component {
 		}
 
 		hp.scale.x = health;
+		mp.scale.x = mana;
 		exp.scale.x = (width / exp.width) * Dungeon.hero.exp / Dungeon.hero.maxExp();
 
 		if (Dungeon.hero.lvl != lastLvl) {
@@ -188,7 +197,7 @@ public class StatusPane extends Component {
 			if (lastLvl != -1) {
 				Emitter emitter = (Emitter)recycle( Emitter.class );
 				emitter.revive();
-				emitter.pos( 27, 27 );
+				emitter.pos( -1, 27, 27 );
 				emitter.burst( Speck.factory( Speck.STAR ), 12 );
 			}
 
@@ -199,7 +208,7 @@ public class StatusPane extends Component {
 			level.y = 27.5f - level.baseLine() / 2;
 		}
 
-		int k = IronKey.curDepthQuantity;
+		int k = IronOldKey.curDepthQuantity;
 		if (k != lastKeys) {
 			lastKeys = k;
 			keys.text( Integer.toString( lastKeys ) );
@@ -207,11 +216,13 @@ public class StatusPane extends Component {
 			keys.x = width - 8 - keys.width()    - 18;
 		}
 
+		/*
 		int tier = Dungeon.hero.tier();
 		if (tier != lastTier) {
 			lastTier = tier;
 			avatar.copy( HeroSprite.avatar( Dungeon.hero.heroClass, tier ) );
 		}
+		*/
 	}
 
 	private static class MenuButton extends Button {

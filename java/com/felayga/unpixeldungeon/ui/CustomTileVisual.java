@@ -46,6 +46,12 @@ public abstract class CustomTileVisual extends Image implements Bundlable {
 	public int tileX, tileY;   //x and y coords for texture within a level
 	public int tileW = 1, tileH = 1; //width and height in tiles
 
+	public CustomTileVisual(int pos) {
+		super();
+
+		this.pos = pos;
+	}
+
 	public void pos(int pos) {
 		pos( pos%Level.WIDTH, pos/Level.WIDTH );
 	}

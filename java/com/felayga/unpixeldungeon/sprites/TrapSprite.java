@@ -34,8 +34,6 @@ public class TrapSprite extends Image {
 
 	private static TextureFilm frames;
 
-	private int pos = -1;
-
 	//trap colors
 	public static final int RED     = 0;
 	public static final int ORANGE  = 1;
@@ -68,7 +66,7 @@ public class TrapSprite extends Image {
 	}
 
 	public TrapSprite( int image ) {
-		this();
+		this( );
 		reset( image );
 	}
 

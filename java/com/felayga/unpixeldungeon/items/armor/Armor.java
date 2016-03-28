@@ -25,6 +25,7 @@ package com.felayga.unpixeldungeon.items.armor;
 
 import java.util.ArrayList;
 
+import com.felayga.unpixeldungeon.Assets;
 import com.felayga.unpixeldungeon.Badges;
 import com.felayga.unpixeldungeon.Dungeon;
 import com.felayga.unpixeldungeon.ResultDescriptions;
@@ -33,10 +34,12 @@ import com.felayga.unpixeldungeon.actors.hero.Hero;
 import com.felayga.unpixeldungeon.items.EquipableItem;
 import com.felayga.unpixeldungeon.items.Item;
 import com.felayga.unpixeldungeon.items.armor.glyphs.*;
-import com.felayga.unpixeldungeon.sprites.HeroSprite;
+import com.felayga.unpixeldungeon.mechanics.BUCStatus;
+import com.felayga.unpixeldungeon.sprites.hero.HeroSprite;
 import com.felayga.unpixeldungeon.sprites.ItemSprite;
 import com.felayga.unpixeldungeon.utils.GLog;
 import com.felayga.unpixeldungeon.utils.Utils;
+import com.watabou.noosa.audio.Sample;
 import com.watabou.utils.Bundlable;
 import com.watabou.utils.Bundle;
 import com.watabou.utils.Random;
@@ -45,30 +48,38 @@ public class Armor extends EquipableItem {
 
 	private static final int HITS_TO_KNOW    = 10;
 
-	private static final String TXT_EQUIP_CURSED	= "your %s constricts around you painfully";
+	private static final String TXT_EQUIP_CURSED_HERO	= "your %s constricts around you painfully";
+	private static final String TXT_EQUIP_CURSED_OTHER	= "the %s winces as their armor tightens";
 		
-	private static final String TXT_IDENTIFY	= "you are now familiar enough with your %s to identify it. It is %s.";
+	private static final String TXT_IDENTIFY	= "you are now familiar enough with your %s to identify it.";
 	
 	private static final String TXT_TO_STRING	= "%s :%d";
 	
 	private static final String TXT_INCOMPATIBLE =
 		"Interaction of different types of magic has erased the glyph on this armor!";
 	
-	public int tier;
-	
-	public int STR;
-	public int DR;
-	
 	private int hitsToKnow = HITS_TO_KNOW;
 	
 	public Glyph glyph;
-	
-	public Armor( int tier ) {
-		
-		this.tier = tier;
-		
-		STR = typicalSTR();
-		DR = typicalDR();
+
+	public int armor;
+	public int armorBonusMaximum;
+	public long speedModifier;
+	public int price;
+	public int textureIndex;
+	public int spellFailure;
+
+
+	public Armor(int armor, int armorBonusMaximum, long speedModifier, long equipTime, int spellFailure) {
+		super(equipTime);
+
+		price = 0;
+
+		this.armor = armor;
+		this.armorBonusMaximum = armorBonusMaximum;
+		this.speedModifier = speedModifier;
+		this.spellFailure = spellFailure;
+		textureIndex = 1;
 	}
 
 	private static final String UNFAMILIRIARITY	= "unfamiliarity";
@@ -76,110 +87,72 @@ public class Armor extends EquipableItem {
 	@Override
 	public void storeInBundle( Bundle bundle ) {
 		super.storeInBundle( bundle );
-		bundle.put( UNFAMILIRIARITY, hitsToKnow );
-		bundle.put( GLYPH, glyph );
+		bundle.put(UNFAMILIRIARITY, hitsToKnow);
+		bundle.put(GLYPH, glyph);
 	}
 
 	@Override
 	public void restoreFromBundle( Bundle bundle ) {
-		super.restoreFromBundle( bundle );
+		super.restoreFromBundle(bundle);
 		if ((hitsToKnow = bundle.getInt( UNFAMILIRIARITY )) == 0) {
 			hitsToKnow = HITS_TO_KNOW;
 		}
-		inscribe( (Glyph)bundle.get( GLYPH ) );
+		enchant((Glyph) bundle.get(GLYPH));
 	}
 
 	@Override
 	public ArrayList<String> actions( Hero hero ) {
 		ArrayList<String> actions = super.actions( hero );
-		actions.add( isEquipped( hero ) ? AC_UNEQUIP : AC_EQUIP );
+		actions.add(isEquipped(hero) ? AC_UNEQUIP : AC_EQUIP);
 		return actions;
 	}
-	
-	@Override
-	public boolean doEquip( Hero hero ) {
-		
-		detach( hero.belongings.backpack );
 
-		if (hero.belongings.armor == null || hero.belongings.armor.doUnequip( hero, true, false )) {
-			
-			hero.belongings.armor = this;
-			
-			cursedKnown = true;
-			if (cursed) {
-				equipCursed( hero );
-				GLog.n( TXT_EQUIP_CURSED, toString() );
+	public int defense() {
+		return armor + level;
+	}
+
+	public Slot[] getSlots() {
+		return new Slot[]{ Slot.Armor };
+	}
+
+	@Override
+	public void onEquip(Char owner, boolean cursed) {
+		super.onEquip(owner, cursed);
+
+		if (cursed) {
+			if (owner instanceof Hero) {
+				GLog.n(TXT_EQUIP_CURSED_HERO, getDisplayName());
+				setHeroSpriteArmor((HeroSprite)owner.sprite, true);
 			}
-			
-			((HeroSprite)hero.sprite).updateArmor();
-
-			hero.spendAndNext( 2 * time2equip( hero ) );
-			return true;
-			
-		} else {
-			
-			collect( hero.belongings.backpack );
-			return false;
-			
+			else {
+				GLog.d(TXT_EQUIP_CURSED_OTHER, getDisplayName());
+			}
 		}
 	}
 
 	@Override
-	protected float time2equip( Hero hero ) {
-		return hero.speed();
-	}
+	public void onUnequip(Char owner) {
+		super.onUnequip(owner);
 
-	@Override
-	public boolean doUnequip( Hero hero, boolean collect, boolean single ) {
-		if (super.doUnequip( hero, collect, single )) {
-
-			hero.belongings.armor = null;
-			((HeroSprite)hero.sprite).updateArmor();
-
-			return true;
-
-		} else {
-
-			return false;
-
+		if (owner instanceof Hero) {
+			setHeroSpriteArmor((HeroSprite)owner.sprite, false);
 		}
 	}
+
+
+	protected void setHeroSpriteArmor(HeroSprite heroSprite, boolean equip) {
+		if (equip) {
+			heroSprite.setArmor(this.textureIndex);
+		}
+		else {
+			heroSprite.setArmor(0);
+		}
+	}
+
 	
 	@Override
-	public boolean isEquipped( Hero hero ) {
+	public boolean isEquipped( Char hero ) {
 		return hero.belongings.armor == this;
-	}
-	
-	@Override
-	public Item upgrade() {
-		return upgrade( false );
-	}
-	
-	public Item upgrade( boolean inscribe ) {
-		
-		if (glyph != null) {
-			if (!inscribe && Random.Int( level ) > 0) {
-				GLog.w( TXT_INCOMPATIBLE );
-				inscribe( null );
-			}
-		} else {
-			if (inscribe) {
-				inscribe( Glyph.random() );
-			}
-		};
-		
-		DR += tier;
-		STR--;
-		
-		return super.upgrade();
-	}
-	
-	@Override
-	public Item degrade() {
-		DR -= tier;
-		STR++;
-		
-		return super.degrade();
 	}
 	
 	public int proc( Char attacker, Char defender, int damage ) {
@@ -191,34 +164,54 @@ public class Armor extends EquipableItem {
 		if (!levelKnown) {
 			if (--hitsToKnow <= 0) {
 				levelKnown = true;
-				GLog.w( TXT_IDENTIFY, name(), toString() );
+				GLog.w( TXT_IDENTIFY, getDisplayName(), toString() );
 				Badges.validateItemLevelAquired( this );
 			}
 		}
 		
 		return damage;
 	}
+
 	
 	@Override
-	public String toString() {
-		return levelKnown ? Utils.format( TXT_TO_STRING, super.toString(), STR ) : super.toString();
+	public String getName() {
+		String name = super.getName();
+
+		if (glyph != null)
+		{
+			name = glyph.name(name);
+		}
+
+		return name;
 	}
-	
+
 	@Override
-	public String name() {
-		return glyph == null ? super.name() : glyph.name( super.name() );
+	public String getDisplayName() {
+		String name = super.getDisplayName();
+
+		if (levelKnown) {
+			if (level >= 0) {
+				name = "+" + level + " " + name;
+			} else {
+				name = level + " " + name;
+			}
+		}
+
+		return name;
 	}
 	
 	@Override
 	public String info() {
-		String name = name();
+		String name = getDisplayName();
 		StringBuilder info = new StringBuilder( desc() );
 		
 		if (levelKnown) {
+			/*
 			info.append(
 				"\n\nThis " + name + " provides damage absorption up to " +
 				"" + Math.max( DR, 0 ) + " points per attack. " );
-			
+			*/
+			/*
 			if (STR > Dungeon.hero.STR()) {
 				
 				if (isEquipped( Dungeon.hero )) {
@@ -232,13 +225,18 @@ public class Armor extends EquipableItem {
 				}
 				
 			}
+			*/
 		} else {
+			/*
 			info.append(
 				"\n\nTypical " + name + " provides damage absorption up to " + typicalDR() + " points per attack " +
 				" and requires " + typicalSTR() + " points of strength. " );
+			*/
+			/*
 			if (typicalSTR() > Dungeon.hero.STR()) {
 				info.append( "Probably this armor is too heavy for you. " );
 			}
+			*/
 		}
 		
 		if (glyph != null) {
@@ -247,16 +245,22 @@ public class Armor extends EquipableItem {
 		
 		if (isEquipped( Dungeon.hero )) {
 			info.append( "\n\nYou are wearing the " + name +
-				(cursed ? ", and because it is cursed, you are powerless to remove it." : ".") );
+				(bucStatus == BUCStatus.Cursed ? ", and because it is cursed, you are powerless to remove it." : ".") );
 		} else {
-			if (cursedKnown && cursed) {
-				info.append( "\n\nYou can feel a malevolent magic lurking within the " + name + "." );
+			if (bucStatusKnown && bucStatus == BUCStatus.Cursed) {
+				info.append("\n\nYou can feel a malevolent magic lurking within the " + name + ".");
 			}
 		}
 		
 		return info.toString();
 	}
-	
+
+
+	@Override
+	public void playPickupSound() {
+		Sample.INSTANCE.play( Assets.SND_ITEM_CLOTH );
+	}
+
 	@Override
 	public Item random() {
 		if (Random.Float() < 0.4) {
@@ -268,64 +272,47 @@ public class Armor extends EquipableItem {
 				}
 			}
 			if (Random.Int( 2 ) == 0) {
-				upgrade( n );
+				upgrade( null, n );
 			} else {
-				degrade( n );
-				cursed = true;
+				upgrade( null, -n );
+				bucStatus = BUCStatus.Cursed;
 			}
 		}
 		
 		if (Random.Int( 10 ) == 0) {
-			inscribe();
+			enchant();
 		}
 		
 		return this;
 	}
-	
-	public int typicalSTR() {
-		return 7 + tier * 2;
-	}
-	
-	public int typicalDR() {
-		return tier * 2;
-	}
-	
+
 	@Override
 	public int price() {
-		int price = 10 * (1 << (tier - 1));
+		int price = this.price;
 		if (glyph != null) {
 			price *= 1.5;
 		}
-		if (cursed && cursedKnown) {
+
+		if (bucStatus == BUCStatus.Cursed) {
 			price /= 2;
 		}
-		if (levelKnown) {
-			if (level > 0) {
-				price *= (level + 1);
-			} else if (level < 0) {
-				price /= (1 - level);
-			}
-		}
+
+		price += level * 10;
+
 		if (price < 1) {
 			price = 1;
 		}
+
 		return price;
 	}
 
-	public Armor inscribe( Glyph glyph ) {
-
-		if (glyph != null && this.glyph == null) {
-			DR += tier;
-		} else if (glyph == null && this.glyph != null) {
-			DR -= tier;
-		}
-
+	public Armor enchant( Glyph glyph ) {
 		this.glyph = glyph;
 
 		return this;
 	}
 
-	public Armor inscribe() {
+	public Armor enchant() {
 
 		Class<? extends Glyph> oldGlyphClass = glyph != null ? glyph.getClass() : null;
 		Glyph gl = Glyph.random();
@@ -333,7 +320,7 @@ public class Armor extends EquipableItem {
 			gl = Armor.Glyph.random();
 		}
 
-		return inscribe( gl );
+		return enchant(gl);
 	}
 
 	public boolean isInscribed() {

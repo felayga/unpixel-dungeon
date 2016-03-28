@@ -23,6 +23,7 @@
  */
 package com.felayga.unpixeldungeon.actors.buffs;
 
+import com.felayga.unpixeldungeon.mechanics.GameTime;
 import com.felayga.unpixeldungeon.ui.BuffIndicator;
 
 public class Barkskin extends Buff {
@@ -33,7 +34,7 @@ public class Barkskin extends Buff {
 	public boolean act() {
 		if (target.isAlive()) {
 
-			spend( TICK );
+			spend(GameTime.TICK, false );
 			if (--level <= 0) {
 				detach();
 			}

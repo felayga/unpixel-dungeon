@@ -28,16 +28,16 @@ import java.util.HashSet;
 import com.felayga.unpixeldungeon.Badges;
 import com.felayga.unpixeldungeon.Dungeon;
 import com.felayga.unpixeldungeon.Statistics;
-import com.felayga.unpixeldungeon.actors.Char;
 import com.felayga.unpixeldungeon.actors.blobs.ToxicGas;
 import com.felayga.unpixeldungeon.actors.buffs.Burning;
 import com.felayga.unpixeldungeon.actors.buffs.Frost;
 import com.felayga.unpixeldungeon.actors.buffs.Paralysis;
 import com.felayga.unpixeldungeon.actors.buffs.Roots;
 import com.felayga.unpixeldungeon.items.food.MysteryMeat;
+import com.felayga.unpixeldungeon.items.weapon.melee.mob.MeleeMobAttack;
 import com.felayga.unpixeldungeon.levels.Level;
+import com.felayga.unpixeldungeon.mechanics.GameTime;
 import com.felayga.unpixeldungeon.sprites.PiranhaSprite;
-import com.watabou.utils.Random;
 
 public class Piranha extends Mob {
 	
@@ -45,16 +45,19 @@ public class Piranha extends Mob {
 		name = "giant piranha";
 		spriteClass = PiranhaSprite.class;
 
-		baseSpeed = 2f;
+		movementSpeed = GameTime.TICK * 2;
 		
 		EXP = 0;
 	}
 	
 	public Piranha() {
 		super();
-		
+
+		DEXCHA = 20 + Dungeon.depth * 2;
 		HP = HT = 10 + Dungeon.depth * 5;
 		defenseSkill = 10 + Dungeon.depth * 2;
+
+		belongings.weapon = new MeleeMobAttack(GameTime.TICK, Dungeon.depth, 4+Dungeon.depth*2);
 	}
 	
 	@Override
@@ -82,21 +85,6 @@ public class Piranha extends Mob {
 
 			return super.act();
 		}
-	}
-	
-	@Override
-	public int damageRoll() {
-		return Random.NormalIntRange( Dungeon.depth, 4 + Dungeon.depth * 2 );
-	}
-	
-	@Override
-	public int attackSkill( Char target ) {
-		return 20 + Dungeon.depth * 2;
-	}
-	
-	@Override
-	public int dr() {
-		return Dungeon.depth;
 	}
 	
 	@Override

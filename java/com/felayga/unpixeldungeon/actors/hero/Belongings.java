@@ -27,11 +27,16 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Iterator;
 
+import com.felayga.unpixeldungeon.Assets;
 import com.felayga.unpixeldungeon.Badges;
 import com.felayga.unpixeldungeon.Dungeon;
 import com.felayga.unpixeldungeon.actors.Char;
+import com.felayga.unpixeldungeon.effects.particles.ShadowParticle;
+import com.felayga.unpixeldungeon.items.Amulet;
 import com.felayga.unpixeldungeon.items.EquipableItem;
 import com.felayga.unpixeldungeon.items.Gold;
+import com.felayga.unpixeldungeon.items.armor.boots.Boots;
+import com.felayga.unpixeldungeon.items.armor.gloves.Gloves;
 import com.felayga.unpixeldungeon.mechanics.IDecayable;
 import com.felayga.unpixeldungeon.items.KindofMisc;
 import com.felayga.unpixeldungeon.items.Item;
@@ -49,13 +54,14 @@ import com.felayga.unpixeldungeon.items.wands.Wand;
 import com.felayga.unpixeldungeon.items.weapon.missiles.Boomerang;
 import com.felayga.unpixeldungeon.levels.Level;
 import com.felayga.unpixeldungeon.mechanics.BUCStatus;
+import com.felayga.unpixeldungeon.sprites.hero.HeroSprite;
 import com.felayga.unpixeldungeon.utils.GLog;
+import com.watabou.noosa.audio.Sample;
 import com.watabou.utils.Bundlable;
 import com.watabou.utils.Bundle;
 import com.watabou.utils.Random;
 
 public class Belongings implements Iterable<Item>, IDecayable {
-
 	public static final int BACKPACK_SIZE	= 36; //original=19
 	
 	private Char owner;
@@ -168,36 +174,126 @@ public class Belongings implements Iterable<Item>, IDecayable {
 				|| backpack2.contains(item);
 	}
 
+	private boolean tryReplace(EquipableItem.Slot slot, EquipableItem item) {
+		switch (slot) {
+			case Weapon:
+				if (item instanceof KindOfWeapon) {
+					if (weapon == null || unequip(weapon, true)) {
+						weapon = (KindOfWeapon)item;
+						return true;
+					}
+				}
+				break;
+			case Offhand:
+				if (item instanceof KindOfWeapon) {
+					if (offhand == null || unequip(offhand, true)) {
+						offhand = (KindOfWeapon)item;
+						return true;
+					}
+				}
+				break;
+			case Armor:
+				if (item instanceof Armor) {
+					if (armor == null || unequip(armor, true)) {
+						armor = (Armor)item;
+						return true;
+					}
+				}
+				break;
+			case Gloves:
+				if (item instanceof Gloves) {
+					if (gloves == null || unequip(gloves, true)) {
+						gloves = (Gloves)item;
+						return true;
+					}
+				}
+				break;
+			case Boots:
+				if (item instanceof Boots) {
+					if (boots == null || unequip(boots, true)) {
+						boots = (Boots)item;
+						return true;
+					}
+				}
+				break;
+			case Ring:
+				//empty
+				break;
+			case Amulet:
+				break;
+			case Cloak:
+				break;
+			case Face:
+				break;
+		}
+
+		return false;
+	}
+
 	public boolean equip(EquipableItem item) {
 		//In addition to equipping itself, item reassigns itself to the quickslot
 		//This is a special case as the item is being removed from inventory, but is staying with the hero.
-		int slot = Dungeon.quickslot.getSlot(this);
-		doEquip(hero);
-		if (slot != -1) {
-			Dungeon.quickslot.setSlot(slot, this);
-			updateQuickslot();
+		int slot = -1;
+		if (owner instanceof Hero) {
+			slot = Dungeon.quickslot.getSlot(item);
 		}
 
+		EquipableItem.Slot[] slots = item.getSlots();
+
+		boolean good = false;
+		if (slots.length == 1 && tryReplace(slots[0], item)) {
+			good = true;
+		}
+
+		if (good)
+		{
+			boolean cursed = false;
+			if (item.bucStatus() == BUCStatus.Cursed) {
+				item.bucStatus(true);
+
+				cursed = true;
+				owner.sprite.emitter().burst(ShadowParticle.CURSE, 6);
+				Sample.INSTANCE.play(Assets.SND_CURSED);
+			}
+
+			if (slot != -1) {
+				Dungeon.quickslot.setSlot(slot, item);
+				item.updateQuickslot();
+			}
+
+			owner.spend(item.equipTime, false);
+		}
+
+		return good;
 	}
 
-	public boolean unequip(EquipableItem item) {
-		if (bucStatus == BUCStatus.Cursed) {
-			GLog.w(TXT_UNEQUIP_CANT, getDisplayName());
-			bucStatusKnown = true;
+	private static final String TXT_UNEQUIP_CANT	= "You can't remove the %s!";
+
+	public boolean unequip(EquipableItem item, boolean collect) {
+		return unequip(item, collect, true);
+	}
+
+	public boolean unequip(EquipableItem item, boolean collect, boolean single) {
+		if (item.bucStatus() == BUCStatus.Cursed) {
+			if (owner instanceof Hero) {
+				GLog.w(TXT_UNEQUIP_CANT, item.getDisplayName());
+			}
+
+			item.bucStatus(true);
+
 			return false;
 		}
 
-		if (single) {
-			hero.spend(time2equip(hero), true);
-		} else {
-			hero.spend( time2equip( hero ), false );
-		}
+		owner.spend(item.equipTime, single);
 
-		if (collect && !hero.belongings.collect(this)) {
-			onDetach();
-			Dungeon.quickslot.clearItem(this);
-			updateQuickslot();
-			Dungeon.level.drop( this, hero.pos );
+		if (collect && !collect(item)) {
+			item.onDetach();
+			item.onUnequip(owner);
+			if (owner instanceof Hero) {
+				Dungeon.quickslot.clearItem(item);
+			}
+			item.updateQuickslot();
+			Dungeon.level.drop( item, owner.pos );
 		}
 
 		return true;
@@ -209,8 +305,8 @@ public class Belongings implements Iterable<Item>, IDecayable {
 	public Tool tool2 = null;
 
 	public Armor armor = null;
-    public Armor gloves = null;
-    public Armor boots = null;
+    public Gloves gloves = null;
+    public Boots boots = null;
     public Armor cloak = null;
 
 	public KindofMisc ring1 = null;
@@ -324,8 +420,8 @@ public class Belongings implements Iterable<Item>, IDecayable {
 		tool2 = (Tool) bundle.get(TOOL2);
 
 		armor = (Armor) bundle.get(ARMOR);
-		gloves = (Armor) bundle.get(GLOVES);
-		boots = (Armor) bundle.get(BOOTS);
+		gloves = (Gloves) bundle.get(GLOVES);
+		boots = (Boots) bundle.get(BOOTS);
 		cloak = (Armor) bundle.get(CLOAK);
 
 		ring1 = (KindofMisc) bundle.get(RING1);

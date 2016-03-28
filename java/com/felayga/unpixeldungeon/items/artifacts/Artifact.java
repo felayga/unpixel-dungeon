@@ -25,11 +25,14 @@ package com.felayga.unpixeldungeon.items.artifacts;
 
 import com.felayga.unpixeldungeon.Dungeon;
 import com.felayga.unpixeldungeon.ShatteredPixelDungeon;
+import com.felayga.unpixeldungeon.actors.Actor;
 import com.felayga.unpixeldungeon.actors.Char;
 import com.felayga.unpixeldungeon.actors.buffs.Buff;
 import com.felayga.unpixeldungeon.actors.hero.Hero;
 import com.felayga.unpixeldungeon.items.Item;
 import com.felayga.unpixeldungeon.items.KindofMisc;
+import com.felayga.unpixeldungeon.mechanics.BUCStatus;
+import com.felayga.unpixeldungeon.mechanics.GameTime;
 import com.felayga.unpixeldungeon.utils.GLog;
 import com.felayga.unpixeldungeon.utils.Utils;
 import com.felayga.unpixeldungeon.windows.WndOptions;
@@ -40,7 +43,7 @@ import java.util.ArrayList;
 
 public class Artifact extends KindofMisc {
 
-	private static final float TIME_TO_EQUIP = 1f;
+	private static final long TIME_TO_EQUIP = GameTime.TICK;
 
 	private static final String TXT_TO_STRING		        = "%s";
 	private static final String TXT_TO_STRING_CHARGE		= "%s (%d/%d)";
@@ -85,7 +88,7 @@ public class Artifact extends KindofMisc {
 	}
 
 	@Override
-	public boolean doEquip( final Hero hero ) {
+	public boolean doEquip( final Char hero ) {
 
 		if ((hero.belongings.ring1 != null && hero.belongings.ring1.getClass() == this.getClass())
 				|| (hero.belongings.ring2 != null && hero.belongings.ring2.getClass() == this.getClass())
@@ -137,18 +140,18 @@ public class Artifact extends KindofMisc {
 				hero.belongings.ring2 = this;
 			}
 
-			detach( hero.belongings.backpack );
+			hero.belongings.detach(this);
 
 			activate( hero );
 
-			cursedKnown = true;
+			bucStatusKnown = true;
 			identify();
-			if (cursed) {
+			if (bucStatus == BUCStatus.Cursed) {
 				equipCursed( hero );
 				GLog.n( "the " + this.name + " painfully binds itself to you" );
 			}
 
-			hero.spendAndNext( TIME_TO_EQUIP );
+			hero.spend( TIME_TO_EQUIP, true );
 			return true;
 
 		}
@@ -161,7 +164,7 @@ public class Artifact extends KindofMisc {
 	}
 
 	@Override
-	public boolean doUnequip( Hero hero, boolean collect, boolean single ) {
+	public boolean doUnequip( Char hero, boolean collect, boolean single ) {
 		if (super.doUnequip( hero, collect, single )) {
 
 		if (hero.belongings.ring1 == this) {
@@ -188,7 +191,7 @@ public class Artifact extends KindofMisc {
 	}
 
 	@Override
-	public boolean isEquipped( Hero hero ) {
+	public boolean isEquipped( Char hero ) {
 		return hero.belongings.ring1 == this || hero.belongings.ring2 == this;
 	}
 
@@ -204,14 +207,14 @@ public class Artifact extends KindofMisc {
 
 	//transfers upgrades from another artifact, transfer level will equal the displayed level
 	public void transferUpgrade(int transferLvl) {
-		upgrade(Math.round((float)(transferLvl*levelCap)/10));
+		upgrade(null, Math.round((float)(transferLvl*levelCap)/10));
 	}
 
 	@Override
 	public String info() {
-		if (cursed && cursedKnown && !isEquipped( Dungeon.hero )) {
+		if (bucStatus == BUCStatus.Cursed && bucStatusKnown && !isEquipped( Dungeon.hero )) {
 
-			return desc() + "\n\nYou can feel a malevolent magic lurking within the " + name() + ".";
+			return desc() + "\n\nYou can feel a malevolent magic lurking within the " + getDisplayName() + ".";
 
 		} else {
 
@@ -225,15 +228,15 @@ public class Artifact extends KindofMisc {
 
 		if (levelKnown && level/levelCap != 0) {
 			if (chargeCap > 0) {
-				return Utils.format( TXT_TO_STRING_LVL_CHARGE, name(), visiblyUpgraded(), charge, chargeCap );
+				return Utils.format( TXT_TO_STRING_LVL_CHARGE, getDisplayName(), visiblyUpgraded(), charge, chargeCap );
 			} else {
-				return Utils.format( TXT_TO_STRING_LVL, name(), visiblyUpgraded() );
+				return Utils.format( TXT_TO_STRING_LVL, getDisplayName(), visiblyUpgraded() );
 			}
 		} else {
 			if (chargeCap > 0) {
-				return Utils.format( TXT_TO_STRING_CHARGE, name(), charge, chargeCap );
+				return Utils.format( TXT_TO_STRING_CHARGE, getDisplayName(), charge, chargeCap );
 			} else {
-				return Utils.format( TXT_TO_STRING, name() );
+				return Utils.format( TXT_TO_STRING, getDisplayName() );
 			}
 		}
 	}
@@ -276,7 +279,7 @@ public class Artifact extends KindofMisc {
 	@Override
 	public Item random() {
 		if (Random.Float() < 0.3f) {
-			cursed = true;
+			bucStatus = BUCStatus.Cursed;
 		}
 		return this;
 	}
@@ -286,7 +289,7 @@ public class Artifact extends KindofMisc {
 		int price = 100;
 		if (level > 0)
 			price += 50*((level*10)/levelCap);
-		if (cursed && cursedKnown) {
+		if (bucStatus == BUCStatus.Cursed) {
 			price /= 2;
 		}
 		if (price < 1) {
@@ -309,7 +312,7 @@ public class Artifact extends KindofMisc {
 		}
 
 		public boolean isCursed() {
-			return cursed;
+			return bucStatus == BUCStatus.Cursed;
 		}
 
 	}

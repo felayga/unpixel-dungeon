@@ -34,7 +34,9 @@ import com.felayga.unpixeldungeon.effects.Speck;
 import com.felayga.unpixeldungeon.items.potions.PotionOfLiquidFlame;
 import com.felayga.unpixeldungeon.items.wands.WandOfFireblast;
 import com.felayga.unpixeldungeon.items.weapon.enchantments.Fire;
+import com.felayga.unpixeldungeon.items.weapon.melee.mob.IgniteChance;
 import com.felayga.unpixeldungeon.levels.Level;
+import com.felayga.unpixeldungeon.mechanics.GameTime;
 import com.felayga.unpixeldungeon.sprites.ElementalSprite;
 import com.watabou.utils.Random;
 
@@ -43,10 +45,12 @@ public class Elemental extends Mob {
 	{
 		name = "fire elemental";
 		spriteClass = ElementalSprite.class;
-		
+
+		DEXCHA = 25;
+
 		HP = HT = 65;
 		defenseSkill = 20;
-		
+
 		EXP = 10;
 		maxLvl = 20;
 		
@@ -54,31 +58,10 @@ public class Elemental extends Mob {
 		
 		loot = new PotionOfLiquidFlame();
 		lootChance = 0.1f;
+
+		belongings.weapon = new IgniteChance(GameTime.TICK, 16, 20);
 	}
-	
-	@Override
-	public int damageRoll() {
-		return Random.NormalIntRange( 16, 20 );
-	}
-	
-	@Override
-	public int attackSkill( Char target ) {
-		return 25;
-	}
-	
-	@Override
-	public int dr() {
-		return 5;
-	}
-	
-	@Override
-	public int attackProc( Char enemy, int damage ) {
-		if (Random.Int( 2 ) == 0) {
-			Buff.affect( enemy, Burning.class ).reignite( enemy );
-		}
-		
-		return damage;
-	}
+
 	
 	@Override
 	public void add( Buff buff ) {

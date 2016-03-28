@@ -36,11 +36,6 @@ public class Shielded extends Brute {
 	}
 	
 	@Override
-	public int dr() {
-		return 10;
-	}
-	
-	@Override
 	public String defenseVerb() {
 		return "blocked";
 	}

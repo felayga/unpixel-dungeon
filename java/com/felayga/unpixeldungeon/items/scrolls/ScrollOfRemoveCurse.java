@@ -23,7 +23,9 @@
  */
 package com.felayga.unpixeldungeon.items.scrolls;
 
+import com.felayga.unpixeldungeon.actors.Char;
 import com.felayga.unpixeldungeon.items.bags.Bag;
+import com.felayga.unpixeldungeon.mechanics.BUCStatus;
 import com.watabou.noosa.audio.Sample;
 import com.felayga.unpixeldungeon.Assets;
 import com.felayga.unpixeldungeon.actors.buffs.Invisibility;
@@ -52,33 +54,39 @@ public class ScrollOfRemoveCurse extends Scroll {
 		new Flare( 6, 32 ).show( curUser.sprite, 2f ) ;
 		Sample.INSTANCE.play( Assets.SND_READ );
 		Invisibility.dispel();
-		
-		boolean procced = uncurse( curUser, curUser.belongings.backpack.items.toArray( new Item[0] ) );
-		procced = uncurse( curUser,
-			curUser.belongings.weapon,
-            curUser.belongings.offhand,
-            curUser.belongings.tool1,
-            curUser.belongings.tool2,
-			curUser.belongings.armor,
-            curUser.belongings.gloves,
-            curUser.belongings.boots,
-            curUser.belongings.cloak,
-			curUser.belongings.ring1,
-			curUser.belongings.ring2,
-            curUser.belongings.amulet,
-            curUser.belongings.face) || procced;
+
+		boolean procced = false;
+		String passProc = null;
+		String failProc = "The scroll disintegrates.";
+
+		switch(bucStatus)
+		{
+			case Cursed:
+				break;
+			case Uncursed:
+				passProc = "You feel like someone is helping you.";
+				failProc = passProc;
+				procced = curUser.belongings.bucUncurse(true, true, true, false) > 0;
+				break;
+			case Blessed:
+				passProc = TXT_PROCCED;
+				failProc = TXT_NOT_PROCCED;
+				procced = curUser.belongings.bucUncurse(true, true, true, true) > 0;
+				break;
+
+		}
 		
 		Weakness.detach( curUser, Weakness.class );
 		
 		if (procced) {
-			GLog.p( TXT_PROCCED );
+			GLog.p( passProc );
 		} else {
-			GLog.i( TXT_NOT_PROCCED );
+			GLog.i( failProc );
 		}
 		
 		setKnown();
 		
-		curUser.spendAndNext( TIME_TO_READ );
+		curUser.spend( TIME_TO_READ, true );
 	}
 	
 	@Override
@@ -89,22 +97,22 @@ public class ScrollOfRemoveCurse extends Scroll {
 			"enchantments that might prevent the wearer from removing them.";
 	}
 	
-	public static boolean uncurse( Hero hero, Item... items ) {
+	public static boolean uncurse( Char hero, Item source, Item... items ) {
 		
 		boolean procced = false;
 		for (Item item : items) {
-			if (item != null && item.cursed) {
-				item.cursed = false;
+			if (item != null && uncurse(source, item)) {
 				procced = true;
 			}
+			/*
 			if (item instanceof Bag){
 				for (Item bagItem : ((Bag)item).items){
-					if (bagItem != null && bagItem.cursed) {
-						bagItem.cursed = false;
+					if (bagItem != null && uncurse(source, bagItem)) {
 						procced = true;
 					}
 				}
 			}
+			*/
 		}
 		
 		if (procced) {
@@ -112,6 +120,15 @@ public class ScrollOfRemoveCurse extends Scroll {
 		}
 		
 		return procced;
+	}
+
+	private static boolean uncurse(Item source, Item item)
+	{
+		BUCStatus test = item.bucStatus();
+
+		item.upgrade(source, 0);
+
+		return test != item.bucStatus();
 	}
 	
 	@Override

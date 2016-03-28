@@ -41,11 +41,15 @@ public class PotionOfStrength extends Potion {
 	@Override
 	public void apply( Hero hero ) {
 		setKnown();
-		
+
+		/*
 		hero.STR++;
 		hero.sprite.showStatus( CharSprite.POSITIVE, "+1 str" );
 		GLog.p( "Newfound strength surges through your body." );
-		
+		*/
+
+		GLog.p("Nope.");
+
 		Badges.validateStrengthAttained();
 	}
 	

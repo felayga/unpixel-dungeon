@@ -31,6 +31,9 @@ import com.felayga.unpixeldungeon.items.Gold;
 import com.felayga.unpixeldungeon.items.Honeypot;
 import com.felayga.unpixeldungeon.items.Item;
 import com.felayga.unpixeldungeon.items.artifacts.MasterThievesArmband;
+import com.felayga.unpixeldungeon.items.weapon.melee.mob.MeleeMobAttack;
+import com.felayga.unpixeldungeon.items.weapon.melee.mob.StealChance;
+import com.felayga.unpixeldungeon.mechanics.GameTime;
 import com.felayga.unpixeldungeon.sprites.CharSprite;
 import com.felayga.unpixeldungeon.sprites.ThiefSprite;
 import com.felayga.unpixeldungeon.utils.GLog;
@@ -40,16 +43,16 @@ import com.watabou.utils.Random;
 
 public class Thief extends Mob {
 
-	protected static final String TXT_STOLE	= "%s stole %s from you!";
 	protected static final String TXT_CARRIES	= "\n\n%s is carrying a _%s_. Stolen obviously.";
-	
-	public Item item;
-	
+
+	public Thief()
 	{
 		name = "crazy thief";
 		spriteClass = ThiefSprite.class;
 
 		canOpenDoors = true;
+
+		DEXCHA = 12;
 
 		HP = HT = 20;
 		defenseSkill = 12;
@@ -61,48 +64,12 @@ public class Thief extends Mob {
 		lootChance = 0.01f;
 
 		FLEEING = new Fleeing();
-	}
 
-	private static final String ITEM = "item";
+		belongings.weapon = new StealChance(GameTime.TICK / 2, 1, 7);
 
-	@Override
-	public void storeInBundle( Bundle bundle ) {
-		super.storeInBundle( bundle );
-		bundle.put( ITEM, item );
-	}
-
-	@Override
-	public void restoreFromBundle( Bundle bundle ) {
-		super.restoreFromBundle( bundle );
-		item = (Item)bundle.get( ITEM );
-	}
-
-	@Override
-	public float speed() {
-		if (item != null) return (5*super.speed())/6;
-		else return super.speed();
-	}
-
-	@Override
-	public int damageRoll() {
-		return Random.NormalIntRange( 1, 7 );
-	}
-
-	@Override
-	protected float attackDelay() {
-		return 0.5f;
-	}
-
-	@Override
-	public void die( Object cause ) {
-
-		super.die( cause );
-
-		if (item != null) {
-			Dungeon.level.drop( item, pos ).sprite.drop();
-			//updates position
-			if (item instanceof Honeypot.ShatteredPot) ((Honeypot.ShatteredPot)item).setHolder( this );
-		}
+		belongings.backpack1.size = 0;
+		belongings.backpack2.size = 4;
+		belongings.backpack3.size = 0;
 	}
 
 	@Override
@@ -110,27 +77,9 @@ public class Thief extends Mob {
 		if (!Dungeon.limitedDrops.armband.dropped()) {
 			Dungeon.limitedDrops.armband.drop();
 			return super.createLoot();
-		} else
+		} else {
 			return new Gold(Random.NormalIntRange(100, 250));
-	}
-
-	@Override
-	public int attackSkill( Char target ) {
-		return 12;
-	}
-
-	@Override
-	public int dr() {
-		return 3;
-	}
-
-	@Override
-	public int attackProc( Char enemy, int damage ) {
-		if (item == null && enemy instanceof Hero && steal( (Hero)enemy )) {
-			state = FLEEING;
 		}
-
-		return damage;
 	}
 
 	@Override
@@ -142,45 +91,27 @@ public class Thief extends Mob {
 		return super.defenseProc(enemy, damage);
 	}
 
-	protected boolean steal( Hero hero ) {
-
-		Item item = hero.belongings.randomUnequipped();
-
-		if (item != null && !item.unique && item.level < 1 ) {
-
-			GLog.w( TXT_STOLE, this.name, item.name() );
-			Dungeon.quickslot.clearItem( item );
-			item.updateQuickslot();
-
-			if (item instanceof Honeypot){
-				this.item = ((Honeypot)item).shatter(this, this.pos);
-				item.detach( hero.belongings.backpack );
-			} else {
-				this.item = item.detach( hero.belongings.backpack );
-				if ( item instanceof Honeypot.ShatteredPot)
-					((Honeypot.ShatteredPot)item).setHolder(this);
-			}
-
-			return true;
-		} else {
-			return false;
-		}
-	}
-
 	@Override
 	public String description() {
 		String desc =
 				"Though these inmates roam free of their cells, this place is still their prison. " +
 				"Over time, this place has taken their minds as well as their freedom. " +
 				"Long ago, these crazy thieves and bandits have forgotten who they are and why they steal.\n\n" +
-				"These enemies are more likely to steal and run than they are to fight. " +
-				"Make sure to keep them in sight, of you might never see your stolen item again.";
+				"These enemies are more likely to steal and run than they are to fight.";
+				//"Make sure to keep them in sight, of you might never see your stolen item again.";
 
-		if (item != null) {
-			desc += String.format( TXT_CARRIES, Utils.capitalize( this.name ), item.name() );
+		/*
+		if (belongings.backpack.co != null) {
+			desc += String.format( TXT_CARRIES, Utils.capitalize( this.name ), weapon.stolenItem.name() );
 		}
+		*/
 
 		return desc;
+	}
+
+	public void flee()
+	{
+		this.state = FLEEING;
 	}
 
 	private class Fleeing extends Mob.Fleeing {
@@ -191,8 +122,10 @@ public class Thief extends Mob {
 					sprite.showStatus(CharSprite.NEGATIVE, TXT_RAGE);
 					state = HUNTING;
 				} else {
-					if (item != null) GLog.n("The thief gets away with your " + item.name() + "!");
-					item = null;
+					/*
+					if (weapon.stolenItem != null) GLog.n("The thief gets away with your " + weapon.stolenItem.name() + "!");
+					weapon.stolenItem = null;
+					*/
 					state = WANDERING;
 				}
 			} else {

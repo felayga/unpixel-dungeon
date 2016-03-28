@@ -39,7 +39,7 @@ import com.felayga.unpixeldungeon.effects.CellEmitter;
 import com.felayga.unpixeldungeon.effects.Speck;
 import com.felayga.unpixeldungeon.items.Heap;
 import com.felayga.unpixeldungeon.items.Item;
-import com.felayga.unpixeldungeon.items.keys.SkeletonKey;
+import com.felayga.unpixeldungeon.items.keys.SkeletonOldKey;
 import com.felayga.unpixeldungeon.levels.painters.Painter;
 import com.felayga.unpixeldungeon.scenes.GameScene;
 import com.watabou.utils.Bundle;
@@ -258,7 +258,7 @@ public class CavesBossLevel extends Level {
 	@Override
 	public Heap drop( Item item, int cell ) {
 		
-		if (!keyDropped && item instanceof SkeletonKey) {
+		if (!keyDropped && item instanceof SkeletonOldKey) {
 			
 			keyDropped = true;
 			unseal();

@@ -27,34 +27,32 @@ import com.felayga.unpixeldungeon.actors.Char;
 import com.felayga.unpixeldungeon.actors.buffs.Bleeding;
 import com.felayga.unpixeldungeon.actors.buffs.Buff;
 import com.felayga.unpixeldungeon.items.Item;
+import com.felayga.unpixeldungeon.mechanics.GameTime;
 import com.felayga.unpixeldungeon.sprites.ItemSpriteSheet;
 import com.watabou.utils.Random;
 
-public class Tamahawk extends MissileWeapon {
+public class Tomahawk extends MissileWeapon {
 
-	{
-		name = "tomahawk";
-		image = ItemSpriteSheet.TOMAHAWK;
-		
-		STR = 17;
-		
-		MIN = 4;
-		MAX = 20;
-	}
-	
-	public Tamahawk() {
+	public Tomahawk() {
 		this( 1 );
 	}
 	
-	public Tamahawk( int number ) {
-		super();
-		quantity = number;
+	public Tomahawk(int number) {
+		super(GameTime.TICK, 4, 20, number);
+
+		name = "tomahawk";
+		image = ItemSpriteSheet.TOMAHAWK;
+
+		//STR = 17;
 	}
 	
 	@Override
-	public void proc( Char attacker, Char defender, int damage ) {
-		super.proc( attacker, defender, damage );
+	public int proc( Char attacker, boolean thrown, Char defender, int damage ) {
+		damage = super.proc( attacker, thrown, defender, damage );
+
 		Buff.affect( defender, Bleeding.class ).set( damage );
+
+		return damage;
 	}
 	
 	@Override

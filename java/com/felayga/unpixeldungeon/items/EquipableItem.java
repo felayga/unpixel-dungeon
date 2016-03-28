@@ -35,8 +35,17 @@ import com.felayga.unpixeldungeon.actors.hero.Hero;
 import com.felayga.unpixeldungeon.effects.particles.ShadowParticle;
 
 public abstract class EquipableItem extends Item {
-
-	private static final String TXT_UNEQUIP_CANT	= "You can't remove the %s!";
+	public enum Slot {
+		Weapon,
+		Offhand,
+		Armor,
+		Gloves,
+		Boots,
+		Ring,
+		Amulet,
+		Cloak,
+		Face
+	}
 
 	public static final String AC_EQUIP		= "EQUIP";
 	public static final String AC_UNEQUIP	= "UNEQUIP";
@@ -57,16 +66,21 @@ public abstract class EquipableItem extends Item {
 				hero.belongings.equip(this);
 				return false;
 			case AC_UNEQUIP:
-				doUnequip(hero, true);
+				hero.belongings.unequip(this, true);
 				return false;
 			default:
 				return super.execute(hero, action);
 		}
 	}
 
+	public abstract Slot[] getSlots();
+
+	public void onEquip(Char owner, boolean cursed) { }
+	public void onUnequip(Char owner) { }
+
 	@Override
 	public void doDrop( Hero hero ) {
-		if (!isEquipped( hero ) || doUnequip( hero, true, false )) {
+		if (!isEquipped( hero ) || hero.belongings.unequip(this, true)) {
 			super.doDrop( hero );
 		}
 	}
@@ -75,7 +89,7 @@ public abstract class EquipableItem extends Item {
 	public void cast( final Hero user, int dst ) {
 
 		if (isEquipped( user )) {
-			if (quantity == 1 && !this.doUnequip( user, true, false )) {
+			if (quantity == 1 && !user.belongings.unequip(this, true)) {
 				return;
 			}
 		}
@@ -83,13 +97,4 @@ public abstract class EquipableItem extends Item {
 		super.cast( user, dst );
 	}
 
-	public static void equipCursed( Char hero ) {
-		hero.sprite.emitter().burst( ShadowParticle.CURSE, 6 );
-		Sample.INSTANCE.play( Assets.SND_CURSED );
-	}
-
-
-	final public boolean doUnequip( Char hero, boolean collect ) {
-		return doUnequip( hero, collect, true );
-	}
 }

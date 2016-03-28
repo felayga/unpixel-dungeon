@@ -21,23 +21,25 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>
  */
-package com.felayga.unpixeldungeon.items.weapon.melee;
+package com.felayga.unpixeldungeon.items.armor.light;
 
 import com.felayga.unpixeldungeon.sprites.ItemSpriteSheet;
 
-public class Dagger extends MeleeWeapon {
-	
+public class ClothArmor extends LightArmor {
+	public ClothArmor()
 	{
-		name = "dagger";
-		image = ItemSpriteSheet.DAGGER;
-	}
-	
-	public Dagger() {
-		super( 1, 1.2f, 1f );
+		super(1, 8, 16);
+		name = "cloth armor";
+		image = ItemSpriteSheet.ARMOR_CLOTH;
+
+		price = 5;
+		textureIndex = 2;
+
+		bones = false; //Finding them in bones would be semi-frequent and disappointing.
 	}
 	
 	@Override
 	public String desc() {
-		return "A simple iron dagger with a well worn wooden handle.";
+		return "This lightweight armor offers basic protection.";
 	}
 }

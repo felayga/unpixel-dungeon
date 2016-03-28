@@ -34,6 +34,7 @@ import com.felayga.unpixeldungeon.actors.buffs.Buff;
 import com.felayga.unpixeldungeon.actors.buffs.Burning;
 import com.felayga.unpixeldungeon.actors.buffs.Ooze;
 import com.felayga.unpixeldungeon.actors.mobs.Acidic;
+import com.felayga.unpixeldungeon.mechanics.GameTime;
 import com.watabou.noosa.audio.Sample;
 import com.felayga.unpixeldungeon.Assets;
 import com.felayga.unpixeldungeon.Badges;
@@ -52,256 +53,260 @@ import com.felayga.unpixeldungeon.windows.WndOptions;
 import com.watabou.utils.Bundle;
 
 public class Potion extends Item {
-	
-	public static final String AC_DRINK	= "DRINK";
-	
-	private static final String TXT_HARMFUL		= "Harmful potion!";
-	private static final String TXT_BENEFICIAL	= "Beneficial potion";
-	private static final String TXT_YES			= "Yes, I know what I'm doing";
-	private static final String TXT_NO			= "No, I changed my mind";
+
+	public static final String AC_DRINK = "DRINK";
+
+	private static final String TXT_HARMFUL = "Harmful potion!";
+	private static final String TXT_BENEFICIAL = "Beneficial potion";
+	private static final String TXT_YES = "Yes, I know what I'm doing";
+	private static final String TXT_NO = "No, I changed my mind";
 	private static final String TXT_R_U_SURE_DRINK =
-		"Are you sure you want to drink it? In most cases you should throw such potions at your enemies.";
+			"Are you sure you want to drink it? In most cases you should throw such potions at your enemies.";
 	private static final String TXT_R_U_SURE_THROW =
-		"Are you sure you want to throw it? In most cases it makes sense to drink it.";
-	
-	private static final float TIME_TO_DRINK = 1f;
+			"Are you sure you want to throw it? In most cases it makes sense to drink it.";
+
+	private static final long TIME_TO_DRINK = GameTime.TICK;
 
 	protected String initials;
 	protected boolean isHelpful = false;
 	protected boolean isHarmful = false;
 
-	private static final int NONRANDOMPOTIONSATENDOFLISTS=1;
-	
+	private static final int NONRANDOMPOTIONSATENDOFLISTS = 1;
+
 	private static final Class<?>[] potions = {
-		//RANDOMIZED
-		PotionOfHealing.class,
-		PotionOfExperience.class,
-		PotionOfToxicGas.class,
-		PotionOfLiquidFlame.class,
-		PotionOfStrength.class,
-		PotionOfParalyticGas.class,
-		PotionOfLevitation.class,
-		PotionOfMindVision.class,
-		PotionOfPurity.class,
-		PotionOfInvisibility.class,
-		PotionOfMight.class,
-		PotionOfFrost.class,
-		PotionOfBooze.class,
-		PotionOfAcid.class,
-		PotionOfExtraHealing.class,
-		PotionOfFullHealing.class,
-		//NOT RANDOMIZED
-		PotionOfWater.class
+			//RANDOMIZED
+			PotionOfHealing.class,
+			PotionOfExperience.class,
+			PotionOfToxicGas.class,
+			PotionOfLiquidFlame.class,
+			PotionOfStrength.class,
+			PotionOfParalyticGas.class,
+			PotionOfLevitation.class,
+			PotionOfMindVision.class,
+			PotionOfPurity.class,
+			PotionOfInvisibility.class,
+			PotionOfMight.class,
+			PotionOfFrost.class,
+			PotionOfBooze.class,
+			PotionOfAcid.class,
+			PotionOfExtraHealing.class,
+			PotionOfFullHealing.class,
+			PotionOfHallucination.class,
+			//NOT RANDOMIZED
+			PotionOfWater.class
 	};
 	private static final String[] colors = {
-		//RANDOMIZED
-		"ruby",        "pink",        "orange",        "yellow",          "emerald",
-		"dark green",  "cyan",        "sky blue",      "brilliant blue",  "magenta",
-		"purple-red",  "puce",        "milky",         "swirly",          "bubbly",
-		"smoky",       "cloudy",      "effervescent",  "black",           "golden",
-		"brown",       "fizzy",       "dark",          "white",           "murky",
-		//NOT RANDOMIZED
-		"clear"
-		/*"turquoise", "crimson", "azure", "jade", "golden", "magenta",
-		"charcoal", "ivory", "amber", "bistre", "indigo", "silver",
-		"pink", "brown"*/
+			//RANDOMIZED
+			"ruby", "pink", "orange", "yellow", "emerald",
+			"dark green", "cyan", "sky blue", "brilliant blue", "magenta",
+			"purple-red", "puce", "milky", "swirly", "bubbly",
+			"smoky", "cloudy", "effervescent", "black", "golden",
+			"brown", "fizzy", "dark", "white", "murky",
+			//NOT RANDOMIZED
+			"clear"
 	};
 	private static final Integer[] images = {
-		//RANDOMIZED
-		ItemSpriteSheet.POTION_RUBY,
-		ItemSpriteSheet.POTION_PINK,
-		ItemSpriteSheet.POTION_ORANGE,
-		ItemSpriteSheet.POTION_YELLOW,
-		ItemSpriteSheet.POTION_EMERALD,
-		ItemSpriteSheet.POTION_DARKGREEN,
-		ItemSpriteSheet.POTION_CYAN,
-		ItemSpriteSheet.POTION_SKYBLUE,
-		ItemSpriteSheet.POTION_BRILLIANTBLUE,
-		ItemSpriteSheet.POTION_MAGENTA,
-		ItemSpriteSheet.POTION_PURPLERED,
-		ItemSpriteSheet.POTION_PUCE,
-		ItemSpriteSheet.POTION_MILKY,
-		ItemSpriteSheet.POTION_SWIRLY,
-		ItemSpriteSheet.POTION_BUBBLY,
-		ItemSpriteSheet.POTION_SMOKY,
-		ItemSpriteSheet.POTION_CLOUDY,
-		ItemSpriteSheet.POTION_EFFERVESCENT,
-		ItemSpriteSheet.POTION_BLACK,
-		ItemSpriteSheet.POTION_GOLDEN,
-		ItemSpriteSheet.POTION_BROWN,
-		ItemSpriteSheet.POTION_FIZZY,
-		ItemSpriteSheet.POTION_DARK,
-		ItemSpriteSheet.POTION_WHITE,
-		ItemSpriteSheet.POTION_MURKY,
-		//NOT RANDOMIZED
-		ItemSpriteSheet.POTION_CLEAR
+			//RANDOMIZED
+			ItemSpriteSheet.POTION_RUBY,
+			ItemSpriteSheet.POTION_PINK,
+			ItemSpriteSheet.POTION_ORANGE,
+			ItemSpriteSheet.POTION_YELLOW,
+			ItemSpriteSheet.POTION_EMERALD,
+			ItemSpriteSheet.POTION_DARKGREEN,
+			ItemSpriteSheet.POTION_CYAN,
+			ItemSpriteSheet.POTION_SKYBLUE,
+			ItemSpriteSheet.POTION_BRILLIANTBLUE,
+			ItemSpriteSheet.POTION_MAGENTA,
+			ItemSpriteSheet.POTION_PURPLERED,
+			ItemSpriteSheet.POTION_PUCE,
+			ItemSpriteSheet.POTION_MILKY,
+			ItemSpriteSheet.POTION_SWIRLY,
+			ItemSpriteSheet.POTION_BUBBLY,
+			ItemSpriteSheet.POTION_SMOKY,
+			ItemSpriteSheet.POTION_CLOUDY,
+			ItemSpriteSheet.POTION_EFFERVESCENT,
+			ItemSpriteSheet.POTION_BLACK,
+			ItemSpriteSheet.POTION_GOLDEN,
+			ItemSpriteSheet.POTION_BROWN,
+			ItemSpriteSheet.POTION_FIZZY,
+			ItemSpriteSheet.POTION_DARK,
+			ItemSpriteSheet.POTION_WHITE,
+			ItemSpriteSheet.POTION_MURKY,
+			//NOT RANDOMIZED
+			ItemSpriteSheet.POTION_CLEAR
 	};
-	
+
 	private static ItemStatusHandler<Potion> handler;
-	
+
 	private String color;
 
 	public boolean ownedByFruit = false;
-	
-	{
-		stackable = true;
-		defaultAction = AC_DRINK;
-	}
-	
+
 	@SuppressWarnings("unchecked")
 	public static void initColors() {
-		handler = new ItemStatusHandler<Potion>( (Class<? extends Potion>[])potions, colors, images, NONRANDOMPOTIONSATENDOFLISTS );
+		handler = new ItemStatusHandler<Potion>((Class<? extends Potion>[]) potions, colors, images, NONRANDOMPOTIONSATENDOFLISTS);
 	}
-	
-	public static void save( Bundle bundle ) {
-		handler.save( bundle );
+
+	public static void save(Bundle bundle) {
+		handler.save(bundle);
 	}
-	
+
 	@SuppressWarnings("unchecked")
-	public static void restore( Bundle bundle ) {
-		handler = new ItemStatusHandler<Potion>( (Class<? extends Potion>[])potions, colors, images, bundle );
+	public static void restore(Bundle bundle) {
+		handler = new ItemStatusHandler<Potion>((Class<? extends Potion>[]) potions, colors, images, bundle);
 	}
-	
+
 	public Potion() {
 		super();
+
 		syncVisuals();
+
+		stackable = true;
+		defaultAction = AC_DRINK;
+		fragile = true;
 	}
 
 	@Override
-	public void syncVisuals(){
-		image = handler.image( this );
-		color = handler.label( this );
-	};
-	
+	public void syncVisuals() {
+		image = handler.image(this);
+		color = handler.label(this);
+	}
+
+	;
+
 	@Override
-	public ArrayList<String> actions( Hero hero ) {
-		ArrayList<String> actions = super.actions( hero );
-		actions.add( AC_DRINK );
+	public ArrayList<String> actions(Hero hero) {
+		ArrayList<String> actions = super.actions(hero);
+		actions.add(AC_DRINK);
 		return actions;
 	}
-	
+
 	@Override
-	public void execute( final Hero hero, String action ) {
-		if (action.equals( AC_DRINK )) {
-			
+	public boolean execute(final Hero hero, String action) {
+		if (action.equals(AC_DRINK)) {
 			if (isKnown() && isHarmful) {
-				
-					GameScene.show(
-						new WndOptions( TXT_HARMFUL, TXT_R_U_SURE_DRINK, TXT_YES, TXT_NO ) {
+				GameScene.show(
+						new WndOptions(TXT_HARMFUL, TXT_R_U_SURE_DRINK, TXT_YES, TXT_NO) {
 							@Override
 							protected void onSelect(int index) {
 								if (index == 0) {
-									drink( hero );
+									drink(hero);
 								}
-							};
+							}
+
+							;
 						}
-					);
-					
-				} else {
-					drink( hero );
-				}
-			
+				);
+			} else {
+				drink(hero);
+			}
+
+			return false;
 		} else {
-			
-			super.execute( hero, action );
-			
+			return super.execute(hero, action);
 		}
 	}
-	
+
 	@Override
-	public void doThrow( final Hero hero ) {
+	public void doThrow(final Hero hero) {
 
 		if (isKnown() && isHelpful) {
-		
+
 			GameScene.show(
-				new WndOptions( TXT_BENEFICIAL, TXT_R_U_SURE_THROW, TXT_YES, TXT_NO ) {
-					@Override
-					protected void onSelect(int index) {
-						if (index == 0) {
-							Potion.super.doThrow( hero );
+					new WndOptions(TXT_BENEFICIAL, TXT_R_U_SURE_THROW, TXT_YES, TXT_NO) {
+						@Override
+						protected void onSelect(int index) {
+							if (index == 0) {
+								Potion.super.doThrow(hero);
+							}
 						}
-					};
-				}
+
+						;
+					}
 			);
-			
+
 		} else {
-			super.doThrow( hero );
+			super.doThrow(hero);
 		}
 	}
-	
-	protected void drink( Hero hero ) {
-		
-		detach( hero.belongings.backpack );
-		
-		hero.spend( TIME_TO_DRINK );
+
+	protected void drink(Hero hero) {
+		hero.belongings.detach(this);
+
+		hero.spend(TIME_TO_DRINK, false);
 		hero.busy();
-		apply( hero );
-		
-		Sample.INSTANCE.play( Assets.SND_DRINK );
-		
-		hero.sprite.operate( hero.pos );
+		apply(hero);
+
+		Sample.INSTANCE.play(Assets.SND_DRINK);
+
+		hero.sprite.operate(hero.pos);
 	}
-	
+
 	@Override
-	protected void onThrow( int cell ) {
+	protected void onThrow(int cell) {
 		if (Dungeon.level.map[cell] == Terrain.WELL || Level.pit[cell]) {
-			
-			super.onThrow( cell );
-			
-		} else  {
-			
-			shatter( cell );
-			
+
+			super.onThrow(cell);
+
+		} else {
+
+			shatter(cell);
+
 		}
 	}
-	
-	public void apply( Hero hero ) {
-		shatter( hero.pos );
+
+	public void apply(Hero hero) {
+		shatter(hero.pos);
 	}
-	
-	public void shatter( int cell ) {
+
+	public void shatter(int cell) {
 		if (Dungeon.visible[cell]) {
-			GLog.i( "The flask shatters and " + color() + " liquid splashes harmlessly" );
-			Sample.INSTANCE.play( Assets.SND_SHATTER );
-			splash( cell );
+			GLog.i("The flask shatters and " + color() + " liquid splashes harmlessly");
+			Sample.INSTANCE.play(Assets.SND_SHATTER);
+			splash(cell);
 		}
 	}
 
 	@Override
-	public void cast( final Hero user, int dst ) {
-			super.cast(user, dst);
+	public void cast(final Hero user, int dst) {
+		super.cast(user, dst);
 	}
-	
+
 	public boolean isKnown() {
-		return handler.isKnown( this );
+		return handler.isKnown(this);
 	}
-	
-	public void setKnown() {
+
+	public boolean setKnown() {
 		if (!ownedByFruit) {
 			if (!isKnown()) {
 				handler.know(this);
+				Badges.validateAllPotionsIdentified();
+
+				return true;
 			}
-
-			Badges.validateAllPotionsIdentified();
 		}
-	}
-	
-	@Override
-	public Item identify() {
 
-		setKnown();
-		return this;
+		return false;
 	}
-	
+
+	@Override
+	public Item identify(boolean updateQuickslot) {
+		if (setKnown()) {
+			updateQuickslot = true;
+		}
+
+		return super.identify(updateQuickslot);
+	}
+
 	protected String color() {
 		return color;
 	}
-	
+
 	@Override
-	public String name() {
-		return isKnown() ? name : color + " potion";
+	public String getName() {
+		return isKnown() ? super.getName() : color + " potion";
 	}
-	
+
 	@Override
 	public String info() {
 		if (isKnown()) {
@@ -309,51 +314,55 @@ public class Potion extends Item {
 		}
 		char c = color.charAt(0);
 		String a_an;
-		if (c=='a' || c=='e' || c=='i' || c=='o' || c=='u') {
-			a_an="an";
+		if (c == 'a' || c == 'e' || c == 'i' || c == 'o' || c == 'u') {
+			a_an = "an";
+		} else {
+			a_an = "a";
 		}
-		else {
-			a_an="a";
-		}
-		return "This flask contains "+a_an+" " + color + " liquid. " +
-			"Who knows what it will do when drunk or thrown?";
+		return "This flask contains " + a_an + " " + color + " liquid. " +
+				"Who knows what it will do when drunk or thrown?";
 	}
 
-	public String initials(){
+	public String initials() {
 		return isKnown() ? initials : null;
 	}
-	
+
+	@Override
+	public void playPickupSound() {
+		Sample.INSTANCE.play(Assets.SND_ITEM_POTION);
+	}
+
 	@Override
 	public boolean isIdentified() {
-		return isKnown();
+		return super.isIdentified() && isKnown();
 	}
-	
+
 	@Override
 	public boolean isUpgradable() {
 		return false;
 	}
-	
+
 	public static HashSet<Class<? extends Potion>> getKnown() {
 		return handler.known();
 	}
-	
+
 	public static HashSet<Class<? extends Potion>> getUnknown() {
 		return handler.unknown();
 	}
-	
+
 	public static boolean allKnown() {
 		return handler.known().size() == potions.length;
 	}
-	
-	protected void splash( int cell ) {
-		final int color = ItemSprite.pick( image, 8, 10 );
-		Splash.at( cell, color, 5 );
 
-		Fire fire = (Fire)Dungeon.level.blobs.get( Fire.class );
+	protected void splash(int cell) {
+		final int color = ItemSprite.pick(image, 8, 10);
+		Splash.at(cell, color, 5);
+
+		Fire fire = (Fire) Dungeon.level.blobs.get(Fire.class);
 		if (fire != null)
-			fire.clear( cell );
+			fire.clear(cell);
 
-		Acid acid = (Acid)Dungeon.level.blobs.get( Acid.class);
+		Acid acid = (Acid) Dungeon.level.blobs.get(Acid.class);
 		if (acid != null)
 			acid.clear(cell);
 
@@ -363,7 +372,7 @@ public class Potion extends Item {
 			Buff.detach(ch, Ooze.class);
 		}
 	}
-	
+
 	@Override
 	public int price() {
 		return 20 * quantity;

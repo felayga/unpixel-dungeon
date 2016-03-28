@@ -25,24 +25,23 @@ package com.felayga.unpixeldungeon.actors.mobs;
 
 import java.util.HashSet;
 
-import com.felayga.unpixeldungeon.Dungeon;
-import com.felayga.unpixeldungeon.actors.Char;
-import com.felayga.unpixeldungeon.effects.Speck;
-import com.felayga.unpixeldungeon.items.Item;
 import com.felayga.unpixeldungeon.items.potions.PotionOfHealing;
 import com.felayga.unpixeldungeon.items.weapon.enchantments.Leech;
+import com.felayga.unpixeldungeon.items.weapon.melee.mob.LeechChance;
+import com.felayga.unpixeldungeon.mechanics.GameTime;
 import com.felayga.unpixeldungeon.sprites.BatSprite;
-import com.watabou.utils.Random;
 
 public class Bat extends Mob {
 
 	{
 		name = "vampire bat";
 		spriteClass = BatSprite.class;
-		
+
+		DEXCHA = 16;
+
 		HP = HT = 30;
 		defenseSkill = 15;
-		baseSpeed = 2f;
+		movementSpeed = GameTime.TICK * 2;
 		
 		EXP = 7;
 		maxLvl = 15;
@@ -51,40 +50,15 @@ public class Bat extends Mob {
 		
 		loot = new PotionOfHealing();
 		lootChance = 0.1667f; //by default, see die()
-	}
-	
-	@Override
-	public int damageRoll() {
-		return Random.NormalIntRange( 6, 12 );
-	}
-	
-	@Override
-	public int attackSkill( Char target ) {
-		return 16;
-	}
-	
-	@Override
-	public int dr() {
-		return 4;
+
+		belongings.weapon = new LeechChance(GameTime.TICK, 6, 12);
 	}
 	
 	@Override
 	public String defenseVerb() {
 		return "evaded";
 	}
-	
-	@Override
-	public int attackProc( Char enemy, int damage ) {
-		
-		int reg = Math.min( damage, HT - HP );
-		
-		if (reg > 0) {
-			HP += reg;
-			sprite.emitter().burst( Speck.factory( Speck.HEALING ), 1 );
-		}
-		
-		return damage;
-	}
+
 
 	/*
 	@Override

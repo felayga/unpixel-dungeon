@@ -24,6 +24,7 @@
 package com.felayga.unpixeldungeon.actors.mobs;
 
 import com.felayga.unpixeldungeon.actors.Char;
+import com.felayga.unpixeldungeon.actors.mobs.npcs.Boulder;
 import com.felayga.unpixeldungeon.actors.mobs.npcs.Ghost;
 import com.watabou.utils.Random;
 
@@ -71,8 +72,8 @@ public class Bestiary {
 		
 		switch (depth) {
 		case 1:
-			chances = new float[]{ 1 };
-			classes = new Class<?>[]{ Rat.class };
+			chances = new float[]{ 1, 1 };
+			classes = new Class<?>[]{ Rat.class, GridBug.class };
 			break;
 		case 2:
 			chances = new float[]{ 1, 1 };

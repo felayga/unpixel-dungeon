@@ -23,6 +23,9 @@
  */
 package com.felayga.unpixeldungeon.levels.features;
 
+import com.felayga.unpixeldungeon.effects.CellEmitter;
+import com.felayga.unpixeldungeon.effects.Speck;
+import com.felayga.unpixeldungeon.utils.GLog;
 import com.watabou.noosa.audio.Sample;
 import com.felayga.unpixeldungeon.Assets;
 import com.felayga.unpixeldungeon.Dungeon;
@@ -32,22 +35,62 @@ import com.felayga.unpixeldungeon.scenes.GameScene;
 
 public class Door {
 
-	public static void open(int pos)
-	{
-		Level.set( pos, Terrain.OPEN_DOOR );
-		GameScene.updateMap( pos );
+	public static void open(int pos) {
+		Level.set(pos, Terrain.OPEN_DOOR);
+		GameScene.updateMap(pos);
 		Dungeon.observe();
 
 		if (Dungeon.visible[pos]) {
-			Sample.INSTANCE.play( Assets.SND_OPEN );
+			Sample.INSTANCE.play(Assets.SND_OPEN);
 		}
 	}
 
-	public static void close(int pos){
-		if (Dungeon.level.heaps.get( pos ) == null) {
-			Level.set( pos, Terrain.DOOR );
-			GameScene.updateMap( pos );
+	public static void kickOpen(int pos) {
+		Level.set(pos, Terrain.OPEN_DOOR);
+		GameScene.updateMap(pos);
+		Dungeon.observe();
+
+		if (Dungeon.visible[pos]) {
+			Sample.INSTANCE.play(Assets.SND_DOOR_KICKOPEN);
+		}
+	}
+
+	public static void unlock(int pos) {
+		Level.set(pos, Terrain.DOOR);
+		GameScene.updateMap(pos);
+		Dungeon.observe();
+
+		if (Dungeon.visible[pos]) {
+			Sample.INSTANCE.play(Assets.SND_UNLOCK);
+		}
+	}
+
+	public static void close(int pos) {
+		if (Dungeon.level.heaps.get(pos) == null) {
+			Level.set(pos, Terrain.DOOR);
+			GameScene.updateMap(pos);
 			Dungeon.observe();
+		}
+
+		if (Dungeon.visible[pos]) {
+			Sample.INSTANCE.play(Assets.SND_DOOR_CLOSE);
+		}
+	}
+
+	public static void hit(int pos) {
+		if (Dungeon.visible[pos]) {
+			Sample.INSTANCE.play(Assets.SND_DOOR_THUMP);
+		}
+	}
+
+	public static void smash(int pos) {
+		Level.set(pos, Terrain.WOOD_DEBRIS);
+		GameScene.updateMap(pos);
+		Dungeon.observe();
+
+		if (Dungeon.visible[pos]) {
+			CellEmitter.get(pos).burst(Speck.factory(Speck.WOOD), 5);
+			Sample.INSTANCE.play(Assets.SND_DOOR_SMASH);
 		}
 	}
 

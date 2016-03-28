@@ -38,13 +38,13 @@ import com.watabou.utils.Rect;
 
 public class Room extends Rect implements Graph.Node, Bundlable {
 	
-	public HashSet<Room> neigbours = new HashSet<Room>();
-	public HashMap<Room, Door> connected = new HashMap<Room, Door>();
+	public HashSet<Room> neigbours = new HashSet<>();
+	public HashMap<Room, Door> connected = new HashMap<>();
 	
 	public int distance;
 	public int price = 1;
 	
-	public static enum Type {
+	public enum Type {
 		NULL( null ),
 		STANDARD	( StandardPainter.class ),
 		ENTRANCE	( EntrancePainter.class ),
@@ -77,7 +77,7 @@ public class Room extends Rect implements Graph.Node, Bundlable {
 		
 		private Method paint;
 		
-		private Type( Class<? extends Painter> painter ) {
+		Type( Class<? extends Painter> painter ) {
 			try {
 				paint = painter.getMethod( "paint", Level.class, Room.class );
 			} catch (Exception e) {
@@ -92,14 +92,19 @@ public class Room extends Rect implements Graph.Node, Bundlable {
 				ShatteredPixelDungeon.reportException(e);
 			}
 		}
-	};
+	}
 	
-	public static final ArrayList<Type> SPECIALS = new ArrayList<Type>( Arrays.asList(
+	public static final ArrayList<Type> SPECIALS = new ArrayList<>( Arrays.asList(
 		Type.WEAK_FLOOR, Type.MAGIC_WELL, Type.CRYPT, Type.POOL, Type.GARDEN, Type.LIBRARY, Type.ARMORY,
 		Type.TREASURY, Type.TRAPS, Type.STORAGE, Type.STATUE, Type.LABORATORY, Type.VAULT
 	) );
 	
 	public Type type = Type.NULL;
+
+	public Room()
+	{
+		super();
+	}
 	
 	public int random() {
 		return random( 0 );
@@ -239,7 +244,7 @@ public class Room extends Rect implements Graph.Node, Bundlable {
 	
 	public static class Door extends Point {
 		
-		public static enum Type {
+		public enum Type {
 			EMPTY, TUNNEL, REGULAR, UNLOCKED, HIDDEN, BARRICADE, LOCKED
 		}
 		public Type type = Type.EMPTY;

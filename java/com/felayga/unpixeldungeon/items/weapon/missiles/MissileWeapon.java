@@ -130,7 +130,8 @@ public class MissileWeapon extends Weapon {
 
 		return damage;
 	}
-	
+
+	/*
 	@Override
 	public boolean doEquip( final Char hero ) {
 		GameScene.show(
@@ -146,7 +147,8 @@ public class MissileWeapon extends Weapon {
 		
 		return false;
 	}
-	
+	*/
+
 	@Override
 	public Item random() {
 		return this;

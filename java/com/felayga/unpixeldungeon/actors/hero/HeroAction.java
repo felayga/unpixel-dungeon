@@ -25,6 +25,10 @@ package com.felayga.unpixeldungeon.actors.hero;
 
 import com.felayga.unpixeldungeon.actors.Char;
 import com.felayga.unpixeldungeon.actors.mobs.npcs.NPC;
+import com.felayga.unpixeldungeon.items.Item;
+import com.felayga.unpixeldungeon.items.KindOfWeapon;
+import com.felayga.unpixeldungeon.items.tools.digging.DiggingTool;
+import com.felayga.unpixeldungeon.items.tools.unlocking.UnlockingTool;
 
 
 public class HeroAction {
@@ -42,7 +46,13 @@ public class HeroAction {
 			this.dst = dst;
 		}
 	}
-	
+
+	public static class OpenBag extends HeroAction {
+		public OpenBag(int dst) {
+			this.dst = dst;
+		}
+	}
+
 	public static class OpenChest extends HeroAction {
 		public OpenChest( int dst ) {
 			this.dst = dst;
@@ -62,9 +72,26 @@ public class HeroAction {
 		}
 	}
 	
-	public static class Unlock extends HeroAction {
-		public Unlock( int door ) {
+	public static class HandleDoor extends HeroAction {
+		public HandleDoor( int door ) {
 			this.dst = door;
+		}
+		boolean successful = true;
+
+		public static class OpenCloseDoor extends HandleDoor {
+			public OpenCloseDoor(int door) { super(door); }
+		}
+
+		public static class KickDoor extends HandleDoor {
+			public KickDoor(int door) { super(door); }
+		}
+
+		public static class UnlockDoor extends HandleDoor {
+			UnlockingTool tool;
+			public UnlockDoor(int door, UnlockingTool tool) {
+				super(door);
+				this.tool = tool;
+			}
 		}
 	}
 	
@@ -88,8 +115,69 @@ public class HeroAction {
 	
 	public static class Attack extends HeroAction {
 		public Char target;
-		public Attack( Char target ) {
+		public KindOfWeapon weapon;
+		public boolean weaponThrown;
+		public Attack( KindOfWeapon weapon, boolean thrown, Char target )
+		{
 			this.target = target;
+			this.weapon = weapon;
+			this.weaponThrown = thrown;
+		}
+	}
+
+	public static class UseItem extends HeroAction {
+		public Item target;
+		public String action;
+
+		public UseItem(Item target, String action)
+		{
+			this.target = target;
+			this.action = action;
+		}
+	}
+
+	public static class UnlockBag extends HeroAction {
+		public UnlockingTool tool;
+		public Item target;
+		public int location;
+
+		public UnlockBag(UnlockingTool tool, Item target, int location) {
+			this.tool = tool;
+			this.target = target;
+			this.location = location;
+		}
+	}
+
+	public static class EatItem extends UseItem{
+		public boolean targetOutsideInventory;
+		public boolean startedEating;
+		public boolean stoppedEating;
+		public boolean forced;
+
+		public EatItem(Item target, String action) {
+			this(target, action, false);
+		}
+
+		public EatItem(Item target, String action, boolean forced) {
+			super(target, action);
+
+			this.forced = forced;
+
+			targetOutsideInventory = false;
+			startedEating = false;
+			stoppedEating = false;
+		}
+	}
+
+	public static class Dig extends HeroAction {
+		public DiggingTool tool;
+		public int pos;
+		public int effort;
+
+		public Dig(DiggingTool tool, int pos, int effort) {
+			this.tool = tool;
+			this.pos = pos;
+			this.effort = effort;
 		}
 	}
 }

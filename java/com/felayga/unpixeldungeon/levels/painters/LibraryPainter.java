@@ -26,7 +26,7 @@ package com.felayga.unpixeldungeon.levels.painters;
 import com.felayga.unpixeldungeon.Dungeon;
 import com.felayga.unpixeldungeon.items.Generator;
 import com.felayga.unpixeldungeon.items.Item;
-import com.felayga.unpixeldungeon.items.keys.IronKey;
+import com.felayga.unpixeldungeon.items.keys.IronOldKey;
 import com.felayga.unpixeldungeon.items.scrolls.Scroll;
 import com.felayga.unpixeldungeon.levels.Level;
 import com.felayga.unpixeldungeon.levels.Room;
@@ -79,7 +79,7 @@ public class LibraryPainter extends Painter {
 		}
 		
 		entrance.set( Room.Door.Type.LOCKED );
-		level.addItemToSpawn( new IronKey( Dungeon.depth ) );
+		level.addItemToSpawn( new IronOldKey( Dungeon.depth ) );
 	}
 	
 	private static Item prize( Level level ) {

@@ -158,8 +158,6 @@ public class CityLevel extends RegularLevel {
 	
 	private static class Smoke extends Emitter {
 		
-		private int pos;
-		
 		private static final Emitter.Factory factory = new Factory() {
 			
 			@Override
@@ -171,11 +169,10 @@ public class CityLevel extends RegularLevel {
 		
 		public Smoke( int pos ) {
 			super();
-			
 			this.pos = pos;
 			
 			PointF p = DungeonTilemap.tileCenterToWorld( pos );
-			pos( p.x - 4, p.y - 2, 4, 0 );
+			pos( pos, p.x - 4, p.y - 2, 4, 0 );
 			
 			pour( factory, 0.2f );
 		}

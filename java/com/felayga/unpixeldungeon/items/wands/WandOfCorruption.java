@@ -36,7 +36,7 @@ import com.felayga.unpixeldungeon.actors.mobs.Tengu;
 import com.felayga.unpixeldungeon.actors.mobs.Yog;
 import com.felayga.unpixeldungeon.actors.mobs.npcs.Ghost;
 import com.felayga.unpixeldungeon.effects.MagicMissile;
-import com.felayga.unpixeldungeon.items.weapon.melee.MagesStaff;
+import com.felayga.unpixeldungeon.items.weapon.melee.simple.MagesStaff;
 import com.felayga.unpixeldungeon.mechanics.Ballistica;
 import com.felayga.unpixeldungeon.sprites.ItemSpriteSheet;
 import com.felayga.unpixeldungeon.utils.GLog;

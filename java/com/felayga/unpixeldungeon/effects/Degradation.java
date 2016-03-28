@@ -100,7 +100,8 @@ public class Degradation extends Group {
 	}
 	
 	private Degradation( PointF p, int[] matrix ) {
-		
+		super(-1);
+
 		for (int i=0; i < matrix.length; i += 2) {
 			add( new Speck( p.x, p.y, matrix[i], matrix[i+1] ) );
 			add( new Speck( p.x, p.y, matrix[i], matrix[i+1] ) );

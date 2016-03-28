@@ -23,6 +23,7 @@
  */
 package com.felayga.unpixeldungeon.actors.buffs;
 
+import com.felayga.unpixeldungeon.mechanics.GameTime;
 import com.felayga.unpixeldungeon.ui.BuffIndicator;
 
 public class Fury extends Buff {
@@ -39,7 +40,7 @@ public class Fury extends Buff {
 			detach();
 		}
 		
-		spend( TICK );
+		spend(GameTime.TICK, false );
 		
 		return true;
 	}

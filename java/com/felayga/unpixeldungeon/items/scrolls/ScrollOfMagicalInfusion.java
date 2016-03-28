@@ -30,7 +30,7 @@ import com.felayga.unpixeldungeon.items.Item;
 import com.felayga.unpixeldungeon.items.armor.Armor;
 import com.felayga.unpixeldungeon.items.weapon.Weapon;
 import com.felayga.unpixeldungeon.utils.GLog;
-import com.felayga.unpixeldungeon.windows.WndBag;
+import com.felayga.unpixeldungeon.windows.WndBackpack;
 
 public class ScrollOfMagicalInfusion extends InventoryScroll {
 
@@ -41,7 +41,7 @@ public class ScrollOfMagicalInfusion extends InventoryScroll {
 		initials = "MaI";
 
 		inventoryTitle = "Select an item to infuse";
-		mode = WndBag.Mode.ENCHANTABLE;
+		mode = WndBackpack.Mode.ENCHANTABLE;
 
 		bones = true;
 	}
@@ -49,13 +49,33 @@ public class ScrollOfMagicalInfusion extends InventoryScroll {
 	@Override
 	protected void onItemSelected( Item item ) {
 
-		ScrollOfRemoveCurse.uncurse( Dungeon.hero, item );
-		if (item instanceof Weapon)
-			((Weapon)item).upgrade(true);
-		else
-			((Armor)item).upgrade(true);
+		ScrollOfRemoveCurse.uncurse( Dungeon.hero, this, item );
+		if (item instanceof Weapon) {
+			Weapon weapon = (Weapon)item;
+			Weapon.Enchantment enchantment = weapon.enchantment;
+
+			weapon.upgrade(this, 1);
+			if (enchantment != null) {
+				weapon.enchant(enchantment);
+			}
+			else {
+				weapon.enchant();
+			}
+		}
+		else {
+			Armor armor = (Armor)item;
+			Armor.Glyph enchantment = armor.glyph;
+
+			armor.upgrade(this, 1);
+			if (enchantment != null) {
+				armor.enchant(enchantment);
+			}
+			else {
+				armor.enchant();
+			}
+		}
 		
-		GLog.p( TXT_INFUSE, item.name() );
+		GLog.p( TXT_INFUSE, item.getDisplayName() );
 		
 		Badges.validateItemLevelAquired( item );
 		

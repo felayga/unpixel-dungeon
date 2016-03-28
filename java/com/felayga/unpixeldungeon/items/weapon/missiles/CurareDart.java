@@ -23,40 +23,39 @@
  */
 package com.felayga.unpixeldungeon.items.weapon.missiles;
 
+import com.felayga.unpixeldungeon.actors.Actor;
 import com.felayga.unpixeldungeon.actors.Char;
 import com.felayga.unpixeldungeon.actors.buffs.Buff;
 import com.felayga.unpixeldungeon.actors.buffs.Paralysis;
 import com.felayga.unpixeldungeon.items.Item;
+import com.felayga.unpixeldungeon.mechanics.GameTime;
 import com.felayga.unpixeldungeon.sprites.ItemSpriteSheet;
 import com.watabou.utils.Random;
 
 public class CurareDart extends MissileWeapon {
 
-	public static final float DURATION	= 3f;
-	
-	{
-		name = "curare dart";
-		image = ItemSpriteSheet.CURARE_DART;
-		
-		STR = 14;
-		
-		MIN = 1;
-		MAX = 3;
-	}
+	public static final long DURATION	= GameTime.TICK * 3;
 	
 	public CurareDart() {
 		this( 1 );
 	}
 	
 	public CurareDart( int number ) {
-		super();
-		quantity = number;
+		super(GameTime.TICK, 1, 3, number);
+
+		name = "curare dart";
+		image = ItemSpriteSheet.CURARE_DART;
+
+		//STR = 14;
 	}
 	
 	@Override
-	public void proc( Char attacker, Char defender, int damage ) {
+	public int proc( Char attacker, boolean thrown, Char defender, int damage ) {
+		damage = super.proc(attacker, thrown, defender, damage);
+
 		Buff.prolong( defender, Paralysis.class, DURATION );
-		super.proc( attacker, defender, damage );
+
+		return damage;
 	}
 	
 	@Override

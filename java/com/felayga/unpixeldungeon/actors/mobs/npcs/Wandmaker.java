@@ -44,6 +44,7 @@ import com.felayga.unpixeldungeon.items.wands.Wand;
 import com.felayga.unpixeldungeon.levels.PrisonLevel;
 import com.felayga.unpixeldungeon.levels.Room;
 import com.felayga.unpixeldungeon.levels.Terrain;
+import com.felayga.unpixeldungeon.mechanics.GameTime;
 import com.felayga.unpixeldungeon.plants.Plant;
 import com.felayga.unpixeldungeon.scenes.GameScene;
 import com.felayga.unpixeldungeon.sprites.ItemSpriteSheet;
@@ -338,12 +339,12 @@ public class Wandmaker extends NPC {
 
 					given = false;
 					wand1 = (Wand) Generator.random(Generator.Category.WAND);
-					wand1.upgrade();
+					wand1.upgrade(null, 1);
 
 					do {
 						wand2 = (Wand) Generator.random(Generator.Category.WAND);
 					} while (wand2.getClass().equals(wand1.getClass()));
-					wand2.upgrade();
+					wand2.upgrade(null, 1);
 
 					return true;
 				} else {
@@ -414,7 +415,7 @@ public class Wandmaker extends NPC {
 			Dungeon.level.drop( new Seed(), pos ).sprite.drop();
 			
 			if (ch != null) {
-				Buff.prolong( ch, Roots.class, TICK * 3 );
+				Buff.prolong( ch, Roots.class, GameTime.TICK * 3 );
 			}
 		}
 		

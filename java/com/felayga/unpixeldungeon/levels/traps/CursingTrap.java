@@ -31,6 +31,7 @@ import com.felayga.unpixeldungeon.effects.particles.ShadowParticle;
 import com.felayga.unpixeldungeon.items.*;
 import com.felayga.unpixeldungeon.items.armor.Armor;
 import com.felayga.unpixeldungeon.items.tools.Tool;
+import com.felayga.unpixeldungeon.mechanics.BUCStatus;
 import com.felayga.unpixeldungeon.sprites.TrapSprite;
 import com.felayga.unpixeldungeon.utils.GLog;
 import com.watabou.noosa.audio.Sample;
@@ -53,43 +54,16 @@ public class CursingTrap extends Trap {
 		Heap heap = Dungeon.level.heaps.get( pos );
 		if (heap != null){
 			for (Item item : heap.items){
-				if (item.isUpgradable())
-					item.cursed = item.cursedKnown = true;
+				if (item.isUpgradable()) {
+					item.bucStatus(BUCStatus.Cursed, false);
+				}
 			}
 		}
 
 		if (Dungeon.hero.pos == pos){
 			Hero user = Dungeon.hero;
 
-			KindOfWeapon weapon = user.belongings.weapon;
-			KindOfWeapon offhand = user.belongings.offhand;
-			Tool tool1 = user.belongings.tool1;
-			Tool tool2 = user.belongings.tool2;
-
-			Armor armor = user.belongings.armor;
-			Armor gloves = user.belongings.gloves;
-			Armor boots = user.belongings.boots;
-			Armor cloak = user.belongings.cloak;
-
-			KindofMisc misc1 = user.belongings.ring1;
-			KindofMisc misc2 = user.belongings.ring2;
-			KindofMisc amulet = user.belongings.amulet;
-			KindofMisc face = user.belongings.face;
-
-			if (weapon != null) weapon.cursed = weapon.cursedKnown = true;
-			if (offhand != null) offhand.cursed = offhand.cursedKnown = true;
-			if (tool1 != null) tool1.cursed = tool1.cursedKnown = true;
-			if (tool2 != null) tool2.cursed = tool2.cursedKnown = true;
-
-			if (armor != null)  armor.cursed = armor.cursedKnown = true;
-			if (gloves != null) gloves.cursed = gloves.cursedKnown = true;
-			if (boots != null) boots.cursed = boots.cursedKnown = true;
-			if (cloak != null) cloak.cursed = cloak.cursedKnown = true;
-
-			if (misc1 != null)  misc1.cursed = misc1.cursedKnown = true;
-			if (misc2 != null)  misc2.cursed = misc2.cursedKnown = true;
-			if (amulet != null) amulet.cursed = amulet.cursedKnown = true;
-			if (face != null) face.cursed = face.cursedKnown = true;
+			user.belongings.bucChange(true, BUCStatus.Cursed, true, true, true, false);
 
 			EquipableItem.equipCursed(user);
 			GLog.n("Your worn equipment becomes cursed!");

@@ -49,7 +49,6 @@ public class FogOfWar extends Image {
 	private int height2;
 	
 	public FogOfWar( int mapWidth, int mapHeight ) {
-		
 		super();
 		
 		pWidth = mapWidth + 1;
@@ -79,7 +78,6 @@ public class FogOfWar extends Image {
 	}
 	
 	public void updateVisibility( boolean[] visible, boolean[] visited, boolean[] mapped ) {
-		
 		if (pixels == null) {
 			pixels = new int[width2 * height2];
 			Arrays.fill( pixels, INVISIBLE );

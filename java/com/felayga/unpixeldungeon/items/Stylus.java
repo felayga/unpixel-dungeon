@@ -27,10 +27,11 @@ import com.felayga.unpixeldungeon.Assets;
 import com.felayga.unpixeldungeon.actors.hero.Hero;
 import com.felayga.unpixeldungeon.effects.particles.PurpleParticle;
 import com.felayga.unpixeldungeon.items.armor.Armor;
+import com.felayga.unpixeldungeon.mechanics.GameTime;
 import com.felayga.unpixeldungeon.scenes.GameScene;
 import com.felayga.unpixeldungeon.sprites.ItemSpriteSheet;
 import com.felayga.unpixeldungeon.utils.GLog;
-import com.felayga.unpixeldungeon.windows.WndBag;
+import com.felayga.unpixeldungeon.windows.WndBackpack;
 import com.watabou.noosa.audio.Sample;
 
 import java.util.ArrayList;
@@ -40,7 +41,7 @@ public class Stylus extends Item {
 	private static final String TXT_SELECT_ARMOR	= "Select an armor to inscribe on";
 	private static final String TXT_INSCRIBED		= "you inscribed your %s with the stylus";
 	
-	private static final float TIME_TO_INSCRIBE = 2;
+	private static final long TIME_TO_INSCRIBE = GameTime.TICK * 2;
 	
 	private static final String AC_INSCRIBE = "INSCRIBE";
 	
@@ -61,16 +62,14 @@ public class Stylus extends Item {
 	}
 	
 	@Override
-	public void execute( Hero hero, String action ) {
-		if (action == AC_INSCRIBE) {
-
+	public boolean execute( Hero hero, String action ) {
+		if (action.equals(AC_INSCRIBE)) {
 			curUser = hero;
-			GameScene.selectItem( itemSelector, WndBag.Mode.ARMOR, TXT_SELECT_ARMOR );
-			
+			GameScene.selectItem( itemSelector, WndBackpack.Mode.ARMOR, TXT_SELECT_ARMOR );
+
+			return false;
 		} else {
-			
-			super.execute( hero, action );
-			
+			return super.execute( hero, action );
 		}
 	}
 	
@@ -85,18 +84,17 @@ public class Stylus extends Item {
 	}
 	
 	private void inscribe( Armor armor ) {
-		
-		detach( curUser.belongings.backpack );
+		curUser.belongings.detach(this);
 
-		GLog.w( TXT_INSCRIBED, armor.name() );
+		GLog.w( TXT_INSCRIBED, armor.getDisplayName() );
 		
-		armor.inscribe();
+		armor.enchant();
 		
 		curUser.sprite.operate( curUser.pos );
-		curUser.sprite.centerEmitter().start( PurpleParticle.BURST, 0.05f, 10 );
+		curUser.sprite.centerEmitter(-1).start( PurpleParticle.BURST, 0.05f, 10 );
 		Sample.INSTANCE.play( Assets.SND_BURNING );
 		
-		curUser.spend( TIME_TO_INSCRIBE );
+		curUser.spend( TIME_TO_INSCRIBE, false );
 		curUser.busy();
 	}
 	
@@ -113,7 +111,7 @@ public class Stylus extends Item {
 			"the stylus will decide it for you.";
 	}
 	
-	private final WndBag.Listener itemSelector = new WndBag.Listener() {
+	private final WndBackpack.Listener itemSelector = new WndBackpack.Listener() {
 		@Override
 		public void onSelect( Item item ) {
 			if (item != null) {

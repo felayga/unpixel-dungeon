@@ -254,15 +254,11 @@ public class CavesLevel extends RegularLevel {
 	
 	private static class Vein extends Group {
 		
-		private int pos;
-		
 		private float delay;
 		
 		public Vein( int pos ) {
-			super();
-			
-			this.pos = pos;
-			
+			super(pos);
+
 			delay = Random.Float( 2 );
 		}
 		

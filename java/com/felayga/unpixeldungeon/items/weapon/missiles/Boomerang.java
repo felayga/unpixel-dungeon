@@ -27,20 +27,21 @@ import com.felayga.unpixeldungeon.Dungeon;
 import com.felayga.unpixeldungeon.actors.Char;
 import com.felayga.unpixeldungeon.actors.hero.Hero;
 import com.felayga.unpixeldungeon.items.Item;
+import com.felayga.unpixeldungeon.mechanics.GameTime;
 import com.felayga.unpixeldungeon.sprites.ItemSpriteSheet;
 import com.felayga.unpixeldungeon.sprites.MissileSprite;
 
 public class Boomerang extends MissileWeapon {
 
+	public Boomerang()
 	{
+		super(GameTime.TICK, 1, 5, 1);
+
 		name = "boomerang";
 		image = ItemSpriteSheet.BOOMERANG;
 		
-		STR = 10;
+		//STR = 10;
 		
-		MIN = 1;
-		MAX = 5;
-
 		stackable = false;
 
 		unique = true;
@@ -51,36 +52,16 @@ public class Boomerang extends MissileWeapon {
 	public boolean isUpgradable() {
 		return true;
 	}
-	
-	@Override
-	public Item upgrade() {
-		return upgrade( false );
-	}
-	
-	@Override
-	public Item upgrade( boolean enchant ) {
-		MIN += 1;
-		MAX += 2;
-		super.upgrade( enchant );
-		
-		updateQuickslot();
-		
-		return this;
-	}
-	
-	@Override
-	public Item degrade() {
-		MIN -= 1;
-		MAX -= 2;
-		return super.degrade();
-	}
 
 	@Override
-	public void proc( Char attacker, Char defender, int damage ) {
-		super.proc( attacker, defender, damage );
-		if (attacker instanceof Hero && ((Hero)attacker).rangedWeapon == this) {
-			circleBack( defender.pos, (Hero)attacker );
+	public int proc( Char attacker, boolean thrown, Char defender, int damage ) {
+		damage = super.proc( attacker, thrown, defender, damage );
+
+		if (attacker instanceof Hero && thrown) {
+			circleBack( defender.pos, attacker );
 		}
+
+		return damage;
 	}
 
 	@Override
@@ -88,19 +69,22 @@ public class Boomerang extends MissileWeapon {
 		circleBack( cell, curUser );
 	}
 
-	private void circleBack( int from, Hero owner ) {
+	private void circleBack( int from, Char owner ) {
 
 		((MissileSprite)curUser.sprite.parent.recycle( MissileSprite.class )).
 				reset( from, curUser.pos, curItem, null );
 
-		if (throwEquiped) {
-			owner.belongings.weapon = this;
-			owner.spend( -TIME_TO_EQUIP );
-			Dungeon.quickslot.replaceSimilar(this);
-			updateQuickslot();
-		} else
-		if (!collect( curUser.belongings.backpack )) {
-			Dungeon.level.drop( this, owner.pos ).sprite.drop();
+		if (owner instanceof Hero) {
+			Hero hero = (Hero) owner;
+
+			if (throwEquiped) {
+				hero.belongings.weapon = this;
+				hero.spend(-TIME_TO_EQUIP, false);
+				Dungeon.quickslot.replaceSimilar(this);
+				updateQuickslot();
+			} else if (!curUser.belongings.collect(this)) {
+				Dungeon.level.drop(this, hero.pos).sprite.drop();
+			}
 		}
 	}
 
@@ -116,6 +100,7 @@ public class Boomerang extends MissileWeapon {
 	public String desc() {
 		String info =
 			"Thrown to the enemy this flat curved wooden missile will return to the hands of its thrower.";
+		/*
 		switch (imbue) {
 			case LIGHT:
 				info += "\n\nIt was balanced to be lighter. ";
@@ -125,6 +110,7 @@ public class Boomerang extends MissileWeapon {
 				break;
 			case NONE:
 		}
+		*/
 		return info;
 	}
 }

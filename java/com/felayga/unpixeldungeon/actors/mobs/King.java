@@ -27,8 +27,13 @@ import java.util.HashSet;
 
 import com.felayga.unpixeldungeon.actors.buffs.LockedFloor;
 import com.felayga.unpixeldungeon.actors.buffs.Vertigo;
+import com.felayga.unpixeldungeon.items.KindOfWeapon;
 import com.felayga.unpixeldungeon.items.artifacts.LloydsBeacon;
+import com.felayga.unpixeldungeon.items.keys.SkeletonOldKey;
 import com.felayga.unpixeldungeon.items.scrolls.ScrollOfTeleportation;
+import com.felayga.unpixeldungeon.items.weapon.melee.mob.MeleeMobAttack;
+import com.felayga.unpixeldungeon.items.weapon.melee.mob.ParalyzeChance;
+import com.felayga.unpixeldungeon.mechanics.GameTime;
 import com.felayga.unpixeldungeon.ui.BossHealthBar;
 import com.felayga.unpixeldungeon.utils.GLog;
 import com.watabou.noosa.audio.Sample;
@@ -38,12 +43,10 @@ import com.felayga.unpixeldungeon.Dungeon;
 import com.felayga.unpixeldungeon.actors.Actor;
 import com.felayga.unpixeldungeon.actors.Char;
 import com.felayga.unpixeldungeon.actors.blobs.ToxicGas;
-import com.felayga.unpixeldungeon.actors.buffs.Buff;
 import com.felayga.unpixeldungeon.actors.buffs.Paralysis;
 import com.felayga.unpixeldungeon.effects.Flare;
 import com.felayga.unpixeldungeon.effects.Speck;
 import com.felayga.unpixeldungeon.items.ArmorKit;
-import com.felayga.unpixeldungeon.items.keys.SkeletonKey;
 import com.felayga.unpixeldungeon.items.scrolls.ScrollOfPsionicBlast;
 import com.felayga.unpixeldungeon.items.wands.WandOfDisintegration;
 import com.felayga.unpixeldungeon.items.weapon.enchantments.Death;
@@ -54,7 +57,6 @@ import com.felayga.unpixeldungeon.sprites.KingSprite;
 import com.felayga.unpixeldungeon.sprites.UndeadSprite;
 import com.watabou.utils.Bundle;
 import com.watabou.utils.PathFinder;
-import com.watabou.utils.Random;
 
 public class King extends Mob {
 	
@@ -66,11 +68,15 @@ public class King extends Mob {
 
 		canOpenDoors = true;
 
+		DEXCHA = 32;
+
 		HP = HT = 300;
 		EXP = 40;
 		defenseSkill = 25;
 		
 		Undead.count = 0;
+
+		belongings.weapon = new MeleeMobAttack(GameTime.TICK, 20, 38);
 	}
 	
 	private boolean nextPedestal = true;
@@ -80,7 +86,7 @@ public class King extends Mob {
 	@Override
 	public void storeInBundle( Bundle bundle ) {
 		super.storeInBundle( bundle );
-		bundle.put( PEDESTAL, nextPedestal );
+		bundle.put(PEDESTAL, nextPedestal);
 	}
 	
 	@Override
@@ -88,21 +94,6 @@ public class King extends Mob {
 		super.restoreFromBundle( bundle );
 		nextPedestal = bundle.getBoolean( PEDESTAL );
 		BossHealthBar.assignBoss(this);
-	}
-	
-	@Override
-	public int damageRoll() {
-		return Random.NormalIntRange( 20, 38 );
-	}
-	
-	@Override
-	public int attackSkill( Char target ) {
-		return 32;
-	}
-	
-	@Override
-	public int dr() {
-		return 14;
 	}
 	
 	@Override
@@ -134,15 +125,15 @@ public class King extends Mob {
 	}
 	
 	@Override
-	public boolean attack( Char enemy ) {
+	public boolean attack( KindOfWeapon weapon, boolean thrown, Char target ) {
 		if (canTryToSummon() && pos == CityBossLevel.pedestal( nextPedestal )) {
 			summon();
 			return true;
 		} else {
-			if (Actor.findChar( CityBossLevel.pedestal( nextPedestal ) ) == enemy) {
+			if (Actor.findChar( CityBossLevel.pedestal( nextPedestal ) ) == target) {
 				nextPedestal = !nextPedestal;
 			}
-			return super.attack(enemy);
+			return super.attack(weapon, thrown, target);
 		}
 	}
 
@@ -158,7 +149,7 @@ public class King extends Mob {
 
 		GameScene.bossSlain();
 		Dungeon.level.drop( new ArmorKit(), pos ).sprite.drop();
-		Dungeon.level.drop( new SkeletonKey( Dungeon.depth ), pos ).sprite.drop();
+		Dungeon.level.drop( new SkeletonOldKey( Dungeon.depth ), pos ).sprite.drop();
 		
 		super.die( cause );
 		
@@ -166,7 +157,7 @@ public class King extends Mob {
 
 		LloydsBeacon beacon = Dungeon.hero.belongings.getItem(LloydsBeacon.class);
 		if (beacon != null) {
-			beacon.upgrade();
+			beacon.upgrade(null, 1);
 			GLog.p("Your beacon grows stronger!");
 		}
 		
@@ -191,7 +182,7 @@ public class King extends Mob {
 
 		nextPedestal = !nextPedestal;
 		
-		sprite.centerEmitter().start( Speck.factory( Speck.SCREAM ), 0.4f, 2 );
+		sprite.centerEmitter(-1).start( Speck.factory( Speck.SCREAM ), 0.4f, 2 );
 		Sample.INSTANCE.play( Assets.SND_CHALLENGE );
 		
 		boolean[] passable = Level.passable.clone();
@@ -277,6 +268,8 @@ public class King extends Mob {
 		{
 			name = "undead dwarf";
 			spriteClass = UndeadSprite.class;
+
+			DEXCHA = 16;
 			
 			HP = HT = 28;
 			defenseSkill = 15;
@@ -284,6 +277,8 @@ public class King extends Mob {
 			EXP = 0;
 			
 			state = WANDERING;
+
+			belongings.weapon = new ParalyzeChance(GameTime.TICK, 12, 16);
 		}
 		
 		@Override
@@ -296,25 +291,6 @@ public class King extends Mob {
 		protected void onRemove() {
 			count--;
 			super.onRemove();
-		}
-		
-		@Override
-		public int damageRoll() {
-			return Random.NormalIntRange( 12, 16 );
-		}
-		
-		@Override
-		public int attackSkill( Char target ) {
-			return 16;
-		}
-		
-		@Override
-		public int attackProc( Char enemy, int damage ) {
-			if (Random.Int( MAX_ARMY_SIZE ) == 0) {
-				Buff.prolong( enemy, Paralysis.class, 1 );
-			}
-			
-			return damage;
 		}
 		
 		@Override
@@ -332,11 +308,6 @@ public class King extends Mob {
 			if (Dungeon.visible[pos]) {
 				Sample.INSTANCE.play( Assets.SND_BONES );
 			}
-		}
-		
-		@Override
-		public int dr() {
-			return 5;
 		}
 		
 		@Override

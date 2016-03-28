@@ -24,10 +24,14 @@
 package com.felayga.unpixeldungeon.items;
 
 import com.felayga.unpixeldungeon.Dungeon;
-import com.felayga.unpixeldungeon.actors.hero.Hero;
 import com.felayga.unpixeldungeon.actors.mobs.npcs.Ghost;
 import com.felayga.unpixeldungeon.actors.mobs.npcs.Wandmaker.Rotberry;
 import com.felayga.unpixeldungeon.items.armor.*;
+import com.felayga.unpixeldungeon.items.armor.heavy.HalfPlateArmor;
+import com.felayga.unpixeldungeon.items.armor.light.ClothArmor;
+import com.felayga.unpixeldungeon.items.armor.light.LeatherArmor;
+import com.felayga.unpixeldungeon.items.armor.medium.MailArmor;
+import com.felayga.unpixeldungeon.items.armor.medium.ScaleArmor;
 import com.felayga.unpixeldungeon.items.artifacts.*;
 import com.felayga.unpixeldungeon.items.bags.Bag;
 import com.felayga.unpixeldungeon.items.food.Food;
@@ -38,7 +42,17 @@ import com.felayga.unpixeldungeon.items.rings.*;
 import com.felayga.unpixeldungeon.items.scrolls.*;
 import com.felayga.unpixeldungeon.items.wands.*;
 import com.felayga.unpixeldungeon.items.weapon.*;
-import com.felayga.unpixeldungeon.items.weapon.melee.*;
+import com.felayga.unpixeldungeon.items.weapon.melee.martial.BattleAxe;
+import com.felayga.unpixeldungeon.items.weapon.melee.martial.Glaive;
+import com.felayga.unpixeldungeon.items.weapon.melee.martial.Longsword;
+import com.felayga.unpixeldungeon.items.weapon.melee.martial.ShortSword;
+import com.felayga.unpixeldungeon.items.weapon.melee.martial.Sword;
+import com.felayga.unpixeldungeon.items.weapon.melee.martial.WarHammer;
+import com.felayga.unpixeldungeon.items.weapon.melee.simple.Dagger;
+import com.felayga.unpixeldungeon.items.weapon.melee.simple.Knuckles;
+import com.felayga.unpixeldungeon.items.weapon.melee.simple.Mace;
+import com.felayga.unpixeldungeon.items.weapon.melee.simple.Quarterstaff;
+import com.felayga.unpixeldungeon.items.weapon.melee.simple.Spear;
 import com.felayga.unpixeldungeon.items.weapon.missiles.*;
 import com.felayga.unpixeldungeon.plants.*;
 import com.watabou.utils.Bundle;
@@ -51,269 +65,265 @@ import java.util.HashMap;
 public class Generator {
 
 	public static enum Category {
-		WEAPON	( 150,	Weapon.class ),
-		ARMOR	( 100,	Armor.class ),
-		POTION	( 500,	Potion.class ),
-		SCROLL	( 400,	Scroll.class ),
-		WAND	( 40,	Wand.class ),
-		RING	( 15,	Ring.class ),
-		ARTIFACT( 15,   Artifact.class),
-		SEED	( 50,	Plant.Seed.class ),
-		FOOD	( 0,	Food.class ),
-		GOLD	( 500,	Gold.class );
-		
+		WEAPON(150, Weapon.class),
+		ARMOR(100, Armor.class),
+		POTION(500, Potion.class),
+		SCROLL(400, Scroll.class),
+		WAND(40, Wand.class),
+		RING(15, Ring.class),
+		ARTIFACT(15, Artifact.class),
+		SEED(50, Plant.Seed.class),
+		FOOD(0, Food.class),
+		GOLD(500, Gold.class);
+
 		public Class<?>[] classes;
 		public float[] probs;
-		
+
 		public float prob;
 		public Class<? extends Item> superClass;
-		
-		private Category( float prob, Class<? extends Item> superClass ) {
+
+		private Category(float prob, Class<? extends Item> superClass) {
 			this.prob = prob;
 			this.superClass = superClass;
 		}
-		
-		public static int order( Item item ) {
-			for (int i=0; i < values().length; i++) {
-				if (values()[i].superClass.isInstance( item )) {
+
+		public static int order(Item item) {
+			for (int i = 0; i < values().length; i++) {
+				if (values()[i].superClass.isInstance(item)) {
 					return i;
 				}
 			}
-			
+
 			return item instanceof Bag ? Integer.MAX_VALUE : Integer.MAX_VALUE - 1;
 		}
-	};
-	
-	private static HashMap<Category,Float> categoryProbs = new HashMap<Generator.Category, Float>();
+	}
 
-	private static final float[] INITIAL_ARTIFACT_PROBS = new float[]{ 0, 1, 0, 1, 0, 1, 1, 1, 1, 0, 0, 0, 1};
-	
+	;
+
+	private static HashMap<Category, Float> categoryProbs = new HashMap<Generator.Category, Float>();
+
+	private static final float[] INITIAL_ARTIFACT_PROBS = new float[]{0, 1, 0, 1, 0, 1, 1, 1, 1, 0, 0, 0, 1};
+
 	static {
-		
+
 		Category.GOLD.classes = new Class<?>[]{
-			Gold.class };
-		Category.GOLD.probs = new float[]{ 1 };
-		
+				Gold.class};
+		Category.GOLD.probs = new float[]{1};
+
 		Category.SCROLL.classes = new Class<?>[]{
-			ScrollOfIdentify.class,
-			ScrollOfTeleportation.class,
-			ScrollOfRemoveCurse.class,
-			ScrollOfUpgrade.class,
-			ScrollOfRecharging.class,
-			ScrollOfMagicMapping.class,
-			ScrollOfRage.class,
-			ScrollOfTerror.class,
-			ScrollOfLullaby.class,
-			ScrollOfMagicalInfusion.class,
-			ScrollOfPsionicBlast.class,
-			ScrollOfMirrorImage.class };
-		Category.SCROLL.probs = new float[]{ 30, 10, 15, 0, 15, 15, 12, 8, 8, 0, 4, 10 };
-		
+				ScrollOfIdentify.class,
+				ScrollOfTeleportation.class,
+				ScrollOfRemoveCurse.class,
+				ScrollOfUpgrade.class,
+				ScrollOfRecharging.class,
+				ScrollOfMagicMapping.class,
+				ScrollOfRage.class,
+				ScrollOfTerror.class,
+				ScrollOfLullaby.class,
+				ScrollOfMagicalInfusion.class,
+				ScrollOfPsionicBlast.class,
+				ScrollOfMirrorImage.class,
+				BlankScroll.class
+		};
+		Category.SCROLL.probs = new float[]{30, 10, 15, 0, 15, 15, 12, 8, 8, 0, 4, 10};
+
 		Category.POTION.classes = new Class<?>[]{
-			PotionOfHealing.class,
-			PotionOfExperience.class,
-			PotionOfToxicGas.class,
-			PotionOfParalyticGas.class,
-			PotionOfLiquidFlame.class,
-			PotionOfLevitation.class,
-			PotionOfStrength.class,
-			PotionOfMindVision.class,
-			PotionOfPurity.class,
-			PotionOfInvisibility.class,
-			PotionOfMight.class,
-			PotionOfFrost.class,
-			PotionOfBooze.class,
-			PotionOfWater.class,
-			PotionOfExtraHealing.class};
-		Category.POTION.probs = new float[]{ 45, 4, 15, 10, 15, 10, 0, 20, 12, 10, 0, 10, 10, 20, 45 };
+				PotionOfHealing.class,
+				PotionOfExperience.class,
+				PotionOfToxicGas.class,
+				PotionOfParalyticGas.class,
+				PotionOfLiquidFlame.class,
+				PotionOfLevitation.class,
+				PotionOfStrength.class,
+				PotionOfMindVision.class,
+				PotionOfPurity.class,
+				PotionOfInvisibility.class,
+				PotionOfMight.class,
+				PotionOfFrost.class,
+				PotionOfBooze.class,
+				PotionOfExtraHealing.class,
+				PotionOfHallucination.class,
+				PotionOfWater.class
+		};
+		Category.POTION.probs = new float[]{45, 4, 15, 10, 15, 10, 0, 20, 12, 10, 0, 10, 10, 20, 45};
 
 		//TODO: add last ones when implemented
 		Category.WAND.classes = new Class<?>[]{
-			WandOfMagicMissile.class,
-			WandOfLightning.class,
-			WandOfDisintegration.class,
-			WandOfFireblast.class,
-			WandOfVenom.class,
-			WandOfBlastWave.class,
-			//WandOfLivingEarth.class,
-			WandOfFrost.class,
-			WandOfPrismaticLight.class,
-			//WandOfWarding.class,
-			WandOfTransfusion.class,
-			WandOfCorruption.class,
-			WandOfRegrowth.class };
-		Category.WAND.probs = new float[]{ 4, 4, 4, 4, 4, 3, /*3,*/ 3, 3, /*3,*/ 3, 3, 3 };
-		
+				WandOfMagicMissile.class,
+				WandOfLightning.class,
+				WandOfDisintegration.class,
+				WandOfFireblast.class,
+				WandOfVenom.class,
+				WandOfBlastWave.class,
+				//WandOfLivingEarth.class,
+				WandOfFrost.class,
+				WandOfPrismaticLight.class,
+				//WandOfWarding.class,
+				WandOfTransfusion.class,
+				WandOfCorruption.class,
+				WandOfRegrowth.class};
+		Category.WAND.probs = new float[]{4, 4, 4, 4, 4, 3, /*3,*/ 3, 3, /*3,*/ 3, 3, 3};
+
 		Category.WEAPON.classes = new Class<?>[]{
-			Dagger.class,
-			Knuckles.class,
-			Quarterstaff.class,
-			Spear.class,
-			Mace.class,
-			Sword.class,
-			Longsword.class,
-			BattleAxe.class,
-			WarHammer.class,
-			Glaive.class,
-			ShortSword.class,
-			Dart.class,
-			Javelin.class,
-			IncendiaryDart.class,
-			CurareDart.class,
-			Shuriken.class,
-			Boomerang.class,
-			Tamahawk.class };
-		Category.WEAPON.probs = new float[]{ 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0, 0, 1, 1, 1, 1, 0, 1 };
-		
+				Dagger.class,
+				Knuckles.class,
+				Quarterstaff.class,
+				Spear.class,
+				Mace.class,
+				Sword.class,
+				Longsword.class,
+				BattleAxe.class,
+				WarHammer.class,
+				Glaive.class,
+				ShortSword.class,
+				Dart.class,
+				Javelin.class,
+				IncendiaryDart.class,
+				CurareDart.class,
+				Shuriken.class,
+				Boomerang.class,
+				Tomahawk.class};
+		Category.WEAPON.probs = new float[]{1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0, 0, 1, 1, 1, 1, 0, 1};
+
 		Category.ARMOR.classes = new Class<?>[]{
-			ClothArmor.class,
-			LeatherArmor.class,
-			MailArmor.class,
-			ScaleArmor.class,
-			PlateArmor.class };
-		Category.ARMOR.probs = new float[]{ 1, 1, 1, 1, 1 };
-		
+				ClothArmor.class,
+				LeatherArmor.class,
+				MailArmor.class,
+				ScaleArmor.class,
+				HalfPlateArmor.class};
+		Category.ARMOR.probs = new float[]{1, 1, 1, 1, 1};
+
 		Category.FOOD.classes = new Class<?>[]{
-			Food.class,
-			Pasty.class,
-			MysteryMeat.class };
-		Category.FOOD.probs = new float[]{ 4, 1, 0 };
-			
+				Food.class,
+				Pasty.class,
+				MysteryMeat.class};
+		Category.FOOD.probs = new float[]{4, 1, 0};
+
 		Category.RING.classes = new Class<?>[]{
-			RingOfAccuracy.class,
-			RingOfEvasion.class,
-			RingOfElements.class,
-			RingOfForce.class,
-			RingOfFuror.class,
-			RingOfHaste.class,
-			RingOfMagic.class, //currently removed from drop tables, pending rework
-			RingOfMight.class,
-			RingOfSharpshooting.class,
-			RingOfTenacity.class,
-			RingOfWealth.class};
-		Category.RING.probs = new float[]{ 1, 1, 1, 1, 1, 1, 0, 1, 1, 1, 1 };
+				RingOfAccuracy.class,
+				RingOfEvasion.class,
+				RingOfElements.class,
+				RingOfForce.class,
+				RingOfFuror.class,
+				RingOfHaste.class,
+				RingOfMagic.class, //currently removed from drop tables, pending rework
+				RingOfMight.class,
+				RingOfSharpshooting.class,
+				RingOfTenacity.class,
+				RingOfWealth.class};
+		Category.RING.probs = new float[]{1, 1, 1, 1, 1, 1, 0, 1, 1, 1, 1};
 
 		Category.ARTIFACT.classes = new Class<?>[]{
-			CapeOfThorns.class,
-			ChaliceOfBlood.class,
-			CloakOfShadows.class,
-			HornOfPlenty.class,
-			MasterThievesArmband.class,
-			SandalsOfNature.class,
-			TalismanOfForesight.class,
-			TimekeepersHourglass.class,
-			UnstableSpellbook.class,
-			AlchemistsToolkit.class, //currently removed from drop tables, pending rework.
-			DriedRose.class, //starts with no chance of spawning, chance is set directly after beating ghost quest.
-			LloydsBeacon.class,
-			EtherealChains.class
-			};
+				CapeOfThorns.class,
+				ChaliceOfBlood.class,
+				CloakOfShadows.class,
+				HornOfPlenty.class,
+				MasterThievesArmband.class,
+				SandalsOfNature.class,
+				TalismanOfForesight.class,
+				TimekeepersHourglass.class,
+				UnstableSpellbook.class,
+				AlchemistsToolkit.class, //currently removed from drop tables, pending rework.
+				DriedRose.class, //starts with no chance of spawning, chance is set directly after beating ghost quest.
+				LloydsBeacon.class,
+				EtherealChains.class
+		};
 		Category.ARTIFACT.probs = INITIAL_ARTIFACT_PROBS.clone();
-		
+
 		Category.SEED.classes = new Class<?>[]{
-			Firebloom.Seed.class,
-			Icecap.Seed.class,
-			Sorrowmoss.Seed.class,
-			Blindweed.Seed.class,
-			Sungrass.Seed.class,
-			Earthroot.Seed.class,
-			Fadeleaf.Seed.class,
-			Rotberry.Seed.class,
-			BlandfruitBush.Seed.class,
-			Dreamfoil.Seed.class,
-			Stormvine.Seed.class,
-			Starflower.Seed.class};
-		Category.SEED.probs = new float[]{ 12, 12, 12, 12, 12, 12, 12, 0, 4, 12, 12, 1 };
+				Firebloom.Seed.class,
+				Icecap.Seed.class,
+				Sorrowmoss.Seed.class,
+				Blindweed.Seed.class,
+				Sungrass.Seed.class,
+				Earthroot.Seed.class,
+				Fadeleaf.Seed.class,
+				Rotberry.Seed.class,
+				BlandfruitBush.Seed.class,
+				Dreamfoil.Seed.class,
+				Stormvine.Seed.class,
+				Starflower.Seed.class};
+		Category.SEED.probs = new float[]{12, 12, 12, 12, 12, 12, 12, 0, 4, 12, 12, 1};
 	}
-	
+
 	public static void reset() {
 		for (Category cat : Category.values()) {
-			categoryProbs.put( cat, cat.prob );
+			categoryProbs.put(cat, cat.prob);
 		}
 	}
-	
+
 	public static Item random() {
-		return random( Random.chances( categoryProbs ) );
+		return random(Random.chances(categoryProbs));
 	}
-	
-	public static Item random( Category cat ) {
+
+	public static Item random(Category cat) {
 		try {
-			
-			categoryProbs.put( cat, categoryProbs.get( cat ) / 2 );
-			
+
+			categoryProbs.put(cat, categoryProbs.get(cat) / 2);
+
 			switch (cat) {
-			case ARMOR:
-				return randomArmor();
-			case WEAPON:
-				return randomWeapon();
-			case ARTIFACT:
-				Item item = randomArtifact();
-				//if we're out of artifacts, return a ring instead.
-				return item != null ? item : random(Category.RING);
-			default:
-				return ((Item)cat.classes[Random.chances( cat.probs )].newInstance()).random();
+				case ARMOR:
+					return randomArmor();
+				case WEAPON:
+					return randomWeapon();
+				case ARTIFACT:
+					Item item = randomArtifact();
+					//if we're out of artifacts, return a ring instead.
+					return item != null ? item : random(Category.RING);
+				default:
+					return ((Item) cat.classes[Random.chances(cat.probs)].newInstance()).random();
 			}
-			
+
 		} catch (Exception e) {
 
 			return null;
-			
+
 		}
 	}
-	
-	public static Item random( Class<? extends Item> cl ) {
+
+	public static Item random(Class<? extends Item> cl) {
 		try {
-			
-			return ((Item)cl.newInstance()).random();
-			
+
+			return ((Item) cl.newInstance()).random();
+
 		} catch (Exception e) {
 
 			return null;
-			
+
 		}
 	}
 
-	public static Armor randomArmor(){
-		int curStr = Hero.STARTING_STR + Dungeon.limitedDrops.strengthPotions.count;
-
-		return randomArmor(curStr);
-	}
-	
-	public static Armor randomArmor(int targetStr) {
-		
-		Category cat = Category.ARMOR;
-
+	public static Armor randomArmor() {
 		try {
-			Armor a1 = (Armor) cat.classes[Random.chances(cat.probs)].newInstance();
-			Armor a2 = (Armor) cat.classes[Random.chances(cat.probs)].newInstance();
+			Armor retval = (Armor) Category.ARMOR.classes[Random.chances(Category.ARMOR.probs)].newInstance();
+			retval.random();
 
-			a1.random();
-			a2.random();
-
-			return Math.abs(targetStr - a1.STR) < Math.abs(targetStr - a2.STR) ? a1 : a2;
-		} catch (Exception e) {
+			return retval;
+		} catch (Exception whocares) {
 			return null;
 		}
 	}
 
-	public static Weapon randomWeapon(){
-		int curStr = Hero.STARTING_STR + Dungeon.limitedDrops.strengthPotions.count;
+	public static Weapon randomWeapon() {
+		//int curStr = Hero.STARTING_STR + Dungeon.limitedDrops.strengthPotions.count;
+		int curStr = 10 + Dungeon.limitedDrops.strengthPotions.count;
 
 		return randomWeapon(curStr);
 	}
-	
+
 	public static Weapon randomWeapon(int targetStr) {
 
 		try {
 			Category cat = Category.WEAPON;
 
-			Weapon w1 = (Weapon)cat.classes[Random.chances( cat.probs )].newInstance();
-			Weapon w2 = (Weapon)cat.classes[Random.chances( cat.probs )].newInstance();
+			Weapon w1 = (Weapon) cat.classes[Random.chances(cat.probs)].newInstance();
+			Weapon w2 = (Weapon) cat.classes[Random.chances(cat.probs)].newInstance();
 
 			w1.random();
 			w2.random();
 
-			return Math.abs( targetStr - w1.STR ) < Math.abs( targetStr - w2.STR ) ? w1 : w2;
+			return Math.abs(targetStr - 10) < Math.abs(targetStr - 10) ? w1 : w2;
+			//return Math.abs( targetStr - w1.STR ) < Math.abs( targetStr - w2.STR ) ? w1 : w2;
 		} catch (Exception e) {
 			return null;
 		}
@@ -324,14 +334,14 @@ public class Generator {
 
 		try {
 			Category cat = Category.ARTIFACT;
-			int i = Random.chances( cat.probs );
+			int i = Random.chances(cat.probs);
 
 			//if no artifacts are left, return null
-			if (i == -1){
+			if (i == -1) {
 				return null;
 			}
 
-			Artifact artifact = (Artifact)cat.classes[i].newInstance();
+			Artifact artifact = (Artifact) cat.classes[i].newInstance();
 
 			//remove the chance of spawning this artifact.
 			cat.probs[i] = 0;
@@ -353,7 +363,7 @@ public class Generator {
 		Category cat = Category.ARTIFACT;
 		for (int i = 0; i < cat.classes.length; i++)
 			if (cat.classes[i].equals(artifact.getClass())) {
-				if (cat.probs[i] == 1){
+				if (cat.probs[i] == 1) {
 					cat.probs[i] = 0;
 					spawnedArtifacts.add(artifact.getClass().getSimpleName());
 					return true;
@@ -380,7 +390,7 @@ public class Generator {
 
 	//used to store information on which artifacts have been spawned.
 	public static void storeInBundle(Bundle bundle) {
-		bundle.put( ARTIFACTS, spawnedArtifacts.toArray(new String[spawnedArtifacts.size()]));
+		bundle.put(ARTIFACTS, spawnedArtifacts.toArray(new String[spawnedArtifacts.size()]));
 	}
 
 	public static void restoreFromBundle(Bundle bundle) {

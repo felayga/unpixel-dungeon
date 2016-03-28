@@ -39,6 +39,7 @@ import com.felayga.unpixeldungeon.items.food.MysteryMeat;
 import com.felayga.unpixeldungeon.items.rings.RingOfElements.Resistance;
 import com.felayga.unpixeldungeon.items.scrolls.Scroll;
 import com.felayga.unpixeldungeon.levels.Level;
+import com.felayga.unpixeldungeon.mechanics.GameTime;
 import com.felayga.unpixeldungeon.scenes.GameScene;
 import com.felayga.unpixeldungeon.sprites.CharSprite;
 import com.felayga.unpixeldungeon.ui.BuffIndicator;
@@ -81,46 +82,42 @@ public class Burning extends Buff implements Hero.Doom {
 			target.damage( Random.Int( 1, 5 ), this );
 			Buff.detach( target, Chill.class);
 
-			if (target instanceof Hero) {
+			if (target instanceof Char) {
 
-				Hero hero = (Hero)target;
+				Char hero = (Char)target;
 				Item item = hero.belongings.randomUnequipped();
 				if (item instanceof Scroll) {
 					
-					item = item.detach( hero.belongings.backpack );
-					GLog.w( TXT_BURNS_UP, item.toString() );
+					item = hero.belongings.detach(item);
+					GLog.w( TXT_BURNS_UP, item.getDisplayName() );
 					
 					Heap.burnFX( hero.pos );
 					
 				} else if (item instanceof MysteryMeat) {
 					
-					item = item.detach( hero.belongings.backpack );
-					ChargrilledMeat steak = new ChargrilledMeat();
-					if (!steak.collect( hero.belongings.backpack )) {
+					item = hero.belongings.detach(item);
+					Item steak = new ChargrilledMeat().bucStatus(item);
+					if (!hero.belongings.collect(steak)) {
 						Dungeon.level.drop( steak, hero.pos ).sprite.drop();
 					}
-					GLog.w( TXT_BURNS_UP, item.toString() );
+					GLog.w( TXT_BURNS_UP, item.getDisplayName() );
 					
 					Heap.burnFX( hero.pos );
 					
 				}
 				
-			} else if (target instanceof Thief && ((Thief)target).item instanceof Scroll) {
-				
-				((Thief)target).item = null;
-				target.sprite.emitter().burst( ElmoParticle.FACTORY, 6 );
 			}
 
 		} else {
 			detach();
 		}
 		
-		if (Level.flamable[target.pos]) {
+		if (Level.wood[target.pos]) {
 			GameScene.add( Blob.seed( target.pos, 4, Fire.class ) );
 		}
 		
-		spend( TICK );
-		left -= TICK;
+		spend(GameTime.TICK, false );
+		left -= GameTime.TICK;
 		
 		if (left <= 0 ||
 			Random.Float() > (2 + (float)target.HP / target.HT) / 3 ||

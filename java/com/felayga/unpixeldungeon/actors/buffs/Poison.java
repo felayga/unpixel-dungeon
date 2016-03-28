@@ -31,6 +31,7 @@ import com.felayga.unpixeldungeon.actors.hero.Hero;
 import com.felayga.unpixeldungeon.effects.CellEmitter;
 import com.felayga.unpixeldungeon.effects.particles.PoisonParticle;
 import com.felayga.unpixeldungeon.items.rings.RingOfElements.Resistance;
+import com.felayga.unpixeldungeon.mechanics.GameTime;
 import com.felayga.unpixeldungeon.ui.BuffIndicator;
 import com.felayga.unpixeldungeon.utils.GLog;
 import com.watabou.utils.Bundle;
@@ -60,7 +61,7 @@ public class Poison extends Buff implements Hero.Doom {
 	
 	public void set( float duration ) {
 		this.left = duration;
-	};
+	}
 	
 	@Override
 	public int icon() {
@@ -95,9 +96,9 @@ public class Poison extends Buff implements Hero.Doom {
 		if (target.isAlive()) {
 			
 			target.damage( (int)(left / 3) + 1, this );
-			spend( TICK );
+			spend(GameTime.TICK, false );
 			
-			if ((left -= TICK) <= 0) {
+			if ((left -= GameTime.TICK) <= 0) {
 				detach();
 			}
 			

@@ -34,22 +34,24 @@ import com.felayga.unpixeldungeon.actors.blobs.Blob;
 import com.felayga.unpixeldungeon.actors.blobs.Fire;
 import com.felayga.unpixeldungeon.actors.blobs.ToxicGas;
 import com.felayga.unpixeldungeon.actors.buffs.Amok;
-import com.felayga.unpixeldungeon.actors.buffs.Buff;
 import com.felayga.unpixeldungeon.actors.buffs.Burning;
 import com.felayga.unpixeldungeon.actors.buffs.Charm;
 import com.felayga.unpixeldungeon.actors.buffs.LockedFloor;
-import com.felayga.unpixeldungeon.actors.buffs.Ooze;
 import com.felayga.unpixeldungeon.actors.buffs.Poison;
 import com.felayga.unpixeldungeon.actors.buffs.Sleep;
 import com.felayga.unpixeldungeon.actors.buffs.Terror;
 import com.felayga.unpixeldungeon.actors.buffs.Vertigo;
 import com.felayga.unpixeldungeon.effects.Pushing;
 import com.felayga.unpixeldungeon.effects.particles.ShadowParticle;
-import com.felayga.unpixeldungeon.items.keys.SkeletonKey;
+import com.felayga.unpixeldungeon.items.KindOfWeapon;
+import com.felayga.unpixeldungeon.items.keys.SkeletonOldKey;
 import com.felayga.unpixeldungeon.items.scrolls.ScrollOfPsionicBlast;
 import com.felayga.unpixeldungeon.items.weapon.enchantments.Death;
+import com.felayga.unpixeldungeon.items.weapon.melee.mob.AcidChance;
+import com.felayga.unpixeldungeon.items.weapon.melee.mob.MeleeMobAttack;
 import com.felayga.unpixeldungeon.levels.Level;
 import com.felayga.unpixeldungeon.mechanics.Ballistica;
+import com.felayga.unpixeldungeon.mechanics.GameTime;
 import com.felayga.unpixeldungeon.scenes.GameScene;
 import com.felayga.unpixeldungeon.sprites.BurningFistSprite;
 import com.felayga.unpixeldungeon.sprites.CharSprite;
@@ -63,8 +65,11 @@ import com.watabou.utils.Bundle;
 import com.watabou.utils.Random;
 
 public class Yog extends Mob {
-	
+
+	public Yog()
 	{
+		super();
+
 		name = "Yog-Dzewa";
 		spriteClass = YogSprite.class;
 		
@@ -79,10 +84,6 @@ public class Yog extends Mob {
 		"Yog-Dzewa is an Old God, a powerful entity from the realms of chaos. A century ago, the ancient dwarves " +
 		"barely won the war against its army of demons, but were unable to kill the god itself. Instead, they then " +
 		"imprisoned it in the halls below their city, believing it to be too weak to rise ever again.";
-	
-	public Yog() {
-		super();
-	}
 	
 	public void spawnFists() {
 		RottingFist fist1 = new RottingFist();
@@ -173,7 +174,7 @@ public class Yog extends Mob {
 		}
 		
 		GameScene.bossSlain();
-		Dungeon.level.drop( new SkeletonKey( Dungeon.depth ), pos ).sprite.drop();
+		Dungeon.level.drop( new SkeletonOldKey( Dungeon.depth ), pos ).sprite.drop();
 		super.die( cause );
 		
 		yell( "..." );
@@ -220,42 +221,22 @@ public class Yog extends Mob {
 	public static class RottingFist extends Mob {
 	
 		private static final int REGENERATION	= 4;
-		
+
+		public RottingFist()
 		{
 			name = "rotting fist";
 			spriteClass = RottingFistSprite.class;
-			
+
+			DEXCHA = 36;
+
 			HP = HT = 300;
 			defenseSkill = 25;
 			
 			EXP = 0;
 			
 			state = WANDERING;
-		}
-		
-		@Override
-		public int attackSkill( Char target ) {
-			return 36;
-		}
-		
-		@Override
-		public int damageRoll() {
-			return Random.NormalIntRange( 24, 36 );
-		}
-		
-		@Override
-		public int dr() {
-			return 15;
-		}
-		
-		@Override
-		public int attackProc( Char enemy, int damage ) {
-			if (Random.Int( 3 ) == 0) {
-				Buff.affect( enemy, Ooze.class );
-				enemy.sprite.burst( 0xFF000000, 5 );
-			}
-			
-			return damage;
+
+			belongings.weapon = new AcidChance(GameTime.TICK, 24, 36);
 		}
 		
 		@Override
@@ -310,32 +291,22 @@ public class Yog extends Mob {
 	}
 	
 	public static class BurningFist extends Mob {
-		
+
+		public BurningFist()
 		{
 			name = "burning fist";
 			spriteClass = BurningFistSprite.class;
-			
+
+			DEXCHA = 36;
+
 			HP = HT = 200;
 			defenseSkill = 25;
 			
 			EXP = 0;
 			
 			state = WANDERING;
-		}
-		
-		@Override
-		public int attackSkill( Char target ) {
-			return 36;
-		}
-		
-		@Override
-		public int damageRoll() {
-			return Random.NormalIntRange( 20, 32 );
-		}
-		
-		@Override
-		public int dr() {
-			return 15;
+
+			belongings.weapon = new MeleeMobAttack(GameTime.TICK, 20, 32);
 		}
 		
 		@Override
@@ -344,14 +315,14 @@ public class Yog extends Mob {
 		}
 		
 		@Override
-		public boolean attack( Char enemy ) {
+		public boolean attack( KindOfWeapon weapon, boolean thrown, Char enemy ) {
 			
 			if (!Level.adjacent( pos, enemy.pos )) {
-				spend( attackDelay() );
+				spend( attackDelay(weapon.delay_new), false );
 				
-				if (hit( this, enemy, true )) {
+				if (hit( this, weapon, false, enemy, true )) {
 					
-					int dmg =  damageRoll();
+					int dmg =  weapon.damageRoll();
 					enemy.damage( dmg, this );
 					
 					enemy.sprite.bloodBurstA( sprite.center(), dmg );
@@ -369,7 +340,7 @@ public class Yog extends Mob {
 					return false;
 				}
 			} else {
-				return super.attack( enemy );
+				return super.attack( weapon, thrown, enemy );
 			}
 		}
 		
@@ -425,32 +396,22 @@ public class Yog extends Mob {
 	}
 	
 	public static class Larva extends Mob {
-		
+
+		public Larva()
 		{
 			name = "god's larva";
 			spriteClass = LarvaSprite.class;
-			
+
+			DEXCHA = 30;
+
 			HP = HT = 25;
 			defenseSkill = 20;
 			
 			EXP = 0;
 			
 			state = HUNTING;
-		}
-		
-		@Override
-		public int attackSkill( Char target ) {
-			return 30;
-		}
-		
-		@Override
-		public int damageRoll() {
-			return Random.NormalIntRange( 15, 20 );
-		}
-		
-		@Override
-		public int dr() {
-			return 8;
+
+			belongings.weapon = new MeleeMobAttack(GameTime.TICK, 15, 20);
 		}
 		
 		@Override

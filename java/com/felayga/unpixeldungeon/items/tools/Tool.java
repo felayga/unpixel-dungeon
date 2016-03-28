@@ -62,6 +62,8 @@ public abstract class Tool extends EquipableItem {
     private boolean canApply;
 
     public Tool(boolean canApply) {
+        super(GameTime.TICK);
+
         this.canApply = canApply;
 
         if (canApply) {

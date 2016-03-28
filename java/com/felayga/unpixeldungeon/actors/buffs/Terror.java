@@ -23,13 +23,15 @@
  */
 package com.felayga.unpixeldungeon.actors.buffs;
 
+import com.felayga.unpixeldungeon.actors.Actor;
 import com.felayga.unpixeldungeon.actors.Char;
+import com.felayga.unpixeldungeon.mechanics.GameTime;
 import com.felayga.unpixeldungeon.ui.BuffIndicator;
 import com.watabou.utils.Bundle;
 
 public class Terror extends FlavourBuff {
 
-	public static final float DURATION = 10f;
+	public static final long DURATION = GameTime.TICK * 10;
 
 	public int object = 0;
 

@@ -26,6 +26,7 @@ package com.felayga.unpixeldungeon.items.artifacts;
 import com.felayga.unpixeldungeon.Dungeon;
 import com.felayga.unpixeldungeon.actors.Char;
 import com.felayga.unpixeldungeon.levels.Level;
+import com.felayga.unpixeldungeon.mechanics.GameTime;
 import com.felayga.unpixeldungeon.sprites.ItemSpriteSheet;
 import com.felayga.unpixeldungeon.ui.BuffIndicator;
 import com.felayga.unpixeldungeon.utils.GLog;
@@ -82,7 +83,7 @@ public class CapeOfThorns extends Artifact {
 				}
 				updateQuickslot();
 			}
-			spend(TICK);
+			spend(GameTime.TICK, false);
 			return true;
 		}
 
@@ -109,7 +110,7 @@ public class CapeOfThorns extends Artifact {
 
 				if (exp >= (level+1)*5 && level < levelCap){
 					exp -= (level+1)*5;
-					upgrade();
+					upgrade(null, 1);
 					GLog.p("Your Cape grows stronger!");
 				}
 

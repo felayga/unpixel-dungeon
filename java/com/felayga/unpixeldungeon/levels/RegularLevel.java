@@ -65,7 +65,6 @@ public abstract class RegularLevel extends Level {
 	
 	@Override
 	protected boolean build() {
-		
 		if (!initRooms()) {
 			return false;
 		}
@@ -90,7 +89,7 @@ public abstract class RegularLevel extends Level {
 			}
 			
 		} while (distance < minDistance);
-		
+
 		roomEntrance.type = Type.ENTRANCE;
 		roomExit.type = Type.EXIT;
 		
@@ -109,7 +108,7 @@ public abstract class RegularLevel extends Level {
 
 		Graph.setPrice( path, roomEntrance.distance );
 
-		Graph.buildDistanceMap( rooms, roomExit );
+		Graph.buildDistanceMap(rooms, roomExit);
 		path = Graph.buildPath( rooms, roomEntrance, roomExit );
 
 		room = roomEntrance;
@@ -167,7 +166,7 @@ public abstract class RegularLevel extends Level {
 		paintGrass();
 		
 		placeTraps();
-		
+
 		return true;
 	}
 
@@ -389,8 +388,10 @@ public abstract class RegularLevel extends Level {
 		return new float[]{1};
 	}
 	
-	protected int minRoomSize = 7;
-	protected int maxRoomSize = 9;
+	protected int minRoomSize = 7; //original=7
+	protected int maxRoomSize = 13; //original=9
+
+	protected int splitMargin = 2;
 	
 	protected void split( Rect rect ) {
 		
@@ -399,14 +400,14 @@ public abstract class RegularLevel extends Level {
 		
 		if (w > maxRoomSize && h < minRoomSize) {
 
-			int vw = Random.Int( rect.left + 3, rect.right - 3 );
+			int vw = Random.Int( rect.left + splitMargin, rect.right - splitMargin );
 			split( new Rect( rect.left, rect.top, vw, rect.bottom ) );
 			split( new Rect( vw, rect.top, rect.right, rect.bottom ) );
 			
 		} else
 		if (h > maxRoomSize && w < minRoomSize) {
 
-			int vh = Random.Int( rect.top + 3, rect.bottom - 3 );
+			int vh = Random.Int( rect.top + splitMargin, rect.bottom - splitMargin );
 			split( new Rect( rect.left, rect.top, rect.right, vh ) );
 			split( new Rect( rect.left, vh, rect.right, rect.bottom ) );
 			
@@ -418,11 +419,11 @@ public abstract class RegularLevel extends Level {
 		} else {
 			
 			if (Random.Float() < (float)(w - 2) / (w + h - 4)) {
-				int vw = Random.Int( rect.left + 3, rect.right - 3 );
+				int vw = Random.Int( rect.left + splitMargin, rect.right - splitMargin );
 				split( new Rect( rect.left, rect.top, vw, rect.bottom ) );
 				split( new Rect( vw, rect.top, rect.right, rect.bottom ) );
 			} else {
-				int vh = Random.Int( rect.top + 3, rect.bottom - 3 );
+				int vh = Random.Int( rect.top + splitMargin, rect.bottom - splitMargin );
 				split( new Rect( rect.left, rect.top, rect.right, vh ) );
 				split( new Rect( rect.left, vh, rect.right, rect.bottom ) );
 			}

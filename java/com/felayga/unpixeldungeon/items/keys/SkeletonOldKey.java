@@ -23,56 +23,34 @@
  */
 package com.felayga.unpixeldungeon.items.keys;
 
-import com.felayga.unpixeldungeon.Dungeon;
-import com.felayga.unpixeldungeon.items.bags.Bag;
+import com.felayga.unpixeldungeon.items.Item;
 import com.felayga.unpixeldungeon.sprites.ItemSpriteSheet;
-import com.felayga.unpixeldungeon.utils.Utils;
 
-public class IronKey extends Key {
-
-	private static final String TXT_FROM_DEPTH = "iron key from depth %d";
-
-	public static int curDepthQuantity = 0;
+public class SkeletonOldKey extends OldKey {
 	
 	{
-		name = "iron key";
-		image = ItemSpriteSheet.IRON_KEY;
+		name = "skeleton key";
+		image = ItemSpriteSheet.SKELETON_KEY;
+		stackable = false;
 	}
 	
-	public IronKey() {
+	public SkeletonOldKey() {
 		this( 0 );
 	}
 	
-	public IronKey( int depth ) {
+	public SkeletonOldKey(int depth) {
 		super();
 		this.depth = depth;
 	}
 	
 	@Override
-	public boolean collect( Bag bag ) {
-		boolean result = super.collect( bag );
-		if (result && depth == Dungeon.depth && Dungeon.hero != null) {
-			Dungeon.hero.belongings.countIronKeys();
-		}
-		return result;
-	}
-
-	@Override
-	public void onDetach( ) {
-		if (depth == Dungeon.depth) {
-			Dungeon.hero.belongings.countIronKeys();
-		}
-	}
-	
-	@Override
-	public String toString() {
-		return Utils.format( TXT_FROM_DEPTH, depth );
+	public boolean isSimilar( Item item ) {
+		return false;
 	}
 	
 	@Override
 	public String info() {
 		return
-			"The notches on this ancient iron key are well worn; its leather lanyard " +
-			"is battered by age. What door might it open?";
+			"This key looks serious: its head is shaped like a skull. Probably it can open some serious door.";
 	}
 }

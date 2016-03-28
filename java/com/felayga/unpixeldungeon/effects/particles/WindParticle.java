@@ -80,17 +80,14 @@ public class WindParticle extends PixelParticle {
 	
 	public static class Wind extends Group {
 		
-		private int pos;
-		
 		private float x;
 		private float y;
 		
 		private float delay;
 		
 		public Wind( int pos ) {
-			super();
+			super(pos);
 			
-			this.pos = pos;
 			PointF p = DungeonTilemap.tileToWorld( pos );
 			x = p.x;
 			y = p.y;

@@ -61,7 +61,7 @@ public class LastLevel extends Level {
 		super.create();
 		for (int i=0; i < LENGTH; i++) {
 			int flags = Terrain.flags[map[i]];
-			if ((flags & Terrain.PIT) != 0){
+			if ((flags & Terrain.FLAG_PIT) != 0){
 				passable[i] = avoid[i] = false;
 				solid[i] = true;
 			}
@@ -183,7 +183,7 @@ public class LastLevel extends Level {
 		super.restoreFromBundle(bundle);
 		for (int i=0; i < LENGTH; i++) {
 			int flags = Terrain.flags[map[i]];
-			if ((flags & Terrain.PIT) != 0){
+			if ((flags & Terrain.FLAG_PIT) != 0){
 				passable[i] = avoid[i] = false;
 				solid[i] = true;
 			}

@@ -21,23 +21,23 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>
  */
-package com.felayga.unpixeldungeon.items.weapon.melee;
+package com.felayga.unpixeldungeon.items.armor.light;
 
 import com.felayga.unpixeldungeon.sprites.ItemSpriteSheet;
 
-public class Longsword extends MeleeWeapon {
-	
+public class LeatherArmor extends LightArmor {
+	public LeatherArmor()
 	{
-		name = "longsword";
-		image = ItemSpriteSheet.LONG_SWORD;
-	}
-	
-	public Longsword() {
-		super( 4, 1f, 1f );
+		super(2, 6, 32);
+		name = "leather armor";
+		image = ItemSpriteSheet.ARMOR_LEATHER;
+
+		price = 10;
+		textureIndex = 3;
 	}
 	
 	@Override
 	public String desc() {
-		return "This towering blade inflicts heavy damage by investing its heft into every cut.";
+		return "Armor made from tanned monster hide. Not as light as cloth armor but provides better protection.";
 	}
 }

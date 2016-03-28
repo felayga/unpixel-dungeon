@@ -32,6 +32,7 @@ import com.felayga.unpixeldungeon.actors.buffs.Poison;
 import com.felayga.unpixeldungeon.actors.buffs.Weakness;
 import com.felayga.unpixeldungeon.actors.hero.Hero;
 import com.felayga.unpixeldungeon.effects.Speck;
+import com.felayga.unpixeldungeon.mechanics.AttributeType;
 import com.felayga.unpixeldungeon.sprites.CharSprite;
 import com.felayga.unpixeldungeon.utils.GLog;
 import com.watabou.utils.Random;
@@ -47,6 +48,13 @@ public class PotionOfExtraHealing extends PotionOfHealing {
 
 		overhealAmount = 2;
         applicationDescription = "significantly";
+	}
+
+	@Override
+	public void heal(Hero hero)
+	{
+		hero.useAttribute(AttributeType.STRCON, 1);
+		super.heal(hero);
 	}
 
 	@Override

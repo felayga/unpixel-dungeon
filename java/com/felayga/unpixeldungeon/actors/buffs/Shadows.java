@@ -23,6 +23,7 @@
  */
 package com.felayga.unpixeldungeon.actors.buffs;
 
+import com.felayga.unpixeldungeon.mechanics.GameTime;
 import com.watabou.noosa.audio.Sample;
 import com.felayga.unpixeldungeon.Assets;
 import com.felayga.unpixeldungeon.Dungeon;
@@ -74,7 +75,7 @@ public class Shadows extends Invisibility {
 	public boolean act() {
 		if (target.isAlive()) {
 			
-			spend( TICK * 2 );
+			spend(GameTime.TICK * 2, false );
 			
 			if (--left <= 0 || Dungeon.hero.visibleEnemies() > 0) {
 				detach();

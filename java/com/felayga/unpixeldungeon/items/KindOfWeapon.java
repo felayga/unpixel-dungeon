@@ -54,8 +54,10 @@ public class KindOfWeapon extends EquipableItem {
 	public int accuracyAttributeMaxBonus = 32767;
     public AttributeType damageAttribute = AttributeType.STRCON;
 
-	public KindOfWeapon(long delay,  int damageMin, int damageMax)
+	public KindOfWeapon(long delay, int damageMin, int damageMax)
 	{
+		super(GameTime.TICK);
+
 		this.delay_new = delay;
 
 		this.damageMin = damageMin;
@@ -73,47 +75,28 @@ public class KindOfWeapon extends EquipableItem {
 	public boolean isEquipped( Char hero ) {
 		return hero.belongings.weapon == this;
 	}
-	
+
 	@Override
-	public boolean doEquip( Char hero ) {
-		hero.belongings.detachAll(this);
+	public Slot[] getSlots() {
+		return new Slot[]{ Slot.Weapon };
+	}
 
-		if (hero.belongings.weapon == null || hero.belongings.weapon.doUnequip( hero, true )) {
-			
-			hero.belongings.weapon = this;
-			activate( hero );
+	@Override
+	public void onEquip(Char owner, boolean cursed) {
+		super.onEquip(owner, cursed);
 
-			updateQuickslot();
-			
-			if (bucStatus == BUCStatus.Cursed) {
-				equipCursed( hero );
+		activate(owner);
+
+		if (cursed) {
+			if (owner instanceof Hero) {
 				GLog.n( TXT_EQUIP_CURSED, getDisplayName() );
-				bucStatusKnown = true;
 			}
-			
-			hero.spend( TIME_TO_EQUIP, true );
-			return true;
-			
-		} else {
-			hero.belongings.collect(this);
-			return false;
+			else {
+				//todo: weapon cursed
+			}
 		}
 	}
 
-	@Override
-	public boolean doUnequip( Char hero, boolean collect, boolean single ) {
-		if (super.doUnequip( hero, collect, single )) {
-
-			hero.belongings.weapon = null;
-			return true;
-
-		} else {
-
-			return false;
-
-		}
-	}
-	
 	public void activate( Char hero ) {
 	}
 	

@@ -25,6 +25,9 @@ package com.felayga.unpixeldungeon.actors.mobs.npcs;
 
 import java.util.Collection;
 
+import com.felayga.unpixeldungeon.actors.Actor;
+import com.felayga.unpixeldungeon.mechanics.BUCStatus;
+import com.felayga.unpixeldungeon.mechanics.GameTime;
 import com.watabou.noosa.audio.Sample;
 import com.felayga.unpixeldungeon.Assets;
 import com.felayga.unpixeldungeon.Badges;
@@ -36,7 +39,7 @@ import com.felayga.unpixeldungeon.actors.hero.Hero;
 import com.felayga.unpixeldungeon.items.EquipableItem;
 import com.felayga.unpixeldungeon.items.Item;
 import com.felayga.unpixeldungeon.items.quest.DarkGold;
-import com.felayga.unpixeldungeon.items.quest.Pickaxe;
+import com.felayga.unpixeldungeon.items.quest.OldPickaxe;
 import com.felayga.unpixeldungeon.items.scrolls.ScrollOfUpgrade;
 import com.felayga.unpixeldungeon.levels.Room;
 import com.felayga.unpixeldungeon.levels.Room.Type;
@@ -101,9 +104,9 @@ public class Blacksmith extends NPC {
 					Quest.given = true;
 					Quest.completed = false;
 					
-					Pickaxe pick = new Pickaxe();
+					OldPickaxe pick = new OldPickaxe();
 					if (pick.doPickUp( Dungeon.hero )) {
-						GLog.i( Hero.TXT_YOU_NOW_HAVE, pick.name() );
+						GLog.i( Hero.TXT_YOU_NOW_HAVE, pick.getDisplayName() );
 					} else {
 						Dungeon.level.drop( pick, Dungeon.hero.pos ).sprite.drop();
 					}
@@ -115,7 +118,7 @@ public class Blacksmith extends NPC {
 		} else if (!Quest.completed) {
 			if (Quest.alternative) {
 				
-				Pickaxe pick = Dungeon.hero.belongings.getItem( Pickaxe.class );
+				OldPickaxe pick = Dungeon.hero.belongings.getItem( OldPickaxe.class );
 				if (pick == null) {
 					tell( TXT2 );
 				} else if (!pick.bloodStained) {
@@ -124,7 +127,7 @@ public class Blacksmith extends NPC {
 					if (pick.isEquipped( Dungeon.hero )) {
 						pick.doUnequip( Dungeon.hero, false );
 					}
-					pick.detach( Dungeon.hero.belongings.backpack );
+					Dungeon.hero.belongings.detach(pick);
 					tell( TXT_COMPLETED );
 					
 					Quest.completed = true;
@@ -133,7 +136,7 @@ public class Blacksmith extends NPC {
 				
 			} else {
 				
-				Pickaxe pick = Dungeon.hero.belongings.getItem( Pickaxe.class );
+				OldPickaxe pick = Dungeon.hero.belongings.getItem( OldPickaxe.class );
 				DarkGold gold = Dungeon.hero.belongings.getItem( DarkGold.class );
 				if (pick == null) {
 					tell( TXT2 );
@@ -143,8 +146,8 @@ public class Blacksmith extends NPC {
 					if (pick.isEquipped( Dungeon.hero )) {
 						pick.doUnequip( Dungeon.hero, false );
 					}
-					pick.detach( Dungeon.hero.belongings.backpack );
-					gold.detachAll( Dungeon.hero.belongings.backpack );
+					Dungeon.hero.belongings.detach(pick);
+					Dungeon.hero.belongings.detachAll(gold);
 					tell( TXT_COMPLETED );
 					
 					Quest.completed = true;
@@ -181,7 +184,7 @@ public class Blacksmith extends NPC {
 			return "I need to know what I'm working with, identify them first!";
 		}
 		
-		if (item1.cursed || item2.cursed) {
+		if (item1.bucStatus() == BUCStatus.Cursed || item2.bucStatus() == BUCStatus.Cursed) {
 			return "I don't work with cursed items!";
 		}
 		
@@ -207,23 +210,23 @@ public class Blacksmith extends NPC {
 			second = item2;
 		}
 
-		Sample.INSTANCE.play( Assets.SND_EVOKE );
-		ScrollOfUpgrade.upgrade( Dungeon.hero );
-		Item.evoke( Dungeon.hero );
+		Sample.INSTANCE.play(Assets.SND_EVOKE);
+		ScrollOfUpgrade.upgrade(Dungeon.hero);
+		Item.evoke(Dungeon.hero);
 		
 		if (first.isEquipped( Dungeon.hero )) {
 			((EquipableItem)first).doUnequip( Dungeon.hero, true );
 		}
-		first.upgrade();
-		GLog.p( TXT_LOOKS_BETTER, first.name() );
-		Dungeon.hero.spendAndNext( 2f );
-		Badges.validateItemLevelAquired( first );
+		first.upgrade(null, 1);
+		GLog.p(TXT_LOOKS_BETTER, first.getDisplayName());
+		Dungeon.hero.spend(GameTime.TICK * 2, true);
+		Badges.validateItemLevelAquired(first);
 		
 		if (second.isEquipped( Dungeon.hero )) {
 			((EquipableItem)second).doUnequip( Dungeon.hero, false );
 		}
-		second.detachAll( Dungeon.hero.belongings.backpack );
-		
+		Dungeon.hero.belongings.detachAll(second);
+
 		Quest.reforged = true;
 		
 		Journal.remove( Journal.Feature.TROLL );

@@ -56,7 +56,7 @@ public class Lightning extends Group {
 	
 	public Lightning( List<Arc> arcs, Callback callback ) {
 		
-		super();
+		super(-1);
 
 		this.arcs = arcs;
 		for (Arc arc : this.arcs)
@@ -109,6 +109,8 @@ public class Lightning extends Group {
 		private PointF start, end;
 
 		public Arc(int from, int to){
+			super(-1);
+
 			start = DungeonTilemap.tileCenterToWorld(from);
 			end = DungeonTilemap.tileCenterToWorld(to);
 
