@@ -6,7 +6,7 @@
  * Copyright (C) 2014-2015 Evan Debenham
  *
  * Unpixel Dungeon
- * Copyright (C) 2015 Randall Foudray
+ * Copyright (C) 2015-2016 Randall Foudray
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -20,6 +20,7 @@
  *
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>
+ *
  */
 package com.felayga.unpixeldungeon.scenes;
 
@@ -46,7 +47,7 @@ import com.felayga.unpixeldungeon.Assets;
 import com.felayga.unpixeldungeon.Badges;
 import com.felayga.unpixeldungeon.Dungeon;
 import com.felayga.unpixeldungeon.actors.hero.HeroClass;
-import com.felayga.unpixeldungeon.sprites.RatSprite;
+import com.felayga.unpixeldungeon.sprites.mobs.rat.GiantRatSprite;
 import com.felayga.unpixeldungeon.ui.Archs;
 import com.felayga.unpixeldungeon.ui.RedButton;
 import com.watabou.utils.Point;
@@ -318,9 +319,12 @@ public class SurfaceScene extends PixelScene {
 			frame( new TextureFilm( texture, WIDTH, HEIGHT ).get( cl.ordinal() ) );
 		}
 	}
-	
-	private static class Pet extends RatSprite {
-		
+
+	private static class Pet extends GiantRatSprite {
+		public Pet() {
+			super(0);
+		}
+
 		public void jump() {
 			play( run );
 		}
@@ -332,7 +336,7 @@ public class SurfaceScene extends PixelScene {
 			}
 		}
 	}
-	
+
 	private static class GrassPatch extends Image {
 		
 		public static final int WIDTH	= 16;

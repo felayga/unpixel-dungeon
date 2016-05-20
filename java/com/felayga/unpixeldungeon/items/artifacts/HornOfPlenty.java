@@ -6,7 +6,7 @@
  * Copyright (C) 2014-2015 Evan Debenham
  *
  * Unpixel Dungeon
- * Copyright (C) 2015 Randall Foudray
+ * Copyright (C) 2015-2016 Randall Foudray
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -20,6 +20,7 @@
  *
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>
+ *
  */
 package com.felayga.unpixeldungeon.items.artifacts;
 
@@ -47,7 +48,7 @@ import com.watabou.noosa.audio.Sample;
 
 import java.util.ArrayList;
 
-public class HornOfPlenty extends Artifact {
+public class HornOfPlenty extends Artifact_old {
 
 
 	{
@@ -234,7 +235,7 @@ public class HornOfPlenty extends Artifact {
 					} else {
 						GLog.p("the horn consumes your food offering and grows in strength!");
 					}
-					hero.belongings.detach(item);
+					hero.belongings.remove(item, 1);
 				}
 
 			}

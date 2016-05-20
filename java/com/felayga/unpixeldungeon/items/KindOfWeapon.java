@@ -6,7 +6,7 @@
  * Copyright (C) 2014-2015 Evan Debenham
  *
  * Unpixel Dungeon
- * Copyright (C) 2015 Randall Foudray
+ * Copyright (C) 2015-2016 Randall Foudray
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -20,6 +20,7 @@
  *
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>
+ *
  */
 package com.felayga.unpixeldungeon.items;
 
@@ -35,7 +36,7 @@ import com.felayga.unpixeldungeon.utils.GLog;
 import com.watabou.noosa.Game;
 import com.watabou.utils.Random;
 
-public class KindOfWeapon extends EquipableItem {
+public class KindOfWeapon extends EquipableItem implements IActivateable {
 	private static final String TXT_EQUIP_CURSED	= "The %s welds itself to your hand!";
 	
 	protected static final long TIME_TO_EQUIP = GameTime.TICK;
@@ -70,11 +71,6 @@ public class KindOfWeapon extends EquipableItem {
 		actions.add( isEquipped( hero ) ? AC_UNEQUIP : AC_EQUIP );
 		return actions;
 	}
-	
-	@Override
-	public boolean isEquipped( Char hero ) {
-		return hero.belongings.weapon == this;
-	}
 
 	@Override
 	public Slot[] getSlots() {
@@ -97,6 +93,7 @@ public class KindOfWeapon extends EquipableItem {
 		}
 	}
 
+	@Override
 	public void activate( Char hero ) {
 	}
 	

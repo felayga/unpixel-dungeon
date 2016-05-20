@@ -6,7 +6,7 @@
  * Copyright (C) 2014-2015 Evan Debenham
  *
  * Unpixel Dungeon
- * Copyright (C) 2015 Randall Foudray
+ * Copyright (C) 2015-2016 Randall Foudray
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -20,12 +20,16 @@
  *
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>
+ *
  */
 package com.felayga.unpixeldungeon.actors.mobs;
 
 import com.felayga.unpixeldungeon.actors.Char;
-import com.felayga.unpixeldungeon.actors.mobs.npcs.Boulder;
+import com.felayga.unpixeldungeon.actors.mobs.bug.GridBug;
 import com.felayga.unpixeldungeon.actors.mobs.npcs.Ghost;
+import com.felayga.unpixeldungeon.actors.mobs.unused.MarsupialRatAlbino;
+import com.felayga.unpixeldungeon.actors.mobs.unused.MarsupialRat;
+import com.felayga.unpixeldungeon.actors.mobs.rat.SewerRat;
 import com.watabou.utils.Random;
 
 public class Bestiary {
@@ -45,8 +49,8 @@ public class Bestiary {
 		Class<? extends Mob> cl = (Class<? extends Mob>)mobClass( depth );
 		
 		if (Random.Int( 30 ) == 0) {
-			if (cl == Rat.class) {
-				cl = Albino.class;
+			if (cl == MarsupialRat.class) {
+				cl = MarsupialRatAlbino.class;
 			} else if (cl == Thief.class) {
 				cl = Bandit.class;
 			} else if (cl == Brute.class) {
@@ -73,19 +77,19 @@ public class Bestiary {
 		switch (depth) {
 		case 1:
 			chances = new float[]{ 1, 1 };
-			classes = new Class<?>[]{ Rat.class, GridBug.class };
+			classes = new Class<?>[]{ SewerRat.class, GridBug.class };
 			break;
 		case 2:
 			chances = new float[]{ 1, 1 };
-			classes = new Class<?>[]{ Rat.class, Gnoll.class };
+			classes = new Class<?>[]{ MarsupialRat.class, Gnoll.class };
 			break;
 		case 3:
 			chances = new float[]{ 2, 4, 1, 1 };
-			classes = new Class<?>[]{ Rat.class, Gnoll.class, Crab.class, Swarm.class };
+			classes = new Class<?>[]{ MarsupialRat.class, Gnoll.class, Crab.class, Swarm.class };
 			break;
 		case 4:
 			chances = new float[]{ 1, 2, 3, 1,   0.01f, 0.01f };
-			classes = new Class<?>[]{ Rat.class, Gnoll.class, Crab.class, Swarm.class,    Skeleton.class, Thief.class };
+			classes = new Class<?>[]{ MarsupialRat.class, Gnoll.class, Crab.class, Swarm.class,    Skeleton.class, Thief.class };
 			break;
 			
 		case 5:
@@ -188,6 +192,6 @@ public class Bestiary {
 	public static boolean isUnique( Char mob ) {
 		return mob instanceof Goo || mob instanceof Tengu || mob instanceof DM300 || mob instanceof King
 				|| mob instanceof Yog.BurningFist || mob instanceof Yog.RottingFist
-			|| mob instanceof Ghost.FetidRat || mob instanceof Ghost.GnollTrickster || mob instanceof Ghost.GreatCrab;
+			|| mob instanceof Ghost.MarisupialRatFetid || mob instanceof Ghost.GnollTrickster || mob instanceof Ghost.GreatCrab;
 	}
 }

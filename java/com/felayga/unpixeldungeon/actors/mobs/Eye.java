@@ -6,7 +6,7 @@
  * Copyright (C) 2014-2015 Evan Debenham
  *
  * Unpixel Dungeon
- * Copyright (C) 2015 Randall Foudray
+ * Copyright (C) 2015-2016 Randall Foudray
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -20,6 +20,7 @@
  *
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>
+ *
  */
 package com.felayga.unpixeldungeon.actors.mobs;
 
@@ -42,7 +43,7 @@ import com.felayga.unpixeldungeon.items.weapon.melee.mob.MeleeMobAttack;
 import com.felayga.unpixeldungeon.mechanics.Ballistica;
 import com.felayga.unpixeldungeon.mechanics.GameTime;
 import com.felayga.unpixeldungeon.sprites.CharSprite;
-import com.felayga.unpixeldungeon.sprites.EyeSprite;
+import com.felayga.unpixeldungeon.sprites.mobs.EyeSprite;
 import com.felayga.unpixeldungeon.utils.GLog;
 import com.felayga.unpixeldungeon.utils.Utils;
 import com.watabou.utils.Random;
@@ -85,7 +86,7 @@ public class Eye extends Mob {
 	@Override
 	protected boolean doAttack( boolean thrown, Char enemy ) {
 
-		spend( attackDelay(belongings.weapon.delay_new), false );
+		spend( attackDelay(((KindOfWeapon)belongings.weapon).delay_new), false );
 
 		boolean rayVisible = false;
 		
@@ -99,7 +100,7 @@ public class Eye extends Mob {
 			sprite.attack( beam.collisionPos );
 			return false;
 		} else {
-			attack( belongings.weapon, thrown, enemy );
+			attack( (KindOfWeapon)belongings.weapon, thrown, enemy );
 			return true;
 		}
 	}

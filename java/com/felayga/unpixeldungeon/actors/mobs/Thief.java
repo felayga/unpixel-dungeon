@@ -6,7 +6,7 @@
  * Copyright (C) 2014-2015 Evan Debenham
  *
  * Unpixel Dungeon
- * Copyright (C) 2015 Randall Foudray
+ * Copyright (C) 2015-2016 Randall Foudray
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -20,25 +20,20 @@
  *
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>
+ *
  */
 package com.felayga.unpixeldungeon.actors.mobs;
 
 import com.felayga.unpixeldungeon.Dungeon;
 import com.felayga.unpixeldungeon.actors.Char;
 import com.felayga.unpixeldungeon.actors.buffs.Terror;
-import com.felayga.unpixeldungeon.actors.hero.Hero;
 import com.felayga.unpixeldungeon.items.Gold;
-import com.felayga.unpixeldungeon.items.Honeypot;
 import com.felayga.unpixeldungeon.items.Item;
 import com.felayga.unpixeldungeon.items.artifacts.MasterThievesArmband;
-import com.felayga.unpixeldungeon.items.weapon.melee.mob.MeleeMobAttack;
 import com.felayga.unpixeldungeon.items.weapon.melee.mob.StealChance;
 import com.felayga.unpixeldungeon.mechanics.GameTime;
 import com.felayga.unpixeldungeon.sprites.CharSprite;
-import com.felayga.unpixeldungeon.sprites.ThiefSprite;
-import com.felayga.unpixeldungeon.utils.GLog;
-import com.felayga.unpixeldungeon.utils.Utils;
-import com.watabou.utils.Bundle;
+import com.felayga.unpixeldungeon.sprites.mobs.ThiefSprite;
 import com.watabou.utils.Random;
 
 public class Thief extends Mob {

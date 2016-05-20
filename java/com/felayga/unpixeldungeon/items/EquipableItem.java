@@ -6,7 +6,7 @@
  * Copyright (C) 2014-2015 Evan Debenham
  *
  * Unpixel Dungeon
- * Copyright (C) 2015 Randall Foudray
+ * Copyright (C) 2015-2016 Randall Foudray
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -20,6 +20,7 @@
  *
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>
+ *
  */
 package com.felayga.unpixeldungeon.items;
 
@@ -41,7 +42,8 @@ public abstract class EquipableItem extends Item {
 		Armor,
 		Gloves,
 		Boots,
-		Ring,
+		Ring1,
+		Ring2,
 		Amulet,
 		Cloak,
 		Face
@@ -51,6 +53,7 @@ public abstract class EquipableItem extends Item {
 	public static final String AC_UNEQUIP	= "UNEQUIP";
 
 	public long equipTime;
+	public boolean twoHanded = false;
 
 	public EquipableItem(long equipTime)
 	{
@@ -77,6 +80,11 @@ public abstract class EquipableItem extends Item {
 
 	public void onEquip(Char owner, boolean cursed) { }
 	public void onUnequip(Char owner) { }
+
+	@Override
+	public final boolean isEquipped( Char hero ) {
+		return hero.belongings.isEquipped(this);
+	}
 
 	@Override
 	public void doDrop( Hero hero ) {

@@ -6,7 +6,7 @@
  * Copyright (C) 2014-2015 Evan Debenham
  *
  * Unpixel Dungeon
- * Copyright (C) 2015 Randall Foudray
+ * Copyright (C) 2015-2016 Randall Foudray
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -20,6 +20,7 @@
  *
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>
+ *
  */
 package com.felayga.unpixeldungeon.actors.blobs;
 
@@ -30,7 +31,7 @@ import com.felayga.unpixeldungeon.effects.Speck;
 import com.felayga.unpixeldungeon.items.Generator;
 import com.felayga.unpixeldungeon.items.Generator.Category;
 import com.felayga.unpixeldungeon.items.Item;
-import com.felayga.unpixeldungeon.items.artifacts.Artifact;
+import com.felayga.unpixeldungeon.items.artifacts.Artifact_old;
 import com.felayga.unpixeldungeon.items.potions.Potion;
 import com.felayga.unpixeldungeon.items.potions.PotionOfMight;
 import com.felayga.unpixeldungeon.items.potions.PotionOfStrength;
@@ -50,7 +51,6 @@ import com.felayga.unpixeldungeon.items.weapon.melee.simple.Knuckles;
 import com.felayga.unpixeldungeon.items.weapon.melee.simple.Mace;
 import com.felayga.unpixeldungeon.items.weapon.melee.simple.Quarterstaff;
 import com.felayga.unpixeldungeon.items.weapon.melee.simple.Spear;
-import com.felayga.unpixeldungeon.mechanics.BUCStatus;
 import com.felayga.unpixeldungeon.plants.Plant;
 
 public class WaterOfTransmutation extends WellWater {
@@ -70,8 +70,8 @@ public class WaterOfTransmutation extends WellWater {
 			item = changeWand( (Wand)item );
 		} else if (item instanceof Plant.Seed) {
 			item = changeSeed( (Plant.Seed)item );
-		} else if (item instanceof Artifact) {
-			item = changeArtifact( (Artifact)item );
+		} else if (item instanceof Artifact_old) {
+			item = changeArtifact( (Artifact_old)item );
 		} else {
 			item = null;
 		}
@@ -166,8 +166,8 @@ public class WaterOfTransmutation extends WellWater {
 		return n;
 	}
 
-	private Artifact changeArtifact( Artifact a ) {
-		Artifact n = Generator.randomArtifact();
+	private Artifact_old changeArtifact( Artifact_old a ) {
+		Artifact_old n = Generator.randomArtifact();
 
 		if (n != null){
 			n.bucStatus(a);

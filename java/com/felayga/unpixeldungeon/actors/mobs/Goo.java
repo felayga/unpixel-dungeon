@@ -6,7 +6,7 @@
  * Copyright (C) 2014-2015 Evan Debenham
  *
  * Unpixel Dungeon
- * Copyright (C) 2015 Randall Foudray
+ * Copyright (C) 2015-2016 Randall Foudray
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -20,6 +20,7 @@
  *
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>
+ *
  */
 package com.felayga.unpixeldungeon.actors.mobs;
 
@@ -44,7 +45,7 @@ import com.felayga.unpixeldungeon.items.weapon.enchantments.Death;
 import com.felayga.unpixeldungeon.levels.Level;
 import com.felayga.unpixeldungeon.scenes.GameScene;
 import com.felayga.unpixeldungeon.sprites.CharSprite;
-import com.felayga.unpixeldungeon.sprites.GooSprite;
+import com.felayga.unpixeldungeon.sprites.mobs.goo.BlackGooSprite;
 import com.felayga.unpixeldungeon.utils.GLog;
 import com.watabou.utils.Bundle;
 import com.watabou.utils.Random;
@@ -60,7 +61,7 @@ public class Goo extends Mob {
 		HP = HT = 100;
 		EXP = 10;
 		defenseSkill = 8;
-		spriteClass = GooSprite.class;
+		spriteClass = BlackGooSprite.class;
 
 		loot = new LloydsBeacon().identify();
 		lootChance = 0.333f;
@@ -105,18 +106,13 @@ public class Goo extends Mob {
 	*/
 
 	@Override
-	public int defenseSkill(Char enemy) {
-		return (int)(super.defenseSkill(enemy) * ((HP*2 <= HT)? 1.5 : 1));
-	}
-
-	@Override
 	public boolean act() {
 
 		if (Level.water[pos] && HP < HT) {
 			sprite.emitter().burst( Speck.factory( Speck.HEALING ), 1 );
 			if (HP*2 == HT) {
 				BossHealthBar.bleed(false);
-				((GooSprite)sprite).spray(false);
+				((BlackGooSprite)sprite).spray(false);
 			}
 			HP++;
 		}
@@ -132,7 +128,7 @@ public class Goo extends Mob {
 	@Override
 	protected boolean doAttack( boolean thrown, Char enemy ) {
 		if (pumpedUp == 1) {
-			((GooSprite)sprite).pumpUp();
+			((BlackGooSprite)sprite).pumpUp();
 			for (int i = 0; i < Level.NEIGHBOURS9DIST2.length; i++) {
 				int j = pos + Level.NEIGHBOURS9DIST2[i];
 				if (Level.insideMap(j) && Level.passable[j])
@@ -149,7 +145,7 @@ public class Goo extends Mob {
 
 			if (visible) {
 				if (pumpedUp >= 2) {
-					((GooSprite) sprite).pumpAttack();
+					((BlackGooSprite) sprite).pumpAttack();
 				}
 				else
 					sprite.attack( enemy.pos );
@@ -165,7 +161,7 @@ public class Goo extends Mob {
 
 			pumpedUp++;
 
-			((GooSprite)sprite).pumpUp();
+			((BlackGooSprite)sprite).pumpUp();
 
 			for (int i=0; i < Level.NEIGHBOURS9.length; i++) {
 				int j = pos + Level.NEIGHBOURS9[i];
@@ -212,7 +208,7 @@ public class Goo extends Mob {
 			BossHealthBar.bleed(true);
 			GLog.w("Goo Becomes Enraged!!");
 			sprite.showStatus(CharSprite.NEGATIVE, "enraged");
-			((GooSprite)sprite).spray(true);
+			((BlackGooSprite)sprite).spray(true);
 			yell("GLUUUURP!");
 			spend(GameTime.TICK, false );
 		}

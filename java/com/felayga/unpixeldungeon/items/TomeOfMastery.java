@@ -6,7 +6,7 @@
  * Copyright (C) 2014-2015 Evan Debenham
  *
  * Unpixel Dungeon
- * Copyright (C) 2015 Randall Foudray
+ * Copyright (C) 2015-2016 Randall Foudray
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -20,12 +20,12 @@
  *
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>
+ *
  */
 package com.felayga.unpixeldungeon.items;
 
 import java.util.ArrayList;
 
-import com.felayga.unpixeldungeon.actors.Actor;
 import com.felayga.unpixeldungeon.mechanics.GameTime;
 import com.watabou.noosa.audio.Sample;
 import com.felayga.unpixeldungeon.Assets;
@@ -41,7 +41,7 @@ import com.felayga.unpixeldungeon.scenes.GameScene;
 import com.felayga.unpixeldungeon.sprites.ItemSpriteSheet;
 import com.felayga.unpixeldungeon.utils.GLog;
 import com.felayga.unpixeldungeon.utils.Utils;
-import com.felayga.unpixeldungeon.windows.WndChooseWay;
+import com.felayga.unpixeldungeon.windows.hero.WndChooseWay;
 
 public class TomeOfMastery extends Item {
 
@@ -129,7 +129,7 @@ public class TomeOfMastery extends Item {
 	}
 	
 	public void choose( HeroSubClass way ) {
-		curUser.belongings.detach(this);
+		curUser.belongings.remove(this, 1);
 
 		curUser.spend( TomeOfMastery.TIME_TO_READ, false );
 		curUser.busy();

@@ -6,7 +6,7 @@
  * Copyright (C) 2014-2015 Evan Debenham
  *
  * Unpixel Dungeon
- * Copyright (C) 2015 Randall Foudray
+ * Copyright (C) 2015-2016 Randall Foudray
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -20,11 +20,13 @@
  *
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>
+ *
  */
 package com.felayga.unpixeldungeon.actors.mobs;
 
 import java.util.HashSet;
 
+import com.felayga.unpixeldungeon.items.KindOfWeapon;
 import com.felayga.unpixeldungeon.items.weapon.melee.mob.MeleeMobAttack;
 import com.felayga.unpixeldungeon.mechanics.GameTime;
 import com.watabou.noosa.audio.Sample;
@@ -36,10 +38,9 @@ import com.felayga.unpixeldungeon.items.Generator;
 import com.felayga.unpixeldungeon.items.Item;
 import com.felayga.unpixeldungeon.items.weapon.enchantments.Death;
 import com.felayga.unpixeldungeon.levels.Level;
-import com.felayga.unpixeldungeon.sprites.SkeletonSprite;
+import com.felayga.unpixeldungeon.sprites.mobs.SkeletonSprite;
 import com.felayga.unpixeldungeon.utils.GLog;
 import com.felayga.unpixeldungeon.utils.Utils;
-import com.watabou.utils.Random;
 
 public class Skeleton extends Mob {
 
@@ -74,7 +75,7 @@ public class Skeleton extends Mob {
 		for (int i=0; i < Level.NEIGHBOURS8.length; i++) {
 			Char ch = findChar( pos + Level.NEIGHBOURS8[i] );
 			if (ch != null && ch.isAlive()) {
-				int damage = Math.max( 0,  belongings.weapon.damageRoll() );
+				int damage = Math.max( 0,  ((KindOfWeapon)belongings.weapon).damageRoll() );
 				ch.damage( damage, this );
 				if (ch == Dungeon.hero && !ch.isAlive()) {
 					heroKilled = true;

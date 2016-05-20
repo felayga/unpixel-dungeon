@@ -6,7 +6,7 @@
  * Copyright (C) 2014-2015 Evan Debenham
  *
  * Unpixel Dungeon
- * Copyright (C) 2015 Randall Foudray
+ * Copyright (C) 2015-2016 Randall Foudray
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -20,13 +20,13 @@
  *
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>
+ *
  */
 package com.felayga.unpixeldungeon.items.food;
 
 import com.felayga.unpixeldungeon.Assets;
 import com.felayga.unpixeldungeon.Badges;
 import com.felayga.unpixeldungeon.Statistics;
-import com.felayga.unpixeldungeon.actors.Actor;
 import com.felayga.unpixeldungeon.actors.buffs.Barkskin;
 import com.felayga.unpixeldungeon.actors.buffs.Bleeding;
 import com.felayga.unpixeldungeon.actors.buffs.Buff;
@@ -99,7 +99,7 @@ public class Blandfruit extends Food {
 	public boolean execute( Hero hero, String action ) {
 		if (action.equals( AC_EAT )){
 			if (potionAttrib == null) {
-				hero.belongings.detach(this);
+				hero.belongings.remove(this, 1);
 
 				((Hunger) hero.buff(Hunger.class)).satisfy_new(energy);
 				GLog.i(message);
@@ -116,7 +116,7 @@ public class Blandfruit extends Food {
 			} else {
 				((Hunger) hero.buff(Hunger.class)).satisfy_new(energy * 2);
 
-				hero.belongings.detach(this);
+				hero.belongings.remove(this, 1);
 
 				hero.spend(GameTime.TICK, false);
 				hero.busy();
@@ -300,7 +300,7 @@ public class Blandfruit extends Food {
 				potionAttrib instanceof PotionOfLevitation ||
 				potionAttrib instanceof PotionOfPurity) {
 			potionAttrib.cast(user, dst);
-			user.belongings.detach(this);
+			user.belongings.remove(this, 1);
 		} else {
 			super.cast(user, dst);
 		}

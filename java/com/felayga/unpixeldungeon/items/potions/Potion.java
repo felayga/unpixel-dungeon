@@ -6,7 +6,7 @@
  * Copyright (C) 2014-2015 Evan Debenham
  *
  * Unpixel Dungeon
- * Copyright (C) 2015 Randall Foudray
+ * Copyright (C) 2015-2016 Randall Foudray
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -20,6 +20,7 @@
  *
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>
+ *
  */
 package com.felayga.unpixeldungeon.items.potions;
 
@@ -32,8 +33,8 @@ import com.felayga.unpixeldungeon.actors.blobs.Acid;
 import com.felayga.unpixeldungeon.actors.blobs.Fire;
 import com.felayga.unpixeldungeon.actors.buffs.Buff;
 import com.felayga.unpixeldungeon.actors.buffs.Burning;
+import com.felayga.unpixeldungeon.actors.buffs.Encumbrance;
 import com.felayga.unpixeldungeon.actors.buffs.Ooze;
-import com.felayga.unpixeldungeon.actors.mobs.Acidic;
 import com.felayga.unpixeldungeon.mechanics.GameTime;
 import com.watabou.noosa.audio.Sample;
 import com.felayga.unpixeldungeon.Assets;
@@ -164,6 +165,7 @@ public class Potion extends Item {
 		stackable = true;
 		defaultAction = AC_DRINK;
 		fragile = true;
+		weight = Encumbrance.UNIT * 20;
 	}
 
 	@Override
@@ -231,7 +233,7 @@ public class Potion extends Item {
 	}
 
 	protected void drink(Hero hero) {
-		hero.belongings.detach(this);
+		hero.belongings.remove(this, 1);
 
 		hero.spend(TIME_TO_DRINK, false);
 		hero.busy();

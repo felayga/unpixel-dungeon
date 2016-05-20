@@ -6,7 +6,7 @@
  * Copyright (C) 2014-2015 Evan Debenham
  *
  * Unpixel Dungeon
- * Copyright (C) 2015 Randall Foudray
+ * Copyright (C) 2015-2016 Randall Foudray
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -20,19 +20,18 @@
  *
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>
+ *
  */
 package com.felayga.unpixeldungeon.items;
 
 import com.felayga.unpixeldungeon.Assets;
-import com.felayga.unpixeldungeon.Badges;
 import com.felayga.unpixeldungeon.Dungeon;
 import com.felayga.unpixeldungeon.actors.Actor;
 import com.felayga.unpixeldungeon.actors.Char;
 import com.felayga.unpixeldungeon.actors.buffs.SnipersMark;
 import com.felayga.unpixeldungeon.actors.hero.Hero;
 import com.felayga.unpixeldungeon.effects.Speck;
-import com.felayga.unpixeldungeon.items.bags.Bag;
-import com.felayga.unpixeldungeon.items.weapon.missiles.Boomerang;
+import com.felayga.unpixeldungeon.items.bags.IBag;
 import com.felayga.unpixeldungeon.items.weapon.missiles.MissileWeapon;
 import com.felayga.unpixeldungeon.mechanics.BUCStatus;
 import com.felayga.unpixeldungeon.mechanics.Ballistica;
@@ -43,7 +42,7 @@ import com.felayga.unpixeldungeon.sprites.ItemSprite;
 import com.felayga.unpixeldungeon.sprites.MissileSprite;
 import com.felayga.unpixeldungeon.ui.QuickSlotButton;
 import com.felayga.unpixeldungeon.utils.GLog;
-import com.felayga.unpixeldungeon.utils.Utils;
+import com.felayga.unpixeldungeon.windows.WndItemDropMultiple;
 import com.watabou.noosa.audio.Sample;
 import com.watabou.noosa.particles.Emitter;
 import com.watabou.utils.Bundlable;
@@ -51,9 +50,7 @@ import com.watabou.utils.Bundle;
 import com.watabou.utils.Callback;
 
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.Comparator;
-import java.util.Iterator;
 
 public class Item implements Bundlable {
 	private static final String TXT_TO_STRING = "%s";
@@ -74,7 +71,7 @@ public class Item implements Bundlable {
 	public String defaultAction;
 	public boolean usesTargeting;
 
-	public Bag parent = null;
+	public IBag parent = null;
 
 	protected String name = "smth";
 	public int image = 0;
@@ -84,6 +81,7 @@ public class Item implements Bundlable {
 
 	public boolean droppable = true;
 	public boolean fragile = false;
+	public int weight = 0;
 
 	public int level = 0;
 	public boolean levelKnown = false;
@@ -173,9 +171,25 @@ public class Item implements Bundlable {
 		Sample.INSTANCE.play(Assets.SND_ITEM);
 	}
 
-	public void doDrop(Hero hero) {
-		hero.spend(TIME_TO_DROP, true);
-		Dungeon.level.drop(hero.belongings.detachAll(this), hero.pos).sprite.drop(hero.pos);
+	public void doDrop(final Hero hero) {
+		if (quantity > 1) {
+			GameScene.show(new WndItemDropMultiple(this) {
+				@Override
+				public void doDrop(int quantity) {
+					if (quantity == Item.this.quantity) {
+						Dungeon.level.drop(hero.belongings.remove(Item.this), hero.pos).sprite.drop(hero.pos);
+					}
+					else {
+						Dungeon.level.drop(hero.belongings.remove(Item.this, quantity), hero.pos).sprite.drop(hero.pos);
+					}
+					hero.spend(TIME_TO_DROP, true);
+				}
+			});
+		}
+		else {
+			Dungeon.level.drop(hero.belongings.remove(this), hero.pos).sprite.drop(hero.pos);
+			hero.spend(TIME_TO_DROP, true);
+		}
 	}
 
 	public void syncVisuals() {
@@ -498,7 +512,7 @@ public class Item implements Bundlable {
 				reset(user.pos, cell, this, new Callback() {
 					@Override
 					public void call() {
-						user.belongings.detach(Item.this).onThrow(cell);
+						user.belongings.remove(Item.this, 1).onThrow(cell);
 						user.spend(finalDelay, true);
 					}
 				});

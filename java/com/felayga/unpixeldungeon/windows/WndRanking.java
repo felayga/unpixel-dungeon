@@ -5,6 +5,9 @@
  * Shattered Pixel Dungeon
  * Copyright (C) 2014-2015 Evan Debenham
  *
+ * Unpixel Dungeon
+ * Copyright (C) 2015-2016 Randall Foudray
+ *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation, either version 3 of the License, or
@@ -17,6 +20,7 @@
  *
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>
+ *
  */
 package com.felayga.unpixeldungeon.windows;
 
@@ -247,11 +251,11 @@ public class WndRanking extends WndTabbed {
 			if (stuff.offhand != null) {
 				addItem(stuff.offhand);
 			}
-            if (stuff.tool1 != null) {
-                addItem(stuff.tool1);
+            if (stuff.weapon2 != null) {
+                addItem(stuff.weapon2);
             }
-            if (stuff.tool2 != null) {
-                addItem(stuff.tool2);
+            if (stuff.offhand2 != null) {
+                addItem(stuff.offhand2);
             }
 			if (stuff.armor != null) {
 				addItem(stuff.armor);

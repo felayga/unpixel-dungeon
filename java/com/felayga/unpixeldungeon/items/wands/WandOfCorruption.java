@@ -6,7 +6,7 @@
  * Copyright (C) 2014-2015 Evan Debenham
  *
  * Unpixel Dungeon
- * Copyright (C) 2015 Randall Foudray
+ * Copyright (C) 2015-2016 Randall Foudray
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -20,6 +20,7 @@
  *
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>
+ *
  */
 package com.felayga.unpixeldungeon.items.wands;
 
@@ -58,7 +59,7 @@ public class WandOfCorruption extends Wand {
 
 	//FIXME: sloppy
 	private static HashSet<Class> bosses = new HashSet<Class>(Arrays.asList(
-			Ghost.FetidRat.class, Ghost.GnollTrickster.class, Ghost.GreatCrab.class,
+			Ghost.MarisupialRatFetid.class, Ghost.GnollTrickster.class, Ghost.GreatCrab.class,
 			Goo.class, Tengu.class, DM300.class, King.class,
 			Yog.class, Yog.BurningFist.class, Yog.RottingFist.class
 	));

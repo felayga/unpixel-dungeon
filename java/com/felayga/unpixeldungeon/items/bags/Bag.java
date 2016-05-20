@@ -6,7 +6,7 @@
  * Copyright (C) 2014-2015 Evan Debenham
  *
  * Unpixel Dungeon
- * Copyright (C) 2015 Randall Foudray
+ * Copyright (C) 2015-2016 Randall Foudray
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -20,6 +20,7 @@
  *
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>
+ *
  */
 package com.felayga.unpixeldungeon.items.bags;
 
@@ -30,6 +31,7 @@ import java.util.Iterator;
 import com.felayga.unpixeldungeon.Badges;
 import com.felayga.unpixeldungeon.Dungeon;
 import com.felayga.unpixeldungeon.actors.Char;
+import com.felayga.unpixeldungeon.actors.buffs.Encumbrance;
 import com.felayga.unpixeldungeon.actors.hero.Hero;
 import com.felayga.unpixeldungeon.items.Item;
 import com.felayga.unpixeldungeon.items.weapon.missiles.Boomerang;
@@ -43,7 +45,7 @@ import com.watabou.utils.Bundlable;
 import com.watabou.utils.Bundle;
 import com.watabou.utils.Random;
 
-public class Bag extends Item implements Iterable<Item> {
+public class Bag extends Item implements Iterable<Item>, IBag {
 	private static final String TXT_PACK_FULL = "Your pack is too full for the %s.";
 
 	public static final String AC_OPEN = "OPEN";
@@ -58,6 +60,8 @@ public class Bag extends Item implements Iterable<Item> {
 		unique = true;
 
 		priority = 16;
+
+		weight = Encumbrance.UNIT * 15;
 	}
 
 	public Char owner;
@@ -71,6 +75,14 @@ public class Bag extends Item implements Iterable<Item> {
 
 	//lower priority, chosen first
 	public int priority;
+
+	public void onWeightChanged(int change) {
+		weight += change;
+
+		if (parent != null) {
+			parent.onWeightChanged(change);
+		}
+	}
 
 	@Override
 	public ArrayList<String> actions( Hero hero ) {
@@ -114,6 +126,9 @@ public class Bag extends Item implements Iterable<Item> {
 				if (collectItem.isSimilar(item)) {
 					item.quantity(item.quantity() + collectItem.quantity());
 					item.updateQuickslot();
+
+					onWeightChanged(collectItem.quantity() * collectItem.weight);
+
 					return true;
 				}
 			}
@@ -127,8 +142,10 @@ public class Bag extends Item implements Iterable<Item> {
 
 			items.add(collectItem);
 			onItemAdded(collectItem);
-			if (collectItem.stackable || collectItem instanceof Boomerang)
+
+			if (collectItem.stackable || collectItem instanceof Boomerang) {
 				Dungeon.quickslot.replaceSimilar(collectItem);
+			}
 			collectItem.updateQuickslot();
 			Collections.sort(items, collectItem.itemComparator);
 			return true;
@@ -157,8 +174,8 @@ public class Bag extends Item implements Iterable<Item> {
 		}
 
 		if (similarities > 0) {
-			items.remove(test);
-			this.collect(test);
+			remove(test);
+			collect(test);
 			return true;
 		}
 
@@ -173,6 +190,32 @@ public class Bag extends Item implements Iterable<Item> {
 		onItemRemoved(item);
 		this.items.remove(item);
 		return item;
+	}
+
+	public Item remove(Item item, int quantity) {
+		if (item.quantity() > quantity) {
+			item.quantity(item.quantity()-quantity);
+			onWeightChanged(-item.weight * quantity);
+
+			try {
+				//todo: WHAT THE FLYING FUCK.
+				//pssh, who needs copy constructors?
+				Item detached = item.getClass().newInstance();
+				Bundle copy = new Bundle();
+				item.storeInBundle(copy);
+				detached.restoreFromBundle(copy);
+				detached.quantity(quantity);
+				detached.onDetach();
+				return detached;
+			} catch (Exception e) {
+				return null;
+			}
+		}
+		else if (item.quantity() == quantity) {
+			return remove(item);
+		}
+
+		return null;
 	}
 
 	/*
@@ -200,9 +243,12 @@ public class Bag extends Item implements Iterable<Item> {
 
 	protected void onItemAdded(Item item) {
 		item.parent = this;
+		onWeightChanged(item.weight * item.quantity());
 	}
 
 	protected void onItemRemoved(Item item) {
+		onWeightChanged(-item.weight * item.quantity());
+
 		if (item.parent == this) {
 			item.parent = null;
 		}

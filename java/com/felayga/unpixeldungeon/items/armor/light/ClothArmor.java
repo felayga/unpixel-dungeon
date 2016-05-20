@@ -6,7 +6,7 @@
  * Copyright (C) 2014-2015 Evan Debenham
  *
  * Unpixel Dungeon
- * Copyright (C) 2015 Randall Foudray
+ * Copyright (C) 2015-2016 Randall Foudray
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -20,9 +20,11 @@
  *
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>
+ *
  */
 package com.felayga.unpixeldungeon.items.armor.light;
 
+import com.felayga.unpixeldungeon.actors.buffs.Encumbrance;
 import com.felayga.unpixeldungeon.sprites.ItemSpriteSheet;
 
 public class ClothArmor extends LightArmor {
@@ -36,6 +38,8 @@ public class ClothArmor extends LightArmor {
 		textureIndex = 2;
 
 		bones = false; //Finding them in bones would be semi-frequent and disappointing.
+
+		weight = Encumbrance.UNIT * 90;
 	}
 	
 	@Override

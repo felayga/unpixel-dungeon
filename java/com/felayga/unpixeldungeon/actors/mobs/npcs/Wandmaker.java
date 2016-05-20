@@ -6,7 +6,7 @@
  * Copyright (C) 2014-2015 Evan Debenham
  *
  * Unpixel Dungeon
- * Copyright (C) 2015 Randall Foudray
+ * Copyright (C) 2015-2016 Randall Foudray
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -20,6 +20,7 @@
  *
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>
+ *
  */
 package com.felayga.unpixeldungeon.actors.mobs.npcs;
 
@@ -48,10 +49,10 @@ import com.felayga.unpixeldungeon.mechanics.GameTime;
 import com.felayga.unpixeldungeon.plants.Plant;
 import com.felayga.unpixeldungeon.scenes.GameScene;
 import com.felayga.unpixeldungeon.sprites.ItemSpriteSheet;
-import com.felayga.unpixeldungeon.sprites.WandmakerSprite;
+import com.felayga.unpixeldungeon.sprites.npcs.WandmakerSprite;
 import com.felayga.unpixeldungeon.utils.Utils;
-import com.felayga.unpixeldungeon.windows.WndQuest;
-import com.felayga.unpixeldungeon.windows.WndWandmaker;
+import com.felayga.unpixeldungeon.windows.quest.WndQuest;
+import com.felayga.unpixeldungeon.windows.quest.WndWandmaker;
 import com.watabou.utils.Bundle;
 import com.watabou.utils.Random;
 
@@ -117,11 +118,6 @@ public class Wandmaker extends NPC {
 	protected boolean act() {
 		throwItem();
 		return super.act();
-	}
-	
-	@Override
-	public int defenseSkill( Char enemy ) {
-		return 1000;
 	}
 	
 	@Override

@@ -6,7 +6,7 @@
  * Copyright (C) 2014-2015 Evan Debenham
  *
  * Unpixel Dungeon
- * Copyright (C) 2015 Randall Foudray
+ * Copyright (C) 2015-2016 Randall Foudray
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -20,6 +20,7 @@
  *
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>
+ *
  */
 package com.felayga.unpixeldungeon.actors.mobs;
 
@@ -49,7 +50,9 @@ import com.felayga.unpixeldungeon.items.rings.RingOfAccuracy;
 import com.felayga.unpixeldungeon.items.rings.RingOfWealth;
 import com.felayga.unpixeldungeon.levels.Level;
 import com.felayga.unpixeldungeon.levels.Level.Feeling;
+import com.felayga.unpixeldungeon.mechanics.AttributeType;
 import com.felayga.unpixeldungeon.mechanics.GameTime;
+import com.felayga.unpixeldungeon.mechanics.Roll;
 import com.felayga.unpixeldungeon.sprites.CharSprite;
 import com.felayga.unpixeldungeon.utils.GLog;
 import com.felayga.unpixeldungeon.utils.Utils;
@@ -60,8 +63,13 @@ import java.util.HashSet;
 
 public abstract class Mob extends Char {
 
+	public Mob(int level)
 	{
 		actPriority = 2; //hero gets priority over mobs.
+
+		this.level = level;
+
+		HP = HT = Roll.MobHP(level);
 	}
 	
 	private static final String	TXT_DIED	= "You hear something died in the distance";
@@ -81,10 +89,8 @@ public abstract class Mob extends Char {
 	
 	protected int target = -1;
 	
-	protected int defenseSkill = 0;
-	
-	protected int EXP = 1;
-	protected int maxLvl = Hero.MAX_LEVEL;
+	protected int experience = 1;
+	protected int level;
 	
 	protected Char enemy;
 	protected boolean enemySeen;
@@ -101,7 +107,6 @@ public abstract class Mob extends Char {
 	
 	@Override
 	public void storeInBundle( Bundle bundle ) {
-		
 		super.storeInBundle(bundle);
 
 		if (state == SLEEPING) {
@@ -121,7 +126,6 @@ public abstract class Mob extends Char {
 	
 	@Override
 	public void restoreFromBundle( Bundle bundle ) {
-		
 		super.restoreFromBundle(bundle);
 
 		String state = bundle.getString( STATE );
@@ -153,7 +157,6 @@ public abstract class Mob extends Char {
 	
 	@Override
 	protected boolean act() {
-		
 		super.act();
 		
 		boolean justAlerted = alerted;
@@ -175,10 +178,9 @@ public abstract class Mob extends Char {
 	}
 	
 	protected Char chooseEnemy() {
-
-		Terror terror = buff( Terror.class );
+		Terror terror = buff(Terror.class);
 		if (terror != null) {
-			Char source = (Char)Actor.findById( terror.object );
+			Char source = (Char) Actor.findById(terror.object);
 			if (source != null) {
 				return source;
 			}
@@ -186,53 +188,63 @@ public abstract class Mob extends Char {
 
 		//resets target if: the target is dead, the target has been lost (wandering)
 		//or if the mob is amoked/corrupted and targeting the hero (will try to target something else)
-		if ( enemy != null &&
+		if (enemy != null &&
 				!enemy.isAlive() || state == WANDERING ||
-				((buff( Amok.class ) != null || buff(Corruption.class) != null) && enemy == Dungeon.hero ))
+				((buff(Amok.class) != null || buff(Corruption.class) != null) && enemy == Dungeon.hero)) {
 			enemy = null;
+		}
 
 		//if there is no current target, find a new one.
 		if (enemy == null) {
-
 			HashSet<Char> enemies = new HashSet<Char>();
 
 			//if the mob is amoked or corrupted...
-			if ( buff(Amok.class) != null || buff(Corruption.class) != null) {
-
+			if (buff(Amok.class) != null || buff(Corruption.class) != null) {
 				//try to find an enemy mob to attack first.
-				for (Mob mob : Dungeon.level.mobs)
-					if (mob != this && Level.fieldOfView[mob.pos] && mob.hostile)
-							enemies.add(mob);
-				if (enemies.size() > 0) return Random.element(enemies);
+				for (Mob mob : Dungeon.level.mobs) {
+					if (mob != this && Level.fieldOfView[mob.pos] && mob.hostile) {
+						enemies.add(mob);
+					}
+				}
+				if (enemies.size() > 0) {
+					return Random.element(enemies);
+				}
 
 				//try to find ally mobs to attack second.
-				for (Mob mob : Dungeon.level.mobs)
-					if (mob != this && Level.fieldOfView[mob.pos] && mob.ally)
+				for (Mob mob : Dungeon.level.mobs) {
+					if (mob != this && Level.fieldOfView[mob.pos] && mob.ally) {
 						enemies.add(mob);
-				if (enemies.size() > 0) return Random.element(enemies);
+					}
+				}
+				if (enemies.size() > 0) {
+					return Random.element(enemies);
+				}
 
 				//if there is nothing, go for the hero, unless corrupted, then go for nothing.
-				if (buff(Corruption.class) != null) return null;
-				else return Dungeon.hero;
-
-			//if the mob is not amoked...
+				if (buff(Corruption.class) != null) {
+					return null;
+				}
+				else {
+					return Dungeon.hero;
+				}
+				//if the mob is not amoked...
 			} else {
-
 				//try to find ally mobs to attack.
-				for (Mob mob : Dungeon.level.mobs)
-					if (mob != this && Level.fieldOfView[mob.pos] && mob.ally)
+				for (Mob mob : Dungeon.level.mobs) {
+					if (mob != this && Level.fieldOfView[mob.pos] && mob.ally) {
 						enemies.add(mob);
+					}
+				}
 
 				//and add the hero to the list of targets.
 				enemies.add(Dungeon.hero);
 
 				//target one at random.
 				return Random.element(enemies);
-
 			}
-
-		} else
+		} else {
 			return enemy;
+		}
 	}
 
 	protected boolean moveSprite( int from, int to ) {
@@ -284,7 +296,9 @@ public abstract class Mob extends Char {
 	}
 	
 	protected boolean getCloser( int target ) {
-		if (rooted) {
+		long speed = speed();
+
+		if (speed == 0) {
 			return false;
 		}
 
@@ -316,9 +330,9 @@ public abstract class Mob extends Char {
 			passable[i] = p[i] || (a[i] && (canOpenDoors || isEthereal));
 		}
 
-		int step = Dungeon.flee( this, pos, target,
-			passable,
-			Level.fieldOfView );
+		int step = Dungeon.flee(this, pos, target,
+				passable,
+				Level.fieldOfView);
 		if (step != -1) {
 			move( step );
 			return true;
@@ -349,36 +363,20 @@ public abstract class Mob extends Char {
 		if (visible) {
 			sprite.attack( enemy.pos );
 		} else {
-			attack( belongings.weapon, thrown, enemy );
+			attack( (KindOfWeapon)belongings.weapon, thrown, enemy );
 		}
 				
-		spend( attackDelay(belongings.weapon.delay_new), false );
+		spend(attackDelay(((KindOfWeapon) belongings.weapon).delay_new), false);
 		
 		return !visible;
 	}
 	
 	@Override
 	public void onAttackComplete() {
-		attack( belongings.weapon, false, enemy );
+		attack( (KindOfWeapon)belongings.weapon, false, enemy );
 		super.onAttackComplete();
 	}
 
-
-	@Override
-	public int defenseSkill( Char enemy ) {
-		if (enemySeen && paralysed == 0) {
-			int defenseSkill = this.defenseSkill;
-			int penalty = 0;
-			for (Buff buff : enemy.buffs(RingOfAccuracy.Accuracy.class)) {
-				penalty += ((RingOfAccuracy.Accuracy) buff).level;
-			}
-			if (penalty != 0 && enemy == Dungeon.hero)
-				defenseSkill *= Math.pow(0.75, penalty);
-			return defenseSkill;
-		} else {
-			return 0;
-		}
-	}
 	
 	@Override
 	public int defenseProc( Char enemy, int damage ) {
@@ -407,6 +405,22 @@ public abstract class Mob extends Char {
 		}
 
 		return damage;
+	}
+
+	@Override
+	public int attackSkill( KindOfWeapon weapon, boolean thrown, Char target )
+	{
+		int retval = super.attackSkill(weapon, thrown, target);
+
+		retval += level;
+
+		return retval;
+	}
+
+
+	@Override
+	public int defenseMundane( Char enemy ) {
+		return defenseMundane;
 	}
 
 	public void aggro( Char ch ) {
@@ -449,10 +463,11 @@ public abstract class Mob extends Char {
 				}
 				Badges.validateNightHunter();
 			}
-			
-			if (Dungeon.hero.lvl <= maxLvl && EXP > 0) {
-				Dungeon.hero.sprite.showStatus( CharSprite.POSITIVE, TXT_EXP, EXP );
-				Dungeon.hero.earnExp( EXP );
+
+			//removed dungeon hero level check (Dungeon.hero.lvl <= Hero.MAX_LEVEL)
+			if (experience > 0) {
+				Dungeon.hero.sprite.showStatus( CharSprite.POSITIVE, TXT_EXP, experience );
+				Dungeon.hero.earnExp( experience );
 			}
 		}
 	}
@@ -468,8 +483,9 @@ public abstract class Mob extends Char {
 		}
 
 		lootChance *= Math.pow(1.1, bonus);
-		
-		if (Random.Float() < lootChance && Dungeon.hero.lvl <= maxLvl + 2) {
+
+		//removed dungeon hero level check (Dungeon.hero.lvl <= Hero.MAX_LEVEL)
+		if (Random.Float() < lootChance) {
 			Item loot = createLoot();
 			if (loot != null)
 				Dungeon.level.drop( loot , pos ).sprite.drop();
@@ -582,15 +598,12 @@ public abstract class Mob extends Char {
 		@Override
 		public boolean act( boolean enemyInFOV, boolean justAlerted ) {
 			if (enemyInFOV && (justAlerted || Random.Int( distance( enemy ) / 2 + enemy.stealth() ) == 0)) {
-
 				enemySeen = true;
 
 				notice();
 				state = HUNTING;
 				target = enemy.pos;
-
 			} else {
-
 				enemySeen = false;
 
 				int oldPos = pos;
@@ -619,11 +632,8 @@ public abstract class Mob extends Char {
 		public boolean act( boolean enemyInFOV, boolean justAlerted ) {
 			enemySeen = enemyInFOV;
 			if (enemyInFOV && !isCharmedBy( enemy ) && canAttack( enemy )) {
-
 				return doAttack( false, enemy );
-
 			} else {
-
 				if (enemyInFOV) {
 					target = enemy.pos;
 				}

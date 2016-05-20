@@ -6,7 +6,7 @@
  * Copyright (C) 2014-2015 Evan Debenham
  *
  * Unpixel Dungeon
- * Copyright (C) 2015 Randall Foudray
+ * Copyright (C) 2015-2016 Randall Foudray
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -20,13 +20,14 @@
  *
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>
+ *
  */
 package com.felayga.unpixeldungeon.items.scrolls;
 
 import com.felayga.unpixeldungeon.Assets;
 import com.felayga.unpixeldungeon.Badges;
-import com.felayga.unpixeldungeon.actors.Actor;
 import com.felayga.unpixeldungeon.actors.buffs.Blindness;
+import com.felayga.unpixeldungeon.actors.buffs.Encumbrance;
 import com.felayga.unpixeldungeon.actors.hero.Hero;
 import com.felayga.unpixeldungeon.items.Item;
 import com.felayga.unpixeldungeon.items.ItemStatusHandler;
@@ -133,11 +134,6 @@ public abstract class Scroll extends Item {
 
 	public boolean ownedByBook = false;
 	
-	{
-		stackable = true;
-		defaultAction = AC_READ;
-	}
-	
 	@SuppressWarnings("unchecked")
 	public static void initLabels() {
 		handler = new ItemStatusHandler<Scroll>( (Class<? extends Scroll>[])scrolls, runes, images, 1 );
@@ -155,6 +151,11 @@ public abstract class Scroll extends Item {
 	public Scroll() {
 		super();
 		syncVisuals();
+
+		stackable = true;
+		defaultAction = AC_READ;
+
+		weight = Encumbrance.UNIT * 5;
 	}
 
 	@Override
@@ -192,7 +193,7 @@ public abstract class Scroll extends Item {
 
 	protected void prepareRead(Hero hero) {
 		curUser = hero;
-		curItem = hero.belongings.detach(this);
+		curItem = hero.belongings.remove(this, 1);
 	}
 
 	abstract protected void doRead();

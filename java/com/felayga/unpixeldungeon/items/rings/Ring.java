@@ -6,7 +6,7 @@
  * Copyright (C) 2014-2015 Evan Debenham
  *
  * Unpixel Dungeon
- * Copyright (C) 2015 Randall Foudray
+ * Copyright (C) 2015-2016 Randall Foudray
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -20,6 +20,7 @@
  *
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>
+ *
  */
 package com.felayga.unpixeldungeon.items.rings;
 
@@ -29,6 +30,8 @@ import com.felayga.unpixeldungeon.Badges;
 import com.felayga.unpixeldungeon.Dungeon;
 import com.felayga.unpixeldungeon.ShatteredPixelDungeon;
 import com.felayga.unpixeldungeon.actors.Actor;
+import com.felayga.unpixeldungeon.actors.buffs.Encumbrance;
+import com.felayga.unpixeldungeon.items.IActivateable;
 import com.felayga.unpixeldungeon.items.KindofMisc;
 import com.felayga.unpixeldungeon.actors.Char;
 import com.felayga.unpixeldungeon.actors.buffs.Buff;
@@ -46,7 +49,7 @@ import com.felayga.unpixeldungeon.windows.WndOptions;
 import com.watabou.utils.Bundle;
 import com.watabou.utils.Random;
 
-public class Ring extends KindofMisc {
+public class Ring extends KindofMisc implements IActivateable {
 
 	private static final int TICKS_TO_KNOW    = 200;
 
@@ -75,7 +78,16 @@ public class Ring extends KindofMisc {
 		RingOfWealth.class,
 	};
 	private static final String[] gems =
-		{"diamond", "opal", "garnet", "ruby", "amethyst", "topaz", "onyx", "tourmaline", "emerald", "sapphire", "quartz", "agate"};
+		{
+			"diamond", "opal", "garnet", "ruby",
+			"amethyst", "topaz", "onyx", "tourmaline",
+			"emerald", "sapphire", "quartz", "agate",
+			"copper", "brass", "bronze", "iron",
+			"steel", "silver", "gold", "coral",
+			"tigereye", "wooden", "ivory", "twisted",
+			"moonstone", "jade", "pearl", "granite",
+			"vine", "ammolite", "spinel", "meat"
+		};
 	private static final Integer[] images = {
 		ItemSpriteSheet.RING_DIAMOND,
 		ItemSpriteSheet.RING_OPAL,
@@ -88,7 +100,28 @@ public class Ring extends KindofMisc {
 		ItemSpriteSheet.RING_EMERALD,
 		ItemSpriteSheet.RING_SAPPHIRE,
 		ItemSpriteSheet.RING_QUARTZ,
-		ItemSpriteSheet.RING_AGATE};
+		ItemSpriteSheet.RING_AGATE,
+		ItemSpriteSheet.RING_COPPER,
+		ItemSpriteSheet.RING_BRASS,
+		ItemSpriteSheet.RING_BRONZE,
+		ItemSpriteSheet.RING_IRON,
+		ItemSpriteSheet.RING_STEEL,
+		ItemSpriteSheet.RING_SILVER,
+		ItemSpriteSheet.RING_GOLD,
+		ItemSpriteSheet.RING_CORAL,
+		ItemSpriteSheet.RING_TIGEREYE,
+		ItemSpriteSheet.RING_WOODEN,
+		ItemSpriteSheet.RING_IVORY,
+		ItemSpriteSheet.RING_TWISTED,
+		ItemSpriteSheet.RING_MOONSTONE,
+		ItemSpriteSheet.RING_JADE,
+		ItemSpriteSheet.RING_PEARL,
+		ItemSpriteSheet.RING_GRANITE,
+		ItemSpriteSheet.RING_VINE,
+		ItemSpriteSheet.RING_AMMOLITE,
+		ItemSpriteSheet.RING_SPINEL,
+		ItemSpriteSheet.RING_MEAT
+};
 	
 	private static ItemStatusHandler<Ring> handler;
 	
@@ -98,7 +131,7 @@ public class Ring extends KindofMisc {
 	
 	@SuppressWarnings("unchecked")
 	public static void initGems() {
-		handler = new ItemStatusHandler<Ring>( (Class<? extends Ring>[])rings, gems, images );
+		handler = new ItemStatusHandler<Ring>( (Class<? extends Ring>[])rings, gems, images, 1 );
 	}
 	
 	public static void save( Bundle bundle ) {
@@ -111,8 +144,11 @@ public class Ring extends KindofMisc {
 	}
 	
 	public Ring() {
-		super();
+		super(GameTime.TICK);
+
 		syncVisuals();
+
+		weight = Encumbrance.UNIT * 3;
 	}
 	
 	public void syncVisuals() {
@@ -126,99 +162,36 @@ public class Ring extends KindofMisc {
 		actions.add(isEquipped(hero) ? AC_UNEQUIP : AC_EQUIP);
 		return actions;
 	}
-	
+
 	@Override
-	public boolean doEquip( final Char hero ) {
-
-		if (hero.belongings.ring1 != null && hero.belongings.ring2 != null) {
-
-			final KindofMisc m1 = hero.belongings.ring1;
-			final KindofMisc m2 = hero.belongings.ring2;
-
-			ShatteredPixelDungeon.scene().add(
-					new WndOptions(TXT_UNEQUIP_TITLE, TXT_UNEQUIP_MESSAGE,
-							Utils.capitalize(m1.toString()),
-							Utils.capitalize(m2.toString()),
-							Constant.TXT_CANCEL) {
-
-						@Override
-						protected void onSelect(int index) {
-                            KindofMisc equipped = null;
-
-                            switch(index) {
-                                case 0:
-                                    equipped = m1;
-                                    break;
-								case 1:
-                                    equipped = m2;
-                                    break;
-                            }
-
-							if (equipped != null && equipped.doUnequip(hero, true, false)) {
-								doEquip(hero);
-							}
-						}
-					});
-
-			return false;
-
-		} else {
-			
-			if (hero.belongings.ring1 == null) {
-				hero.belongings.ring1 = this;
-            }
-            else {
-                hero.belongings.ring2 = this;
-            }
-
-			hero.belongings.detach(this);
-
-			activate( hero );
-			
-			if (bucStatus == BUCStatus.Cursed) {
-				bucStatusKnown = true;
-				equipCursed( hero );
-				GLog.n( "your " + this + " tightens around your finger painfully" );
-			}
-			
-			hero.spend(TIME_TO_EQUIP, true);
-			return true;
-			
-		}
-
+	public Slot[] getSlots() {
+		return new Slot[]{ Slot.Ring1, Slot.Ring2 };
 	}
-	
+
+	@Override
+	public void onEquip(Char owner, boolean cursed) {
+		activate(owner);
+
+		if (cursed) {
+			if (owner instanceof Hero) {
+				GLog.n( "your " + this.getDisplayName() + " tightens around your finger painfully" );
+			}
+			else {
+				//todo: other ring cursed description
+			}
+		}
+	}
+
+	@Override
+	public void onUnequip(Char owner) {
+		owner.remove( buff );
+		buff = null;
+	}
+
+	@Override
 	public void activate( Char ch ) {
 		buff = buff();
 		buff.attachTo(ch);
-	}
-
-	@Override
-	public boolean doUnequip( Char hero, boolean collect, boolean single ) {
-		if (super.doUnequip( hero, collect, single )) {
-
-			if (hero.belongings.ring1 == this) {
-				hero.belongings.ring1 = null;
-            }
-            else {
-                hero.belongings.ring2 = null;
-            }
-
-			hero.remove( buff );
-			buff = null;
-
-			return true;
-
-		} else {
-
-			return false;
-
-		}
-	}
-	
-	@Override
-	public boolean isEquipped( Char hero ) {
-		return hero.belongings.ring1 == this || hero.belongings.ring2 == this;
 	}
 	
 	@Override

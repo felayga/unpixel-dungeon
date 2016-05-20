@@ -6,7 +6,7 @@
  * Copyright (C) 2014-2015 Evan Debenham
  *
  * Unpixel Dungeon
- * Copyright (C) 2015 Randall Foudray
+ * Copyright (C) 2015-2016 Randall Foudray
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -20,6 +20,7 @@
  *
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>
+ *
  */
 package com.felayga.unpixeldungeon.actors.mobs;
 
@@ -37,7 +38,7 @@ import com.felayga.unpixeldungeon.items.food.MysteryMeat;
 import com.felayga.unpixeldungeon.items.weapon.melee.mob.MeleeMobAttack;
 import com.felayga.unpixeldungeon.levels.Level;
 import com.felayga.unpixeldungeon.mechanics.GameTime;
-import com.felayga.unpixeldungeon.sprites.PiranhaSprite;
+import com.felayga.unpixeldungeon.sprites.mobs.PiranhaSprite;
 
 public class Piranha extends Mob {
 	
@@ -103,8 +104,9 @@ public class Piranha extends Mob {
 	
 	@Override
 	protected boolean getCloser( int target ) {
-		
-		if (rooted) {
+		long speed = speed();
+
+		if (speed == 0) {
 			return false;
 		}
 		

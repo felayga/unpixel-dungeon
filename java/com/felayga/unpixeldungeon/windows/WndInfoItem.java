@@ -5,6 +5,9 @@
  * Shattered Pixel Dungeon
  * Copyright (C) 2014-2015 Evan Debenham
  *
+ * Unpixel Dungeon
+ * Copyright (C) 2015-2016 Randall Foudray
+ *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation, either version 3 of the License, or
@@ -17,10 +20,11 @@
  *
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>
+ *
  */
 package com.felayga.unpixeldungeon.windows;
 
-import com.felayga.unpixeldungeon.items.artifacts.Artifact;
+import com.felayga.unpixeldungeon.items.artifacts.Artifact_old;
 import com.felayga.unpixeldungeon.items.rings.Ring;
 import com.felayga.unpixeldungeon.items.wands.Wand;
 import com.watabou.noosa.BitmapTextMultiline;
@@ -93,7 +97,7 @@ public class WndInfoItem extends Window {
 				info = TXT_REMAINS;
 			} else if (heap.type == Type.CRYSTAL_CHEST) {
 				title = TTL_CRYSTAL_CHEST;
-				if (heap.peek() instanceof Artifact)
+				if (heap.peek() instanceof Artifact_old)
 					info = Utils.format( TXT_INSIDE, "an artifact" );
 				else if (heap.peek() instanceof Wand)
 					info = Utils.format( TXT_INSIDE, "a wand" );

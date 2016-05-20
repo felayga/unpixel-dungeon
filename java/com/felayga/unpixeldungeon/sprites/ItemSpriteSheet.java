@@ -6,7 +6,7 @@
  * Copyright (C) 2014-2015 Evan Debenham
  *
  * Unpixel Dungeon
- * Copyright (C) 2015 Randall Foudray
+ * Copyright (C) 2015-2016 Randall Foudray
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -20,6 +20,7 @@
  *
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>
+ *
  */
 package com.felayga.unpixeldungeon.sprites;
 
@@ -177,190 +178,211 @@ public class ItemSpriteSheet {
 	public static final int RING_QUARTZ		= ROW8+9;
 	public static final int RING_AGATE		= ROW8+10;
 	public static final int RING_DIAMOND	= ROW8+11;
+	public static final int RING_COPPER		= ROW8+12;
+	public static final int RING_BRASS		= ROW8+13;
+	public static final int RING_BRONZE		= ROW8+14;
+	public static final int RING_IRON		= ROW8+15;
+	public static final int RING_STEEL		= ROW9+0;
+	public static final int RING_SILVER		= ROW9+1;
+	public static final int RING_GOLD		= ROW9+2;
+	public static final int RING_CORAL		= ROW9+3;
+	public static final int RING_TIGEREYE	= ROW9+4;
+	public static final int RING_WOODEN		= ROW9+5;
+	public static final int RING_IVORY		= ROW9+6;
+	public static final int RING_TWISTED	= ROW9+7;
+	public static final int RING_MOONSTONE	= ROW9+8;
+	public static final int RING_JADE		= ROW9+9;
+	public static final int RING_PEARL		= ROW9+10;
+	public static final int RING_GRANITE	= ROW9+11;
+	public static final int RING_VINE		= ROW9+12;
+	public static final int RING_AMMOLITE	= ROW9+13;
+	public static final int RING_SPINEL		= ROW9+14;
+	public static final int RING_MEAT		= ROW9+15;
+
 
 	//Row Eight: Artifacts with Static Images
-	public static final int ARTIFACT_CLOAK      = ROW9+0;
-	public static final int ARTIFACT_ARMBAND    = ROW9+1;
-	public static final int ARTIFACT_CAPE       = ROW9+2;
-	public static final int ARTIFACT_TALISMAN   = ROW9+3;
-	public static final int ARTIFACT_HOURGLASS  = ROW9+4;
-	public static final int ARTIFACT_TOOLKIT    = ROW9+5;
-	public static final int ARTIFACT_SPELLBOOK  = ROW9+6;
-	public static final int ARTIFACT_BEACON     = ROW9+7;
-	public static final int ARTIFACT_CHAINS     = ROW9+8;
+	public static final int ARTIFACT_CLOAK      = ROW10+0;
+	public static final int ARTIFACT_ARMBAND    = ROW10+1;
+	public static final int ARTIFACT_CAPE       = ROW10+2;
+	public static final int ARTIFACT_TALISMAN   = ROW10+3;
+	public static final int ARTIFACT_HOURGLASS  = ROW10+4;
+	public static final int ARTIFACT_TOOLKIT    = ROW10+5;
+	public static final int ARTIFACT_SPELLBOOK  = ROW10+6;
+	public static final int ARTIFACT_BEACON     = ROW10+7;
+	public static final int ARTIFACT_CHAINS     = ROW10+8;
 
 	//Row Nine: Artifacts with Dynamic Images
-	public static final int ARTIFACT_HORN1      = ROW10+0;
-	public static final int ARTIFACT_HORN2      = ROW10+1;
-	public static final int ARTIFACT_HORN3      = ROW10+2;
-	public static final int ARTIFACT_HORN4      = ROW10+3;
-	public static final int ARTIFACT_CHALICE1   = ROW10+4;
-	public static final int ARTIFACT_CHALICE2   = ROW10+5;
-	public static final int ARTIFACT_CHALICE3   = ROW10+6;
-	public static final int ARTIFACT_SANDALS    = ROW10+7;
-	public static final int ARTIFACT_SHOES      = ROW10+8;
-	public static final int ARTIFACT_BOOTS      = ROW10+9;
-	public static final int ARTIFACT_GREAVES    = ROW10+10;
-	public static final int ARTIFACT_ROSE1      = ROW10+11;
-	public static final int ARTIFACT_ROSE2      = ROW10+12;
-	public static final int ARTIFACT_ROSE3      = ROW10+13;
+	public static final int ARTIFACT_HORN1      = ROW11+0;
+	public static final int ARTIFACT_HORN2      = ROW11+1;
+	public static final int ARTIFACT_HORN3      = ROW11+2;
+	public static final int ARTIFACT_HORN4      = ROW11+3;
+	public static final int ARTIFACT_CHALICE1   = ROW11+4;
+	public static final int ARTIFACT_CHALICE2   = ROW11+5;
+	public static final int ARTIFACT_CHALICE3   = ROW11+6;
+	public static final int ARTIFACT_SANDALS    = ROW11+7;
+	public static final int ARTIFACT_SHOES      = ROW11+8;
+	public static final int ARTIFACT_BOOTS      = ROW11+9;
+	public static final int ARTIFACT_GREAVES    = ROW11+10;
+	public static final int ARTIFACT_ROSE1      = ROW11+11;
+	public static final int ARTIFACT_ROSE2      = ROW11+12;
+	public static final int ARTIFACT_ROSE3      = ROW11+13;
 
 	//Row Ten: Scrolls
-	public static final int SCROLL_01			= ROW11+0;
-	public static final int SCROLL_02			= ROW11+1;
-	public static final int SCROLL_03			= ROW11+2;
-	public static final int SCROLL_04			= ROW11+3;
-	public static final int SCROLL_05			= ROW11+4;
-	public static final int SCROLL_06			= ROW11+5;
-	public static final int SCROLL_07			= ROW11+6;
-	public static final int SCROLL_08			= ROW11+7;
-	public static final int SCROLL_09			= ROW11+8;
-	public static final int SCROLL_10			= ROW11+9;
-	public static final int SCROLL_11			= ROW11+10;
-	public static final int SCROLL_12			= ROW11+11;
-	public static final int SCROLL_13			= ROW11+12;
-	public static final int SCROLL_14			= ROW11+13;
-	public static final int SCROLL_15			= ROW11+14;
-	public static final int SCROLL_16			= ROW11+15;
-	public static final int SCROLL_17			= ROW12+0;
-	public static final int SCROLL_18			= ROW12+1;
-	public static final int SCROLL_19			= ROW12+2;
-	public static final int SCROLL_20			= ROW12+3;
-	public static final int SCROLL_21			= ROW12+4;
-	public static final int SCROLL_22			= ROW12+5;
-	public static final int SCROLL_23			= ROW12+6;
-	public static final int SCROLL_24			= ROW12+7;
-	public static final int SCROLL_25			= ROW12+8;
-	public static final int SCROLL_BLANK		= ROW12+9;
+	public static final int SCROLL_01			= ROW12+0;
+	public static final int SCROLL_02			= ROW12+1;
+	public static final int SCROLL_03			= ROW12+2;
+	public static final int SCROLL_04			= ROW12+3;
+	public static final int SCROLL_05			= ROW12+4;
+	public static final int SCROLL_06			= ROW12+5;
+	public static final int SCROLL_07			= ROW12+6;
+	public static final int SCROLL_08			= ROW12+7;
+	public static final int SCROLL_09			= ROW12+8;
+	public static final int SCROLL_10			= ROW12+9;
+	public static final int SCROLL_11			= ROW12+10;
+	public static final int SCROLL_12			= ROW12+11;
+	public static final int SCROLL_13			= ROW12+12;
+	public static final int SCROLL_14			= ROW12+13;
+	public static final int SCROLL_15			= ROW12+14;
+	public static final int SCROLL_16			= ROW12+15;
+	public static final int SCROLL_17			= ROW13+0;
+	public static final int SCROLL_18			= ROW13+1;
+	public static final int SCROLL_19			= ROW13+2;
+	public static final int SCROLL_20			= ROW13+3;
+	public static final int SCROLL_21			= ROW13+4;
+	public static final int SCROLL_22			= ROW13+5;
+	public static final int SCROLL_23			= ROW13+6;
+	public static final int SCROLL_24			= ROW13+7;
+	public static final int SCROLL_25			= ROW13+8;
+	public static final int SCROLL_BLANK		= ROW13+9;
 
 	//Row Eleven: Potions
-	public static final int POTION_RUBY			= ROW13+0;
-	public static final int POTION_PINK			= ROW13+1;
-	public static final int POTION_ORANGE		= ROW13+2;
-	public static final int POTION_YELLOW		= ROW13+3;
-	public static final int POTION_EMERALD		= ROW13+4;
-	public static final int POTION_DARKGREEN	= ROW13+5;
-	public static final int POTION_CYAN			= ROW13+6;
-	public static final int POTION_SKYBLUE		= ROW13+7;
-	public static final int POTION_BRILLIANTBLUE= ROW13+8;
-	public static final int POTION_MAGENTA		= ROW13+9;
-	public static final int POTION_PURPLERED	= ROW13+10;
-	public static final int POTION_PUCE			= ROW13+11;
-	public static final int POTION_MILKY		= ROW13+12;
-	public static final int POTION_SWIRLY		= ROW13+13;
-	public static final int POTION_BUBBLY		= ROW13+14;
-	public static final int POTION_SMOKY		= ROW13+15;
-	public static final int POTION_CLOUDY		= ROW14+0;
-	public static final int POTION_EFFERVESCENT	= ROW14+1;
-	public static final int POTION_BLACK		= ROW14+2;
-	public static final int POTION_GOLDEN		= ROW14+3;
-	public static final int POTION_BROWN		= ROW14+4;
-	public static final int POTION_FIZZY		= ROW14+5;
-	public static final int POTION_DARK			= ROW14+6;
-	public static final int POTION_WHITE		= ROW14+7;
-	public static final int POTION_MURKY		= ROW14+8;
-	public static final int POTION_CLEAR		= ROW14+9;
+	public static final int POTION_RUBY			= ROW14+0;
+	public static final int POTION_PINK			= ROW14+1;
+	public static final int POTION_ORANGE		= ROW14+2;
+	public static final int POTION_YELLOW		= ROW14+3;
+	public static final int POTION_EMERALD		= ROW14+4;
+	public static final int POTION_DARKGREEN	= ROW14+5;
+	public static final int POTION_CYAN			= ROW14+6;
+	public static final int POTION_SKYBLUE		= ROW14+7;
+	public static final int POTION_BRILLIANTBLUE= ROW14+8;
+	public static final int POTION_MAGENTA		= ROW14+9;
+	public static final int POTION_PURPLERED	= ROW14+10;
+	public static final int POTION_PUCE			= ROW14+11;
+	public static final int POTION_MILKY		= ROW14+12;
+	public static final int POTION_SWIRLY		= ROW14+13;
+	public static final int POTION_BUBBLY		= ROW14+14;
+	public static final int POTION_SMOKY		= ROW14+15;
+	public static final int POTION_CLOUDY		= ROW15+0;
+	public static final int POTION_EFFERVESCENT	= ROW15+1;
+	public static final int POTION_BLACK		= ROW15+2;
+	public static final int POTION_GOLDEN		= ROW15+3;
+	public static final int POTION_BROWN		= ROW15+4;
+	public static final int POTION_FIZZY		= ROW15+5;
+	public static final int POTION_DARK			= ROW15+6;
+	public static final int POTION_WHITE		= ROW15+7;
+	public static final int POTION_MURKY		= ROW15+8;
+	public static final int POTION_CLEAR		= ROW15+9;
 
 	//Row Twelve: Seeds
-	public static final int SEED_ROTBERRY	= ROW15+0;
-	public static final int SEED_FIREBLOOM	= ROW15+1;
-	public static final int SEED_STARFLOWER	= ROW15+2;
-	public static final int SEED_BLINDWEED	= ROW15+3;
-	public static final int SEED_SUNGRASS	= ROW15+4;
-	public static final int SEED_ICECAP		= ROW15+5;
-	public static final int SEED_STORMVINE	= ROW15+6;
-	public static final int SEED_SORROWMOSS	= ROW15+7;
-	public static final int SEED_DREAMFOIL	= ROW15+8;
-	public static final int SEED_EARTHROOT	= ROW15+9;
-	public static final int SEED_FADELEAF	= ROW15+10;
-	public static final int SEED_BLANDFRUIT	= ROW15+11;
+	public static final int SEED_ROTBERRY	= ROW16+0;
+	public static final int SEED_FIREBLOOM	= ROW16+1;
+	public static final int SEED_STARFLOWER	= ROW16+2;
+	public static final int SEED_BLINDWEED	= ROW16+3;
+	public static final int SEED_SUNGRASS	= ROW16+4;
+	public static final int SEED_ICECAP		= ROW16+5;
+	public static final int SEED_STORMVINE	= ROW16+6;
+	public static final int SEED_SORROWMOSS	= ROW16+7;
+	public static final int SEED_DREAMFOIL	= ROW16+8;
+	public static final int SEED_EARTHROOT	= ROW16+9;
+	public static final int SEED_FADELEAF	= ROW16+10;
+	public static final int SEED_BLANDFRUIT	= ROW16+11;
 
 	//Row Thirteen: Food
-	public static final int MEAT		= ROW16+0;
-	public static final int STEAK		= ROW16+1;
-	public static final int OVERPRICED	= ROW16+2;
-	public static final int CARPACCIO	= ROW16+3;
-	public static final int BLANDFRUIT	= ROW16+4;
-	public static final int RATION		= ROW16+5;
-	public static final int PASTY		= ROW16+6;
+	public static final int MEAT		= ROW17+0;
+	public static final int STEAK		= ROW17+1;
+	public static final int OVERPRICED	= ROW17+2;
+	public static final int CARPACCIO	= ROW17+3;
+	public static final int BLANDFRUIT	= ROW17+4;
+	public static final int RATION		= ROW17+5;
+	public static final int PASTY		= ROW17+6;
 
 	//Row Fourteen: Quest Items
-	public static final int SKULL		= ROW17+0;
-	public static final int DUST		= ROW17+1;
-	public static final int CANDLE		= ROW17+2;
-	public static final int EMBER		= ROW17+3;
-	public static final int PICKAXE		= ROW17+4;
-	public static final int ORE			= ROW17+5;
-	public static final int TOKEN		= ROW17+6;
-	public static final int LOCKPICK	= ROW17+7;
+	public static final int SKULL		= ROW18+0;
+	public static final int DUST		= ROW18+1;
+	public static final int CANDLE		= ROW18+2;
+	public static final int EMBER		= ROW18+3;
+	public static final int PICKAXE		= ROW18+4;
+	public static final int ORE			= ROW18+5;
+	public static final int TOKEN		= ROW18+6;
+	public static final int LOCKPICK	= ROW18+7;
 
 	//Row Fifteen: Containers/Bags
-	public static final int VIAL	    = ROW18+0;
-	public static final int POUCH	    = ROW18+1;
-	public static final int HOLDER	    = ROW18+2;
-	public static final int BANDOLIER   = ROW18+3;
-	public static final int HOLSTER	    = ROW18+4;
+	public static final int VIAL	    = ROW19+0;
+	public static final int POUCH	    = ROW19+1;
+	public static final int HOLDER	    = ROW19+2;
+	public static final int BANDOLIER   = ROW19+3;
+	public static final int HOLSTER	    = ROW19+4;
 
 	//Row Sixteen: Unused
-	public static final int GEMSTONE_WHITE	= ROW19+0;
-	public static final int GEMSTONE_RED	= ROW19+1;
-	public static final int GEMSTONE_ORANGE	= ROW19+2;
-	public static final int GEMSTONE_BROWN	= ROW19+3;
-	public static final int GEMSTONE_YELLOW	= ROW19+4;
-	public static final int GEMSTONE_GREEN	= ROW19+5;
-	public static final int GEMSTONE_BLUE	= ROW19+6;
-	public static final int GEMSTONE_VIOLET	= ROW19+7;
-	public static final int GEMSTONE_BLACK	= ROW19+8;
-	public static final int GEMSTONE_GRAY	= ROW19+9;
+	public static final int GEMSTONE_WHITE	= ROW20+0;
+	public static final int GEMSTONE_RED	= ROW20+1;
+	public static final int GEMSTONE_ORANGE	= ROW20+2;
+	public static final int GEMSTONE_BROWN	= ROW20+3;
+	public static final int GEMSTONE_YELLOW	= ROW20+4;
+	public static final int GEMSTONE_GREEN	= ROW20+5;
+	public static final int GEMSTONE_BLUE	= ROW20+6;
+	public static final int GEMSTONE_VIOLET	= ROW20+7;
+	public static final int GEMSTONE_BLACK	= ROW20+8;
+	public static final int GEMSTONE_GRAY	= ROW20+9;
 
 	//herpty derp all these comments are out of date
-	public static final int SPELLBOOK_01	= ROW20+0;
-	public static final int SPELLBOOK_02	= ROW20+1;
-	public static final int SPELLBOOK_03	= ROW20+2;
-	public static final int SPELLBOOK_04	= ROW20+3;
-	public static final int SPELLBOOK_05	= ROW20+4;
-	public static final int SPELLBOOK_06	= ROW20+5;
-	public static final int SPELLBOOK_07	= ROW20+6;
-	public static final int SPELLBOOK_08	= ROW20+7;
-	public static final int SPELLBOOK_09	= ROW20+8;
-	public static final int SPELLBOOK_10	= ROW20+9;
-	public static final int SPELLBOOK_11	= ROW20+10;
-	public static final int SPELLBOOK_12	= ROW20+11;
-	public static final int SPELLBOOK_13	= ROW20+12;
-	public static final int SPELLBOOK_14	= ROW20+13;
-	public static final int SPELLBOOK_15	= ROW20+14;
-	public static final int SPELLBOOK_16	= ROW20+15;
-	public static final int SPELLBOOK_17	= ROW21+0;
-	public static final int SPELLBOOK_18	= ROW21+1;
-	public static final int SPELLBOOK_19	= ROW21+2;
-	public static final int SPELLBOOK_20	= ROW21+3;
-	public static final int SPELLBOOK_21	= ROW21+4;
-	public static final int SPELLBOOK_22	= ROW21+5;
-	public static final int SPELLBOOK_23	= ROW21+6;
-	public static final int SPELLBOOK_24	= ROW21+7;
-	public static final int SPELLBOOK_25	= ROW21+8;
-	public static final int SPELLBOOK_26	= ROW21+9;
-	public static final int SPELLBOOK_27	= ROW21+10;
-	public static final int SPELLBOOK_28	= ROW21+11;
-	public static final int SPELLBOOK_29	= ROW21+12;
-	public static final int SPELLBOOK_30	= ROW21+13;
-	public static final int SPELLBOOK_31	= ROW21+14;
-	public static final int SPELLBOOK_32	= ROW21+15;
-	public static final int SPELLBOOK_33	= ROW22+0;
-	public static final int SPELLBOOK_34	= ROW22+1;
-	public static final int SPELLBOOK_35	= ROW22+2;
-	public static final int SPELLBOOK_36	= ROW22+3;
-	public static final int SPELLBOOK_37	= ROW22+4;
-	public static final int SPELLBOOK_38	= ROW22+5;
-	public static final int SPELLBOOK_39	= ROW22+6;
-	public static final int SPELLBOOK_40	= ROW22+7;
+	public static final int SPELLBOOK_01	= ROW21+0;
+	public static final int SPELLBOOK_02	= ROW21+1;
+	public static final int SPELLBOOK_03	= ROW21+2;
+	public static final int SPELLBOOK_04	= ROW21+3;
+	public static final int SPELLBOOK_05	= ROW21+4;
+	public static final int SPELLBOOK_06	= ROW21+5;
+	public static final int SPELLBOOK_07	= ROW21+6;
+	public static final int SPELLBOOK_08	= ROW21+7;
+	public static final int SPELLBOOK_09	= ROW21+8;
+	public static final int SPELLBOOK_10	= ROW21+9;
+	public static final int SPELLBOOK_11	= ROW21+10;
+	public static final int SPELLBOOK_12	= ROW21+11;
+	public static final int SPELLBOOK_13	= ROW21+12;
+	public static final int SPELLBOOK_14	= ROW21+13;
+	public static final int SPELLBOOK_15	= ROW21+14;
+	public static final int SPELLBOOK_16	= ROW21+15;
+	public static final int SPELLBOOK_17	= ROW22+0;
+	public static final int SPELLBOOK_18	= ROW22+1;
+	public static final int SPELLBOOK_19	= ROW22+2;
+	public static final int SPELLBOOK_20	= ROW22+3;
+	public static final int SPELLBOOK_21	= ROW22+4;
+	public static final int SPELLBOOK_22	= ROW22+5;
+	public static final int SPELLBOOK_23	= ROW22+6;
+	public static final int SPELLBOOK_24	= ROW22+7;
+	public static final int SPELLBOOK_25	= ROW22+8;
+	public static final int SPELLBOOK_26	= ROW22+9;
+	public static final int SPELLBOOK_27	= ROW22+10;
+	public static final int SPELLBOOK_28	= ROW22+11;
+	public static final int SPELLBOOK_29	= ROW22+12;
+	public static final int SPELLBOOK_30	= ROW22+13;
+	public static final int SPELLBOOK_31	= ROW22+14;
+	public static final int SPELLBOOK_32	= ROW22+15;
+	public static final int SPELLBOOK_33	= ROW23+0;
+	public static final int SPELLBOOK_34	= ROW23+1;
+	public static final int SPELLBOOK_35	= ROW23+2;
+	public static final int SPELLBOOK_36	= ROW23+3;
+	public static final int SPELLBOOK_37	= ROW23+4;
+	public static final int SPELLBOOK_38	= ROW23+5;
+	public static final int SPELLBOOK_39	= ROW23+6;
+	public static final int SPELLBOOK_40	= ROW23+7;
 
 	//fart
-	public static final int SPELL_IDENTIFY	= ROW23+0;
+	public static final int SPELL_IDENTIFY	= ROW24+0;
 
 	//another fart
-	public static final int BOOTS_LEATHER	= ROW24+0;
+	public static final int BOOTS_LEATHER	= ROW25+0;
 
 	//third fart
-	public static final int GLOVES_LEATHER	= ROW25+0;
+	public static final int GLOVES_LEATHER	= ROW26+0;
 }

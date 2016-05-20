@@ -6,7 +6,7 @@
  * Copyright (C) 2014-2015 Evan Debenham
  *
  * Unpixel Dungeon
- * Copyright (C) 2015 Randall Foudray
+ * Copyright (C) 2015-2016 Randall Foudray
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -20,10 +20,13 @@
  *
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>
+ *
  */
 package com.felayga.unpixeldungeon.actors.buffs;
 
 import com.felayga.unpixeldungeon.actors.Actor;
+import com.felayga.unpixeldungeon.actors.Char;
+import com.felayga.unpixeldungeon.mechanics.Constant;
 import com.felayga.unpixeldungeon.mechanics.GameTime;
 import com.felayga.unpixeldungeon.ui.BuffIndicator;
 
@@ -34,7 +37,23 @@ public class Cripple extends FlavourBuff {
 	{
 		type = buffType.NEGATIVE;
 	}
-	
+
+	@Override
+	public boolean attachTo( Char target ) {
+		if (super.attachTo(target)) {
+			target.crippled.put(Constant.DEBUFF_CRIPPLE, GameTime.TICK / 2);
+			return true;
+		} else {
+			return false;
+		}
+	}
+
+	@Override
+	public void detach() {
+		target.crippled.remove(Constant.DEBUFF_CRIPPLE);
+		super.detach();
+	}
+
 	@Override
 	public int icon() {
 		return BuffIndicator.CRIPPLE;

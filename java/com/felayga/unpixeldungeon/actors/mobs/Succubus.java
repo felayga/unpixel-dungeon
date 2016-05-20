@@ -6,7 +6,7 @@
  * Copyright (C) 2014-2015 Evan Debenham
  *
  * Unpixel Dungeon
- * Copyright (C) 2015 Randall Foudray
+ * Copyright (C) 2015-2016 Randall Foudray
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -20,6 +20,7 @@
  *
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>
+ *
  */
 package com.felayga.unpixeldungeon.actors.mobs;
 
@@ -36,9 +37,9 @@ import com.felayga.unpixeldungeon.items.scrolls.ScrollOfLullaby;
 import com.felayga.unpixeldungeon.items.weapon.enchantments.Leech;
 import com.felayga.unpixeldungeon.levels.Level;
 import com.felayga.unpixeldungeon.mechanics.Ballistica;
-import com.felayga.unpixeldungeon.sprites.foocubus.IncubusSprite;
-import com.felayga.unpixeldungeon.sprites.foocubus.SuccubusSprite;
-import com.felayga.unpixeldungeon.windows.start.WndHeroInit;
+import com.felayga.unpixeldungeon.sprites.mobs.foocubus.IncubusSprite;
+import com.felayga.unpixeldungeon.sprites.mobs.foocubus.SuccubusSprite;
+import com.felayga.unpixeldungeon.windows.hero.WndInitHero;
 import com.watabou.utils.Random;
 
 public class Succubus extends Mob {
@@ -55,7 +56,7 @@ public class Succubus extends Mob {
 
 	public Succubus()
 	{
-		if (WndHeroInit.genderSelected == 0) {
+		if (WndInitHero.genderSelected == 0) {
 			name = "succubus";
 			spriteClass = SuccubusSprite.class;
 			description = DESCRIPTION_FEMALE;

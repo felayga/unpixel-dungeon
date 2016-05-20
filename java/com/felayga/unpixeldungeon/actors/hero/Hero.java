@@ -6,7 +6,7 @@
  * Copyright (C) 2014-2015 Evan Debenham
  *
  * Unpixel Dungeon
- * Copyright (C) 2015 Randall Foudray
+ * Copyright (C) 2015-2016 Randall Foudray
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -20,6 +20,7 @@
  *
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>
+ *
  */
 package com.felayga.unpixeldungeon.actors.hero;
 
@@ -42,6 +43,7 @@ import com.felayga.unpixeldungeon.actors.buffs.Charm;
 import com.felayga.unpixeldungeon.actors.buffs.Cripple;
 import com.felayga.unpixeldungeon.actors.buffs.DeathlySick;
 import com.felayga.unpixeldungeon.actors.buffs.Drowsy;
+import com.felayga.unpixeldungeon.actors.buffs.Encumbrance;
 import com.felayga.unpixeldungeon.actors.buffs.Fainting;
 import com.felayga.unpixeldungeon.actors.buffs.Fury;
 import com.felayga.unpixeldungeon.actors.buffs.Hallucination;
@@ -50,7 +52,6 @@ import com.felayga.unpixeldungeon.actors.buffs.Invisibility;
 import com.felayga.unpixeldungeon.actors.buffs.Ooze;
 import com.felayga.unpixeldungeon.actors.buffs.Paralysis;
 import com.felayga.unpixeldungeon.actors.buffs.Poison;
-import com.felayga.unpixeldungeon.actors.buffs.Regeneration;
 import com.felayga.unpixeldungeon.actors.buffs.Roots;
 import com.felayga.unpixeldungeon.actors.buffs.Vertigo;
 import com.felayga.unpixeldungeon.actors.buffs.Weakness;
@@ -68,6 +69,7 @@ import com.felayga.unpixeldungeon.items.Heap;
 import com.felayga.unpixeldungeon.items.Heap.Type;
 import com.felayga.unpixeldungeon.items.Item;
 import com.felayga.unpixeldungeon.items.KindOfWeapon;
+import com.felayga.unpixeldungeon.items.armor.Armor;
 import com.felayga.unpixeldungeon.items.armor.glyphs.Viscosity;
 import com.felayga.unpixeldungeon.items.artifacts.CapeOfThorns;
 import com.felayga.unpixeldungeon.items.artifacts.DriedRose;
@@ -77,20 +79,14 @@ import com.felayga.unpixeldungeon.items.artifacts.TimekeepersHourglass;
 import com.felayga.unpixeldungeon.items.bags.Bag;
 import com.felayga.unpixeldungeon.items.food.Food;
 import com.felayga.unpixeldungeon.items.keys.OldKey;
-import com.felayga.unpixeldungeon.items.potions.Potion;
-import com.felayga.unpixeldungeon.items.potions.PotionOfMight;
-import com.felayga.unpixeldungeon.items.potions.PotionOfStrength;
 import com.felayga.unpixeldungeon.items.rings.RingOfElements;
 import com.felayga.unpixeldungeon.items.rings.RingOfEvasion;
 import com.felayga.unpixeldungeon.items.rings.RingOfHaste;
 import com.felayga.unpixeldungeon.items.rings.RingOfMight;
 import com.felayga.unpixeldungeon.items.rings.RingOfTenacity;
 import com.felayga.unpixeldungeon.items.scrolls.BlankScroll;
-import com.felayga.unpixeldungeon.items.scrolls.Scroll;
 import com.felayga.unpixeldungeon.items.scrolls.ScrollOfMagicMapping;
-import com.felayga.unpixeldungeon.items.scrolls.ScrollOfUpgrade;
-import com.felayga.unpixeldungeon.items.scrolls.ScrollOfMagicalInfusion;
-import com.felayga.unpixeldungeon.items.tools.Tool;
+import com.felayga.unpixeldungeon.items.tools.ITool;
 import com.felayga.unpixeldungeon.items.tools.digging.DiggingTool;
 import com.felayga.unpixeldungeon.items.tools.unlocking.UnlockingTool;
 import com.felayga.unpixeldungeon.items.weapon.missiles.MissileWeapon;
@@ -115,13 +111,14 @@ import com.felayga.unpixeldungeon.ui.AttackIndicator;
 import com.felayga.unpixeldungeon.ui.BuffIndicator;
 import com.felayga.unpixeldungeon.ui.QuickSlotButton;
 import com.felayga.unpixeldungeon.utils.GLog;
+import com.felayga.unpixeldungeon.utils.Utils;
 import com.felayga.unpixeldungeon.windows.WndBackpack;
 import com.felayga.unpixeldungeon.windows.WndBag;
 import com.felayga.unpixeldungeon.windows.WndMessage;
 import com.felayga.unpixeldungeon.windows.WndOptions;
-import com.felayga.unpixeldungeon.windows.WndResurrect;
+import com.felayga.unpixeldungeon.windows.hero.WndResurrect;
 import com.felayga.unpixeldungeon.windows.WndTradeItem;
-import com.felayga.unpixeldungeon.windows.start.WndHeroInit;
+import com.felayga.unpixeldungeon.windows.hero.WndInitHero;
 import com.watabou.noosa.Camera;
 import com.watabou.noosa.Game;
 import com.watabou.noosa.audio.Sample;
@@ -149,12 +146,12 @@ public class Hero extends Char {
 	private static final String TXT_LEVEL_CAP =
 		"You can't gain any more levels, but your experiences still give you a burst of energy!";
 	
-	public static final String TXT_YOU_NOW_HAVE	= "You picked up %s.";
-	
 	private static final String TXT_SOMETHING_ELSE	= "There is something else here";
 	private static final String TXT_LOCKED_CHEST	= "This chest is locked and you don't have matching key";
 	private static final String TXT_LOCKED_DOOR		= "This door is locked.";
 	private static final String TXT_NOTICED_SMTH	= "You noticed something";
+
+	public static final String TXT_YOU_NOW_HAVE		= "REPLACE TXT_YOU_NOW_HAVE %s";
 	
 	private static final String TXT_WAIT	= "...";
 	private static final String TXT_SEARCH	= "search";
@@ -177,6 +174,7 @@ public class Hero extends Char {
 	private Char enemy;
 	
 	public boolean resting = false;
+	private long motivation;
 
 	protected int[] attributeUse;
 
@@ -303,6 +301,8 @@ public class Hero extends Char {
 
 		awareness = 0.1f;
 
+		motivation = 0;
+
 		belongings = new Belongings(this);
 
 		visibleEnemies = new ArrayList<>();
@@ -332,6 +332,7 @@ public class Hero extends Char {
 	private static final String INTELLIGENCEWISDOM_USAGE	= "INTWIS_use";
 	private static final String LEVEL						= "lvl";
 	private static final String EXPERIENCE					= "exp";
+	private static final String MOTIVATION					= "motivation";
 	
 	@Override
 	public void storeInBundle( Bundle bundle ) {
@@ -354,6 +355,8 @@ public class Hero extends Char {
 		
 		bundle.put( LEVEL, lvl );
 		bundle.put( EXPERIENCE, exp);
+
+		bundle.put(MOTIVATION, motivation);
 
 		belongings.storeInBundle(bundle);
 	}
@@ -383,6 +386,8 @@ public class Hero extends Char {
 		
 		lvl = bundle.getInt( LEVEL );
 		exp = bundle.getInt( EXPERIENCE );
+
+		motivation = bundle.getLong(MOTIVATION);
 		
 		belongings.restoreFromBundle(bundle);
 	}
@@ -400,8 +405,8 @@ public class Hero extends Char {
 	}
 	
 	public void live() {
-		Buff.affect( this, Regeneration.class);
 		Buff.affect(this, Hunger.class);
+		Buff.affect(this, Encumbrance.class);
 	}
 
 	public boolean shoot( Char enemy, MissileWeapon wep) {
@@ -414,7 +419,9 @@ public class Hero extends Char {
 
 	public void pushBoulder(int newPos) {
 		spend(speed() * 2, true);
-		useAttribute(AttributeType.STRCON, 2);
+		useAttribute(AttributeType.STRCON, 1);
+
+		GLog.i("With great effort you move the boulder.");
 
 		curAction = new HeroAction.Move(newPos);
 		lastAction = null;
@@ -440,44 +447,10 @@ public class Hero extends Char {
 
         return accuracy;
 	}
-	
-	@Override
-	public int defenseSkill( Char enemy ) {
-        int defense = defenseSkill;
 
-		for (Buff buff : buffs( RingOfEvasion.Evasion.class )) {
-			defense += ((RingOfEvasion.Evasion)buff).effectiveLevel;
-		}
-
-		if (paralysed > 0) {
-			defense -= 4;
-		}
-
-        if (belongings.armor != null) {
-            defense += belongings.armor.defense();
-			defense += Math.min(getAttributeModifier(AttributeType.DEXCHA), belongings.armor.armorBonusMaximum);
-        }
-
-		return defense;
-		/*
-		int aEnc = belongings.armor != null ? belongings.armor.STR - STR() : 9 - STR();
-		
-		if (aEnc > 0) {
-			return (int)(defenseSkill * evasion / Math.pow( 1.5, aEnc ));
-		} else {
-			
-			if (heroClass == HeroClass.ROGUE) {
-				return (int)((defenseSkill - aEnc) * evasion);
-			} else {
-				return (int)(defenseSkill * evasion);
-			}
-		}
-		*/
-	}
 	
 	@Override
 	public long speed() {
-
 		long speed = super.speed();
 
 		int hasteLevel = 0;
@@ -490,7 +463,7 @@ public class Hero extends Char {
 		
 		if (belongings.armor != null) {
 			
-			return speed * belongings.armor.speedModifier / GameTime.TICK;
+			return speed * ((Armor)belongings.armor).speedModifier / GameTime.TICK;
 			
 		} else {
 
@@ -503,6 +476,21 @@ public class Hero extends Char {
 		}
 	}
 
+	public void motivate(boolean andnext) {
+		if (andnext)
+		{
+			busy();
+		}
+
+		super.spend(1, false);
+		motivation++;
+
+		if (andnext)
+		{
+			next();
+		}
+	}
+
 	@Override
 	public void spend( long time, boolean andnext ) {
 		if (andnext)
@@ -510,9 +498,13 @@ public class Hero extends Char {
 			busy();
 		}
 
-		TimekeepersHourglass.timeFreeze buff = buff(TimekeepersHourglass.timeFreeze.class);
-		if (!(buff != null && buff.processTime(time))) {
-			super.spend(time, false);
+		if (motivation < time) {
+			super.spend(time - motivation, false);
+			motivation = 0;
+		}
+		else {
+			super.spend(1, false);
+			motivation -= time - 1;
 		}
 
 		if (andnext)
@@ -647,7 +639,7 @@ public class Hero extends Char {
 		{
 			if (food.quantity() > 1)
 			{
-				action.target = belongings.detach(food);
+				action.target = belongings.remove(food, 1);
 				action.targetOutsideInventory = true;
 				food = (Food)action.target;
 
@@ -683,7 +675,7 @@ public class Hero extends Char {
 										break;
 									case 1:
 										curAction = new HeroAction.EatItem(foodItem, Food.AC_EAT, true);
-										spend(1, true);
+										motivate(true);
 										break;
 								}
 							}
@@ -698,7 +690,7 @@ public class Hero extends Char {
 		}
 		else {
 			if (!action.targetOutsideInventory) {
-				belongings.detach(action.target);
+				belongings.remove(action.target, 1);
 			}
 
 			//ready();
@@ -947,35 +939,82 @@ public class Hero extends Char {
 	}
 
 	private boolean actPickUp( HeroAction.PickUp action ) {
-		int dst = action.dst;
+		final int dst = action.dst;
 
 		if (pos == dst) {
-			Heap heap = Dungeon.level.heaps.get( pos );
+			Heap heap = Dungeon.level.heaps.get(pos);
 			if (heap != null) {
+				String pickupMessage = null;
+
+				Item test = heap.peek();
+
+				Encumbrance encumbrance = buff(Encumbrance.class);
+				Encumbrance.EncumbranceLevel encumbranceLevel = encumbrance.testWeight(test.weight * test.quantity());
+
+				if (encumbranceLevel == Encumbrance.EncumbranceLevel.OVERLOADED) {
+					Encumbrance.EncumbranceLevel testLevel = encumbrance.current;
+					if (testLevel != encumbranceLevel) {
+						encumbranceLevel = Encumbrance.EncumbranceLevel.OVERTAXED;
+					}
+				}
+
+				pickupMessage = Encumbrance.getPickUpMessage(encumbranceLevel);
+
+				switch (encumbranceLevel) {
+					case STRAINED:
+					case OVERTAXED:
+						if (!action.forced) {
+							ShatteredPixelDungeon.scene().add(
+									new WndOptions("Pick Up Item", Utils.format(pickupMessage, test.getDisplayName()) + "  Continue?",
+											"YES",
+											Constant.TXT_CANCEL) {
+
+										@Override
+										protected void onSelect(int index) {
+											switch (index) {
+												case 0:
+													curAction = new HeroAction.PickUp(dst, true);
+													motivate(true);
+													break;
+											}
+										}
+									});
+							ready();
+							return false;
+						}
+						break;
+					case OVERLOADED:
+						GLog.n(pickupMessage, test.getDisplayName());
+						ready();
+						return false;
+				}
+
 				Item item = heap.pickUp();
-				if (item.doPickUp( this )) {
+				if (item.doPickUp(this)) {
 					if (item instanceof Dewdrop
 							|| item instanceof TimekeepersHourglass.sandBag
 							|| item instanceof DriedRose.Petal) {
 						//Do Nothing
 					} else {
-
-						boolean important =
-								((item instanceof ScrollOfUpgrade || item instanceof ScrollOfMagicalInfusion) && ((Scroll)item).isKnown()) ||
-								((item instanceof PotionOfStrength || item instanceof PotionOfMight) && ((Potion)item).isKnown());
-						if (important) {
-							GLog.p( TXT_YOU_NOW_HAVE, item.getDisplayName() );
-						} else {
-							GLog.i( TXT_YOU_NOW_HAVE, item.getDisplayName() );
+						switch (encumbranceLevel) {
+							case BURDENED:
+							case STRESSED:
+							case STRAINED:
+							case OVERTAXED:
+								GLog.w(pickupMessage, item.getDisplayName());
+								break;
+							default:
+								GLog.i(pickupMessage, item.getDisplayName());
+								break;
 						}
 					}
-					
+
 					if (!heap.isEmpty()) {
-						GLog.i( TXT_SOMETHING_ELSE );
+						GLog.i(TXT_SOMETHING_ELSE);
 					}
 					curAction = null;
 				} else {
-					Dungeon.level.drop( item, pos ).sprite.drop();
+					Dungeon.level.drop(item, pos).sprite.drop();
 					ready();
 				}
 			} else {
@@ -983,7 +1022,7 @@ public class Hero extends Char {
 			}
 
 			return false;
-		} else if (getCloser( dst )) {
+		} else if (getCloser(dst)) {
 			return true;
 		} else {
 			ready();
@@ -1155,12 +1194,12 @@ public class Hero extends Char {
 					actionOptions.add(false);
 				}
 
-				Tool test = null;
+				ITool[] tools = belongings.getToolTypes(UnlockingTool.NAME, DiggingTool.NAME);
 
 				UnlockingTool unlockingTool = null;
 				String unlockingToolName = null;
-				if ((test = belongings.getEquippedTool(UnlockingTool.NAME)) != null) {
-					unlockingTool = (UnlockingTool)test;
+				if (tools[0] != null) {
+					unlockingTool = (UnlockingTool)tools[0];
 					unlockingToolName = unlockingTool.getName().toUpperCase();
 
 					actions.add(unlockingToolName);
@@ -1169,8 +1208,8 @@ public class Hero extends Char {
 
 				DiggingTool diggingTool = null;
 				String diggingToolName = null;
-				if ((test = belongings.getEquippedTool(DiggingTool.NAME)) != null) {
-					diggingTool = (DiggingTool)test;
+				if (tools[1] != null) {
+					diggingTool = (DiggingTool)tools[1];
 					diggingToolName = diggingTool.getName().toUpperCase();
 
 					actions.add(diggingToolName);
@@ -1201,13 +1240,13 @@ public class Hero extends Char {
 
 									if (selection.equals(Item.AC_KICK)) {
 										curAction = new HeroAction.HandleDoor.KickDoor(doorCell);
-										spend(1, true);
+										motivate(true);
 									} else if (selection.equals(unlockingToolName_WTFJAVA)) {
 										curAction = new HeroAction.HandleDoor.UnlockDoor(doorCell, unlockingTool_WTFJAVA);
-										spend(1, true);
+										motivate(true);
 									} else if (selection.equals(diggingToolName_WTFJAVA)) {
 										curAction = new HeroAction.Dig(diggingTool_WTFJAVA, doorCell, 101);
-										spend(1, true);
+										motivate(true);
 									} else {
 										GLog.i("You leave the door alone.");
 										ready();
@@ -1289,7 +1328,7 @@ public class Hero extends Char {
 					ready();
 				} else {
 					Dungeon.win( ResultDescriptions.WIN );
-					Dungeon.deleteGame(WndHeroInit.savedGameIndex, false, true );
+					Dungeon.deleteGame(WndInitHero.savedGameIndex, false, true );
 					Game.switchScene( SurfaceScene.class );
 				}
 				
@@ -1332,6 +1371,9 @@ public class Hero extends Char {
 		if (Level.adjacent( pos, enemy.pos ) && enemy.isAlive() && !isCharmedBy( enemy )) {
 			Hunger hunger = buff(Hunger.class);
 			hunger.satisfy_new(-1);
+			Encumbrance encumbrance = buff(Encumbrance.class);
+			encumbrance.isAttacking();
+
 			if (action.weapon != null) {
 				spend(attackDelay(action.weapon.delay_new), false);
 			}
@@ -1401,7 +1443,7 @@ public class Hero extends Char {
 		}
 		
 		if (belongings.armor != null) {
-			damage = belongings.armor.proc( enemy, this, damage );
+			damage = ((Armor)belongings.armor).proc( enemy, this, damage );
 		}
 		
 		return damage;
@@ -1487,8 +1529,9 @@ public class Hero extends Char {
 	}
 	
 	private boolean getCloser( final int target ) {
-		
-		if (rooted) {
+		long speed = speed();
+
+		if (speed == 0) {
 			Camera.main.shake( 1, 1f );
 			return false;
 		}
@@ -1540,7 +1583,7 @@ public class Hero extends Char {
             sprite.move(pos, step);
             move(step);
 			attributeIncreaseCheck();
-			spend(GameTime.TICK * GameTime.TICK / speed(), false);
+			spend(GameTime.TICK * GameTime.TICK / speed, false);
 
             return true;
 		} else {
@@ -1559,7 +1602,7 @@ public class Hero extends Char {
 
 		Char ch;
 		Heap heap;
-		Tool tool = null;
+		ITool[] tools;
 
 		if (Dungeon.level.map[cell] == Terrain.ALCHEMY && cell != pos) {
 
@@ -1573,7 +1616,7 @@ public class Hero extends Char {
 				if (missileWeapon != null) {
 					curAction = new HeroAction.Attack(missileWeapon, true, ch);
 				} else {
-					curAction = new HeroAction.Attack(belongings.weapon, false, ch);
+					curAction = new HeroAction.Attack((KindOfWeapon)belongings.weapon, false, ch);
 				}
 			}
 
@@ -1605,8 +1648,8 @@ public class Hero extends Char {
 		} else if (cell == Dungeon.level.entrance) {
 
 			curAction = new HeroAction.Ascend(cell);
-		} else if (Dungeon.level.solid[cell] && (tool = belongings.getEquippedTool(DiggingTool.NAME)) != null) {
-			curAction = new HeroAction.Dig((DiggingTool) tool, cell, 101);
+		} else if (Dungeon.level.solid[cell] && ((tools = belongings.getToolTypes(DiggingTool.NAME)) != null && tools[0] != null)) {
+			curAction = new HeroAction.Dig((DiggingTool) tools[0], cell, 101);
 		} else {
 
 			curAction = new HeroAction.Move(cell);
@@ -1784,7 +1827,7 @@ public class Hero extends Char {
 			new Flare(8, 32).color(0xFFFF66, true).show(sprite, 2f);
 			CellEmitter.get(this.pos).start(Speck.factory(Speck.LIGHT), 0.2f, 3);
 
-			belongings.detach(ankh);
+			belongings.remove(ankh, 1);
 
 			Sample.INSTANCE.play( Assets.SND_TELEPORT );
 			GLog.w( ankh.TXT_REVIVE );
@@ -1802,7 +1845,7 @@ public class Hero extends Char {
 			
 		} else {
 			
-			Dungeon.deleteGame( WndHeroInit.savedGameIndex, true, false );
+			Dungeon.deleteGame( WndInitHero.savedGameIndex, true, false );
 			GameScene.show(new WndResurrect(ankh, cause));
 			
 		}
@@ -1865,7 +1908,7 @@ public class Hero extends Char {
 			((Hero.Doom)cause).onDeath();
 		}
 		
-		Dungeon.deleteGame( WndHeroInit.savedGameIndex, true, true );
+		Dungeon.deleteGame( WndInitHero.savedGameIndex, true, true );
 	}
 	
 	@Override

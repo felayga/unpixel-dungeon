@@ -6,7 +6,7 @@
  * Copyright (C) 2014-2015 Evan Debenham
  *
  * Unpixel Dungeon
- * Copyright (C) 2015 Randall Foudray
+ * Copyright (C) 2015-2016 Randall Foudray
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -20,6 +20,7 @@
  *
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>
+ *
  */
 package com.felayga.unpixeldungeon.plants;
 
@@ -160,7 +161,7 @@ public abstract class Plant implements Bundlable {
 			if (action.equals( AC_PLANT )) {
 				hero.spend(TIME_TO_PLANT, false);
 				hero.busy();
-				((Seed)hero.belongings.detach(this)).onThrow(hero.pos);
+				((Seed)hero.belongings.remove(this, 1)).onThrow(hero.pos);
 
 				hero.sprite.operate( hero.pos );
 

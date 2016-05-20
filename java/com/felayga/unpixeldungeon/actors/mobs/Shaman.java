@@ -6,7 +6,7 @@
  * Copyright (C) 2014-2015 Evan Debenham
  *
  * Unpixel Dungeon
- * Copyright (C) 2015 Randall Foudray
+ * Copyright (C) 2015-2016 Randall Foudray
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -20,12 +20,13 @@
  *
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>
+ *
  */
 package com.felayga.unpixeldungeon.actors.mobs;
 
 import java.util.HashSet;
 
-import com.felayga.unpixeldungeon.actors.Actor;
+import com.felayga.unpixeldungeon.items.KindOfWeapon;
 import com.felayga.unpixeldungeon.items.weapon.melee.mob.MeleeMobAttack;
 import com.felayga.unpixeldungeon.mechanics.GameTime;
 import com.watabou.noosa.Camera;
@@ -38,7 +39,7 @@ import com.felayga.unpixeldungeon.levels.Level;
 import com.felayga.unpixeldungeon.levels.traps.LightningTrap;
 import com.felayga.unpixeldungeon.mechanics.Ballistica;
 import com.felayga.unpixeldungeon.sprites.CharSprite;
-import com.felayga.unpixeldungeon.sprites.ShamanSprite;
+import com.felayga.unpixeldungeon.sprites.mobs.unused.GnollShamanSprite;
 import com.felayga.unpixeldungeon.utils.GLog;
 import com.felayga.unpixeldungeon.utils.Utils;
 import com.watabou.utils.Callback;
@@ -52,7 +53,7 @@ public class Shaman extends Mob implements Callback {
 	
 	{
 		name = "gnoll shaman";
-		spriteClass = ShamanSprite.class;
+		spriteClass = GnollShamanSprite.class;
 
 		canOpenDoors = true;
 
@@ -86,12 +87,12 @@ public class Shaman extends Mob implements Callback {
 			
 			boolean visible = Level.fieldOfView[pos] || Level.fieldOfView[enemy.pos];
 			if (visible) {
-				((ShamanSprite)sprite).zap( enemy.pos );
+				((GnollShamanSprite)sprite).zap( enemy.pos );
 			}
 			
 			spend( TIME_TO_ZAP, false );
 			
-			if (hit( this, belongings.weapon, true, enemy, true )) {
+			if (hit( this, (KindOfWeapon)belongings.weapon, true, enemy, true )) {
 				int dmg = Random.Int( 2, 12 );
 				if (Level.water[enemy.pos] && !enemy.flying) {
 					dmg *= 1.5f;

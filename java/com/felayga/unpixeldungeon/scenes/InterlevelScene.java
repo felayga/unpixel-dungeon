@@ -6,7 +6,7 @@
  * Copyright (C) 2014-2015 Evan Debenham
  *
  * Unpixel Dungeon
- * Copyright (C) 2015 Randall Foudray
+ * Copyright (C) 2015-2016 Randall Foudray
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -20,6 +20,7 @@
  *
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>
+ *
  */
 package com.felayga.unpixeldungeon.scenes;
 
@@ -27,15 +28,13 @@ import com.felayga.unpixeldungeon.Assets;
 import com.felayga.unpixeldungeon.Dungeon;
 import com.felayga.unpixeldungeon.ShatteredPixelDungeon;
 import com.felayga.unpixeldungeon.Statistics;
-import com.felayga.unpixeldungeon.actors.Actor;
 import com.felayga.unpixeldungeon.items.Generator;
 import com.felayga.unpixeldungeon.levels.Level;
 import com.felayga.unpixeldungeon.mechanics.Constant;
 import com.felayga.unpixeldungeon.mechanics.GameTime;
-import com.felayga.unpixeldungeon.utils.GLog;
 import com.felayga.unpixeldungeon.windows.WndError;
 import com.felayga.unpixeldungeon.windows.WndStory;
-import com.felayga.unpixeldungeon.windows.start.WndHeroInit;
+import com.felayga.unpixeldungeon.windows.hero.WndInitHero;
 import com.watabou.noosa.BitmapText;
 import com.watabou.noosa.Camera;
 import com.watabou.noosa.Game;
@@ -250,7 +249,7 @@ public class InterlevelScene extends PixelScene {
 		Level level;
 		if (Statistics.floorsVisited[Dungeon.depth + 1]) {
 			Dungeon.depth++;
-			level = Dungeon.loadLevel(WndHeroInit.savedGameIndex);
+			level = Dungeon.loadLevel(WndInitHero.savedGameIndex);
 		} else {
 			level = Dungeon.newLevel();
 		}
@@ -264,7 +263,7 @@ public class InterlevelScene extends PixelScene {
 		Level level;
 		if (Statistics.floorsVisited[Dungeon.depth + 1]) {
 			Dungeon.depth++;
-			level = Dungeon.loadLevel(WndHeroInit.savedGameIndex);
+			level = Dungeon.loadLevel(WndInitHero.savedGameIndex);
 		} else {
 			level = Dungeon.newLevel();
 		}
@@ -279,7 +278,7 @@ public class InterlevelScene extends PixelScene {
 
 		Level level = null;
 		if (Statistics.floorsVisited[Dungeon.depth]) {
-			level = Dungeon.loadLevel( WndHeroInit.savedGameIndex );
+			level = Dungeon.loadLevel( WndInitHero.savedGameIndex );
 		}
 		else {
 			Dungeon.depth--;
@@ -294,14 +293,14 @@ public class InterlevelScene extends PixelScene {
 		
 		Dungeon.saveLevel();
 		Dungeon.depth = returnDepth;
-		Level level = Dungeon.loadLevel( WndHeroInit.savedGameIndex );
+		Level level = Dungeon.loadLevel( WndInitHero.savedGameIndex );
 		Dungeon.switchLevel(level, Level.resizingNeeded ? level.adjustPos(returnPos) : returnPos);
 	}
 	
 	private void restore() throws IOException {
 		GameTime.fix();
 
-		Dungeon.loadGame(WndHeroInit.savedGameIndex);
+		Dungeon.loadGame(WndInitHero.savedGameIndex);
 		if (Dungeon.depth == -1) {
 			Dungeon.depth = 1;
 			for (int n = Dungeon.HIGHESTLEVEL - 1; n >= 1; n--)
@@ -312,9 +311,9 @@ public class InterlevelScene extends PixelScene {
 					break;
 				}
 			}
-			Dungeon.switchLevel( Dungeon.loadLevel( WndHeroInit.savedGameIndex ), Constant.POS_EXIT);
+			Dungeon.switchLevel( Dungeon.loadLevel( WndInitHero.savedGameIndex ), Constant.POS_EXIT);
 		} else {
-			Level level = Dungeon.loadLevel( WndHeroInit.savedGameIndex );
+			Level level = Dungeon.loadLevel( WndInitHero.savedGameIndex );
 			Dungeon.switchLevel( level, Level.resizingNeeded ? level.adjustPos( Dungeon.hero.pos ) : Dungeon.hero.pos );
 		}
 	}
@@ -348,7 +347,7 @@ public class InterlevelScene extends PixelScene {
 
 		if (Statistics.floorsVisited[teleportDepth]) {
 			Dungeon.depth = teleportDepth;
-			level = Dungeon.loadLevel( WndHeroInit.savedGameIndex );
+			level = Dungeon.loadLevel( WndInitHero.savedGameIndex );
 		}
 		else {
 			Dungeon.depth = teleportDepth-1;

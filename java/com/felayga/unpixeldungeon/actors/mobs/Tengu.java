@@ -5,6 +5,9 @@
  * Shattered Pixel Dungeon
  * Copyright (C) 2014-2015 Evan Debenham
  *
+ * Unpixel Dungeon
+ * Copyright (C) 2015-2016 Randall Foudray
+ *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation, either version 3 of the License, or
@@ -17,6 +20,7 @@
  *
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>
+ *
  */
 package com.felayga.unpixeldungeon.actors.mobs;
 
@@ -24,6 +28,7 @@ import java.util.HashSet;
 
 import com.felayga.unpixeldungeon.actors.buffs.LockedFloor;
 import com.felayga.unpixeldungeon.actors.hero.HeroSubClass;
+import com.felayga.unpixeldungeon.items.KindOfWeapon;
 import com.felayga.unpixeldungeon.items.artifacts.LloydsBeacon;
 import com.felayga.unpixeldungeon.items.weapon.melee.mob.MeleeMobAttack;
 import com.felayga.unpixeldungeon.levels.PrisonBossLevel;
@@ -49,7 +54,7 @@ import com.felayga.unpixeldungeon.levels.Level;
 import com.felayga.unpixeldungeon.levels.Terrain;
 import com.felayga.unpixeldungeon.mechanics.Ballistica;
 import com.felayga.unpixeldungeon.scenes.GameScene;
-import com.felayga.unpixeldungeon.sprites.TenguSprite;
+import com.felayga.unpixeldungeon.sprites.mobs.TenguSprite;
 import com.watabou.utils.Bundle;
 import com.watabou.utils.Random;
 
@@ -137,7 +142,7 @@ public class Tengu extends Mob {
 	@Override
 	protected boolean doAttack(boolean thrown, Char enemy) {
 		sprite.attack( enemy.pos );
-		spend( attackDelay(belongings.weapon.delay_new), false );
+		spend( attackDelay(((KindOfWeapon)belongings.weapon).delay_new), false );
 		return true;
 	}
 

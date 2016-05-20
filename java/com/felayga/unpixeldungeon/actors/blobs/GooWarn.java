@@ -6,7 +6,7 @@
  * Copyright (C) 2014-2015 Evan Debenham
  *
  * Unpixel Dungeon
- * Copyright (C) 2015 Randall Foudray
+ * Copyright (C) 2015-2016 Randall Foudray
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -20,13 +20,14 @@
  *
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>
+ *
  */
 package com.felayga.unpixeldungeon.actors.blobs;
 
 
 
 import com.felayga.unpixeldungeon.effects.BlobEmitter;
-import com.felayga.unpixeldungeon.sprites.GooSprite;
+import com.felayga.unpixeldungeon.sprites.mobs.goo.BlackGooSprite;
 
 public class GooWarn extends Blob {
 
@@ -65,7 +66,7 @@ public class GooWarn extends Blob {
 	@Override
 	public void use( BlobEmitter emitter ) {
 		super.use( emitter );
-		emitter.pour(GooSprite.GooParticle.FACTORY, 0.03f );
+		emitter.pour(BlackGooSprite.GooParticle.FACTORY, 0.03f );
 	}
 
 	@Override

@@ -6,7 +6,7 @@
  * Copyright (C) 2014-2015 Evan Debenham
  *
  * Unpixel Dungeon
- * Copyright (C) 2015 Randall Foudray
+ * Copyright (C) 2015-2016 Randall Foudray
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -20,19 +20,16 @@
  *
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>
+ *
  */
 package com.felayga.unpixeldungeon.actors.buffs;
 
 import com.felayga.unpixeldungeon.Badges;
-import com.felayga.unpixeldungeon.Challenges;
 import com.felayga.unpixeldungeon.Dungeon;
 import com.felayga.unpixeldungeon.ResultDescriptions;
-import com.felayga.unpixeldungeon.actors.Actor;
 import com.felayga.unpixeldungeon.actors.Char;
 import com.felayga.unpixeldungeon.actors.hero.Hero;
 import com.felayga.unpixeldungeon.actors.hero.HeroClass;
-import com.felayga.unpixeldungeon.items.artifacts.Artifact;
-import com.felayga.unpixeldungeon.items.artifacts.HornOfPlenty;
 import com.felayga.unpixeldungeon.mechanics.GameTime;
 import com.felayga.unpixeldungeon.ui.BuffIndicator;
 import com.felayga.unpixeldungeon.utils.GLog;
@@ -62,12 +59,15 @@ public class Hunger extends Buff implements Hero.Doom {
 	//todo: figure out what this is (viscosity glyph?)
 	private float partialDamage;
 
+	public boolean regenActive = true;
+
 	private static final String LEVEL				= "level";
 	private static final String PARTIALDAMAGE 		= "partialDamage";
 	private static final String LIFEREGENTICK		= "lifeRegenTick";
 	private static final String MANAREGENTICK		= "manaRegenTick";
 	private static final String TRINKETHUNGERTICK	= "trinketHungerTick";
 	private static final String HUNGERTICKAMOUNT	= "hungerTickAmount";
+	private static final String REGENACTIVE			= "regenActive";
 
 	public Hunger()
 	{
@@ -77,7 +77,8 @@ public class Hunger extends Buff implements Hero.Doom {
 		lifeRegenTick = 0;
 		manaRegenTick = 0;
 		trinketHungerTick = 0;
-		hungerTickAmount = 1;
+		hungerTickAmount = -1;
+		regenActive = true;
 	}
 
 	@Override
@@ -89,6 +90,7 @@ public class Hunger extends Buff implements Hero.Doom {
 		bundle.put(MANAREGENTICK, manaRegenTick);
 		bundle.put(TRINKETHUNGERTICK, trinketHungerTick);
 		bundle.put(HUNGERTICKAMOUNT, hungerTickAmount);
+		bundle.put(REGENACTIVE, regenActive);
 	}
 
 	@Override
@@ -100,6 +102,7 @@ public class Hunger extends Buff implements Hero.Doom {
 		manaRegenTick = bundle.getInt(MANAREGENTICK);
 		trinketHungerTick = bundle.getInt(TRINKETHUNGERTICK);
 		hungerTickAmount = bundle.getInt(HUNGERTICKAMOUNT);
+		regenActive = bundle.getBoolean(REGENACTIVE);
 	}
 
 	@Override
@@ -119,77 +122,72 @@ public class Hunger extends Buff implements Hero.Doom {
 			int test;
 
 
-			lifeRegenTick++;
+			if (regenActive) {
+				lifeRegenTick++;
 
-			if (hero.lvl >= 10)
-			{
-				test = 3;
+				if (hero.lvl >= 10) {
+					test = 3;
 
-				if (lifeRegenTick >= test) {
-					lifeRegenTick = 0;
+					if (lifeRegenTick >= test) {
+						lifeRegenTick = 0;
 
-					hero.HP += Random.Int(0, hero.STRCON) + 1;
+						hero.HP += Random.Int(0, hero.STRCON) + 1;
+					}
+				} else {
+					test = 42 / (hero.lvl + 2) + 1;
+
+					if (lifeRegenTick >= test) {
+						lifeRegenTick = 0;
+
+						hero.HP++;
+					}
+				}
+
+				if (hero.HP > hero.HT) {
+					hero.HP = hero.HT;
+				}
+
+
+				test = 19 - hero.lvl / 2;
+				manaRegenTick++;
+
+				if (manaRegenTick >= test) {
+					manaRegenTick = 0;
+
+					test = 1 + hero.INTWIS / 7;
+					if (test > 1) {
+						hero.MP += Random.Int(0, test) + 1;
+					} else {
+						hero.MP++;
+					}
+				}
+
+				if (hero.MP > hero.MT) {
+					hero.MP = hero.MT;
 				}
 			}
-			else {
-				test = 42 / (hero.lvl + 2) + 1;
-
-				if (lifeRegenTick >= test) {
-					lifeRegenTick = 0;
-
-					hero.HP++;
-				}
-			}
-
-			if (hero.HP > hero.HT) {
-				hero.HP = hero.HT;
-			}
-
-
-
-			test = 19 - hero.lvl / 2;
-			manaRegenTick++;
-
-			if (manaRegenTick >= test) {
-				manaRegenTick = 0;
-
-				test = 1 + hero.INTWIS / 7;
-				if (test > 1) {
-					hero.MP += Random.Int(0, test) + 1;
-				}
-				else {
-					hero.MP++;
-				}
-			}
-
-			if (hero.MP > hero.MT) {
-				hero.MP = hero.MT;
-			}
-
 
 			trinketHungerTick++;
 			if (trinketHungerTick >= 20) {
 				trinketHungerTick -= 20;
 
 				if (hero.belongings.ring1 != null) {
-					GLog.d("ring1");
 					hungerTickAmount++;
 				}
 				if (hero.belongings.ring2 != null) {
-					GLog.d("ring2");
 					hungerTickAmount++;
 				}
 				if (hero.belongings.amulet != null) {
-					GLog.d("amulet");
 					hungerTickAmount++;
 				}
 			}
 
-			if (satisfyDirect(-hungerTickAmount)) {
+			if (satisfyDirect(hungerTickAmount)) {
 				hero.interrupt();
 
 				if (HungerLevel.fromInt(level) == HungerLevel.DEAD) {
 					target.damage(target.HP, this);
+					//todo: why doesn't this happen on its own like it should?
 					target.sprite.die();
 				}
 				else {
@@ -199,7 +197,7 @@ public class Hunger extends Buff implements Hero.Doom {
 				}
 			}
 
-			hungerTickAmount = 1;
+			hungerTickAmount = -1;
 
 			long STEP = GameTime.TICK;
 			long step = ((Hero)target).heroClass == HeroClass.ROGUE ? STEP * 12 / 10 : STEP;
@@ -217,7 +215,7 @@ public class Hunger extends Buff implements Hero.Doom {
 			satisfyDirect(amount);
 		}
 		else {
-			hungerTickAmount -= amount;
+			hungerTickAmount += amount;
 		}
 	}
 

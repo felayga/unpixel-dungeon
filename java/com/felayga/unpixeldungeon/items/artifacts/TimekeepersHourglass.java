@@ -6,7 +6,7 @@
  * Copyright (C) 2014-2015 Evan Debenham
  *
  * Unpixel Dungeon
- * Copyright (C) 2015 Randall Foudray
+ * Copyright (C) 2015-2016 Randall Foudray
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -20,12 +20,12 @@
  *
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>
+ *
  */
 package com.felayga.unpixeldungeon.items.artifacts;
 
 import com.felayga.unpixeldungeon.Assets;
 import com.felayga.unpixeldungeon.Dungeon;
-import com.felayga.unpixeldungeon.actors.Actor;
 import com.felayga.unpixeldungeon.actors.Char;
 import com.felayga.unpixeldungeon.actors.buffs.Hunger;
 import com.felayga.unpixeldungeon.actors.buffs.LockedFloor;
@@ -45,7 +45,7 @@ import com.watabou.utils.Random;
 
 import java.util.ArrayList;
 
-public class TimekeepersHourglass extends Artifact {
+public class TimekeepersHourglass extends Artifact_old {
 
 	private static final String TXT_HGLASS	= "Timekeeper's Hourglass";
 	private static final String TXT_STASIS	= "Put myself in stasis";
@@ -126,15 +126,11 @@ public class TimekeepersHourglass extends Artifact {
 	}
 
 	@Override
-	public boolean doUnequip(Char hero, boolean collect, boolean single) {
-		if (super.doUnequip(hero, collect, single)){
-			if (activeBuff != null){
-				activeBuff.detach();
-				activeBuff = null;
-			}
-			return true;
-		} else
-			return false;
+	public void onUnequip(Char owner) {
+		if (activeBuff != null){
+			activeBuff.detach();
+			activeBuff = null;
+		}
 	}
 
 	@Override

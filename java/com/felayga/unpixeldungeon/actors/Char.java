@@ -6,7 +6,7 @@
  * Copyright (C) 2014-2015 Evan Debenham
  *
  * Unpixel Dungeon
- * Copyright (C) 2015 Randall Foudray
+ * Copyright (C) 2015-2016 Randall Foudray
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -20,6 +20,7 @@
  *
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>
+ *
  */
 package com.felayga.unpixeldungeon.actors;
 
@@ -33,9 +34,11 @@ import com.felayga.unpixeldungeon.actors.mobs.Yog;
 import com.felayga.unpixeldungeon.items.KindOfWeapon;
 import com.felayga.unpixeldungeon.items.armor.glyphs.Bounce;
 import com.felayga.unpixeldungeon.items.food.Corpse;
+import com.felayga.unpixeldungeon.items.rings.RingOfEvasion;
 import com.felayga.unpixeldungeon.levels.Level;
 import com.felayga.unpixeldungeon.mechanics.AttributeType;
 import com.felayga.unpixeldungeon.mechanics.GameTime;
+import com.felayga.unpixeldungeon.mechanics.MagicType;
 import com.felayga.unpixeldungeon.sprites.CharSprite;
 import com.felayga.unpixeldungeon.utils.GLog;
 import com.felayga.unpixeldungeon.utils.Utils;
@@ -46,7 +49,9 @@ import com.watabou.utils.Bundle;
 import com.watabou.utils.GameMath;
 import com.watabou.utils.Random;
 
+import java.util.HashMap;
 import java.util.HashSet;
+import java.util.Iterator;
 
 public abstract class Char extends Actor {
 
@@ -60,6 +65,10 @@ public abstract class Char extends Actor {
 	private static final String TXT_OUT_OF_PARALYSIS	= "The pain snapped %s out of paralysis";
 	
 	public int pos = 0;
+
+	public int defenseMundane = 10;
+	public int defenseMagical = 0;
+	public int immunityMagical = 0;
 	
 	public CharSprite sprite;
 
@@ -102,11 +111,11 @@ public abstract class Char extends Actor {
 		return attackSpeed * weaponAttackSpeed / GameTime.TICK;
 	}
 	
-	public int paralysed	    = 0;
-	public boolean rooted		= false;
-	public boolean flying		= false;
-    public boolean levitating   = false;
-	public int invisible		= 0;
+	public int paralysed	    			= 0;
+	public HashMap<Integer, Long> crippled	= new HashMap<>();
+	public boolean flying					= false;
+    public boolean levitating   			= false;
+	public int invisible					= 0;
 	
 	public int viewDistance	= 8;
 
@@ -283,9 +292,9 @@ public abstract class Char extends Actor {
 	}
 	
 	public static boolean hit( Char attacker, KindOfWeapon weapon, boolean thrown, Char defender, boolean magic ) {
-		int roll = Random.Int(1, 16);
+		int roll = Random.Int(1, 20);
         int skill = attacker.attackSkill(weapon, thrown, defender);
-        int defense = defender.defenseSkill(attacker);
+        int defense = defender.defenseMundane(attacker);
 
         GLog.n("roll=" + roll + " + " + skill + " >= " + defense + "?");
 
@@ -310,8 +319,23 @@ public abstract class Char extends Actor {
 		return 0;
 	}
 	
-	public int defenseSkill( Char enemy ) {
-		return 10 + belongings.getArmor(getAttributeModifier(AttributeType.DEXCHA));
+	public int defenseMundane( Char enemy ) {
+		/*
+		//todo: ring defense buff shit
+		for (Buff buff : buffs( RingOfEvasion.Evasion.class )) {
+			defense += ((RingOfEvasion.Evasion)buff).effectiveLevel;
+		}
+		*/
+
+		return defenseMundane + belongings.getArmor(getAttributeModifier(AttributeType.DEXCHA));
+	}
+
+	public int defenseMagical( Char enemy, MagicType type ) {
+		if ((immunityMagical | type.value) != 0) {
+			return 7;
+		}
+
+		return defenseMagical + belongings.getResistance();
 	}
 	
 	public String defenseVerb() {
@@ -323,7 +347,18 @@ public abstract class Char extends Actor {
 	}
 	
 	public long speed() {
-		return buff( Cripple.class ) == null ? movementSpeed : movementSpeed / 2;
+		long retval = movementSpeed;
+
+		if (!crippled.isEmpty()) {
+			Iterator<Long> iterator = crippled.values().iterator();
+			while (iterator.hasNext()) {
+				Long value = iterator.next();
+
+				retval = retval * value / GameTime.TICK;
+			}
+		}
+
+		return retval;
 	}
 	
 	public void damage( int dmg, Object src ) {

@@ -6,7 +6,7 @@
  * Copyright (C) 2014-2015 Evan Debenham
  *
  * Unpixel Dungeon
- * Copyright (C) 2015 Randall Foudray
+ * Copyright (C) 2015-2016 Randall Foudray
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -20,10 +20,9 @@
  *
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>
+ *
  */
 package com.felayga.unpixeldungeon.scenes;
-
-import android.graphics.RectF;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -38,12 +37,9 @@ import com.felayga.unpixeldungeon.sprites.TrapSprite;
 import com.felayga.unpixeldungeon.ui.LootIndicator;
 import com.felayga.unpixeldungeon.ui.ResumeIndicator;
 import com.felayga.unpixeldungeon.windows.WndInfoTrap;
-import com.watabou.gltextures.SmartTexture;
-import com.watabou.glwrap.Texture;
 import com.watabou.noosa.Camera;
 import com.watabou.noosa.Game;
 import com.watabou.noosa.Group;
-import com.watabou.noosa.Image;
 import com.watabou.noosa.SkinnedBlock;
 import com.watabou.noosa.Visual;
 import com.watabou.noosa.audio.Music;
@@ -84,7 +80,7 @@ import com.felayga.unpixeldungeon.ui.Window;
 import com.felayga.unpixeldungeon.utils.GLog;
 import com.felayga.unpixeldungeon.windows.WndGame;
 import com.felayga.unpixeldungeon.windows.WndBackpack;
-import com.felayga.unpixeldungeon.windows.WndHero;
+import com.felayga.unpixeldungeon.windows.hero.WndHero;
 import com.felayga.unpixeldungeon.windows.WndInfoCell;
 import com.felayga.unpixeldungeon.windows.WndInfoItem;
 import com.felayga.unpixeldungeon.windows.WndInfoMob;

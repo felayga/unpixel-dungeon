@@ -1,12 +1,12 @@
 /*
  * Pixel Dungeon
- * Copyright (C) 2012-2015 Oleg Dolya
+ * Copyright (C) 2012-2015  Oleg Dolya
  *
  * Shattered Pixel Dungeon
  * Copyright (C) 2014-2015 Evan Debenham
  *
  * Unpixel Dungeon
- * Copyright (C) 2015 Randall Foudray
+ * Copyright (C) 2015-2016 Randall Foudray
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -20,6 +20,7 @@
  *
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>
+ *
  */
 package com.felayga.unpixeldungeon.actors.mobs;
 
@@ -44,7 +45,7 @@ import com.felayga.unpixeldungeon.items.Item;
 import com.felayga.unpixeldungeon.items.scrolls.ScrollOfPsionicBlast;
 import com.felayga.unpixeldungeon.levels.Level;
 import com.felayga.unpixeldungeon.scenes.GameScene;
-import com.felayga.unpixeldungeon.sprites.MimicSprite;
+import com.felayga.unpixeldungeon.sprites.mobs.MimicSprite;
 import com.watabou.utils.Bundle;
 import com.watabou.utils.Random;
 

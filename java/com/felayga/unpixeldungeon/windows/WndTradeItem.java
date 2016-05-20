@@ -5,6 +5,9 @@
  * Shattered Pixel Dungeon
  * Copyright (C) 2014-2015 Evan Debenham
  *
+ * Unpixel Dungeon
+ * Copyright (C) 2015-2016 Randall Foudray
+ *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation, either version 3 of the License, or
@@ -17,6 +20,7 @@
  *
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>
+ *
  */
 package com.felayga.unpixeldungeon.windows;
 
@@ -237,10 +241,10 @@ public class WndTradeItem extends Window {
 		
 		Hero hero = Dungeon.hero;
 		
-		if (item.isEquipped( hero ) && !((EquipableItem)item).doUnequip( hero, false )) {
+		if (item.isEquipped( hero ) && !hero.belongings.unequip((EquipableItem) item, false)) {
 			return;
 		}
-		hero.belongings.detach(item);
+		hero.belongings.remove(item, 1);
 
 		int price = item.price();
 		
@@ -256,7 +260,7 @@ public class WndTradeItem extends Window {
 			
 			Hero hero = Dungeon.hero;
 			
-			item = hero.belongings.detach(item);
+			item = hero.belongings.remove(item, 1);
 			int price = item.price();
 			
 			new Gold( price ).doPickUp( hero );

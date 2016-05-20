@@ -6,7 +6,7 @@
  * Copyright (C) 2014-2015 Evan Debenham
  *
  * Unpixel Dungeon
- * Copyright (C) 2015 Randall Foudray
+ * Copyright (C) 2015-2016 Randall Foudray
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -20,6 +20,7 @@
  *
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>
+ *
  */
 package com.felayga.unpixeldungeon.ui;
 
@@ -146,6 +147,17 @@ public class ItemSlot extends Button {
 			bottomRight.x = x + (width - bottomRight.width());
 			bottomRight.y = y + (height - bottomRight.height()) + 1;
 		}
+	}
+
+	public void setHotkey(String key, boolean active) {
+		topRight.text(key);
+		if (active) {
+			topRight.hardlight(UPGRADED);
+		}
+		else {
+			topRight.hardlight(DEGRADED);
+		}
+		topRight.measure();
 	}
 	
 	public void item( Item item ) {

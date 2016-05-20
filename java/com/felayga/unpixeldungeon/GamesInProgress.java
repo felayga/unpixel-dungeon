@@ -6,7 +6,7 @@
  * Copyright (C) 2014-2015 Evan Debenham
  *
  * Unpixel Dungeon
- * Copyright (C) 2015 Randall Foudray
+ * Copyright (C) 2015-2016 Randall Foudray
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -20,14 +20,13 @@
  *
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>
+ *
  */
 package com.felayga.unpixeldungeon;
 
 import com.felayga.unpixeldungeon.actors.hero.Hero;
 import com.felayga.unpixeldungeon.actors.hero.HeroClass;
-import com.felayga.unpixeldungeon.utils.GLog;
-import com.felayga.unpixeldungeon.windows.WndHero;
-import com.felayga.unpixeldungeon.windows.start.WndHeroInit;
+import com.felayga.unpixeldungeon.windows.hero.WndInitHero;
 import com.watabou.utils.Bundlable;
 import com.watabou.utils.Bundle;
 
@@ -61,10 +60,10 @@ public class GamesInProgress {
 	public static void set( int index, HeroClass heroClass, int level, int depth ) {
 		Info info = new Info();
 		info.heroClass = HeroClass.toInt(heroClass);
-		info.gender = WndHeroInit.genderSelected;
-		info.hair = WndHeroInit.hairSelected;
-		info.hairFace = WndHeroInit.hairFaceSelected;
-		info.hairColor = WndHeroInit.hairColorSelected;
+		info.gender = WndInitHero.genderSelected;
+		info.hair = WndInitHero.hairSelected;
+		info.hairFace = WndInitHero.hairFaceSelected;
+		info.hairColor = WndInitHero.hairColorSelected;
 		info.level = level;
 		info.depth = depth;
 		info.dead = false;
@@ -98,19 +97,19 @@ public class GamesInProgress {
 
 		public void toWndHeroInit()
 		{
-			WndHeroInit.heroClassSelected = heroClass;
-			WndHeroInit.genderSelected = gender;
-			WndHeroInit.hairSelected = hair;
-			WndHeroInit.hairFaceSelected = hairFace;
-			WndHeroInit.hairColorSelected = hairColor;
+			WndInitHero.heroClassSelected = heroClass;
+			WndInitHero.genderSelected = gender;
+			WndInitHero.hairSelected = hair;
+			WndInitHero.hairFaceSelected = hairFace;
+			WndInitHero.hairColorSelected = hairColor;
 		}
 
 		public void fromWndHeroInit() {
-			heroClass = WndHeroInit.heroClassSelected;
-			gender = WndHeroInit.genderSelected;
-			hair = WndHeroInit.hairSelected;
-			hairFace = WndHeroInit.hairFaceSelected;
-			hairColor = WndHeroInit.hairColorSelected;
+			heroClass = WndInitHero.heroClassSelected;
+			gender = WndInitHero.genderSelected;
+			hair = WndInitHero.hairSelected;
+			hairFace = WndInitHero.hairFaceSelected;
+			hairColor = WndInitHero.hairColorSelected;
 		}
 
 		private static final String CLASS		= "hero_class";

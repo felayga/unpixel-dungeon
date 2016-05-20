@@ -6,7 +6,7 @@
  * Copyright (C) 2014-2015 Evan Debenham
  *
  * Unpixel Dungeon
- * Copyright (C) 2015 Randall Foudray
+ * Copyright (C) 2015-2016 Randall Foudray
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -20,10 +20,58 @@
  *
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>
+ *
  */
 package com.felayga.unpixeldungeon;
 
 public class Assets {
+	public class Mobs {
+		public static final String RAT			= "mobs/rat.png";
+		public static final String KOBOLD		= "mobs/kobold.png";
+		public static final String CRAB			= "mobs/crab.png";
+		public static final String GOO			= "mobs/goo.png";
+		public static final String SWARM		= "mobs/swarm.png";
+		public static final String SKELETON		= "mobs/skeleton.png";
+		public static final String THIEF		= "mobs/thief.png";
+		public static final String TENGU		= "mobs/tengu.png";
+		public static final String BAT			= "mobs/bat.png";
+		public static final String BRUTE		= "mobs/brute.png";
+		public static final String SPINNER		= "mobs/spinner.png";
+		public static final String DM300		= "mobs/dm300.png";
+		public static final String WRAITH		= "mobs/wraith.png";
+		public static final String ELEMENTAL	= "mobs/elemental.png";
+		public static final String MONK			= "mobs/monk.png";
+		public static final String WARLOCK		= "mobs/warlock.png";
+		public static final String GOLEM		= "mobs/golem.png";
+		public static final String UNDEAD		= "mobs/undead.png";
+		public static final String KING			= "mobs/king.png";
+		public static final String STATUE		= "mobs/statue.png";
+		public static final String PIRANHA		= "mobs/piranha.png";
+		public static final String EYE			= "mobs/eye.png";
+		public static final String FOOCUBUS		= "mobs/foocubus.png";
+		public static final String SCORPIO		= "mobs/scorpio.png";
+		public static final String ROTTING		= "mobs/rotting_fist.png";
+		public static final String BURNING		= "mobs/burning_fist.png";
+		public static final String YOG			= "mobs/yog.png";
+		public static final String LARVA		= "mobs/larva.png";
+		public static final String BEE      	= "mobs/bee.png";
+		public static final String MIMIC    	= "mobs/mimic.png";
+		public static final String ROT_LASH 	= "mobs/rot_lasher.png";
+		public static final String ROT_HEART	= "mobs/rot_heart.png";
+		public static final String GUARD    	= "mobs/guard.png";
+		public static final String BUG			= "mobs/bug.png";
+		public static final String FUNGUS		= "mobs/fungus.png";
+		public static final String DWARF		= "mobs/dwarf.png";
+		public static final String ELF			= "mobs/elf.png";
+		public static final String GNOME		= "mobs/gnome.png";
+		public static final String JACKAL		= "mobs/jackal.png";
+		public static final String MONKEY		= "mobs/monkey.png";
+		public static final String NEWT			= "mobs/newt.png";
+		public static final String ORC			= "mobs/orc.png";
+		public static final String ROTHE		= "mobs/rothe.png";
+		public static final String SNAKE		= "mobs/snake.png";
+		public static final String WEREJACKAL	= "mobs/werejackal.png";
+	}
 
 	public static final String ARCS_BG		= "arcs1.png";
 	public static final String ARCS_FG		= "arcs2.png";
@@ -43,11 +91,11 @@ public class Assets {
 	public static final String SHADOW   = "shadow.png";
 	public static final String BOSSHP   = "boss_hp.png";
 
-	public static final String HERO_ARMOR		= "hero_armor.png";
-	public static final String HERO_HEAD		= "hero_head.png";
-	public static final String HERO_HAIR		= "hero_hair.png";
-	public static final String HERO_HAIRFACE	= "hero_hairface.png";
-	public static final String HERO_INTROPLOT	= "hero_introplot.png";
+	public static final String HERO_ARMOR		= "hero/armor.png";
+	public static final String HERO_HEAD		= "hero/head.png";
+	public static final String HERO_HAIR		= "hero/hair.png";
+	public static final String HERO_HAIRFACE	= "hero/hairface.png";
+	public static final String HERO_INTROPLOT	= "hero/introplot.png";
 	/*
 	public static final String WARRIOR	= "warrior.png";
 	public static final String MAGE		= "mage.png";
@@ -63,49 +111,14 @@ public class Assets {
 	public static final String SPECKS		= "specks.png";
 	public static final String EFFECTS		= "effects.png";
 	
-	public static final String RAT		= "rat.png";
-	public static final String GNOLL	= "gnoll.png";
-	public static final String CRAB		= "crab.png";
-	public static final String GOO		= "goo.png";
-	public static final String SWARM	= "swarm.png";
-	public static final String SKELETON	= "skeleton.png";
-	public static final String SHAMAN	= "shaman.png";
-	public static final String THIEF	= "thief.png";
-	public static final String TENGU	= "tengu.png";
 	public static final String SHEEP	= "sheep.png";
 	public static final String KEEPER	= "shopkeeper.png";
-	public static final String BAT		= "bat.png";
-	public static final String BRUTE	= "brute.png";
-	public static final String SPINNER	= "spinner.png";
-	public static final String DM300	= "dm300.png";
-	public static final String WRAITH	= "wraith.png";
-	public static final String ELEMENTAL= "elemental.png";
-	public static final String MONK		= "monk.png";
-	public static final String WARLOCK	= "warlock.png";
-	public static final String GOLEM	= "golem.png";
-	public static final String UNDEAD	= "undead.png";
-	public static final String KING		= "king.png";
-	public static final String STATUE	= "statue.png";
-	public static final String PIRANHA	= "piranha.png";
-	public static final String EYE		= "eye.png";
-	public static final String FOOCUBUS	= "foocubus.png";
-	public static final String SCORPIO	= "scorpio.png";
-	public static final String ROTTING	= "rotting_fist.png";
-	public static final String BURNING	= "burning_fist.png";
-	public static final String YOG		= "yog.png";
-	public static final String LARVA	= "larva.png";
+
 	public static final String GHOST	= "ghost.png";
 	public static final String MAKER	= "wandmaker.png";
 	public static final String TROLL	= "blacksmith.png";
 	public static final String IMP		= "demon.png";
 	public static final String RATKING	= "ratking.png";
-	public static final String BEE      = "bee.png";
-	public static final String MIMIC    = "mimic.png";
-	public static final String ROT_LASH = "rot_lasher.png";
-	public static final String ROT_HEART= "rot_heart.png";
-	public static final String GUARD    = "guard.png";
-	public static final String GRIDBUG	= "gridbug.png";
-	public static final String LICHEN	= "lichen.png";
 
 	public static final String BOULDER	= "boulder.png";
 

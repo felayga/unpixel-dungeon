@@ -6,7 +6,7 @@
  * Copyright (C) 2014-2015 Evan Debenham
  *
  * Unpixel Dungeon
- * Copyright (C) 2015 Randall Foudray
+ * Copyright (C) 2015-2016 Randall Foudray
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -20,6 +20,7 @@
  *
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>
+ *
  */
 package com.felayga.unpixeldungeon.items.wands;
 
@@ -48,17 +49,12 @@ import com.felayga.unpixeldungeon.effects.Speck;
 import com.felayga.unpixeldungeon.effects.SpellSprite;
 import com.felayga.unpixeldungeon.effects.particles.ShadowParticle;
 import com.felayga.unpixeldungeon.items.Bomb;
-import com.felayga.unpixeldungeon.items.EquipableItem;
 import com.felayga.unpixeldungeon.items.Generator;
 import com.felayga.unpixeldungeon.items.Item;
-import com.felayga.unpixeldungeon.items.KindOfWeapon;
-import com.felayga.unpixeldungeon.items.KindofMisc;
-import com.felayga.unpixeldungeon.items.armor.Armor;
 import com.felayga.unpixeldungeon.items.artifacts.DriedRose;
 import com.felayga.unpixeldungeon.items.artifacts.TimekeepersHourglass;
 import com.felayga.unpixeldungeon.items.scrolls.ScrollOfRecharging;
 import com.felayga.unpixeldungeon.items.scrolls.ScrollOfTeleportation;
-import com.felayga.unpixeldungeon.items.tools.Tool;
 import com.felayga.unpixeldungeon.items.weapon.missiles.MissileWeapon;
 import com.felayga.unpixeldungeon.levels.Level;
 import com.felayga.unpixeldungeon.levels.Terrain;
@@ -316,7 +312,7 @@ public class CursedWand {
 			case 1:
 				user.belongings.bucChange(true, BUCStatus.Cursed, true, true, true, false);
 
-				EquipableItem.equipCursed(user);
+				//EquipableItem.equipCursed(user);
 				GLog.n("Your worn equipment becomes cursed!");
 				wand.wandUsed();
 				break;
@@ -425,7 +421,7 @@ public class CursedWand {
 			//random transmogrification
 			case 3:
 				wand.wandUsed();
-				user.belongings.detach(wand);
+				user.belongings.remove(wand, 1);
 				Item result;
 				do {
 					result = Generator.random(Random.oneOf(Generator.Category.WEAPON, Generator.Category.ARMOR,

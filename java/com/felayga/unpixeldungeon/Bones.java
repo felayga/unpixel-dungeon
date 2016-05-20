@@ -6,7 +6,7 @@
  * Copyright (C) 2014-2015 Evan Debenham
  *
  * Unpixel Dungeon
- * Copyright (C) 2015 Randall Foudray
+ * Copyright (C) 2015-2016 Randall Foudray
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -20,6 +20,7 @@
  *
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>
+ *
  */
 package com.felayga.unpixeldungeon;
 
@@ -27,7 +28,7 @@ import com.felayga.unpixeldungeon.actors.hero.Hero;
 import com.felayga.unpixeldungeon.items.Generator;
 import com.felayga.unpixeldungeon.items.Gold;
 import com.felayga.unpixeldungeon.items.Item;
-import com.felayga.unpixeldungeon.items.artifacts.Artifact;
+import com.felayga.unpixeldungeon.items.artifacts.Artifact_old;
 import com.felayga.unpixeldungeon.items.weapon.missiles.MissileWeapon;
 import com.felayga.unpixeldungeon.mechanics.BUCStatus;
 import com.watabou.noosa.Game;
@@ -86,10 +87,10 @@ public class Bones {
 					item = hero.belongings.offhand;
 					break;
 				case 2:
-					item = hero.belongings.tool1;
+					item = hero.belongings.weapon2;
 					break;
 				case 3:
-					item = hero.belongings.tool2;
+					item = hero.belongings.offhand2;
 					break;
                 case 4:
                     item = hero.belongings.armor;
@@ -179,13 +180,13 @@ public class Bones {
 				Game.instance.deleteFile( BONES_FILE );
 				depth = 0;
 
-				if (item instanceof Artifact){
-					if (Generator.removeArtifact((Artifact)item)) {
+				if (item instanceof Artifact_old){
+					if (Generator.removeArtifact((Artifact_old)item)) {
 						try {
-							Artifact artifact = (Artifact)item.getClass().newInstance();
-							artifact.bucStatus(BUCStatus.Cursed, false);
-							//caps displayed artifact level
-							artifact.transferUpgrade(Math.min(
+							Artifact_old artifactOld = (Artifact_old)item.getClass().newInstance();
+							artifactOld.bucStatus(BUCStatus.Cursed, false);
+							//caps displayed artifactOld level
+							artifactOld.transferUpgrade(Math.min(
 									item.visiblyUpgraded(),
 									1 + ((Dungeon.depth * 3) / 10)));
 

@@ -6,7 +6,7 @@
  * Copyright (C) 2014-2015 Evan Debenham
  *
  * Unpixel Dungeon
- * Copyright (C) 2015 Randall Foudray
+ * Copyright (C) 2015-2016 Randall Foudray
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -20,6 +20,7 @@
  *
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>
+ *
  */
 package com.felayga.unpixeldungeon.items;
 
@@ -71,7 +72,7 @@ public class Generator {
 		SCROLL(400, Scroll.class),
 		WAND(40, Wand.class),
 		RING(15, Ring.class),
-		ARTIFACT(15, Artifact.class),
+		ARTIFACT(15, Artifact_old.class),
 		SEED(50, Plant.Seed.class),
 		FOOD(0, Food.class),
 		GOLD(500, Gold.class);
@@ -330,7 +331,7 @@ public class Generator {
 	}
 
 	//enforces uniqueness of artifacts throughout a run.
-	public static Artifact randomArtifact() {
+	public static Artifact_old randomArtifact() {
 
 		try {
 			Category cat = Category.ARTIFACT;
@@ -341,31 +342,31 @@ public class Generator {
 				return null;
 			}
 
-			Artifact artifact = (Artifact) cat.classes[i].newInstance();
+			Artifact_old artifactOld = (Artifact_old) cat.classes[i].newInstance();
 
-			//remove the chance of spawning this artifact.
+			//remove the chance of spawning this artifactOld.
 			cat.probs[i] = 0;
 			spawnedArtifacts.add(cat.classes[i].getSimpleName());
 
-			artifact.random();
+			artifactOld.random();
 
-			return artifact;
+			return artifactOld;
 
 		} catch (Exception e) {
 			return null;
 		}
 	}
 
-	public static boolean removeArtifact(Artifact artifact) {
-		if (spawnedArtifacts.contains(artifact.getClass().getSimpleName()))
+	public static boolean removeArtifact(Artifact_old artifactOld) {
+		if (spawnedArtifacts.contains(artifactOld.getClass().getSimpleName()))
 			return false;
 
 		Category cat = Category.ARTIFACT;
 		for (int i = 0; i < cat.classes.length; i++)
-			if (cat.classes[i].equals(artifact.getClass())) {
+			if (cat.classes[i].equals(artifactOld.getClass())) {
 				if (cat.probs[i] == 1) {
 					cat.probs[i] = 0;
-					spawnedArtifacts.add(artifact.getClass().getSimpleName());
+					spawnedArtifacts.add(artifactOld.getClass().getSimpleName());
 					return true;
 				} else
 					return false;

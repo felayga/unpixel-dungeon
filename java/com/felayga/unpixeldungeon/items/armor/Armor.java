@@ -6,7 +6,7 @@
  * Copyright (C) 2014-2015 Evan Debenham
  *
  * Unpixel Dungeon
- * Copyright (C) 2015 Randall Foudray
+ * Copyright (C) 2015-2016 Randall Foudray
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -20,6 +20,7 @@
  *
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>
+ *
  */
 package com.felayga.unpixeldungeon.items.armor;
 
@@ -63,6 +64,7 @@ public class Armor extends EquipableItem {
 	public Glyph glyph;
 
 	public int armor;
+	public int armorMagic;
 	public int armorBonusMaximum;
 	public long speedModifier;
 	public int price;
@@ -70,13 +72,14 @@ public class Armor extends EquipableItem {
 	public int spellFailure;
 
 
-	public Armor(int armor, int armorBonusMaximum, long speedModifier, long equipTime, int spellFailure) {
+	public Armor(int armor, int armorBonusMaximum, int armorMagic, long speedModifier, long equipTime, int spellFailure) {
 		super(equipTime);
 
 		price = 0;
 
 		this.armor = armor;
 		this.armorBonusMaximum = armorBonusMaximum;
+		this.armorMagic = armorMagic;
 		this.speedModifier = speedModifier;
 		this.spellFailure = spellFailure;
 		textureIndex = 1;
@@ -149,11 +152,6 @@ public class Armor extends EquipableItem {
 		}
 	}
 
-	
-	@Override
-	public boolean isEquipped( Char hero ) {
-		return hero.belongings.armor == this;
-	}
 	
 	public int proc( Char attacker, Char defender, int damage ) {
 		

@@ -6,7 +6,7 @@
  * Copyright (C) 2014-2015 Evan Debenham
  *
  * Unpixel Dungeon
- * Copyright (C) 2015 Randall Foudray
+ * Copyright (C) 2015-2016 Randall Foudray
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -20,6 +20,7 @@
  *
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>
+ *
  */
 package com.felayga.unpixeldungeon.ui;
 
@@ -50,8 +51,11 @@ public abstract class OptionSlider extends Component {
 	private ColorBlock[] sliderTicks;
 	private float tickDist;
 
+	public OptionSlider(String title, String minTxt, String maxTxt, int minVal, int maxVal) {
+		this(title, minTxt, maxTxt, minVal, maxVal, (maxVal - minVal) + 1);
+	}
 
-	public OptionSlider(String title, String minTxt, String maxTxt, int minVal, int maxVal){
+	public OptionSlider(String title, String minTxt, String maxTxt, int minVal, int maxVal, int sliderTickCount){
 		super();
 
 		this.title.text(title);
@@ -70,7 +74,7 @@ public abstract class OptionSlider extends Component {
 			visible = false;
 		}
 
-		sliderTicks = new ColorBlock[(maxVal - minVal) + 1];
+		sliderTicks = new ColorBlock[sliderTickCount];
 		for (int i = 0; i < sliderTicks.length; i++){
 			add(sliderTicks[i] = new ColorBlock(1, 11, 0xFF222222));
 		}
@@ -125,7 +129,10 @@ public abstract class OptionSlider extends Component {
 				sliderNode.resetColor();
 
 				//sets the selected value
-				selectedVal = minVal + Math.round(sliderNode.x/tickDist);
+				selectedVal = minVal + (int)Math.round(sliderNode.x / tickDist);
+				if (selectedVal > maxVal) {
+					selectedVal = maxVal;
+				}
 				sliderNode.x = (int)(x + tickDist*(selectedVal-minVal));
 				onChange();
 			}
@@ -141,11 +148,12 @@ public abstract class OptionSlider extends Component {
 		sliderBG.y = y + height() - 8;
 		sliderBG.x = x+2;
 		sliderBG.size(width-5, 1);
-		tickDist = sliderBG.width()/(maxVal - minVal);
+		tickDist = sliderBG.width()/(sliderTicks.length - 1);
 		for (int i = 0; i < sliderTicks.length; i++){
 			sliderTicks[i].y = sliderBG.y-5;
 			sliderTicks[i].x = (int)(x + 2 + (tickDist*i));
 		}
+		tickDist = sliderBG.width() / (maxVal - minVal);
 
 		minTxt.y = maxTxt.y = sliderBG.y-6-minTxt.baseLine();
 		minTxt.x = x+1;

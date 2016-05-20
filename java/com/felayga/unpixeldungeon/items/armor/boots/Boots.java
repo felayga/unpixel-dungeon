@@ -1,3 +1,28 @@
+/*
+ * Pixel Dungeon
+ * Copyright (C) 2012-2015  Oleg Dolya
+ *
+ * Shattered Pixel Dungeon
+ * Copyright (C) 2014-2015 Evan Debenham
+ *
+ * Unpixel Dungeon
+ * Copyright (C) 2015-2016 Randall Foudray
+ *
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program.  If not, see <http://www.gnu.org/licenses/>
+ *
+ */
+
 package com.felayga.unpixeldungeon.items.armor.boots;
 
 import com.felayga.unpixeldungeon.Dungeon;
@@ -32,16 +57,10 @@ public class Boots extends Armor {
 
     private static Boots curBoots;
 
-    @Override
-    protected Armor getEquipmentSlot(Char hero)
-    {
-        return hero.belongings.boots;
-    }
 
     @Override
-    protected void setEquipmentSlot(Char hero, Armor item)
-    {
-        hero.belongings.boots = item;
+    public Slot[] getSlots() {
+        return new Slot[]{ Slot.Boots };
     }
 
     @Override
@@ -59,45 +78,32 @@ public class Boots extends Armor {
     }
 
     @Override
-    public boolean doEquip( Char ch ) {
-        boolean retval = super.doEquip(ch);
+    public void onEquip(Char owner, boolean cursed) {
+        super.onEquip(owner, cursed);
 
-        if (retval) {
-            defaultAction = AC_KICK;
+        defaultAction = AC_KICK;
 
-            if (ch instanceof Hero) {
-                int index = Dungeon.quickslot.getPlaceholder(this);
-                if (index >= 0) {
-                    Dungeon.quickslot.setSlot(index, this);
-                }
+        if (owner instanceof Hero) {
+            int index = Dungeon.quickslot.getPlaceholder(this);
+            if (index >= 0) {
+                Dungeon.quickslot.setSlot(index, this);
             }
         }
-
-        return retval;
     }
 
     @Override
-    public boolean doUnequip( Char ch, boolean collect, boolean single ) {
-        boolean retval = super.doUnequip(ch, collect, single);
-
-        if (retval) {
-            defaultAction = null;
-
-            if (ch instanceof Hero) {
-                int index = Dungeon.quickslot.getSlot(this);
-                if (index >= 0) {
-                    Dungeon.quickslot.convertToPlaceholder(this);
-                }
-            }
-        }
-
-        return retval;
-    }
-
-    @Override
-    public boolean isEquipped(Char hero)
+    public void onUnequip(Char owner)
     {
-        return hero.belongings.boots == this;
+        super.onUnequip(owner);
+
+        defaultAction = null;
+
+        if (owner instanceof Hero) {
+            int index = Dungeon.quickslot.getSlot(this);
+            if (index >= 0) {
+                Dungeon.quickslot.convertToPlaceholder(this);
+            }
+        }
     }
 
     @Override
@@ -120,7 +126,7 @@ public class Boots extends Armor {
 
         if (cell == Terrain.LOCKED_DOOR || cell == Terrain.DOOR) {
             hero.curAction = new HeroAction.HandleDoor.KickDoor(target);
-            hero.spend(1, true);
+            hero.motivate(true);
             return;
         }
 
@@ -167,7 +173,7 @@ public class Boots extends Armor {
 
         @Override
         public String prompt() {
-            return "Kick";
+            return "Choose a place to kick";
         }
     };
 

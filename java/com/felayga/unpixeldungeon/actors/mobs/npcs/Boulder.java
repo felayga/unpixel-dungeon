@@ -6,7 +6,7 @@
  * Copyright (C) 2014-2015 Evan Debenham
  *
  * Unpixel Dungeon
- * Copyright (C) 2015 Randall Foudray
+ * Copyright (C) 2015-2016 Randall Foudray
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -20,6 +20,7 @@
  *
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>
+ *
  */
 package com.felayga.unpixeldungeon.actors.mobs.npcs;
 
@@ -32,21 +33,17 @@ import com.felayga.unpixeldungeon.actors.buffs.Buff;
 import com.felayga.unpixeldungeon.actors.buffs.Paralysis;
 import com.felayga.unpixeldungeon.actors.buffs.Roots;
 import com.felayga.unpixeldungeon.actors.hero.Hero;
-import com.felayga.unpixeldungeon.actors.hero.HeroAction;
 import com.felayga.unpixeldungeon.effects.CellEmitter;
 import com.felayga.unpixeldungeon.effects.Speck;
-import com.felayga.unpixeldungeon.items.keys.OldKey;
+import com.felayga.unpixeldungeon.items.tools.ITool;
 import com.felayga.unpixeldungeon.items.tools.digging.DiggingTool;
-import com.felayga.unpixeldungeon.items.tools.unlocking.UnlockingTool;
 import com.felayga.unpixeldungeon.items.weapon.missiles.Rock;
 import com.felayga.unpixeldungeon.levels.Level;
 import com.felayga.unpixeldungeon.levels.Terrain;
-import com.felayga.unpixeldungeon.levels.features.Door;
-import com.felayga.unpixeldungeon.mechanics.AttributeType;
 import com.felayga.unpixeldungeon.mechanics.Constant;
 import com.felayga.unpixeldungeon.mechanics.GameTime;
 import com.felayga.unpixeldungeon.scenes.GameScene;
-import com.felayga.unpixeldungeon.sprites.BoulderSprite;
+import com.felayga.unpixeldungeon.sprites.npcs.BoulderSprite;
 import com.felayga.unpixeldungeon.utils.GLog;
 import com.felayga.unpixeldungeon.windows.WndOptions;
 import com.watabou.noosa.audio.Sample;
@@ -71,11 +68,6 @@ public class Boulder extends NPC {
 
         state = PASSIVE;
         actPriority = -8;
-    }
-
-    @Override
-    public int defenseSkill( Char enemy ) {
-        return 1000;
     }
 
     @Override
@@ -115,20 +107,14 @@ public class Boulder extends NPC {
         actions.add(TXT_PUSH);
         actionOptions.add(false);
 
+        ITool[] tools = hero.belongings.getToolTypes(DiggingTool.NAME);
+
 
         DiggingTool diggingTool = null;
         String diggingToolName = null;
-        if (hero.belongings.tool1 instanceof DiggingTool || hero.belongings.tool2 instanceof DiggingTool)
+        if (tools[0] != null)
         {
-            if (hero.belongings.tool1 instanceof DiggingTool)
-            {
-                diggingTool = (DiggingTool)hero.belongings.tool1;
-            }
-            else if (hero.belongings.tool2 instanceof DiggingTool)
-            {
-                diggingTool = (DiggingTool)hero.belongings.tool2;
-            }
-
+            diggingTool = (DiggingTool)tools[0];
             diggingToolName = diggingTool.getName().toUpperCase();
 
             actions.add(diggingToolName);
@@ -180,7 +166,7 @@ public class Boulder extends NPC {
 
                                     GLog.p("The boulder settles into the pit, filling a hole.");
                                 } else {
-                                    GLog.n("The boulder won't budge.");
+                                    GLog.n("You try to move the boulder, but in vain.");
                                 }
                             }
                             else {

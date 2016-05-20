@@ -6,7 +6,7 @@
  * Copyright (C) 2014-2015 Evan Debenham
  *
  * Unpixel Dungeon
- * Copyright (C) 2015 Randall Foudray
+ * Copyright (C) 2015-2016 Randall Foudray
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -20,14 +20,12 @@
  *
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>
+ *
  */
 package com.felayga.unpixeldungeon.actors.buffs;
 
 import com.felayga.unpixeldungeon.Dungeon;
-import com.felayga.unpixeldungeon.actors.Actor;
 import com.felayga.unpixeldungeon.actors.Char;
-import com.felayga.unpixeldungeon.actors.hero.Hero;
-import com.felayga.unpixeldungeon.actors.mobs.Thief;
 import com.felayga.unpixeldungeon.items.Item;
 import com.felayga.unpixeldungeon.items.food.FrozenCarpaccio;
 import com.felayga.unpixeldungeon.items.food.MysteryMeat;
@@ -61,13 +59,13 @@ public class Chill extends FlavourBuff {
 				Item item = target.belongings.randomUnequipped();
 				if (item instanceof Potion) {
 
-					item = target.belongings.detach(item);
+					item = target.belongings.remove(item, 1);
 					GLog.w(TXT_FREEZES, item.toString());
 					((Potion) item).shatter(target.pos);
 
 				} else if (item instanceof MysteryMeat) {
 
-					item = target.belongings.detach(item);
+					item = target.belongings.remove(item, 1);
 					FrozenCarpaccio carpaccio = new FrozenCarpaccio();
 					if (!target.belongings.collect(carpaccio)) {
 						Dungeon.level.drop( carpaccio, target.pos ).sprite.drop();

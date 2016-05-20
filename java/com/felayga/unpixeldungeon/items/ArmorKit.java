@@ -6,7 +6,7 @@
  * Copyright (C) 2014-2015 Evan Debenham
  *
  * Unpixel Dungeon
- * Copyright (C) 2015 Randall Foudray
+ * Copyright (C) 2015-2016 Randall Foudray
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -20,6 +20,7 @@
  *
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>
+ *
  */
 package com.felayga.unpixeldungeon.items;
 
@@ -85,7 +86,7 @@ public class ArmorKit extends Item {
 	
 	private void upgrade( Armor armor ) {
 		
-		curUser.belongings.detach(this);
+		curUser.belongings.remove(this, 1);
 		
 		curUser.sprite.centerEmitter(-1).start( Speck.factory( Speck.KIT ), 0.05f, 10 );
 		curUser.spend( TIME_TO_UPGRADE, false );
@@ -100,7 +101,7 @@ public class ArmorKit extends Item {
 			((HeroSprite)curUser.sprite).setArmor(classArmor.textureIndex);
 			
 		} else {
-			curUser.belongings.detach(armor);
+			curUser.belongings.remove(armor, 1);
 			curUser.belongings.collect(classArmor);
 		}
 		

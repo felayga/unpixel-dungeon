@@ -6,7 +6,7 @@
  * Copyright (C) 2014-2015 Evan Debenham
  *
  * Unpixel Dungeon
- * Copyright (C) 2015 Randall Foudray
+ * Copyright (C) 2015-2016 Randall Foudray
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -20,19 +20,17 @@
  *
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>
+ *
  */
 package com.felayga.unpixeldungeon.scenes;
 
 import java.util.HashMap;
 
-import com.felayga.unpixeldungeon.utils.GLog;
-import com.felayga.unpixeldungeon.windows.WndHero;
-import com.felayga.unpixeldungeon.windows.start.WndHeroInit;
+import com.felayga.unpixeldungeon.windows.hero.WndInitHero;
 import com.watabou.noosa.BitmapText;
 import com.watabou.noosa.BitmapTextMultiline;
 import com.watabou.noosa.Camera;
 import com.watabou.noosa.Game;
-import com.watabou.noosa.Group;
 import com.watabou.noosa.Image;
 import com.watabou.noosa.audio.Sample;
 import com.watabou.noosa.particles.Emitter;
@@ -50,9 +48,7 @@ import com.felayga.unpixeldungeon.ui.Archs;
 import com.felayga.unpixeldungeon.ui.ExitButton;
 import com.felayga.unpixeldungeon.ui.Icons;
 import com.felayga.unpixeldungeon.ui.RedButton;
-import com.felayga.unpixeldungeon.utils.Utils;
 import com.felayga.unpixeldungeon.windows.WndChallenges;
-import com.felayga.unpixeldungeon.windows.WndClass;
 import com.felayga.unpixeldungeon.windows.WndMessage;
 import com.felayga.unpixeldungeon.windows.WndOptions;
 import com.watabou.utils.Callback;
@@ -160,7 +156,7 @@ public class StartScene extends PixelScene {
 					info.toWndHeroInit();
 				}
 				else {
-					WndHeroInit.setDefault();
+					WndInitHero.setDefault();
 				}
 
 				InterlevelScene.mode = InterlevelScene.Mode.CONTINUE;
@@ -260,7 +256,7 @@ public class StartScene extends PixelScene {
 		}
 
 		curIndex = index;
-		WndHeroInit.savedGameIndex = curIndex;
+		WndInitHero.savedGameIndex = curIndex;
 
 		shields.get(curIndex).highlight(true);
 
@@ -298,10 +294,10 @@ public class StartScene extends PixelScene {
 			info.toWndHeroInit();
 		}
 		else {
-			WndHeroInit.setDefault();
+			WndInitHero.setDefault();
 		}
 
-		ShatteredPixelDungeon.scene().add(new WndHeroInit(new WndHeroInit.Listener() {
+		ShatteredPixelDungeon.scene().add(new WndInitHero(new WndInitHero.Listener() {
 			@Override
 			public void onReady() {
 				InterlevelScene.mode = InterlevelScene.Mode.DESCEND;

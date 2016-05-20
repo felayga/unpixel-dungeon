@@ -6,7 +6,7 @@
  * Copyright (C) 2014-2015 Evan Debenham
  *
  * Unpixel Dungeon
- * Copyright (C) 2015 Randall Foudray
+ * Copyright (C) 2015-2016 Randall Foudray
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -20,35 +20,31 @@
  *
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>
+ *
  */
 package com.felayga.unpixeldungeon.sprites.hero;
 
 import android.graphics.RectF;
 
 import com.felayga.unpixeldungeon.Assets;
-import com.felayga.unpixeldungeon.Dungeon;
 import com.felayga.unpixeldungeon.actors.Char;
 import com.felayga.unpixeldungeon.actors.hero.Hero;
-import com.felayga.unpixeldungeon.actors.hero.HeroClass;
+import com.felayga.unpixeldungeon.items.armor.Armor;
 import com.felayga.unpixeldungeon.sprites.CharSprite;
-import com.felayga.unpixeldungeon.utils.GLog;
-import com.felayga.unpixeldungeon.windows.start.WndHeroInit;
+import com.felayga.unpixeldungeon.windows.hero.WndInitHero;
 import com.watabou.gltextures.SmartTexture;
 import com.watabou.gltextures.TextureCache;
-import com.watabou.glwrap.Quad;
 import com.watabou.noosa.Camera;
 import com.watabou.noosa.Image;
 import com.watabou.noosa.NoosaScript;
 import com.watabou.noosa.TextureFilm;
 import com.watabou.utils.Callback;
 
-import java.nio.FloatBuffer;
-
 public class HeroSprite extends CharSprite {
 	private static final int FRAME_WIDTH	= 12;
 	public static final int FRAME_HEIGHT	= 15;
 
-	private static final int RUN_FRAMERATE	= 20;
+	public static final int RUN_FRAMERATE	= 20;
 
 	private static final int HEROINDEX_DEAD	= 2;
 
@@ -104,12 +100,12 @@ public class HeroSprite extends CharSprite {
 		if (ch instanceof Hero) {
 			Hero hero = (Hero)ch;
 
-			heroGender = WndHeroInit.genderSelected;
-			hairIndex = WndHeroInit.hairSelected;
-			hairFaceIndex = WndHeroInit.hairFaceSelected;
-			setHairColor(WndHeroInit.hairColorSelected);
+			heroGender = WndInitHero.genderSelected;
+			hairIndex = WndInitHero.hairSelected;
+			hairFaceIndex = WndInitHero.hairFaceSelected;
+			setHairColor(WndInitHero.hairColorSelected);
 
-			armorIndex = hero.belongings.armor != null ? hero.belongings.armor.textureIndex : heroGender;
+			armorIndex = hero.belongings.armor != null ? ((Armor)hero.belongings.armor).textureIndex : heroGender;
 		}
 	}
 

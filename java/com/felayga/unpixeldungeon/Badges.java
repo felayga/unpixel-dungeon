@@ -6,7 +6,7 @@
  * Copyright (C) 2014-2015 Evan Debenham
  *
  * Unpixel Dungeon
- * Copyright (C) 2015 Randall Foudray
+ * Copyright (C) 2015-2016 Randall Foudray
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -20,6 +20,7 @@
  *
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>
+ *
  */
 package com.felayga.unpixeldungeon;
 
@@ -32,11 +33,11 @@ import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 
-import com.felayga.unpixeldungeon.items.artifacts.Artifact;
+import com.felayga.unpixeldungeon.items.artifacts.Artifact_old;
 import com.felayga.unpixeldungeon.items.bags.PotionBandolier;
 import com.watabou.noosa.Game;
 import com.felayga.unpixeldungeon.actors.mobs.Acidic;
-import com.felayga.unpixeldungeon.actors.mobs.Albino;
+import com.felayga.unpixeldungeon.actors.mobs.unused.MarsupialRatAlbino;
 import com.felayga.unpixeldungeon.actors.mobs.Bandit;
 import com.felayga.unpixeldungeon.actors.mobs.Mob;
 import com.felayga.unpixeldungeon.actors.mobs.Senior;
@@ -412,7 +413,7 @@ public class Badges {
 		// 3) When an item is identified
 
 		// Note that artifacts should never trigger this badge as they are alternatively upgraded
-		if (!item.levelKnown || item instanceof Artifact) {
+		if (!item.levelKnown || item instanceof Artifact_old) {
 			return;
 		}
 		
@@ -747,7 +748,7 @@ public class Badges {
 	public static void validateRare( Mob mob ) {
 		
 		Badge badge = null;
-		if (mob instanceof Albino) {
+		if (mob instanceof MarsupialRatAlbino) {
 			badge = Badge.RARE_ALBINO;
 		} else if (mob instanceof Bandit) {
 			badge = Badge.RARE_BANDIT;

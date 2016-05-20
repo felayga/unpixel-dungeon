@@ -6,7 +6,7 @@
  * Copyright (C) 2014-2015 Evan Debenham
  *
  * Unpixel Dungeon
- * Copyright (C) 2015 Randall Foudray
+ * Copyright (C) 2015-2016 Randall Foudray
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -20,10 +20,12 @@
  *
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>
+ *
  */
 package com.felayga.unpixeldungeon.actors.buffs;
 
 import com.felayga.unpixeldungeon.actors.Char;
+import com.felayga.unpixeldungeon.mechanics.Constant;
 import com.felayga.unpixeldungeon.ui.BuffIndicator;
 
 public class Roots extends FlavourBuff {
@@ -35,7 +37,7 @@ public class Roots extends FlavourBuff {
 	@Override
 	public boolean attachTo( Char target ) {
 		if (!target.flying && super.attachTo( target )) {
-			target.rooted = true;
+			target.crippled.put(Constant.DEBUFF_ROOTS, 0L);
 			return true;
 		} else {
 			return false;
@@ -44,7 +46,7 @@ public class Roots extends FlavourBuff {
 	
 	@Override
 	public void detach() {
-		target.rooted = false;
+		target.crippled.remove(Constant.DEBUFF_ROOTS);
 		super.detach();
 	}
 	

@@ -6,7 +6,7 @@
  * Copyright (C) 2014-2015 Evan Debenham
  *
  * Unpixel Dungeon
- * Copyright (C) 2015 Randall Foudray
+ * Copyright (C) 2015-2016 Randall Foudray
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -20,6 +20,7 @@
  *
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>
+ *
  */
 package com.felayga.unpixeldungeon.items.artifacts;
 
@@ -48,7 +49,7 @@ import com.watabou.utils.Random;
 import java.util.ArrayList;
 import java.util.Collections;
 
-public class UnstableSpellbook extends Artifact {
+public class UnstableSpellbook extends Artifact_old {
 
 	{
 		name = "Unstable Spellbook";
@@ -240,7 +241,7 @@ public class UnstableSpellbook extends Artifact {
 						hero.sprite.emitter().burst(ElmoParticle.FACTORY, 12);
 
 						scrolls.remove(i);
-						hero.belongings.detach(item);
+						hero.belongings.remove(item, 1);
 
 						upgrade(item, 1);
 						GLog.i("You infuse the scroll's energy into the book.");

@@ -6,7 +6,7 @@
  * Copyright (C) 2014-2015 Evan Debenham
  *
  * Unpixel Dungeon
- * Copyright (C) 2015 Randall Foudray
+ * Copyright (C) 2015-2016 Randall Foudray
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -20,6 +20,7 @@
  *
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>
+ *
  */
 package com.felayga.unpixeldungeon.windows;
 
@@ -38,6 +39,7 @@ import com.felayga.unpixeldungeon.items.bags.ScrollHolder;
 import com.felayga.unpixeldungeon.items.bags.SeedPouch;
 import com.felayga.unpixeldungeon.items.bags.WandHolster;
 import com.felayga.unpixeldungeon.items.bags.backpack.Backpack;
+import com.felayga.unpixeldungeon.items.bags.backpack.EquipmentBackpack;
 import com.felayga.unpixeldungeon.items.food.Food;
 import com.felayga.unpixeldungeon.items.potions.Potion;
 import com.felayga.unpixeldungeon.items.scrolls.Scroll;
@@ -185,25 +187,27 @@ public class WndBackpack extends WndTabbed {
 	}
 
 	protected void placeItems(Bag container) {
-		// Equipped items
-		Belongings stuff = Dungeon.hero.belongings;
-		placeItem(stuff.weapon != null ? stuff.weapon : new Placeholder(ItemSpriteSheet.WEAPON));
-		placeItem(stuff.offhand != null ? stuff.offhand : new Placeholder(ItemSpriteSheet.SHIELD));
+		if (container instanceof EquipmentBackpack) {
+			// Equipped items
+			Belongings stuff = Dungeon.hero.belongings;
+			placeItem(stuff.weapon != null ? stuff.weapon : new Placeholder(ItemSpriteSheet.WEAPON)).setHotkey("+", true);
+			placeItem(stuff.offhand != null ? stuff.offhand : new Placeholder(ItemSpriteSheet.SHIELD)).setHotkey("+", true);
 
-		placeItem(stuff.armor != null ? stuff.armor : new Placeholder(ItemSpriteSheet.ARMOR));
-		placeItem(stuff.gloves != null ? stuff.gloves : new Placeholder(ItemSpriteSheet.GLOVES));
+			placeItem(stuff.armor != null ? stuff.armor : new Placeholder(ItemSpriteSheet.ARMOR));
+			placeItem(stuff.gloves != null ? stuff.gloves : new Placeholder(ItemSpriteSheet.GLOVES));
 
-		placeItem(stuff.ring1 != null ? stuff.ring1 : new Placeholder(ItemSpriteSheet.RING));
-		placeItem(stuff.ring2 != null ? stuff.ring2 : new Placeholder(ItemSpriteSheet.RING));
+			placeItem(stuff.ring1 != null ? stuff.ring1 : new Placeholder(ItemSpriteSheet.RING));
+			placeItem(stuff.ring2 != null ? stuff.ring2 : new Placeholder(ItemSpriteSheet.RING));
 
-		placeItem(stuff.tool1 != null ? stuff.tool1 : new Placeholder(ItemSpriteSheet.TOOL));
-		placeItem(stuff.tool2 != null ? stuff.tool2 : new Placeholder(ItemSpriteSheet.TOOL));
+			placeItem(stuff.weapon2 != null ? stuff.weapon2 : new Placeholder(ItemSpriteSheet.WEAPON)).setHotkey("-", false);
+			placeItem(stuff.offhand2 != null ? stuff.offhand2 : new Placeholder(ItemSpriteSheet.SHIELD)).setHotkey("-", false);
 
-		placeItem(stuff.boots != null ? stuff.boots : new Placeholder(ItemSpriteSheet.BOOTS));
-		placeItem(stuff.cloak != null ? stuff.cloak : new Placeholder(ItemSpriteSheet.CLOAK));
+			placeItem(stuff.boots != null ? stuff.boots : new Placeholder(ItemSpriteSheet.BOOTS));
+			placeItem(stuff.cloak != null ? stuff.cloak : new Placeholder(ItemSpriteSheet.CLOAK));
 
-		placeItem(stuff.amulet != null ? stuff.amulet : new Placeholder(ItemSpriteSheet.AMULETB));
-		placeItem(stuff.face != null ? stuff.face : new Placeholder(ItemSpriteSheet.FACE));
+			placeItem(stuff.amulet != null ? stuff.amulet : new Placeholder(ItemSpriteSheet.AMULETB));
+			placeItem(stuff.face != null ? stuff.face : new Placeholder(ItemSpriteSheet.FACE));
+		}
 
 		if (col != 0) {
 			col = 0;
@@ -246,11 +250,14 @@ public class WndBackpack extends WndTabbed {
 		*/
 	}
 
-	protected void placeItem(final Item item) {
+	protected ItemButton placeItem(final Item item) {
 		int x = col * (SLOT_SIZE + SLOT_MARGIN);
 		int y = TITLE_HEIGHT + row * (SLOT_SIZE + SLOT_MARGIN);
 
-		add(new ItemButton(item).setPos(x, y));
+		ItemButton retval = new ItemButton(item);
+		retval.setPos(x, y);
+
+		add(retval);
 
 		if (++col >= nCols) {
 			col = 0;
@@ -258,6 +265,8 @@ public class WndBackpack extends WndTabbed {
 		}
 
 		count++;
+
+		return retval;
 	}
 
 	@Override

@@ -6,7 +6,7 @@
  * Copyright (C) 2014-2015 Evan Debenham
  *
  * Unpixel Dungeon
- * Copyright (C) 2015 Randall Foudray
+ * Copyright (C) 2015-2016 Randall Foudray
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -20,12 +20,12 @@
  *
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>
+ *
  */
 package com.felayga.unpixeldungeon.actors.mobs;
 
 import java.util.ArrayList;
 
-import com.felayga.unpixeldungeon.Dungeon;
 import com.felayga.unpixeldungeon.actors.Actor;
 import com.felayga.unpixeldungeon.actors.Char;
 import com.felayga.unpixeldungeon.actors.buffs.Buff;
@@ -33,15 +33,12 @@ import com.felayga.unpixeldungeon.actors.buffs.Burning;
 import com.felayga.unpixeldungeon.actors.buffs.Corruption;
 import com.felayga.unpixeldungeon.actors.buffs.Poison;
 import com.felayga.unpixeldungeon.effects.Pushing;
-import com.felayga.unpixeldungeon.items.Item;
 import com.felayga.unpixeldungeon.items.potions.PotionOfHealing;
 import com.felayga.unpixeldungeon.items.weapon.melee.mob.MeleeMobAttack;
 import com.felayga.unpixeldungeon.levels.Level;
-import com.felayga.unpixeldungeon.levels.Terrain;
-import com.felayga.unpixeldungeon.levels.features.Door;
 import com.felayga.unpixeldungeon.mechanics.GameTime;
 import com.felayga.unpixeldungeon.scenes.GameScene;
-import com.felayga.unpixeldungeon.sprites.SwarmSprite;
+import com.felayga.unpixeldungeon.sprites.mobs.SwarmSprite;
 import com.watabou.utils.Bundle;
 import com.watabou.utils.Random;
 

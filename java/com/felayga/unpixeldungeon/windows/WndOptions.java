@@ -5,6 +5,9 @@
  * Shattered Pixel Dungeon
  * Copyright (C) 2014-2015 Evan Debenham
  *
+ * Unpixel Dungeon
+ * Copyright (C) 2015-2016 Randall Foudray
+ *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation, either version 3 of the License, or
@@ -17,6 +20,7 @@
  *
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>
+ *
  */
 package com.felayga.unpixeldungeon.windows;
 
@@ -25,15 +29,17 @@ import com.felayga.unpixeldungeon.scenes.PixelScene;
 import com.felayga.unpixeldungeon.ui.RedButton;
 import com.felayga.unpixeldungeon.ui.Window;
 
+import java.util.List;
+
 public class WndOptions extends Window {
 
 	private static final int WIDTH			= 120;
 	private static final int MARGIN 		= 2;
 	private static final int BUTTON_HEIGHT	= 20;
 
-	private static boolean[] getClicky(String[] options)
+	private static boolean[] getClicky(int optionsLength)
 	{
-		boolean[] clicky = new boolean[options.length];
+		boolean[] clicky = new boolean[optionsLength];
 		for (int n=0;n<clicky.length;n++) {
 			clicky[n] = true;
 		}
@@ -54,7 +60,11 @@ public class WndOptions extends Window {
 
 	public WndOptions( String title, String message, String... options)
 	{
-		this(title, message, options, getClicky(options));
+		this(title, message, options, getClicky(options.length));
+	}
+
+	public WndOptions(String title, String message, List<String> options) {
+		this(title, message, options.toArray(new String[options.size()]));
 	}
 
 	public WndOptions(String title, String message, String[] options, Boolean[] optionClickSound) {

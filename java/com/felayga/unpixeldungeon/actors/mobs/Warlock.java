@@ -6,7 +6,7 @@
  * Copyright (C) 2014-2015 Evan Debenham
  *
  * Unpixel Dungeon
- * Copyright (C) 2015 Randall Foudray
+ * Copyright (C) 2015-2016 Randall Foudray
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -20,6 +20,7 @@
  *
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>
+ *
  */
 package com.felayga.unpixeldungeon.actors.mobs;
 
@@ -27,20 +28,18 @@ import java.util.HashSet;
 
 import com.felayga.unpixeldungeon.Dungeon;
 import com.felayga.unpixeldungeon.ResultDescriptions;
-import com.felayga.unpixeldungeon.actors.Actor;
 import com.felayga.unpixeldungeon.actors.Char;
 import com.felayga.unpixeldungeon.actors.buffs.Buff;
 import com.felayga.unpixeldungeon.actors.buffs.Weakness;
 import com.felayga.unpixeldungeon.items.Generator;
-import com.felayga.unpixeldungeon.items.Item;
-import com.felayga.unpixeldungeon.items.potions.PotionOfHealing;
+import com.felayga.unpixeldungeon.items.KindOfWeapon;
 import com.felayga.unpixeldungeon.items.weapon.enchantments.Death;
 import com.felayga.unpixeldungeon.items.weapon.melee.mob.MeleeMobAttack;
 import com.felayga.unpixeldungeon.levels.Level;
 import com.felayga.unpixeldungeon.mechanics.Ballistica;
 import com.felayga.unpixeldungeon.mechanics.GameTime;
 import com.felayga.unpixeldungeon.sprites.CharSprite;
-import com.felayga.unpixeldungeon.sprites.WarlockSprite;
+import com.felayga.unpixeldungeon.sprites.mobs.WarlockSprite;
 import com.felayga.unpixeldungeon.utils.GLog;
 import com.felayga.unpixeldungeon.utils.Utils;
 import com.watabou.utils.Callback;
@@ -99,7 +98,7 @@ public class Warlock extends Mob implements Callback {
 	private void zap() {
 		spend( TIME_TO_ZAP, false );
 		
-		if (hit( this, belongings.weapon, true, enemy, true )) {
+		if (hit( this, (KindOfWeapon)belongings.weapon, true, enemy, true )) {
 			if (enemy == Dungeon.hero && Random.Int( 2 ) == 0) {
 				Buff.prolong( enemy, Weakness.class, Weakness.duration( enemy ) );
 			}

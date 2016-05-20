@@ -6,7 +6,7 @@
  * Copyright (C) 2014-2015 Evan Debenham
  *
  * Unpixel Dungeon
- * Copyright (C) 2015 Randall Foudray
+ * Copyright (C) 2015-2016 Randall Foudray
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -20,12 +20,12 @@
  *
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>
+ *
  */
 package com.felayga.unpixeldungeon.actors.mobs.npcs;
 
 import com.felayga.unpixeldungeon.Dungeon;
 import com.felayga.unpixeldungeon.Journal;
-import com.felayga.unpixeldungeon.actors.Char;
 import com.felayga.unpixeldungeon.actors.buffs.Buff;
 import com.felayga.unpixeldungeon.actors.mobs.Golem;
 import com.felayga.unpixeldungeon.actors.mobs.Mob;
@@ -36,10 +36,10 @@ import com.felayga.unpixeldungeon.items.rings.Ring;
 import com.felayga.unpixeldungeon.levels.CityLevel;
 import com.felayga.unpixeldungeon.mechanics.BUCStatus;
 import com.felayga.unpixeldungeon.scenes.GameScene;
-import com.felayga.unpixeldungeon.sprites.ImpSprite;
+import com.felayga.unpixeldungeon.sprites.npcs.ImpSprite;
 import com.felayga.unpixeldungeon.utils.Utils;
-import com.felayga.unpixeldungeon.windows.WndImp;
-import com.felayga.unpixeldungeon.windows.WndQuest;
+import com.felayga.unpixeldungeon.windows.quest.WndImp;
+import com.felayga.unpixeldungeon.windows.quest.WndQuest;
 import com.watabou.utils.Bundle;
 import com.watabou.utils.Random;
 
@@ -93,11 +93,6 @@ public class Imp extends NPC {
 		throwItem();
 		
 		return super.act();
-	}
-	
-	@Override
-	public int defenseSkill( Char enemy ) {
-		return 1000;
 	}
 	
 	@Override

@@ -6,7 +6,7 @@
  * Copyright (C) 2014-2015 Evan Debenham
  *
  * Unpixel Dungeon
- * Copyright (C) 2015 Randall Foudray
+ * Copyright (C) 2015-2016 Randall Foudray
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -20,6 +20,7 @@
  *
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>
+ *
  */
 package com.felayga.unpixeldungeon.actors.mobs.npcs;
 
@@ -35,11 +36,12 @@ import com.felayga.unpixeldungeon.actors.buffs.Roots;
 import com.felayga.unpixeldungeon.actors.mobs.Crab;
 import com.felayga.unpixeldungeon.actors.mobs.Gnoll;
 import com.felayga.unpixeldungeon.actors.mobs.Mob;
-import com.felayga.unpixeldungeon.actors.mobs.Rat;
+import com.felayga.unpixeldungeon.actors.mobs.unused.MarsupialRat;
 import com.felayga.unpixeldungeon.effects.CellEmitter;
 import com.felayga.unpixeldungeon.effects.Speck;
 import com.felayga.unpixeldungeon.items.Generator;
 import com.felayga.unpixeldungeon.items.Item;
+import com.felayga.unpixeldungeon.items.KindOfWeapon;
 import com.felayga.unpixeldungeon.items.armor.Armor;
 import com.felayga.unpixeldungeon.items.food.MysteryMeat;
 import com.felayga.unpixeldungeon.items.wands.Wand;
@@ -55,14 +57,14 @@ import com.felayga.unpixeldungeon.mechanics.Ballistica;
 import com.felayga.unpixeldungeon.mechanics.GameTime;
 import com.felayga.unpixeldungeon.scenes.GameScene;
 import com.felayga.unpixeldungeon.sprites.CharSprite;
-import com.felayga.unpixeldungeon.sprites.FetidRatSprite;
-import com.felayga.unpixeldungeon.sprites.GhostSprite;
-import com.felayga.unpixeldungeon.sprites.GnollTricksterSprite;
-import com.felayga.unpixeldungeon.sprites.GreatCrabSprite;
+import com.felayga.unpixeldungeon.sprites.mobs.rat.RabidRatSprite;
+import com.felayga.unpixeldungeon.sprites.npcs.GhostSprite;
+import com.felayga.unpixeldungeon.sprites.mobs.unused.GnollTricksterSprite;
+import com.felayga.unpixeldungeon.sprites.mobs.GreatCrabSprite;
 import com.felayga.unpixeldungeon.utils.GLog;
 import com.felayga.unpixeldungeon.utils.Utils;
-import com.felayga.unpixeldungeon.windows.WndQuest;
-import com.felayga.unpixeldungeon.windows.WndSadGhost;
+import com.felayga.unpixeldungeon.windows.quest.WndQuest;
+import com.felayga.unpixeldungeon.windows.quest.WndSadGhost;
 import com.watabou.noosa.audio.Sample;
 import com.watabou.utils.Bundle;
 import com.watabou.utils.Random;
@@ -118,11 +120,6 @@ public class Ghost extends NPC {
 		super();
 
 		Sample.INSTANCE.load( Assets.SND_GHOST );
-	}
-	
-	@Override
-	public int defenseSkill( Char enemy ) {
-		return 1000;
 	}
 	
 	@Override
@@ -199,7 +196,7 @@ public class Ghost extends NPC {
 
 			switch (Quest.type){
 				case 1: default:
-					questBoss = new FetidRat();
+					questBoss = new MarisupialRatFetid();
 					txt_quest = Utils.format(TXT_RAT1, Dungeon.hero.givenName()); break;
 				case 2:
 					questBoss = new GnollTrickster();
@@ -380,43 +377,44 @@ public class Ghost extends NPC {
 	}
 
 
-	
-	public static class FetidRat extends Rat {
-		public FetidRat()
+
+	public static class MarisupialRatFetid extends MarsupialRat {
+		public MarisupialRatFetid()
 		{
 			super();
 
 			name = "fetid rat";
-			spriteClass = FetidRatSprite.class;
+			spriteClass = RabidRatSprite.class;
 
 			DEXCHA = 12;
 			nutrition = 30;
-			
+
 			HP = HT = 20;
 			defenseSkill = 5;
-			
+
 			EXP = 4;
 
 			state = WANDERING;
 
-			belongings.weapon = new AcidChance(attackDelay(belongings.weapon.delay_new), belongings.weapon.damageMin, belongings.weapon.damageMax);
+			KindOfWeapon weapon = (KindOfWeapon)belongings.weapon;
+			belongings.weapon = new AcidChance(attackDelay(weapon.delay_new), weapon.damageMin, weapon.damageMax);
 		}
 
 		@Override
 		public int defenseProc( Char enemy, int damage ) {
-			
+
 			GameScene.add( Blob.seed( pos, 20, StenchGas.class ) );
-			
+
 			return super.defenseProc(enemy, damage);
 		}
-		
+
 		@Override
 		public void die( Object cause ) {
 			super.die( cause );
-			
+
 			Quest.process();
 		}
-		
+
 		@Override
 		public String description() {
 			return
@@ -459,7 +457,8 @@ public class Ghost extends NPC {
 			loot = Generator.random(CurareDart.class);
 			lootChance = 1f;
 
-			specialWeapon = new ComboChance(attackDelay(belongings.weapon.delay_new), belongings.weapon.damageMin, belongings.weapon.damageMax);
+			KindOfWeapon weapon = (KindOfWeapon)belongings.weapon;
+			specialWeapon = new ComboChance(attackDelay(weapon.delay_new), weapon.damageMin, weapon.damageMax);
 			belongings.weapon = specialWeapon;
 		}
 

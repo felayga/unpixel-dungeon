@@ -6,7 +6,7 @@
  * Copyright (C) 2014-2015 Evan Debenham
  *
  * Unpixel Dungeon
- * Copyright (C) 2015 Randall Foudray
+ * Copyright (C) 2015-2016 Randall Foudray
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -20,6 +20,7 @@
  *
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>
+ *
  */
 package com.felayga.unpixeldungeon;
 
@@ -62,8 +63,8 @@ import com.felayga.unpixeldungeon.scenes.GameScene;
 import com.felayga.unpixeldungeon.ui.QuickSlotButton;
 import com.felayga.unpixeldungeon.utils.BArray;
 import com.felayga.unpixeldungeon.utils.Utils;
-import com.felayga.unpixeldungeon.windows.WndResurrect;
-import com.felayga.unpixeldungeon.windows.start.WndHeroInit;
+import com.felayga.unpixeldungeon.windows.hero.WndResurrect;
+import com.felayga.unpixeldungeon.windows.hero.WndInitHero;
 import com.watabou.noosa.Game;
 import com.watabou.utils.Bundlable;
 import com.watabou.utils.Bundle;
@@ -192,7 +193,7 @@ public class Dungeon {
 		
 		Badges.reset();
 
-		HeroClass.toHeroClass(WndHeroInit.heroClassSelected).initHero(hero);
+		HeroClass.toHeroClass(WndInitHero.heroClassSelected).initHero(hero);
 		//todo: fart
 		//StartScene.curClass.initHero( hero );
 	}
@@ -449,7 +450,7 @@ public class Dungeon {
 			//bundle.put( GOLD, gold );
 			bundle.put( DEPTH, depth );
 
-			GamesInProgress.Info info = GamesInProgress.check(WndHeroInit.savedGameIndex);
+			GamesInProgress.Info info = GamesInProgress.check(WndInitHero.savedGameIndex);
 			if (info == null) {
 				info = new GamesInProgress.Info();
 				info.fromWndHeroInit();
@@ -506,7 +507,7 @@ public class Dungeon {
 			
 		} catch (IOException e) {
 
-			GamesInProgress.setUnknown( WndHeroInit.savedGameIndex );
+			GamesInProgress.setUnknown( WndInitHero.savedGameIndex );
 		}
 	}
 	
@@ -515,7 +516,7 @@ public class Dungeon {
 		bundle.put( LEVEL, level );
 		
 		OutputStream output = Game.instance.openFileOutput(
-			Utils.format( depthFile( WndHeroInit.savedGameIndex ), depth ), Game.MODE_PRIVATE );
+			Utils.format( depthFile( WndInitHero.savedGameIndex ), depth ), Game.MODE_PRIVATE );
 		Bundle.write( bundle, output );
 		output.close();
 	}
@@ -524,10 +525,10 @@ public class Dungeon {
 		if (hero.isAlive()) {
 
 			GameTime.fix();
-			saveGame( gameFile( WndHeroInit.savedGameIndex ) );
+			saveGame( gameFile( WndInitHero.savedGameIndex ) );
 			saveLevel();
 
-			GamesInProgress.set( WndHeroInit.savedGameIndex, hero.heroClass, hero.lvl, depth );
+			GamesInProgress.set( WndInitHero.savedGameIndex, hero.heroClass, hero.lvl, depth );
 
 		} else if (WndResurrect.instance != null) {
 			

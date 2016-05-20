@@ -6,7 +6,7 @@
  * Copyright (C) 2014-2015 Evan Debenham
  *
  * Unpixel Dungeon
- * Copyright (C) 2015 Randall Foudray
+ * Copyright (C) 2015-2016 Randall Foudray
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -20,16 +20,17 @@
  *
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>
+ *
  */
 package com.felayga.unpixeldungeon.items.books;
 
 import com.felayga.unpixeldungeon.Assets;
 import com.felayga.unpixeldungeon.Badges;
 import com.felayga.unpixeldungeon.actors.buffs.Blindness;
+import com.felayga.unpixeldungeon.actors.buffs.Encumbrance;
 import com.felayga.unpixeldungeon.actors.hero.Hero;
 import com.felayga.unpixeldungeon.items.Item;
 import com.felayga.unpixeldungeon.items.ItemStatusHandler;
-import com.felayga.unpixeldungeon.items.artifacts.UnstableSpellbook;
 import com.felayga.unpixeldungeon.items.scrolls.Scroll;
 import com.felayga.unpixeldungeon.sprites.ItemSpriteSheet;
 import com.felayga.unpixeldungeon.utils.GLog;
@@ -160,6 +161,8 @@ public abstract class Book extends Item {
     public Book() {
         super();
         syncVisuals();
+
+        weight = Encumbrance.UNIT * 50;
     }
 
     @Override
@@ -193,7 +196,7 @@ public abstract class Book extends Item {
 
     protected void prepareRead(Hero hero) {
         curUser = hero;
-        curItem = hero.belongings.detach(this);
+        curItem = hero.belongings.remove(this, 1);
     }
 
     abstract protected void doRead();

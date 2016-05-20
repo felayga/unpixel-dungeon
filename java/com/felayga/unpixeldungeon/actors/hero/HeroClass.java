@@ -6,7 +6,7 @@
  * Copyright (C) 2014-2015 Evan Debenham
  *
  * Unpixel Dungeon
- * Copyright (C) 2015 Randall Foudray
+ * Copyright (C) 2015-2016 Randall Foudray
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -20,6 +20,7 @@
  *
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>
+ *
  */
 package com.felayga.unpixeldungeon.actors.hero;
 
@@ -27,6 +28,7 @@ import com.felayga.unpixeldungeon.Badges;
 import com.felayga.unpixeldungeon.Challenges;
 import com.felayga.unpixeldungeon.Dungeon;
 import com.felayga.unpixeldungeon.ShatteredPixelDungeon;
+import com.felayga.unpixeldungeon.items.IActivateable;
 import com.felayga.unpixeldungeon.items.armor.Armor;
 import com.felayga.unpixeldungeon.items.armor.boots.LeatherBoots;
 import com.felayga.unpixeldungeon.items.armor.gloves.LeatherGloves;
@@ -301,7 +303,7 @@ public enum HeroClass {
 	private static void initMage( Hero hero ) {
 		MagesStaff staff = new MagesStaff(new WandOfMagicMissile());
 		(hero.belongings.weapon = staff).identify();
-		hero.belongings.weapon.activate(hero);
+		((IActivateable)hero.belongings.weapon).activate(hero);
 
 		Dungeon.quickslot.setSlot(0, staff);
 
@@ -313,7 +315,7 @@ public enum HeroClass {
 
 		CloakOfShadows cloak = new CloakOfShadows();
 		(hero.belongings.ring1 = cloak).identify();
-		hero.belongings.ring1.activate(hero);
+		((IActivateable)hero.belongings.ring1).activate(hero);
 
 		Dart darts = new Dart( 8 );
 		hero.belongings.collect(darts.identify());

@@ -6,7 +6,7 @@
  * Copyright (C) 2014-2015 Evan Debenham
  *
  * Unpixel Dungeon
- * Copyright (C) 2015 Randall Foudray
+ * Copyright (C) 2015-2016 Randall Foudray
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -20,12 +20,12 @@
  *
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>
+ *
  */
 package com.felayga.unpixeldungeon.actors.mobs.npcs;
 
 import java.util.Collection;
 
-import com.felayga.unpixeldungeon.actors.Actor;
 import com.felayga.unpixeldungeon.mechanics.BUCStatus;
 import com.felayga.unpixeldungeon.mechanics.GameTime;
 import com.watabou.noosa.audio.Sample;
@@ -33,7 +33,6 @@ import com.felayga.unpixeldungeon.Assets;
 import com.felayga.unpixeldungeon.Badges;
 import com.felayga.unpixeldungeon.Dungeon;
 import com.felayga.unpixeldungeon.Journal;
-import com.felayga.unpixeldungeon.actors.Char;
 import com.felayga.unpixeldungeon.actors.buffs.Buff;
 import com.felayga.unpixeldungeon.actors.hero.Hero;
 import com.felayga.unpixeldungeon.items.EquipableItem;
@@ -44,10 +43,10 @@ import com.felayga.unpixeldungeon.items.scrolls.ScrollOfUpgrade;
 import com.felayga.unpixeldungeon.levels.Room;
 import com.felayga.unpixeldungeon.levels.Room.Type;
 import com.felayga.unpixeldungeon.scenes.GameScene;
-import com.felayga.unpixeldungeon.sprites.BlacksmithSprite;
+import com.felayga.unpixeldungeon.sprites.npcs.BlacksmithSprite;
 import com.felayga.unpixeldungeon.utils.GLog;
-import com.felayga.unpixeldungeon.windows.WndBlacksmith;
-import com.felayga.unpixeldungeon.windows.WndQuest;
+import com.felayga.unpixeldungeon.windows.quest.WndBlacksmith;
+import com.felayga.unpixeldungeon.windows.quest.WndQuest;
 import com.watabou.utils.Bundle;
 import com.watabou.utils.Random;
 
@@ -90,7 +89,7 @@ public class Blacksmith extends NPC {
 	@Override
 	public void interact() {
 		
-		sprite.turnTo( pos, Dungeon.hero.pos );
+		sprite.turnTo(pos, Dungeon.hero.pos);
 		
 		if (!Quest.given) {
 			
@@ -125,9 +124,9 @@ public class Blacksmith extends NPC {
 					tell( TXT4 );
 				} else {
 					if (pick.isEquipped( Dungeon.hero )) {
-						pick.doUnequip( Dungeon.hero, false );
+						Dungeon.hero.belongings.unequip(pick, false);
 					}
-					Dungeon.hero.belongings.detach(pick);
+					Dungeon.hero.belongings.remove(pick, 1);
 					tell( TXT_COMPLETED );
 					
 					Quest.completed = true;
@@ -144,10 +143,10 @@ public class Blacksmith extends NPC {
 					tell( TXT3 );
 				} else {
 					if (pick.isEquipped( Dungeon.hero )) {
-						pick.doUnequip( Dungeon.hero, false );
+						Dungeon.hero.belongings.unequip(pick, false);
 					}
-					Dungeon.hero.belongings.detach(pick);
-					Dungeon.hero.belongings.detachAll(gold);
+					Dungeon.hero.belongings.remove(pick, 1);
+					Dungeon.hero.belongings.remove(gold);
 					tell( TXT_COMPLETED );
 					
 					Quest.completed = true;
@@ -215,7 +214,7 @@ public class Blacksmith extends NPC {
 		Item.evoke(Dungeon.hero);
 		
 		if (first.isEquipped( Dungeon.hero )) {
-			((EquipableItem)first).doUnequip( Dungeon.hero, true );
+			Dungeon.hero.belongings.unequip((EquipableItem) first, true);
 		}
 		first.upgrade(null, 1);
 		GLog.p(TXT_LOOKS_BETTER, first.getDisplayName());
@@ -223,18 +222,13 @@ public class Blacksmith extends NPC {
 		Badges.validateItemLevelAquired(first);
 		
 		if (second.isEquipped( Dungeon.hero )) {
-			((EquipableItem)second).doUnequip( Dungeon.hero, false );
+			Dungeon.hero.belongings.unequip((EquipableItem) second, false);
 		}
-		Dungeon.hero.belongings.detachAll(second);
+		Dungeon.hero.belongings.remove(second);
 
 		Quest.reforged = true;
 		
 		Journal.remove( Journal.Feature.TROLL );
-	}
-	
-	@Override
-	public int defenseSkill( Char enemy ) {
-		return 1000;
 	}
 	
 	@Override

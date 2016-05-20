@@ -6,7 +6,7 @@
  * Copyright (C) 2014-2015 Evan Debenham
  *
  * Unpixel Dungeon
- * Copyright (C) 2015 Randall Foudray
+ * Copyright (C) 2015-2016 Randall Foudray
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -20,6 +20,7 @@
  *
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>
+ *
  */
 package com.felayga.unpixeldungeon.actors.buffs;
 
@@ -30,8 +31,6 @@ import com.felayga.unpixeldungeon.actors.Char;
 import com.felayga.unpixeldungeon.actors.blobs.Blob;
 import com.felayga.unpixeldungeon.actors.blobs.Fire;
 import com.felayga.unpixeldungeon.actors.hero.Hero;
-import com.felayga.unpixeldungeon.actors.mobs.Thief;
-import com.felayga.unpixeldungeon.effects.particles.ElmoParticle;
 import com.felayga.unpixeldungeon.items.Heap;
 import com.felayga.unpixeldungeon.items.Item;
 import com.felayga.unpixeldungeon.items.food.ChargrilledMeat;
@@ -88,14 +87,14 @@ public class Burning extends Buff implements Hero.Doom {
 				Item item = hero.belongings.randomUnequipped();
 				if (item instanceof Scroll) {
 					
-					item = hero.belongings.detach(item);
+					item = hero.belongings.remove(item, 1);
 					GLog.w( TXT_BURNS_UP, item.getDisplayName() );
 					
 					Heap.burnFX( hero.pos );
 					
 				} else if (item instanceof MysteryMeat) {
 					
-					item = hero.belongings.detach(item);
+					item = hero.belongings.remove(item, 1);
 					Item steak = new ChargrilledMeat().bucStatus(item);
 					if (!hero.belongings.collect(steak)) {
 						Dungeon.level.drop( steak, hero.pos ).sprite.drop();
