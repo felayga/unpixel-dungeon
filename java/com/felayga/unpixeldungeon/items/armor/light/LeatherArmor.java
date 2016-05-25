@@ -30,14 +30,14 @@ import com.felayga.unpixeldungeon.sprites.ItemSpriteSheet;
 public class LeatherArmor extends LightArmor {
 	public LeatherArmor()
 	{
-		super(2, 6, 32);
+		super(2, 6, 0, 32);
 		name = "leather armor";
 		image = ItemSpriteSheet.ARMOR_LEATHER;
 
 		price = 10;
 		textureIndex = 3;
 
-		weight = Encumbrance.UNIT * 135;
+		weight(Encumbrance.UNIT * 135);
 	}
 	
 	@Override

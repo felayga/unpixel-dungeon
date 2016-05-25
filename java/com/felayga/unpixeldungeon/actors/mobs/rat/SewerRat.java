@@ -24,28 +24,33 @@
  */
 package com.felayga.unpixeldungeon.actors.mobs.rat;
 
+import com.felayga.unpixeldungeon.actors.buffs.Encumbrance;
 import com.felayga.unpixeldungeon.actors.mobs.Mob;
 import com.felayga.unpixeldungeon.items.weapon.melee.mob.MeleeMobAttack;
 import com.felayga.unpixeldungeon.mechanics.GameTime;
+import com.felayga.unpixeldungeon.mechanics.MagicType;
+import com.felayga.unpixeldungeon.sprites.mobs.newt.NewtSprite;
 import com.felayga.unpixeldungeon.sprites.mobs.rat.RatSprite;
 
 public class SewerRat extends Mob {
 
     public SewerRat()
     {
+        super(0);
+
         name = "sewer rat";
         spriteClass = RatSprite.class;
 
-        DEXCHA = 8;
+        experience = 1;
+        movementSpeed = GameTime.TICK;
+        attackSpeed = GameTime.TICK;
+        defenseMundane = 13;
+        defenseMagical = 0;
+        weight = Encumbrance.UNIT * 20;
         nutrition = 12;
-        movementSpeed = GameTime.TICK * 3 / 4;
+        immunityMagical = MagicType.None.value;
 
-        HP = HT = 8;
-        defenseSkill = 7;
-
-        maxLvl = 5;
-
-        belongings.weapon = new MeleeMobAttack(GameTime.TICK, 1, 3);
+        belongings.collectEquip(new MeleeMobAttack(GameTime.TICK, 1, 3));
     }
 
     @Override

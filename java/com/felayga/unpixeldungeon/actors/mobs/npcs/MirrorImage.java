@@ -44,14 +44,17 @@ import com.watabou.utils.Bundle;
 import com.watabou.utils.Random;
 
 public class MirrorImage extends NPC {
-	
+
+	public MirrorImage(int level)
 	{
+		super(level);
+
 		name = "mirror image";
 		spriteClass = MirrorSprite.class;
 		
 		state = HUNTING;
 
-		belongings.weapon = new SuicideAttack(GameTime.TICK, 1, 4);
+		belongings.collectEquip(new SuicideAttack(GameTime.TICK, 1, 4));
 	}
 	
 	private static final String TIER			= "tier";
@@ -126,14 +129,4 @@ public class MirrorImage extends NPC {
 		Dungeon.hero.busy();
 	}
 
-	private static final HashSet<Class<?>> IMMUNITIES = new HashSet<Class<?>>();
-	static {
-		IMMUNITIES.add( ToxicGas.class );
-		IMMUNITIES.add( Burning.class );
-	}
-
-	@Override
-	public HashSet<Class<?>> immunities() {
-		return IMMUNITIES;
-	}
 }

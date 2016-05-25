@@ -40,16 +40,12 @@ public class SeedPouch extends Bag {
 		
 		size = 36;
 		priority = 8;
+        price = 50;
 	}
 	
 	@Override
 	public boolean grab( Item item ) {
 		return item instanceof Plant.Seed;
-	}
-	
-	@Override
-	public int price() {
-		return 50;
 	}
 	
 	@Override

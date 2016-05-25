@@ -24,8 +24,9 @@
  */
 package com.felayga.unpixeldungeon.levels.features;
 
-import com.felayga.unpixeldungeon.items.artifacts.DriedRose;
+//import com.felayga.unpixeldungeon.items.artifacts.DriedRose;
 import com.felayga.unpixeldungeon.items.artifacts.TimekeepersHourglass;
+import com.felayga.unpixeldungeon.mechanics.MagicType;
 import com.watabou.noosa.Camera;
 import com.watabou.noosa.Game;
 import com.watabou.noosa.audio.Sample;
@@ -79,8 +80,10 @@ public class Chasm {
 		Buff buff = Dungeon.hero.buff(TimekeepersHourglass.timeFreeze.class);
 		if (buff != null) buff.detach();
 
+		/*
 		for (Mob mob : Dungeon.level.mobs.toArray( new Mob[0] ))
 			if (mob instanceof DriedRose.GhostHero) mob.destroy();
+		*/
 		
 		if (Dungeon.hero.isAlive()) {
 			Dungeon.hero.interrupt();
@@ -101,11 +104,14 @@ public class Chasm {
 		
 		Hero hero = Dungeon.hero;
 		
-		hero.sprite.burst( hero.sprite.blood(), 10 );
-		Camera.main.shake( 4, 0.2f );
+		hero.sprite.burst(hero.sprite.blood(), 10);
+		Camera.main.shake(4, 0.2f);
 		
-		Buff.prolong( hero, Cripple.class, Cripple.DURATION );
-		hero.damage( Random.IntRange( hero.HP / 2, hero.HT / 2 ), new Hero.Doom() {
+		Buff.prolong(hero, Cripple.class, Cripple.DURATION);
+		hero.damage( Random.IntRange( hero.HP / 2, hero.HT / 2 ), MagicType.Mundane, null);
+		//todo: fix message from falling to death
+		/*
+		new Hero.Doom() {
 			@Override
 			public void onDeath() {
 				Badges.validateDeathFromFalling();
@@ -113,7 +119,8 @@ public class Chasm {
 				Dungeon.fail( ResultDescriptions.FALL );
 				GLog.n( "You fell to death..." );
 			}
-		} );
+		}
+		*/
 	}
 
 	public static void mobFall( Mob mob ) {

@@ -29,6 +29,7 @@ import com.felayga.unpixeldungeon.actors.Char;
 import com.felayga.unpixeldungeon.actors.hero.Hero;
 import com.felayga.unpixeldungeon.items.Item;
 import com.felayga.unpixeldungeon.mechanics.GameTime;
+import com.felayga.unpixeldungeon.mechanics.WeaponSkill;
 import com.felayga.unpixeldungeon.sprites.ItemSpriteSheet;
 import com.felayga.unpixeldungeon.sprites.MissileSprite;
 
@@ -36,7 +37,7 @@ public class Boomerang extends MissileWeapon {
 
 	public Boomerang()
 	{
-		super(GameTime.TICK, 1, 5, 1);
+		super(WeaponSkill.Martial, GameTime.TICK, 1, 5, 1);
 
 		name = "boomerang";
 		image = ItemSpriteSheet.BOOMERANG;
@@ -66,8 +67,8 @@ public class Boomerang extends MissileWeapon {
 	}
 
 	@Override
-	protected void miss( int cell ) {
-		circleBack( cell, curUser );
+	protected void miss( int cell, Char thrower ) {
+		circleBack( cell, thrower );
 	}
 
 	private void circleBack( int from, Char owner ) {
@@ -79,7 +80,7 @@ public class Boomerang extends MissileWeapon {
 			Hero hero = (Hero) owner;
 
 			if (throwEquiped) {
-				hero.belongings.weapon = this;
+				hero.belongings.collectEquip(this);
 				hero.spend(-TIME_TO_EQUIP, false);
 				Dungeon.quickslot.replaceSimilar(this);
 				updateQuickslot();

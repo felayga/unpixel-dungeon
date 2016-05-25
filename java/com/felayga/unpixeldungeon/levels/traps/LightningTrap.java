@@ -28,6 +28,7 @@ import com.felayga.unpixeldungeon.actors.Actor;
 import com.felayga.unpixeldungeon.items.Heap;
 import com.felayga.unpixeldungeon.items.Item;
 import com.felayga.unpixeldungeon.items.wands.Wand;
+import com.felayga.unpixeldungeon.mechanics.MagicType;
 import com.felayga.unpixeldungeon.sprites.TrapSprite;
 import com.watabou.noosa.Camera;
 import com.felayga.unpixeldungeon.Dungeon;
@@ -57,7 +58,7 @@ public class LightningTrap extends Trap {
 		Char ch = Actor.findChar( pos );
 
 		if (ch != null) {
-			ch.damage( Math.max( 1, Random.Int( ch.HP / 3, 2 * ch.HP / 3 ) ), LIGHTNING );
+			ch.damage( Math.max( 1, Random.Int( ch.HP / 3, 2 * ch.HP / 3 ) ), MagicType.Shock, null );
 			if (ch == Dungeon.hero) {
 
 				Camera.main.shake( 2, 0.3f );

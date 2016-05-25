@@ -149,16 +149,6 @@ public class ItemSlot extends Button {
 		}
 	}
 
-	public void setHotkey(String key, boolean active) {
-		topRight.text(key);
-		if (active) {
-			topRight.hardlight(UPGRADED);
-		}
-		else {
-			topRight.hardlight(DEGRADED);
-		}
-		topRight.measure();
-	}
 	
 	public void item( Item item ) {
 		if (item == null) {

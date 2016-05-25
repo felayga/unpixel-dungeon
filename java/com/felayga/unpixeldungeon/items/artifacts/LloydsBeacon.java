@@ -24,7 +24,7 @@
  */
 package com.felayga.unpixeldungeon.items.artifacts;
 //If it weren't super obvious, this is going to become an artifact soon.
-
+/*
 import com.felayga.unpixeldungeon.Assets;
 import com.felayga.unpixeldungeon.Dungeon;
 import com.felayga.unpixeldungeon.actors.Actor;
@@ -326,3 +326,4 @@ public class LloydsBeacon extends Artifact_old {
 		}
 	}
 }
+*/

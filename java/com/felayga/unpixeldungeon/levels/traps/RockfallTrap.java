@@ -34,6 +34,7 @@ import com.felayga.unpixeldungeon.actors.buffs.Paralysis;
 import com.felayga.unpixeldungeon.effects.CellEmitter;
 import com.felayga.unpixeldungeon.effects.Speck;
 import com.felayga.unpixeldungeon.levels.Level;
+import com.felayga.unpixeldungeon.mechanics.MagicType;
 import com.felayga.unpixeldungeon.sprites.TrapSprite;
 import com.felayga.unpixeldungeon.utils.GLog;
 import com.felayga.unpixeldungeon.utils.Utils;
@@ -62,7 +63,7 @@ public class RockfallTrap extends Trap {
 
 		if (ch != null){
 			int damage = Random.NormalIntRange(5+Dungeon.depth, 10+Dungeon.depth*3);
-			ch.damage( Math.max(damage, 0) , this);
+			ch.damage( Math.max(damage, 0) , MagicType.Mundane, null);
 
 			Buff.prolong( ch, Paralysis.class, Paralysis.duration(ch)*2);
 

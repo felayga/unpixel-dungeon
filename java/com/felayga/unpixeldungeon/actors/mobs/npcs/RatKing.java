@@ -25,15 +25,20 @@
 package com.felayga.unpixeldungeon.actors.mobs.npcs;
 
 import com.felayga.unpixeldungeon.Dungeon;
+import com.felayga.unpixeldungeon.actors.Actor;
 import com.felayga.unpixeldungeon.actors.Char;
 import com.felayga.unpixeldungeon.actors.buffs.Buff;
 
 import com.felayga.unpixeldungeon.mechanics.GameTime;
+import com.felayga.unpixeldungeon.mechanics.MagicType;
 import com.felayga.unpixeldungeon.sprites.npcs.RatKingSprite;
 
 public class RatKing extends NPC {
 
+	public RatKing()
 	{
+		super(5);
+
 		name = "rat king";
 		spriteClass = RatKingSprite.class;
 		
@@ -51,7 +56,7 @@ public class RatKing extends NPC {
 	}
 	
 	@Override
-	public void damage( int dmg, Object src ) {
+	public void damage( int dmg, MagicType type, Actor source ) {
 	}
 	
 	@Override

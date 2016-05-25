@@ -24,7 +24,6 @@
  */
 package com.felayga.unpixeldungeon.sprites.mobs.wraith;
 
-import com.felayga.unpixeldungeon.actors.mobs.Wraith;
 import com.felayga.unpixeldungeon.sprites.MobSprite;
 import com.watabou.noosa.TextureFilm;
 import com.felayga.unpixeldungeon.Assets;

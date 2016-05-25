@@ -32,6 +32,7 @@ import com.felayga.unpixeldungeon.effects.particles.ShadowParticle;
 import com.felayga.unpixeldungeon.items.Item;
 import com.felayga.unpixeldungeon.mechanics.BUCStatus;
 import com.felayga.unpixeldungeon.mechanics.GameTime;
+import com.felayga.unpixeldungeon.mechanics.MagicType;
 import com.felayga.unpixeldungeon.plants.Earthroot;
 import com.felayga.unpixeldungeon.scenes.GameScene;
 import com.felayga.unpixeldungeon.sprites.ItemSpriteSheet;
@@ -127,7 +128,7 @@ public class ChaliceOfBlood extends Artifact_old {
 		}
 
 		if (damage > 0)
-			hero.damage(damage, this);
+			hero.damage(damage, MagicType.Mundane, null);
 
 		if (!hero.isAlive()) {
 			Dungeon.fail(Utils.format( ResultDescriptions.ITEM, name ));

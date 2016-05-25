@@ -37,11 +37,14 @@ import com.felayga.unpixeldungeon.scenes.GameScene;
 
 public class PotionOfLiquidFlame extends Potion {
 
+    public PotionOfLiquidFlame()
 	{
 		name = "Potion of Liquid Flame";
 		initials = "LF";
 
 		isHarmful = true;
+
+        price = 40;
 	}
 	
 	@Override
@@ -75,9 +78,5 @@ public class PotionOfLiquidFlame extends Potion {
 			"This flask contains an unstable compound which will burst " +
 			"violently into flame upon exposure to open air.";
 	}
-	
-	@Override
-	public int price() {
-		return isKnown() ? 40 * quantity : super.price();
-	}
+
 }

@@ -26,14 +26,9 @@
 package com.felayga.unpixeldungeon.items.bags.backpack;
 
 import com.felayga.unpixeldungeon.actors.Char;
-import com.felayga.unpixeldungeon.items.EquipableItem;
+import com.felayga.unpixeldungeon.items.EquippableItem;
 import com.felayga.unpixeldungeon.items.Item;
-import com.felayga.unpixeldungeon.items.armor.Armor;
-import com.felayga.unpixeldungeon.items.bags.Bag;
-import com.felayga.unpixeldungeon.items.rings.Ring;
 import com.felayga.unpixeldungeon.items.tools.ITool;
-import com.felayga.unpixeldungeon.items.tools.Tool;
-import com.felayga.unpixeldungeon.items.weapon.Weapon;
 
 /**
  * Created by hello on 3/17/16.
@@ -49,7 +44,7 @@ public class EquipmentBackpack extends Backpack {
 
     @Override
     public boolean grab( Item item ) {
-        return item instanceof EquipableItem
+        return item instanceof EquippableItem
                 || item instanceof ITool;
     }
 

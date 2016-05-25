@@ -70,16 +70,15 @@ import com.felayga.unpixeldungeon.items.Heap.Type;
 import com.felayga.unpixeldungeon.items.Item;
 import com.felayga.unpixeldungeon.items.KindOfWeapon;
 import com.felayga.unpixeldungeon.items.armor.Armor;
-import com.felayga.unpixeldungeon.items.armor.glyphs.Viscosity;
 import com.felayga.unpixeldungeon.items.artifacts.CapeOfThorns;
-import com.felayga.unpixeldungeon.items.artifacts.DriedRose;
+//import com.felayga.unpixeldungeon.items.artifacts.DriedRose;
 import com.felayga.unpixeldungeon.items.artifacts.EtherealChains;
 import com.felayga.unpixeldungeon.items.artifacts.TalismanOfForesight;
 import com.felayga.unpixeldungeon.items.artifacts.TimekeepersHourglass;
 import com.felayga.unpixeldungeon.items.bags.Bag;
 import com.felayga.unpixeldungeon.items.food.Food;
+import com.felayga.unpixeldungeon.items.gemstones.gray.Loadstone;
 import com.felayga.unpixeldungeon.items.keys.OldKey;
-import com.felayga.unpixeldungeon.items.rings.RingOfElements;
 import com.felayga.unpixeldungeon.items.rings.RingOfEvasion;
 import com.felayga.unpixeldungeon.items.rings.RingOfHaste;
 import com.felayga.unpixeldungeon.items.rings.RingOfMight;
@@ -87,7 +86,7 @@ import com.felayga.unpixeldungeon.items.rings.RingOfTenacity;
 import com.felayga.unpixeldungeon.items.scrolls.BlankScroll;
 import com.felayga.unpixeldungeon.items.scrolls.ScrollOfMagicMapping;
 import com.felayga.unpixeldungeon.items.tools.ITool;
-import com.felayga.unpixeldungeon.items.tools.digging.DiggingTool;
+import com.felayga.unpixeldungeon.items.tools.digging.Pickaxe;
 import com.felayga.unpixeldungeon.items.tools.unlocking.UnlockingTool;
 import com.felayga.unpixeldungeon.items.weapon.missiles.MissileWeapon;
 import com.felayga.unpixeldungeon.items.weapon.missiles.Rock;
@@ -100,6 +99,8 @@ import com.felayga.unpixeldungeon.levels.features.Sign;
 import com.felayga.unpixeldungeon.mechanics.AttributeType;
 import com.felayga.unpixeldungeon.mechanics.Constant;
 import com.felayga.unpixeldungeon.mechanics.GameTime;
+import com.felayga.unpixeldungeon.mechanics.MagicType;
+import com.felayga.unpixeldungeon.mechanics.WeaponSkill;
 import com.felayga.unpixeldungeon.plants.Earthroot;
 import com.felayga.unpixeldungeon.plants.Sungrass;
 import com.felayga.unpixeldungeon.scenes.GameScene;
@@ -127,7 +128,6 @@ import com.watabou.utils.Random;
 
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.HashSet;
 import java.util.List;
 
 public class Hero extends Char {
@@ -162,7 +162,7 @@ public class Hero extends Char {
 	public HeroClass heroClass = HeroClass.ROGUE;
 	public HeroSubClass subClass = HeroSubClass.NONE;
 
-	private int weaponSkill = 0;
+	public WeaponSkill weaponSkill = WeaponSkill.None;
 	private int defenseSkill = 0;
 	private int spellSkill = 0;
 
@@ -193,7 +193,7 @@ public class Hero extends Char {
 		}
 	}
 
-	private int attributeUseRequirement(int attribute)
+	public static int attributeUseRequirement(int attribute)
 	{
 		return (int)(Math.pow(attribute, 3.0) / 2.0);
 	}
@@ -274,11 +274,16 @@ public class Hero extends Char {
 		INTWIS = newvalue;
 	}
 
+    protected int luck = 0;
+
+    public int luck() {
+        return luck;
+    }
+
 	public boolean weakened = false;
 	
 	public float awareness;
-	
-	public int lvl = 1;
+
 	public int exp = 0;
 
 	public int MT;
@@ -287,7 +292,8 @@ public class Hero extends Char {
 	private ArrayList<Mob> visibleEnemies;
 	
 	public Hero() {
-		super();
+		super(1);
+
 		name = "you";
 
 		HP = HT = 20;
@@ -340,10 +346,10 @@ public class Hero extends Char {
 
 		heroClass.storeInBundle(bundle);
 		subClass.storeInBundle(bundle);
-		
+
 		bundle.put(DEFENSE, defenseSkill);
 
-		bundle.put( WEAPONSKILL, weaponSkill );
+		bundle.put(WEAPONSKILL, weaponSkill.value);
 
 		bundle.put(STRENGTHCONSTITUTION, STRCON);
 		bundle.put(DEXTERITYCHARISMA, DEXCHA);
@@ -352,9 +358,9 @@ public class Hero extends Char {
 		bundle.put(STRENGTHCONSTITUTION_USAGE, attributeUse[0]);
 		bundle.put(DEXTERITYCHARISMA_USAGE, attributeUse[1]);
 		bundle.put(INTELLIGENCEWISDOM_USAGE, attributeUse[2]);
-		
-		bundle.put( LEVEL, lvl );
-		bundle.put( EXPERIENCE, exp);
+
+		bundle.put(LEVEL, level);
+		bundle.put(EXPERIENCE, exp);
 
 		bundle.put(MOTIVATION, motivation);
 
@@ -370,7 +376,7 @@ public class Hero extends Char {
 
 		defenseSkill = bundle.getInt(DEFENSE);
 
-		weaponSkill = bundle.getInt(WEAPONSKILL);
+		weaponSkill = WeaponSkill.fromInt(bundle.getInt(WEAPONSKILL));
 
 		STRCON = bundle.getInt(STRENGTHCONSTITUTION);
 		DEXCHA = bundle.getInt(DEXTERITYCHARISMA);
@@ -383,8 +389,8 @@ public class Hero extends Char {
 		};
 
 		updateAwareness();
-		
-		lvl = bundle.getInt( LEVEL );
+
+		level = bundle.getInt( LEVEL );
 		exp = bundle.getInt( EXPERIENCE );
 
 		motivation = bundle.getLong(MOTIVATION);
@@ -433,17 +439,23 @@ public class Hero extends Char {
 	public int attackSkill( KindOfWeapon weapon, boolean thrown, Char target ) {
 		int accuracy = super.attackSkill(weapon, thrown, target);
 
+		//GLog.d("attackskill="+accuracy);
+
 		//KindOfWeapon wep = rangedWeapon != null ? rangedWeapon : belongings.weapon;
 		if (weapon != null)
 		{
-			if (weaponSkill < weapon.skillRequired)
+			if (weaponSkill.value < weapon.skillRequired.value)
 			{
-				accuracy -= (weapon.skillRequired - weaponSkill) * 2;
+				accuracy -= (weapon.skillRequired.value - weaponSkill.value) * 2;
 			}
 
 			accuracy += getAttributeModifier(weapon.accuracyAttribute);
 			accuracy += weapon.accuracyFactor();
+
+			//GLog.d("skill="+weaponSkill.value+" required="+weapon.skillRequired.value+" modifier="+getAttributeModifier(weapon.accuracyAttribute)+" factor="+weapon.accuracyFactor());
 		}
+
+		//GLog.d("result="+accuracy);
 
         return accuracy;
 	}
@@ -460,10 +472,11 @@ public class Hero extends Char {
 
 		if (hasteLevel != 0)
 			speed *= Math.pow(1.2, hasteLevel);
-		
-		if (belongings.armor != null) {
+
+        Armor armor = (Armor)belongings.armor();
+		if (armor != null) {
 			
-			return speed * ((Armor)belongings.armor).speedModifier / GameTime.TICK;
+			return speed * (armor).speedModifier / GameTime.TICK;
 			
 		} else {
 
@@ -700,7 +713,7 @@ public class Hero extends Char {
 	}
 
 	public boolean tryCastSpell(int spellLevel) {
-		int difficulty = spellLevel * 4 - spellSkill * 6 - lvl / 3 - 5;
+		int difficulty = spellLevel * 4 - spellSkill * 6 - level / 3 - 5;
 		int chance = INTWIS * 12 - belongings.getSpellFailure();
 
 		if (difficulty > 0) {
@@ -717,8 +730,7 @@ public class Hero extends Char {
 		if (action instanceof HeroAction.EatItem)
 		{
 			return actEatItem((HeroAction.EatItem)action);
-		}
-		else {
+		} else {
 			//todo: faurt
 			return 1/0 != 1;
 		}
@@ -948,52 +960,55 @@ public class Hero extends Char {
 
 				Item test = heap.peek();
 
-				Encumbrance encumbrance = buff(Encumbrance.class);
-				Encumbrance.EncumbranceLevel encumbranceLevel = encumbrance.testWeight(test.weight * test.quantity());
+                if (test instanceof Loadstone) {
+                    action.forced = true;
+                }
 
-				if (encumbranceLevel == Encumbrance.EncumbranceLevel.OVERLOADED) {
-					Encumbrance.EncumbranceLevel testLevel = encumbrance.current;
-					if (testLevel != encumbranceLevel) {
-						encumbranceLevel = Encumbrance.EncumbranceLevel.OVERTAXED;
-					}
-				}
+                Encumbrance encumbrance = buff(Encumbrance.class);
+                Encumbrance.EncumbranceLevel encumbranceLevel = encumbrance.testWeight(test.weight() * test.quantity());
 
-				pickupMessage = Encumbrance.getPickUpMessage(encumbranceLevel);
+                if (encumbranceLevel == Encumbrance.EncumbranceLevel.OVERLOADED) {
+                    Encumbrance.EncumbranceLevel testLevel = encumbrance.current;
+                    if (testLevel != encumbranceLevel) {
+                        encumbranceLevel = Encumbrance.EncumbranceLevel.OVERTAXED;
+                    }
+                }
 
-				switch (encumbranceLevel) {
-					case STRAINED:
-					case OVERTAXED:
-						if (!action.forced) {
-							ShatteredPixelDungeon.scene().add(
-									new WndOptions("Pick Up Item", Utils.format(pickupMessage, test.getDisplayName()) + "  Continue?",
-											"YES",
-											Constant.TXT_CANCEL) {
+                if (!action.forced) {
+                    pickupMessage = Encumbrance.getPickUpMessage(encumbranceLevel);
 
-										@Override
-										protected void onSelect(int index) {
-											switch (index) {
-												case 0:
-													curAction = new HeroAction.PickUp(dst, true);
-													motivate(true);
-													break;
-											}
-										}
-									});
-							ready();
-							return false;
-						}
-						break;
-					case OVERLOADED:
-						GLog.n(pickupMessage, test.getDisplayName());
-						ready();
-						return false;
-				}
+                    switch (encumbranceLevel) {
+                        case STRAINED:
+                        case OVERTAXED:
+                            ShatteredPixelDungeon.scene().add(
+                                    new WndOptions("Pick Up Item", Utils.format(pickupMessage, test.getDisplayName()) + "  Continue?",
+                                            "YES",
+                                            Constant.TXT_CANCEL) {
+
+                                        @Override
+                                        protected void onSelect(int index) {
+                                            switch (index) {
+                                                case 0:
+                                                    curAction = new HeroAction.PickUp(dst, true);
+                                                    motivate(true);
+                                                    break;
+                                            }
+                                        }
+                                    });
+                            ready();
+                            return false;
+                        case OVERLOADED:
+                            GLog.n(pickupMessage, test.getDisplayName());
+                            ready();
+                            return false;
+                    }
+                }
 
 				Item item = heap.pickUp();
 				if (item.doPickUp(this)) {
 					if (item instanceof Dewdrop
 							|| item instanceof TimekeepersHourglass.sandBag
-							|| item instanceof DriedRose.Petal) {
+							/*|| item instanceof DriedRose.Petal*/) {
 						//Do Nothing
 					} else {
 						switch (encumbranceLevel) {
@@ -1189,12 +1204,12 @@ public class Hero extends Char {
 				final List<String> actions = new ArrayList<>();
 				List<Boolean> actionOptions = new ArrayList<>();
 
-				if (belongings.boots != null) {
+				if (belongings.boots() != null) {
 					actions.add(Item.AC_KICK);
 					actionOptions.add(false);
 				}
 
-				ITool[] tools = belongings.getToolTypes(UnlockingTool.NAME, DiggingTool.NAME);
+				ITool[] tools = belongings.getToolTypes(true, true, UnlockingTool.NAME, Pickaxe.NAME);
 
 				UnlockingTool unlockingTool = null;
 				String unlockingToolName = null;
@@ -1206,10 +1221,10 @@ public class Hero extends Char {
 					actionOptions.add(false);
 				}
 
-				DiggingTool diggingTool = null;
+				Pickaxe diggingTool = null;
 				String diggingToolName = null;
 				if (tools[1] != null) {
-					diggingTool = (DiggingTool)tools[1];
+					diggingTool = (Pickaxe)tools[1];
 					diggingToolName = diggingTool.getName().toUpperCase();
 
 					actions.add(diggingToolName);
@@ -1226,7 +1241,7 @@ public class Hero extends Char {
 				if (actionsLength > 1) {
 					final UnlockingTool unlockingTool_WTFJAVA = unlockingTool;
 					final String unlockingToolName_WTFJAVA = unlockingToolName;
-					final DiggingTool diggingTool_WTFJAVA = diggingTool;
+					final Pickaxe diggingTool_WTFJAVA = diggingTool;
 					final String diggingToolName_WTFJAVA = diggingToolName;
 
 					ShatteredPixelDungeon.scene().add(
@@ -1299,9 +1314,11 @@ public class Hero extends Char {
 			Buff buff = buff(TimekeepersHourglass.timeFreeze.class);
 			if (buff != null) buff.detach();
 
+			/*
 			for (Mob mob : Dungeon.level.mobs.toArray( new Mob[0] ))
 				if (mob instanceof DriedRose.GhostHero) mob.destroy();
-			
+			*/
+
 			InterlevelScene.mode = InterlevelScene.Mode.DESCEND;
 			Game.switchScene(InterlevelScene.class);
 
@@ -1344,8 +1361,10 @@ public class Hero extends Char {
 				Buff buff = buff(TimekeepersHourglass.timeFreeze.class);
 				if (buff != null) buff.detach();
 
+				/*
 				for (Mob mob : Dungeon.level.mobs.toArray( new Mob[0] ))
 					if (mob instanceof DriedRose.GhostHero) mob.destroy();
+				*/
 
 				InterlevelScene.mode = InterlevelScene.Mode.ASCEND;
 				Game.switchScene(InterlevelScene.class);
@@ -1380,7 +1399,7 @@ public class Hero extends Char {
 			else {
 				spend(GameTime.TICK, false);
 			}
-			sprite.attack( enemy.pos );
+			sprite.attack(enemy.pos);
 
 			return false;
 
@@ -1405,6 +1424,7 @@ public class Hero extends Char {
 		}
 		resting = fullRest;
 	}
+
 
 	/*
 	@Override
@@ -1432,29 +1452,32 @@ public class Hero extends Char {
 	@Override
 	public int defenseProc( Char enemy, int damage ) {
 		
-		Earthroot.Armor armor = buff( Earthroot.Armor.class );
-		if (armor != null) {
-			damage = armor.absorb(damage);
+		Earthroot.Armor earthroot = buff( Earthroot.Armor.class );
+		if (earthroot != null) {
+			damage = earthroot.absorb(damage);
 		}
 
 		Sungrass.Health health = buff( Sungrass.Health.class );
 		if (health != null) {
 			health.absorb(damage);
 		}
-		
-		if (belongings.armor != null) {
-			damage = ((Armor)belongings.armor).proc( enemy, this, damage );
+
+        Armor armor = (Armor)belongings.armor();
+		if (armor != null) {
+			damage = armor.proc(enemy, this, damage);
 		}
 		
 		return damage;
 	}
 	
 	@Override
-	public void damage( int dmg, Object src ) {
+	public void damage(int dmg, MagicType type, Actor source) {
 		if (buff(TimekeepersHourglass.timeStasis.class) != null)
 			return;
 
-		if (!(src instanceof Hunger || src instanceof Viscosity.DeferedDamage || src instanceof Food) && damageInterrupt) {
+		//todo: make sure this is right
+		//if (!(src instanceof Hunger || src instanceof Viscosity.DeferedDamage || src instanceof Food) && damageInterrupt) {
+		if (source != null) {
 			interrupt();
 			resting = false;
 		}
@@ -1466,7 +1489,7 @@ public class Hero extends Char {
 
 		CapeOfThorns.Thorns thorns = buff( CapeOfThorns.Thorns.class );
 		if (thorns != null) {
-			dmg = thorns.proc(dmg, (src instanceof Char ? (Char) src : null), this);
+			dmg = thorns.proc(dmg, source, this);
 		}
 
 		int tenacity = 0;
@@ -1476,7 +1499,7 @@ public class Hero extends Char {
 		if (tenacity != 0) //(HT - HP)/HT = heroes current % missing health.
 			dmg = (int)Math.ceil((float)dmg * Math.pow(0.9, tenacity*((float)(HT - HP)/HT)));
 
-		super.damage(dmg, src);
+		super.damage(dmg, type, source);
 		
 		if (subClass == HeroSubClass.BERSERKER && 0 < HP && HP <= HT * Fury.LEVEL) {
 			Buff.affect( this, Fury.class );
@@ -1616,7 +1639,7 @@ public class Hero extends Char {
 				if (missileWeapon != null) {
 					curAction = new HeroAction.Attack(missileWeapon, true, ch);
 				} else {
-					curAction = new HeroAction.Attack((KindOfWeapon)belongings.weapon, false, ch);
+					curAction = new HeroAction.Attack((KindOfWeapon)belongings.weapon(), false, ch);
 				}
 			}
 
@@ -1648,8 +1671,8 @@ public class Hero extends Char {
 		} else if (cell == Dungeon.level.entrance) {
 
 			curAction = new HeroAction.Ascend(cell);
-		} else if (Dungeon.level.solid[cell] && ((tools = belongings.getToolTypes(DiggingTool.NAME)) != null && tools[0] != null)) {
-			curAction = new HeroAction.Dig((DiggingTool) tools[0], cell, 101);
+		} else if (Dungeon.level.solid[cell] && ((tools = belongings.getToolTypes(true, false, Pickaxe.NAME)) != null && tools[0] != null)) {
+			curAction = new HeroAction.Dig((Pickaxe) tools[0], cell, 101);
 		} else {
 
 			curAction = new HeroAction.Move(cell);
@@ -1673,8 +1696,8 @@ public class Hero extends Char {
 		boolean levelUp = false;
 		while (this.exp >= maxExp()) {
 			this.exp -= maxExp();
-			if (lvl < MAX_LEVEL) {
-				lvl++;
+			if (level < MAX_LEVEL) {
+				level++;
 				levelUp = true;
 
 				//todo: level up bonuses
@@ -1692,14 +1715,14 @@ public class Hero extends Char {
 				Sample.INSTANCE.play( Assets.SND_LEVELUP );
 			}
 			
-			if (lvl < 10) {
+			if (level < 10) {
 				updateAwareness();
 			}
 		}
 		
 		if (levelUp) {
 			
-			GLog.p( TXT_NEW_LEVEL, lvl );
+			GLog.p( TXT_NEW_LEVEL, level );
 			sprite.showStatus( CharSprite.POSITIVE, TXT_LEVEL_UP );
 			Sample.INSTANCE.play( Assets.SND_LEVELUP );
 			
@@ -1708,13 +1731,19 @@ public class Hero extends Char {
 	}
 	
 	public int maxExp() {
-		return 5 + lvl * 5;
-	}
+        if (level < 20) {
+            return (2 << level) * 10;
+        } else if (level < 30) {
+            return (level - 19) * 10000000;
+        } else {
+            return Integer.MAX_VALUE;
+        }
+    }
 	
 	void updateAwareness() {
 		awareness = (float)(1 - Math.pow(
 			(heroClass == HeroClass.ROGUE ? 0.85 : 0.90),
-			(1 + Math.min( lvl,  9 )) * 0.5
+			(1 + Math.min( level,  9 )) * 0.5
 		));
 	}
 	
@@ -1802,7 +1831,7 @@ public class Hero extends Char {
 	}
 	
 	@Override
-	public void die( Object cause  ) {
+	public void die( Actor cause  ) {
 		
 		curAction = null;
 
@@ -1989,95 +2018,95 @@ public class Hero extends Char {
 	}
 	
 	public boolean search( boolean intentional ) {
-		
-		boolean smthFound = false;
 
-		int positive = 0;
-		int negative = 0;
+        boolean smthFound = false;
 
-		int distance = 1 + positive + negative;
+        int positive = 0;
+        int negative = 0;
 
-		float level = intentional ? (2 * awareness - awareness * awareness) : awareness;
-		if (distance <= 0) {
-			level /= 2 - distance;
-			distance = 1;
-		}
-		
-		int cx = pos % Level.WIDTH;
-		int cy = pos / Level.WIDTH;
-		int ax = cx - distance;
-		if (ax < 0) {
-			ax = 0;
-		}
-		int bx = cx + distance;
-		if (bx >= Level.WIDTH) {
-			bx = Level.WIDTH - 1;
-		}
-		int ay = cy - distance;
-		if (ay < 0) {
-			ay = 0;
-		}
-		int by = cy + distance;
-		if (by >= Level.HEIGHT) {
-			by = Level.HEIGHT - 1;
-		}
+        int distance = 1 + positive + negative;
 
-		TalismanOfForesight.Foresight foresight = buff( TalismanOfForesight.Foresight.class );
+        float level = intentional ? (2 * awareness - awareness * awareness) : awareness;
+        if (distance <= 0) {
+            level /= 2 - distance;
+            distance = 1;
+        }
 
-		//cursed talisman of foresight makes unintentionally finding things impossible.
-		if (foresight != null && foresight.isCursed()){
-			level = -1;
-		}
-		
-		for (int y = ay; y <= by; y++) {
-			for (int x = ax, p = ax + y * Level.WIDTH; x <= bx; x++, p++) {
-				
-				if (Dungeon.visible[p]) {
-					
-					if (intentional) {
-						sprite.parent.addToBack( new CheckedCell() );
-					}
-					
-					if (Level.secret[p] && (intentional || Random.Float() < level)) {
-						
-						int oldValue = Dungeon.level.map[p];
-						
-						GameScene.discoverTile( p, oldValue );
-						
-						Dungeon.level.discover( p );
-						
-						ScrollOfMagicMapping.discover( p );
-						
-						smthFound = true;
+        int cx = pos % Level.WIDTH;
+        int cy = pos / Level.WIDTH;
+        int ax = cx - distance;
+        if (ax < 0) {
+            ax = 0;
+        }
+        int bx = cx + distance;
+        if (bx >= Level.WIDTH) {
+            bx = Level.WIDTH - 1;
+        }
+        int ay = cy - distance;
+        if (ay < 0) {
+            ay = 0;
+        }
+        int by = cy + distance;
+        if (by >= Level.HEIGHT) {
+            by = Level.HEIGHT - 1;
+        }
 
-						if (foresight != null && !foresight.isCursed())
-							foresight.charge();
-					}
-				}
-			}
-		}
+        TalismanOfForesight.Foresight foresight = buff(TalismanOfForesight.Foresight.class);
 
-		
-		if (intentional) {
-			sprite.showStatus( CharSprite.DEFAULT, TXT_SEARCH );
-			sprite.operate( pos );
-			if (foresight != null && foresight.isCursed()){
-				GLog.n("You can't concentrate, searching takes a while.");
-				spend(TIME_TO_SEARCH * 3, true);
-			} else {
-				spend(TIME_TO_SEARCH, true);
-			}
-			
-		}
-		
-		if (smthFound) {
-			GLog.w( TXT_NOTICED_SMTH );
-			Sample.INSTANCE.play( Assets.SND_SECRET );
-			interrupt();
-		}
-		
-		return smthFound;
-	}
+        //cursed talisman of foresight makes unintentionally finding things impossible.
+        if (foresight != null && foresight.isCursed()) {
+            level = -1;
+        }
+
+        for (int y = ay; y <= by; y++) {
+            for (int x = ax, p = ax + y * Level.WIDTH; x <= bx; x++, p++) {
+
+                if (Dungeon.visible[p]) {
+
+                    if (intentional) {
+                        sprite.parent.addToBack(new CheckedCell());
+                    }
+
+                    if (Level.secret[p] && (intentional || Random.Float() < level)) {
+
+                        int oldValue = Dungeon.level.map[p];
+
+                        GameScene.discoverTile(p, oldValue);
+
+                        Dungeon.level.discover(p);
+
+                        ScrollOfMagicMapping.discover(p);
+
+                        smthFound = true;
+
+                        if (foresight != null && !foresight.isCursed())
+                            foresight.charge();
+                    }
+                }
+            }
+        }
+
+
+        if (intentional) {
+            sprite.showStatus(CharSprite.DEFAULT, TXT_SEARCH);
+            sprite.operate(pos);
+            if (foresight != null && foresight.isCursed()) {
+                GLog.n("You can't concentrate, searching takes a while.");
+                spend(TIME_TO_SEARCH * 3, true);
+            } else {
+                spend(TIME_TO_SEARCH, true);
+            }
+
+        }
+
+        if (smthFound) {
+            GLog.w(TXT_NOTICED_SMTH);
+            Sample.INSTANCE.play(Assets.SND_SECRET);
+            interrupt();
+        }
+
+        return smthFound;
+    }
 	
 	public void resurrect( int resetLevel ) {
 		
@@ -2088,22 +2117,6 @@ public class Hero extends Char {
 		belongings.resurrect( resetLevel );
 
 		live();
-	}
-	
-	@Override
-	public HashSet<Class<?>> resistances() {
-		RingOfElements.Resistance r = buff( RingOfElements.Resistance.class );
-		return r == null ? super.resistances() : r.resistances();
-	}
-	
-	@Override
-	public HashSet<Class<?>> immunities() {
-		HashSet<Class<?>> immunities = new HashSet<>();
-		for (Buff buff : buffs()){
-			for (Class<?> immunity : buff.immunities)
-				immunities.add(immunity);
-		}
-		return immunities;
 	}
 
 	@Override

@@ -28,13 +28,15 @@ import com.felayga.unpixeldungeon.Dungeon;
 import com.felayga.unpixeldungeon.items.Item;
 import com.felayga.unpixeldungeon.items.weapon.Weapon;
 import com.felayga.unpixeldungeon.mechanics.BUCStatus;
+import com.felayga.unpixeldungeon.mechanics.WeaponSkill;
 import com.felayga.unpixeldungeon.utils.Utils;
 import com.watabou.utils.Random;
 
 public class MeleeWeapon extends Weapon {
-	public MeleeWeapon( long delay, int damageMin, int damageMax ) {
-		super(delay, damageMin, damageMax);
+	public MeleeWeapon(WeaponSkill weaponSkill, long delay, int damageMin, int damageMax) {
+		super(weaponSkill, delay, damageMin, damageMax);
 
+        price = 20;
 		
 		//ACU = acu;
 
@@ -138,29 +140,7 @@ public class MeleeWeapon extends Weapon {
 		
 		return info.toString();
 	}
-	
-	@Override
-	public int price() {
-		int price = 20;
-		if (enchantment != null) {
-			price *= 1.5;
-		}
-		if (bucStatus == BUCStatus.Cursed) {
-			price /= 2;
-		}
-		if (levelKnown) {
-			if (level > 0) {
-				price *= (level + 1);
-			} else if (level < 0) {
-				price /= (1 - level);
-			}
-		}
-		if (price < 1) {
-			price = 1;
-		}
-		return price;
-	}
-	
+
 	@Override
 	public Item random() {
 		super.random();

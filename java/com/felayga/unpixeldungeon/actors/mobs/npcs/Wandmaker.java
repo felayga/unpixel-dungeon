@@ -46,6 +46,7 @@ import com.felayga.unpixeldungeon.levels.PrisonLevel;
 import com.felayga.unpixeldungeon.levels.Room;
 import com.felayga.unpixeldungeon.levels.Terrain;
 import com.felayga.unpixeldungeon.mechanics.GameTime;
+import com.felayga.unpixeldungeon.mechanics.MagicType;
 import com.felayga.unpixeldungeon.plants.Plant;
 import com.felayga.unpixeldungeon.scenes.GameScene;
 import com.felayga.unpixeldungeon.sprites.ItemSpriteSheet;
@@ -58,7 +59,10 @@ import com.watabou.utils.Random;
 
 public class Wandmaker extends NPC {
 
+	public Wandmaker()
 	{
+		super(10);
+
 		name = "old wandmaker";
 		spriteClass = WandmakerSprite.class;
 	}
@@ -126,7 +130,7 @@ public class Wandmaker extends NPC {
 	}
 	
 	@Override
-	public void damage( int dmg, Object src ) {
+	public void damage( int dmg, MagicType type, Actor source) {
 	}
 	
 	@Override
@@ -366,6 +370,7 @@ public class Wandmaker extends NPC {
 				return false;
 			}
 
+			/*
 			switch (type){
 				case 1: default:
 					questRoom.type = Room.Type.MASS_GRAVE;
@@ -377,6 +382,8 @@ public class Wandmaker extends NPC {
 					questRoom.type = Room.Type.ROT_GARDEN;
 					break;
 			}
+			*/
+			questRoom.type = Room.Type.RITUAL_SITE;
 
 			return true;
 		}

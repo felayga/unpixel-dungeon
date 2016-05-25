@@ -30,9 +30,6 @@ import com.felayga.unpixeldungeon.actors.Actor;
 import com.felayga.unpixeldungeon.actors.blobs.ToxicGas;
 import com.felayga.unpixeldungeon.actors.buffs.Burning;
 import com.felayga.unpixeldungeon.actors.buffs.Poison;
-import com.felayga.unpixeldungeon.actors.mobs.Eye;
-import com.felayga.unpixeldungeon.actors.mobs.Warlock;
-import com.felayga.unpixeldungeon.actors.mobs.Yog;
 import com.felayga.unpixeldungeon.levels.traps.LightningTrap;
 import com.felayga.unpixeldungeon.mechanics.GameTime;
 import com.watabou.utils.Random;
@@ -64,9 +61,11 @@ public class RingOfElements extends Ring {
 		FULL.add( ToxicGas.class );
 		FULL.add( Poison.class );
 		FULL.add( LightningTrap.Electricity.class );
+		/*
 		FULL.add( Warlock.class );
 		FULL.add( Eye.class );
 		FULL.add( Yog.BurningFist.class );
+		*/
 	}
 	
 	public class Resistance extends RingBuff {

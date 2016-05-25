@@ -32,6 +32,7 @@ import com.felayga.unpixeldungeon.items.scrolls.ScrollOfRecharging;
 import com.felayga.unpixeldungeon.items.weapon.melee.simple.MagesStaff;
 import com.felayga.unpixeldungeon.mechanics.Ballistica;
 import com.felayga.unpixeldungeon.mechanics.GameTime;
+import com.felayga.unpixeldungeon.mechanics.MagicType;
 import com.felayga.unpixeldungeon.sprites.ItemSpriteSheet;
 import com.watabou.utils.Random;
 
@@ -51,7 +52,7 @@ public class WandOfMagicMissile extends Wand {
 			int level = 1;//level();
 
 			processSoulMark(ch, chargesPerCast());
-			ch.damage(Random.NormalIntRange(4 , 6 + level * 2), this);
+			ch.damage(Random.NormalIntRange(4 , 6 + level * 2), MagicType.Magic, null);
 
 			ch.sprite.burst(0xFFFFFFFF, level / 2 + 2);
 

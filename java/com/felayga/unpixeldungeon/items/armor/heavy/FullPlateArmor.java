@@ -30,14 +30,14 @@ import com.felayga.unpixeldungeon.sprites.ItemSpriteSheet;
 public class FullPlateArmor extends HeavyArmor {
     public FullPlateArmor()
     {
-        super(8, 1, 112);
+        super(8, 1, 2, 112);
         name = "full plate armor";
         image = ItemSpriteSheet.ARMOR_FULLPLATE;
 
         price = 1500;
         textureIndex = 7;
 
-        weight = Encumbrance.UNIT * 450;
+        weight(Encumbrance.UNIT * 450);
     }
 
     @Override

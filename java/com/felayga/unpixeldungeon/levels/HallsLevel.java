@@ -78,7 +78,7 @@ public class HallsLevel extends RegularLevel {
 	protected Class<?>[] trapClasses() {
 		return new Class[]{ BlazingTrap.class, DisintegrationTrap.class, FrostTrap.class, SpearTrap.class, VenomTrap.class,
 				ExplosiveTrap.class, GrippingTrap.class, LightningTrap.class, OozeTrap.class, WeakeningTrap.class,
-				CursingTrap.class, FlockTrap.class, GrimTrap.class, GuardianTrap.class, SummoningTrap.class, TeleportationTrap.class,
+				CursingTrap.class, FlockTrap.class, GrimTrap.class, /*GuardianTrap.class,*/ SummoningTrap.class, TeleportationTrap.class,
 				DisarmingTrap.class, DistortionTrap.class, WarpingTrap.class};
 	}
 

@@ -28,13 +28,14 @@ import java.util.ArrayList;
 
 import com.felayga.unpixeldungeon.actors.Actor;
 import com.felayga.unpixeldungeon.mechanics.GameTime;
+import com.felayga.unpixeldungeon.mechanics.WeaponSkill;
 import com.watabou.noosa.audio.Sample;
 import com.felayga.unpixeldungeon.Assets;
 import com.felayga.unpixeldungeon.Dungeon;
 import com.felayga.unpixeldungeon.actors.Char;
 import com.felayga.unpixeldungeon.actors.buffs.Hunger;
 import com.felayga.unpixeldungeon.actors.hero.Hero;
-import com.felayga.unpixeldungeon.actors.mobs.Bat;
+//import com.felayga.unpixeldungeon.actors.mobs.Bat;
 import com.felayga.unpixeldungeon.effects.CellEmitter;
 import com.felayga.unpixeldungeon.effects.Speck;
 import com.felayga.unpixeldungeon.items.weapon.Weapon;
@@ -60,7 +61,7 @@ public class OldPickaxe extends Weapon {
 
 	public OldPickaxe()
 	{
-		super(GameTime.TICK, 3, 12);
+		super(WeaponSkill.None, GameTime.TICK, 3, 12);
 
 		name = "pickaxe";
 		image = ItemSpriteSheet.PICKAXE;
@@ -149,10 +150,12 @@ public class OldPickaxe extends Weapon {
 	public int proc( Char attacker, boolean thrown, Char defender, int damage ) {
 		damage = super.proc(attacker, thrown, defender, damage);
 
+		/*
 		if (!bloodStained && defender instanceof Bat && (defender.HP <= damage)) {
 			bloodStained = true;
 			updateQuickslot();
 		}
+		*/
 
 		return damage;
 	}

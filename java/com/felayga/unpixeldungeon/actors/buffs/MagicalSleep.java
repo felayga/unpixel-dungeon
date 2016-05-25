@@ -39,7 +39,8 @@ public class MagicalSleep extends Buff {
 
 	@Override
 	public boolean attachTo( Char target ) {
-		if (super.attachTo( target ) && !target.immunities().contains(Sleep.class)) {
+		//todo: MagicalSleep immunity/resistance
+		if (super.attachTo( target )/* && !target.immunities().contains(Sleep.class)*/) {
 
 			if (target instanceof Hero)
 				if (target.HP == target.HT) {

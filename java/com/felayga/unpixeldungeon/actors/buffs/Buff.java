@@ -50,10 +50,13 @@ public class Buff extends Actor {
 	
 	public boolean attachTo( Char target ) {
 
+		//todo: Buff attachment immunity/resistance
+		/*
 		if (target.immunities().contains( getClass() )) {
 			return false;
 		}
-		
+		*/
+
 		this.target = target;
 		target.add( this );
 

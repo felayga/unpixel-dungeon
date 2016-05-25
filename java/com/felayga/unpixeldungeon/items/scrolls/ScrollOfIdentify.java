@@ -62,6 +62,8 @@ public class ScrollOfIdentify extends InventoryScroll {
 		mode = WndBackpack.Mode.UNIDENTIFED;
 
 		bones = true;
+
+        price = 30;
 	}
 
 	@Override
@@ -136,9 +138,5 @@ public class ScrollOfIdentify extends InventoryScroll {
 		return
 			"Permanently reveals all of the secrets of a single item.";
 	}
-	
-	@Override
-	public int price() {
-		return isKnown() ? 30 * quantity : super.price();
-	}
+
 }

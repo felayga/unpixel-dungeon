@@ -40,6 +40,7 @@ import com.watabou.utils.Random;
 
 public class PotionOfExtraHealing extends PotionOfHealing {
 
+    public PotionOfExtraHealing()
 	{
 		name = "Potion of Extra Healing";
 		initials = "XHe";
@@ -49,6 +50,7 @@ public class PotionOfExtraHealing extends PotionOfHealing {
 
 		overhealAmount = 2;
         applicationDescription = "significantly";
+        price = 30;
 	}
 
 	@Override
@@ -67,10 +69,5 @@ public class PotionOfExtraHealing extends PotionOfHealing {
 	public String desc() {
 		return
 			"An elixir that will instantly restore a lot of health and cure poison.";
-	}
-	
-	@Override
-	public int price() {
-		return isKnown() ? 30 * quantity : super.price();
 	}
 }

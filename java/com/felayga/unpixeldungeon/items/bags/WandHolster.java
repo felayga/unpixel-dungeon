@@ -40,6 +40,7 @@ public class WandHolster extends Bag {
 		
 		size = 12;
 		priority = 8;
+        price = 50;
 	}
 	
 	@Override
@@ -73,10 +74,6 @@ public class WandHolster extends Bag {
 	}
 	*/
 
-	@Override
-	public int price() {
-		return 50;
-	}
 	
 	@Override
 	public String info() {

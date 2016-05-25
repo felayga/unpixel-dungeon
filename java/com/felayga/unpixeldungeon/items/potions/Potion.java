@@ -165,7 +165,8 @@ public class Potion extends Item {
 		stackable = true;
 		defaultAction = AC_DRINK;
 		fragile = true;
-		weight = Encumbrance.UNIT * 20;
+		weight(Encumbrance.UNIT * 20);
+        price = 20;
 	}
 
 	@Override
@@ -245,10 +246,10 @@ public class Potion extends Item {
 	}
 
 	@Override
-	protected void onThrow(int cell) {
+	protected void onThrow(int cell, Char thrower) {
 		if (Dungeon.level.map[cell] == Terrain.WELL || Level.pit[cell]) {
 
-			super.onThrow(cell);
+			super.onThrow(cell, thrower);
 
 		} else {
 
@@ -375,8 +376,4 @@ public class Potion extends Item {
 		}
 	}
 
-	@Override
-	public int price() {
-		return 20 * quantity;
-	}
 }

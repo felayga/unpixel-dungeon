@@ -78,6 +78,7 @@ public class Artifact_old extends KindofMisc {
 
 	public Artifact_old(){
 		super(GameTime.TICK);
+        price = 100;
 	}
 
 	@Override
@@ -203,27 +204,6 @@ public class Artifact_old extends KindofMisc {
 		return className;
 	};
 
-	@Override
-	public Item random() {
-		if (Random.Float() < 0.3f) {
-			bucStatus = BUCStatus.Cursed;
-		}
-		return this;
-	}
-
-	@Override
-	public int price() {
-		int price = 100;
-		if (level > 0)
-			price += 50*((level*10)/levelCap);
-		if (bucStatus == BUCStatus.Cursed) {
-			price /= 2;
-		}
-		if (price < 1) {
-			price = 1;
-		}
-		return price;
-	}
 
 
 	protected ArtifactBuff passiveBuff() {

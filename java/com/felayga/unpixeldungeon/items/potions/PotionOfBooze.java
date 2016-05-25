@@ -41,12 +41,15 @@ import com.watabou.utils.Random;
 
 public class PotionOfBooze extends Potion {
 
+    public PotionOfBooze()
 	{
 		name = "Potion of Booze";
 		initials = "Bz";
 
 		bones = true;
 		isHelpful = true;
+
+        price = 30;
 	}
 	
 	@Override
@@ -78,9 +81,5 @@ public class PotionOfBooze extends Potion {
 		return
 			"An elixir that will restore some hunger while making you confused.";
 	}
-	
-	@Override
-	public int price() {
-		return isKnown() ? 30 * quantity : super.price();
-	}
+
 }

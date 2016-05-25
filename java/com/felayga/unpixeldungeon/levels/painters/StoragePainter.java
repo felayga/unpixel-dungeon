@@ -25,7 +25,7 @@
 package com.felayga.unpixeldungeon.levels.painters;
 
 import com.felayga.unpixeldungeon.items.Generator;
-import com.felayga.unpixeldungeon.items.Honeypot;
+//import com.felayga.unpixeldungeon.items.Honeypot;
 import com.felayga.unpixeldungeon.items.Item;
 import com.felayga.unpixeldungeon.items.potions.PotionOfAcid;
 import com.felayga.unpixeldungeon.items.potions.PotionOfLiquidFlame;
@@ -43,7 +43,7 @@ public class StoragePainter extends Painter {
 		fill( level, room, Terrain.WALL );
 		fill( level, room, 1, floor );
 
-		boolean honeyPot = Random.Int( 2 ) == 0;
+		//boolean honeyPot = Random.Int( 2 ) == 0;
 		
 		int n = Random.IntRange( 3, 4 );
 		for (int i=0; i < n; i++) {
@@ -51,11 +51,14 @@ public class StoragePainter extends Painter {
 			do {
 				pos = room.random();
 			} while (level.map[pos] != floor);
+			/*
 			if (honeyPot){
 				level.drop( new Honeypot(), pos);
 				honeyPot = false;
-			} else
-				level.drop( prize( level ), pos );
+			} else {
+			*/
+				level.drop(prize(level), pos);
+			//}
 		}
 		
 		room.entrance().set(Room.Door.Type.BARRICADE);

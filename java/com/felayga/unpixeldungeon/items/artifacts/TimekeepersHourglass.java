@@ -55,6 +55,7 @@ public class TimekeepersHourglass extends Artifact_old {
 			"While in stasis, time will move normally while you are frozen and completely invulnerable.\n\n" +
 			"When time is frozen, you can move as if your actions take no time. Note that attacking will break this.";
 
+    public TimekeepersHourglass()
 	{
 		name = "Timekeeper's Hourglass";
 		image = ItemSpriteSheet.ARTIFACT_HOURGLASS;
@@ -67,6 +68,7 @@ public class TimekeepersHourglass extends Artifact_old {
 		chargeCap = 10+level*2;
 
 		defaultAction = AC_ACTIVATE;
+        price = 20;
 	}
 
 	public static final String AC_ACTIVATE = "ACTIVATE";
@@ -385,10 +387,6 @@ public class TimekeepersHourglass extends Artifact_old {
 					"It seems odd that the shopkeeper would have this specific item right when you need it.";
 		}
 
-		@Override
-		public int price() {
-			return 20;
-		}
 	}
 
 

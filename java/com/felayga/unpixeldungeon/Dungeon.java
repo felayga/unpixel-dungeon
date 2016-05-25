@@ -31,8 +31,8 @@ import com.felayga.unpixeldungeon.actors.buffs.Light;
 import com.felayga.unpixeldungeon.actors.hero.Hero;
 import com.felayga.unpixeldungeon.actors.hero.HeroClass;
 import com.felayga.unpixeldungeon.actors.mobs.npcs.Blacksmith;
-import com.felayga.unpixeldungeon.actors.mobs.npcs.Ghost;
-import com.felayga.unpixeldungeon.actors.mobs.npcs.Imp;
+//import com.felayga.unpixeldungeon.actors.mobs.npcs.Ghost;
+//import com.felayga.unpixeldungeon.actors.mobs.npcs.Imp;
 import com.felayga.unpixeldungeon.actors.mobs.npcs.Wandmaker;
 import com.felayga.unpixeldungeon.items.Ankh;
 import com.felayga.unpixeldungeon.items.Generator;
@@ -46,12 +46,10 @@ import com.felayga.unpixeldungeon.levels.CavesLevel;
 import com.felayga.unpixeldungeon.levels.CityBossLevel;
 import com.felayga.unpixeldungeon.levels.CityLevel;
 import com.felayga.unpixeldungeon.levels.DeadEndLevel;
-import com.felayga.unpixeldungeon.levels.HallsBossLevel;
 import com.felayga.unpixeldungeon.levels.HallsLevel;
 import com.felayga.unpixeldungeon.levels.LastLevel;
 import com.felayga.unpixeldungeon.levels.LastShopLevel;
 import com.felayga.unpixeldungeon.levels.Level;
-import com.felayga.unpixeldungeon.levels.PrisonBossLevel;
 import com.felayga.unpixeldungeon.levels.PrisonLevel;
 import com.felayga.unpixeldungeon.levels.Room;
 import com.felayga.unpixeldungeon.levels.SewerBossLevel;
@@ -147,7 +145,7 @@ public class Dungeon {
 	public static SparseArray<ArrayList<Item>> droppedItems;
 
 	public static int version;
-	
+
 	public static void init() {
 
 		version = Game.versionCode;
@@ -180,10 +178,10 @@ public class Dungeon {
 		
 		chapters = new HashSet<Integer>();
 		
-		Ghost.Quest.reset();
+		//Ghost.Quest.reset();
 		Wandmaker.Quest.reset();
 		Blacksmith.Quest.reset();
-		Imp.Quest.reset();
+		//Imp.Quest.reset();
 		
 		Room.shuffleTypes();
 
@@ -241,8 +239,8 @@ public class Dungeon {
 			level = new PrisonLevel();
 			break;
 		case 10:
-			level = new PrisonBossLevel();
-			break;
+			//level = new PrisonBossLevel();
+			//break;
 		case 11:
 		case 12:
 		case 13:
@@ -270,8 +268,8 @@ public class Dungeon {
 			level = new HallsLevel();
 			break;
 		case 25:
-			level = new HallsBossLevel();
-			break;
+			//level = new HallsBossLevel();
+			//break;
 		case 26:
 			level = new LastLevel();
 			break;
@@ -479,10 +477,10 @@ public class Dungeon {
 			bundle.put( CHAPTERS, ids );
 			
 			Bundle quests = new Bundle();
-			Ghost		.Quest.storeInBundle( quests );
+			//Ghost		.Quest.storeInBundle( quests );
 			Wandmaker	.Quest.storeInBundle( quests );
 			Blacksmith	.Quest.storeInBundle( quests );
-			Imp			.Quest.storeInBundle( quests );
+			//Imp			.Quest.storeInBundle( quests );
 			bundle.put( QUESTS, quests );
 			
 			Room.storeRoomsInBundle( bundle );
@@ -528,7 +526,7 @@ public class Dungeon {
 			saveGame( gameFile( WndInitHero.savedGameIndex ) );
 			saveLevel();
 
-			GamesInProgress.set( WndInitHero.savedGameIndex, hero.heroClass, hero.lvl, depth );
+			GamesInProgress.set( WndInitHero.savedGameIndex, hero.heroClass, hero.level, depth );
 
 		} else if (WndResurrect.instance != null) {
 			
@@ -603,15 +601,15 @@ public class Dungeon {
 			
 			Bundle quests = bundle.getBundle( QUESTS );
 			if (!quests.isNull()) {
-				Ghost.Quest.restoreFromBundle( quests );
+				//Ghost.Quest.restoreFromBundle( quests );
 				Wandmaker.Quest.restoreFromBundle( quests );
 				Blacksmith.Quest.restoreFromBundle( quests );
-				Imp.Quest.restoreFromBundle( quests );
+				//Imp.Quest.restoreFromBundle( quests );
 			} else {
-				Ghost.Quest.reset();
+				//Ghost.Quest.reset();
 				Wandmaker.Quest.reset();
 				Blacksmith.Quest.reset();
-				Imp.Quest.reset();
+				//Imp.Quest.reset();
 			}
 			
 			Room.restoreRoomsFromBundle(bundle);

@@ -39,7 +39,7 @@ public class Backpack extends Bag {
 
         tabIcon = Icons.BACKPACK;
 
-        weight = 0;
+        weight(0);
     }
 
 }

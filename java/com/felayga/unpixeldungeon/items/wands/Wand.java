@@ -86,7 +86,8 @@ public abstract class Wand extends Item {
 		defaultAction = AC_ZAP;
 		usesTargeting = true;
 
-		weight = Encumbrance.UNIT * 7;
+		weight(Encumbrance.UNIT * 7);
+        price = 75;
 	}
 	
 	@Override
@@ -271,45 +272,6 @@ public abstract class Wand extends Item {
 		}
 
 		curUser.spend( TIME_TO_ZAP, true );
-	}
-	
-	@Override
-	public Item random() {
-		int n = 0;
-
-		if (Random.Int(2) == 0) {
-			n++;
-			if (Random.Int(5) == 0) {
-				n++;
-			}
-		}
-
-		upgrade(null, n);
-		if (Random.Float() < 0.3f) {
-			bucStatus = BUCStatus.Cursed;
-			bucStatusKnown = false;
-		}
-
-		return this;
-	}
-	
-	@Override
-	public int price() {
-		int price = 75;
-		if (bucStatus == BUCStatus.Cursed) {
-			price /= 2;
-		}
-		if (levelKnown) {
-			if (level > 0) {
-				price *= (level + 1);
-			} else if (level < 0) {
-				price /= (1 - level);
-			}
-		}
-		if (price < 1) {
-			price = 1;
-		}
-		return price;
 	}
 
 	private static final String UNFAMILIRIARITY        = "unfamiliarity";

@@ -31,12 +31,13 @@ package com.felayga.unpixeldungeon.items.weapon.melee.mob;
 
 
 import com.felayga.unpixeldungeon.items.weapon.melee.MeleeWeapon;
+import com.felayga.unpixeldungeon.mechanics.WeaponSkill;
 import com.felayga.unpixeldungeon.sprites.ItemSpriteSheet;
 
 public class MeleeMobAttack extends MeleeWeapon {
 
     public MeleeMobAttack(long delay, int damageMin, int damageMax) {
-        super(delay, damageMin, damageMax );
+        super(WeaponSkill.None, delay, damageMin, damageMax );
 
         name = "meleemobattack";
         image = ItemSpriteSheet.WEAPON;

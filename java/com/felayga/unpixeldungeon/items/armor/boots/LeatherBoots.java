@@ -35,7 +35,7 @@ import com.watabou.utils.Bundle;
  */
 public class LeatherBoots extends Boots {
     public LeatherBoots() {
-        super(0, GameTime.TICK);
+        super(0, 0, GameTime.TICK);
 
         name = "leather boots";
         image = ItemSpriteSheet.BOOTS_LEATHER;

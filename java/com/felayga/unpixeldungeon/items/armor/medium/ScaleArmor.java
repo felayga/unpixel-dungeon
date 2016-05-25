@@ -30,14 +30,14 @@ import com.felayga.unpixeldungeon.sprites.ItemSpriteSheet;
 public class ScaleArmor extends MediumArmor {
 	public ScaleArmor()
 	{
-		super(4, 3, 80);
+		super(4, 3, 0, 80);
 		name = "scale armor";
 		image = ItemSpriteSheet.ARMOR_SCALE;
 
 		price = 50;
 		textureIndex = 5;
 
-		weight = Encumbrance.UNIT * 270;
+		weight(Encumbrance.UNIT * 270);
 	}
 	
 	@Override

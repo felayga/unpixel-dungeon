@@ -37,7 +37,7 @@ public class ImpShopkeeper extends Shopkeeper {
 	private static final String TXT_GREETINGS = "Hello, %s!";
 	public static final String TXT_THIEF = "I thought I could trust you!";
 
-	
+	public ImpShopkeeper()
 	{
 		name = "ambitious imp";
 		spriteClass = ImpSprite.class;

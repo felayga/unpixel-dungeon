@@ -43,11 +43,14 @@ import com.watabou.utils.Random;
 
 public class FrozenCarpaccio extends Food {
 
+    public FrozenCarpaccio()
 	{
 		name = "frozen carpaccio";
 		image = ItemSpriteSheet.CARPACCIO;
 		energy = 125;
 		hornValue = 1;
+
+        price = 10;
 	}
 	
 	@Override
@@ -93,10 +96,6 @@ public class FrozenCarpaccio extends Food {
 			"It's a piece of frozen raw meat. The only way to eat it is " +
 			"by cutting thin slices of it. And this way it's suprisingly good.";
 	}
-	
-	public int price() {
-		return 10 * quantity;
-	};
 	
 	public static Food cook( MysteryMeat ingredient ) {
 		FrozenCarpaccio result = new FrozenCarpaccio();

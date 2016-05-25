@@ -29,22 +29,20 @@ import com.felayga.unpixeldungeon.sprites.ItemSpriteSheet;
 
 public class ChargrilledMeat extends Food {
 
+    public ChargrilledMeat()
 	{
 		name = "chargrilled meat";
 		image = ItemSpriteSheet.STEAK;
 		energy = 125;
 		hornValue = 1;
+        price = 5;
 	}
 	
 	@Override
 	public String info() {
 		return "It looks like a decent steak.";
 	}
-	
-	@Override
-	public int price() {
-		return 5 * quantity;
-	}
+
 	
 	public static Food cook( MysteryMeat ingredient ) {
 		ChargrilledMeat result = new ChargrilledMeat();

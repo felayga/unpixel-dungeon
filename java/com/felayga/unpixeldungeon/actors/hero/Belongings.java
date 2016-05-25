@@ -35,7 +35,7 @@ import com.felayga.unpixeldungeon.Dungeon;
 import com.felayga.unpixeldungeon.ShatteredPixelDungeon;
 import com.felayga.unpixeldungeon.actors.Char;
 import com.felayga.unpixeldungeon.effects.particles.ShadowParticle;
-import com.felayga.unpixeldungeon.items.EquipableItem;
+import com.felayga.unpixeldungeon.items.EquippableItem;
 import com.felayga.unpixeldungeon.items.Gold;
 import com.felayga.unpixeldungeon.items.bags.IBag;
 import com.felayga.unpixeldungeon.items.tools.ITool;
@@ -95,7 +95,7 @@ public class Belongings implements Iterable<Item>, IDecayable, IBag {
 		}
 
 		GLog.d("collect "+item.getDisplayName()+" "+ retval);
-		GLog.d("weight="+weight+" "+backpack1.weight+" "+backpack2.weight+" "+backpack3.weight+" "+backpack4.weight);
+		GLog.d("weight2="+weight+" "+backpack1.weight()+" "+backpack2.weight()+" "+backpack3.weight()+" "+backpack4.weight());
 
 		return retval;
 	}
@@ -123,7 +123,7 @@ public class Belongings implements Iterable<Item>, IDecayable, IBag {
 			retval = remove(backpack2, item);
 		}
 
-		GLog.d("weight="+weight+" "+backpack1.weight+" "+backpack2.weight+" "+backpack3.weight+" "+backpack4.weight);
+		GLog.d("weight3="+weight+" "+backpack1.weight()+" "+backpack2.weight()+" "+backpack3.weight()+" "+backpack4.weight());
 
 		return retval;
 	}
@@ -133,9 +133,7 @@ public class Belongings implements Iterable<Item>, IDecayable, IBag {
 			Item detached = item.parent.remove(item, quantity);
 			item.updateQuickslot();
 
-			GLog.d("weight=" + weight + " " + backpack1.weight + " " + backpack2.weight + " " + backpack3.weight + " " + backpack4.weight);
 			return detached;
-
 		} else if (item.quantity() == quantity) {
 			if (item.stackable || item instanceof Boomerang) {
 				Dungeon.quickslot.convertToPlaceholder(item);
@@ -156,8 +154,7 @@ public class Belongings implements Iterable<Item>, IDecayable, IBag {
 				iterator.remove();
 				item.onDetach();
 
-				GLog.d("weight=" + weight + " " + backpack1.weight + " " + backpack2.weight + " " + backpack3.weight + " " + backpack4.weight);
-
+				GLog.d("weight5=" + weight + " " + backpack1.weight() + " " + backpack2.weight() + " " + backpack3.weight() + " " + backpack4.weight());
 				return item;
 			}
 		}
@@ -176,7 +173,7 @@ public class Belongings implements Iterable<Item>, IDecayable, IBag {
 				|| backpack2.contains(item);
 	}
 
-	private boolean tryReplaceSimple(EquipableItem.Slot slot, EquipableItem item) {
+	private boolean tryReplaceSimple(EquippableItem.Slot slot, EquippableItem item) {
 		switch (slot) {
 			case Weapon:
 				if (weapon == null || unequip(weapon, true)) {
@@ -226,13 +223,25 @@ public class Belongings implements Iterable<Item>, IDecayable, IBag {
 				break;
 			case Face:
 				break;
+            case Helmet:
+                if (helmet == null || unequip(helmet, true)) {
+                    helmet = item;
+                    return true;
+                }
+                break;
+            case Pants:
+                if (pants == null || unequip(pants, true)) {
+                    pants = item;
+                    return true;
+                }
+                break;
 		}
 
 		return false;
 	}
 
-	private boolean tryReplaceOneHanded(final EquipableItem.Slot[] slots, final EquipableItem item, final int quickslot) {
-		final EquipableItem[] items = new EquipableItem[slots.length];
+	private boolean tryReplaceOneHanded(final EquippableItem.Slot[] slots, final EquippableItem item, final int quickslot) {
+		final EquippableItem[] items = new EquippableItem[slots.length];
 
 		for (int n = 0; n < slots.length; n++) {
 			switch (slots[n]) {
@@ -321,6 +330,24 @@ public class Belongings implements Iterable<Item>, IDecayable, IBag {
 						items[n] = face;
 					}
 					break;
+                case Helmet:
+                    if (helmet == null) {
+                        helmet = item;
+                        return true;
+                    }
+                    else {
+                        items[n] = helmet;
+                    }
+                    break;
+                case Pants:
+                    if (pants == null) {
+                        pants = item;
+                        return true;
+                    }
+                    else {
+                        items[n] = pants;
+                    }
+                    break;
 			}
 		}
 
@@ -348,44 +375,50 @@ public class Belongings implements Iterable<Item>, IDecayable, IBag {
 		return false;
 	}
 
-	private boolean tryReplaceTwoHanded(final EquipableItem.Slot[] slots, final EquipableItem item, final int quickslot) {
-		final EquipableItem[] items = new EquipableItem[slots.length];
+	private boolean tryReplaceTwoHanded(final EquippableItem.Slot[] slots, final EquippableItem item, final int quickslot) {
+		final EquippableItem[] items = new EquippableItem[slots.length];
 		int[] quickslots = new int[slots.length];
 
 		for (int n = 0; n < slots.length; n++) {
-			switch (slots[n]) {
-				case Weapon:
-					items[n] = weapon;
-					break;
-				case Offhand:
-					items[n] = offhand;
-					break;
-				case Armor:
-					items[n] = armor;
-					break;
-				case Gloves:
-					items[n] = gloves;
-					break;
-				case Boots:
-						items[n] = boots;
-					break;
-				case Ring1:
-						items[n] = ring1;
-					break;
-				case Ring2:
-						items[n] = ring2;
-					break;
-				case Amulet:
-					items[n] = amulet;
-					break;
-				case Cloak:
-					items[n] = cloak;
-					break;
-				case Face:
-					items[n] = face;
-					break;
-			}
-		}
+            switch (slots[n]) {
+                case Weapon:
+                    items[n] = weapon;
+                    break;
+                case Offhand:
+                    items[n] = offhand;
+                    break;
+                case Armor:
+                    items[n] = armor;
+                    break;
+                case Gloves:
+                    items[n] = gloves;
+                    break;
+                case Boots:
+                    items[n] = boots;
+                    break;
+                case Ring1:
+                    items[n] = ring1;
+                    break;
+                case Ring2:
+                    items[n] = ring2;
+                    break;
+                case Amulet:
+                    items[n] = amulet;
+                    break;
+                case Cloak:
+                    items[n] = cloak;
+                    break;
+                case Face:
+                    items[n] = face;
+                    break;
+                case Helmet:
+                    items[n] = helmet;
+                    break;
+                case Pants:
+                    items[n] = pants;
+                    break;
+            }
+        }
 
 		for (int n=0;n<slots.length;n++) {
 			for (int subn=n+1;subn<slots.length;subn++) {
@@ -450,13 +483,27 @@ public class Belongings implements Iterable<Item>, IDecayable, IBag {
 				case Face:
 					face = item;
 					break;
+                case Helmet:
+                    helmet = item;
+                    break;
+                case Pants:
+                    pants = item;
+                    break;
 			}
 		}
 
 		return true;
 	}
 
-	public boolean equip(EquipableItem item) {
+    public boolean collectEquip(EquippableItem item) {
+        if (equip(item)) {
+            return true;
+        }
+
+        return collect(item);
+    }
+
+	public boolean equip(EquippableItem item) {
 		//In addition to equipping itself, item reassigns itself to the quickslot
 		//This is a special case as the item is being removed from inventory, but is staying with the hero.
 		int slot = -1;
@@ -464,7 +511,7 @@ public class Belongings implements Iterable<Item>, IDecayable, IBag {
 			slot = Dungeon.quickslot.getSlot(item);
 		}
 
-		EquipableItem.Slot[] slots = item.getSlots();
+		EquippableItem.Slot[] slots = item.getSlots();
 
 		boolean good = false;
 		if (slots.length == 1 && tryReplaceSimple(slots[0], item)) {
@@ -480,6 +527,8 @@ public class Belongings implements Iterable<Item>, IDecayable, IBag {
 
 		if (good)
 		{
+            GLog.d("equip "+item.getDisplayName());
+
 			remove(item);
 
 			onItemEquipped(owner, item, slot, true);
@@ -488,21 +537,23 @@ public class Belongings implements Iterable<Item>, IDecayable, IBag {
 		return good;
 	}
 
-	private void onItemEquipped(Char owner, EquipableItem item, int quickslot, boolean cursednotify) {
+	private void onItemEquipped(Char owner, EquippableItem item, int quickslot, boolean cursednotify) {
 		boolean cursed = false;
 
 		if (item.bucStatus() == BUCStatus.Cursed) {
 			cursed = true;
 			item.bucStatus(true);
 
-			owner.sprite.emitter().burst(ShadowParticle.CURSE, 6);
-			Sample.INSTANCE.play(Assets.SND_CURSED);
+            if (Level.fieldOfView[owner.pos] && owner.sprite != null) {
+                owner.sprite.emitter().burst(ShadowParticle.CURSE, 6);
+                Sample.INSTANCE.play(Assets.SND_CURSED);
+            }
 		}
 
 		item.onEquip(owner, cursed & cursednotify);
-		weight += item.weight * item.quantity();
+        onWeightChanged(item.weight() * item.quantity());
 
-		GLog.d("weight="+weight+" "+backpack1.weight+" "+backpack2.weight+" "+backpack3.weight+" "+backpack4.weight);
+		GLog.d("weight0="+weight+" "+backpack1.weight()+" "+backpack2.weight()+" "+backpack3.weight()+" "+backpack4.weight());
 
 		if (quickslot != -1) {
 			Dungeon.quickslot.setSlot(quickslot, item);
@@ -512,21 +563,21 @@ public class Belongings implements Iterable<Item>, IDecayable, IBag {
 		owner.spend(item.equipTime, false);
 	}
 
-	private void onItemUnequipped(Char owner, EquipableItem item, boolean single) {
+	private void onItemUnequipped(Char owner, EquippableItem item, boolean single) {
 		item.onUnequip(owner);
-		weight -= item.weight * item.quantity();
+		weight -= item.weight() * item.quantity();
 
 		owner.spend(item.equipTime, single);
-		GLog.d("weight="+weight+" "+backpack1.weight+" "+backpack2.weight+" "+backpack3.weight+" "+backpack4.weight);
+		GLog.d("weight1="+weight+" "+backpack1.weight()+" "+backpack2.weight()+" "+backpack3.weight()+" "+backpack4.weight());
 	}
 
 	private static final String TXT_UNEQUIP_CANT	= "You can't remove the %s!";
 
-	public boolean unequip(EquipableItem item, boolean collect) {
+	public boolean unequip(EquippableItem item, boolean collect) {
 		return unequip(item, collect, true);
 	}
 
-	public boolean unequip(EquipableItem item, boolean collect, boolean single) {
+	public boolean unequip(EquippableItem item, boolean collect, boolean single) {
 		if (item.bucStatus() == BUCStatus.Cursed) {
 			if (owner instanceof Hero) {
 				GLog.w(TXT_UNEQUIP_CANT, item.getDisplayName());
@@ -550,8 +601,8 @@ public class Belongings implements Iterable<Item>, IDecayable, IBag {
 		return true;
 	}
 
-	private void unequip(EquipableItem item) {
-		EquipableItem.Slot[] slots = item.getSlots();
+	private void unequip(EquippableItem item) {
+		EquippableItem.Slot[] slots = item.getSlots();
 
 		for (int n=0;n<slots.length;n++) {
 			switch(slots[n]) {
@@ -565,44 +616,56 @@ public class Belongings implements Iterable<Item>, IDecayable, IBag {
 						offhand = null;
 					}
 					break;
+
+                case Face:
+                    if (face == item) {
+                        face = null;
+                    }
+                    break;
+                case Amulet:
+                    if (amulet == item) {
+                        amulet = null;
+                    }
+                    break;
+                case Ring1:
+                    if (ring1 == item) {
+                        ring1 = null;
+                    }
+                    break;
+                case Ring2:
+                    if (ring2 == item) {
+                        ring2 = null;
+                    }
+                    break;
+
+                case Cloak:
+                    if (cloak == item) {
+                        cloak = null;
+                    }
+                    break;
 				case Armor:
 					if (armor == item) {
 						armor = null;
 					}
 					break;
+                case Helmet:
+                    if (helmet == item) {
+                        helmet = null;
+                    }
+                    break;
 				case Gloves:
 					if (gloves == item) {
 						gloves = null;
 					}
 					break;
+                case Pants:
+                    if (pants == item) {
+                        pants = null;
+                    }
+                    break;
 				case Boots:
 					if (boots == item) {
 						boots = null;
-					}
-					break;
-				case Ring1:
-					if (ring1 == item) {
-						ring1 = null;
-					}
-					break;
-				case Ring2:
-					if (ring2 == item) {
-						ring2 = null;
-					}
-					break;
-				case Amulet:
-					if (amulet == item) {
-						amulet = null;
-					}
-					break;
-				case Cloak:
-					if (cloak == item) {
-						cloak = null;
-					}
-					break;
-				case Face:
-					if (face == item) {
-						face = null;
 					}
 					break;
 			}
@@ -623,20 +686,69 @@ public class Belongings implements Iterable<Item>, IDecayable, IBag {
 		return false;
 	}
 
-	public EquipableItem weapon = null;
-	public EquipableItem offhand = null;
-	public EquipableItem weapon2 = null;
-	public EquipableItem offhand2 = null;
+	private EquippableItem weapon = null;
+	private EquippableItem offhand = null;
 
-	public EquipableItem armor = null;
-    public EquipableItem gloves = null;
-    public EquipableItem boots = null;
-    public EquipableItem cloak = null;
+    private EquippableItem face = null;
+    private EquippableItem amulet = null;
+	private EquippableItem ring1 = null;
+	private EquippableItem ring2 = null;
 
-	public EquipableItem ring1 = null;
-	public EquipableItem ring2 = null;
-	public EquipableItem amulet = null;
-	public EquipableItem face = null;
+	private EquippableItem cloak = null;
+	private EquippableItem helmet = null;
+	private EquippableItem armor = null;
+    private EquippableItem gloves = null;
+	private EquippableItem pants = null;
+    private EquippableItem boots = null;
+
+    public EquippableItem weapon() {
+        return weapon;
+    }
+
+    public EquippableItem offhand() {
+        return offhand;
+    }
+
+    public EquippableItem face() {
+        return face;
+    }
+
+    public EquippableItem amulet() {
+        return amulet;
+    }
+
+    public EquippableItem ring1() {
+        return ring1;
+    }
+
+    public EquippableItem ring2() {
+        return ring2;
+    }
+
+    public EquippableItem cloak() {
+        return cloak;
+    }
+
+    public EquippableItem armor() {
+        return armor;
+    }
+
+    public EquippableItem helmet() {
+        return helmet;
+    }
+
+    public EquippableItem gloves() {
+        return gloves;
+    }
+
+    public EquippableItem pants() {
+        return pants;
+    }
+
+    public EquippableItem boots() {
+        return boots;
+    }
+
 
 	public int weight = 0;
 	
@@ -675,16 +787,19 @@ public class Belongings implements Iterable<Item>, IDecayable, IBag {
 
 	private static final String WEAPON		= "weapon";
     private static final String OFFHAND 	= "offhand";
-    private static final String WEAPON2 	= "weapon2";
-    private static final String OFFHAND2	= "offhand2";
-	private static final String ARMOR		= "armor";
-    private static final String GLOVES  	= "gloves";
-    private static final String BOOTS   	= "boots";
-    private static final String CLOAK   	= "cloak";
+
 	private static final String RING1   	= "ring1";
 	private static final String RING2   	= "ring2";
 	private static final String AMULET		= "amulet";
-    private static final String FACE    	= "face";
+	private static final String FACE    	= "face";
+
+	private static final String CLOAK   	= "cloak";
+	private static final String ARMOR		= "armor";
+
+	private static final String HELMET		= "helmet";
+    private static final String GLOVES  	= "gloves";
+	private static final String PANTS		= "pants";
+    private static final String BOOTS   	= "boots";
 
 	public void storeInBundle( Bundle bundle ) {
 		backpack1.storeInBundle(bundle, BACKPACK1);
@@ -705,18 +820,19 @@ public class Belongings implements Iterable<Item>, IDecayable, IBag {
 
 		bundle.put(WEAPON, weapon);
         bundle.put(OFFHAND, offhand);
-        bundle.put(WEAPON2, weapon2);
-        bundle.put(OFFHAND2, offhand2);
-
-		bundle.put(ARMOR, armor);
-        bundle.put(GLOVES, gloves);
-        bundle.put(BOOTS, boots);
-        bundle.put(CLOAK, cloak);
 
 		bundle.put(RING1, ring1);
 		bundle.put(RING2, ring2);
-        bundle.put(AMULET, amulet);
-        bundle.put(FACE, face);
+		bundle.put(AMULET, amulet);
+		bundle.put(FACE, face);
+
+        bundle.put(CLOAK, cloak);
+		bundle.put(ARMOR, armor);
+        bundle.put(HELMET, helmet);
+        bundle.put(GLOVES, gloves);
+		bundle.put(PANTS, pants);
+        bundle.put(BOOTS, boots);
+
 	}
 	
 	public void restoreFromBundle( Bundle bundle ) {
@@ -747,28 +863,29 @@ public class Belongings implements Iterable<Item>, IDecayable, IBag {
 		backpack3.restoreFromBundle(bundle);
 		*/
 
-		weapon = (EquipableItem) bundle.get(WEAPON);
-		offhand = (EquipableItem) bundle.get(OFFHAND);
-		weapon2 = (EquipableItem) bundle.get(WEAPON2);
-		offhand2 = (EquipableItem) bundle.get(OFFHAND2);
+		weapon = (EquippableItem) bundle.get(WEAPON);
+		offhand = (EquippableItem) bundle.get(OFFHAND);
 
-		armor = (EquipableItem) bundle.get(ARMOR);
-		gloves = (EquipableItem) bundle.get(GLOVES);
-		boots = (EquipableItem) bundle.get(BOOTS);
-		cloak = (EquipableItem) bundle.get(CLOAK);
+		ring1 = (EquippableItem) bundle.get(RING1);
+		ring2 = (EquippableItem) bundle.get(RING2);
+		amulet = (EquippableItem) bundle.get(AMULET);
+		face = (EquippableItem) bundle.get(FACE);
 
-		ring1 = (EquipableItem) bundle.get(RING1);
-		ring2 = (EquipableItem) bundle.get(RING2);
-		amulet = (EquipableItem) bundle.get(AMULET);
-		face = (EquipableItem) bundle.get(FACE);
+		cloak = (EquippableItem) bundle.get(CLOAK);
+		armor = (EquippableItem) bundle.get(ARMOR);
+		helmet = (EquippableItem) bundle.get(HELMET);
+		gloves = (EquippableItem) bundle.get(GLOVES);
+		pants = (EquippableItem) bundle.get(PANTS);
+		boots = (EquippableItem) bundle.get(BOOTS);
+
 
 		Iterator<Item> iterator = iterator(true, false);
 
 		while (iterator.hasNext()) {
 			Item item = iterator.next();
 
-			if (item instanceof EquipableItem) {
-				onItemEquipped(owner, (EquipableItem)item, -1, false);
+			if (item instanceof EquippableItem) {
+				onItemEquipped(owner, (EquippableItem)item, -1, false);
 			}
 		}
 
@@ -979,31 +1096,7 @@ public class Belongings implements Iterable<Item>, IDecayable, IBag {
             offhand.identify();
             Badges.validateItemLevelAquired(offhand);
         }
-        if (weapon2 != null)
-        {
-            weapon2.identify();
-            Badges.validateItemLevelAquired(weapon2);
-        }
-        if (offhand2 != null){
-            offhand2.identify();
-            Badges.validateItemLevelAquired(offhand2);
-        }
-		if (armor != null) {
-			armor.identify();
-			Badges.validateItemLevelAquired( armor );
-		}
-        if (gloves != null) {
-            gloves.identify();
-            Badges.validateItemLevelAquired(gloves);
-        }
-        if (boots != null){
-            boots.identify();
-            Badges.validateItemLevelAquired(boots);
-        }
-        if (cloak != null){
-            cloak.identify();
-            Badges.validateItemLevelAquired(cloak);
-        }
+
 		if (ring1 != null) {
 			ring1.identify();
 			Badges.validateItemLevelAquired(ring1);
@@ -1012,13 +1105,38 @@ public class Belongings implements Iterable<Item>, IDecayable, IBag {
 			ring2.identify();
 			Badges.validateItemLevelAquired(ring2);
 		}
-        if (amulet != null) {
-            amulet.identify();
-            Badges.validateItemLevelAquired(amulet);
-        }
-        if (face != null) {
-            face.identify();
-            Badges.validateItemLevelAquired(face);
+		if (amulet != null) {
+			amulet.identify();
+			Badges.validateItemLevelAquired(amulet);
+		}
+		if (face != null) {
+			face.identify();
+			Badges.validateItemLevelAquired(face);
+		}
+
+		if (cloak != null){
+			cloak.identify();
+			Badges.validateItemLevelAquired(cloak);
+		}
+		if (armor != null) {
+			armor.identify();
+			Badges.validateItemLevelAquired( armor );
+		}
+		if (helmet != null) {
+			helmet.identify();
+			Badges.validateItemLevelAquired(helmet);
+		}
+		if (gloves != null) {
+			gloves.identify();
+			Badges.validateItemLevelAquired(gloves);
+		}
+		if (pants != null) {
+			pants.identify();
+			Badges.validateItemLevelAquired(pants);
+		}
+        if (boots != null){
+            boots.identify();
+            Badges.validateItemLevelAquired(boots);
         }
 
 		/*
@@ -1096,6 +1214,33 @@ public class Belongings implements Iterable<Item>, IDecayable, IBag {
 
 		return itemsModified;
 	}
+
+    public Item randomEquipped() {
+        ItemIterator iterator = new ItemIterator(true, false);
+
+        int count = 0;
+
+        for (int n = 0; n < iterator.equippedLength; n++) {
+            if (iterator.equipped[n] != null) {
+                count++;
+            }
+        }
+
+        if (count > 0) {
+            int index = Random.Int(count);
+
+            for (int n = 0; n < iterator.equippedLength; n++) {
+                if (iterator.equipped[n] != null) {
+                    if (index == 0) {
+                        return iterator.equipped[n];
+                    }
+                    index--;
+                }
+            }
+        }
+
+        return null;
+    }
 
 	public Item randomUnequipped() {
 		Item retval = null;
@@ -1300,9 +1445,9 @@ public class Belongings implements Iterable<Item>, IDecayable, IBag {
 	}
 
 
-	public ITool[] getToolTypes(String... types) {
+	public ITool[] getToolTypes(boolean equipped, boolean unequipped, String... types) {
 		ITool[] retval = new ITool[types.length];
-		Iterator<Item> iterator = iterator(true, true);
+		Iterator<Item> iterator = iterator(equipped, unequipped);
 
 		while (iterator.hasNext()) {
 			Item item = iterator.next();
@@ -1356,8 +1501,8 @@ public class Belongings implements Iterable<Item>, IDecayable, IBag {
 		private Iterator<Item> backpack4Iterator = backpack4.iterator();
 		private int backpackIndex = -1;
 
-		private Item[] equipped = {weapon, offhand, weapon2, offhand2, armor, gloves, boots, cloak, ring1, ring2, amulet, face};
-		private int equippedLength = equipped.length;
+		public Item[] equipped = {weapon, offhand, face, amulet, ring1, ring2, cloak, armor, helmet, gloves, pants, boots };
+		public int equippedLength = equipped.length;
 
 		private boolean backpackItems;
 
@@ -1459,45 +1604,47 @@ public class Belongings implements Iterable<Item>, IDecayable, IBag {
 					equipped[1] = null;
 					unequip(offhand);
 					break;
-				case 2:
-					equipped[2] = null;
-					unequip(weapon2);
-					break;
-				case 3:
-					equipped[3] = null;
-					unequip(offhand2);
-					break;
+
+                case 2:
+                    equipped[2] = null;
+                    unequip(face);
+                    break;
+                case 3:
+                    equipped[3] = null;
+                    unequip(amulet);
+                    break;
 				case 4:
 					equipped[4] = null;
-					unequip(armor);
+					unequip(ring1);
 					break;
 				case 5:
 					equipped[5] = null;
-					unequip(gloves);
+					unequip(ring2);
 					break;
+
 				case 6:
 					equipped[6] = null;
-					unequip(boots);
+					unequip(cloak);
 					break;
 				case 7:
 					equipped[7] = null;
-					unequip(cloak);
+					unequip(armor);
 					break;
 				case 8:
 					equipped[8] = null;
-					unequip(ring1);
+					unequip(helmet);
 					break;
 				case 9:
 					equipped[9] = null;
-					unequip(ring2);
+					unequip(gloves);
 					break;
 				case 10:
 					equipped[10] = null;
-					unequip(amulet);
+					unequip(pants);
 					break;
 				case 11:
 					equipped[11] = null;
-					unequip(face);
+					unequip(boots);
 					break;
 			}
 		}

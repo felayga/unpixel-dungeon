@@ -25,9 +25,11 @@
 package com.felayga.unpixeldungeon.items.artifacts;
 
 import com.felayga.unpixeldungeon.Dungeon;
+import com.felayga.unpixeldungeon.actors.Actor;
 import com.felayga.unpixeldungeon.actors.Char;
 import com.felayga.unpixeldungeon.levels.Level;
 import com.felayga.unpixeldungeon.mechanics.GameTime;
+import com.felayga.unpixeldungeon.mechanics.MagicType;
 import com.felayga.unpixeldungeon.sprites.ItemSpriteSheet;
 import com.felayga.unpixeldungeon.ui.BuffIndicator;
 import com.felayga.unpixeldungeon.utils.GLog;
@@ -88,7 +90,7 @@ public class CapeOfThorns extends Artifact_old {
 			return true;
 		}
 
-		public int proc(int damage, Char attacker, Char defender){
+		public int proc(int damage, Actor attacker, Char defender){
 			if (cooldown == 0){
 				charge += damage*(0.5+level*0.05);
 				if (charge >= chargeCap){
@@ -103,8 +105,11 @@ public class CapeOfThorns extends Artifact_old {
 				int deflected = Random.NormalIntRange(0, damage);
 				damage -= deflected;
 
-				if (attacker != null && Level.adjacent(attacker.pos, defender.pos)) {
-					attacker.damage(deflected, this);
+				if (attacker instanceof Char) {
+					Char c = (Char)attacker;
+					if (Level.adjacent(c.pos, defender.pos)) {
+						c.damage(deflected, MagicType.Mundane, null);
+					}
 				}
 
 				exp+= deflected;

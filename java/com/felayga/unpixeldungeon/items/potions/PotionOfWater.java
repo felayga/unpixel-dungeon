@@ -37,11 +37,14 @@ import com.felayga.unpixeldungeon.utils.GLog;
 
 public class PotionOfWater extends Potion {
 
+    public PotionOfWater()
 	{
 		name = "Potion of Water";
 		initials = "H2O";
 
 		bones = true;
+
+        price = 30;
 	}
 	
 	@Override
@@ -56,9 +59,5 @@ public class PotionOfWater extends Potion {
 		return
 			"This is a flask of water.";
 	}
-	
-	@Override
-	public int price() {
-		return isKnown() ? 30 * quantity : super.price();
-	}
+
 }

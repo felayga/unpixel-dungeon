@@ -28,6 +28,7 @@ import com.felayga.unpixeldungeon.Dungeon;
 import com.felayga.unpixeldungeon.ResultDescriptions;
 import com.felayga.unpixeldungeon.levels.Level;
 import com.felayga.unpixeldungeon.mechanics.GameTime;
+import com.felayga.unpixeldungeon.mechanics.MagicType;
 import com.felayga.unpixeldungeon.ui.BuffIndicator;
 import com.felayga.unpixeldungeon.utils.GLog;
 import com.watabou.utils.Random;
@@ -63,9 +64,9 @@ public class Ooze extends Buff {
 	public boolean act() {
 		if (target.isAlive()) {
 			if (Dungeon.depth > 4)
-				target.damage( Dungeon.depth/5, this );
+				target.damage( Dungeon.depth/5, MagicType.Acid, null );
 			else if (Random.Int(2) == 0)
-				target.damage( 1, this );
+				target.damage( 1, MagicType.Acid, null );
 			if (!target.isAlive() && target == Dungeon.hero) {
 				Dungeon.fail( ResultDescriptions.OOZE );
 				GLog.n( TXT_HERO_KILLED, toString() );

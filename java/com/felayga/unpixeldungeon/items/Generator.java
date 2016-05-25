@@ -24,8 +24,10 @@
  */
 package com.felayga.unpixeldungeon.items;
 
+import android.util.Log;
+
 import com.felayga.unpixeldungeon.Dungeon;
-import com.felayga.unpixeldungeon.actors.mobs.npcs.Ghost;
+//import com.felayga.unpixeldungeon.actors.mobs.npcs.Ghost;
 import com.felayga.unpixeldungeon.actors.mobs.npcs.Wandmaker.Rotberry;
 import com.felayga.unpixeldungeon.items.armor.*;
 import com.felayga.unpixeldungeon.items.armor.heavy.HalfPlateArmor;
@@ -38,6 +40,17 @@ import com.felayga.unpixeldungeon.items.bags.Bag;
 import com.felayga.unpixeldungeon.items.food.Food;
 import com.felayga.unpixeldungeon.items.food.MysteryMeat;
 import com.felayga.unpixeldungeon.items.food.Pasty;
+import com.felayga.unpixeldungeon.items.gemstones.Gemstone;
+import com.felayga.unpixeldungeon.items.gemstones.black.GemstoneBlackOpal;
+import com.felayga.unpixeldungeon.items.gemstones.black.GemstoneJetStone;
+import com.felayga.unpixeldungeon.items.gemstones.black.GemstoneObsidian;
+import com.felayga.unpixeldungeon.items.gemstones.blue.GemstoneLapisLazuli;
+import com.felayga.unpixeldungeon.items.gemstones.blue.GemstoneSapphire;
+import com.felayga.unpixeldungeon.items.gemstones.brown.GemstoneAmber;
+import com.felayga.unpixeldungeon.items.gemstones.brown.GemstoneTigersEye;
+import com.felayga.unpixeldungeon.items.gemstones.randomized.GemstoneAgate;
+import com.felayga.unpixeldungeon.items.gemstones.white.GemstoneDiamond;
+import com.felayga.unpixeldungeon.items.gemstones.white.GemstoneDilithium;
 import com.felayga.unpixeldungeon.items.potions.*;
 import com.felayga.unpixeldungeon.items.rings.*;
 import com.felayga.unpixeldungeon.items.scrolls.*;
@@ -56,6 +69,7 @@ import com.felayga.unpixeldungeon.items.weapon.melee.simple.Quarterstaff;
 import com.felayga.unpixeldungeon.items.weapon.melee.simple.Spear;
 import com.felayga.unpixeldungeon.items.weapon.missiles.*;
 import com.felayga.unpixeldungeon.plants.*;
+import com.felayga.unpixeldungeon.utils.GLog;
 import com.watabou.utils.Bundle;
 import com.watabou.utils.Random;
 
@@ -75,7 +89,8 @@ public class Generator {
 		ARTIFACT(15, Artifact_old.class),
 		SEED(50, Plant.Seed.class),
 		FOOD(0, Food.class),
-		GOLD(500, Gold.class);
+		GOLD(500, Gold.class),
+        GEMSTONE(400, Gemstone.class);
 
 		public Class<?>[] classes;
 		public float[] probs;
@@ -146,7 +161,7 @@ public class Generator {
 				PotionOfHallucination.class,
 				PotionOfWater.class
 		};
-		Category.POTION.probs = new float[]{45, 4, 15, 10, 15, 10, 0, 20, 12, 10, 0, 10, 10, 20, 45};
+		Category.POTION.probs = new float[]{45, 4, 15, 10, 15, 10, 0, 20, 12, 10, 0, 10, 10, 20, 45, 40};
 
 		//TODO: add last ones when implemented
 		Category.WAND.classes = new Class<?>[]{
@@ -155,15 +170,15 @@ public class Generator {
 				WandOfDisintegration.class,
 				WandOfFireblast.class,
 				WandOfVenom.class,
-				WandOfBlastWave.class,
+				//WandOfBlastWave.class,
 				//WandOfLivingEarth.class,
 				WandOfFrost.class,
-				WandOfPrismaticLight.class,
+				//WandOfPrismaticLight.class,
 				//WandOfWarding.class,
-				WandOfTransfusion.class,
-				WandOfCorruption.class,
+				//WandOfTransfusion.class,
+				//WandOfCorruption.class,
 				WandOfRegrowth.class};
-		Category.WAND.probs = new float[]{4, 4, 4, 4, 4, 3, /*3,*/ 3, 3, /*3,*/ 3, 3, 3};
+		Category.WAND.probs = new float[]{4, 4, 4, 4, 4, 3, 3, /*3, 3, 3, 3, 3, 3*/};
 
 		Category.WEAPON.classes = new Class<?>[]{
 				Dagger.class,
@@ -225,8 +240,8 @@ public class Generator {
 				TimekeepersHourglass.class,
 				UnstableSpellbook.class,
 				AlchemistsToolkit.class, //currently removed from drop tables, pending rework.
-				DriedRose.class, //starts with no chance of spawning, chance is set directly after beating ghost quest.
-				LloydsBeacon.class,
+				//DriedRose.class, //starts with no chance of spawning, chance is set directly after beating ghost quest.
+				//LloydsBeacon.class,
 				EtherealChains.class
 		};
 		Category.ARTIFACT.probs = INITIAL_ARTIFACT_PROBS.clone();
@@ -245,6 +260,18 @@ public class Generator {
 				Stormvine.Seed.class,
 				Starflower.Seed.class};
 		Category.SEED.probs = new float[]{12, 12, 12, 12, 12, 12, 12, 0, 4, 12, 12, 1};
+
+        Category.GEMSTONE.classes = new Class<?>[]{
+                GemstoneBlackOpal.class,
+                GemstoneJetStone.class,
+                GemstoneObsidian.class,
+                GemstoneLapisLazuli.class,
+                GemstoneSapphire.class,
+                GemstoneAmber.class,
+                GemstoneTigersEye.class,
+
+        };
+
 	}
 
 	public static void reset() {
@@ -259,7 +286,6 @@ public class Generator {
 
 	public static Item random(Category cat) {
 		try {
-
 			categoryProbs.put(cat, categoryProbs.get(cat) / 2);
 
 			switch (cat) {
@@ -276,9 +302,9 @@ public class Generator {
 			}
 
 		} catch (Exception e) {
-
+            GLog.d("random item failed");
+            GLog.d(e);
 			return null;
-
 		}
 	}
 
@@ -380,7 +406,7 @@ public class Generator {
 		Category.ARTIFACT.probs = INITIAL_ARTIFACT_PROBS.clone();
 
 		//checks for dried rose quest completion, adds the rose in accordingly.
-		if (Ghost.Quest.completed()) Category.ARTIFACT.probs[10] = 1;
+		//if (Ghost.Quest.completed()) Category.ARTIFACT.probs[10] = 1;
 
 		spawnedArtifacts = new ArrayList<String>();
 	}

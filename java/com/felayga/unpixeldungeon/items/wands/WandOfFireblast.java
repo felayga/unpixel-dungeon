@@ -29,6 +29,7 @@ import com.felayga.unpixeldungeon.actors.buffs.Paralysis;
 import com.felayga.unpixeldungeon.effects.MagicMissile;
 import com.felayga.unpixeldungeon.items.weapon.melee.simple.MagesStaff;
 import com.felayga.unpixeldungeon.mechanics.GameTime;
+import com.felayga.unpixeldungeon.mechanics.MagicType;
 import com.felayga.unpixeldungeon.sprites.ItemSpriteSheet;
 import com.watabou.noosa.audio.Sample;
 import com.felayga.unpixeldungeon.Assets;
@@ -73,7 +74,7 @@ public class WandOfFireblast extends Wand {
 			Char ch = Actor.findChar( cell );
 			if (ch != null) {
 
-				ch.damage(Random.NormalIntRange(1, (int) (8 + (level * level * (1 + chargesPerCast()) / 6f))), this);
+				ch.damage(Random.NormalIntRange(1, (int) (8 + (level * level * (1 + chargesPerCast()) / 6f))), MagicType.Fire, null);
 				Buff.affect( ch, Burning.class ).reignite( ch );
 				switch(chargesPerCast()){
 					case 1:

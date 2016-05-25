@@ -36,24 +36,27 @@ import com.felayga.unpixeldungeon.effects.CellEmitter;
 import com.felayga.unpixeldungeon.effects.particles.AcidParticle;
 import com.felayga.unpixeldungeon.effects.particles.FlameParticle;
 import com.felayga.unpixeldungeon.levels.Level;
+import com.felayga.unpixeldungeon.mechanics.MagicType;
 import com.felayga.unpixeldungeon.scenes.GameScene;
 import com.felayga.unpixeldungeon.utils.GLog;
 import com.watabou.noosa.audio.Sample;
 
 public class PotionOfAcid extends Potion {
 
+    public PotionOfAcid()
 	{
 		name = "Potion of Acid";
 		initials = "Ac";
 
 		isHarmful = true;
+        price = 40;
 	}
 
 	@Override
 	public void apply( Hero hero ) {
 		setKnown();
 		GLog.p("This burns like acid!");
-		Acid.burnChar(hero, this);
+		Acid.burnChar(hero, null);
 	}
 
 	@Override
@@ -87,9 +90,5 @@ public class PotionOfAcid extends Potion {
 			"This flask contains an acidic compound which will cling " +
 			"to surfaces it comes into contact with.";
 	}
-	
-	@Override
-	public int price() {
-		return isKnown() ? 40 * quantity : super.price();
-	}
+
 }

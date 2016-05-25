@@ -34,6 +34,7 @@ import com.felayga.unpixeldungeon.effects.particles.SparkParticle;
 import com.felayga.unpixeldungeon.items.weapon.Weapon;
 import com.felayga.unpixeldungeon.levels.Level;
 import com.felayga.unpixeldungeon.levels.traps.LightningTrap;
+import com.felayga.unpixeldungeon.mechanics.MagicType;
 import com.watabou.utils.Random;
 
 public class Shock extends Weapon.Enchantment {
@@ -83,7 +84,7 @@ public class Shock extends Weapon.Enchantment {
 		}
 		
 		affected.add(ch);
-		ch.damage(Level.water[ch.pos] && !ch.flying ? (int) (damage * 2) : damage, LightningTrap.LIGHTNING);
+		ch.damage(Level.water[ch.pos] && !ch.flying ? (int) (damage * 2) : damage, MagicType.Shock, null);
 		
 		ch.sprite.centerEmitter(-1).burst(SparkParticle.FACTORY, 3);
 		ch.sprite.flash();

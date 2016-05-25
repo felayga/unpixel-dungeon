@@ -30,6 +30,7 @@ import com.felayga.unpixeldungeon.actors.buffs.Buff;
 import com.felayga.unpixeldungeon.actors.buffs.Vertigo;
 import com.felayga.unpixeldungeon.effects.BlobEmitter;
 import com.felayga.unpixeldungeon.effects.Speck;
+import com.felayga.unpixeldungeon.mechanics.MagicType;
 
 public class ConfusionGas extends Blob {
 
@@ -40,8 +41,8 @@ public class ConfusionGas extends Blob {
 		Char ch;
 		for (int i=0; i < LENGTH; i++) {
 			if (cur[i] > 0 && (ch = Actor.findChar( i )) != null) {
-				if (!ch.immunities().contains(this.getClass()))
-					Buff.prolong( ch, Vertigo.class, 2 );
+				//todo: ConfusionGas resistance/immunity
+				//if (!ch.immunities().contains(this.getClass())) Buff.prolong(ch, Vertigo.class, 2);
 			}
 		}
 	}

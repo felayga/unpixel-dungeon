@@ -71,6 +71,7 @@ public class Blandfruit extends Food {
 	public Potion potionAttrib = null;
 	public ItemSprite.Glowing potionGlow = null;
 
+    public Blandfruit()
 	{
 		name = "Blandfruit";
 		stackable = true;
@@ -79,6 +80,7 @@ public class Blandfruit extends Food {
 		hornValue = 6; //only applies when blandfruit is cooked
 
 		bones = true;
+        price = 20;
 	}
 
 	@Override
@@ -190,11 +192,6 @@ public class Blandfruit extends Food {
 	@Override
 	public String info() {
 		return info;
-	}
-
-	@Override
-	public int price() {
-		return 20 * quantity;
 	}
 
 	public Item cook(Seed seed){

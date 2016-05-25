@@ -54,13 +54,13 @@ public class DisarmChance extends MeleeMobAttack {
         if (target == Dungeon.hero) {
 
             Hero hero = Dungeon.hero;
-            KindOfWeapon weapon = (KindOfWeapon)hero.belongings.weapon;
+            KindOfWeapon weapon = (KindOfWeapon)hero.belongings.weapon();
 
             if (weapon != null && !(weapon instanceof Knuckles) && weapon.bucStatus() != BUCStatus.Cursed) {
                 if (hitsToDisarm == 0) hitsToDisarm = Random.NormalIntRange(4, 8);
 
                 if (--hitsToDisarm == 0) {
-                    hero.belongings.weapon = null;
+                    hero.belongings.unequip(weapon, false);
                     Dungeon.quickslot.clearItem(weapon);
                     weapon.updateQuickslot();
                     Dungeon.level.drop(weapon, hero.pos).sprite.drop();

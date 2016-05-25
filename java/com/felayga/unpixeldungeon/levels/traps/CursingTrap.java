@@ -66,7 +66,7 @@ public class CursingTrap extends Trap {
 
 			user.belongings.bucChange(true, BUCStatus.Cursed, true, true, true, false);
 
-			//EquipableItem.equipCursed(user);
+			//EquippableItem.equipCursed(user);
 			GLog.n("Your worn equipment becomes cursed!");
 		}
 	}

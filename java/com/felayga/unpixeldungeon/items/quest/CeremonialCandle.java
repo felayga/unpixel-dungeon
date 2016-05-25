@@ -26,8 +26,9 @@ package com.felayga.unpixeldungeon.items.quest;
 
 import com.felayga.unpixeldungeon.Assets;
 import com.felayga.unpixeldungeon.Dungeon;
+import com.felayga.unpixeldungeon.actors.Char;
 import com.felayga.unpixeldungeon.actors.hero.Hero;
-import com.felayga.unpixeldungeon.actors.mobs.NewbornElemental;
+//import com.felayga.unpixeldungeon.actors.mobs.NewbornElemental;
 import com.felayga.unpixeldungeon.effects.CellEmitter;
 import com.felayga.unpixeldungeon.effects.particles.ElmoParticle;
 import com.felayga.unpixeldungeon.items.Heap;
@@ -68,8 +69,8 @@ public class CeremonialCandle extends Item {
 	}
 
 	@Override
-	protected void onThrow(int cell) {
-		super.onThrow(cell);
+	protected void onThrow(int cell, Char thrower) {
+		super.onThrow(cell, thrower);
 		checkCandles();
 	}
 
@@ -94,10 +95,12 @@ public class CeremonialCandle extends Item {
 				heapBottom.pickUp();
 				heapLeft.pickUp();
 
+				/*
 				NewbornElemental elemental = new NewbornElemental();
 				elemental.pos = ritualPos;
 				elemental.state = elemental.HUNTING;
 				GameScene.add(elemental, 1);
+				*/
 
 				for (int i : Level.NEIGHBOURS9){
 					CellEmitter.get(ritualPos+i).burst(ElmoParticle.FACTORY, 10);

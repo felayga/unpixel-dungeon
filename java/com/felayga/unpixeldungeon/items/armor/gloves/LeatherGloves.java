@@ -25,6 +25,7 @@
 
 package com.felayga.unpixeldungeon.items.armor.gloves;
 
+import com.felayga.unpixeldungeon.actors.buffs.Encumbrance;
 import com.felayga.unpixeldungeon.mechanics.GameTime;
 import com.felayga.unpixeldungeon.sprites.ItemSpriteSheet;
 import com.felayga.unpixeldungeon.utils.GLog;
@@ -35,10 +36,11 @@ import com.watabou.utils.Bundle;
  */
 public class LeatherGloves extends Gloves {
     public LeatherGloves() {
-        super(0, GameTime.TICK);
+        super(0, 0, GameTime.TICK);
 
         name = "leather gloves";
         image = ItemSpriteSheet.GLOVES_LEATHER;
+        weight(Encumbrance.UNIT * 10);
     }
 
 }

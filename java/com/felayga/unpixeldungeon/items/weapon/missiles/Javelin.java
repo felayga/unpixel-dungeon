@@ -29,6 +29,7 @@ import com.felayga.unpixeldungeon.actors.buffs.Buff;
 import com.felayga.unpixeldungeon.actors.buffs.Cripple;
 import com.felayga.unpixeldungeon.items.Item;
 import com.felayga.unpixeldungeon.mechanics.GameTime;
+import com.felayga.unpixeldungeon.mechanics.WeaponSkill;
 import com.felayga.unpixeldungeon.sprites.ItemSpriteSheet;
 import com.watabou.utils.Random;
 
@@ -39,12 +40,13 @@ public class Javelin extends MissileWeapon {
 	}
 	
 	public Javelin( int number ) {
-		super(GameTime.TICK, 2, 15, number);
+		super(WeaponSkill.Martial, GameTime.TICK, 2, 15, number);
 
 		name = "javelin";
 		image = ItemSpriteSheet.JAVELIN;
 
 		//STR = 15;
+        price = 12;
 	}
 	
 	@Override
@@ -68,9 +70,5 @@ public class Javelin extends MissileWeapon {
 		quantity = Random.Int( 5, 15 );
 		return this;
 	}
-	
-	@Override
-	public int price() {
-		return 12 * quantity;
-	}
+
 }

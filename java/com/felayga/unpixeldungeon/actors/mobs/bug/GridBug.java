@@ -24,9 +24,11 @@
  */
 package com.felayga.unpixeldungeon.actors.mobs.bug;
 
+import com.felayga.unpixeldungeon.actors.buffs.Encumbrance;
 import com.felayga.unpixeldungeon.actors.mobs.Mob;
 import com.felayga.unpixeldungeon.items.weapon.melee.mob.MeleeMobAttack;
 import com.felayga.unpixeldungeon.mechanics.GameTime;
+import com.felayga.unpixeldungeon.mechanics.MagicType;
 import com.felayga.unpixeldungeon.mechanics.Roll;
 import com.felayga.unpixeldungeon.sprites.mobs.bug.GridBugSprite;
 
@@ -39,21 +41,20 @@ public class GridBug extends Mob {
         name = "grid bug";
         spriteClass = GridBugSprite.class;
 
-        DEXCHA = 8;
-
         experience = 1;
         movementSpeed = GameTime.TICK;
         attackSpeed = GameTime.TICK;
-        defenseMundane = 9;
+        defenseMundane = 11;
         defenseMagical = 0;
+        weight = Encumbrance.UNIT * 15;
+        nutrition = 0;
+        immunityMagical = MagicType.None.value;
 
-        maxLvl = 5;
-
-        belongings.weapon = new MeleeMobAttack(GameTime.TICK, 1, 1);
+        belongings.collectEquip(new MeleeMobAttack(GameTime.TICK, 1, 1));
     }
 
     @Override
     public String description() {
-        return "grid bug boop";
+        return "A throwback to an older generation, the grid bug is as dangerous as it looks.";
     }
 }

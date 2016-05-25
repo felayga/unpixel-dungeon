@@ -51,7 +51,7 @@ public class Ankh extends Item {
 	public static final String TXT_REVIVE = "The ankh explodes with life-giving energy!";
 
 
-
+    public Ankh()
 	{
 		name = "Ankh";
 		image = ItemSpriteSheet.ANKH;
@@ -59,6 +59,7 @@ public class Ankh extends Item {
 		//You tell the ankh no, don't revive me, and then it comes back to revive you again in another run.
 		//I'm not sure if that's enthusiasm or passive-aggression.
 		bones = true;
+        price = 50;
 	}
 
 	private Boolean blessed = false;
@@ -132,7 +133,7 @@ public class Ankh extends Item {
 
 	@Override
 	public void storeInBundle( Bundle bundle ) {
-		super.storeInBundle( bundle );
+		super.storeInBundle(bundle);
 		bundle.put( BLESSED, blessed );
 	}
 
@@ -141,9 +142,5 @@ public class Ankh extends Item {
 		super.restoreFromBundle( bundle );
 		blessed	= bundle.getBoolean( BLESSED );
 	}
-	
-	@Override
-	public int price() {
-		return 50 * quantity;
-	}
+
 }

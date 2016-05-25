@@ -37,11 +37,14 @@ import com.watabou.noosa.audio.Sample;
 
 public class PotionOfLevitation extends Potion {
 
+    public PotionOfLevitation()
 	{
 		name = "Potion of Levitation";
 		initials = "Le";
 
 		isHelpful = true;
+
+        price = 35;
 	}
 
 	@Override
@@ -54,7 +57,7 @@ public class PotionOfLevitation extends Potion {
 			Sample.INSTANCE.play( Assets.SND_SHATTER );
 		}
 
-		GameScene.add( Blob.seed( cell, 1000, ConfusionGas.class ) );
+		GameScene.add(Blob.seed(cell, 1000, ConfusionGas.class));
 	}
 	
 	@Override
@@ -70,10 +73,5 @@ public class PotionOfLevitation extends Potion {
 			"Drinking this curious liquid will cause you to hover in the air, " +
 			"able to drift effortlessly over traps and pits. Throwing this potion " +
 			"will create a cloud of unrefined gas, disorienting anything caught in it.";
-	}
-	
-	@Override
-	public int price() {
-		return isKnown() ? 35 * quantity : super.price();
 	}
 }

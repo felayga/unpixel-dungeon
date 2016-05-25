@@ -36,6 +36,7 @@ import com.felayga.unpixeldungeon.effects.particles.FlameParticle;
 import com.felayga.unpixeldungeon.items.Heap;
 import com.felayga.unpixeldungeon.levels.Level;
 import com.felayga.unpixeldungeon.levels.Terrain;
+import com.felayga.unpixeldungeon.mechanics.MagicType;
 import com.felayga.unpixeldungeon.plants.Plant;
 import com.felayga.unpixeldungeon.scenes.GameScene;
 import com.watabou.utils.Random;
@@ -93,7 +94,7 @@ public class Acid extends Blob {
 		}
 	}
 
-	public static void burnChar(Char ch, Object source)
+	public static void burnChar(Char ch, Char source)
 	{
 		Buff.affect(ch, Ooze.class);
 
@@ -103,13 +104,13 @@ public class Acid extends Blob {
 			damage++;
 		}
 
-		ch.damage(damage, source);
+		ch.damage(damage, MagicType.Acid, source);
 	}
 
 	private void burn( int pos ) {
 		Char ch = Actor.findChar( pos );
 		if (ch != null) {
-			burnChar(ch, this);
+			burnChar(ch, null);
 		}
 		
 		Heap heap = Dungeon.level.heaps.get( pos );

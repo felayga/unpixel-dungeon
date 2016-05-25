@@ -26,6 +26,7 @@ package com.felayga.unpixeldungeon.items.weapon.enchantments;
 
 import com.felayga.unpixeldungeon.actors.Char;
 import com.felayga.unpixeldungeon.items.weapon.Weapon;
+import com.felayga.unpixeldungeon.mechanics.MagicType;
 import com.felayga.unpixeldungeon.sprites.ItemSprite;
 import com.felayga.unpixeldungeon.sprites.ItemSprite.Glowing;
 
@@ -45,7 +46,7 @@ public class Luck extends Weapon.Enchantment {
 		}
 		
 		if (dmg > damage) {
-			defender.damage( dmg - damage, this );
+			defender.damage( dmg - damage, MagicType.Mundane, null );
 			return true;
 		} else {
 			return false;

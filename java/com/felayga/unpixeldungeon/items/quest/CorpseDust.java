@@ -30,7 +30,7 @@ import com.felayga.unpixeldungeon.actors.Actor;
 import com.felayga.unpixeldungeon.actors.buffs.Buff;
 import com.felayga.unpixeldungeon.actors.hero.Hero;
 import com.felayga.unpixeldungeon.actors.mobs.Mob;
-import com.felayga.unpixeldungeon.actors.mobs.Wraith;
+//import com.felayga.unpixeldungeon.actors.mobs.Wraith;
 import com.felayga.unpixeldungeon.items.Item;
 import com.felayga.unpixeldungeon.levels.Level;
 import com.felayga.unpixeldungeon.mechanics.BUCStatus;
@@ -105,9 +105,11 @@ public class CorpseDust extends Item {
 			spawnPower++;
 			int wraiths = 1; //we include the wraith we're trying to spawn
 			for (Mob mob : Dungeon.level.mobs){
+				/*
 				if (mob instanceof Wraith){
 					wraiths++;
 				}
+				*/
 			}
 
 			int powerNeeded = Math.min(25, wraiths*wraiths);
@@ -118,7 +120,7 @@ public class CorpseDust extends Item {
 				do{
 					pos = Random.Int(Level.LENGTH);
 				} while (!Dungeon.visible[pos] || !Level.passable[pos] || Actor.findChar( pos ) != null);
-				Wraith.spawnAt(pos);
+				//Wraith.spawnAt(pos);
 				Sample.INSTANCE.play(Assets.SND_CURSED);
 			}
 
@@ -129,9 +131,11 @@ public class CorpseDust extends Item {
 		public void dispel(){
 			detach();
 			for (Mob mob : Dungeon.level.mobs.toArray(new Mob[0])){
+				/*
 				if (mob instanceof Wraith){
 					mob.die(null);
 				}
+				*/
 			}
 		}
 

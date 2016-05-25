@@ -42,6 +42,7 @@ import com.felayga.unpixeldungeon.items.tools.unlocking.UnlockingTool;
 import com.felayga.unpixeldungeon.levels.features.Door;
 import com.felayga.unpixeldungeon.mechanics.AttributeType;
 import com.felayga.unpixeldungeon.mechanics.GameTime;
+import com.felayga.unpixeldungeon.mechanics.MagicType;
 import com.felayga.unpixeldungeon.sprites.ItemSpriteSheet;
 import com.felayga.unpixeldungeon.utils.GLog;
 import com.felayga.unpixeldungeon.windows.WndOptions;
@@ -76,7 +77,8 @@ public class Food extends Item {
 
 		bones = true;
 
-		weight = Encumbrance.UNIT * 20;
+		weight(Encumbrance.UNIT * 20);
+        price = 10;
 	}
 
 
@@ -153,7 +155,7 @@ public class Food extends Item {
 			if (hunger.isStuffed() && hunger.choke(hero))
 			{
 				GLog.n(TXT_OVEREATING_DEAD, name);
-				hero.damage(hero.HT, this);
+				hero.damage(hero.HT, MagicType.Mundane, null);
 				hero.sprite.die();
 				return false;
 			}
@@ -274,9 +276,5 @@ public class Food extends Item {
 	public boolean isUpgradable() {
 		return false;
 	}
-	
-	@Override
-	public int price() {
-		return 10 * quantity;
-	}
+
 }

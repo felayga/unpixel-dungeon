@@ -39,7 +39,7 @@ import com.felayga.unpixeldungeon.actors.buffs.Buff;
 import com.felayga.unpixeldungeon.actors.buffs.Burning;
 import com.felayga.unpixeldungeon.actors.buffs.Frost;
 import com.felayga.unpixeldungeon.actors.hero.Hero;
-import com.felayga.unpixeldungeon.actors.mobs.Mimic;
+//import com.felayga.unpixeldungeon.actors.mobs.Mimic;
 import com.felayga.unpixeldungeon.actors.mobs.Mob;
 import com.felayga.unpixeldungeon.actors.mobs.npcs.Sheep;
 import com.felayga.unpixeldungeon.effects.CellEmitter;
@@ -51,7 +51,7 @@ import com.felayga.unpixeldungeon.effects.particles.ShadowParticle;
 import com.felayga.unpixeldungeon.items.Bomb;
 import com.felayga.unpixeldungeon.items.Generator;
 import com.felayga.unpixeldungeon.items.Item;
-import com.felayga.unpixeldungeon.items.artifacts.DriedRose;
+//import com.felayga.unpixeldungeon.items.artifacts.DriedRose;
 import com.felayga.unpixeldungeon.items.artifacts.TimekeepersHourglass;
 import com.felayga.unpixeldungeon.items.scrolls.ScrollOfRecharging;
 import com.felayga.unpixeldungeon.items.scrolls.ScrollOfTeleportation;
@@ -63,6 +63,7 @@ import com.felayga.unpixeldungeon.levels.traps.SummoningTrap;
 import com.felayga.unpixeldungeon.mechanics.BUCStatus;
 import com.felayga.unpixeldungeon.mechanics.Ballistica;
 import com.felayga.unpixeldungeon.mechanics.GameTime;
+import com.felayga.unpixeldungeon.mechanics.MagicType;
 import com.felayga.unpixeldungeon.plants.Plant;
 import com.felayga.unpixeldungeon.scenes.GameScene;
 import com.felayga.unpixeldungeon.scenes.InterlevelScene;
@@ -230,16 +231,16 @@ public class CursedWand {
 				if (target != null) {
 					cursedFX(user, bolt, new Callback() {
 						public void call() {
-							int damage = user.lvl * 2;
+							int damage = user.level * 2;
 							switch (Random.Int(2)) {
 								case 0:
 									user.HP = Math.min(user.HT, user.HP + damage);
 									user.sprite.emitter().burst(Speck.factory(Speck.HEALING), 3);
-									target.damage(damage, wand);
+									target.damage(damage, MagicType.Magic, null);
 									target.sprite.emitter().start(ShadowParticle.UP, 0.05f, 10);
 									break;
 								case 1:
-									user.damage( damage, this );
+									user.damage( damage, MagicType.Magic, null );
 									user.sprite.emitter().start(ShadowParticle.UP, 0.05f, 10);
 									target.HP = Math.min(target.HT, target.HP + damage);
 									target.sprite.emitter().burst(Speck.factory(Speck.HEALING), 3);
@@ -312,7 +313,7 @@ public class CursedWand {
 			case 1:
 				user.belongings.bucChange(true, BUCStatus.Cursed, true, true, true, false);
 
-				//EquipableItem.equipCursed(user);
+				//EquippableItem.equipCursed(user);
 				GLog.n("Your worn equipment becomes cursed!");
 				wand.wandUsed();
 				break;
@@ -329,8 +330,10 @@ public class CursedWand {
 					Buff buff = Dungeon.hero.buff(TimekeepersHourglass.timeFreeze.class);
 					if (buff != null) buff.detach();
 
+					/*
 					for (Mob mob : Dungeon.level.mobs.toArray( new Mob[0] ))
 						if (mob instanceof DriedRose.GhostHero) mob.destroy();
+					*/
 
 					InterlevelScene.mode = InterlevelScene.Mode.RETURN;
 					InterlevelScene.returnDepth = depth;
@@ -382,6 +385,7 @@ public class CursedWand {
 			case 1:
 				cursedFX(user, bolt, new Callback() {
 					public void call() {
+						/*
 						Mimic mimic = Mimic.spawnAt(bolt.collisionPos, new ArrayList<Item>());
 						mimic.adjustStats(Dungeon.depth + 10);
 						mimic.HP = mimic.HT;
@@ -393,7 +397,7 @@ public class CursedWand {
 						Sample.INSTANCE.play(Assets.SND_MIMIC, 1, 1, 0.5f);
 						mimic.items.clear();
 						mimic.items.add(reward);
-
+						*/
 						wand.wandUsed();
 					}
 				});

@@ -24,6 +24,7 @@
  */
 package com.felayga.unpixeldungeon.actors.mobs.unused;
 
+/*
 import com.felayga.unpixeldungeon.actors.mobs.Mob;
 import com.felayga.unpixeldungeon.items.weapon.melee.mob.MeleeMobAttack;
 import com.felayga.unpixeldungeon.mechanics.GameTime;
@@ -54,3 +55,4 @@ public class MarsupialRat extends Mob {
 			"of the sewers. They have a nasty bite, but are only life threatening in large numbers.";
 	}
 }
+*/

@@ -33,11 +33,14 @@ import com.felayga.unpixeldungeon.scenes.GameScene;
 
 public class PotionOfToxicGas extends Potion {
 
+    public PotionOfToxicGas()
 	{
 		name = "Potion of Toxic Gas";
 		initials = "TG";
 
 		isHarmful = true;
+
+        price = 40;
 	}
 	
 	@Override
@@ -60,10 +63,5 @@ public class PotionOfToxicGas extends Potion {
 			"its contents to explode into a deadly cloud of toxic green gas. " +
 			"You might choose to fling this potion at distant enemies " +
 			"instead of uncorking it by hand.";
-	}
-	
-	@Override
-	public int price() {
-		return isKnown() ? 40 * quantity : super.price();
 	}
 }

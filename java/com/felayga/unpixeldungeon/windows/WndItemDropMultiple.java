@@ -24,58 +24,13 @@
  */
 package com.felayga.unpixeldungeon.windows;
 
-import android.graphics.RectF;
-import com.felayga.unpixeldungeon.Assets;
-import com.felayga.unpixeldungeon.Dungeon;
-import com.felayga.unpixeldungeon.ShatteredPixelDungeon;
-import com.felayga.unpixeldungeon.actors.Char;
-import com.felayga.unpixeldungeon.actors.hero.Belongings;
-import com.felayga.unpixeldungeon.actors.hero.Hero;
-import com.felayga.unpixeldungeon.actors.hero.HeroAction;
-import com.felayga.unpixeldungeon.actors.hero.HeroClass;
-import com.felayga.unpixeldungeon.items.EquipableItem;
 import com.felayga.unpixeldungeon.items.Item;
-import com.felayga.unpixeldungeon.items.armor.Armor;
-import com.felayga.unpixeldungeon.items.bags.Bag;
-import com.felayga.unpixeldungeon.items.bags.PotionBandolier;
-import com.felayga.unpixeldungeon.items.bags.ScrollHolder;
-import com.felayga.unpixeldungeon.items.bags.SeedPouch;
-import com.felayga.unpixeldungeon.items.bags.WandHolster;
-import com.felayga.unpixeldungeon.items.bags.backpack.Backpack;
-import com.felayga.unpixeldungeon.items.food.Food;
-import com.felayga.unpixeldungeon.items.potions.Potion;
-import com.felayga.unpixeldungeon.items.scrolls.Scroll;
-import com.felayga.unpixeldungeon.items.wands.Wand;
-import com.felayga.unpixeldungeon.items.weapon.melee.MeleeWeapon;
-import com.felayga.unpixeldungeon.items.weapon.missiles.Boomerang;
-import com.felayga.unpixeldungeon.mechanics.BUCStatus;
 import com.felayga.unpixeldungeon.mechanics.Constant;
-import com.felayga.unpixeldungeon.plants.Plant.Seed;
-import com.felayga.unpixeldungeon.scenes.GameScene;
 import com.felayga.unpixeldungeon.scenes.PixelScene;
-import com.felayga.unpixeldungeon.sprites.ItemSpriteSheet;
-import com.felayga.unpixeldungeon.sprites.hero.HeroSprite;
-import com.felayga.unpixeldungeon.ui.CheckBox;
-import com.felayga.unpixeldungeon.ui.Icons;
-import com.felayga.unpixeldungeon.ui.ItemSlot;
-import com.felayga.unpixeldungeon.ui.LeftRightSelector;
 import com.felayga.unpixeldungeon.ui.OptionSlider;
-import com.felayga.unpixeldungeon.ui.QuickSlotButton;
 import com.felayga.unpixeldungeon.ui.RedButton;
-import com.felayga.unpixeldungeon.ui.Toolbar;
 import com.felayga.unpixeldungeon.ui.Window;
-import com.felayga.unpixeldungeon.utils.Utils;
-import com.watabou.gltextures.TextureCache;
-import com.watabou.noosa.BitmapText;
 import com.watabou.noosa.BitmapTextMultiline;
-import com.watabou.noosa.ColorBlock;
-import com.watabou.noosa.Image;
-import com.watabou.noosa.audio.Sample;
-import com.watabou.utils.PointF;
-
-import java.util.ArrayList;
-import java.util.Iterator;
-import java.util.List;
 
 public class WndItemDropMultiple extends Window {
     private static final int WIDTH = 112;

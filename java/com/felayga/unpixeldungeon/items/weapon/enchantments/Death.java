@@ -29,6 +29,7 @@ import com.felayga.unpixeldungeon.actors.Char;
 import com.felayga.unpixeldungeon.actors.hero.Hero;
 import com.felayga.unpixeldungeon.effects.particles.ShadowParticle;
 import com.felayga.unpixeldungeon.items.weapon.Weapon;
+import com.felayga.unpixeldungeon.mechanics.MagicType;
 import com.felayga.unpixeldungeon.sprites.ItemSprite;
 import com.felayga.unpixeldungeon.sprites.ItemSprite.Glowing;
 import com.watabou.utils.Random;
@@ -48,7 +49,7 @@ public class Death extends Weapon.Enchantment {
 		
 		if (Random.Int( level + 100 ) >= 92) {
 			
-			defender.damage( defender.HP, this );
+			defender.damage( defender.HP, MagicType.Drain, null );
 			defender.sprite.emitter().burst( ShadowParticle.UP, 5 );
 			
 			if (!defender.isAlive() && attacker instanceof Hero) {

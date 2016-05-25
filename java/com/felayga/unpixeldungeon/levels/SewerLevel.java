@@ -32,7 +32,7 @@ import com.watabou.noosa.particles.PixelParticle;
 import com.felayga.unpixeldungeon.Assets;
 import com.felayga.unpixeldungeon.Dungeon;
 import com.felayga.unpixeldungeon.DungeonTilemap;
-import com.felayga.unpixeldungeon.actors.mobs.npcs.Ghost;
+//import com.felayga.unpixeldungeon.actors.mobs.npcs.Ghost;
 import com.felayga.unpixeldungeon.items.DewVial;
 import com.felayga.unpixeldungeon.scenes.GameScene;
 import com.watabou.utils.ColorMath;
@@ -142,7 +142,7 @@ public class SewerLevel extends RegularLevel {
 			Dungeon.limitedDrops.dewVial.drop();
 		}
 
-		Ghost.Quest.spawn( this );
+		//Ghost.Quest.spawn( this );
 		
 		super.createItems();
 	}

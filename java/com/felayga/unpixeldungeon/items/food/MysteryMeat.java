@@ -38,11 +38,13 @@ import com.watabou.utils.Random;
 
 public class MysteryMeat extends Food {
 
+    public MysteryMeat()
 	{
 		name = "mystery meat";
 		image = ItemSpriteSheet.MEAT;
 		energy = 125;
 		hornValue = 1;
+        price = 5;
 	}
 	
 	@Override
@@ -82,8 +84,5 @@ public class MysteryMeat extends Food {
 	public String message() {
 		return "That food tasted... strange.";
 	}
-	
-	public int price() {
-		return 5 * quantity;
-	};
+
 }

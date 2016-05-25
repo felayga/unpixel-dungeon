@@ -26,8 +26,9 @@ package com.felayga.unpixeldungeon.windows.quest;
 
 import com.felayga.unpixeldungeon.Challenges;
 import com.felayga.unpixeldungeon.Dungeon;
+import com.felayga.unpixeldungeon.actors.Char;
 import com.felayga.unpixeldungeon.actors.hero.Hero;
-import com.felayga.unpixeldungeon.actors.mobs.npcs.Ghost;
+//import com.felayga.unpixeldungeon.actors.mobs.npcs.Ghost;
 import com.felayga.unpixeldungeon.items.Item;
 import com.felayga.unpixeldungeon.scenes.PixelScene;
 //import com.felayga.unpixeldungeon.sprites.mobs.rat.MarsupialRatFetid;
@@ -62,7 +63,7 @@ public class WndSadGhost extends Window {
 	private static final int BTN_HEIGHT	= 20;
 	private static final float GAP		= 2;
 	
-	public WndSadGhost( final Ghost ghost, final int type ) {
+	public WndSadGhost( final Char ghost, final int type ) {
 		
 		super();
 		
@@ -99,7 +100,7 @@ public class WndSadGhost extends Window {
 		RedButton btnWeapon = new RedButton( TXT_WEAPON ) {
 			@Override
 			protected void onClick() {
-				selectReward( ghost, Ghost.Quest.weapon );
+				selectReward( ghost, ghost.belongings.weapon() );
 			}
 		};
 		btnWeapon.setRect( 0, message.y + message.height() + GAP, WIDTH, BTN_HEIGHT );
@@ -109,7 +110,7 @@ public class WndSadGhost extends Window {
 			RedButton btnArmor = new RedButton(TXT_ARMOR) {
 				@Override
 				protected void onClick() {
-					selectReward(ghost, Ghost.Quest.armor);
+					selectReward(ghost, ghost.belongings.armor() );
 				}
 			};
 			btnArmor.setRect(0, btnWeapon.bottom() + GAP, WIDTH, BTN_HEIGHT);
@@ -121,7 +122,7 @@ public class WndSadGhost extends Window {
 		}
 	}
 	
-	private void selectReward( Ghost ghost, Item reward ) {
+	private void selectReward( Char ghost, Item reward ) {
 		
 		hide();
 		
@@ -131,9 +132,10 @@ public class WndSadGhost extends Window {
 			Dungeon.level.drop( reward, ghost.pos ).sprite.drop();
 		}
 		
-		ghost.yell( "Farewell, adventurer!" );
+		//ghost.yell( "Farewell, adventurer!" );
 		ghost.die( null );
-		
-		Ghost.Quest.complete();
+
+		//todo: fix ghost quest completion bit
+		//Ghost.Quest.complete();
 	}
 }

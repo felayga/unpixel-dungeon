@@ -31,6 +31,7 @@ import com.felayga.unpixeldungeon.actors.Char;
 import com.felayga.unpixeldungeon.actors.hero.Hero;
 import com.felayga.unpixeldungeon.actors.hero.HeroClass;
 import com.felayga.unpixeldungeon.mechanics.GameTime;
+import com.felayga.unpixeldungeon.mechanics.MagicType;
 import com.felayga.unpixeldungeon.ui.BuffIndicator;
 import com.felayga.unpixeldungeon.utils.GLog;
 import com.watabou.utils.Bundle;
@@ -125,7 +126,7 @@ public class Hunger extends Buff implements Hero.Doom {
 			if (regenActive) {
 				lifeRegenTick++;
 
-				if (hero.lvl >= 10) {
+				if (hero.level >= 10) {
 					test = 3;
 
 					if (lifeRegenTick >= test) {
@@ -134,7 +135,7 @@ public class Hunger extends Buff implements Hero.Doom {
 						hero.HP += Random.Int(0, hero.STRCON) + 1;
 					}
 				} else {
-					test = 42 / (hero.lvl + 2) + 1;
+					test = 42 / (hero.level + 2) + 1;
 
 					if (lifeRegenTick >= test) {
 						lifeRegenTick = 0;
@@ -148,7 +149,7 @@ public class Hunger extends Buff implements Hero.Doom {
 				}
 
 
-				test = 19 - hero.lvl / 2;
+				test = 19 - hero.level / 2;
 				manaRegenTick++;
 
 				if (manaRegenTick >= test) {
@@ -171,13 +172,13 @@ public class Hunger extends Buff implements Hero.Doom {
 			if (trinketHungerTick >= 20) {
 				trinketHungerTick -= 20;
 
-				if (hero.belongings.ring1 != null) {
+				if (hero.belongings.ring1() != null) {
 					hungerTickAmount++;
 				}
-				if (hero.belongings.ring2 != null) {
+				if (hero.belongings.ring2() != null) {
 					hungerTickAmount++;
 				}
-				if (hero.belongings.amulet != null) {
+				if (hero.belongings.amulet() != null) {
 					hungerTickAmount++;
 				}
 			}
@@ -186,7 +187,7 @@ public class Hunger extends Buff implements Hero.Doom {
 				hero.interrupt();
 
 				if (HungerLevel.fromInt(level) == HungerLevel.DEAD) {
-					target.damage(target.HP, this);
+					target.damage(target.HP, MagicType.Mundane, null);
 					//todo: why doesn't this happen on its own like it should?
 					target.sprite.die();
 				}

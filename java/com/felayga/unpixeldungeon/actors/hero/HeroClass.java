@@ -28,66 +28,24 @@ import com.felayga.unpixeldungeon.Badges;
 import com.felayga.unpixeldungeon.Challenges;
 import com.felayga.unpixeldungeon.Dungeon;
 import com.felayga.unpixeldungeon.ShatteredPixelDungeon;
-import com.felayga.unpixeldungeon.items.IActivateable;
-import com.felayga.unpixeldungeon.items.armor.Armor;
-import com.felayga.unpixeldungeon.items.armor.boots.LeatherBoots;
 import com.felayga.unpixeldungeon.items.armor.gloves.LeatherGloves;
-import com.felayga.unpixeldungeon.items.armor.heavy.BandedArmor;
-import com.felayga.unpixeldungeon.items.armor.heavy.FullPlateArmor;
-import com.felayga.unpixeldungeon.items.armor.light.ClothArmor;
 import com.felayga.unpixeldungeon.items.armor.heavy.HalfPlateArmor;
-import com.felayga.unpixeldungeon.items.armor.light.LeatherArmor;
-import com.felayga.unpixeldungeon.items.armor.light.StuddedLeatherArmor;
-import com.felayga.unpixeldungeon.items.armor.medium.HideArmor;
-import com.felayga.unpixeldungeon.items.armor.medium.MailArmor;
 import com.felayga.unpixeldungeon.items.armor.medium.ScaleArmor;
-import com.felayga.unpixeldungeon.items.artifacts.ChaliceOfBlood;
 import com.felayga.unpixeldungeon.items.artifacts.CloakOfShadows;
-import com.felayga.unpixeldungeon.items.artifacts.UnstableSpellbook;
-import com.felayga.unpixeldungeon.items.bags.SeedPouch;
 import com.felayga.unpixeldungeon.items.food.Food;
-import com.felayga.unpixeldungeon.items.gemstones.randomized.GlassGemstone;
-import com.felayga.unpixeldungeon.items.gemstones.white.DilithiumGemstone;
-import com.felayga.unpixeldungeon.items.potions.PotionOfAcid;
-import com.felayga.unpixeldungeon.items.potions.PotionOfBooze;
-import com.felayga.unpixeldungeon.items.potions.PotionOfExperience;
-import com.felayga.unpixeldungeon.items.potions.PotionOfExtraHealing;
-import com.felayga.unpixeldungeon.items.potions.PotionOfFrost;
-import com.felayga.unpixeldungeon.items.potions.PotionOfFullHealing;
-import com.felayga.unpixeldungeon.items.potions.PotionOfHallucination;
-import com.felayga.unpixeldungeon.items.potions.PotionOfHealing;
-import com.felayga.unpixeldungeon.items.potions.PotionOfInvisibility;
-import com.felayga.unpixeldungeon.items.potions.PotionOfLevitation;
-import com.felayga.unpixeldungeon.items.potions.PotionOfLiquidFlame;
-import com.felayga.unpixeldungeon.items.potions.PotionOfMight;
 import com.felayga.unpixeldungeon.items.potions.PotionOfMindVision;
-import com.felayga.unpixeldungeon.items.potions.PotionOfParalyticGas;
-import com.felayga.unpixeldungeon.items.potions.PotionOfPurity;
 import com.felayga.unpixeldungeon.items.potions.PotionOfStrength;
-import com.felayga.unpixeldungeon.items.potions.PotionOfToxicGas;
-import com.felayga.unpixeldungeon.items.potions.PotionOfWater;
-import com.felayga.unpixeldungeon.items.rings.Ring;
 import com.felayga.unpixeldungeon.items.rings.RingOfWealth;
-import com.felayga.unpixeldungeon.items.scrolls.BlankScroll;
-import com.felayga.unpixeldungeon.items.scrolls.ScrollOfIdentify;
 import com.felayga.unpixeldungeon.items.scrolls.ScrollOfMagicMapping;
-import com.felayga.unpixeldungeon.items.scrolls.ScrollOfTeleportation;
 import com.felayga.unpixeldungeon.items.scrolls.ScrollOfUpgrade;
-import com.felayga.unpixeldungeon.items.spells.inventory.IdentifySpell;
-import com.felayga.unpixeldungeon.items.tools.digging.Pickaxe;
-import com.felayga.unpixeldungeon.items.tools.unlocking.LockPick;
-import com.felayga.unpixeldungeon.items.tools.unlocking.SkeletonKey;
-import com.felayga.unpixeldungeon.items.weapon.Weapon;
 import com.felayga.unpixeldungeon.items.weapon.melee.martial.BattleAxe;
+import com.felayga.unpixeldungeon.items.weapon.melee.martial.Longsword;
 import com.felayga.unpixeldungeon.items.weapon.melee.simple.MagesStaff;
 import com.felayga.unpixeldungeon.items.wands.WandOfMagicMissile;
-import com.felayga.unpixeldungeon.items.weapon.melee.simple.Dagger;
-import com.felayga.unpixeldungeon.items.weapon.melee.martial.ShortSword;
+import com.felayga.unpixeldungeon.items.tools.digging.Pickaxe;
 import com.felayga.unpixeldungeon.items.weapon.missiles.Dart;
 import com.felayga.unpixeldungeon.items.weapon.missiles.Boomerang;
-import com.felayga.unpixeldungeon.mechanics.BUCStatus;
-import com.felayga.unpixeldungeon.plants.Earthroot;
-import com.felayga.unpixeldungeon.utils.GLog;
+import com.felayga.unpixeldungeon.mechanics.WeaponSkill;
 import com.watabou.utils.Bundle;
 import com.watabou.utils.Random;
 
@@ -202,7 +160,7 @@ public enum HeroClass {
 
 	private static void initCommon( Hero hero ) {
 		if (!Dungeon.isChallenged(Challenges.NO_ARMOR)) {
-			(hero.belongings.armor = new ClothArmor()).identify();
+			//(hero.belongings.armor = new ClothArmor()).identify();
 		}
 
 		if (!Dungeon.isChallenged(Challenges.NO_FOOD)) {
@@ -225,73 +183,38 @@ public enum HeroClass {
 	}
 
 	private static void initDebug( Hero hero ){
-		(hero.belongings.weapon = new ShortSword()).identify();
 		Dart darts = new Dart( 8 );
 		hero.belongings.collect(darts.identify());
 
 		Dungeon.quickslot.setSlot(0, darts);
 
-		hero.belongings.armor = (Armor)new HalfPlateArmor().upgrade(darts, 20);
-		hero.belongings.weapon = (Weapon)new BattleAxe().upgrade(darts, 20);
-		hero.belongings.ring1 = (Ring)new RingOfWealth().upgrade(darts, 20);
+		hero.belongings.collectEquip(new HalfPlateArmor());
+        hero.belongings.armor().upgrade(darts, 20);
 
-		hero.belongings.collect(new PotionOfAcid().quantity(20).identify());
-		hero.belongings.collect(new PotionOfBooze().quantity(20).identify());
-		hero.belongings.collect(new PotionOfExperience().quantity(20).identify());
-		hero.belongings.collect(new PotionOfExtraHealing().quantity(20).identify());
-		hero.belongings.collect(new PotionOfFullHealing().quantity(20).identify());
-		hero.belongings.collect(new PotionOfFrost().quantity(20).identify());
-		hero.belongings.collect(new PotionOfHealing().quantity(20).identify());
-		hero.belongings.collect(new PotionOfInvisibility().quantity(20).identify());
-		hero.belongings.collect(new PotionOfLevitation().quantity(20).identify());
-		hero.belongings.collect(new PotionOfLiquidFlame().quantity(20).identify());
-		hero.belongings.collect(new PotionOfMight().quantity(20).identify());
-		hero.belongings.collect(new PotionOfMindVision().quantity(20).identify());
-		hero.belongings.collect(new PotionOfParalyticGas().quantity(20).identify());
-		hero.belongings.collect(new PotionOfPurity().quantity(20).identify());
-		hero.belongings.collect(new PotionOfStrength().quantity(20).identify());
-		hero.belongings.collect(new PotionOfToxicGas().quantity(20).identify());
-		hero.belongings.collect(new PotionOfWater().quantity(20).identify());
-		hero.belongings.collect(new PotionOfHallucination().quantity(20).identify());
-		hero.belongings.collect(new ScrollOfMagicMapping().quantity(30).bucStatus(BUCStatus.Cursed, false));
-		hero.belongings.collect(new ScrollOfMagicMapping().quantity(30).bucStatus(BUCStatus.Uncursed, false));
-		hero.belongings.collect(new ScrollOfMagicMapping().quantity(30).bucStatus(BUCStatus.Blessed, false));
-		hero.belongings.collect(new ScrollOfTeleportation().quantity(15).bucStatus(BUCStatus.Cursed, false));
-		hero.belongings.collect(new ScrollOfIdentify().quantity(10).bucStatus(BUCStatus.Cursed, false));
-		hero.belongings.collect(new ScrollOfIdentify().quantity(10).bucStatus(BUCStatus.Uncursed, false));
-		hero.belongings.collect(new ScrollOfIdentify().quantity(10).bucStatus(BUCStatus.Blessed, false));
-		hero.belongings.collect(new LockPick());
-		hero.belongings.collect(new SkeletonKey());
+		hero.belongings.collectEquip(new BattleAxe());
+        hero.belongings.weapon().upgrade(darts, 20);
+
+
+		hero.belongings.collectEquip(new RingOfWealth());
+        hero.belongings.ring1().upgrade(darts, 20);
+
 		hero.belongings.collect(new Pickaxe());
-		hero.belongings.collect(new UnstableSpellbook());
-		hero.belongings.collect(new ChaliceOfBlood());
-		hero.belongings.collect(new GlassGemstone());
-		hero.belongings.collect(new GlassGemstone());
-		hero.belongings.collect(new GlassGemstone());
-		hero.belongings.collect(new GlassGemstone());
-		hero.belongings.collect(new DilithiumGemstone());
-		hero.belongings.collect(new BlankScroll());
-		hero.belongings.collect(new IdentifySpell());
-		hero.belongings.collect(new SeedPouch());
-		hero.belongings.collect(new Earthroot.Seed());
-		hero.belongings.collect(new LeatherBoots());
-		hero.belongings.collect(new LeatherGloves());
-		hero.belongings.collect(new ClothArmor());
-		hero.belongings.collect(new LeatherArmor());
-		hero.belongings.collect(new StuddedLeatherArmor());
-		hero.belongings.collect(new MailArmor());
-		hero.belongings.collect(new HideArmor());
-		hero.belongings.collect(new ScaleArmor());
-		hero.belongings.collect(new HalfPlateArmor());
-		hero.belongings.collect(new FullPlateArmor());
-		hero.belongings.collect(new BandedArmor());
 	}
 
 	private static void initWarrior( Hero hero ) {
 		//hero.STR = hero.STR + 1;
 
-		(hero.belongings.armor = new ClothArmor()).identify();
-		(hero.belongings.weapon = new ShortSword()).identify();
+		hero.belongings.equip(new ScaleArmor());
+        hero.belongings.armor().identify();
+
+		hero.belongings.equip(new Longsword());
+        hero.belongings.weapon().identify();
+
+		hero.belongings.equip(new LeatherGloves());
+        hero.belongings.gloves().identify();
+
+		hero.weaponSkill = WeaponSkill.Martial;
+
 		Dart darts = new Dart( 8 );
 		hero.belongings.collect(darts.identify());
 
@@ -302,8 +225,8 @@ public enum HeroClass {
 
 	private static void initMage( Hero hero ) {
 		MagesStaff staff = new MagesStaff(new WandOfMagicMissile());
-		(hero.belongings.weapon = staff).identify();
-		((IActivateable)hero.belongings.weapon).activate(hero);
+		//(hero.belongings.weapon = staff).identify();
+		//((IActivateable)hero.belongings.weapon).activate(hero);
 
 		Dungeon.quickslot.setSlot(0, staff);
 
@@ -311,11 +234,11 @@ public enum HeroClass {
 	}
 
 	private static void initRogue( Hero hero ) {
-		(hero.belongings.weapon = new Dagger()).identify();
+		//(hero.belongings.weapon = new Dagger()).identify();
 
 		CloakOfShadows cloak = new CloakOfShadows();
-		(hero.belongings.ring1 = cloak).identify();
-		((IActivateable)hero.belongings.ring1).activate(hero);
+		//(hero.belongings.ring1 = cloak).identify();
+		//((IActivateable)hero.belongings.ring1).activate(hero);
 
 		Dart darts = new Dart( 8 );
 		hero.belongings.collect(darts.identify());
@@ -328,7 +251,7 @@ public enum HeroClass {
 	}
 
 	private static void initHuntress( Hero hero ) {
-		(hero.belongings.weapon = new Dagger()).identify();
+		//(hero.belongings.weapon = new Dagger()).identify();
 		Boomerang boomerang = new Boomerang();
 		hero.belongings.collect(boomerang.identify());
 

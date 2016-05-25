@@ -133,7 +133,7 @@ public abstract class Scroll extends Item {
 	private String rune;
 
 	public boolean ownedByBook = false;
-	
+
 	@SuppressWarnings("unchecked")
 	public static void initLabels() {
 		handler = new ItemStatusHandler<Scroll>( (Class<? extends Scroll>[])scrolls, runes, images, 1 );
@@ -155,7 +155,8 @@ public abstract class Scroll extends Item {
 		stackable = true;
 		defaultAction = AC_READ;
 
-		weight = Encumbrance.UNIT * 5;
+		weight(Encumbrance.UNIT * 5);
+        price = 15;
 	}
 
 	@Override
@@ -255,7 +256,7 @@ public abstract class Scroll extends Item {
 	}
 	
 	public static HashSet<Class<? extends Scroll>> getKnown() {
-		return handler.known();
+        return handler.known();
 	}
 	
 	public static HashSet<Class<? extends Scroll>> getUnknown() {
@@ -265,9 +266,5 @@ public abstract class Scroll extends Item {
 	public static boolean allKnown() {
 		return handler.known().size() == scrolls.length;
 	}
-	
-	@Override
-	public int price() {
-		return 15 * quantity;
-	}
+
 }

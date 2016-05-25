@@ -53,7 +53,7 @@ import com.felayga.unpixeldungeon.items.Stylus;
 import com.felayga.unpixeldungeon.items.Torch;
 import com.felayga.unpixeldungeon.items.armor.Armor;
 import com.felayga.unpixeldungeon.items.artifacts.AlchemistsToolkit;
-import com.felayga.unpixeldungeon.items.artifacts.DriedRose;
+//import com.felayga.unpixeldungeon.items.artifacts.DriedRose;
 import com.felayga.unpixeldungeon.items.artifacts.TimekeepersHourglass;
 import com.felayga.unpixeldungeon.items.bags.ScrollHolder;
 import com.felayga.unpixeldungeon.items.bags.SeedPouch;
@@ -243,6 +243,7 @@ public abstract class Level implements Bundlable, IDecayable {
 					addItemToSpawn(new PotionOfMight());
 			}
 
+			/*
 			DriedRose rose = Dungeon.hero.belongings.getItem(DriedRose.class);
 			if (rose != null && rose.bucStatus() != BUCStatus.Cursed) {
 				//this way if a rose is dropped later in the game, player still has a chance to max it out.
@@ -256,6 +257,7 @@ public abstract class Level implements Bundlable, IDecayable {
 					}
 				}
 			}
+			*/
 
 			if (Dungeon.depth > 1) {
 				switch (Random.Int(10)) {
@@ -609,7 +611,7 @@ public abstract class Level implements Bundlable, IDecayable {
 			protected boolean act() {
 				if (mobs.size() < nMobs()) {
 
-					Mob mob = Bestiary.mutable(Dungeon.depth);
+					Mob mob = Bestiary.mutable(Dungeon.depth, Dungeon.hero.level);
 					mob.state = mob.WANDERING;
 					mob.pos = randomRespawnCell();
 					if (Dungeon.hero.isAlive() && mob.pos != -1 && distance(Dungeon.hero.pos, mob.pos) >= 4) {

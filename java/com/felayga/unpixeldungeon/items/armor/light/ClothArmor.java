@@ -30,7 +30,7 @@ import com.felayga.unpixeldungeon.sprites.ItemSpriteSheet;
 public class ClothArmor extends LightArmor {
 	public ClothArmor()
 	{
-		super(1, 8, 16);
+		super(1, 8, 0, 16);
 		name = "cloth armor";
 		image = ItemSpriteSheet.ARMOR_CLOTH;
 
@@ -39,7 +39,7 @@ public class ClothArmor extends LightArmor {
 
 		bones = false; //Finding them in bones would be semi-frequent and disappointing.
 
-		weight = Encumbrance.UNIT * 90;
+		weight(Encumbrance.UNIT * 90);
 	}
 	
 	@Override

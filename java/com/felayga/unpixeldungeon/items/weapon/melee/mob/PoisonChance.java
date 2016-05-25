@@ -31,9 +31,9 @@ import com.felayga.unpixeldungeon.actors.buffs.Bleeding;
 import com.felayga.unpixeldungeon.actors.buffs.Buff;
 import com.felayga.unpixeldungeon.actors.buffs.Poison;
 import com.felayga.unpixeldungeon.actors.hero.Hero;
-import com.felayga.unpixeldungeon.actors.mobs.Spinner;
-import com.felayga.unpixeldungeon.actors.mobs.Thief;
-import com.felayga.unpixeldungeon.items.Honeypot;
+//import com.felayga.unpixeldungeon.actors.mobs.Spinner;
+//import com.felayga.unpixeldungeon.actors.mobs.Thief;
+//import com.felayga.unpixeldungeon.items.Honeypot;
 import com.felayga.unpixeldungeon.items.Item;
 import com.felayga.unpixeldungeon.utils.GLog;
 import com.watabou.utils.Random;
@@ -55,11 +55,13 @@ public class PoisonChance extends MeleeMobAttack {
         if (Random.Int(2) == 0) {
             Buff.affect(target, Poison.class).set(Random.Int(7, 9) * Poison.durationFactor(target));
 
+            /*
             if (attacker instanceof Spinner)
             {
                 Spinner spinner = (Spinner)attacker;
                 spinner.flee();
             }
+            */
         }
 
         return damage;

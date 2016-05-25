@@ -30,14 +30,14 @@ import com.felayga.unpixeldungeon.sprites.ItemSpriteSheet;
 public class BandedArmor extends HeavyArmor {
     public BandedArmor()
     {
-        super(6, 1, 112);
+        super(6, 1, 0, 112);
         name = "banded armor";
         image = ItemSpriteSheet.ARMOR_BANDED;
 
         price = 250;
         textureIndex = 10;
 
-        weight = Encumbrance.UNIT * 315;
+        weight(Encumbrance.UNIT * 315);
     }
 
     @Override

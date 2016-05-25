@@ -28,7 +28,7 @@ import com.felayga.unpixeldungeon.ShatteredPixelDungeon;
 import com.felayga.unpixeldungeon.actors.Char;
 import com.felayga.unpixeldungeon.actors.mobs.Mob;
 import com.felayga.unpixeldungeon.effects.Speck;
-import com.felayga.unpixeldungeon.items.artifacts.DriedRose;
+//import com.felayga.unpixeldungeon.items.artifacts.DriedRose;
 import com.felayga.unpixeldungeon.mechanics.Constant;
 import com.felayga.unpixeldungeon.scenes.InterlevelScene;
 import com.felayga.unpixeldungeon.windows.WndOptions;
@@ -49,10 +49,13 @@ public class ScrollOfTeleportation extends Scroll {
 	public static final String TXT_NO_TELEPORT = "A mysterious force prevents you from teleporting.";
 
 	public static final String TXT_MISSED_TELEPORT = "You feel disoriented for a moment.";
-	
+
+    public ScrollOfTeleportation()
 	{
 		name = "Scroll of Teleportation";
 		initials = "TP";
+
+        price = 40;
 	}
 	
 	@Override
@@ -75,8 +78,10 @@ public class ScrollOfTeleportation extends Scroll {
 
 						GLog.d("cursed levelport to " + target);
 
+						/*
 						for (Mob mob : Dungeon.level.mobs.toArray(new Mob[0]))
 							if (mob instanceof DriedRose.GhostHero) mob.destroy();
+						*/
 
 						InterlevelScene.mode = InterlevelScene.Mode.TELEPORT;
 						InterlevelScene.teleportDepth = target;
@@ -168,9 +173,5 @@ public class ScrollOfTeleportation extends Scroll {
 			"to escape a dangerous situation, but the unlucky reader might " +
 			"find himself in an even more dangerous place.";
 	}
-	
-	@Override
-	public int price() {
-		return isKnown() ? 40 * quantity : super.price();
-	}
+
 }

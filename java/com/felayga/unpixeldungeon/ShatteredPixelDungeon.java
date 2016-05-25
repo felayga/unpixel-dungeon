@@ -58,9 +58,9 @@ public class ShatteredPixelDungeon extends Game {
 				"com.shatteredpixel.shatteredpixeldungeon.items.scrolls.ScrollOfWeaponUpgrade" );
 
 		// 0.2.4d
-		com.watabou.utils.Bundle.addAlias(
-				com.felayga.unpixeldungeon.items.artifacts.LloydsBeacon.class,
-				"com.shatteredpixel.shatteredpixeldungeon.items.LloydsBeacon" );
+		//com.watabou.utils.Bundle.addAlias(
+		//		com.felayga.unpixeldungeon.items.artifacts.LloydsBeacon.class,
+		//		"com.shatteredpixel.shatteredpixeldungeon.items.LloydsBeacon" );
 
 		// 0.3.0, lots of wands
 		com.watabou.utils.Bundle.addAlias(
@@ -72,12 +72,12 @@ public class ShatteredPixelDungeon extends Game {
 		com.watabou.utils.Bundle.addAlias(
 				com.felayga.unpixeldungeon.items.wands.WandOfFireblast.class,
 				"com.shatteredpixel.shatteredpixeldungeon.items.wands.WandOfFirebolt" );
-		com.watabou.utils.Bundle.addAlias(
-				com.felayga.unpixeldungeon.items.wands.WandOfCorruption.class,
-				"com.shatteredpixel.shatteredpixeldungeon.items.wands.WandOfAmok" );
-		com.watabou.utils.Bundle.addAlias(
-				com.felayga.unpixeldungeon.items.wands.WandOfBlastWave.class,
-				"com.shatteredpixel.shatteredpixeldungeon.items.wands.WandOfTelekinesis" );
+		//com.watabou.utils.Bundle.addAlias(
+		//		com.felayga.unpixeldungeon.items.wands.WandOfCorruption.class,
+		//		"com.shatteredpixel.shatteredpixeldungeon.items.wands.WandOfAmok" );
+		//com.watabou.utils.Bundle.addAlias(
+		//		com.felayga.unpixeldungeon.items.wands.WandOfBlastWave.class,
+		//		"com.shatteredpixel.shatteredpixeldungeon.items.wands.WandOfTelekinesis" );
 		com.watabou.utils.Bundle.addAlias(
 				com.felayga.unpixeldungeon.items.wands.WandOfMagicMissile.class,
 				"com.shatteredpixel.shatteredpixeldungeon.items.wands.WandOfFlock" );

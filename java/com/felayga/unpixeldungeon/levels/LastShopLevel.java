@@ -27,7 +27,7 @@ package com.felayga.unpixeldungeon.levels;
 import com.felayga.unpixeldungeon.Assets;
 import com.felayga.unpixeldungeon.Bones;
 import com.felayga.unpixeldungeon.actors.Actor;
-import com.felayga.unpixeldungeon.actors.mobs.npcs.Imp;
+//import com.felayga.unpixeldungeon.actors.mobs.npcs.Imp;
 import com.felayga.unpixeldungeon.items.Heap;
 import com.felayga.unpixeldungeon.items.Item;
 import com.felayga.unpixeldungeon.levels.Room.Type;
@@ -123,7 +123,7 @@ public class LastShopLevel extends RegularLevel {
 		if (roomShop == null || shopSquare < 54) {
 			return false;
 		} else {
-			roomShop.type = Imp.Quest.isCompleted() ? Room.Type.SHOP : Room.Type.STANDARD;
+			roomShop.type = /*Imp.Quest.isCompleted() ? Room.Type.SHOP :*/ Room.Type.STANDARD;
 		}
 		
 		paint();
@@ -153,9 +153,9 @@ public class LastShopLevel extends RegularLevel {
 			}
 		}
 		
-		if (Imp.Quest.isCompleted()) {
+		//if (Imp.Quest.isCompleted()) {
 			placeSign();
-		}
+		//}
 	}
 	
 	@Override

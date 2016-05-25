@@ -29,7 +29,6 @@ import com.felayga.unpixeldungeon.Assets;
 import com.felayga.unpixeldungeon.actors.Char;
 import com.felayga.unpixeldungeon.actors.buffs.Buff;
 import com.felayga.unpixeldungeon.actors.buffs.Ooze;
-import com.felayga.unpixeldungeon.actors.mobs.Goo;
 import com.felayga.unpixeldungeon.effects.CellEmitter;
 import com.felayga.unpixeldungeon.effects.particles.ElmoParticle;
 import com.felayga.unpixeldungeon.levels.Level;
@@ -55,6 +54,7 @@ public class AcidChance extends MeleeMobAttack {
             target.sprite.burst( 0x000000, 5 );
         }
 
+        /*
         if (attacker instanceof Goo)
         {
             Goo goo = (Goo)attacker;
@@ -63,6 +63,7 @@ public class AcidChance extends MeleeMobAttack {
                 Camera.main.shake(3, 0.2f);
             }
         }
+        */
 
         return damage;
     }

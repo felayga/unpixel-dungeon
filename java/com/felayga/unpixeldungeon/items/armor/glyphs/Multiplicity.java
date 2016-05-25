@@ -34,6 +34,7 @@ import com.felayga.unpixeldungeon.items.armor.Armor;
 import com.felayga.unpixeldungeon.items.armor.Armor.Glyph;
 import com.felayga.unpixeldungeon.items.scrolls.ScrollOfTeleportation;
 import com.felayga.unpixeldungeon.levels.Level;
+import com.felayga.unpixeldungeon.mechanics.MagicType;
 import com.felayga.unpixeldungeon.scenes.GameScene;
 import com.felayga.unpixeldungeon.sprites.ItemSprite;
 import com.felayga.unpixeldungeon.sprites.ItemSprite.Glowing;
@@ -62,12 +63,12 @@ public class Multiplicity extends Glyph {
 			}
 			
 			if (respawnPoints.size() > 0) {
-				MirrorImage mob = new MirrorImage();
+				MirrorImage mob = new MirrorImage(defender.level);
 				mob.duplicate( (Hero)defender );
 				GameScene.add( mob );
 				ScrollOfTeleportation.appear( mob, Random.element( respawnPoints ) );
 				
-				defender.damage( Random.IntRange( 1, defender.HT / 6 ), this );
+				defender.damage( Random.IntRange( 1, defender.HT / 6 ), MagicType.Mundane, null );
 				checkOwner( defender );
 			}
 			

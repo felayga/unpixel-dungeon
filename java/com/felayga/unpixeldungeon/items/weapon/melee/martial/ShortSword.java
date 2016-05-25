@@ -77,9 +77,9 @@ public class ShortSword extends MartialMeleeWeapon {
 	@Override
 	public boolean execute( Hero hero, String action ) {
 		if (action == AC_REFORGE) {
-			if (hero.belongings.weapon == this) {
+			if (hero.belongings.weapon() == this) {
 				equipped = true;
-				hero.belongings.weapon = null;
+                hero.belongings.unequip(this, false);
 			} else {
 				equipped = false;
 				hero.belongings.remove(this, 1);
@@ -124,7 +124,7 @@ public class ShortSword extends MartialMeleeWeapon {
 				}
 				
 				if (equipped) {
-					curUser.belongings.weapon = ShortSword.this;
+					curUser.belongings.collectEquip(ShortSword.this);
 				} else {
 					curUser.belongings.collect(ShortSword.this);
 				}

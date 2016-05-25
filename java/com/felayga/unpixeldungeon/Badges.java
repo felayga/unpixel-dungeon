@@ -36,12 +36,7 @@ import java.util.List;
 import com.felayga.unpixeldungeon.items.artifacts.Artifact_old;
 import com.felayga.unpixeldungeon.items.bags.PotionBandolier;
 import com.watabou.noosa.Game;
-import com.felayga.unpixeldungeon.actors.mobs.Acidic;
-import com.felayga.unpixeldungeon.actors.mobs.unused.MarsupialRatAlbino;
-import com.felayga.unpixeldungeon.actors.mobs.Bandit;
 import com.felayga.unpixeldungeon.actors.mobs.Mob;
-import com.felayga.unpixeldungeon.actors.mobs.Senior;
-import com.felayga.unpixeldungeon.actors.mobs.Shielded;
 import com.felayga.unpixeldungeon.items.Item;
 import com.felayga.unpixeldungeon.items.bags.ScrollHolder;
 import com.felayga.unpixeldungeon.items.bags.SeedPouch;
@@ -301,19 +296,19 @@ public class Badges {
 	public static void validateLevelReached() {
 		Badge badge = null;
 		
-		if (!local.contains( Badge.LEVEL_REACHED_1 ) && Dungeon.hero.lvl >= 6) {
+		if (!local.contains( Badge.LEVEL_REACHED_1 ) && Dungeon.hero.level >= 6) {
 			badge = Badge.LEVEL_REACHED_1;
 			local.add( badge );
 		}
-		if (!local.contains( Badge.LEVEL_REACHED_2 ) && Dungeon.hero.lvl >= 12) {
+		if (!local.contains( Badge.LEVEL_REACHED_2 ) && Dungeon.hero.level >= 12) {
 			badge = Badge.LEVEL_REACHED_2;
 			local.add( badge );
 		}
-		if (!local.contains( Badge.LEVEL_REACHED_3 ) && Dungeon.hero.lvl >= 18) {
+		if (!local.contains( Badge.LEVEL_REACHED_3 ) && Dungeon.hero.level >= 18) {
 			badge = Badge.LEVEL_REACHED_3;
 			local.add( badge );
 		}
-		if (!local.contains( Badge.LEVEL_REACHED_4 ) && Dungeon.hero.lvl >= 24) {
+		if (!local.contains( Badge.LEVEL_REACHED_4 ) && Dungeon.hero.level >= 24) {
 			badge = Badge.LEVEL_REACHED_4;
 			local.add( badge );
 		}
@@ -748,6 +743,7 @@ public class Badges {
 	public static void validateRare( Mob mob ) {
 		
 		Badge badge = null;
+		/*
 		if (mob instanceof MarsupialRatAlbino) {
 			badge = Badge.RARE_ALBINO;
 		} else if (mob instanceof Bandit) {
@@ -759,6 +755,7 @@ public class Badges {
 		} else if (mob instanceof Acidic) {
 			badge = Badge.RARE_ACIDIC;
 		}
+		*/
 		if (!global.contains( badge )) {
 			global.add( badge );
 			saveNeeded = true;

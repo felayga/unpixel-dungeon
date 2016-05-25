@@ -28,13 +28,15 @@ import com.felayga.unpixeldungeon.items.Item;
 import com.felayga.unpixeldungeon.sprites.ItemSpriteSheet;
 
 public class DarkGold extends Item {
-	
+
+    public DarkGold()
 	{
 		name = "dark gold ore";
 		image = ItemSpriteSheet.ORE;
 		
 		stackable = true;
 		unique = true;
+        price = 1;
 	}
 	
 	@Override
@@ -53,9 +55,5 @@ public class DarkGold extends Item {
 			"This metal is called dark not because of its color (it doesn't differ from the normal gold), " +
 			"but because it melts under the daylight, making it useless on the surface.";
 	}
-	
-	@Override
-	public int price() {
-		return quantity;
-	}
+
 }

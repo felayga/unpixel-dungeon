@@ -26,6 +26,7 @@ package com.felayga.unpixeldungeon.actors.buffs;
 
 import com.felayga.unpixeldungeon.actors.hero.Hero;
 import com.felayga.unpixeldungeon.mechanics.GameTime;
+import com.felayga.unpixeldungeon.mechanics.MagicType;
 import com.felayga.unpixeldungeon.ui.BuffIndicator;
 import com.felayga.unpixeldungeon.utils.GLog;
 import com.watabou.utils.Bundle;
@@ -67,7 +68,7 @@ public class DeathlySick extends Buff implements Hero.Doom {
             roundsLeft -= GameTime.TICK;
 
             if (roundsLeft <= 0) {
-                target.damage(target.HP, this);
+                target.damage(target.HP, MagicType.Mundane, null);
                 target.sprite.die();
             }
         } else {

@@ -25,6 +25,8 @@
 
 package com.felayga.unpixeldungeon.items.tools;
 
+import com.felayga.unpixeldungeon.actors.hero.Hero;
+
 /**
  * Created by HELLO on 3/28/2016.
  */

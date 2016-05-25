@@ -79,50 +79,16 @@ public class Bones {
 	private static Item pickItem(Hero hero){
 		Item item = null;
 		if (Random.Int(2) == 0) {
-			switch (Random.Int(13)) {
-				case 0:
-					item = hero.belongings.weapon;
-					break;
-				case 1:
-					item = hero.belongings.offhand;
-					break;
-				case 2:
-					item = hero.belongings.weapon2;
-					break;
-				case 3:
-					item = hero.belongings.offhand2;
-					break;
-                case 4:
-                    item = hero.belongings.armor;
-                    break;
-                case 5:
-                    item = hero.belongings.gloves;
-                    break;
-                case 6:
-                    item = hero.belongings.boots;
-                    break;
-                case 7:
-                    item = hero.belongings.cloak;
-                    break;
-                case 8:
-                    item = hero.belongings.ring1;
-                    break;
-                case 9:
-                    item = hero.belongings.ring2;
-                    break;
-                case 10:
-                    item = hero.belongings.amulet;
-                    break;
-                case 11:
-                    item = hero.belongings.face;
-                    break;
-				default:
-					item = Dungeon.quickslot.randomNonePlaceholder();
-					break;
-			}
-			if (item != null && !item.bones)
-				return pickItem(hero);
-		} else {
+            item = hero.belongings.randomUnequipped();
+
+            if (item == null) {
+                item = Dungeon.quickslot.randomNonePlaceholder();
+            }
+
+            if (item != null && !item.bones) {
+                return pickItem(hero);
+            }
+        } else {
 
 			Iterator<Item> iterator = hero.belongings.iterator();
 			Item curItem;
@@ -192,10 +158,10 @@ public class Bones {
 
 							return item;
 						} catch (Exception e) {
-							return new Gold(item.price());
+							return new Gold(item.price() * item.quantity());
 						}
 					} else {
-						return new Gold(item.price());
+						return new Gold(item.price() * item.quantity());
 					}
 				}
 				

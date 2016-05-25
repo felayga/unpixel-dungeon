@@ -61,7 +61,7 @@ public class Bag extends Item implements Iterable<Item>, IBag {
 
 		priority = 16;
 
-		weight = Encumbrance.UNIT * 15;
+		weight(Encumbrance.UNIT * 15);
 	}
 
 	public Char owner;
@@ -77,11 +77,7 @@ public class Bag extends Item implements Iterable<Item>, IBag {
 	public int priority;
 
 	public void onWeightChanged(int change) {
-		weight += change;
-
-		if (parent != null) {
-			parent.onWeightChanged(change);
-		}
+		weight(weight() + change);
 	}
 
 	@Override
@@ -127,7 +123,7 @@ public class Bag extends Item implements Iterable<Item>, IBag {
 					item.quantity(item.quantity() + collectItem.quantity());
 					item.updateQuickslot();
 
-					onWeightChanged(collectItem.quantity() * collectItem.weight);
+					onWeightChanged(collectItem.quantity() * collectItem.weight());
 
 					return true;
 				}
@@ -195,7 +191,7 @@ public class Bag extends Item implements Iterable<Item>, IBag {
 	public Item remove(Item item, int quantity) {
 		if (item.quantity() > quantity) {
 			item.quantity(item.quantity()-quantity);
-			onWeightChanged(-item.weight * quantity);
+			onWeightChanged(-item.weight() * quantity);
 
 			try {
 				//todo: WHAT THE FLYING FUCK.
@@ -243,11 +239,11 @@ public class Bag extends Item implements Iterable<Item>, IBag {
 
 	protected void onItemAdded(Item item) {
 		item.parent = this;
-		onWeightChanged(item.weight * item.quantity());
+		onWeightChanged(item.weight() * item.quantity());
 	}
 
 	protected void onItemRemoved(Item item) {
-		onWeightChanged(-item.weight * item.quantity());
+		onWeightChanged(-item.weight() * item.quantity());
 
 		if (item.parent == this) {
 			item.parent = null;

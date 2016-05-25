@@ -36,7 +36,7 @@ public class MerchantsBeacon extends Item {
 
 	private static final String AC_USE = "USE";
 
-
+    public MerchantsBeacon()
 	{
 		name = "merchant's beacon";
 		image = ItemSpriteSheet.BEACON;
@@ -46,6 +46,8 @@ public class MerchantsBeacon extends Item {
 		defaultAction = AC_USE;
 
 		bones = true;
+
+        price = 5;
 	}
 
 	@Override
@@ -76,11 +78,6 @@ public class MerchantsBeacon extends Item {
 	@Override
 	public boolean isIdentified() {
 		return true;
-	}
-
-	@Override
-	public int price() {
-		return 5 * quantity;
 	}
 
 	@Override

@@ -33,8 +33,6 @@ import com.felayga.unpixeldungeon.actors.buffs.Buff;
 import com.felayga.unpixeldungeon.actors.buffs.Burning;
 import com.felayga.unpixeldungeon.actors.buffs.Frost;
 import com.felayga.unpixeldungeon.actors.hero.Hero;
-import com.felayga.unpixeldungeon.actors.mobs.Mimic;
-import com.felayga.unpixeldungeon.actors.mobs.Wraith;
 import com.felayga.unpixeldungeon.effects.CellEmitter;
 import com.felayga.unpixeldungeon.effects.Speck;
 import com.felayga.unpixeldungeon.effects.Splash;
@@ -52,6 +50,7 @@ import com.felayga.unpixeldungeon.items.potions.PotionOfHealing;
 import com.felayga.unpixeldungeon.items.scrolls.Scroll;
 import com.felayga.unpixeldungeon.mechanics.BUCStatus;
 import com.felayga.unpixeldungeon.mechanics.GameTime;
+import com.felayga.unpixeldungeon.mechanics.MagicType;
 import com.felayga.unpixeldungeon.plants.Plant.Seed;
 import com.felayga.unpixeldungeon.sprites.ItemSprite;
 import com.felayga.unpixeldungeon.sprites.ItemSpriteSheet;
@@ -121,7 +120,8 @@ public class Heap implements Bundlable {
 	public void open( Hero hero ) {
 		switch (type) {
 		case MIMIC:
-			if (Mimic.spawnAt(pos, items) != null) {
+			//todo: mimic spawning
+			if (false/*Mimic.spawnAt(pos, items) != null*/) {
 				GLog.n(TXT_MIMIC);
 				destroy();
 			} else {
@@ -129,16 +129,18 @@ public class Heap implements Bundlable {
 			}
 			break;
 		case TOMB:
-			Wraith.spawnAround( hero.pos );
+			//todo: wraith spawn maybe?
+			//Wraith.spawnAround( hero.pos );
 			break;
 		case SKELETON:
 		case REMAINS:
 			CellEmitter.center( pos ).start( Speck.factory( Speck.RATTLE ), 0.1f, 3 );
 			for (Item item : items) {
 				if (item.bucStatus == BUCStatus.Cursed) {
-					if (Wraith.spawnAt( pos ) == null) {
+					//todo: wraith spawn from opening remains maybe?
+					if (false/*Wraith.spawnAt( pos ) == null*/) {
 						hero.sprite.emitter().burst( ShadowParticle.CURSE, 6 );
-						hero.damage( hero.HP / 2, this );
+						hero.damage( hero.HP / 2, MagicType.Magic, null );
 					}
 					Sample.INSTANCE.play( Assets.SND_CURSED );
 					item.bucStatusKnown = true;
@@ -222,12 +224,15 @@ public class Heap implements Bundlable {
 	public void burn() {
 
 		if (type == Type.MIMIC) {
+			//todo: fix mimic burning
+			/*
 			Mimic m = Mimic.spawnAt( pos, items );
 			if (m != null) {
 				Buff.affect( m, Burning.class ).reignite( m );
 				m.sprite.emitter().burst( FlameParticle.FACTORY, 5 );
 				destroy();
 			}
+			*/
 		}
 
 		if (type != Type.HEAP) {
@@ -317,11 +322,14 @@ public class Heap implements Bundlable {
 	public void freeze() {
 
 		if (type == Type.MIMIC) {
+			//todo: fix mimic freezing
+			/*
 			Mimic m = Mimic.spawnAt( pos, items );
 			if (m != null) {
 				Buff.prolong( m, Frost.class, Frost.duration( m ) * Random.Long(GameTime.TICK, GameTime.TICK*3/2) / GameTime.TICK );
 				destroy();
 			}
+			*/
 		}
 
 		if (type != Type.HEAP) {

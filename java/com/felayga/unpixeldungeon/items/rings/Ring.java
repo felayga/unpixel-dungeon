@@ -49,7 +49,7 @@ import com.felayga.unpixeldungeon.windows.WndOptions;
 import com.watabou.utils.Bundle;
 import com.watabou.utils.Random;
 
-public class Ring extends KindofMisc implements IActivateable {
+public class Ring extends KindofMisc {
 
 	private static final int TICKS_TO_KNOW    = 200;
 
@@ -148,7 +148,10 @@ public class Ring extends KindofMisc implements IActivateable {
 
 		syncVisuals();
 
-		weight = Encumbrance.UNIT * 3;
+		weight(Encumbrance.UNIT * 3);
+        price = 75;
+
+        randomEnchantmentMinimum = 1;
 	}
 	
 	public void syncVisuals() {
@@ -270,47 +273,10 @@ public class Ring extends KindofMisc implements IActivateable {
 
 		return super.identify(updateQuickslot);
 	}
-	
-	@Override
-	public Item random() {
-		int n = 1;
-		if (Random.Int(3) == 0) {
-			n++;
-			if (Random.Int(5) == 0){
-				n++;
-			}
-		}
 
-		if (Random.Float() < 0.3f) {
-			level = -n;
-			bucStatus = BUCStatus.Cursed;
-		} else
-			level = n;
-
-		return this;
-	}
 	
 	public static boolean allKnown() {
 		return handler.known().size() == rings.length - 2;
-	}
-	
-	@Override
-	public int price() {
-		int price = 75;
-		if (bucStatus == BUCStatus.Cursed) {
-			price /= 2;
-		}
-		if (levelKnown) {
-			if (level > 0) {
-				price *= (level + 1);
-			} else if (level < 0) {
-				price /= (1 - level);
-			}
-		}
-		if (price < 1) {
-			price = 1;
-		}
-		return price;
 	}
 	
 	protected RingBuff buff() {

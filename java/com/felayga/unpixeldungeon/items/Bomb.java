@@ -25,6 +25,7 @@
 package com.felayga.unpixeldungeon.items;
 
 import com.felayga.unpixeldungeon.actors.hero.Hero;
+import com.felayga.unpixeldungeon.mechanics.MagicType;
 import com.felayga.unpixeldungeon.sprites.CharSprite;
 import com.felayga.unpixeldungeon.sprites.ItemSprite;
 import com.felayga.unpixeldungeon.utils.GLog;
@@ -46,7 +47,8 @@ import com.watabou.utils.Random;
 import java.util.ArrayList;
 
 public class Bomb extends Item {
-	
+
+    public Bomb()
 	{
 		name = "bomb";
 		image = ItemSpriteSheet.BOMB;
@@ -55,6 +57,7 @@ public class Bomb extends Item {
 		usesTargeting = true;
 
 		stackable = true;
+        price = 20;
 	}
 
 	public Fuse fuse;
@@ -89,7 +92,7 @@ public class Bomb extends Item {
 	}
 
 	@Override
-	protected void onThrow( int cell ) {
+	protected void onThrow( int cell, Char thrower ) {
 		if (!Level.pit[ cell ] && lightingFuse) {
 			Actor.addDelayed(fuse = new Fuse().ignite(this), 2);
 		}
@@ -101,7 +104,7 @@ public class Bomb extends Item {
 			int newCell = candidates.isEmpty() ? cell : Random.element(candidates);
 			Dungeon.level.drop( this, newCell ).sprite.drop( cell );
 		} else
-			super.onThrow( cell );
+			super.onThrow( cell, thrower );
 	}
 
 	@Override
@@ -150,7 +153,7 @@ public class Bomb extends Item {
 
 					int dmg = Random.NormalIntRange( minDamage, maxDamage );
 					if (dmg > 0) {
-						ch.damage( dmg, this );
+						ch.damage( dmg, MagicType.Mundane, null );
 					}
 
 					if (ch == Dungeon.hero && !ch.isAlive())
@@ -188,11 +191,6 @@ public class Bomb extends Item {
 	@Override
 	public ItemSprite.Glowing glowing() {
 		return fuse != null ? new ItemSprite.Glowing( 0xFF0000, 0.6f) : null;
-	}
-
-	@Override
-	public int price() {
-		return 20 * quantity;
 	}
 	
 	@Override

@@ -28,6 +28,7 @@ import com.felayga.unpixeldungeon.Dungeon;
 import com.felayga.unpixeldungeon.actors.Actor;
 import com.felayga.unpixeldungeon.actors.hero.Hero;
 import com.felayga.unpixeldungeon.mechanics.GameTime;
+import com.felayga.unpixeldungeon.mechanics.MagicType;
 import com.felayga.unpixeldungeon.ui.BuffIndicator;
 import com.watabou.utils.Bundle;
 
@@ -81,7 +82,7 @@ public class Venom extends Poison implements Hero.Doom {
 	@Override
 	public boolean act() {
 		if (target.isAlive()) {
-			target.damage(damage, this);
+			target.damage(damage, MagicType.Poison, null);
 			if (damage < ((Dungeon.depth+1)/2)+1)
 				damage++;
 

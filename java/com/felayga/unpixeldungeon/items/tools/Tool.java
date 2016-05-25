@@ -24,29 +24,15 @@
  */
 package com.felayga.unpixeldungeon.items.tools;
 
-import com.felayga.unpixeldungeon.Dungeon;
-import com.felayga.unpixeldungeon.ShatteredPixelDungeon;
-import com.felayga.unpixeldungeon.actors.Actor;
-import com.felayga.unpixeldungeon.actors.Char;
 import com.felayga.unpixeldungeon.actors.hero.Hero;
-import com.felayga.unpixeldungeon.items.EquipableItem;
 import com.felayga.unpixeldungeon.items.Item;
-import com.felayga.unpixeldungeon.items.KindofMisc;
-import com.felayga.unpixeldungeon.mechanics.BUCStatus;
-import com.felayga.unpixeldungeon.mechanics.Constant;
-import com.felayga.unpixeldungeon.mechanics.GameTime;
 import com.felayga.unpixeldungeon.scenes.CellSelector;
 import com.felayga.unpixeldungeon.scenes.GameScene;
-import com.felayga.unpixeldungeon.utils.GLog;
-import com.felayga.unpixeldungeon.utils.Utils;
-import com.felayga.unpixeldungeon.windows.WndOptions;
-
-import java.util.ArrayList;
 
 /**
  * Created by hello on 12/21/15.
  */
-public abstract class Tool extends Item {
+public abstract class Tool extends Item implements ITool {
     private static Tool curTool;
 
     public Tool() {
@@ -72,7 +58,7 @@ public abstract class Tool extends Item {
 
     public abstract void apply(Hero hero, int target);
 
-    protected static CellSelector.Listener applier = new CellSelector.Listener() {
+    public static CellSelector.Listener applier = new CellSelector.Listener() {
         @Override
         public void onSelect(Integer target) {
             if (target != null) {

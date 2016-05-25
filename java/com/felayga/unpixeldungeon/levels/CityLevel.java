@@ -31,7 +31,6 @@ import com.watabou.noosa.particles.PixelParticle;
 import com.felayga.unpixeldungeon.Assets;
 import com.felayga.unpixeldungeon.Dungeon;
 import com.felayga.unpixeldungeon.DungeonTilemap;
-import com.felayga.unpixeldungeon.actors.mobs.npcs.Imp;
 import com.felayga.unpixeldungeon.levels.Room.Type;
 import com.watabou.utils.PointF;
 import com.watabou.utils.Random;
@@ -65,7 +64,7 @@ public class CityLevel extends RegularLevel {
 	protected Class<?>[] trapClasses() {
 		return new Class[]{ BlazingTrap.class, FrostTrap.class, SpearTrap.class, VenomTrap.class,
 				ExplosiveTrap.class, GrippingTrap.class, LightningTrap.class, RockfallTrap.class, OozeTrap.class, WeakeningTrap.class,
-				CursingTrap.class, FlockTrap.class, GuardianTrap.class, PitfallTrap.class, SummoningTrap.class, TeleportationTrap.class,
+				CursingTrap.class, FlockTrap.class, /*GuardianTrap.class,*/ PitfallTrap.class, SummoningTrap.class, TeleportationTrap.class,
 				DisarmingTrap.class, WarpingTrap.class};
 	}
 
@@ -108,7 +107,7 @@ public class CityLevel extends RegularLevel {
 	protected void createItems() {
 		super.createItems();
 		
-		Imp.Quest.spawn( this );
+		//Imp.Quest.spawn( this );
 	}
 	
 	@Override

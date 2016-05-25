@@ -30,6 +30,7 @@ import com.felayga.unpixeldungeon.ResultDescriptions;
 import com.felayga.unpixeldungeon.actors.Actor;
 import com.felayga.unpixeldungeon.actors.Char;
 import com.felayga.unpixeldungeon.effects.Wound;
+import com.felayga.unpixeldungeon.mechanics.MagicType;
 import com.felayga.unpixeldungeon.sprites.TrapSprite;
 import com.felayga.unpixeldungeon.utils.GLog;
 import com.felayga.unpixeldungeon.utils.Utils;
@@ -64,7 +65,7 @@ public class SpearTrap extends Trap {
 		Char ch = Actor.findChar( pos);
 		if (ch != null){
 			int damage = Random.NormalIntRange(Dungeon.depth, Dungeon.depth*2);
-			ch.damage( Math.max(damage, 0) , this);
+			ch.damage( Math.max(damage, 0) , MagicType.Mundane, null);
 			if (!ch.isAlive() && ch == Dungeon.hero){
 				Dungeon.fail(Utils.format(ResultDescriptions.TRAP, name));
 				GLog.n("You were skewered by the spear trap...");

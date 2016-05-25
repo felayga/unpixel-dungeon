@@ -45,7 +45,8 @@ public class Stylus extends Item {
 	private static final long TIME_TO_INSCRIBE = GameTime.TICK * 2;
 	
 	private static final String AC_INSCRIBE = "INSCRIBE";
-	
+
+    public Stylus()
 	{
 		name = "arcane stylus";
 		image = ItemSpriteSheet.STYLUS;
@@ -53,6 +54,8 @@ public class Stylus extends Item {
 		stackable = true;
 
 		bones = true;
+
+        price = 30;
 	}
 	
 	@Override
@@ -97,11 +100,6 @@ public class Stylus extends Item {
 		
 		curUser.spend( TIME_TO_INSCRIBE, false );
 		curUser.busy();
-	}
-	
-	@Override
-	public int price() {
-		return 30 * quantity;
 	}
 	
 	@Override

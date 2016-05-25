@@ -24,8 +24,8 @@
  */
 package com.felayga.unpixeldungeon.sprites.mobs.unused;
 
-import com.felayga.unpixeldungeon.actors.mobs.Shaman;
 import com.felayga.unpixeldungeon.effects.Lightning;
+import com.watabou.utils.Callback;
 
 public class GnollShamanSprite extends GnollSprite {
 	
@@ -37,7 +37,7 @@ public class GnollShamanSprite extends GnollSprite {
 	
 	public void zap( int pos ) {
 
-		parent.add( new Lightning( ch.pos, pos, (Shaman)ch ) );
+		parent.add( new Lightning( ch.pos, pos, (Callback)ch ) );
 		
 		turnTo( ch.pos, pos );
 		play( zap );

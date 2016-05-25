@@ -49,16 +49,19 @@ public class PotionOfPurity extends Potion {
 	private static final String TXT_NO_SMELL	= "You've stopped sensing any smells!";
 	
 	private static final int DISTANCE	= 5;
-	
+
+    public PotionOfPurity()
 	{
 		name = "Potion of Purification";
 		initials = "Pu";
+
+        price = 50;
 	}
 	
 	@Override
 	public void shatter( int cell ) {
 		
-		PathFinder.buildDistanceMap( cell, BArray.not( Level.losBlocking, null ), DISTANCE );
+		PathFinder.buildDistanceMap(cell, BArray.not(Level.losBlocking, null), DISTANCE);
 		
 		boolean procd = false;
 		
@@ -136,9 +139,5 @@ public class PotionOfPurity extends Potion {
 			"This reagent will quickly neutralize all harmful gases in the area of effect. " +
 			"Drinking it will give you a temporary immunity to such gases.";
 	}
-	
-	@Override
-	public int price() {
-		return isKnown() ? 50 * quantity : super.price();
-	}
+
 }

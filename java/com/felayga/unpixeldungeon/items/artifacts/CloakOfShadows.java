@@ -240,7 +240,7 @@ public class CloakOfShadows extends Artifact_old {
 				((Hero)target).interrupt();
 			}
 
-			if (turnsToCost == 0) exp += 10 + ((Hero)target).lvl;
+			if (turnsToCost == 0) exp += 10 + ((Char)target).level;
 
 			if (exp >= (level+1)*50 && level < levelCap) {
 				upgrade(null, 1);
@@ -260,7 +260,7 @@ public class CloakOfShadows extends Artifact_old {
 		public void dispel(){
 			charge --;
 
-			exp += 10 + ((Hero)target).lvl;
+			exp += 10 + ((Hero)target).level;
 
 			if (exp >= (level+1)*50 && level < levelCap) {
 				upgrade(null, 1);

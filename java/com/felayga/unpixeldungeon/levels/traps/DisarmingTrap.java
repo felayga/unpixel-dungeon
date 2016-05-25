@@ -68,13 +68,13 @@ public class DisarmingTrap extends Trap{
 
 		if (Dungeon.hero.pos == pos){
 			Hero hero = Dungeon.hero;
-			KindOfWeapon weapon = (KindOfWeapon)hero.belongings.weapon;
+			KindOfWeapon weapon = (KindOfWeapon)hero.belongings.weapon();
 
 			if (weapon != null && !(weapon instanceof Knuckles) && weapon.bucStatus() != BUCStatus.Cursed) {
 
 				int cell = Dungeon.level.randomRespawnCell();
 				if (cell != -1) {
-					hero.belongings.weapon = null;
+                    hero.belongings.unequip(weapon, false);
 					Dungeon.quickslot.clearItem(weapon);
 					weapon.updateQuickslot();
 

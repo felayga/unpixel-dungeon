@@ -30,14 +30,14 @@ import com.felayga.unpixeldungeon.sprites.ItemSpriteSheet;
 public class MailArmor extends MediumArmor {
 	public MailArmor()
 	{
-		super(5, 2, 96);
+		super(5, 2, 1, 96);
 		name = "chainmail armor";
 		image = ItemSpriteSheet.ARMOR_MAIL;
 
 		price = 150;
 		textureIndex = 4;
 
-		weight = Encumbrance.UNIT * 360;
+		weight(Encumbrance.UNIT * 360);
 	}
 
 	@Override

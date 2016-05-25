@@ -193,7 +193,7 @@ public class StatusPane extends Component {
 		mp.scale.x = mana;
 		exp.scale.x = (width / exp.width) * Dungeon.hero.exp / Dungeon.hero.maxExp();
 
-		if (Dungeon.hero.lvl != lastLvl) {
+		if (Dungeon.hero.level != lastLvl) {
 
 			if (lastLvl != -1) {
 				Emitter emitter = (Emitter)recycle( Emitter.class );
@@ -202,7 +202,7 @@ public class StatusPane extends Component {
 				emitter.burst( Speck.factory( Speck.STAR ), 12 );
 			}
 
-			lastLvl = Dungeon.hero.lvl;
+			lastLvl = Dungeon.hero.level;
 			level.text( Integer.toString( lastLvl ) );
 			level.measure();
 			level.x = 27.0f - level.width() / 2;

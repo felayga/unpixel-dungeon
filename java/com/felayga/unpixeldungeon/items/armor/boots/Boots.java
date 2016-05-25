@@ -37,6 +37,7 @@ import com.felayga.unpixeldungeon.items.bags.Bag;
 import com.felayga.unpixeldungeon.levels.Terrain;
 import com.felayga.unpixeldungeon.mechanics.AttributeType;
 import com.felayga.unpixeldungeon.mechanics.GameTime;
+import com.felayga.unpixeldungeon.mechanics.MagicType;
 import com.felayga.unpixeldungeon.scenes.CellSelector;
 import com.felayga.unpixeldungeon.scenes.GameScene;
 import com.felayga.unpixeldungeon.sprites.hero.HeroSprite;
@@ -49,8 +50,8 @@ import java.util.ArrayList;
  * Created by HELLO on 3/23/2016.
  */
 public class Boots extends Armor {
-    public Boots(int armor, long speedModifier) {
-        super(armor, 32767, speedModifier, GameTime.TICK / 2, 0);
+    public Boots(int armor, int armorMagic, long speedModifier) {
+        super(armor, 32767, armorMagic, speedModifier, GameTime.TICK / 2, 0);
 
         defaultAction = null;
     }
@@ -154,7 +155,7 @@ public class Boots extends Armor {
         }
         else {
             GLog.n("Ouch!  That hurts.");
-            hero.damage(Random.IntRange(1,4), cell);
+            hero.damage(Random.IntRange(1,4), MagicType.Mundane, null);
             if (Random.Int(3)==0) {
                 Cripple.prolong(hero, Cripple.class, GameTime.TICK * Random.IntRange(4, 12));
             }

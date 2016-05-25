@@ -29,6 +29,7 @@ import com.felayga.unpixeldungeon.actors.buffs.Bleeding;
 import com.felayga.unpixeldungeon.actors.buffs.Buff;
 import com.felayga.unpixeldungeon.items.Item;
 import com.felayga.unpixeldungeon.mechanics.GameTime;
+import com.felayga.unpixeldungeon.mechanics.WeaponSkill;
 import com.felayga.unpixeldungeon.sprites.ItemSpriteSheet;
 import com.watabou.utils.Random;
 
@@ -39,12 +40,13 @@ public class Tomahawk extends MissileWeapon {
 	}
 	
 	public Tomahawk(int number) {
-		super(GameTime.TICK, 4, 20, number);
+		super(WeaponSkill.Simple, GameTime.TICK, 4, 20, number);
 
 		name = "tomahawk";
 		image = ItemSpriteSheet.TOMAHAWK;
 
 		//STR = 17;
+        price = 15;
 	}
 	
 	@Override
@@ -68,9 +70,5 @@ public class Tomahawk extends MissileWeapon {
 		quantity = Random.Int( 5, 12 );
 		return this;
 	}
-	
-	@Override
-	public int price() {
-		return 15 * quantity;
-	}
+
 }

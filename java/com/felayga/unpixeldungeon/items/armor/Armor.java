@@ -32,7 +32,7 @@ import com.felayga.unpixeldungeon.Dungeon;
 import com.felayga.unpixeldungeon.ResultDescriptions;
 import com.felayga.unpixeldungeon.actors.Char;
 import com.felayga.unpixeldungeon.actors.hero.Hero;
-import com.felayga.unpixeldungeon.items.EquipableItem;
+import com.felayga.unpixeldungeon.items.EquippableItem;
 import com.felayga.unpixeldungeon.items.Item;
 import com.felayga.unpixeldungeon.items.armor.glyphs.*;
 import com.felayga.unpixeldungeon.mechanics.BUCStatus;
@@ -45,7 +45,7 @@ import com.watabou.utils.Bundlable;
 import com.watabou.utils.Bundle;
 import com.watabou.utils.Random;
 
-public class Armor extends EquipableItem {
+public class Armor extends EquippableItem {
 
 	private static final int HITS_TO_KNOW    = 10;
 
@@ -162,7 +162,7 @@ public class Armor extends EquipableItem {
 		if (!levelKnown) {
 			if (--hitsToKnow <= 0) {
 				levelKnown = true;
-				GLog.w( TXT_IDENTIFY, getDisplayName(), toString() );
+				GLog.w( TXT_IDENTIFY, getDisplayName() );
 				Badges.validateItemLevelAquired( this );
 			}
 		}
@@ -261,47 +261,13 @@ public class Armor extends EquipableItem {
 
 	@Override
 	public Item random() {
-		if (Random.Float() < 0.4) {
-			int n = 1;
-			if (Random.Int( 3 ) == 0) {
-				n++;
-				if (Random.Int( 5 ) == 0) {
-					n++;
-				}
-			}
-			if (Random.Int( 2 ) == 0) {
-				upgrade( null, n );
-			} else {
-				upgrade( null, -n );
-				bucStatus = BUCStatus.Cursed;
-			}
-		}
+		super.random();
 		
 		if (Random.Int( 10 ) == 0) {
 			enchant();
 		}
 		
 		return this;
-	}
-
-	@Override
-	public int price() {
-		int price = this.price;
-		if (glyph != null) {
-			price *= 1.5;
-		}
-
-		if (bucStatus == BUCStatus.Cursed) {
-			price /= 2;
-		}
-
-		price += level * 10;
-
-		if (price < 1) {
-			price = 1;
-		}
-
-		return price;
 	}
 
 	public Armor enchant( Glyph glyph ) {

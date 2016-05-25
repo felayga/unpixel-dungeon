@@ -32,11 +32,14 @@ import com.felayga.unpixeldungeon.utils.GLog;
 
 public class PotionOfMindVision extends Potion {
 
+    public PotionOfMindVision()
 	{
 		name = "Potion of Mind Vision";
 		initials = "MV";
 
 		isHelpful = true;
+
+        price = 35;
 	}
 	
 	@Override
@@ -59,9 +62,5 @@ public class PotionOfMindVision extends Potion {
 			"of distant creatures, enabling you to sense biological presences through walls. " +
 			"Also this potion will permit you to see through nearby walls and doors.";
 	}
-	
-	@Override
-	public int price() {
-		return isKnown() ? 35 * quantity : super.price();
-	}
+
 }

@@ -49,8 +49,8 @@ import java.util.ArrayList;
  * Created by HELLO on 3/23/2016.
  */
 public class Gloves extends Armor {
-    public Gloves(int armor, long speedModifier) {
-        super(armor, 32767, speedModifier, GameTime.TICK / 2, 0);
+    public Gloves(int armor, int armorMagic, long speedModifier) {
+        super(armor, 32767, armorMagic, speedModifier, GameTime.TICK / 2, 0);
     }
 
     @Override

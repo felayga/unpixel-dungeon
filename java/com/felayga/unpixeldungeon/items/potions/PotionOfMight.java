@@ -31,12 +31,15 @@ import com.felayga.unpixeldungeon.utils.GLog;
 
 public class PotionOfMight extends PotionOfStrength {
 
+    public PotionOfMight()
 	{
 		name = "Potion of Might";
 		initials = "Mi";
 
 		bones = true;
 		isHelpful = true;
+
+        price = 200;
 	}
 	
 	@Override
@@ -62,9 +65,5 @@ public class PotionOfMight extends PotionOfStrength {
 			"This powerful liquid will course through your muscles, permanently " +
 			"increasing your strength by one point and health by five points.";
 	}
-	
-	@Override
-	public int price() {
-		return isKnown() ? 200 * quantity : super.price();
-	}
+
 }

@@ -29,11 +29,13 @@ import com.felayga.unpixeldungeon.sprites.ItemSpriteSheet;
 
 public class OverpricedRation extends Food {
 
+    public OverpricedRation()
 	{
 		name = "overpriced food ration";
 		image = ItemSpriteSheet.OVERPRICED;
 		energy = 400;
 		hornValue = 1;
+        price = 20;
 	}
 	
 	@Override
@@ -46,9 +48,5 @@ public class OverpricedRation extends Food {
 	{
 		return "That food tasted ok.";
 	}
-	
-	@Override
-	public int price() {
-		return 20 * quantity;
-	}
+
 }

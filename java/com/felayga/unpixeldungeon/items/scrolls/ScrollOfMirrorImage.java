@@ -60,7 +60,7 @@ public class ScrollOfMirrorImage extends Scroll {
 		while (nImages > 0 && respawnPoints.size() > 0) {
 			int index = Random.index( respawnPoints );
 			
-			MirrorImage mob = new MirrorImage();
+			MirrorImage mob = new MirrorImage(curUser.level);
 			mob.duplicate( curUser );
 			GameScene.add( mob );
 			ScrollOfTeleportation.appear( mob, respawnPoints.get( index ) );

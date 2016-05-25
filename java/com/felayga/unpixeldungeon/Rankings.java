@@ -61,7 +61,7 @@ public enum Rankings {
 		rec.info	= Dungeon.resultDescription;
 		rec.win		= win;
 		rec.heroClass	= Dungeon.hero.heroClass;
-		rec.herolevel	= Dungeon.hero.lvl;
+		rec.herolevel	= Dungeon.hero.level;
 		rec.depth		= Dungeon.depth;
 		rec.score	= score( win );
 		
@@ -107,7 +107,7 @@ public enum Rankings {
 	}
 
 	private int score( boolean win ) {
-		return (Statistics.goldCollected + Dungeon.hero.lvl * (win ? 26 : Dungeon.depth ) * 100) * (win ? 2 : 1);
+		return (Statistics.goldCollected + Dungeon.hero.level * (win ? 26 : Dungeon.depth ) * 100) * (win ? 2 : 1);
 	}
 	
 	private static final String RECORDS	= "records";

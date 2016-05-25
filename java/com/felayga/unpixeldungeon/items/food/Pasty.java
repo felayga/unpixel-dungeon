@@ -29,6 +29,7 @@ import com.felayga.unpixeldungeon.sprites.ItemSpriteSheet;
 
 public class Pasty extends Food {
 
+    public Pasty()
 	{
 		name = "pasty";
 		image = ItemSpriteSheet.PASTY;
@@ -36,15 +37,12 @@ public class Pasty extends Food {
 		hornValue = 5;
 
 		bones = true;
+        price = 20;
 	}
 	
 	@Override
 	public String info() {
 		return "This is authentic Cornish pasty with traditional filling of beef and potato.";
 	}
-	
-	@Override
-	public int price() {
-		return 20 * quantity;
-	}
+
 }

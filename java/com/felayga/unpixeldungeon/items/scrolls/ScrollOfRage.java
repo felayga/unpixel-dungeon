@@ -25,7 +25,7 @@
 package com.felayga.unpixeldungeon.items.scrolls;
 
 import com.felayga.unpixeldungeon.actors.Actor;
-import com.felayga.unpixeldungeon.actors.mobs.Mimic;
+//import com.felayga.unpixeldungeon.actors.mobs.Mimic;
 import com.felayga.unpixeldungeon.items.Heap;
 import com.felayga.unpixeldungeon.levels.Level;
 import com.felayga.unpixeldungeon.mechanics.GameTime;
@@ -58,11 +58,13 @@ public class ScrollOfRage extends Scroll {
 
 		for (Heap heap : Dungeon.level.heaps.values()) {
 			if (heap.type == Heap.Type.MIMIC) {
+				/*
 				Mimic m = Mimic.spawnAt( heap.pos, heap.items );
 				if (m != null) {
 					m.beckon( curUser.pos );
 					heap.destroy();
 				}
+				*/
 			}
 		}
 

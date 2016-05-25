@@ -33,7 +33,7 @@ import com.felayga.unpixeldungeon.items.Ankh;
 import com.felayga.unpixeldungeon.items.Bomb;
 import com.felayga.unpixeldungeon.items.Generator;
 import com.felayga.unpixeldungeon.items.Heap;
-import com.felayga.unpixeldungeon.items.Honeypot;
+//import com.felayga.unpixeldungeon.items.Honeypot;
 import com.felayga.unpixeldungeon.items.Item;
 import com.felayga.unpixeldungeon.items.MerchantsBeacon;
 import com.felayga.unpixeldungeon.items.Stylus;
@@ -196,7 +196,7 @@ public class ShopPainter extends Painter {
 				break;
 			case 3:
 			case 4:
-				itemsToSpawn.add( new Honeypot() );
+				//itemsToSpawn.add( new Honeypot() );
 				break;
 		}
 

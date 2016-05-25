@@ -34,6 +34,7 @@ import com.felayga.unpixeldungeon.effects.MagicMissile;
 import com.felayga.unpixeldungeon.effects.particles.ShadowParticle;
 import com.felayga.unpixeldungeon.levels.Level;
 import com.felayga.unpixeldungeon.mechanics.Ballistica;
+import com.felayga.unpixeldungeon.mechanics.MagicType;
 import com.felayga.unpixeldungeon.sprites.TrapSprite;
 import com.felayga.unpixeldungeon.utils.GLog;
 import com.felayga.unpixeldungeon.utils.Utils;
@@ -78,10 +79,10 @@ public class GrimTrap extends Trap {
 					if (finalTarget == Dungeon.hero) {
 						//almost kill the player
 						if (((float)finalTarget.HP/finalTarget.HT) >= 0.9f){
-							finalTarget.damage((finalTarget.HP-1), this);
+							finalTarget.damage((finalTarget.HP-1), MagicType.Magic, null);
 						//kill 'em
 						} else {
-							finalTarget.damage(finalTarget.HP, this);
+							finalTarget.damage(finalTarget.HP, MagicType.Magic, null);
 						}
 						Sample.INSTANCE.play(Assets.SND_CURSED);
 						if (!finalTarget.isAlive()) {
@@ -89,7 +90,7 @@ public class GrimTrap extends Trap {
 							GLog.n("You were killed by the blast of a grim trap...");
 						}
 					} else {
-						finalTarget.damage(finalTarget.HP, this);
+						finalTarget.damage(finalTarget.HP, MagicType.Magic, null);
 						Sample.INSTANCE.play(Assets.SND_BURNING);
 					}
 					finalTarget.sprite.emitter().burst(ShadowParticle.UP, 10);

@@ -36,10 +36,13 @@ import com.watabou.utils.PathFinder;
 public class PotionOfFrost extends Potion {
 	
 	private static final int DISTANCE	= 2;
-	
+
+    public PotionOfFrost()
 	{
 		name = "Potion of Frost";
 		initials = "Fr";
+
+        price = 50;
 	}
 	
 	@Override
@@ -71,9 +74,5 @@ public class PotionOfFrost extends Potion {
 			"any creature that contacts it to be frozen in place unable to act and move. " +
 			"The freezing effect is much stronger if the environment is wet.";
 	}
-	
-	@Override
-	public int price() {
-		return isKnown() ? 50 * quantity : super.price();
-	}
+
 }

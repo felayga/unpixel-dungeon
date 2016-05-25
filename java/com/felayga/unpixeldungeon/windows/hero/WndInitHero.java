@@ -149,6 +149,7 @@ public class WndInitHero extends Window {
         hairs.add("CREWCUT");
         hairs.add("FLIP");
         hairs.add("PONYTAIL");
+        hairs.add("LONG");
 
         addLeftRightSelector("Hair", hairs, hairSelected, new LeftRightSelector.Listener() {
             @Override

@@ -24,30 +24,41 @@
  */
 package com.felayga.unpixeldungeon.actors.mobs;
 
+import android.util.Log;
+
 import com.felayga.unpixeldungeon.actors.Char;
 import com.felayga.unpixeldungeon.actors.mobs.bug.GridBug;
-import com.felayga.unpixeldungeon.actors.mobs.npcs.Ghost;
-import com.felayga.unpixeldungeon.actors.mobs.unused.MarsupialRatAlbino;
-import com.felayga.unpixeldungeon.actors.mobs.unused.MarsupialRat;
+import com.felayga.unpixeldungeon.actors.mobs.jackal.Fox;
+import com.felayga.unpixeldungeon.actors.mobs.jackal.Jackal;
+import com.felayga.unpixeldungeon.actors.mobs.kobold.Kobold;
+import com.felayga.unpixeldungeon.actors.mobs.kobold.KoboldZombie;
+import com.felayga.unpixeldungeon.actors.mobs.lichen.Lichen;
+import com.felayga.unpixeldungeon.actors.mobs.newt.Newt;
+//import com.felayga.unpixeldungeon.actors.mobs.npcs.Ghost;
+import com.felayga.unpixeldungeon.actors.mobs.orc.Goblin;
 import com.felayga.unpixeldungeon.actors.mobs.rat.SewerRat;
+import com.felayga.unpixeldungeon.utils.GLog;
 import com.watabou.utils.Random;
 
 public class Bestiary {
 
-	public static Mob mob( int depth ) {
-		@SuppressWarnings("unchecked")
-		Class<? extends Mob> cl = (Class<? extends Mob>)mobClass( depth );
-		try {
-			return cl.newInstance();
-		} catch (Exception e) {
-			return null;
-		}
-	}
-	
-	public static Mob mutable( int depth ) {
-		@SuppressWarnings("unchecked")
-		Class<? extends Mob> cl = (Class<? extends Mob>)mobClass( depth );
-		
+    public static Mob mob(int depth, int heroLevel) {
+        @SuppressWarnings("unchecked")
+        Class<? extends Mob> cl = (Class<? extends Mob>) mobClass(depth, heroLevel);
+        try {
+            return cl.newInstance();
+        } catch (Exception e) {
+            GLog.d("it's bad, mmmkay");
+            GLog.d(e);
+            return null;
+        }
+    }
+
+    public static Mob mutable(int depth, int heroLevel) {
+        @SuppressWarnings("unchecked")
+        Class<? extends Mob> cl = (Class<? extends Mob>) mobClass(depth, heroLevel);
+
+		/*
 		if (Random.Int( 30 ) == 0) {
 			if (cl == MarsupialRat.class) {
 				cl = MarsupialRatAlbino.class;
@@ -61,137 +72,51 @@ public class Bestiary {
 				cl = Acidic.class;
 			}
 		}
-		
-		try {
-			return cl.newInstance();
-		} catch (Exception e) {
-			return null;
-		}
-	}
-	
-	private static Class<?> mobClass( int depth ) {
-		
-		float[] chances;
-		Class<?>[] classes;
-		
-		switch (depth) {
-		case 1:
-			chances = new float[]{ 1, 1 };
-			classes = new Class<?>[]{ SewerRat.class, GridBug.class };
-			break;
-		case 2:
-			chances = new float[]{ 1, 1 };
-			classes = new Class<?>[]{ MarsupialRat.class, Gnoll.class };
-			break;
-		case 3:
-			chances = new float[]{ 2, 4, 1, 1 };
-			classes = new Class<?>[]{ MarsupialRat.class, Gnoll.class, Crab.class, Swarm.class };
-			break;
-		case 4:
-			chances = new float[]{ 1, 2, 3, 1,   0.01f, 0.01f };
-			classes = new Class<?>[]{ MarsupialRat.class, Gnoll.class, Crab.class, Swarm.class,    Skeleton.class, Thief.class };
-			break;
-			
-		case 5:
-			chances = new float[]{ 1 };
-			classes = new Class<?>[]{ Goo.class };
-			break;
-			
-		case 6:
-			chances = new float[]{ 3, 1, 1,     0.2f };
-			classes = new Class<?>[]{ Skeleton.class, Thief.class, Swarm.class,   Shaman.class };
-			break;
-		case 7:
-			chances = new float[]{ 3, 1, 1, 1 };
-			classes = new Class<?>[]{ Skeleton.class, Shaman.class, Thief.class, Guard.class };
-			break;
-		case 8:
-			chances = new float[]{ 3, 2, 2, 1,   0.02f };
-			classes = new Class<?>[]{ Skeleton.class, Shaman.class, Guard.class, Thief.class,   Bat.class };
-			break;
-		case 9:
-			chances = new float[]{ 3, 3, 2, 1,   0.02f, 0.01f };
-			classes = new Class<?>[]{ Skeleton.class, Guard.class, Shaman.class, Thief.class,   Bat.class, Brute.class };
-			break;
-			
-		case 10:
-			chances = new float[]{ 1 };
-			classes = new Class<?>[]{ Tengu.class };
-			break;
-			
-		case 11:
-			chances = new float[]{ 1,   0.2f };
-			classes = new Class<?>[]{ Bat.class,   Brute.class };
-			break;
-		case 12:
-			chances = new float[]{ 1, 1,   0.2f };
-			classes = new Class<?>[]{ Bat.class, Brute.class,   Spinner.class };
-			break;
-		case 13:
-			chances = new float[]{ 1, 3, 1, 1,   0.02f };
-			classes = new Class<?>[]{ Bat.class, Brute.class, Shaman.class, Spinner.class,    Elemental.class };
-			break;
-		case 14:
-			chances = new float[]{ 1, 3, 1, 4,    0.02f, 0.01f };
-			classes = new Class<?>[]{ Bat.class, Brute.class, Shaman.class, Spinner.class,    Elemental.class, Monk.class };
-			break;
-			
-		case 15:
-			chances = new float[]{ 1 };
-			classes = new Class<?>[]{ DM300.class };
-			break;
-			
-		case 16:
-			chances = new float[]{ 1, 1,   0.2f };
-			classes = new Class<?>[]{ Elemental.class, Warlock.class,    Monk.class };
-			break;
-		case 17:
-			chances = new float[]{ 1, 1, 1 };
-			classes = new Class<?>[]{ Elemental.class, Monk.class, Warlock.class };
-			break;
-		case 18:
-			chances = new float[]{ 1, 2, 1, 1 };
-			classes = new Class<?>[]{ Elemental.class, Monk.class, Golem.class, Warlock.class };
-			break;
-		case 19:
-			chances = new float[]{ 1, 2, 3, 1,    0.02f };
-			classes = new Class<?>[]{ Elemental.class, Monk.class, Golem.class, Warlock.class,    Succubus.class };
-			break;
-			
-		case 20:
-			chances = new float[]{ 1 };
-			classes = new Class<?>[]{ King.class };
-			break;
-			
-		case 22:
-			chances = new float[]{ 1, 1 };
-			classes = new Class<?>[]{ Succubus.class, Eye.class };
-			break;
-		case 23:
-			chances = new float[]{ 1, 2, 1 };
-			classes = new Class<?>[]{ Succubus.class, Eye.class, Scorpio.class };
-			break;
-		case 24:
-			chances = new float[]{ 1, 2, 3 };
-			classes = new Class<?>[]{ Succubus.class, Eye.class, Scorpio.class };
-			break;
-			
-		case 25:
-			chances = new float[]{ 1 };
-			classes = new Class<?>[]{ Yog.class };
-			break;
-			
-		default:
-			chances = new float[]{ 1 };
-			classes = new Class<?>[]{ Eye.class };
-		}
-		
-		return classes[ Random.chances( chances )];
-	}
-	
-	public static boolean isUnique( Char mob ) {
+		*/
+
+        try {
+            return cl.newInstance();
+        } catch (Exception e) {
+            return null;
+        }
+    }
+
+    private static Class<?> mobClass(int depth, int heroLevel) {
+        float[] chances;
+        Class<?>[] classes;
+
+        int min = depth / 7;
+        int max = (depth + heroLevel) / 2;
+
+        if (min > max) {
+            int swap = min;
+            min = max;
+            max = swap;
+        }
+
+        int test = Random.Int(min, max + 1);
+
+        switch (test) {
+            case 0:
+                chances = new float[]{3, 3, 1, 5, 1, 1, 4, 2, 1};
+                classes = new Class<?>[]{GridBug.class, Jackal.class, KoboldZombie.class, Newt.class, SewerRat.class, Fox.class, Lichen.class, Goblin.class, Kobold.class};
+                break;
+
+            default:
+                chances = new float[]{1};
+                classes = new Class<?>[]{GridBug.class};
+        }
+
+        return classes[Random.chances(chances)];
+    }
+
+    public static boolean isUnique(Char mob) {
+		/*
 		return mob instanceof Goo || mob instanceof Tengu || mob instanceof DM300 || mob instanceof King
 				|| mob instanceof Yog.BurningFist || mob instanceof Yog.RottingFist
 			|| mob instanceof Ghost.MarisupialRatFetid || mob instanceof Ghost.GnollTrickster || mob instanceof Ghost.GreatCrab;
-	}
+		*/
+
+        return false;
+    }
 }

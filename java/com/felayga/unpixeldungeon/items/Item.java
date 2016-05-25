@@ -48,6 +48,7 @@ import com.watabou.noosa.particles.Emitter;
 import com.watabou.utils.Bundlable;
 import com.watabou.utils.Bundle;
 import com.watabou.utils.Callback;
+import com.watabou.utils.Random;
 
 import java.util.ArrayList;
 import java.util.Comparator;
@@ -81,9 +82,47 @@ public class Item implements Bundlable {
 
 	public boolean droppable = true;
 	public boolean fragile = false;
-	public int weight = 0;
+	private int weight = 0;
+
+    protected int price = 0;
+
+    public final int price() {
+        int price = this.price;
+        if (bucStatus == BUCStatus.Cursed) {
+            price /= 2;
+        }
+        if (levelKnown) {
+            if (level > 0) {
+                price *= (level + 1);
+            } else if (level < 0) {
+                price /= (1 - level);
+            }
+        }
+        if (price < 1) {
+            price = 1;
+        }
+
+        return price * quantity;
+    }
+
+    public int weight() {
+        return weight;
+    }
+
+    public void weight(int newWeight) {
+        if (weight == newWeight) {
+            return;
+        }
+
+        if (parent != null) {
+            parent.onWeightChanged((newWeight - weight) * quantity);
+        }
+
+        weight = newWeight;
+    }
 
 	public int level = 0;
+    public int levelSoftCap = 3;
 	public boolean levelKnown = false;
 	public boolean hasLevels = true;
 
@@ -122,6 +161,36 @@ public class Item implements Bundlable {
 
 		return this;
 	}
+
+    public Item randomizeStatus() {
+        BUCStatus newStatus;
+        switch (Random.Int(10)) {
+            case 6:
+            case 7:
+            case 8:
+                newStatus = BUCStatus.Cursed;
+                break;
+            case 9:
+                newStatus = BUCStatus.Blessed;
+                break;
+            default:
+                newStatus = BUCStatus.Uncursed;
+                break;
+        }
+
+        if (hasLevels) {
+            levelKnown = false;
+            level = 0;
+
+            int direction = Random.Int(3)==0 ? 1:-1;
+
+            while (level < levelSoftCap + 2 && Random.Int(level >= levelSoftCap ? 10 : 5)==0) {
+                level += direction;
+            }
+        }
+
+        return bucStatus(newStatus, false);
+    }
 
 	public void hasBuc(boolean state){
 		if (hasBuc != state)
@@ -197,15 +266,12 @@ public class Item implements Bundlable {
 	}
 
 	public void doThrow(Hero hero) {
-		GLog.d("armor4="+(Dungeon.hero.belongings.armor != null ? Dungeon.hero.belongings.armor.getDisplayName() : "null"));
 		GameScene.selectCell(thrower);
 	}
 
 	public boolean execute(Hero hero, String action) {
 		curUser = hero;
 		curItem = this;
-
-		GLog.d("armor3="+(Dungeon.hero.belongings.armor != null ? Dungeon.hero.belongings.armor.getDisplayName() : "null"));
 
 		if (action.equals(AC_DROP)) {
 			doDrop(hero);
@@ -220,7 +286,7 @@ public class Item implements Bundlable {
 		return execute(hero, defaultAction);
 	}
 
-	protected void onThrow(int cell) {
+	protected void onThrow(int cell, Char thrower) {
 		GLog.d("onthrow cell="+cell);
 		Heap heap = Dungeon.level.drop(this, cell);
 		if (!heap.isEmpty()) {
@@ -397,11 +463,6 @@ public class Item implements Bundlable {
 		return this;
 	}
 
-
-	public int price() {
-		return 0;
-	}
-
 	public static Item virtual(Class<? extends Item> cl) {
 		try {
 
@@ -414,7 +475,41 @@ public class Item implements Bundlable {
 		}
 	}
 
+    public int randomEnchantmentMinimum = 0;
+    public int randomEnchantmentMaximum = 5;
+
 	public Item random() {
+        int luck = Dungeon.hero.luck();
+        float levelBonusChance = 0.5f + (luck - 2.0f) * 0.04f;
+
+        level = randomEnchantmentMinimum;
+        while (level < randomEnchantmentMaximum && Random.Float() < levelBonusChance) {
+            level++;
+        }
+
+        if (Random.Float() <= 0.025f) {
+            level = -level;
+        }
+
+        if (hasBuc) {
+            float cursed = 1.0f - (float) Math.sqrt(levelBonusChance);
+            float uncursed = (1.0f - cursed) / (1.0f + levelBonusChance) + cursed;
+
+            float bucDetermination = Random.Float();
+
+            if (bucDetermination <= cursed) {
+                bucStatus(BUCStatus.Cursed);
+                level = -level;
+            }
+            else if (bucDetermination <= uncursed) {
+                bucStatus(BUCStatus.Uncursed);
+            }
+            else {
+                bucStatus(BUCStatus.Blessed);
+            }
+        }
+
+
 		return this;
 	}
 
@@ -434,6 +529,7 @@ public class Item implements Bundlable {
 	private static final String OLDSLOT = "quickslot";
 	private static final String QUICKSLOT = "quickslotpos";
 	private static final String DEFAULTACTION = "defaultAction";
+    private static final String WEIGHT = "weight";
 
 	@Override
 	public void storeInBundle(Bundle bundle) {
@@ -446,6 +542,7 @@ public class Item implements Bundlable {
 			bundle.put(QUICKSLOT, Dungeon.quickslot.getSlot(this));
 		}
 		bundle.put(DEFAULTACTION, defaultAction);
+        bundle.put(WEIGHT, weight);
 	}
 
 	@Override
@@ -475,17 +572,16 @@ public class Item implements Bundlable {
 				Dungeon.quickslot.setSlot(bundle.getInt(QUICKSLOT), this);
 			}
 		}
+        weight = bundle.getInt(WEIGHT);
 	}
 
 	public void cast(final Hero user, int dst) {
-		GLog.d("cast dst="+dst);
-		GLog.d("armor5="+(Dungeon.hero.belongings.armor != null ? Dungeon.hero.belongings.armor.getDisplayName() : "null"));
 		final int cell = new Ballistica(user.pos, dst, Ballistica.PROJECTILE).collisionPos;
-		GLog.d("cast cell="+cell);
 		user.sprite.zap(cell);
 		user.busy();
 
-		GLog.d("armor6=" + (Dungeon.hero.belongings.armor != null ? Dungeon.hero.belongings.armor.getDisplayName() : "null"));
+        //todo: make sure throwing item weights are right, etc.
+
 		Sample.INSTANCE.play(Assets.SND_MISS, 0.6f, 0.6f, 1.5f);
 
 		Char enemy = Actor.findChar(cell);
@@ -506,13 +602,12 @@ public class Item implements Bundlable {
 			}
 		}
 		final long finalDelay = delay;
-		GLog.d("armor7="+(Dungeon.hero.belongings.armor != null ? Dungeon.hero.belongings.armor.getDisplayName() : "null"));
 
 		((MissileSprite) user.sprite.parent.recycle(MissileSprite.class)).
 				reset(user.pos, cell, this, new Callback() {
 					@Override
 					public void call() {
-						user.belongings.remove(Item.this, 1).onThrow(cell);
+						user.belongings.remove(Item.this, 1).onThrow(cell, user);
 						user.spend(finalDelay, true);
 					}
 				});

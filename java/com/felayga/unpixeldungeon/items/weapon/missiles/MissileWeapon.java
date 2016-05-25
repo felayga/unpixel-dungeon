@@ -36,6 +36,7 @@ import com.felayga.unpixeldungeon.actors.hero.HeroClass;
 import com.felayga.unpixeldungeon.items.Item;
 import com.felayga.unpixeldungeon.items.rings.RingOfSharpshooting;
 import com.felayga.unpixeldungeon.items.weapon.Weapon;
+import com.felayga.unpixeldungeon.mechanics.WeaponSkill;
 import com.felayga.unpixeldungeon.scenes.GameScene;
 import com.felayga.unpixeldungeon.utils.GLog;
 import com.felayga.unpixeldungeon.windows.WndOptions;
@@ -49,9 +50,9 @@ public class MissileWeapon extends Weapon {
 	private static final String TXT_R_U_SURE	=
 		"Do you really want to equip it as a melee weapon?";
 
-	public MissileWeapon(long delay, int damageMin, int damageMax, int quantity)
+	public MissileWeapon(WeaponSkill weaponSkill, long delay, int damageMin, int damageMax, int quantity)
 	{
-		super(delay, damageMin, damageMax);
+		super(weaponSkill, delay, damageMin, damageMax);
 
 		stackable = true;
 		levelKnown = true;
@@ -72,16 +73,16 @@ public class MissileWeapon extends Weapon {
 	}
 
 	@Override
-	protected void onThrow( int cell ) {
+	protected void onThrow( int cell, Char thrower ) {
 		Char enemy = Actor.findChar( cell );
 		if (enemy == null || enemy == curUser) {
 			if (this instanceof Boomerang)
-				super.onThrow( cell );
+				super.onThrow( cell, thrower );
 			else
-				miss( cell );
+				miss( cell, thrower );
 		} else {
 			if (!curUser.shoot( enemy, this )) {
-				miss( cell );
+				miss( cell, thrower );
 			} else if (!(this instanceof Boomerang)){
 				int bonus = 0;
 
@@ -97,7 +98,7 @@ public class MissileWeapon extends Weapon {
 		}
 	}
 	
-	protected void miss( int cell ) {
+	protected void miss( int cell, Char thrower ) {
 		int bonus = 0;
 		for (Buff buff : curUser.buffs(RingOfSharpshooting.Aim.class)) {
 			bonus += ((RingOfSharpshooting.Aim)buff).level;
@@ -105,7 +106,7 @@ public class MissileWeapon extends Weapon {
 
 		//degraded ring of sharpshooting will even make missed shots break.
 		if (Random.Float() < Math.pow(0.6, -bonus))
-			super.onThrow( cell );
+			super.onThrow( cell, thrower );
 	}
 	
 	@Override
@@ -149,11 +150,6 @@ public class MissileWeapon extends Weapon {
 		return false;
 	}
 	*/
-
-	@Override
-	public Item random() {
-		return this;
-	}
 	
 	@Override
 	public boolean isUpgradable() {

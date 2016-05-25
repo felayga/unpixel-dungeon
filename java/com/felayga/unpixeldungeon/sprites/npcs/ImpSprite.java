@@ -28,7 +28,7 @@ import com.felayga.unpixeldungeon.sprites.MobSprite;
 import com.watabou.noosa.TextureFilm;
 import com.felayga.unpixeldungeon.Assets;
 import com.felayga.unpixeldungeon.actors.Char;
-import com.felayga.unpixeldungeon.actors.mobs.npcs.Imp;
+//import com.felayga.unpixeldungeon.actors.mobs.npcs.Imp;
 import com.felayga.unpixeldungeon.effects.Speck;
 
 public class ImpSprite extends MobSprite {
@@ -58,9 +58,9 @@ public class ImpSprite extends MobSprite {
 	public void link( Char ch ) {
 		super.link( ch );
 		
-		if (ch instanceof Imp) {
-			alpha( 0.4f );
-		}
+		//if (ch instanceof Imp) {
+		//	alpha( 0.4f );
+		//}
 	}
 	
 	@Override

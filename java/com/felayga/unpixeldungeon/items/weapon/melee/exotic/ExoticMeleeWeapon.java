@@ -26,14 +26,13 @@
 package com.felayga.unpixeldungeon.items.weapon.melee.exotic;
 
 import com.felayga.unpixeldungeon.items.weapon.melee.MeleeWeapon;
+import com.felayga.unpixeldungeon.mechanics.WeaponSkill;
 
 /**
  * Created by HELLO on 3/14/2016.
  */
 public class ExoticMeleeWeapon extends MeleeWeapon {
     public ExoticMeleeWeapon( long delay, int damageMin, int damageMax ) {
-        super(delay, damageMin, damageMax);
-
-        skillRequired = 3;
+        super(WeaponSkill.Exotic, delay, damageMin, damageMax);
     }
 }

@@ -24,11 +24,12 @@
  */
 package com.felayga.unpixeldungeon.windows.quest;
 
+import com.felayga.unpixeldungeon.actors.Char;
 import com.felayga.unpixeldungeon.windows.IconTitle;
 import com.watabou.noosa.BitmapTextMultiline;
 import com.felayga.unpixeldungeon.Dungeon;
 import com.felayga.unpixeldungeon.actors.hero.Hero;
-import com.felayga.unpixeldungeon.actors.mobs.npcs.Imp;
+//import com.felayga.unpixeldungeon.actors.mobs.npcs.Imp;
 import com.felayga.unpixeldungeon.items.Item;
 import com.felayga.unpixeldungeon.items.quest.DwarfToken;
 import com.felayga.unpixeldungeon.scenes.PixelScene;
@@ -50,7 +51,7 @@ public class WndImp extends Window {
 	private static final int BTN_HEIGHT = 20;
 	private static final int GAP        = 2;
 
-	public WndImp( final Imp imp, final DwarfToken tokens ) {
+	public WndImp( final Char imp, final DwarfToken tokens ) {
 		
 		super();
 		
@@ -69,7 +70,7 @@ public class WndImp extends Window {
 		RedButton btnReward = new RedButton( TXT_REWARD ) {
 			@Override
 			protected void onClick() {
-				takeReward( imp, tokens, Imp.Quest.reward );
+				takeReward( imp, tokens, imp.belongings.randomUnequipped() );
 			}
 		};
 		btnReward.setRect( 0, message.y + message.height() + GAP, WIDTH, BTN_HEIGHT );
@@ -78,7 +79,7 @@ public class WndImp extends Window {
 		resize( WIDTH, (int)btnReward.bottom() );
 	}
 	
-	private void takeReward( Imp imp, DwarfToken tokens, Item reward ) {
+	private void takeReward( Char imp, DwarfToken tokens, Item reward ) {
 		
 		hide();
 
@@ -91,8 +92,8 @@ public class WndImp extends Window {
 			Dungeon.level.drop( reward, imp.pos ).sprite.drop();
 		}
 		
-		imp.flee();
+		//imp.flee();
 		
-		Imp.Quest.complete();
+		//Imp.Quest.complete();
 	}
 }

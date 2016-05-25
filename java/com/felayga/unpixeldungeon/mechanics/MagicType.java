@@ -29,6 +29,7 @@ package com.felayga.unpixeldungeon.mechanics;
  * Created by HELLO on 5/19/2016.
  */
 public enum MagicType {
+    None                (0x0000),
     Acid                (0x0001),
     Cold                (0x0002),
     Disintegration      (0x0004),
@@ -41,7 +42,8 @@ public enum MagicType {
     Drain               (0x0200),
     Stoning             (0x0400),
     Sliming             (0x0800),
-    Sickness            (0x1000);
+    Sickness            (0x1000),
+    Mundane             (0x2000);
 
     public final int value;
 

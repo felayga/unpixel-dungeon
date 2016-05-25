@@ -29,6 +29,7 @@ import com.watabou.utils.Random;
 
 public class PotionOfFullHealing extends PotionOfExtraHealing {
 
+    public PotionOfFullHealing()
 	{
 		name = "Potion of Full Healing";
 		initials = "FHe";
@@ -38,6 +39,8 @@ public class PotionOfFullHealing extends PotionOfExtraHealing {
 
 		overhealAmount = 4;
 		applicationDescription = "completely";
+
+        price = 30;
 	}
 
 	@Override
@@ -50,9 +53,5 @@ public class PotionOfFullHealing extends PotionOfExtraHealing {
 		return
 			"An elixir that will instantly return you to full health and cure poison.";
 	}
-	
-	@Override
-	public int price() {
-		return isKnown() ? 30 * quantity : super.price();
-	}
+
 }

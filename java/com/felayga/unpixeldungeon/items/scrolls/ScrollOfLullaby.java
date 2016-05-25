@@ -37,9 +37,12 @@ import com.felayga.unpixeldungeon.utils.GLog;
 
 public class ScrollOfLullaby extends Scroll {
 
+    public ScrollOfLullaby()
 	{
 		name = "Scroll of Lullaby";
 		initials = "Lu";
+
+        price = 50;
 	}
 	
 	@Override
@@ -70,9 +73,5 @@ public class ScrollOfLullaby extends Scroll {
 		return
 			"A soothing melody will lull all who hear it into a deep magical sleep ";
 	}
-	
-	@Override
-	public int price() {
-		return isKnown() ? 50 * quantity : super.price();
-	}
+
 }

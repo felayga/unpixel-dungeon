@@ -39,7 +39,8 @@ public class Torch extends Item {
 	public static final String AC_LIGHT	= "LIGHT";
 	
 	public static final long TIME_TO_LIGHT = GameTime.TICK;
-	
+
+    public Torch()
 	{
 		name = "torch";
 		image = ItemSpriteSheet.TORCH;
@@ -47,6 +48,7 @@ public class Torch extends Item {
 		stackable = true;
 		
 		defaultAction = AC_LIGHT;
+        price = 10;
 	}
 	
 	@Override
@@ -85,11 +87,6 @@ public class Torch extends Item {
 	@Override
 	public boolean isIdentified() {
 		return true;
-	}
-	
-	@Override
-	public int price() {
-		return 10 * quantity;
 	}
 	
 	@Override

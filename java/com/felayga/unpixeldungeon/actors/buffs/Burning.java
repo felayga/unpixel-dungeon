@@ -39,6 +39,7 @@ import com.felayga.unpixeldungeon.items.rings.RingOfElements.Resistance;
 import com.felayga.unpixeldungeon.items.scrolls.Scroll;
 import com.felayga.unpixeldungeon.levels.Level;
 import com.felayga.unpixeldungeon.mechanics.GameTime;
+import com.felayga.unpixeldungeon.mechanics.MagicType;
 import com.felayga.unpixeldungeon.scenes.GameScene;
 import com.felayga.unpixeldungeon.sprites.CharSprite;
 import com.felayga.unpixeldungeon.ui.BuffIndicator;
@@ -78,7 +79,7 @@ public class Burning extends Buff implements Hero.Doom {
 		
 		if (target.isAlive()) {
 			
-			target.damage( Random.Int( 1, 5 ), this );
+			target.damage( Random.Int( 1, 5 ), MagicType.Fire, null );
 			Buff.detach( target, Chill.class);
 
 			if (target instanceof Char) {

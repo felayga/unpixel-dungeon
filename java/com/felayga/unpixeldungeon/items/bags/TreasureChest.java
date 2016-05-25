@@ -42,12 +42,9 @@ public class TreasureChest extends Bag {
 
         size = 36;
         priority = 8;
+        price = 50;
     }
 
-    @Override
-    public int price() {
-        return 50;
-    }
 
     @Override
     public String info() {

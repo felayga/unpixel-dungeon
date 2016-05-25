@@ -51,6 +51,7 @@ public class Weightstone extends Item {
 
 	private static final String AC_APPLY = "APPLY";
 
+    public Weightstone()
 	{
 		name = "weightstone";
 		image = ItemSpriteSheet.WEIGHT;
@@ -58,6 +59,7 @@ public class Weightstone extends Item {
 		stackable = true;
 
 		bones = true;
+        price = 40;
 	}
 
 	@Override
@@ -108,11 +110,6 @@ public class Weightstone extends Item {
 
 		curUser.spend( TIME_TO_APPLY, false );
 		curUser.busy();
-	}
-
-	@Override
-	public int price() {
-		return 40 * quantity;
 	}
 
 	@Override

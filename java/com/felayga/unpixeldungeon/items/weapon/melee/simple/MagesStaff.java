@@ -279,16 +279,16 @@ public class MagesStaff extends SimpleMeleeWeapon {
 			result += "The staff hums with deep and powerful energy from the wand it is imbued with.";
 		} else if (wand instanceof WandOfVenom){
 			result += "The staff drips and hisses with corrosive energy from the wand it is imbued with.";
-		} else if (wand instanceof WandOfPrismaticLight){
-			result += "The staff glows and shimmers with bright energy from the wand it is imbued with.";
+		//} else if (wand instanceof WandOfPrismaticLight){
+		//	result += "The staff glows and shimmers with bright energy from the wand it is imbued with.";
 		} else if (wand instanceof WandOfFrost){
 			result += "The staff chills the air with the cold energy from the wand it is imbued with.";
-		} else if (wand instanceof WandOfBlastWave){
-			result += "The staff pops and crackles with explosive energy from the wand it is imbued with.";
+		//} else if (wand instanceof WandOfBlastWave){
+		//	result += "The staff pops and crackles with explosive energy from the wand it is imbued with.";
 		} else if (wand instanceof WandOfRegrowth){
 			result += "The staff flourishes and grows with natural energy from the wand it is imbued with.";
-		} else if (wand instanceof WandOfTransfusion){
-			result += "The staff courses and flows with life energy from the wand it is imbued with.";
+		//} else if (wand instanceof WandOfTransfusion){
+		//	result += "The staff courses and flows with life energy from the wand it is imbued with.";
 		}
 
 		return result;
@@ -354,7 +354,7 @@ public class MagesStaff extends SimpleMeleeWeapon {
 		//some particles need light mode, others don't
 		public boolean lightMode() {
 			return !((wand instanceof WandOfDisintegration)
-					|| (wand instanceof WandOfCorruption)
+					//|| (wand instanceof WandOfCorruption)
 					|| (wand instanceof WandOfRegrowth));
 		}
 	};

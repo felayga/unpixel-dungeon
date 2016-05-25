@@ -88,6 +88,8 @@ public class ItemSpriteSheet {
 	public static final int CLOAK	= ROW2+8;
 	public static final int AMULETB	= ROW2+9;
 	public static final int FACE	= ROW2+10;
+	public static final int HELMET	= ROW2+11;
+	public static final int PANTS	= ROW2+12;
 
 	//Row Two: Miscellaneous single use items
 	public static final int GOLD	    = ROW3+0;
@@ -122,6 +124,7 @@ public class ItemSpriteSheet {
 	public static final int LONG_SWORD		= ROW4+9;
 	public static final int WAR_HAMMER		= ROW4+10;
 	public static final int GLAIVE			= ROW4+11;
+    public static final int DAGGER_CRUDE    = ROW4+12;
 
 	//Row Four: Missile weapons
 	public static final int DART			= ROW5+0;
@@ -305,6 +308,7 @@ public class ItemSpriteSheet {
 	public static final int BLANDFRUIT	= ROW17+4;
 	public static final int RATION		= ROW17+5;
 	public static final int PASTY		= ROW17+6;
+    public static final int MEAT_ROTTEN = ROW17+7;
 
 	//Row Fourteen: Quest Items
 	public static final int SKULL		= ROW18+0;
@@ -385,4 +389,8 @@ public class ItemSpriteSheet {
 
 	//third fart
 	public static final int GLOVES_LEATHER	= ROW26+0;
+
+    //blah blah
+    public static final int HELMET_LEATHER  = ROW27+0;
+    public static final int HELMET_CRUDE    = ROW27+1;
 }

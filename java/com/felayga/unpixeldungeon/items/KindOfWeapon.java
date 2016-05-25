@@ -26,17 +26,15 @@ package com.felayga.unpixeldungeon.items;
 
 import java.util.ArrayList;
 
-import com.felayga.unpixeldungeon.actors.Actor;
 import com.felayga.unpixeldungeon.actors.Char;
 import com.felayga.unpixeldungeon.actors.hero.Hero;
 import com.felayga.unpixeldungeon.mechanics.AttributeType;
-import com.felayga.unpixeldungeon.mechanics.BUCStatus;
 import com.felayga.unpixeldungeon.mechanics.GameTime;
+import com.felayga.unpixeldungeon.mechanics.WeaponSkill;
 import com.felayga.unpixeldungeon.utils.GLog;
-import com.watabou.noosa.Game;
 import com.watabou.utils.Random;
 
-public class KindOfWeapon extends EquipableItem implements IActivateable {
+public class KindOfWeapon extends EquippableItem {
 	private static final String TXT_EQUIP_CURSED	= "The %s welds itself to your hand!";
 	
 	protected static final long TIME_TO_EQUIP = GameTime.TICK;
@@ -48,16 +46,18 @@ public class KindOfWeapon extends EquipableItem implements IActivateable {
     public int accuracy = 10;
     public int damage = 10;
 
-	public int skillRequired = 0;
+	public WeaponSkill skillRequired;
 	public int refined = 0;
 
     public AttributeType accuracyAttribute = AttributeType.DEXCHA;
 	public int accuracyAttributeMaxBonus = 32767;
     public AttributeType damageAttribute = AttributeType.STRCON;
 
-	public KindOfWeapon(long delay, int damageMin, int damageMax)
+	public KindOfWeapon(WeaponSkill skillRequired, long delay, int damageMin, int damageMax)
 	{
 		super(GameTime.TICK);
+
+		this.skillRequired = skillRequired;
 
 		this.delay_new = delay;
 
@@ -81,8 +81,6 @@ public class KindOfWeapon extends EquipableItem implements IActivateable {
 	public void onEquip(Char owner, boolean cursed) {
 		super.onEquip(owner, cursed);
 
-		activate(owner);
-
 		if (cursed) {
 			if (owner instanceof Hero) {
 				GLog.n( TXT_EQUIP_CURSED, getDisplayName() );
@@ -91,10 +89,6 @@ public class KindOfWeapon extends EquipableItem implements IActivateable {
 				//todo: weapon cursed
 			}
 		}
-	}
-
-	@Override
-	public void activate( Char hero ) {
 	}
 	
 	public int damageRoll() {

@@ -34,7 +34,7 @@ import com.felayga.unpixeldungeon.mechanics.GameTime;
  */
 public class MediumArmor extends Armor {
 
-    public MediumArmor(int armor, int armorBonusMaximum, int spellFailure) {
-        super(armor, armorBonusMaximum, GameTime.TICK, GameTime.TICK * 4, spellFailure);
+    public MediumArmor(int armor, int armorBonusMaximum, int armorMagic, int spellFailure) {
+        super(armor, armorBonusMaximum, armorMagic, GameTime.TICK, GameTime.TICK * 4, spellFailure);
     }
 }

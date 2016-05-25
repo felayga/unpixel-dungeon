@@ -40,16 +40,12 @@ public class ScrollHolder extends Bag {
 		
 		size = 12;
 		priority = 8;
+        price = 50;
 	}
 	
 	@Override
 	public boolean grab( Item item ) {
 		return item instanceof Scroll;
-	}
-	
-	@Override
-	public int price() {
-		return 50;
 	}
 	
 	@Override

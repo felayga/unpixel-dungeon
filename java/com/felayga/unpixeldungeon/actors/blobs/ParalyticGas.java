@@ -30,6 +30,7 @@ import com.felayga.unpixeldungeon.actors.buffs.Buff;
 import com.felayga.unpixeldungeon.actors.buffs.Paralysis;
 import com.felayga.unpixeldungeon.effects.BlobEmitter;
 import com.felayga.unpixeldungeon.effects.Speck;
+import com.felayga.unpixeldungeon.mechanics.MagicType;
 
 public class ParalyticGas extends Blob {
 	
@@ -40,8 +41,8 @@ public class ParalyticGas extends Blob {
 		Char ch;
 		for (int i=0; i < LENGTH; i++) {
 			if (cur[i] > 0 && (ch = Actor.findChar( i )) != null) {
-				if (!ch.immunities().contains(this.getClass()))
-					Buff.prolong( ch, Paralysis.class, Paralysis.duration( ch ) );
+				//todo: ParalyticGas resistance/immunity
+				//if (!ch.immunities().contains(this.getClass())) Buff.prolong( ch, Paralysis.class, Paralysis.duration( ch ) );
 			}
 		}
 	}

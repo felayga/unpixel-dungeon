@@ -26,6 +26,7 @@ package com.felayga.unpixeldungeon.items.scrolls;
 
 import com.felayga.unpixeldungeon.ResultDescriptions;
 import com.felayga.unpixeldungeon.actors.buffs.Paralysis;
+import com.felayga.unpixeldungeon.mechanics.MagicType;
 import com.felayga.unpixeldungeon.utils.GLog;
 import com.felayga.unpixeldungeon.utils.Utils;
 import com.watabou.noosa.audio.Sample;
@@ -41,11 +42,14 @@ import com.watabou.utils.Random;
 
 public class ScrollOfPsionicBlast extends Scroll {
 
+    public ScrollOfPsionicBlast()
 	{
 		name = "Scroll of Psionic Blast";
 		initials = "PB";
 
 		bones = true;
+
+        price = 80;
 	}
 	
 	@Override
@@ -58,11 +62,11 @@ public class ScrollOfPsionicBlast extends Scroll {
 		
 		for (Mob mob : Dungeon.level.mobs.toArray( new Mob[Dungeon.level.mobs.size()] )) {
 			if (Level.fieldOfView[mob.pos]) {
-				mob.damage(mob.HT, this );
+				mob.damage(mob.HT, MagicType.Magic, null );
 			}
 		}
 
-		curUser.damage(Math.max(curUser.HT/5, curUser.HP/2), this);
+		curUser.damage(Math.max(curUser.HT/5, curUser.HP/2), MagicType.Magic, null);
 		Buff.prolong( curUser, Paralysis.class, Random.Int( 4, 6 ) );
 		Buff.prolong( curUser, Blindness.class, Random.Int( 6, 9 ) );
 		Dungeon.observe();
@@ -84,9 +88,5 @@ public class ScrollOfPsionicBlast extends Scroll {
 			"the minds of all visible creatures. The power unleashed by the scroll will also temporarily " +
 			"blind, stun, and seriously harm the reader.";
 	}
-	
-	@Override
-	public int price() {
-		return isKnown() ? 80 * quantity : super.price();
-	}
+
 }

@@ -32,9 +32,10 @@ import com.watabou.utils.Random;
 
 public abstract class NPC extends Mob {
 
+	public NPC(int level)
 	{
-		HP = HT = 1;
-		EXP = 0;
+		super(level);
+		experience = 0;
 
 		hostile = false;
 		state = PASSIVE;

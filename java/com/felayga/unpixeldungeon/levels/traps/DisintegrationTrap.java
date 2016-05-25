@@ -36,6 +36,7 @@ import com.felayga.unpixeldungeon.items.Heap;
 import com.felayga.unpixeldungeon.items.Item;
 import com.felayga.unpixeldungeon.items.bags.Bag;
 import com.felayga.unpixeldungeon.levels.Level;
+import com.felayga.unpixeldungeon.mechanics.MagicType;
 import com.felayga.unpixeldungeon.sprites.TrapSprite;
 import com.felayga.unpixeldungeon.utils.GLog;
 import com.felayga.unpixeldungeon.utils.Utils;
@@ -67,7 +68,7 @@ public class DisintegrationTrap extends Trap {
 
 		Char ch = Actor.findChar(pos);
 		if (ch != null){
-			ch.damage( Math.max( ch.HT/5, Random.Int(ch.HP / 2, 2 * ch.HP / 3) ), this );
+			ch.damage( Math.max( ch.HT/5, Random.Int(ch.HP / 2, 2 * ch.HP / 3) ), MagicType.Disintegration, null );
 			if (ch == Dungeon.hero){
 				Hero hero = (Hero)ch;
 				if (!hero.isAlive()){

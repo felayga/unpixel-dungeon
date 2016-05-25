@@ -69,7 +69,7 @@ public class CavesLevel extends RegularLevel {
 	protected Class<?>[] trapClasses() {
 		return new Class[]{ FireTrap.class, FrostTrap.class, PoisonTrap.class, SpearTrap.class, VenomTrap.class,
 				ExplosiveTrap.class, FlashingTrap.class, GrippingTrap.class, ParalyticTrap.class, LightningTrap.class, RockfallTrap.class, OozeTrap.class,
-				ConfusionTrap.class, FlockTrap.class, GuardianTrap.class, PitfallTrap.class, SummoningTrap.class, TeleportationTrap.class,
+				ConfusionTrap.class, FlockTrap.class, /*GuardianTrap.class,*/ PitfallTrap.class, SummoningTrap.class, TeleportationTrap.class,
 				WarpingTrap.class};
 	}
 

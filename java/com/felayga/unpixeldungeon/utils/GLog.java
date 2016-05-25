@@ -49,7 +49,8 @@ public class GLog {
 		update.dispatch( text );
 	}
 
-	public static void d( String text, Object... args ) { i( NEGATIVE + text, args ); }
+	public static void d( String text, Object... args ) { i(NEGATIVE + text, args); }
+    public static void d( Throwable throwable) { d(Log.getStackTraceString(throwable)); }
 	
 	public static void p( String text, Object... args ) {
 		i( POSITIVE + text, args );

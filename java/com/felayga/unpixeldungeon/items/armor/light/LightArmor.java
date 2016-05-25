@@ -34,7 +34,7 @@ import com.felayga.unpixeldungeon.mechanics.GameTime;
  */
 public class LightArmor extends Armor {
 
-    public LightArmor(int armor, int armorBonusMaximum, int spellFailure) {
-        super(armor, armorBonusMaximum, GameTime.TICK, GameTime.TICK * 2, spellFailure);
+    public LightArmor(int armor, int armorBonusMaximum, int armorMagic, int spellFailure) {
+        super(armor, armorBonusMaximum, armorMagic, GameTime.TICK, GameTime.TICK * 2, spellFailure);
     }
 }

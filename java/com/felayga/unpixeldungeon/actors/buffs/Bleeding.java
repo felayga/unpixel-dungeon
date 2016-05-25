@@ -28,6 +28,7 @@ import com.felayga.unpixeldungeon.Dungeon;
 import com.felayga.unpixeldungeon.ResultDescriptions;
 import com.felayga.unpixeldungeon.effects.Splash;
 import com.felayga.unpixeldungeon.mechanics.GameTime;
+import com.felayga.unpixeldungeon.mechanics.MagicType;
 import com.felayga.unpixeldungeon.ui.BuffIndicator;
 import com.felayga.unpixeldungeon.utils.GLog;
 import com.watabou.utils.Bundle;
@@ -77,7 +78,7 @@ public class Bleeding extends Buff {
 			
 			if ((level = Random.Int( level / 2, level )) > 0) {
 				
-				target.damage( level, this );
+				target.damage( level, MagicType.Mundane, null );
 				if (target.sprite.visible) {
 					Splash.at( target.sprite.center(), -PointF.PI / 2, PointF.PI / 6,
 							target.sprite.blood(), Math.min( 10 * level / target.HT, 10 ) );

@@ -25,12 +25,12 @@
 package com.felayga.unpixeldungeon.windows;
 
 import com.felayga.unpixeldungeon.actors.mobs.Mob;
+import com.felayga.unpixeldungeon.items.EquippableItem;
 import com.felayga.unpixeldungeon.items.artifacts.MasterThievesArmband;
 import com.watabou.noosa.BitmapTextMultiline;
 import com.felayga.unpixeldungeon.Dungeon;
 import com.felayga.unpixeldungeon.actors.hero.Hero;
 import com.felayga.unpixeldungeon.actors.mobs.npcs.Shopkeeper;
-import com.felayga.unpixeldungeon.items.EquipableItem;
 import com.felayga.unpixeldungeon.items.Gold;
 import com.felayga.unpixeldungeon.items.Heap;
 import com.felayga.unpixeldungeon.items.Item;
@@ -241,7 +241,7 @@ public class WndTradeItem extends Window {
 		
 		Hero hero = Dungeon.hero;
 		
-		if (item.isEquipped( hero ) && !hero.belongings.unequip((EquipableItem) item, false)) {
+		if (item.isEquipped( hero ) && !hero.belongings.unequip((EquippableItem) item, false)) {
 			return;
 		}
 		hero.belongings.remove(item, 1);

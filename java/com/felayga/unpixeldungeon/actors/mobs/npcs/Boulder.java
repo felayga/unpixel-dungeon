@@ -36,12 +36,13 @@ import com.felayga.unpixeldungeon.actors.hero.Hero;
 import com.felayga.unpixeldungeon.effects.CellEmitter;
 import com.felayga.unpixeldungeon.effects.Speck;
 import com.felayga.unpixeldungeon.items.tools.ITool;
-import com.felayga.unpixeldungeon.items.tools.digging.DiggingTool;
+import com.felayga.unpixeldungeon.items.tools.digging.Pickaxe;
 import com.felayga.unpixeldungeon.items.weapon.missiles.Rock;
 import com.felayga.unpixeldungeon.levels.Level;
 import com.felayga.unpixeldungeon.levels.Terrain;
 import com.felayga.unpixeldungeon.mechanics.Constant;
 import com.felayga.unpixeldungeon.mechanics.GameTime;
+import com.felayga.unpixeldungeon.mechanics.MagicType;
 import com.felayga.unpixeldungeon.scenes.GameScene;
 import com.felayga.unpixeldungeon.sprites.npcs.BoulderSprite;
 import com.felayga.unpixeldungeon.utils.GLog;
@@ -61,7 +62,7 @@ public class Boulder extends NPC {
     public final static String STOREDFLAG = "storedFlag";
 
     public Boulder() {
-        super();
+        super(0);
 
         name = "boulder";
         spriteClass = BoulderSprite.class;
@@ -84,7 +85,7 @@ public class Boulder extends NPC {
     protected Char chooseEnemy() { return null; }
 
     @Override
-    public void damage( int dmg, Object src ) {
+    public void damage( int dmg, MagicType type, Actor source ) {
     }
 
     @Override
@@ -107,21 +108,21 @@ public class Boulder extends NPC {
         actions.add(TXT_PUSH);
         actionOptions.add(false);
 
-        ITool[] tools = hero.belongings.getToolTypes(DiggingTool.NAME);
+        ITool[] tools = hero.belongings.getToolTypes(true, true, Pickaxe.NAME);
 
 
-        DiggingTool diggingTool = null;
+        Pickaxe diggingTool = null;
         String diggingToolName = null;
         if (tools[0] != null)
         {
-            diggingTool = (DiggingTool)tools[0];
+            diggingTool = (Pickaxe)tools[0];
             diggingToolName = diggingTool.getName().toUpperCase();
 
             actions.add(diggingToolName);
             actionOptions.add(false);
         }
 
-        final DiggingTool diggingTool_WTFJAVA = diggingTool;
+        final Pickaxe diggingTool_WTFJAVA = diggingTool;
         final String diggingToolName_WTFJAVA = diggingToolName;
 
 
@@ -170,11 +171,11 @@ public class Boulder extends NPC {
                                 }
                             }
                             else {
-                                GLog.n("There's something on the other side of the boulder.");
+                                GLog.n("The boulder won't budge.");
                             }
                         }
                         else if (selection == diggingToolName_WTFJAVA) {
-                            boulder.die(null);
+                            diggingTool_WTFJAVA.apply(hero, Boulder.this.pos);
                         }
                         else {
                             GLog.i("You leave the boulder alone.");
@@ -272,7 +273,7 @@ public class Boulder extends NPC {
     }
 
     @Override
-    public void die(Object cause)
+    public void die(Actor cause)
     {
         if (!pluggingPit){
             Dungeon.level.drop( new Rock( Random.Int(6, 66) ), pos );
@@ -309,15 +310,5 @@ public class Boulder extends NPC {
         return "This is a large boulder.  Maybe you could push it?";
     }
 
-    private static final HashSet<Class<?>> IMMUNITIES = new HashSet<Class<?>>();
-    static {
-        IMMUNITIES.add( Paralysis.class );
-        IMMUNITIES.add( Roots.class );
-    }
-
-    @Override
-    public HashSet<Class<?>> immunities() {
-        return IMMUNITIES;
-    }
 
 }

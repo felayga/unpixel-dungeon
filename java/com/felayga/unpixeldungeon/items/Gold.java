@@ -55,7 +55,7 @@ public class Gold extends Item {
 		hasBuc(false);
 
 		this.quantity = quantity;
-		weight = 1;
+		weight(1);
 	}
 	
 	public Gold() {
@@ -114,7 +114,7 @@ public class Gold extends Item {
 	
 	@Override
 	public Item random() {
-		quantity = Random.Int( 30 + Dungeon.depth * 10, 60 + Dungeon.depth * 20 );
+		quantity = Random.Int( 30 + (Dungeon.depth * 3/8 + Dungeon.hero.level / 8) * 10, 60 + (Dungeon.depth * 3/8 + Dungeon.hero.level / 8) * 20 );
 		return this;
 	}
 	

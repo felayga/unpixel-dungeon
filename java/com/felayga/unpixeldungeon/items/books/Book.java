@@ -139,11 +139,6 @@ public abstract class Book extends Item {
 
     public boolean ownedByBook = false;
 
-    {
-        stackable = true;
-        defaultAction = Scroll.AC_READ;
-    }
-
     @SuppressWarnings("unchecked")
     public static void initLabels() {
         handler = new ItemStatusHandler<Book>( (Class<? extends Book>[])books, runes, images, 2 );
@@ -160,9 +155,15 @@ public abstract class Book extends Item {
 
     public Book() {
         super();
-        syncVisuals();
 
-        weight = Encumbrance.UNIT * 50;
+        weight(Encumbrance.UNIT * 50);
+
+        stackable = true;
+        defaultAction = Scroll.AC_READ;
+
+        price = 15;
+
+        syncVisuals();
     }
 
     @Override
@@ -270,8 +271,4 @@ public abstract class Book extends Item {
         return handler.known().size() == books.length;
     }
 
-    @Override
-    public int price() {
-        return 15 * quantity;
-    }
 }

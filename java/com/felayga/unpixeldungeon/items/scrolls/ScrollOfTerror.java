@@ -37,9 +37,12 @@ import com.felayga.unpixeldungeon.utils.GLog;
 
 public class ScrollOfTerror extends Scroll {
 
+    public ScrollOfTerror()
 	{
 		name = "Scroll of Terror";
 		initials = "Te";
+
+        price = 50;
 	}
 	
 	@Override
@@ -83,9 +86,5 @@ public class ScrollOfTerror extends Scroll {
 			"A flash of red light will overwhelm all creatures in your field of view with terror, " +
 			"and they will turn and flee. Attacking a fleeing enemy will dispel the effect.";
 	}
-	
-	@Override
-	public int price() {
-		return isKnown() ? 50 * quantity : super.price();
-	}
+
 }

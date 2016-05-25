@@ -48,10 +48,12 @@ import com.felayga.unpixeldungeon.items.KindOfWeapon;
 import com.felayga.unpixeldungeon.items.artifacts.TimekeepersHourglass;
 import com.felayga.unpixeldungeon.items.rings.RingOfAccuracy;
 import com.felayga.unpixeldungeon.items.rings.RingOfWealth;
+import com.felayga.unpixeldungeon.items.weapon.Weapon;
 import com.felayga.unpixeldungeon.levels.Level;
 import com.felayga.unpixeldungeon.levels.Level.Feeling;
 import com.felayga.unpixeldungeon.mechanics.AttributeType;
 import com.felayga.unpixeldungeon.mechanics.GameTime;
+import com.felayga.unpixeldungeon.mechanics.MagicType;
 import com.felayga.unpixeldungeon.mechanics.Roll;
 import com.felayga.unpixeldungeon.sprites.CharSprite;
 import com.felayga.unpixeldungeon.utils.GLog;
@@ -65,9 +67,9 @@ public abstract class Mob extends Char {
 
 	public Mob(int level)
 	{
-		actPriority = 2; //hero gets priority over mobs.
+		super(level);
 
-		this.level = level;
+		actPriority = 2; //hero gets priority over mobs.
 
 		HP = HT = Roll.MobHP(level);
 	}
@@ -311,8 +313,8 @@ public abstract class Mob extends Char {
 		}
 		
 		int step = Dungeon.findPath(this, pos, target,
-				passable,
-				Level.fieldOfView);
+                passable,
+                Level.fieldOfView);
 		if (step != -1) {
 			move( step );
 			return true;
@@ -359,21 +361,24 @@ public abstract class Mob extends Char {
 	
 	protected boolean doAttack( boolean thrown, Char enemy ) {
 		boolean visible = Dungeon.visible[pos];
+
+        KindOfWeapon weapon = (KindOfWeapon)belongings.weapon();
 		
 		if (visible) {
 			sprite.attack( enemy.pos );
 		} else {
-			attack( (KindOfWeapon)belongings.weapon, thrown, enemy );
+			attack( weapon, thrown, enemy );
 		}
 				
-		spend(attackDelay(((KindOfWeapon) belongings.weapon).delay_new), false);
+		spend(attackDelay(weapon.delay_new), false);
 		
 		return !visible;
 	}
 	
 	@Override
 	public void onAttackComplete() {
-		attack( (KindOfWeapon)belongings.weapon, false, enemy );
+        KindOfWeapon weapon = (KindOfWeapon)belongings.weapon();
+		attack( weapon, false, enemy );
 		super.onAttackComplete();
 	}
 
@@ -417,12 +422,6 @@ public abstract class Mob extends Char {
 		return retval;
 	}
 
-
-	@Override
-	public int defenseMundane( Char enemy ) {
-		return defenseMundane;
-	}
-
 	public void aggro( Char ch ) {
 		enemy = ch;
 		if (state != PASSIVE){
@@ -431,7 +430,7 @@ public abstract class Mob extends Char {
 	}
 
 	@Override
-	public void damage( int dmg, Object src ) {
+	public void damage( int dmg, MagicType type, Actor source ) {
 		Terror.recover( this );
 
 		if (state == SLEEPING) {
@@ -439,7 +438,7 @@ public abstract class Mob extends Char {
 		}
 		alerted = true;
 		
-		super.damage( dmg, src );
+		super.damage( dmg, type, source );
 	}
 	
 	
@@ -473,7 +472,7 @@ public abstract class Mob extends Char {
 	}
 	
 	@Override
-	public void die( Object cause ) {
+	public void die( Actor cause ) {
 		super.die( cause );
 
 		float lootChance = this.lootChance;

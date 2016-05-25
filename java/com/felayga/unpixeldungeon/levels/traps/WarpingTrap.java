@@ -34,7 +34,7 @@ import com.felayga.unpixeldungeon.effects.CellEmitter;
 import com.felayga.unpixeldungeon.effects.Speck;
 import com.felayga.unpixeldungeon.items.Heap;
 import com.felayga.unpixeldungeon.items.Item;
-import com.felayga.unpixeldungeon.items.artifacts.DriedRose;
+//import com.felayga.unpixeldungeon.items.artifacts.DriedRose;
 import com.felayga.unpixeldungeon.items.artifacts.TimekeepersHourglass;
 import com.felayga.unpixeldungeon.scenes.InterlevelScene;
 import com.felayga.unpixeldungeon.sprites.TrapSprite;
@@ -81,8 +81,10 @@ public class WarpingTrap extends Trap {
 				Buff buff = Dungeon.hero.buff(TimekeepersHourglass.timeFreeze.class);
 				if (buff != null) buff.detach();
 
+				/*
 				for (Mob mob : Dungeon.level.mobs.toArray( new Mob[0] ))
 					if (mob instanceof DriedRose.GhostHero) mob.destroy();
+				*/
 
 				InterlevelScene.mode = InterlevelScene.Mode.RETURN;
 				InterlevelScene.returnDepth = depth;

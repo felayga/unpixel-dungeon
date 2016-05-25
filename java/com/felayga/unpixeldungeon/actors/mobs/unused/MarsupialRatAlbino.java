@@ -24,6 +24,7 @@
  */
 package com.felayga.unpixeldungeon.actors.mobs.unused;
 
+/*
 import com.felayga.unpixeldungeon.Badges;
 import com.felayga.unpixeldungeon.items.weapon.melee.mob.BleedChance;
 import com.felayga.unpixeldungeon.mechanics.GameTime;
@@ -51,3 +52,4 @@ public class MarsupialRatAlbino extends MarsupialRat {
 		return "This is a rare breed of marsupial rat, with pure white fur and jagged teeth.";
 	}
 }
+*/

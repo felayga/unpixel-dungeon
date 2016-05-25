@@ -30,14 +30,14 @@ import com.felayga.unpixeldungeon.sprites.ItemSpriteSheet;
 public class HideArmor extends MediumArmor {
     public HideArmor()
     {
-        super(3, 4, 64);
+        super(3, 4, 0, 64);
         name = "hide armor";
         image = ItemSpriteSheet.ARMOR_HIDE;
 
         price = 15;
         textureIndex = 9;
 
-        weight = Encumbrance.UNIT * 225;
+        weight(Encumbrance.UNIT * 225);
     }
 
     @Override

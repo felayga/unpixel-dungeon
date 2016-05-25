@@ -28,12 +28,15 @@ import com.felayga.unpixeldungeon.actors.hero.Hero;
 
 public class PotionOfExperience extends Potion {
 
+    public PotionOfExperience()
 	{
 		name = "Potion of Experience";
 		initials = "Ex";
 
 		bones = true;
 		isHelpful = true;
+
+        price = 80;
 	}
 	
 	@Override
@@ -48,9 +51,5 @@ public class PotionOfExperience extends Potion {
 			"The storied experiences of multitudes of battles reduced to liquid form, " +
 			"this draught will instantly raise your experience level.";
 	}
-	
-	@Override
-	public int price() {
-		return isKnown() ? 80 * quantity : super.price();
-	}
+
 }

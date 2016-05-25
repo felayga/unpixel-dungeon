@@ -30,12 +30,15 @@ import com.felayga.unpixeldungeon.sprites.ItemSpriteSheet;
 //this one's still hanging around to support quests from old saves
 //I may reuse it at some point.
 public class RatSkull extends Item {
-	
+
+    public RatSkull()
 	{
 		name = "giant rat skull";
 		image = ItemSpriteSheet.SKULL;
 		
 		unique = true;
+
+        price = 100;
 	}
 	
 	@Override
@@ -53,9 +56,5 @@ public class RatSkull extends Item {
 		return
 			"A surprisingly large rat skull. It would make a great hunting trophy, if you had a wall to mount it on.";
 	}
-	
-	@Override
-	public int price() {
-		return 100;
-	}
+
 }

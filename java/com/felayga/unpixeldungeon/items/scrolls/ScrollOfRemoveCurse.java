@@ -43,10 +43,13 @@ public class ScrollOfRemoveCurse extends Scroll {
 		"Your pack glows with a cleansing light, and a malevolent energy disperses.";
 	private static final String TXT_NOT_PROCCED	=
 		"Your pack glows with a cleansing light, but nothing happens.";
-	
+
+    public ScrollOfRemoveCurse()
 	{
 		name = "Scroll of Remove Curse";
 		initials = "RC";
+
+        price = 30;
 	}
 	
 	@Override
@@ -130,10 +133,5 @@ public class ScrollOfRemoveCurse extends Scroll {
 		item.upgrade(source, 0);
 
 		return test != item.bucStatus();
-	}
-	
-	@Override
-	public int price() {
-		return isKnown() ? 30 * quantity : super.price();
 	}
 }

@@ -42,7 +42,8 @@ public class Drowsy extends Buff {
 	}
 
 	public boolean attachTo( Char target ) {
-		if (!target.immunities().contains(Sleep.class) && super.attachTo(target)) {
+		//todo: Drowsy immunity/resistance
+		if (/*!target.immunities().contains(Sleep.class) && */super.attachTo(target)) {
 			if (cooldown() == 0)
 				spend(Random.Long(GameTime.TICK * 3, GameTime.TICK * 6), false);
 			return true;

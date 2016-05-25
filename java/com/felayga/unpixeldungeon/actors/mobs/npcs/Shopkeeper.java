@@ -25,12 +25,15 @@
 package com.felayga.unpixeldungeon.actors.mobs.npcs;
 
 import com.felayga.unpixeldungeon.Dungeon;
+import com.felayga.unpixeldungeon.actors.Actor;
+import com.felayga.unpixeldungeon.actors.Char;
 import com.felayga.unpixeldungeon.actors.buffs.Buff;
 import com.felayga.unpixeldungeon.effects.CellEmitter;
 import com.felayga.unpixeldungeon.effects.particles.ElmoParticle;
 import com.felayga.unpixeldungeon.items.Heap;
 import com.felayga.unpixeldungeon.items.Item;
 import com.felayga.unpixeldungeon.mechanics.GameTime;
+import com.felayga.unpixeldungeon.mechanics.MagicType;
 import com.felayga.unpixeldungeon.scenes.GameScene;
 import com.felayga.unpixeldungeon.sprites.npcs.ShopkeeperSprite;
 import com.felayga.unpixeldungeon.windows.WndBackpack;
@@ -41,7 +44,10 @@ public class Shopkeeper extends NPC {
 	public static final String TXT_THIEF = "Thief, Thief!";
 	private int startPos = -1;
 
+	public Shopkeeper()
 	{
+		super(15);
+
 		name = "shopkeeper";
 		spriteClass = ShopkeeperSprite.class;
 	}
@@ -62,9 +68,10 @@ public class Shopkeeper extends NPC {
 		spend(GameTime.TICK, false );
 		return true;
 	}
-	
+
+	//todo: shopkeeper ain't no pansy
 	@Override
-	public void damage( int dmg, Object src ) {
+	public void damage( int dmg, MagicType type, Actor source ) {
 		flee();
 	}
 	

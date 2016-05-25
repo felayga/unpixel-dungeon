@@ -41,9 +41,12 @@ public class ScrollOfRecharging extends Scroll {
 
 	public static final long BUFF_DURATION = GameTime.TICK * 30;
 
+    public ScrollOfRecharging()
 	{
 		name = "Scroll of Recharging";
 		initials = "Re";
+
+        price = 40;
 	}
 	
 	@Override
@@ -71,11 +74,6 @@ public class ScrollOfRecharging extends Scroll {
 	
 	public static void charge( Hero hero ) {
 		hero.sprite.centerEmitter(-1).burst( EnergyParticle.FACTORY, 15 );
-	}
-	
-	@Override
-	public int price() {
-		return isKnown() ? 40 * quantity : super.price();
 	}
 
 

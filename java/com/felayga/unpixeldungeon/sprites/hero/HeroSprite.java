@@ -29,6 +29,7 @@ import android.graphics.RectF;
 import com.felayga.unpixeldungeon.Assets;
 import com.felayga.unpixeldungeon.actors.Char;
 import com.felayga.unpixeldungeon.actors.hero.Hero;
+import com.felayga.unpixeldungeon.items.EquippableItem;
 import com.felayga.unpixeldungeon.items.armor.Armor;
 import com.felayga.unpixeldungeon.sprites.CharSprite;
 import com.felayga.unpixeldungeon.windows.hero.WndInitHero;
@@ -98,15 +99,21 @@ public class HeroSprite extends CharSprite {
 		super.link(ch);
 
 		if (ch instanceof Hero) {
-			Hero hero = (Hero)ch;
+            Hero hero = (Hero) ch;
 
-			heroGender = WndInitHero.genderSelected;
-			hairIndex = WndInitHero.hairSelected;
-			hairFaceIndex = WndInitHero.hairFaceSelected;
-			setHairColor(WndInitHero.hairColorSelected);
+            heroGender = WndInitHero.genderSelected;
+            hairIndex = WndInitHero.hairSelected;
+            hairFaceIndex = WndInitHero.hairFaceSelected;
+            setHairColor(WndInitHero.hairColorSelected);
 
-			armorIndex = hero.belongings.armor != null ? ((Armor)hero.belongings.armor).textureIndex : heroGender;
-		}
+            EquippableItem test = hero.belongings.armor();
+            if (test != null) {
+                Armor armor = (Armor) test;
+                armorIndex = armor.textureIndex;
+            } else {
+                armorIndex = heroGender;
+            }
+        }
 	}
 
 

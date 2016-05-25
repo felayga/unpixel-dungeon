@@ -43,9 +43,12 @@ public class ScrollOfMagicMapping extends Scroll {
 	private static final String TXT_LAYOUT = "A map coalesces in your mind!";
 	private static final String TXT_LAYOUT_CURSED = "Unfortunately, you can't grasp the details.";
 
+    public ScrollOfMagicMapping()
 	{
 		name = "Scroll of Magic Mapping";
 		initials = "MM";
+
+        price = 25;
 	}
 
 	private boolean discoverCell(int index, boolean allowDiscovery) {
@@ -126,11 +129,6 @@ public class ScrollOfMagicMapping extends Scroll {
 			"When this scroll is read, an image of crystal clarity will be etched into your memory, " +
 			"alerting you to the precise layout of the level and revealing all hidden secrets. " +
 			"The locations of items and creatures will remain unknown.";
-	}
-	
-	@Override
-	public int price() {
-		return isKnown() ? 25 * quantity : super.price();
 	}
 	
 	public static void discover( int cell ) {

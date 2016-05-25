@@ -28,13 +28,16 @@ import com.felayga.unpixeldungeon.items.Item;
 import com.felayga.unpixeldungeon.sprites.ItemSpriteSheet;
 
 public class DwarfToken extends Item {
-	
+
+    public DwarfToken()
 	{
 		name = "dwarf token";
 		image = ItemSpriteSheet.TOKEN;
 		
 		stackable = true;
 		unique = true;
+
+        price = 100;
 	}
 	
 	@Override
@@ -53,9 +56,5 @@ public class DwarfToken extends Item {
 			"Many dwarves and some of their larger creations carry these small pieces of metal of unknown purpose. " +
 			"Maybe they are jewelry or maybe some kind of ID. Dwarves are strange folk.";
 	}
-	
-	@Override
-	public int price() {
-		return quantity * 100;
-	}
+
 }

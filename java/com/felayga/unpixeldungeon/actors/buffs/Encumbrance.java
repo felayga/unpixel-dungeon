@@ -32,6 +32,7 @@ import com.felayga.unpixeldungeon.actors.hero.Hero;
 import com.felayga.unpixeldungeon.mechanics.AttributeType;
 import com.felayga.unpixeldungeon.mechanics.Constant;
 import com.felayga.unpixeldungeon.mechanics.GameTime;
+import com.felayga.unpixeldungeon.mechanics.MagicType;
 import com.felayga.unpixeldungeon.ui.BuffIndicator;
 import com.felayga.unpixeldungeon.utils.GLog;
 import com.watabou.utils.Bundle;
@@ -167,13 +168,15 @@ public class Encumbrance extends Buff implements Hero.Doom {
             }
 
             if (hpDecreaseTick >= 60) {
-                target.damage(1, this);
+                target.damage(1, MagicType.Mundane, null);
                 hpDecreaseTick -= 30;
             }
 
             if (consumptionTick >= 2) {
                 Hunger hunger = hero.buff(Hunger.class);
-                hunger.satisfy_new(-1);
+                if (hunger != null) {
+                    hunger.satisfy_new(-1);
+                }
             }
 
             return true;

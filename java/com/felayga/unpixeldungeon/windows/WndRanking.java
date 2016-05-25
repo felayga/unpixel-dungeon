@@ -179,7 +179,7 @@ public class WndRanking extends WndTabbed {
 			
 			IconTitle title = new IconTitle();
 			title.icon( HeroSprite.avatar( 0, 0 ) );
-			title.label( Utils.format( TXT_TITLE, Dungeon.hero.lvl, heroClass ).toUpperCase( Locale.ENGLISH ) );
+			title.label( Utils.format( TXT_TITLE, Dungeon.hero.level, heroClass ).toUpperCase( Locale.ENGLISH ) );
 			title.color(Window.SHPX_COLOR);
 			title.setRect( 0, 0, WIDTH, 0 );
 			add( title );
@@ -245,41 +245,43 @@ public class WndRanking extends WndTabbed {
 			super(-1);
 			
 			Belongings stuff = Dungeon.hero.belongings;
-			if (stuff.weapon != null) {
-				addItem(stuff.weapon);
+			if (stuff.weapon() != null) {
+				addItem(stuff.weapon());
 			}
-			if (stuff.offhand != null) {
-				addItem(stuff.offhand);
+			if (stuff.offhand() != null) {
+				addItem(stuff.offhand());
 			}
-            if (stuff.weapon2 != null) {
-                addItem(stuff.weapon2);
+
+            if (stuff.face() != null) {
+                addItem(stuff.face());
             }
-            if (stuff.offhand2 != null) {
-                addItem(stuff.offhand2);
+            if (stuff.amulet() != null) {
+                addItem(stuff.amulet());
             }
-			if (stuff.armor != null) {
-				addItem(stuff.armor);
+			if (stuff.ring1() != null) {
+				addItem(stuff.ring1());
 			}
-            if (stuff.gloves != null) {
-                addItem(stuff.gloves);
+			if (stuff.ring2() != null) {
+				addItem(stuff.ring2());
+			}
+
+			if (stuff.cloak() != null) {
+				addItem(stuff.cloak());
+			}
+			if (stuff.armor() != null) {
+				addItem(stuff.armor());
+			}
+            if (stuff.helmet() != null) {
+                addItem(stuff.helmet());
             }
-            if (stuff.boots != null) {
-                addItem(stuff.boots);
-            }
-            if (stuff.cloak != null) {
-                addItem(stuff.cloak);
-            }
-            if (stuff.ring1 != null) {
-                addItem(stuff.ring1);
-            }
-            if (stuff.ring2 != null) {
-                addItem(stuff.ring2);
-            }
-            if (stuff.amulet != null) {
-                addItem(stuff.amulet);
-            }
-            if (stuff.face != null) {
-                addItem(stuff.face);
+			if (stuff.gloves() != null) {
+				addItem(stuff.gloves());
+			}
+			if (stuff.pants() != null) {
+				addItem(stuff.pants());
+			}
+            if (stuff.boots() != null) {
+                addItem(stuff.boots());
             }
 
 			pos = 0;

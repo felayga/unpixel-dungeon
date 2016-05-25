@@ -33,6 +33,7 @@ import com.felayga.unpixeldungeon.effects.CellEmitter;
 import com.felayga.unpixeldungeon.effects.particles.PoisonParticle;
 import com.felayga.unpixeldungeon.items.rings.RingOfElements.Resistance;
 import com.felayga.unpixeldungeon.mechanics.GameTime;
+import com.felayga.unpixeldungeon.mechanics.MagicType;
 import com.felayga.unpixeldungeon.ui.BuffIndicator;
 import com.felayga.unpixeldungeon.utils.GLog;
 import com.watabou.utils.Bundle;
@@ -96,7 +97,7 @@ public class Poison extends Buff implements Hero.Doom {
 	public boolean act() {
 		if (target.isAlive()) {
 			
-			target.damage( (int)(left / 3) + 1, this );
+			target.damage( (int)(left / 3) + 1, MagicType.Poison, null );
 			spend(GameTime.TICK, false );
 			
 			if ((left -= GameTime.TICK) <= 0) {

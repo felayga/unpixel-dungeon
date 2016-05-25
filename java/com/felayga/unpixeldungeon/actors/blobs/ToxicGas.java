@@ -32,6 +32,7 @@ import com.felayga.unpixeldungeon.actors.Char;
 import com.felayga.unpixeldungeon.actors.hero.Hero;
 import com.felayga.unpixeldungeon.effects.BlobEmitter;
 import com.felayga.unpixeldungeon.effects.Speck;
+import com.felayga.unpixeldungeon.mechanics.MagicType;
 import com.felayga.unpixeldungeon.utils.GLog;
 import com.watabou.utils.Random;
 
@@ -52,7 +53,7 @@ public class ToxicGas extends Blob implements Hero.Doom {
 					damage++;
 				}
 				
-				ch.damage( damage, this );
+				ch.damage( damage, MagicType.Poison, null );
 			}
 		}
 	}

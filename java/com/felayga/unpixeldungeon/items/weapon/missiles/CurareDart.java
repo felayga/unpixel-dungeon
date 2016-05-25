@@ -30,6 +30,7 @@ import com.felayga.unpixeldungeon.actors.buffs.Buff;
 import com.felayga.unpixeldungeon.actors.buffs.Paralysis;
 import com.felayga.unpixeldungeon.items.Item;
 import com.felayga.unpixeldungeon.mechanics.GameTime;
+import com.felayga.unpixeldungeon.mechanics.WeaponSkill;
 import com.felayga.unpixeldungeon.sprites.ItemSpriteSheet;
 import com.watabou.utils.Random;
 
@@ -42,12 +43,13 @@ public class CurareDart extends MissileWeapon {
 	}
 	
 	public CurareDart( int number ) {
-		super(GameTime.TICK, 1, 3, number);
+		super(WeaponSkill.Simple, GameTime.TICK, 1, 3, number);
 
 		name = "curare dart";
 		image = ItemSpriteSheet.CURARE_DART;
 
 		//STR = 14;
+        price = 8;
 	}
 	
 	@Override
@@ -71,9 +73,5 @@ public class CurareDart extends MissileWeapon {
 		quantity = Random.Int( 2, 5 );
 		return this;
 	}
-	
-	@Override
-	public int price() {
-		return 8 * quantity;
-	}
+
 }

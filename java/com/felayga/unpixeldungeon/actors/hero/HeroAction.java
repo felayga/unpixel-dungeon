@@ -28,7 +28,7 @@ import com.felayga.unpixeldungeon.actors.Char;
 import com.felayga.unpixeldungeon.actors.mobs.npcs.NPC;
 import com.felayga.unpixeldungeon.items.Item;
 import com.felayga.unpixeldungeon.items.KindOfWeapon;
-import com.felayga.unpixeldungeon.items.tools.digging.DiggingTool;
+import com.felayga.unpixeldungeon.items.tools.digging.Pickaxe;
 import com.felayga.unpixeldungeon.items.tools.unlocking.UnlockingTool;
 
 
@@ -178,11 +178,11 @@ public class HeroAction {
 	}
 
 	public static class Dig extends HeroAction {
-		public DiggingTool tool;
+		public Pickaxe tool;
 		public int pos;
 		public int effort;
 
-		public Dig(DiggingTool tool, int pos, int effort) {
+		public Dig(Pickaxe tool, int pos, int effort) {
 			this.tool = tool;
 			this.pos = pos;
 			this.effort = effort;

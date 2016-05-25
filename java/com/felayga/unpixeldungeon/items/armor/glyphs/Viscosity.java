@@ -32,6 +32,7 @@ import com.felayga.unpixeldungeon.actors.buffs.Buff;
 import com.felayga.unpixeldungeon.items.armor.Armor;
 import com.felayga.unpixeldungeon.items.armor.Armor.Glyph;
 import com.felayga.unpixeldungeon.mechanics.GameTime;
+import com.felayga.unpixeldungeon.mechanics.MagicType;
 import com.felayga.unpixeldungeon.sprites.CharSprite;
 import com.felayga.unpixeldungeon.sprites.ItemSprite;
 import com.felayga.unpixeldungeon.sprites.ItemSprite.Glowing;
@@ -131,7 +132,7 @@ public class Viscosity extends Glyph {
 		public boolean act() {
 			if (target.isAlive()) {
 				
-				target.damage( 1, this );
+				target.damage( 1, MagicType.Mundane, null );
 				if (target == Dungeon.hero && !target.isAlive()) {
 
 					Glyph glyph = new Viscosity();

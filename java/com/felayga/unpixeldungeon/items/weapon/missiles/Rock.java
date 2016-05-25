@@ -28,6 +28,7 @@ import com.felayga.unpixeldungeon.Assets;
 import com.felayga.unpixeldungeon.actors.buffs.Encumbrance;
 import com.felayga.unpixeldungeon.items.Item;
 import com.felayga.unpixeldungeon.mechanics.GameTime;
+import com.felayga.unpixeldungeon.mechanics.WeaponSkill;
 import com.felayga.unpixeldungeon.sprites.ItemSpriteSheet;
 import com.watabou.noosa.audio.Sample;
 import com.watabou.utils.Random;
@@ -40,7 +41,7 @@ public class Rock extends MissileWeapon {
 
     public Rock(int quantity)
     {
-        super(GameTime.TICK, 0, 2, quantity);
+        super(WeaponSkill.None, GameTime.TICK, 0, 2, quantity);
 
         name = "rock";
         image = ItemSpriteSheet.ROCK;
@@ -49,7 +50,8 @@ public class Rock extends MissileWeapon {
 
         hasLevels = false;
 
-        weight = Encumbrance.UNIT * 10;
+        weight(Encumbrance.UNIT * 10);
+        price = 0;
     }
 
 
@@ -60,14 +62,10 @@ public class Rock extends MissileWeapon {
 
     @Override
     public Item random() {
-        quantity = Random.Int( 5, 15 );
+        quantity = Random.Int( 5, 11 );
         return this;
     }
 
-    @Override
-    public int price() {
-        return 0;
-    }
 
     @Override
     public void playPickupSound() {

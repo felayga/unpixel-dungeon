@@ -36,12 +36,15 @@ import com.felayga.unpixeldungeon.utils.GLog;
 public class PotionOfInvisibility extends Potion {
 
 	private static final float ALPHA	= 0.4f;
-	
+
+    public PotionOfInvisibility()
 	{
 		name = "Potion of Invisibility";
 		initials = "In";
 
 		isHelpful = true;
+
+        price = 40;
 	}
 	
 	@Override
@@ -58,11 +61,6 @@ public class PotionOfInvisibility extends Potion {
 			"Drinking this potion will render you temporarily invisible. While invisible, " +
 			"enemies will be unable to see you. Attacking an enemy, as well as using a wand or a scroll " +
 			"before enemy's eyes, will dispel the effect.";
-	}
-	
-	@Override
-	public int price() {
-		return isKnown() ? 40 * quantity : super.price();
 	}
 	
 	public static void melt( Char ch ) {

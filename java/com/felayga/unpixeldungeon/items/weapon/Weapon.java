@@ -40,6 +40,7 @@ import com.felayga.unpixeldungeon.items.weapon.missiles.MissileWeapon;
 import com.felayga.unpixeldungeon.mechanics.AttributeType;
 import com.felayga.unpixeldungeon.mechanics.BUCStatus;
 import com.felayga.unpixeldungeon.mechanics.GameTime;
+import com.felayga.unpixeldungeon.mechanics.WeaponSkill;
 import com.felayga.unpixeldungeon.sprites.ItemSprite;
 import com.felayga.unpixeldungeon.utils.GLog;
 import com.felayga.unpixeldungeon.utils.Utils;
@@ -65,8 +66,8 @@ public class Weapon extends KindOfWeapon {
 
 	public Enchantment enchantment;
 
-	public Weapon(long delay, int damageMin, int damageMax) {
-		super(delay, damageMin, damageMax);
+	public Weapon(WeaponSkill weaponSkill, long delay, int damageMin, int damageMax) {
+		super(weaponSkill, delay, damageMin, damageMax);
 	}
 
 	@Override
@@ -169,26 +170,6 @@ public class Weapon extends KindOfWeapon {
 	@Override
 	public void playPickupSound() {
 		Sample.INSTANCE.play( Assets.SND_ITEM_BLADE );
-	}
-
-	@Override
-	public Item random() {
-		if (Random.Float() < 0.4) {
-			int n = 1;
-			if (Random.Int( 3 ) == 0) {
-				n++;
-				if (Random.Int( 5 ) == 0) {
-					n++;
-				}
-			}
-			if (Random.Int( 2 ) == 0) {
-				upgrade( null, n );
-			} else {
-				upgrade(null, -n);
-				bucStatus = BUCStatus.Cursed;
-			}
-		}
-		return this;
 	}
 	
 	public Weapon enchant( Enchantment ench ) {

@@ -29,6 +29,7 @@ import com.felayga.unpixeldungeon.actors.buffs.Buff;
 import com.felayga.unpixeldungeon.actors.buffs.Burning;
 import com.felayga.unpixeldungeon.effects.particles.FlameParticle;
 import com.felayga.unpixeldungeon.items.weapon.Weapon;
+import com.felayga.unpixeldungeon.mechanics.MagicType;
 import com.felayga.unpixeldungeon.sprites.ItemSprite;
 import com.felayga.unpixeldungeon.sprites.ItemSprite.Glowing;
 import com.watabou.utils.Random;
@@ -51,7 +52,7 @@ public class Fire extends Weapon.Enchantment {
 			if (Random.Int( 2 ) == 0) {
 				Buff.affect( defender, Burning.class ).reignite( defender );
 			}
-			defender.damage( Random.Int( 1, level + 2 ), this );
+			defender.damage( Random.Int( 1, level + 2 ), MagicType.Fire, null );
 			
 			defender.sprite.emitter().burst( FlameParticle.FACTORY, level + 1 );
 			

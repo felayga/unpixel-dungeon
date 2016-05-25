@@ -28,7 +28,7 @@ import java.io.IOException;
 import java.util.ArrayList;
 
 import com.felayga.unpixeldungeon.*;
-import com.felayga.unpixeldungeon.items.Honeypot;
+//import com.felayga.unpixeldungeon.items.Honeypot;
 import com.felayga.unpixeldungeon.items.potions.Potion;
 import com.felayga.unpixeldungeon.items.scrolls.ScrollOfTeleportation;
 import com.felayga.unpixeldungeon.levels.traps.Trap;
@@ -367,8 +367,8 @@ public class GameScene extends PixelScene {
 					((Potion)item).shatter( pos );
 				} else if (item instanceof Plant.Seed) {
 					Dungeon.level.plant( (Plant.Seed)item, pos );
-				} else if (item instanceof Honeypot) {
-					Dungeon.level.drop(((Honeypot) item).shatter(null, pos), pos);
+				//} else if (item instanceof Honeypot) {
+				//	Dungeon.level.drop(((Honeypot) item).shatter(null, pos), pos);
 				} else {
 					Dungeon.level.drop( item, pos );
 				}

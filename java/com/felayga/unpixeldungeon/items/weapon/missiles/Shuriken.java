@@ -26,6 +26,7 @@ package com.felayga.unpixeldungeon.items.weapon.missiles;
 
 import com.felayga.unpixeldungeon.items.Item;
 import com.felayga.unpixeldungeon.mechanics.GameTime;
+import com.felayga.unpixeldungeon.mechanics.WeaponSkill;
 import com.felayga.unpixeldungeon.sprites.ItemSpriteSheet;
 import com.watabou.utils.Random;
 
@@ -33,12 +34,13 @@ public class Shuriken extends MissileWeapon {
 
 	public Shuriken(int quantity)
 	{
-		super(GameTime.TICK/2, 2, 6, quantity);
+		super(WeaponSkill.Martial, GameTime.TICK/2, 2, 6, quantity);
 
 		name = "shuriken";
 		image = ItemSpriteSheet.SHURIKEN;
 
 		//STR = 13;
+        price = 6;
 	}
 
 	public Shuriken()
@@ -58,9 +60,5 @@ public class Shuriken extends MissileWeapon {
 		quantity = Random.Int( 5, 15 );
 		return this;
 	}
-	
-	@Override
-	public int price() {
-		return 6 * quantity;
-	}
+
 }

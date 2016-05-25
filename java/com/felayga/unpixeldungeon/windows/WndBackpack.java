@@ -30,7 +30,7 @@ import com.felayga.unpixeldungeon.Dungeon;
 import com.felayga.unpixeldungeon.ShatteredPixelDungeon;
 import com.felayga.unpixeldungeon.actors.Char;
 import com.felayga.unpixeldungeon.actors.hero.Belongings;
-import com.felayga.unpixeldungeon.items.EquipableItem;
+import com.felayga.unpixeldungeon.items.EquippableItem;
 import com.felayga.unpixeldungeon.items.Item;
 import com.felayga.unpixeldungeon.items.armor.Armor;
 import com.felayga.unpixeldungeon.items.bags.Bag;
@@ -55,7 +55,6 @@ import com.felayga.unpixeldungeon.sprites.ItemSpriteSheet;
 import com.felayga.unpixeldungeon.ui.Icons;
 import com.felayga.unpixeldungeon.ui.ItemSlot;
 import com.felayga.unpixeldungeon.ui.QuickSlotButton;
-import com.felayga.unpixeldungeon.ui.RedButton;
 import com.felayga.unpixeldungeon.utils.Utils;
 import com.watabou.gltextures.TextureCache;
 import com.watabou.noosa.BitmapText;
@@ -190,23 +189,23 @@ public class WndBackpack extends WndTabbed {
 		if (container instanceof EquipmentBackpack) {
 			// Equipped items
 			Belongings stuff = Dungeon.hero.belongings;
-			placeItem(stuff.weapon != null ? stuff.weapon : new Placeholder(ItemSpriteSheet.WEAPON)).setHotkey("+", true);
-			placeItem(stuff.offhand != null ? stuff.offhand : new Placeholder(ItemSpriteSheet.SHIELD)).setHotkey("+", true);
+			placeItem(stuff.weapon() != null ? stuff.weapon() : new Placeholder(ItemSpriteSheet.WEAPON));
+			placeItem(stuff.offhand() != null ? stuff.offhand() : new Placeholder(ItemSpriteSheet.SHIELD));
 
-			placeItem(stuff.armor != null ? stuff.armor : new Placeholder(ItemSpriteSheet.ARMOR));
-			placeItem(stuff.gloves != null ? stuff.gloves : new Placeholder(ItemSpriteSheet.GLOVES));
+			placeItem(stuff.face() != null ? stuff.face() : new Placeholder(ItemSpriteSheet.FACE));
+			placeItem(stuff.amulet() != null ? stuff.amulet() : new Placeholder(ItemSpriteSheet.AMULETB));
 
-			placeItem(stuff.ring1 != null ? stuff.ring1 : new Placeholder(ItemSpriteSheet.RING));
-			placeItem(stuff.ring2 != null ? stuff.ring2 : new Placeholder(ItemSpriteSheet.RING));
+			placeItem(stuff.ring1() != null ? stuff.ring1() : new Placeholder(ItemSpriteSheet.RING));
+			placeItem(stuff.ring2() != null ? stuff.ring2() : new Placeholder(ItemSpriteSheet.RING));
 
-			placeItem(stuff.weapon2 != null ? stuff.weapon2 : new Placeholder(ItemSpriteSheet.WEAPON)).setHotkey("-", false);
-			placeItem(stuff.offhand2 != null ? stuff.offhand2 : new Placeholder(ItemSpriteSheet.SHIELD)).setHotkey("-", false);
+			placeItem(stuff.cloak() != null ? stuff.cloak() : new Placeholder(ItemSpriteSheet.CLOAK));
+			placeItem(stuff.armor() != null ? stuff.armor() : new Placeholder(ItemSpriteSheet.ARMOR));
 
-			placeItem(stuff.boots != null ? stuff.boots : new Placeholder(ItemSpriteSheet.BOOTS));
-			placeItem(stuff.cloak != null ? stuff.cloak : new Placeholder(ItemSpriteSheet.CLOAK));
+			placeItem(stuff.helmet() != null ? stuff.helmet() : new Placeholder(ItemSpriteSheet.HELMET));
+			placeItem(stuff.gloves() != null ? stuff.gloves() : new Placeholder(ItemSpriteSheet.GLOVES));
 
-			placeItem(stuff.amulet != null ? stuff.amulet : new Placeholder(ItemSpriteSheet.AMULETB));
-			placeItem(stuff.face != null ? stuff.face : new Placeholder(ItemSpriteSheet.FACE));
+			placeItem(stuff.pants() != null ? stuff.pants() : new Placeholder(ItemSpriteSheet.PANTS));
+			placeItem(stuff.boots() != null ? stuff.boots() : new Placeholder(ItemSpriteSheet.BOOTS));
 		}
 
 		if (col != 0) {
@@ -449,7 +448,7 @@ public class WndBackpack extends WndTabbed {
 									mode == Mode.FOOD && (item instanceof Food) ||
 									mode == Mode.POTION && (item instanceof Potion) ||
 									mode == Mode.SCROLL && (item instanceof Scroll) ||
-									mode == Mode.EQUIPMENT && (item instanceof EquipableItem) ||
+									mode == Mode.EQUIPMENT && (item instanceof EquippableItem) ||
 									(mode == Mode.ALL && !(item instanceof Spell)) ||
 									mode == Mode.SPELL && (item instanceof Spell) ||
 									mode == Mode.ALL_WITH_SPELL

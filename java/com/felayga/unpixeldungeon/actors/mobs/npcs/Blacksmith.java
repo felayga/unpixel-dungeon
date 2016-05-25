@@ -26,8 +26,11 @@ package com.felayga.unpixeldungeon.actors.mobs.npcs;
 
 import java.util.Collection;
 
+import com.felayga.unpixeldungeon.actors.Actor;
+import com.felayga.unpixeldungeon.items.EquippableItem;
 import com.felayga.unpixeldungeon.mechanics.BUCStatus;
 import com.felayga.unpixeldungeon.mechanics.GameTime;
+import com.felayga.unpixeldungeon.mechanics.MagicType;
 import com.watabou.noosa.audio.Sample;
 import com.felayga.unpixeldungeon.Assets;
 import com.felayga.unpixeldungeon.Badges;
@@ -35,7 +38,6 @@ import com.felayga.unpixeldungeon.Dungeon;
 import com.felayga.unpixeldungeon.Journal;
 import com.felayga.unpixeldungeon.actors.buffs.Buff;
 import com.felayga.unpixeldungeon.actors.hero.Hero;
-import com.felayga.unpixeldungeon.items.EquipableItem;
 import com.felayga.unpixeldungeon.items.Item;
 import com.felayga.unpixeldungeon.items.quest.DarkGold;
 import com.felayga.unpixeldungeon.items.quest.OldPickaxe;
@@ -74,8 +76,11 @@ public class Blacksmith extends NPC {
 		"I'm busy. Get lost!";
 	
 	private static final String TXT_LOOKS_BETTER	= "your %s certainly looks better now";
-	
+
+	public Blacksmith()
 	{
+		super(10);
+
 		name = "troll blacksmith";
 		spriteClass = BlacksmithSprite.class;
 	}
@@ -214,7 +219,7 @@ public class Blacksmith extends NPC {
 		Item.evoke(Dungeon.hero);
 		
 		if (first.isEquipped( Dungeon.hero )) {
-			Dungeon.hero.belongings.unequip((EquipableItem) first, true);
+			Dungeon.hero.belongings.unequip((EquippableItem) first, true);
 		}
 		first.upgrade(null, 1);
 		GLog.p(TXT_LOOKS_BETTER, first.getDisplayName());
@@ -222,7 +227,7 @@ public class Blacksmith extends NPC {
 		Badges.validateItemLevelAquired(first);
 		
 		if (second.isEquipped( Dungeon.hero )) {
-			Dungeon.hero.belongings.unequip((EquipableItem) second, false);
+			Dungeon.hero.belongings.unequip((EquippableItem) second, false);
 		}
 		Dungeon.hero.belongings.remove(second);
 
@@ -232,7 +237,7 @@ public class Blacksmith extends NPC {
 	}
 	
 	@Override
-	public void damage( int dmg, Object src ) {
+	public void damage( int dmg, MagicType type, Actor source) {
 	}
 	
 	@Override

@@ -27,7 +27,7 @@ package com.felayga.unpixeldungeon.items;
 import com.felayga.unpixeldungeon.actors.Char;
 
 
-public abstract class KindofMisc extends EquipableItem {
+public abstract class KindofMisc extends EquippableItem {
 
 	public KindofMisc(long equipTime) {
 		super(equipTime);

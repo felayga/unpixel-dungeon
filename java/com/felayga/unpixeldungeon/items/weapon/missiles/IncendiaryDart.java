@@ -33,6 +33,7 @@ import com.felayga.unpixeldungeon.actors.buffs.Burning;
 import com.felayga.unpixeldungeon.items.Item;
 import com.felayga.unpixeldungeon.levels.Level;
 import com.felayga.unpixeldungeon.mechanics.GameTime;
+import com.felayga.unpixeldungeon.mechanics.WeaponSkill;
 import com.felayga.unpixeldungeon.scenes.GameScene;
 import com.felayga.unpixeldungeon.sprites.ItemSpriteSheet;
 import com.watabou.utils.Random;
@@ -44,21 +45,22 @@ public class IncendiaryDart extends MissileWeapon {
 	}
 	
 	public IncendiaryDart( int number ) {
-		super(GameTime.TICK, 1, 2, number);
+		super(WeaponSkill.Simple, GameTime.TICK, 1, 2, number);
 
 		name = "incendiary dart";
 		image = ItemSpriteSheet.INCENDIARY_DART;
 
 		//STR = 12;
+        price = 5;
 	}
 	
 	@Override
-	protected void onThrow( int cell ) {
+	protected void onThrow( int cell, Char thrower ) {
 		Char enemy = Actor.findChar( cell );
 		if ((enemy == null || enemy == curUser) && Level.wood[cell])
 			GameScene.add( Blob.seed( cell, 4, Fire.class ) );
 		else
-			super.onThrow( cell );
+			super.onThrow( cell, thrower );
 	}
 	
 	@Override
@@ -82,9 +84,5 @@ public class IncendiaryDart extends MissileWeapon {
 		quantity = Random.Int( 3, 6 );
 		return this;
 	}
-	
-	@Override
-	public int price() {
-		return 5 * quantity;
-	}
+
 }

@@ -38,6 +38,7 @@ import com.felayga.unpixeldungeon.items.weapon.melee.simple.MagesStaff;
 import com.felayga.unpixeldungeon.levels.Level;
 import com.felayga.unpixeldungeon.mechanics.Ballistica;
 import com.felayga.unpixeldungeon.mechanics.GameTime;
+import com.felayga.unpixeldungeon.mechanics.MagicType;
 import com.felayga.unpixeldungeon.sprites.ItemSpriteSheet;
 import com.watabou.noosa.audio.Sample;
 import com.watabou.utils.Callback;
@@ -74,7 +75,7 @@ public class WandOfFrost extends Wand {
 			}
 
 			processSoulMark(ch, chargesPerCast());
-			ch.damage(damage, this);
+			ch.damage(damage, MagicType.Cold, null);
 
 			if (ch.isAlive()){
 				if (Level.water[ch.pos]){

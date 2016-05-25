@@ -25,7 +25,9 @@
 package com.felayga.unpixeldungeon.actors.mobs.npcs;
 
 import com.felayga.unpixeldungeon.actors.Actor;
+import com.felayga.unpixeldungeon.actors.Char;
 import com.felayga.unpixeldungeon.mechanics.GameTime;
+import com.felayga.unpixeldungeon.mechanics.MagicType;
 import com.felayga.unpixeldungeon.sprites.SheepSprite;
 import com.watabou.utils.Random;
 
@@ -33,7 +35,10 @@ public class Sheep extends NPC {
 
 	private static final String[] QUOTES = {"Baa!", "Baa?", "Baa.", "Baa..."};
 
+	public Sheep()
 	{
+		super(0);
+
 		name = "sheep";
 		spriteClass = SheepSprite.class;
 	}
@@ -58,7 +63,7 @@ public class Sheep extends NPC {
 	}
 
 	@Override
-	public void damage( int dmg, Object src ) {
+	public void damage( int dmg, MagicType type, Actor source) {
 	}
 
 	@Override

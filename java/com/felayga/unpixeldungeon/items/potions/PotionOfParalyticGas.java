@@ -33,11 +33,14 @@ import com.felayga.unpixeldungeon.scenes.GameScene;
 
 public class PotionOfParalyticGas extends Potion {
 
+    public PotionOfParalyticGas()
 	{
 		name = "Potion of Paralytic Gas";
 		initials = "PG";
 
 		isHarmful = true;
+
+        price = 40;
 	}
 	
 	@Override
@@ -60,10 +63,5 @@ public class PotionOfParalyticGas extends Potion {
 			"into a numbing yellow haze. Anyone who inhales the cloud will be paralyzed " +
 			"instantly, unable to move for some time after the cloud dissipates. This " +
 			"item can be thrown at distant enemies to catch them within the effect of the gas.";
-	}
-	
-	@Override
-	public int price() {
-		return isKnown() ? 40 * quantity : super.price();
 	}
 }

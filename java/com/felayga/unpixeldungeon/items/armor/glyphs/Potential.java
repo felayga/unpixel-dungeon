@@ -24,6 +24,7 @@
  */
 package com.felayga.unpixeldungeon.items.armor.glyphs;
 
+import com.felayga.unpixeldungeon.mechanics.MagicType;
 import com.watabou.noosa.Camera;
 import com.felayga.unpixeldungeon.Dungeon;
 import com.felayga.unpixeldungeon.actors.Char;
@@ -50,9 +51,9 @@ public class Potential extends Glyph {
 		if (Level.adjacent( attacker.pos, defender.pos ) && Random.Int( level + 7 ) >= 6) {
 			
 			int dmg = Random.IntRange( 1, damage );
-			attacker.damage( dmg, LightningTrap.LIGHTNING );
+			attacker.damage( dmg, MagicType.Shock, null );
 			dmg = Random.IntRange( 1, dmg );
-			defender.damage( dmg, LightningTrap.LIGHTNING );
+			defender.damage( dmg, MagicType.Shock, null );
 			
 			checkOwner( defender );
 			if (defender == Dungeon.hero) {

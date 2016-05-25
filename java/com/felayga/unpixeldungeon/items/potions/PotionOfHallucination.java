@@ -42,6 +42,7 @@ import com.watabou.utils.Random;
 
 public class PotionOfHallucination extends Potion {
 
+    public PotionOfHallucination()
     {
         name = "Potion of Hallucination";
         initials = "Ha";
@@ -50,6 +51,7 @@ public class PotionOfHallucination extends Potion {
         isHelpful = false;
 
         applicationDescription = "somewhat";
+        price = 30;
     }
 
     protected String applicationDescription;
@@ -64,10 +66,5 @@ public class PotionOfHallucination extends Potion {
     public String desc() {
         return
                 "An elixir that is probably illegal in most civilized places.";
-    }
-
-    @Override
-    public int price() {
-        return isKnown() ? 30 * quantity : super.price();
     }
 }
