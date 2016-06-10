@@ -260,7 +260,7 @@ public class Item implements Bundlable {
     }
 
 	public boolean doPickUp(Hero hero) {
-		if (hero.levitating) {
+		if (hero.flying) {
 			GLog.w("You can't reach the floor.");
 			return false;
 		}

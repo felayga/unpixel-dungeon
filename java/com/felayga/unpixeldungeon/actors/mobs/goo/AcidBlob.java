@@ -58,6 +58,8 @@ public class AcidBlob extends Mob {
         corpseResistances = MagicType.None.value;
 
         belongings.collectEquip(new MeleeMobAttack(GameTime.TICK, 0, 0));
+
+        isEthereal = true; //todo: make sure isEthereal works right
     }
 
     @Override

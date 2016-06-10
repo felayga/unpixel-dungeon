@@ -1682,6 +1682,24 @@ public class Hero extends Char {
 	public Mob visibleEnemy( int index ) {
 		return visibleEnemies.get(index % visibleEnemies.size());
 	}
+
+    protected boolean[] getCloserStepCandidate() {
+        int len = Level.LENGTH;
+        boolean[] retval = new boolean[len];
+
+        boolean[] passable = Level.passable;
+        boolean[] pathable = Level.pathable;
+
+        boolean[] visited = Dungeon.level.visited;
+        boolean[] mapped = Dungeon.level.mapped;
+        boolean[] avoid = Dungeon.level.avoid;
+
+        for (int i=0; i < len; i++) {
+            retval[i] = (passable[i] || pathable[i]) && (visited[i] || mapped[i]) && (!avoid[i]);
+        }
+
+        return retval;
+    }
 	
 	private boolean getCloser( final int target ) {
 		long speed = speed();
@@ -1709,24 +1727,15 @@ public class Hero extends Char {
 				}
 			}
 		} else {
-			int len = Level.LENGTH;
-            boolean[] passable = Level.passable;
-            boolean[] pathable = Level.pathable;
-			boolean[] visited = Dungeon.level.visited;
-			boolean[] mapped = Dungeon.level.mapped;
-			boolean[] avoid = Dungeon.level.avoid;
-			boolean[] candidate = new boolean[len];
+            boolean[] candidate = getCloserStepCandidate();
             boolean[] diagonal = Level.diagonal;
-			for (int i=0; i < len; i++) {
-				candidate[i] = (passable[i] || pathable[i]) && (visited[i] || mapped[i]) && (!avoid[i]);
-			}
 
 			step = Dungeon.findPath( this, pos, target, candidate, diagonal, Level.fieldOfView );
 		}
 
 		if (step != -1 && step != pos) {
-            GLog.d("step");
-            GLog.d(pos, step);
+            //GLog.d("step");
+            //GLog.d(pos, step);
             if (Dungeon.level.map[step] == Terrain.DOOR){
 				if (!Random.PassFail(280 - 512 / STRCON)) {
     	            GLog.w("Ouch! You bump into a door.");

@@ -192,7 +192,6 @@ public abstract class Actor implements Bundlable {
                     now = actor.time;
                     current = actor;
                 }
-
             }
 
             if (current != null) {

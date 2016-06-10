@@ -127,7 +127,6 @@ public abstract class Char extends Actor {
     public int paralysed = 0;
     public HashMap<Integer, Long> crippled = new HashMap<>();
     public boolean flying = false;
-    public boolean levitating = false;
     public int invisible = 0;
 
     public int viewDistance = 8;
@@ -265,10 +264,10 @@ public abstract class Char extends Actor {
             retval = false;
         }
 
-        if (this.levitating) {
+        if (this.flying) {
             Bounce.proc(32767, this, enemy);
         }
-        if (enemy.levitating) {
+        if (enemy.flying) {
             Bounce.proc(32767, enemy, this);
         }
 

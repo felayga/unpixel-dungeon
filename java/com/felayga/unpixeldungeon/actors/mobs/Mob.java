@@ -281,7 +281,21 @@ public abstract class Mob extends Char {
 			state = HUNTING;
 		}
 	}
-	
+
+    protected boolean[] getCloserStepCandidate() {
+        int len = Level.LENGTH;
+        boolean[] retval = new boolean[len];
+
+        boolean[] passable = Level.passable;
+        boolean[] pathable = Level.pathable;
+
+        for (int i=0; i < len; i++) {
+            retval[i] = passable[i] || (pathable[i] && (canOpenDoors || isEthereal));
+        }
+
+        return retval;
+    }
+
 	protected boolean getCloser( int target ) {
 		long speed = speed();
 
@@ -289,15 +303,9 @@ public abstract class Mob extends Char {
 			return false;
 		}
 
-		int len = Level.LENGTH;
-		boolean[] passable = Level.passable;
-		boolean[] pathable = Level.pathable;
+        boolean[] candidate = getCloserStepCandidate();
         boolean[] diagonal = Level.diagonal;
-		boolean[] candidate = new boolean[len];
-		for (int i=0; i < len; i++) {
-			candidate[i] = passable[i] || (pathable[i] && (canOpenDoors || isEthereal));
-		}
-		
+
 		int step = Dungeon.findPath(this, pos, target,
                 candidate, diagonal,
                 Level.fieldOfView);
