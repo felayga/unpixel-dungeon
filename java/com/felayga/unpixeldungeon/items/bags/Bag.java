@@ -31,10 +31,11 @@ import java.util.Iterator;
 import com.felayga.unpixeldungeon.Badges;
 import com.felayga.unpixeldungeon.Dungeon;
 import com.felayga.unpixeldungeon.actors.Char;
-import com.felayga.unpixeldungeon.actors.buffs.Encumbrance;
+import com.felayga.unpixeldungeon.actors.buffs.hero.Encumbrance;
 import com.felayga.unpixeldungeon.actors.hero.Hero;
+import com.felayga.unpixeldungeon.items.Heap;
 import com.felayga.unpixeldungeon.items.Item;
-import com.felayga.unpixeldungeon.items.weapon.missiles.Boomerang;
+import com.felayga.unpixeldungeon.items.weapon.missiles.martial.Boomerang;
 import com.felayga.unpixeldungeon.mechanics.Constant;
 import com.felayga.unpixeldungeon.scenes.GameScene;
 import com.felayga.unpixeldungeon.ui.Icons;
@@ -64,14 +65,30 @@ public class Bag extends Item implements Iterable<Item>, IBag {
 		weight(Encumbrance.UNIT * 15);
 	}
 
+    public Item self() {
+        return this;
+    }
+    public int pos() { return Constant.POS_NONE; }
+    public String action() { return null; }
+
 	public Char owner;
 
 	private ArrayList<Item> items = new ArrayList<>();
 
 	public Icons tabIcon = null;
-	public boolean locked = false;
+
+    public Icons tabIcon() {
+        return tabIcon;
+    }
+
+	protected boolean locked = false;
+    public boolean locked() { return locked; }
 
 	public int size = 1;
+
+    public int size() {
+        return size;
+    }
 
 	//lower priority, chosen first
 	public int priority;
@@ -83,15 +100,20 @@ public class Bag extends Item implements Iterable<Item>, IBag {
 	@Override
 	public ArrayList<String> actions( Hero hero ) {
 		ArrayList<String> actions = super.actions( hero );
-		actions.add( AC_OPEN );
+		actions.add(AC_OPEN);
 		return actions;
 	}
 
 	@Override
 	public boolean execute(Hero hero, String action) {
 		if (action.equals(AC_OPEN)) {
-			//GameScene.show(new WndBackpack(this, null, WndBackpack.Mode.ALL, null));
-			GameScene.show(new WndBag(this, null, WndBackpack.Mode.ALL, null, Constant.POS_NONE));
+            if (parent() instanceof Heap) {
+                Heap heap = (Heap)parent();
+                GameScene.show(new WndBag(this, null, WndBackpack.Mode.ALL, null, heap.pos));
+            }
+            else {
+                GameScene.show(new WndBag(this, null, WndBackpack.Mode.ALL, null, Constant.POS_NONE));
+            }
 
 			return false;
 		} else {
@@ -104,22 +126,9 @@ public class Bag extends Item implements Iterable<Item>, IBag {
 			return true;
 		}
 
-		/*
-		for (Item item : this.items) {
-			if (item instanceof Bag) {
-				Bag bag = (Bag)item;
-
-				if (bag.grab(item))
-				{
-					return bag.collect(item);
-				}
-			}
-		}
-		*/
-
 		if (collectItem.stackable) {
 			for (Item item : items) {
-				if (collectItem.isSimilar(item)) {
+				if (collectItem.isStackableWith(item)) {
 					item.quantity(item.quantity() + collectItem.quantity());
 					item.updateQuickslot();
 
@@ -131,7 +140,6 @@ public class Bag extends Item implements Iterable<Item>, IBag {
 		}
 
 		if (items.size() < this.size) {
-
 			if (Dungeon.hero != null && Dungeon.hero.isAlive()) {
 				Badges.validateItemLevelAquired(collectItem);
 			}
@@ -145,13 +153,11 @@ public class Bag extends Item implements Iterable<Item>, IBag {
 			collectItem.updateQuickslot();
 			Collections.sort(items, collectItem.itemComparator);
 			return true;
-
 		} else {
 			if (this.owner instanceof Hero) {
 				GLog.n(TXT_PACK_FULL, collectItem.getDisplayName());
 			}
 			return false;
-
 		}
 	}
 
@@ -164,7 +170,7 @@ public class Bag extends Item implements Iterable<Item>, IBag {
 
 			if (item == test) {
 				index = n;
-			} else if (item.isSimilar(test)) {
+			} else if (item.isStackableWith(test)) {
 				similarities++;
 			}
 		}
@@ -190,11 +196,7 @@ public class Bag extends Item implements Iterable<Item>, IBag {
 
 	public Item remove(Item item, int quantity) {
 		if (item.quantity() > quantity) {
-			item.quantity(item.quantity()-quantity);
-			onWeightChanged(-item.weight() * quantity);
-
 			try {
-				//todo: WHAT THE FLYING FUCK.
 				//pssh, who needs copy constructors?
 				Item detached = item.getClass().newInstance();
 				Bundle copy = new Bundle();
@@ -202,6 +204,10 @@ public class Bag extends Item implements Iterable<Item>, IBag {
 				detached.restoreFromBundle(copy);
 				detached.quantity(quantity);
 				detached.onDetach();
+
+                item.quantity(item.quantity()-quantity);
+                onWeightChanged(-item.weight() * quantity);
+
 				return detached;
 			} catch (Exception e) {
 				return null;
@@ -214,39 +220,16 @@ public class Bag extends Item implements Iterable<Item>, IBag {
 		return null;
 	}
 
-	/*
-	@Override
-	public boolean collect( Bag container ) {
-		if (super.collect( container )) {
-			
-			owner = container.owner;
-			
-			for (Item item : container.items.toArray( new Item[container.items.size()] )) {
-				if (grab( item )) {
-					item.detachAll( container );
-					item.collect( this );
-				}
-			}
-			
-			Badges.validateAllBagsBought( this );
-			
-			return true;
-		} else {
-			return false;
-		}
-	}
-	*/
-
 	protected void onItemAdded(Item item) {
-		item.parent = this;
+		item.parent(this);
 		onWeightChanged(item.weight() * item.quantity());
 	}
 
 	protected void onItemRemoved(Item item) {
 		onWeightChanged(-item.weight() * item.quantity());
 
-		if (item.parent == this) {
-			item.parent = null;
+		if (item.parent() == this) {
+			item.parent(null);
 		}
 	}
 
@@ -258,6 +241,15 @@ public class Bag extends Item implements Iterable<Item>, IBag {
 		}
 		updateQuickslot();
 	}
+
+    @Override
+    public boolean canPerformActionExternally(Hero hero, String action) {
+        if (action.equals(AC_OPEN)) {
+            return true;
+        }
+
+        return super.canPerformActionExternally(hero, action);
+    }
 
 	@Override
 	public boolean isUpgradable() {
@@ -305,7 +297,7 @@ public class Bag extends Item implements Iterable<Item>, IBag {
 		for (Item i : items) {
 			if (i == item) {
 				return true;
-			} else if (i instanceof Bag && ((Bag) i).contains(item)) {
+			} else if (i instanceof IBag && ((IBag) i).contains(item)) {
 				return true;
 			}
 		}
@@ -326,57 +318,7 @@ public class Bag extends Item implements Iterable<Item>, IBag {
 	}
 
 	public Iterator<Item> iterator(boolean allowNested) {
-		return new ItemIterator(allowNested);
+		return new ItemIterator(this, items, allowNested);
 	}
 
-	private class ItemIterator implements Iterator<Item> {
-
-		private int index = 0;
-		private Iterator<Item> nested = null;
-		private boolean allowNested;
-
-		public ItemIterator(boolean allowNested) {
-			this.allowNested = allowNested;
-		}
-
-		@Override
-		public boolean hasNext() {
-			if (nested != null) {
-				return nested.hasNext() || index < items.size();
-			} else {
-				return index < items.size();
-			}
-		}
-
-		@Override
-		public Item next() {
-			if (nested != null && nested.hasNext()) {
-
-				return nested.next();
-
-			} else {
-
-				nested = null;
-
-				Item item = items.get(index++);
-
-				if (allowNested && item instanceof Bag) {
-					nested = ((Bag) item).iterator();
-				}
-
-				return item;
-			}
-		}
-
-		@Override
-		public void remove() {
-			if (nested != null) {
-				nested.remove();
-			} else {
-				index--;
-				onItemRemoved(items.get(index));
-				items.remove(index);
-			}
-		}
-	}
 }

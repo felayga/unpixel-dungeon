@@ -32,9 +32,10 @@ import com.felayga.unpixeldungeon.actors.hero.Belongings;
 import com.felayga.unpixeldungeon.actors.hero.Hero;
 import com.felayga.unpixeldungeon.actors.hero.HeroAction;
 import com.felayga.unpixeldungeon.items.EquippableItem;
+import com.felayga.unpixeldungeon.items.Heap;
 import com.felayga.unpixeldungeon.items.Item;
 import com.felayga.unpixeldungeon.items.armor.Armor;
-import com.felayga.unpixeldungeon.items.bags.Bag;
+import com.felayga.unpixeldungeon.items.bags.IBag;
 import com.felayga.unpixeldungeon.items.bags.PotionBandolier;
 import com.felayga.unpixeldungeon.items.bags.ScrollHolder;
 import com.felayga.unpixeldungeon.items.bags.SeedPouch;
@@ -44,14 +45,17 @@ import com.felayga.unpixeldungeon.items.potions.Potion;
 import com.felayga.unpixeldungeon.items.scrolls.Scroll;
 import com.felayga.unpixeldungeon.items.wands.Wand;
 import com.felayga.unpixeldungeon.items.weapon.melee.MeleeWeapon;
-import com.felayga.unpixeldungeon.items.weapon.missiles.Boomerang;
+import com.felayga.unpixeldungeon.items.weapon.missiles.martial.Boomerang;
 import com.felayga.unpixeldungeon.mechanics.BUCStatus;
+import com.felayga.unpixeldungeon.mechanics.Constant;
+import com.felayga.unpixeldungeon.mechanics.GameTime;
 import com.felayga.unpixeldungeon.plants.Plant.Seed;
 import com.felayga.unpixeldungeon.scenes.GameScene;
 import com.felayga.unpixeldungeon.scenes.PixelScene;
 import com.felayga.unpixeldungeon.ui.Icons;
 import com.felayga.unpixeldungeon.ui.ItemSlot;
 import com.felayga.unpixeldungeon.ui.RedButton;
+import com.felayga.unpixeldungeon.utils.GLog;
 import com.felayga.unpixeldungeon.utils.Utils;
 import com.watabou.gltextures.TextureCache;
 import com.watabou.noosa.BitmapText;
@@ -63,17 +67,20 @@ import com.watabou.utils.PointF;
 import java.util.Iterator;
 
 public class WndBag extends WndTabbed {
-    private static final String BTN_DEPOSIT = "DEPOSIT";
-    private static final String BTN_TAKEALL = "TAKE ALL";
-    private static final String BTN_PICKUP = "PICK UP";
+    private static final int SLOTS_DISPLAY_MAX = 36;
 
-    protected static final int COLS_P    = 6; //width original=4
-    protected static final int COLS_L    = 12; //height original=6
+    private static final String BTN_DEPOSIT     = "DEPOSIT";
+    private static final String BTN_TAKEALL     = "TAKE ALL";
+    private static final String BTN_PICKUP      = "PICK UP";
+    private static final String BTN_NOACTION    = "NO ACTION";
 
-    protected static final int SLOT_SIZE	= 18; //original=28
-    protected static final int SLOT_MARGIN	= 1;
+    protected static final int COLS_P = 6; //width original=4
+    protected static final int COLS_L = 12; //height original=6
 
-    protected static final int TITLE_HEIGHT	= 12; //original=12
+    protected static final int SLOT_SIZE = 18; //original=28
+    protected static final int SLOT_MARGIN = 1;
+
+    protected static final int TITLE_HEIGHT = 12; //original=12
 
     private Listener listener;
     private WndBackpack.Mode mode;
@@ -87,13 +94,12 @@ public class WndBag extends WndTabbed {
     protected int row;
 
     private static WndBackpack.Mode lastMode;
-    private static Bag lastBag;
+    private static IBag lastBag;
     private static int lastPos;
 
     private int pos;
 
-    public WndBag(Bag bag, Listener listener, WndBackpack.Mode mode, String title, int pos) {
-
+    public WndBag(IBag bag, Listener listener, WndBackpack.Mode mode, String title, int pos) {
         super();
 
         this.listener = listener;
@@ -122,11 +128,11 @@ public class WndBag extends WndTabbed {
 
         resize(slotsWidth, slotsHeight + TITLE_HEIGHT);
 
-        Bag[] bags = {
+        IBag[] bags = {
                 bag
         };
 
-        for (Bag b : bags) {
+        for (IBag b : bags) {
             if (b != null) {
                 BagTab tab = new BagTab(b);
                 add(tab);
@@ -137,65 +143,50 @@ public class WndBag extends WndTabbed {
         layoutTabs();
     }
 
-    /*
-    public static WndBag lastBag( Listener listener, WndBackpack.Mode mode, String title ) {
-        //todo: make sure this is right
-        if (mode == lastMode && lastBag != null) {
-
-            return new WndBag( lastBag, listener, mode, title, -1 );
-
-        } else {
-
-            return new WndBag( Dungeon.hero.belongings.backpack1, listener, mode, title, -1 );
-
-        }
-    }
-
-    public static WndBag getBag( Class<? extends Bag> bagClass, Listener listener, WndBackpack.Mode mode, String title ) {
-        Bag bag = Dungeon.hero.belongings.getItem( bagClass );
-        return bag != null ?
-                new WndBag( bag, listener, mode, title, -1 ) :
-                lastBag( listener, mode, title );
-    }
-    */
-
-    protected void placeItems( Bag container ) {
+    protected void placeItems(IBag container) {
         count = 0;
 
         // Items in the bag
         Iterator<Item> iterator;
         int itemCount = 0;
 
-        iterator = container.iterator(false);
-        while (iterator.hasNext())
-        {
-            Item item = iterator.next();
-            placeItem(item);
-            itemCount++;
+        if (container.size() > 0) {
+            iterator = container.iterator(false);
+            while (iterator.hasNext() && count < SLOTS_DISPLAY_MAX) {
+                Item item = iterator.next();
+                placeItem(item);
+                itemCount++;
+            }
         }
 
         // Free Space
-        while (count < container.size) {
-            placeItem( null );
+        while (count < SLOTS_DISPLAY_MAX) {
+            placeItem(null);
         }
 
         if (col != 0) {
-            col=0;
+            col = 0;
             row++;
         }
 
-        placeButton(BTN_DEPOSIT, itemCount < lastBag.size);
-        placeButton(BTN_TAKEALL, true);
-        col += 3;
-        placeButton(BTN_PICKUP, pos >= 0);
+        String action = lastBag.action();
 
+        placeButton(BTN_DEPOSIT, itemCount < lastBag.size());
+        placeButton(BTN_TAKEALL, itemCount > 0);
+        if (action != null) {
+            placeButton(action, true);
+        }
+        else {
+            placeButton(BTN_NOACTION, false);
+        }
+        placeButton(BTN_PICKUP, pos >= 0 && lastBag.self() != null);
     }
 
-    protected void placeItem( final Item item ) {
+    protected void placeItem(final Item item) {
         int x = col * (SLOT_SIZE + SLOT_MARGIN);
         int y = TITLE_HEIGHT + row * (SLOT_SIZE + SLOT_MARGIN);
 
-        add( new ItemButton( item ).setPos( x, y ) );
+        add(new ItemButton(item).setPos(x, y));
 
         if (++col >= nCols) {
             col = 0;
@@ -209,11 +200,31 @@ public class WndBag extends WndTabbed {
         @Override
         public void onSelect(Item item) {
             if (item != null) {
-                if (Dungeon.hero.belongings.collect(item)) {
-                    lastBag.remove(item);
+                int pos = lastBag.pos();
+                if (pos == Constant.POS_NONE) {
+                    pos = Dungeon.hero.pos;
+                }
+
+                Item test = lastBag.remove(item);
+                if (test == item) {
+                    if (Dungeon.hero.belongings.collect(item)) {
+                        Dungeon.hero.spend(GameTime.TICK / 2, true);
+                    }
+                    else {
+                        Dungeon.level.drop(item, pos);
+                    }
+                }
+                else {
+                    GLog.d("failure withdrawing item from bag");
+                    GLog.d(""+1/0);
                 }
             }
-            GameScene.show(new WndBag(lastBag, null, lastMode, null, lastPos));
+
+            if (lastBag instanceof Heap && lastBag.size() < 1) {
+            }
+            else {
+                GameScene.show(new WndBag(lastBag, null, lastMode, null, lastPos));
+            }
         }
     };
 
@@ -221,7 +232,8 @@ public class WndBag extends WndTabbed {
         @Override
         public void onSelect(Item item) {
             if (item != null) {
-                lastBag.collect(item.parent.remove(item));
+                item = item.parent().remove(item);
+                lastBag.collect(item);
             }
             GameScene.show(new WndBag(lastBag, null, lastMode, null, lastPos));
         }
@@ -233,24 +245,24 @@ public class WndBag extends WndTabbed {
 
         final Hero hero = Dungeon.hero;
         final int position = this.pos;
-        final Item self = lastBag;
+        final IBag self = lastBag;
 
         final RedButton button = new RedButton(buttonText, true) {
             @Override
             protected void onClick() {
-                switch(buttonText) {
+                switch (buttonText) {
                     case BTN_DEPOSIT:
                         hide();
-                        GameScene.selectItem(depositItemSelector, WndBackpack.Mode.ALL, "Deposit an item", self);
+                        GameScene.selectItem(depositItemSelector, WndBackpack.Mode.ALL, "Deposit an item", self.self());
                         break;
                     case BTN_PICKUP:
                         hide();
-                        hero.curAction = new HeroAction.PickUp(position);
+                        hero.curAction = new HeroAction.HandleHeap.PickUp(position, self.self());
                         hero.motivate(true);
                         break;
                     case BTN_TAKEALL:
                         hide();
-                        Iterator<Item> iterator= lastBag.iterator(false);
+                        Iterator<Item> iterator = lastBag.iterator(false);
                         while (iterator.hasNext()) {
                             Item item = iterator.next();
                             if (hero.belongings.collect(item)) {
@@ -284,15 +296,15 @@ public class WndBag extends WndTabbed {
     @Override
     public void onBackPressed() {
         if (listener != null) {
-            listener.onSelect( null );
+            listener.onSelect(null);
         }
         super.onBackPressed();
     }
 
     @Override
-    protected void onClick( Tab tab ) {
+    protected void onClick(Tab tab) {
         hide();
-        GameScene.show( new WndBag( ((BagTab)tab).bag, listener, mode, title, pos ) );
+        GameScene.show(new WndBag(((BagTab) tab).bag, listener, mode, title, pos));
     }
 
     @Override
@@ -304,20 +316,20 @@ public class WndBag extends WndTabbed {
 
         private Image icon;
 
-        private Bag bag;
+        private IBag bag;
 
-        public BagTab( Bag bag ) {
+        public BagTab(IBag bag) {
             super();
 
             this.bag = bag;
 
             icon = icon();
-            add( icon );
+            add(icon);
         }
 
         @Override
-        protected void select( boolean value ) {
-            super.select( value );
+        protected void select(boolean value) {
+            super.select(value);
             icon.am = selected ? 1.0f : 0.6f;
         }
 
@@ -325,32 +337,30 @@ public class WndBag extends WndTabbed {
         protected void layout() {
             super.layout();
 
-            icon.copy( icon() );
+            icon.copy(icon());
             icon.x = x + (width - icon.width) / 2;
             icon.y = y + (height - icon.height) / 2 - 2 - (selected ? 0 : 1);
             if (!selected && icon.y < y + CUT) {
                 RectF frame = icon.frame();
                 frame.top += (y + CUT - icon.y) / icon.texture.height;
-                icon.frame( frame );
+                icon.frame(frame);
                 icon.y = y + CUT;
             }
         }
 
         private Image icon() {
-            if (bag.tabIcon != null)
-            {
-                return Icons.get( bag.tabIcon );
-            }
-            else if (bag instanceof SeedPouch) {
-                return Icons.get( Icons.SEED_POUCH );
+            if (bag.tabIcon() != null) {
+                return Icons.get(bag.tabIcon());
+            } else if (bag instanceof SeedPouch) {
+                return Icons.get(Icons.SEED_POUCH);
             } else if (bag instanceof ScrollHolder) {
-                return Icons.get( Icons.SCROLL_HOLDER );
+                return Icons.get(Icons.SCROLL_HOLDER);
             } else if (bag instanceof WandHolster) {
-                return Icons.get( Icons.WAND_HOLSTER );
+                return Icons.get(Icons.WAND_HOLSTER);
             } else if (bag instanceof PotionBandolier) {
-                return Icons.get( Icons.POTION_BANDOLIER );
+                return Icons.get(Icons.POTION_BANDOLIER);
             } else {
-                return Icons.get( Icons.BACKPACK );
+                return Icons.get(Icons.BACKPACK);
             }
         }
     }
@@ -366,14 +376,14 @@ public class WndBag extends WndTabbed {
             return new PointF(0.75f, 0.75f);
         }
 
-        private static final int NORMAL		= 0xFF4A4D44;
-        private static final int EQUIPPED	= 0xFF63665B;
+        private static final int NORMAL = 0xFF4A4D44;
+        private static final int EQUIPPED = 0xFF63665B;
 
         private Item item;
         private ColorBlock bg;
 
-        public ItemButton( Item item ) {
-            super( item );
+        public ItemButton(Item item) {
+            super(item);
 
             this.item = item;
 			/*
@@ -387,7 +397,7 @@ public class WndBag extends WndTabbed {
 
         @Override
         protected void createChildren() {
-            bg = new ColorBlock( SLOT_SIZE, SLOT_SIZE, NORMAL );
+            bg = new ColorBlock(SLOT_SIZE, SLOT_SIZE, NORMAL);
             add(bg);
 
             super.createChildren();
@@ -402,7 +412,7 @@ public class WndBag extends WndTabbed {
         }
 
         @Override
-        public void item( Item item ) {
+        public void item(Item item) {
 
             super.item(item);
             if (item != null) {
@@ -411,10 +421,10 @@ public class WndBag extends WndTabbed {
                 BUCStatus.colorizeBackground(bg, item.visibleBucStatus());
 
                 if (item.getDisplayName() == null) {
-                    enable( false );
+                    enable(false);
                 } else {
                     enable(
-                            mode == WndBackpack.Mode.FOR_SALE && (item.price() > 0) && (!item.isEquipped( Dungeon.hero ) || item.bucStatus() != BUCStatus.Cursed) ||
+                            mode == WndBackpack.Mode.FOR_SALE && (item.price() > 0) && (!item.isEquipped(Dungeon.hero) || item.bucStatus() != BUCStatus.Cursed) ||
                                     mode == WndBackpack.Mode.UPGRADEABLE && item.isUpgradable() ||
                                     mode == WndBackpack.Mode.UNIDENTIFED && !item.isIdentified() ||
                                     mode == WndBackpack.Mode.QUICKSLOT && (item.defaultAction != null) ||
@@ -431,31 +441,31 @@ public class WndBag extends WndTabbed {
                     );
                 }
             } else {
-                bg.color( NORMAL );
+                bg.color(NORMAL);
             }
         }
 
         @Override
         protected void onTouchDown() {
-            bg.brightness( 1.5f );
+            bg.brightness(1.5f);
             Sample.INSTANCE.play(Assets.SND_CLICK, 0.7f, 0.7f, 1.2f);
-        };
+        }
+
+        ;
 
         protected void onTouchUp() {
-            bg.brightness( 1.0f );
-        };
+            bg.brightness(1.0f);
+        }
+
+        ;
 
         @Override
         protected void onClick() {
             if (listener != null) {
-
                 hide();
-                listener.onSelect( item );
-
+                listener.onSelect(item);
             } else {
-
-                WndBag.this.add( new WndItem( WndBag.this, item, withdrawItemSelector ) );
-
+                WndBag.this.add(new WndItem(WndBag.this, item, withdrawItemSelector));
             }
         }
 
@@ -466,6 +476,6 @@ public class WndBag extends WndTabbed {
     }
 
     public interface Listener {
-        void onSelect( Item item );
+        void onSelect(Item item);
     }
 }

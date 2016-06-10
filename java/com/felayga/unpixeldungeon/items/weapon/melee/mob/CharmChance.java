@@ -26,10 +26,9 @@
 package com.felayga.unpixeldungeon.items.weapon.melee.mob;
 
 import com.felayga.unpixeldungeon.Assets;
-import com.felayga.unpixeldungeon.actors.Actor;
 import com.felayga.unpixeldungeon.actors.Char;
 import com.felayga.unpixeldungeon.actors.buffs.Buff;
-import com.felayga.unpixeldungeon.actors.buffs.Charm;
+import com.felayga.unpixeldungeon.actors.buffs.negative.Charm;
 import com.felayga.unpixeldungeon.effects.Speck;
 import com.felayga.unpixeldungeon.mechanics.GameTime;
 import com.watabou.noosa.audio.Sample;

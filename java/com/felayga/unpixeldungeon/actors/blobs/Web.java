@@ -27,7 +27,7 @@ package com.felayga.unpixeldungeon.actors.blobs;
 import com.felayga.unpixeldungeon.actors.Actor;
 import com.felayga.unpixeldungeon.actors.Char;
 import com.felayga.unpixeldungeon.actors.buffs.Buff;
-import com.felayga.unpixeldungeon.actors.buffs.Roots;
+import com.felayga.unpixeldungeon.actors.buffs.negative.Roots;
 import com.felayga.unpixeldungeon.effects.BlobEmitter;
 import com.felayga.unpixeldungeon.effects.particles.WebParticle;
 import com.felayga.unpixeldungeon.mechanics.GameTime;

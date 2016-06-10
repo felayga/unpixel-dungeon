@@ -71,8 +71,9 @@ public class Shopkeeper extends NPC {
 
 	//todo: shopkeeper ain't no pansy
 	@Override
-	public void damage( int dmg, MagicType type, Actor source ) {
+	public int damage( int dmg, MagicType type, Actor source ) {
 		flee();
+        return 0;
 	}
 	
 	@Override

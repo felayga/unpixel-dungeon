@@ -31,7 +31,7 @@ import com.felayga.unpixeldungeon.Dungeon;
 import com.felayga.unpixeldungeon.DungeonTilemap;
 import com.felayga.unpixeldungeon.Journal;
 import com.felayga.unpixeldungeon.Journal.Feature;
-import com.felayga.unpixeldungeon.actors.buffs.Awareness;
+import com.felayga.unpixeldungeon.actors.buffs.positive.Awareness;
 import com.felayga.unpixeldungeon.actors.buffs.Buff;
 import com.felayga.unpixeldungeon.actors.hero.Hero;
 import com.felayga.unpixeldungeon.effects.BlobEmitter;

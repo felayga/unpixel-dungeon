@@ -34,27 +34,19 @@ import com.felayga.unpixeldungeon.ShatteredPixelDungeon;
 import com.felayga.unpixeldungeon.Statistics;
 import com.felayga.unpixeldungeon.actors.Actor;
 import com.felayga.unpixeldungeon.actors.Char;
-import com.felayga.unpixeldungeon.actors.buffs.Bleeding;
-import com.felayga.unpixeldungeon.actors.buffs.Bless;
-import com.felayga.unpixeldungeon.actors.buffs.Blindness;
+import com.felayga.unpixeldungeon.actors.buffs.positive.Bless;
 import com.felayga.unpixeldungeon.actors.buffs.Buff;
-import com.felayga.unpixeldungeon.actors.buffs.Burning;
-import com.felayga.unpixeldungeon.actors.buffs.Charm;
-import com.felayga.unpixeldungeon.actors.buffs.Cripple;
-import com.felayga.unpixeldungeon.actors.buffs.DeathlySick;
-import com.felayga.unpixeldungeon.actors.buffs.Drowsy;
-import com.felayga.unpixeldungeon.actors.buffs.Encumbrance;
-import com.felayga.unpixeldungeon.actors.buffs.Fainting;
-import com.felayga.unpixeldungeon.actors.buffs.Fury;
-import com.felayga.unpixeldungeon.actors.buffs.Hallucination;
-import com.felayga.unpixeldungeon.actors.buffs.Hunger;
-import com.felayga.unpixeldungeon.actors.buffs.Invisibility;
-import com.felayga.unpixeldungeon.actors.buffs.Ooze;
-import com.felayga.unpixeldungeon.actors.buffs.Paralysis;
-import com.felayga.unpixeldungeon.actors.buffs.Poison;
-import com.felayga.unpixeldungeon.actors.buffs.Roots;
-import com.felayga.unpixeldungeon.actors.buffs.Vertigo;
-import com.felayga.unpixeldungeon.actors.buffs.Weakness;
+import com.felayga.unpixeldungeon.actors.buffs.negative.Burning;
+import com.felayga.unpixeldungeon.actors.buffs.hero.DeathlySick;
+import com.felayga.unpixeldungeon.actors.buffs.negative.Drowsy;
+import com.felayga.unpixeldungeon.actors.buffs.hero.Encumbrance;
+import com.felayga.unpixeldungeon.actors.buffs.hero.Fury;
+import com.felayga.unpixeldungeon.actors.buffs.hero.Hunger;
+import com.felayga.unpixeldungeon.actors.buffs.positive.Invisibility;
+import com.felayga.unpixeldungeon.actors.buffs.negative.Ooze;
+import com.felayga.unpixeldungeon.actors.buffs.negative.Paralysis;
+import com.felayga.unpixeldungeon.actors.buffs.negative.Poison;
+import com.felayga.unpixeldungeon.actors.buffs.negative.Vertigo;
 import com.felayga.unpixeldungeon.actors.mobs.Mob;
 import com.felayga.unpixeldungeon.actors.mobs.npcs.Boulder;
 import com.felayga.unpixeldungeon.actors.mobs.npcs.NPC;
@@ -65,6 +57,8 @@ import com.felayga.unpixeldungeon.effects.Speck;
 import com.felayga.unpixeldungeon.items.Amulet;
 import com.felayga.unpixeldungeon.items.Ankh;
 import com.felayga.unpixeldungeon.items.Dewdrop;
+import com.felayga.unpixeldungeon.items.EquippableItem;
+import com.felayga.unpixeldungeon.items.Gemstone;
 import com.felayga.unpixeldungeon.items.Heap;
 import com.felayga.unpixeldungeon.items.Heap.Type;
 import com.felayga.unpixeldungeon.items.Item;
@@ -76,20 +70,19 @@ import com.felayga.unpixeldungeon.items.artifacts.EtherealChains;
 import com.felayga.unpixeldungeon.items.artifacts.TalismanOfForesight;
 import com.felayga.unpixeldungeon.items.artifacts.TimekeepersHourglass;
 import com.felayga.unpixeldungeon.items.bags.Bag;
+import com.felayga.unpixeldungeon.items.bags.IBag;
 import com.felayga.unpixeldungeon.items.food.Food;
-import com.felayga.unpixeldungeon.items.gemstones.gray.Loadstone;
 import com.felayga.unpixeldungeon.items.keys.OldKey;
 import com.felayga.unpixeldungeon.items.rings.RingOfEvasion;
 import com.felayga.unpixeldungeon.items.rings.RingOfHaste;
 import com.felayga.unpixeldungeon.items.rings.RingOfMight;
 import com.felayga.unpixeldungeon.items.rings.RingOfTenacity;
-import com.felayga.unpixeldungeon.items.scrolls.BlankScroll;
 import com.felayga.unpixeldungeon.items.scrolls.ScrollOfMagicMapping;
 import com.felayga.unpixeldungeon.items.tools.ITool;
 import com.felayga.unpixeldungeon.items.tools.digging.Pickaxe;
 import com.felayga.unpixeldungeon.items.tools.unlocking.UnlockingTool;
 import com.felayga.unpixeldungeon.items.weapon.missiles.MissileWeapon;
-import com.felayga.unpixeldungeon.items.weapon.missiles.Rock;
+import com.felayga.unpixeldungeon.items.weapon.missiles.simple.Rock;
 import com.felayga.unpixeldungeon.levels.Level;
 import com.felayga.unpixeldungeon.levels.Terrain;
 import com.felayga.unpixeldungeon.levels.features.AlchemyPot;
@@ -115,6 +108,7 @@ import com.felayga.unpixeldungeon.utils.GLog;
 import com.felayga.unpixeldungeon.utils.Utils;
 import com.felayga.unpixeldungeon.windows.WndBackpack;
 import com.felayga.unpixeldungeon.windows.WndBag;
+import com.felayga.unpixeldungeon.windows.WndItem;
 import com.felayga.unpixeldungeon.windows.WndMessage;
 import com.felayga.unpixeldungeon.windows.WndOptions;
 import com.felayga.unpixeldungeon.windows.hero.WndResurrect;
@@ -127,7 +121,6 @@ import com.watabou.utils.Bundle;
 import com.watabou.utils.Random;
 
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 
 public class Hero extends Char {
@@ -152,6 +145,10 @@ public class Hero extends Char {
 	private static final String TXT_NOTICED_SMTH	= "You noticed something";
 
 	public static final String TXT_YOU_NOW_HAVE		= "REPLACE TXT_YOU_NOW_HAVE %s";
+
+    public static final String TXT_DIG_HERE         = "You can try to dig up through the ceiling or down through the floor here.  Neither is a terrific idea, generally speaking.";
+    public static final String TXT_DIG_HERE_UP      = "DIG UP";
+    public static final String TXT_DIG_HERE_DOWN    = "DIG DOWN";
 	
 	private static final String TXT_WAIT	= "...";
 	private static final String TXT_SEARCH	= "search";
@@ -314,6 +311,11 @@ public class Hero extends Char {
 		visibleEnemies = new ArrayList<>();
 	}
 
+    public void updateEncumbrance() {
+        Encumbrance encumbrance = buff(Encumbrance.class);
+        encumbrance.updateAppearance(this);
+    }
+
 	/*
 	private int STR() {
 		int STR = this.STRCON;
@@ -417,7 +419,7 @@ public class Hero extends Char {
 
 	public boolean shoot( Char enemy, MissileWeapon wep) {
 
-		boolean result = attack(wep, true, enemy);
+		boolean result = attack(wep, enemy);
 		Invisibility.dispel();
 
 		return result;
@@ -529,76 +531,87 @@ public class Hero extends Char {
 	@Override
 	public boolean act() {
 
-		super.act();
+        super.act();
 
-		if (paralysed > 0) {
+        if (paralysed > 0) {
 
-			curAction = null;
+            curAction = null;
 
-			spend(GameTime.TICK, true);
-			return false;
-		}
+            spend(GameTime.TICK, true);
+            return false;
+        }
 
-		checkVisibleMobs();
+        checkVisibleMobs();
 
-		if (curAction == null) {
+        if (curAction == null) {
 
-			if (resting) {
-				spend(TIME_TO_REST, false);
-				next();
-				return false;
-			}
+            if (resting) {
+                spend(TIME_TO_REST, false);
+                next();
+                return false;
+            }
 
-			ready();
-			return false;
+            ready();
+            return false;
 
-		} else {
+        } else {
 
-			resting = false;
+            resting = false;
 
-			ready = false;
+            ready = false;
 
-			if (curAction instanceof HeroAction.Move) {
-				return actMove((HeroAction.Move) curAction);
-			} else if (curAction instanceof HeroAction.Interact) {
-				return actInteract((HeroAction.Interact) curAction);
-			} else if (curAction instanceof HeroAction.Buy) {
-				return actBuy((HeroAction.Buy) curAction);
-			} else if (curAction instanceof HeroAction.PickUp) {
-				return actPickUp((HeroAction.PickUp) curAction);
-			} else if (curAction instanceof HeroAction.OpenBag) {
-				return actOpenBag((HeroAction.OpenBag) curAction);
-			} else if (curAction instanceof HeroAction.UnlockBag) {
-				return actLockUnlockBag((HeroAction.UnlockBag) curAction);
-			} else if (curAction instanceof HeroAction.OpenChest) {
-				return actOpenChest((HeroAction.OpenChest) curAction);
-			} else if (curAction instanceof HeroAction.HandleDoor) {
-				if (curAction instanceof HeroAction.HandleDoor.OpenCloseDoor) {
-					return actOpenCloseDoor((HeroAction.HandleDoor.OpenCloseDoor) curAction);
-				} else if (curAction instanceof HeroAction.HandleDoor.KickDoor) {
-					return actKickDoor((HeroAction.HandleDoor.KickDoor) curAction);
-				} else if (curAction instanceof HeroAction.HandleDoor.UnlockDoor) {
-					return actUnlockDoor((HeroAction.HandleDoor.UnlockDoor) curAction);
-				} else {
-					return actHandleDoor((HeroAction.HandleDoor) curAction);
-				}
-			} else if (curAction instanceof HeroAction.Descend) {
-				return actDescend((HeroAction.Descend) curAction);
-			} else if (curAction instanceof HeroAction.Ascend) {
-				return actAscend((HeroAction.Ascend) curAction);
-			} else if (curAction instanceof HeroAction.Attack) {
-				return actAttack((HeroAction.Attack) curAction);
-			} else if (curAction instanceof HeroAction.Cook) {
-				return actCook((HeroAction.Cook) curAction);
-			} else if (curAction instanceof HeroAction.UseItem) {
-				return actUseItem((HeroAction.UseItem) curAction);
-			} else if (curAction instanceof HeroAction.Dig) {
-				return actDig((HeroAction.Dig) curAction);
-			}
-		}
+            if (curAction instanceof HeroAction.Move) {
+                return actMove((HeroAction.Move) curAction);
+            } else if (curAction instanceof HeroAction.Interact) {
+                return actInteract((HeroAction.Interact) curAction);
+            } else if (curAction instanceof HeroAction.Buy) {
+                return actBuy((HeroAction.Buy) curAction);
+            } else if (curAction instanceof HeroAction.HandleHeap) {
+                GLog.d("curaction is HandleHeap");
+                if (curAction instanceof HeroAction.HandleHeap.PickUp) {
+                    GLog.d("curaction is PickUp");
+                    return actPickUp((HeroAction.HandleHeap.PickUp) curAction);
+                } else if (curAction instanceof HeroAction.HandleHeap.OpenBag) {
+                    GLog.d("curaction is OpenBag");
+                    return actOpenBag((HeroAction.HandleHeap.OpenBag) curAction);
+                } else if (curAction instanceof HeroAction.HandleHeap.InteractItem) {
+                    GLog.d("curaction is InteractItem");
+                    return actInteractItem((HeroAction.HandleHeap.InteractItem) curAction);
+                } else {
+                    GLog.d("curaction is base");
+                    return actHandleHeap((HeroAction.HandleHeap) curAction);
+                }
+            } else if (curAction instanceof HeroAction.UnlockBag) {
+                return actLockUnlockBag((HeroAction.UnlockBag) curAction);
+            } else if (curAction instanceof HeroAction.OpenChest) {
+                return actOpenChest((HeroAction.OpenChest) curAction);
+            } else if (curAction instanceof HeroAction.HandleDoor) {
+                if (curAction instanceof HeroAction.HandleDoor.OpenCloseDoor) {
+                    return actOpenCloseDoor((HeroAction.HandleDoor.OpenCloseDoor) curAction);
+                } else if (curAction instanceof HeroAction.HandleDoor.KickDoor) {
+                    return actKickDoor((HeroAction.HandleDoor.KickDoor) curAction);
+                } else if (curAction instanceof HeroAction.HandleDoor.UnlockDoor) {
+                    return actUnlockDoor((HeroAction.HandleDoor.UnlockDoor) curAction);
+                } else {
+                    return actHandleDoor((HeroAction.HandleDoor) curAction);
+                }
+            } else if (curAction instanceof HeroAction.Descend) {
+                return actDescend((HeroAction.Descend) curAction);
+            } else if (curAction instanceof HeroAction.Ascend) {
+                return actAscend((HeroAction.Ascend) curAction);
+            } else if (curAction instanceof HeroAction.Attack) {
+                return actAttack((HeroAction.Attack) curAction);
+            } else if (curAction instanceof HeroAction.Cook) {
+                return actCook((HeroAction.Cook) curAction);
+            } else if (curAction instanceof HeroAction.UseItem) {
+                return actUseItem((HeroAction.UseItem) curAction);
+            } else if (curAction instanceof HeroAction.Dig) {
+                return actDig((HeroAction.Dig) curAction);
+            }
+        }
 
-		return false;
-	}
+        return false;
+    }
 	
 	public void busy() {
 		ready = false;
@@ -626,8 +639,8 @@ public class Hero extends Char {
 				food.stoppedEating(this);
 			}
 
-			if (action.targetOutsideInventory) {
-				if (!action.target.doPickUp(Dungeon.hero)) {
+			if (action.targetOutsideInventory != null) {
+				if (!action.targetOutsideInventory.collect(action.target)) {
 					Dungeon.level.drop(action.target, pos).sprite.drop();
 				}
 			}
@@ -642,8 +655,7 @@ public class Hero extends Char {
 		act();
 	}
 
-	private boolean actEatItem(HeroAction.EatItem action)
-	{
+	private boolean actEatItem(HeroAction.EatItem action) {
 		Food food = (Food)action.target;
 
 		//food.identify();
@@ -652,8 +664,8 @@ public class Hero extends Char {
 		{
 			if (food.quantity() > 1)
 			{
-				action.target = belongings.remove(food, 1);
-				action.targetOutsideInventory = true;
+                action.targetOutsideInventory = food.parent();
+				action.target = food.parent().remove(food, 1);
 				food = (Food)action.target;
 
 				//GLog.d("split food stack energy="+food.energy);
@@ -676,7 +688,7 @@ public class Hero extends Char {
 			Hunger hunger = buff(Hunger.class);
 			final Food foodItem = (Food)action.target;
 
-			if (hunger.isStuffed() && food.energy > 0 && !action.forced)
+			if (hunger.isStuffed() && food.energyLeft() && !action.forced)
 			{
 				ShatteredPixelDungeon.scene().add(
 						new WndOptions(foodItem.getName(), "You're having a hard time getting it all down.  Stop eating?", new String[]{"YES", "NO"}) {
@@ -702,12 +714,14 @@ public class Hero extends Char {
 			return true;
 		}
 		else {
-			if (!action.targetOutsideInventory) {
-				belongings.remove(action.target, 1);
+			if (action.targetOutsideInventory == null) {
+                IBag parent = action.target.parent();
+                if (parent != null) {
+                    parent.remove(action.target, 1);
+                }
 			}
 
 			//ready();
-
 			return false;
 		}
 	}
@@ -736,90 +750,166 @@ public class Hero extends Char {
 		}
 	}
 
-	private boolean actDig( HeroAction.Dig action ) {
-		int digPos = action.pos;
+	private boolean actDig( final HeroAction.Dig action ) {
+        int digPos = action.pos;
 
-		if (Level.adjacent(pos, digPos) && action.effort > 0) {
-			sprite.turnTo(pos, digPos);
+        if (action.effort > 0 && (Level.canReach(pos, digPos) || pos == digPos)) {
+            if (pos == digPos && action.direction == 0) {
+                ShatteredPixelDungeon.scene().add(
+                        new WndOptions("Dig Here", TXT_DIG_HERE, TXT_DIG_HERE_DOWN, TXT_DIG_HERE_UP, Constant.TXT_CANCEL) {
 
-			int x = digPos % Level.WIDTH;
-			int y = digPos / Level.WIDTH;
+                            @Override
+                            protected void onSelect(int index) {
+                                switch (index) {
+                                    case 0:
+                                        curAction = new HeroAction.Dig(action.tool, action.pos, action.effort, 1);
+                                        motivate(true);
+                                        break;
+                                    case 1:
+                                        curAction = new HeroAction.Dig(action.tool, action.pos, action.effort, -1);
+                                        motivate(true);
+                                        break;
+                                    default:
+                                        ready();
+                                        break;
+                                }
+                            }
+                        });
 
-			int terrain = Dungeon.level.map[digPos];
+                return false;
+            }
 
-			if (x<=0 || x >= Level.WIDTH -1 || y<=0 || y >= Level.HEIGHT-1) {
-				GLog.n("You seem to have hit bedrock.");
-				ready();
-				return false;
-			}
-			else if ((Terrain.flags[terrain] & (Terrain.FLAG_WOOD | Terrain.FLAG_STONE)) == 0) {
-				GLog.n("Your " + action.tool.getName() + " isn't strong enough for this.");
-				ready();
-				return false;
-			}
+            int x = digPos % Level.WIDTH;
+            int y = digPos / Level.WIDTH;
 
-			action.effort -= 9 + Random.Int(5) + action.tool.level + getAttributeModifier(AttributeType.STRCON) + getAttributeModifier(AttributeType.DEXCHA);
-			useAttribute(AttributeType.STRCON, 1);
+            if (x <= 0 || x >= Level.WIDTH - 1 || y <= 0 || y >= Level.HEIGHT - 1) {
+                GLog.n("You seem to have hit bedrock.");
+                ready();
+                return false;
+            }
 
-			if (action.effort <= 0) {
-				sprite.attack(digPos);
-				spend(GameTime.TICK, false);
+            int currentEffort = action.tool.effort(this, true);
+            action.effort -= currentEffort;
+            useAttribute(AttributeType.STRCON, 1);
 
-				if (Dungeon.level.stone[digPos]) {
-					if (terrain == Terrain.WALL_STONE) {
-						Level.setDirt(digPos);
-					}
-					else {
-						Level.set(digPos, Terrain.EMPTY);
-					}
+            Hunger hunger = buff(Hunger.class);
+            if (hunger != null) {
+                hunger.satisfy_new(-1);
+            }
 
-					if (Random.Int(10) == 0) {
-						GLog.w("A boulder falls out!");
-						Boulder npc = new Boulder();
-						npc.pos = digPos;
-						Dungeon.level.mobs.add(npc);
-						GameScene.add(npc);
-					}
-					else {
-						Dungeon.level.drop(new Rock(Random.Int(6, 66)), digPos);
-					}
+            spend(GameTime.TICK, false);
 
-					Sample.INSTANCE.play(Assets.SND_WALL_SMASH);
-					CellEmitter.get(digPos).burst(Speck.factory(Speck.DUST), 5);
-				}
-				else if (Dungeon.level.wood[digPos]) {
-					Level.set(digPos, Terrain.WOOD_DEBRIS);
+            if (action.boulder != null) {
+                action.boulder.HP -= currentEffort;
 
-					if (terrain == Terrain.BOOKSHELF)
-					{
-						Dungeon.level.drop(new BlankScroll().quantity(Random.Int(1, 4)), digPos);
-					}
+                if (action.boulder.HP <= 0) {
+                    sprite.turnTo(pos, digPos);
 
-					Sample.INSTANCE.play(Assets.SND_DOOR_SMASH);
-					CellEmitter.get(digPos).burst(Speck.factory(Speck.WOOD), 5);
-				}
+                    sprite.attack(digPos);
 
-				Dungeon.level.removeVisuals(digPos);
+                    action.boulder.die(this);
 
-				GameScene.updateMap(digPos);
-				Dungeon.observe();
+                    return false;
+                }
+            }
+            else {
+                int terrain = Dungeon.level.map[digPos];
 
-				return false;
-			}
+                if (pos != digPos && (Terrain.flags[terrain] & (Terrain.FLAG_WOOD | Terrain.FLAG_STONE)) == 0) {
+                    GLog.n("Your " + action.tool.getName() + " isn't strong enough for this.");
+                    ready();
+                    return false;
+                }
 
-			spend(GameTime.TICK, false);
+                if (action.effort <= 0) {
+                    if (pos != digPos) {
+                        sprite.turnTo(pos, digPos);
 
-			return true;
-		} else {
-			if (Level.fieldOfView[digPos] && getCloser(digPos)) {
-				return true;
-			} else {
-				ready();
+                        sprite.attack(digPos);
+                        spend(GameTime.TICK, false);
 
-				return false;
-			}
-		}
-	}
+                        if (Dungeon.level.stone[digPos]) {
+                            if (terrain == Terrain.WALL_STONE) {
+                                Level.setDirt(digPos, true);
+                            } else {
+                                Level.setEmpty(digPos, true);
+                            }
+
+                            if (Random.Int(12) == 0) {
+                                GLog.w("You've dug out a boulder!");
+                                Boulder npc = new Boulder();
+                                npc.pos = digPos;
+                                Dungeon.level.mobs.add(npc);
+                                GameScene.add(npc);
+                            } else {
+                                Dungeon.level.drop(new Rock(Random.Int(3, 23)), digPos);
+                            }
+
+                            Sample.INSTANCE.play(Assets.SND_WALL_SMASH);
+                            CellEmitter.get(digPos).burst(Speck.factory(Speck.DUST), 5);
+                        } else if (Dungeon.level.wood[digPos]) {
+                            Level.setWoodDebris(digPos, true);
+
+                            Sample.INSTANCE.play(Assets.SND_DOOR_SMASH);
+                            CellEmitter.get(digPos).burst(Speck.factory(Speck.WOOD), 5);
+                        }
+
+                        Dungeon.level.removeVisuals(digPos);
+
+                        Dungeon.observe();
+                    } else {
+                        CellEmitter.get(digPos).burst(Speck.factory(Speck.DUST), 5);
+
+                        if (action.direction == -1) {
+                            GLog.n("You loosen some rocks from the ceiling.  They fall on your head!");
+                            EquippableItem _helmet = belongings.helmet();
+
+                            Armor helmet = null;
+                            if (_helmet instanceof Armor) {
+                                helmet = (Armor) _helmet;
+                            }
+
+                            if (helmet != null && helmet.armor > 0) {
+                                GLog.p("Good thing you were wearing a sturdy helmet.");
+                            } else {
+                                Rock rock = new Rock();
+                                rock.random();
+
+                                int damage = 1;
+                                for (int n=0;n<rock.quantity();n++) {
+                                    damage += rock.damageRoll();
+                                }
+
+                                damage(damage, MagicType.Mundane, null);
+
+                                Dungeon.level.drop(rock, pos);
+                            }
+                        }
+                        else {
+                            GLog.w("You dig through the floor!");
+
+                            Level.setDirtDeep(pos, true);
+
+                            Dungeon.observe();
+                        }
+
+                        ready();
+                    }
+
+                    return false;
+                }
+            }
+
+            return true;
+        }
+
+        if (Level.fieldOfView[digPos] && getCloser(digPos)) {
+            return true;
+        } else {
+            ready();
+            return false;
+        }
+    }
 
 	private boolean actMove( HeroAction.Move action ) {
 
@@ -841,7 +931,7 @@ public class Hero extends Char {
 
 		NPC npc = action.npc;
 
-		if (Level.adjacent(pos, npc.pos)) {
+		if (Level.canReach(pos, npc.pos)) {
 			ready();
 			sprite.turnTo(pos, npc.pos);
 			npc.interact();
@@ -861,10 +951,10 @@ public class Hero extends Char {
 	private boolean actBuy( HeroAction.Buy action ) {
 		int dst = action.dst;
 
-		if (pos == dst || Level.adjacent( pos, dst )) {
+		if (pos == dst || Level.canReach(pos, dst)) {
 			ready();
 			
-			Heap heap = Dungeon.level.heaps.get( dst );
+			Heap heap = Dungeon.level.heaps.get(dst);
 			if (heap != null && heap.type == Type.FOR_SALE && heap.size() == 1) {
 				GameScene.show(new WndTradeItem(heap, true));
 			}
@@ -895,15 +985,14 @@ public class Hero extends Char {
 		}
 	}
 
-	private boolean actLockUnlockBag(HeroAction.UnlockBag action)
-	{
+	private boolean actLockUnlockBag(HeroAction.UnlockBag action) {
 		int dst = action.dst;
-		if (Level.adjacent( pos, dst ) || pos == dst) {
+		if (Level.canReach(pos, dst) || pos == dst) {
 			Heap heap = Dungeon.level.heaps.get( dst );
 			Item item = heap.peek();
 			Bag bag = (Bag)item;
 
-			if (bag.locked) {
+			if (bag.locked()) {
 
 			}
 			else {
@@ -923,132 +1012,174 @@ public class Hero extends Char {
 		}
 	}
 
-	private boolean actOpenBag(HeroAction.OpenBag action){
-		int dst = action.dst;
-		if (Level.adjacent( pos, dst ) || pos == dst) {
-			Heap heap = Dungeon.level.heaps.get( dst );
-			Item item = heap.peek();
-			Bag bag = (Bag)item;
+    private boolean actHandleHeap(HeroAction.HandleHeap action) {
+        final int dst = action.dst;
 
-			if (bag.locked) {
+        if (pos == dst) {
+            Heap heap = Dungeon.level.heaps.get(pos);
 
-			}
-			else {
-				GameScene.show(new WndBag(bag, null, WndBackpack.Mode.ALL, null, dst));
-			}
+            if (heap != null) {
+                if (heap.size() == 1) {
+                    Item item = heap.peek();
+                    ArrayList<String> actions = item.actions(Dungeon.hero, true);
 
-			ready();
+                    if (actions.size() == 1) {
+                        GLog.d("pickup");
+                        curAction = new HeroAction.HandleHeap.PickUp(dst, item);
+                        return true;
+                    }
+                    else {
+                        GLog.d("interactitem");
+                        curAction = new HeroAction.HandleHeap.InteractItem(dst, item);
+                        return true;
+                    }
+                }
+                else {
+                    GLog.d("openbag");
+                    curAction = new HeroAction.HandleHeap.OpenBag(dst, heap);
+                    return true;
+                }
+            }
 
-			return false;
-		} else if (getCloser( dst )) {
+            return false;
+        } else if (getCloser(dst)) {
+            return true;
+        } else {
+            ready();
 
-			return true;
+            return false;
+        }
+    }
 
-		} else {
-			ready();
-			return false;
-		}
-	}
-
-	private boolean actPickUp( HeroAction.PickUp action ) {
+	private boolean actPickUp( HeroAction.HandleHeap.PickUp action ) {
 		final int dst = action.dst;
 
+        GLog.d("actPickUp go");
+
 		if (pos == dst) {
-			Heap heap = Dungeon.level.heaps.get(pos);
-			if (heap != null) {
-				String pickupMessage = null;
+            final Item item = action.item;
+            String pickupMessage = null;
 
-				Item test = heap.peek();
+            if (item instanceof Gemstone.Loadstone) {
+                action.forced = true;
+            }
 
-                if (test instanceof Loadstone) {
-                    action.forced = true;
+            Encumbrance encumbrance = buff(Encumbrance.class);
+            Encumbrance.EncumbranceLevel encumbranceLevel = encumbrance.testWeight(item.weight() * item.quantity());
+
+            if (encumbranceLevel == Encumbrance.EncumbranceLevel.OVERLOADED) {
+                Encumbrance.EncumbranceLevel testLevel = encumbrance.current;
+                if (testLevel != encumbranceLevel) {
+                    encumbranceLevel = Encumbrance.EncumbranceLevel.OVERTAXED;
                 }
+            }
 
-                Encumbrance encumbrance = buff(Encumbrance.class);
-                Encumbrance.EncumbranceLevel encumbranceLevel = encumbrance.testWeight(test.weight() * test.quantity());
+            if (!action.forced) {
+                pickupMessage = Encumbrance.getPickUpMessage(encumbranceLevel);
 
-                if (encumbranceLevel == Encumbrance.EncumbranceLevel.OVERLOADED) {
-                    Encumbrance.EncumbranceLevel testLevel = encumbrance.current;
-                    if (testLevel != encumbranceLevel) {
-                        encumbranceLevel = Encumbrance.EncumbranceLevel.OVERTAXED;
-                    }
+                switch (encumbranceLevel) {
+                    case STRAINED:
+                    case OVERTAXED:
+                        ShatteredPixelDungeon.scene().add(
+                                new WndOptions("Pick Up Item", Utils.format(pickupMessage, item.getDisplayName()) + "  Continue?",
+                                        "YES",
+                                        Constant.TXT_CANCEL) {
+
+                                    @Override
+                                    protected void onSelect(int index) {
+                                        switch (index) {
+                                            case 0:
+                                                curAction = new HeroAction.HandleHeap.PickUp(dst, item, true);
+                                                motivate(true);
+                                                break;
+                                        }
+                                    }
+                                });
+                        ready();
+                        return false;
+                    case OVERLOADED:
+                        GLog.n(pickupMessage, item.getDisplayName());
+                        ready();
+                        return false;
                 }
+            }
 
-                if (!action.forced) {
-                    pickupMessage = Encumbrance.getPickUpMessage(encumbranceLevel);
-
+            GLog.d("item.dopickup...");
+            if (item.doPickUp(this)) {
+                if (item instanceof Dewdrop
+                        || item instanceof TimekeepersHourglass.sandBag
+                    /*|| item instanceof DriedRose.Petal*/) {
+                    //Do Nothing
+                } else {
                     switch (encumbranceLevel) {
+                        case BURDENED:
+                        case STRESSED:
                         case STRAINED:
                         case OVERTAXED:
-                            ShatteredPixelDungeon.scene().add(
-                                    new WndOptions("Pick Up Item", Utils.format(pickupMessage, test.getDisplayName()) + "  Continue?",
-                                            "YES",
-                                            Constant.TXT_CANCEL) {
-
-                                        @Override
-                                        protected void onSelect(int index) {
-                                            switch (index) {
-                                                case 0:
-                                                    curAction = new HeroAction.PickUp(dst, true);
-                                                    motivate(true);
-                                                    break;
-                                            }
-                                        }
-                                    });
-                            ready();
-                            return false;
-                        case OVERLOADED:
-                            GLog.n(pickupMessage, test.getDisplayName());
-                            ready();
-                            return false;
+                            GLog.w(pickupMessage, item.getDisplayName());
+                            break;
+                        default:
+                            GLog.i(pickupMessage, item.getDisplayName());
+                            break;
                     }
                 }
 
-				Item item = heap.pickUp();
-				if (item.doPickUp(this)) {
-					if (item instanceof Dewdrop
-							|| item instanceof TimekeepersHourglass.sandBag
-							/*|| item instanceof DriedRose.Petal*/) {
-						//Do Nothing
-					} else {
-						switch (encumbranceLevel) {
-							case BURDENED:
-							case STRESSED:
-							case STRAINED:
-							case OVERTAXED:
-								GLog.w(pickupMessage, item.getDisplayName());
-								break;
-							default:
-								GLog.i(pickupMessage, item.getDisplayName());
-								break;
-						}
-					}
-
-					if (!heap.isEmpty()) {
-						GLog.i(TXT_SOMETHING_ELSE);
-					}
-					curAction = null;
-				} else {
-					Dungeon.level.drop(item, pos).sprite.drop();
-					ready();
-				}
-			} else {
-				ready();
-			}
+                curAction = null;
+            } else {
+                Dungeon.level.drop(item, pos).sprite.drop();
+                ready();
+            }
 
 			return false;
-		} else if (getCloser(dst)) {
-			return true;
 		} else {
-			ready();
-
-			return false;
+            return actHandleHeap(action);
 		}
 	}
-	
-	private boolean actOpenChest( HeroAction.OpenChest action ) {
+
+    private boolean actOpenBag(HeroAction.HandleHeap.OpenBag action){
+        int dst = action.dst;
+        if (Level.canReach(pos, dst) || pos == dst) {
+            IBag bag = action.bag;
+
+            if (bag.locked()) {
+
+            }
+            else {
+                GameScene.show(new WndBag(bag, null, WndBackpack.Mode.ALL, null, dst));
+            }
+
+            ready();
+
+            return false;
+        } else {
+            return actHandleHeap(action);
+        }
+    }
+
+    private boolean actInteractItem(HeroAction.HandleHeap.InteractItem action) {
+        final int dst = action.dst;
+        if (Level.canReach(pos, dst) || pos == dst) {
+            final Item item = action.item;
+
+            GameScene.show(new WndItem(null, item, new WndBackpack.Listener() {
+                @Override
+                public void onSelect(Item item) {
+                    curAction = new HeroAction.HandleHeap.PickUp(dst, item);
+                    motivate(true);
+                }
+            }));
+
+            ready();
+
+            return false;
+        } else {
+            return actHandleHeap(action);
+        }
+    }
+
+    private boolean actOpenChest( HeroAction.OpenChest action ) {
 		int dst = action.dst;
-		if (Level.adjacent( pos, dst ) || pos == dst) {
+		if (Level.canReach(pos, dst) || pos == dst) {
 			
 			Heap heap = Dungeon.level.heaps.get( dst );
 			if (heap != null && (heap.type != Type.HEAP && heap.type != Type.FOR_SALE)) {
@@ -1100,7 +1231,7 @@ public class Hero extends Char {
 
 	private boolean actOpenCloseDoor(final HeroAction.HandleDoor.OpenCloseDoor action) {
 		final int doorCell = action.dst;
-		if (Level.adjacent(pos, doorCell)) {
+		if (Level.canStep(pos, doorCell, Level.diagonal)) {
 			int door = Dungeon.level.map[doorCell];
 			final Hero hero = this;
 
@@ -1130,7 +1261,7 @@ public class Hero extends Char {
 
 	private boolean actKickDoor(final HeroAction.HandleDoor.KickDoor action) {
 		final int doorCell = action.dst;
-		if (Level.adjacent(pos, doorCell)) {
+		if (Level.canStep(pos, doorCell, Level.diagonal)) {
 			int door = Dungeon.level.map[doorCell];
 			final Hero hero = this;
 
@@ -1165,7 +1296,7 @@ public class Hero extends Char {
 
 	private boolean actUnlockDoor(final HeroAction.HandleDoor.UnlockDoor action) {
 		final int doorCell = action.dst;
-		if (Level.adjacent(pos, doorCell)) {
+		if (Level.canStep(pos, doorCell, Level.diagonal)) {
 			final Hero hero = this;
 
 			action.successful = action.tool.unlockDoor(hero);
@@ -1193,10 +1324,9 @@ public class Hero extends Char {
 		}
 	}
 
-
 	private boolean actHandleDoor( final HeroAction.HandleDoor action ) {
 		final int doorCell = action.dst;
-		if (Level.adjacent(pos, doorCell)) {
+		if (Level.canStep(pos, doorCell, Level.diagonal)) {
 			int door = Dungeon.level.map[doorCell];
 			final Hero hero = this;
 
@@ -1387,7 +1517,7 @@ public class Hero extends Char {
 
 		useAttribute(AttributeType.STRCON, 1);
 
-		if (Level.adjacent( pos, enemy.pos ) && enemy.isAlive() && !isCharmedBy( enemy )) {
+		if (Level.canReach(pos, enemy.pos) && enemy.isAlive() && !isCharmedBy( enemy )) {
 			Hunger hunger = buff(Hunger.class);
 			hunger.satisfy_new(-1);
 			Encumbrance encumbrance = buff(Encumbrance.class);
@@ -1471,9 +1601,9 @@ public class Hero extends Char {
 	}
 	
 	@Override
-	public void damage(int dmg, MagicType type, Actor source) {
+	public int damage(int dmg, MagicType type, Actor source) {
 		if (buff(TimekeepersHourglass.timeStasis.class) != null)
-			return;
+			return 0;
 
 		//todo: make sure this is right
 		//if (!(src instanceof Hunger || src instanceof Viscosity.DeferedDamage || src instanceof Food) && damageInterrupt) {
@@ -1499,11 +1629,13 @@ public class Hero extends Char {
 		if (tenacity != 0) //(HT - HP)/HT = heroes current % missing health.
 			dmg = (int)Math.ceil((float)dmg * Math.pow(0.9, tenacity*((float)(HT - HP)/HT)));
 
-		super.damage(dmg, type, source);
+		dmg = super.damage(dmg, type, source);
 		
 		if (subClass == HeroSubClass.BERSERKER && 0 < HP && HP <= HT * Fury.LEVEL) {
 			Buff.affect( this, Fury.class );
 		}
+
+        return dmg;
 	}
 	
 	private void checkVisibleMobs() {
@@ -1561,8 +1693,7 @@ public class Hero extends Char {
 		
 		int step = -1;
 		
-		if (Level.adjacent( pos, target )) {
-			
+		if (Level.canStep(pos, target, Level.diagonal)) {
 			if (Actor.findChar( target ) == null) {
 				if (Level.pit[target] && !flying && !Level.solid[target]) {
 					if (!Chasm.jumpConfirmed){
@@ -1577,24 +1708,25 @@ public class Hero extends Char {
 					step = target;
 				}
 			}
-			
 		} else {
-		
 			int len = Level.LENGTH;
-            boolean[] p = Level.passable;
-            boolean[] a = Level.pathable;
-			boolean[] v = Dungeon.level.visited;
-			boolean[] m = Dungeon.level.mapped;
-			boolean[] av = Dungeon.level.avoid;
-			boolean[] passable = new boolean[len];
+            boolean[] passable = Level.passable;
+            boolean[] pathable = Level.pathable;
+			boolean[] visited = Dungeon.level.visited;
+			boolean[] mapped = Dungeon.level.mapped;
+			boolean[] avoid = Dungeon.level.avoid;
+			boolean[] candidate = new boolean[len];
+            boolean[] diagonal = Level.diagonal;
 			for (int i=0; i < len; i++) {
-				passable[i] = (p[i] || a[i]) && (v[i] || m[i]) && (!av[i]);
+				candidate[i] = (passable[i] || pathable[i]) && (visited[i] || mapped[i]) && (!avoid[i]);
 			}
-			
-			step = Dungeon.findPath( this, pos, target, passable, Level.fieldOfView );
+
+			step = Dungeon.findPath( this, pos, target, candidate, diagonal, Level.fieldOfView );
 		}
 
-		if (step != -1) {
+		if (step != -1 && step != pos) {
+            GLog.d("step");
+            GLog.d(pos, step);
             if (Dungeon.level.map[step] == Terrain.DOOR){
 				if (!Random.PassFail(280 - 512 / STRCON)) {
     	            GLog.w("Ouch! You bump into a door.");
@@ -1617,8 +1749,7 @@ public class Hero extends Char {
 
 	}
 	
-	public boolean handle( int cell ) {
-
+	public boolean handle( int cell, boolean fromGameScene ) {
 		if (cell == -1) {
 			return false;
 		}
@@ -1628,56 +1759,46 @@ public class Hero extends Char {
 		ITool[] tools;
 
 		if (Dungeon.level.map[cell] == Terrain.ALCHEMY && cell != pos) {
-
 			curAction = new HeroAction.Cook(cell);
-
 		} else if (Level.fieldOfView[cell] && (ch = Actor.findChar(cell)) instanceof Mob) {
-
 			if (ch instanceof NPC) {
 				curAction = new HeroAction.Interact((NPC) ch);
 			} else {
 				if (missileWeapon != null) {
-					curAction = new HeroAction.Attack(missileWeapon, true, ch);
+					curAction = new HeroAction.Attack(missileWeapon, ch);
 				} else {
-					curAction = new HeroAction.Attack((KindOfWeapon)belongings.weapon(), false, ch);
+					curAction = new HeroAction.Attack((KindOfWeapon)belongings.weapon(), ch);
 				}
 			}
-
-		} else if ((heap = Dungeon.level.heaps.get(cell)) != null) {
-
+		} else if ((heap = Dungeon.level.heaps.get(cell)) != null && !Dungeon.level.solid[cell]) {
 			switch (heap.type) {
 				case HEAP:
-					if (heap.peek() instanceof Bag) {
-						curAction = new HeroAction.OpenBag(cell);
-					} else {
-						curAction = new HeroAction.PickUp(cell);
-					}
+                    if ((!fromGameScene) || ShatteredPixelDungeon.gameplay_autoPickup()) {
+                        curAction = new HeroAction.HandleHeap(cell);
+                    }
+                    else {
+                        curAction = new HeroAction.Move(cell);
+                    }
 					break;
 				case FOR_SALE:
 					curAction = heap.size() == 1 && heap.peek().price() > 0 ?
 							new HeroAction.Buy(cell) :
-							new HeroAction.PickUp(cell);
+							new HeroAction.HandleHeap(cell);
 					break;
 				default:
 					curAction = new HeroAction.OpenChest(cell);
 			}
-
 		} else if (Dungeon.level.map[cell] == Terrain.LOCKED_DOOR || Dungeon.level.map[cell] == Terrain.LOCKED_EXIT || Dungeon.level.map[cell] == Terrain.DOOR || Dungeon.level.map[cell] == Terrain.OPEN_DOOR) {
 			curAction = new HeroAction.HandleDoor(cell);
 		} else if (cell == Dungeon.level.exit && Dungeon.depth < 26) {
-
 			curAction = new HeroAction.Descend(cell);
-
 		} else if (cell == Dungeon.level.entrance) {
-
 			curAction = new HeroAction.Ascend(cell);
 		} else if (Dungeon.level.solid[cell] && ((tools = belongings.getToolTypes(true, false, Pickaxe.NAME)) != null && tools[0] != null)) {
 			curAction = new HeroAction.Dig((Pickaxe) tools[0], cell, 101);
 		} else {
-
 			curAction = new HeroAction.Move(cell);
 			lastAction = null;
-
 		}
 
 		//GLog.d("handle() set curAction="+(curAction != null ? curAction.getClass().toString() : "null"));
@@ -1753,7 +1874,6 @@ public class Hero extends Char {
 	
 	@Override
 	public void add( Buff buff ) {
-
 		if (buff(TimekeepersHourglass.timeStasis.class) != null) {
 			return;
 		}
@@ -1761,45 +1881,28 @@ public class Hero extends Char {
 		super.add(buff);
 
 		if (sprite != null) {
+            String message = buff.attachedMessage(true);
+
+            if (message != null) {
+                GLog.w(message);
+            }
+
 			if (buff instanceof Burning) {
-				GLog.w("You catch fire!");
 				interrupt();
-			} else if (buff instanceof Fainting) {
-				GLog.w("You faint!");
 			} else if (buff instanceof Paralysis) {
-				GLog.w( "You are paralysed!" );
 				interrupt();
 			} else if (buff instanceof Poison) {
-				GLog.w("You are poisoned!");
 				interrupt();
 			} else if (buff instanceof DeathlySick) {
-				GLog.w("You feel deathly sick.");
 				interrupt();
 			} else if (buff instanceof Ooze) {
-				GLog.w( "Caustic ooze eats your flesh. Wash it away!" );
-			} else if (buff instanceof Roots) {
-				GLog.w( "You can't move!" );
-			} else if (buff instanceof Weakness) {
-				GLog.w( "You feel weakened!" );
-			} else if (buff instanceof Blindness) {
-				GLog.w( "You are blinded!" );
-			} else if (buff instanceof Fury) {
-				GLog.w( "You become furious!" );
-			} else if (buff instanceof Charm) {
-				GLog.w( "You are charmed!" );
-			}  else if (buff instanceof Cripple) {
-				GLog.w( "You are crippled!" );
-			} else if (buff instanceof Bleeding) {
-				GLog.w( "You are bleeding!" );
+                interrupt();
 			} else if (buff instanceof RingOfMight.Might){
 				if (((RingOfMight.Might)buff).level > 0) {
 					HT += ((RingOfMight.Might) buff).level * 5;
 				}
 			} else if (buff instanceof Vertigo) {
-				GLog.w("Everything is spinning around you!");
 				interrupt();
-			} else if (buff instanceof Hallucination) {
-				GLog.w("Whoa!  Everything's all trippy.");
 			}
 
 		}
@@ -1906,31 +2009,6 @@ public class Hero extends Char {
 				
 		Dungeon.hero.belongings.identify();
 
-		int pos = Dungeon.hero.pos;
-
-		ArrayList<Integer> passable = new ArrayList<Integer>();
-		for (Integer ofs : Level.NEIGHBOURS8) {
-			int cell = pos + ofs;
-			if ((Level.passable[cell] || Level.avoid[cell]) && Dungeon.level.heaps.get( cell ) == null) {
-				passable.add( cell );
-			}
-		}
-		Collections.shuffle( passable );
-
-		Dungeon.hero.belongings.dropAll(pos);
-		/*
-		ArrayList<Item> items = new ArrayList<Item>( Dungeon.hero.belongings.backpack.items );
-		for (Integer cell : passable) {
-			if (items.isEmpty()) {
-				break;
-			}
-
-			Item item = Random.element( items );
-			Dungeon.level.drop( item, cell ).sprite.drop( pos );
-			items.remove( item );
-		}
-		*/
-
 		GameScene.gameOver();
 		
 		if (cause instanceof Hero.Doom) {
@@ -1970,7 +2048,7 @@ public class Hero extends Char {
 
 		if (curAction instanceof HeroAction.Attack) {
 			HeroAction.Attack action = (HeroAction.Attack) curAction;
-			attack(action.weapon, action.weaponThrown, enemy);
+			attack(action.weapon, enemy);
 		}
 		curAction = null;
 		

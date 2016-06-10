@@ -79,7 +79,7 @@ public class LightningTrap extends Trap {
 		Heap heap = Dungeon.level.heaps.get(pos);
 		if (heap != null){
 			//TODO: this should probably charge staffs too
-			Item item = heap.items.peek();
+			Item item = heap.randomItem();
 			if (item instanceof Wand){
 				Wand wand = (Wand)item;
 				((Wand)item).curCharges += (int)Math.ceil((wand.maxCharges - wand.curCharges)/2f);

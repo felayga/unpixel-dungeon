@@ -26,7 +26,7 @@ package com.felayga.unpixeldungeon.actors.mobs.unused;
 /*
 import java.util.HashSet;
 
-import com.felayga.unpixeldungeon.actors.buffs.LockedFloor;
+import com.felayga.unpixeldungeon.actors.buffs.hero.LockedFloor;
 import com.felayga.unpixeldungeon.actors.hero.HeroSubClass;
 import com.felayga.unpixeldungeon.items.KindOfWeapon;
 import com.felayga.unpixeldungeon.items.artifacts.LloydsBeacon;
@@ -43,7 +43,7 @@ import com.felayga.unpixeldungeon.Dungeon;
 import com.felayga.unpixeldungeon.actors.Actor;
 import com.felayga.unpixeldungeon.actors.Char;
 import com.felayga.unpixeldungeon.actors.blobs.ToxicGas;
-import com.felayga.unpixeldungeon.actors.buffs.Poison;
+import com.felayga.unpixeldungeon.actors.buffs.negative.Poison;
 import com.felayga.unpixeldungeon.effects.CellEmitter;
 import com.felayga.unpixeldungeon.effects.Speck;
 import com.felayga.unpixeldungeon.items.TomeOfMastery;

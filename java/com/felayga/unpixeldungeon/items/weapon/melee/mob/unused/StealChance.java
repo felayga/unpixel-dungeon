@@ -27,7 +27,7 @@ package com.felayga.unpixeldungeon.items.weapon.melee.mob.unused;
 /*
 import com.felayga.unpixeldungeon.Dungeon;
 import com.felayga.unpixeldungeon.actors.Char;
-import com.felayga.unpixeldungeon.actors.buffs.Bleeding;
+import com.felayga.unpixeldungeon.actors.buffs.negative.Bleeding;
 import com.felayga.unpixeldungeon.actors.buffs.Buff;
 import com.felayga.unpixeldungeon.actors.hero.Hero;
 import com.felayga.unpixeldungeon.items.Honeypot;

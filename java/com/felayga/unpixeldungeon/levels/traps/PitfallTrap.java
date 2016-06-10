@@ -37,6 +37,8 @@ import com.felayga.unpixeldungeon.levels.features.Chasm;
 import com.felayga.unpixeldungeon.scenes.GameScene;
 import com.felayga.unpixeldungeon.sprites.TrapSprite;
 
+import java.util.Iterator;
+
 public class PitfallTrap extends Trap {
 
 	{
@@ -51,7 +53,9 @@ public class PitfallTrap extends Trap {
 		Heap heap = Dungeon.level.heaps.get( pos );
 
 		if (heap != null){
-			for (Item item : heap.items){
+            Iterator<Item> iterator = heap.iterator(false);
+			while (iterator.hasNext()){
+                Item item = iterator.next();
 				Dungeon.dropToChasm(item);
 			}
 			heap.sprite.kill();

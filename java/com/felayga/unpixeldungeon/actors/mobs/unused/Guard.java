@@ -26,7 +26,7 @@ package com.felayga.unpixeldungeon.actors.mobs.unused;
 /*
 import com.felayga.unpixeldungeon.Dungeon;
 import com.felayga.unpixeldungeon.actors.Actor;
-import com.felayga.unpixeldungeon.actors.buffs.Cripple;
+import com.felayga.unpixeldungeon.actors.buffs.negative.Cripple;
 import com.felayga.unpixeldungeon.effects.Chains;
 import com.felayga.unpixeldungeon.effects.Pushing;
 import com.felayga.unpixeldungeon.items.Generator;

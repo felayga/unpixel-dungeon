@@ -27,10 +27,10 @@ package com.felayga.unpixeldungeon.items.weapon.melee.mob.unused;
 /*
 import com.felayga.unpixeldungeon.Dungeon;
 import com.felayga.unpixeldungeon.actors.Char;
-import com.felayga.unpixeldungeon.actors.buffs.Blindness;
+import com.felayga.unpixeldungeon.actors.buffs.negative.Blindness;
 import com.felayga.unpixeldungeon.actors.buffs.Buff;
-import com.felayga.unpixeldungeon.actors.buffs.Cripple;
-import com.felayga.unpixeldungeon.actors.buffs.Poison;
+import com.felayga.unpixeldungeon.actors.buffs.negative.Cripple;
+import com.felayga.unpixeldungeon.actors.buffs.negative.Poison;
 import com.felayga.unpixeldungeon.actors.hero.Hero;
 import com.watabou.utils.Random;
 

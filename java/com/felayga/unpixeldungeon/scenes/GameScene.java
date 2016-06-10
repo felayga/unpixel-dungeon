@@ -34,6 +34,7 @@ import com.felayga.unpixeldungeon.items.scrolls.ScrollOfTeleportation;
 import com.felayga.unpixeldungeon.levels.traps.Trap;
 import com.felayga.unpixeldungeon.ui.CustomTileVisual;
 import com.felayga.unpixeldungeon.sprites.TrapSprite;
+import com.felayga.unpixeldungeon.ui.HallucinationOverlay;
 import com.felayga.unpixeldungeon.ui.LootIndicator;
 import com.felayga.unpixeldungeon.ui.ResumeIndicator;
 import com.felayga.unpixeldungeon.windows.WndInfoTrap;
@@ -108,7 +109,7 @@ public class GameScene extends PixelScene {
 	private SkinnedBlock waterUnder;
 	private DungeonTilemap tiles;
 	private FogOfWar fog;
-	private Hallucination hallucination;
+	private HallucinationOverlay hallucinationOverlay;
 	private HeroSprite hero;
 	
 	private GameLog log;
@@ -234,8 +235,8 @@ public class GameScene extends PixelScene {
 			addBlobSprite( blob );
 		}
 
-		hallucination = new Hallucination(Level.WIDTH, Level.HEIGHT);
-		add(hallucination);
+		hallucinationOverlay = new HallucinationOverlay(Level.WIDTH, Level.HEIGHT);
+		add(hallucinationOverlay);
 
 		fog = new FogOfWar( Level.WIDTH, Level.HEIGHT );
 		fog.updateVisibility(Dungeon.visible, Dungeon.level.visited, Dungeon.level.mapped);
@@ -293,6 +294,8 @@ public class GameScene extends PixelScene {
 			GLog.i(TXT_WELCOME, Dungeon.depth);
 			if (InterlevelScene.mode == InterlevelScene.Mode.DESCEND) Sample.INSTANCE.play(Assets.SND_DESCEND);
 		}
+
+        Dungeon.hero.updateEncumbrance();
 
 		Statistics.floorsVisited[Dungeon.depth] = true;
 
@@ -498,8 +501,8 @@ public class GameScene extends PixelScene {
 		fog.am = 1f + shift;
 		fog.aa = 0f - shift;
 
-		hallucination.am = 1f + shift;
-		hallucination.aa = 0f - shift;
+        hallucinationOverlay.am = 1f + shift;
+        hallucinationOverlay.aa = 0f - shift;
 	}
 
 	public void addCustomTile( CustomTileVisual visual){
@@ -729,12 +732,8 @@ public class GameScene extends PixelScene {
 			return false;
 		}
 	}
-
-	public static WndBackpack selectItem( WndBackpack.Listener listener, WndBackpack.Mode mode, String title) {
-		return selectItem(listener, mode, title, null);
-	}
 	
-	public static WndBackpack selectItem( WndBackpack.Listener listener, WndBackpack.Mode mode, String title, Item excluded ) {
+	public static WndBackpack selectItem( WndBackpack.Listener listener, WndBackpack.Mode mode, String title, Item... excluded ) {
 		cancelCellSelector();
 
 		WndBackpack wnd = WndBackpack.lastBag(listener, mode, title, excluded);
@@ -826,19 +825,19 @@ public class GameScene extends PixelScene {
 
 	public static void startHallucinating()
 	{
-		scene.hallucination.startHallucinating();
+		scene.hallucinationOverlay.startHallucinating();
 	}
 
 	public static void stopHallucinating()
 	{
-		scene.hallucination.stopHallucinating();
+		scene.hallucinationOverlay.stopHallucinating();
 	}
 
 	
 	private static final CellSelector.Listener defaultCellListener = new CellSelector.Listener() {
 		@Override
 		public void onSelect( Integer cell ) {
-			if (Dungeon.hero.handle( cell )) {
+			if (Dungeon.hero.handle( cell, true )) {
 				Dungeon.hero.next();
 			}
 		}

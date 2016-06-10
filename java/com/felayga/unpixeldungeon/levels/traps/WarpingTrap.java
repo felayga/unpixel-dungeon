@@ -43,6 +43,7 @@ import com.watabou.noosa.audio.Sample;
 import com.watabou.utils.Random;
 
 import java.util.ArrayList;
+import java.util.Iterator;
 
 public class WarpingTrap extends Trap {
 
@@ -70,7 +71,10 @@ public class WarpingTrap extends Trap {
 				if (dropped == null) {
 					Dungeon.droppedItems.put( depth, dropped = new ArrayList<Item>() );
 				}
-				for (Item item : heap.items){
+
+                Iterator<Item> iterator = heap.iterator(false);
+				while (iterator.hasNext()){
+                    Item item = iterator.next();
 					dropped.add(item);
 				}
 				heap.destroy();

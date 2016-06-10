@@ -162,7 +162,7 @@ public class StandardPainter extends Painter {
 
 	//TODO: this is almost a special room type now, consider moving this into its own painter if/when you address room gen significantly.
 	private static void paintStudy( Level level, Room room ) {
-		fill( level, room.left + 1, room.top + 1, room.width() - 1, room.height() - 1 , Terrain.BOOKSHELF );
+		fill( level, room.left + 1, room.top + 1, room.width() - 1, room.height() - 1 , Terrain.BARRICADE );
 		fill( level, room.left + 2, room.top + 2, room.width() - 3, room.height() - 3 , Terrain.EMPTY_SP );
 
 		for (Point door : room.connected.values()) {

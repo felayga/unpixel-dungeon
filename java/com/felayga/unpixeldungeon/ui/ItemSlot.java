@@ -152,13 +152,10 @@ public class ItemSlot extends Button {
 	
 	public void item( Item item ) {
 		if (item == null) {
-			
 			active = false;
 			topLeft.visible = topRight.visible = bottomRight.visible = false;
 			icon.visible(false);
-			
 		} else {
-			
 			active = true;
 			topLeft.visible = topRight.visible = bottomRight.visible = true;
 			icon.visible(true);
@@ -166,13 +163,13 @@ public class ItemSlot extends Button {
 			icon.view( item );
 			
 			topLeft.text( item.status()  );
-			
+
+            /*
 			boolean isArmor = item instanceof Armor;
 			boolean isWeapon = item instanceof Weapon;
 			if (isArmor || isWeapon) {
 				
 				if (item.levelKnown || (isWeapon && !(item instanceof MeleeWeapon))) {
-					
 					int str = 0;//isArmor ? ((Armor)item).STR : ((Weapon)item).STR;
 					topRight.text( Utils.format( TXT_STRENGTH, str ) );
 					if (str > Dungeon.hero.STRCON) {
@@ -182,12 +179,10 @@ public class ItemSlot extends Button {
 					}
 					
 				} else {
-					/*
 					topRight.text( Utils.format( TXT_TYPICAL_STR, isArmor ?
 						((Armor)item).typicalSTR() :
 						((MeleeWeapon)item).typicalSTR() ) );
 					topRight.hardlight( WARNING );
-					*/
 				}
 				topRight.measure();
 
@@ -199,7 +194,8 @@ public class ItemSlot extends Button {
 				topRight.text( null );
 				
 			}
-	
+	        */
+
 			int level = item.visiblyUpgraded();
 
 			if (level != 0) {

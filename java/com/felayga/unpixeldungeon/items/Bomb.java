@@ -68,7 +68,7 @@ public class Bomb extends Item {
 	private static final String AC_LIGHTTHROW = "Light & Throw";
 
 	@Override
-	public boolean isSimilar(Item item) {
+    protected boolean checkSimilarity(Item item) {
 		return item instanceof Bomb && this.fuse == ((Bomb) item).fuse;
 	}
 
@@ -116,56 +116,66 @@ public class Bomb extends Item {
 		return super.doPickUp(hero);
 	}
 
-	public void explode(int cell){
-		//We're blowing up, so no need for a fuse anymore.
-		this.fuse = null;
+    public static void explode(int cell, boolean destroyItems, int minDamage, int maxDamage) {
+        Sample.INSTANCE.play( Assets.SND_BLAST );
 
-		Sample.INSTANCE.play( Assets.SND_BLAST );
+        if (Dungeon.visible[cell]) {
+            CellEmitter.center( cell ).burst( BlastParticle.FACTORY, 30 );
+        }
 
-		if (Dungeon.visible[cell]) {
-			CellEmitter.center( cell ).burst( BlastParticle.FACTORY, 30 );
-		}
+        boolean terrainAffected = false;
+        for (int n : Level.NEIGHBOURS9) {
+            int c = cell + n;
+            if (c >= 0 && c < Level.LENGTH) {
+                if (Dungeon.visible[c]) {
+                    CellEmitter.get( c ).burst( SmokeParticle.FACTORY, 4 );
+                }
 
-		boolean terrainAffected = false;
-		for (int n : Level.NEIGHBOURS9) {
-			int c = cell + n;
-			if (c >= 0 && c < Level.LENGTH) {
-				if (Dungeon.visible[c]) {
-					CellEmitter.get( c ).burst( SmokeParticle.FACTORY, 4 );
-				}
+                if (Level.wood[c]) {
+                    Level.set( c, Terrain.EMBERS );
+                    GameScene.updateMap( c );
+                    terrainAffected = true;
+                }
 
-				if (Level.wood[c]) {
-					Level.set( c, Terrain.EMBERS );
-					GameScene.updateMap( c );
-					terrainAffected = true;
-				}
+                if (destroyItems) {
+                    //destroys items / triggers bombs caught in the blast.
+                    Heap heap = Dungeon.level.heaps.get(c);
+                    if (heap != null) {
+                        heap.explode();
+                    }
+                }
 
-				//destroys items / triggers bombs caught in the blast.
-				Heap heap = Dungeon.level.heaps.get( c );
-				if(heap != null)
-					heap.explode();
+                Char ch = Actor.findChar( c );
+                if (ch != null) {
+                    //those not at the center of the blast take damage less consistently.
+                    int minCorrected = minDamage;
+                    if (c != cell) {
+                        minCorrected /= 4;
+                    }
 
-				Char ch = Actor.findChar( c );
-				if (ch != null) {
-					//those not at the center of the blast take damage less consistently.
-					int minDamage = c == cell ? Dungeon.depth+5 : 1;
-					int maxDamage = 10 + Dungeon.depth * 2;
+                    int dmg = Random.NormalIntRange( minCorrected, maxDamage );
+                    if (dmg > 0) {
+                        ch.damage( dmg, MagicType.Mundane, null );
+                    }
 
-					int dmg = Random.NormalIntRange( minDamage, maxDamage );
-					if (dmg > 0) {
-						ch.damage( dmg, MagicType.Mundane, null );
-					}
+                    if (ch == Dungeon.hero && !ch.isAlive()) {
+                        Dungeon.fail("Killed by an explosion");
+                    }
+                }
+            }
+        }
 
-					if (ch == Dungeon.hero && !ch.isAlive())
-						Dungeon.fail("Killed by an explosion");
-				}
-			}
-		}
+        if (terrainAffected) {
+            Dungeon.observe();
+        }
+    }
 
-		if (terrainAffected) {
-			Dungeon.observe();
-		}
-	}
+	public void explode(int cell) {
+        //We're blowing up, so no need for a fuse anymore.
+        this.fuse = null;
+
+        explode(cell, true, Dungeon.depth + 5, 10 + Dungeon.depth * 2);
+    }
 	
 	@Override
 	public boolean isUpgradable() {
@@ -241,8 +251,8 @@ public class Bomb extends Item {
 
 			//look for our bomb, remove it from its heap, and blow it up.
 			for (Heap heap : Dungeon.level.heaps.values()) {
-				if (heap.items.contains(bomb)) {
-					heap.items.remove(bomb);
+				if (heap.contains(bomb)) {
+					heap.remove(bomb);
 
 					bomb.explode(heap.pos);
 

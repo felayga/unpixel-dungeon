@@ -60,7 +60,7 @@ public class WerejackalSprite extends MobSprite {
 
         int offset = index * FRAMES_PER_ROW;
 
-        idle = new Animation( 1, true );
+        idle = new Animation( 2, true );
         idle.frames(frames, offset + 0, offset + 0, offset + 0, offset + 1, offset + 0, offset + 0, offset + 2, offset + 2,
                 offset + 0, offset + 0, offset + 0, offset + 1, offset + 1, offset + 0, offset + 0, offset + 2);
 

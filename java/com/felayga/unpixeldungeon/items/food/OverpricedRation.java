@@ -24,23 +24,25 @@
  */
 package com.felayga.unpixeldungeon.items.food;
 
-import com.felayga.unpixeldungeon.actors.buffs.Hunger;
+import com.felayga.unpixeldungeon.actors.buffs.hero.Encumbrance;
 import com.felayga.unpixeldungeon.sprites.ItemSpriteSheet;
 
 public class OverpricedRation extends Food {
 
     public OverpricedRation()
 	{
+        super(400, Encumbrance.UNIT * 20);
+
 		name = "overpriced food ration";
 		image = ItemSpriteSheet.OVERPRICED;
-		energy = 400;
-		hornValue = 1;
+
+        bones = true;
         price = 20;
 	}
 	
 	@Override
 	public String info() {
-		return "It looks exactly like a standard ration of food but smaller.";
+		return "It looks exactly like a standard ration of food but smaller." + super.info();
 	}
 
 	@Override

@@ -26,8 +26,8 @@ package com.felayga.unpixeldungeon.actors.mobs.unused;
 /*
 import java.util.HashSet;
 
-import com.felayga.unpixeldungeon.actors.buffs.LockedFloor;
-import com.felayga.unpixeldungeon.actors.buffs.Terror;
+import com.felayga.unpixeldungeon.actors.buffs.hero.LockedFloor;
+import com.felayga.unpixeldungeon.actors.buffs.negative.Terror;
 import com.felayga.unpixeldungeon.items.artifacts.CapeOfThorns;
 import com.felayga.unpixeldungeon.items.artifacts.LloydsBeacon;
 import com.felayga.unpixeldungeon.items.weapon.melee.mob.MeleeMobAttack;
@@ -43,7 +43,7 @@ import com.felayga.unpixeldungeon.actors.Char;
 import com.felayga.unpixeldungeon.actors.blobs.Blob;
 import com.felayga.unpixeldungeon.actors.blobs.ToxicGas;
 import com.felayga.unpixeldungeon.actors.buffs.Buff;
-import com.felayga.unpixeldungeon.actors.buffs.Paralysis;
+import com.felayga.unpixeldungeon.actors.buffs.negative.Paralysis;
 import com.felayga.unpixeldungeon.effects.CellEmitter;
 import com.felayga.unpixeldungeon.effects.Speck;
 import com.felayga.unpixeldungeon.effects.particles.ElmoParticle;

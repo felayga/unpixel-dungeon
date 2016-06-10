@@ -26,16 +26,36 @@
 package com.felayga.unpixeldungeon.items.bags;
 
 import com.felayga.unpixeldungeon.items.Item;
+import com.felayga.unpixeldungeon.ui.Icons;
+
+import java.util.AbstractList;
+import java.util.Iterator;
 
 /**
  * Created by HELLO on 3/29/2016.
  */
 public interface IBag {
-    void onWeightChanged(int change);
+    Item self();
+    String action();
+    String getDisplayName();
+    Icons tabIcon();
 
-    Item remove(Item item);
-    Item remove(Item item, int quantity);
+    int size();
+    int pos();
+
+    void onWeightChanged(int change);
 
     boolean tryMergeStack(Item test);
 
+    boolean collect(Item collectItem);
+    Item remove(Item item);
+    Item remove(Item item, int quantity);
+
+    boolean contains(Item item);
+
+    boolean locked();
+
+    Item randomItem();
+
+    Iterator<Item> iterator(boolean allowNested);
 }

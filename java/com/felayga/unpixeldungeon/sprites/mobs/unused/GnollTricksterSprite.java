@@ -24,7 +24,7 @@
  */
 package com.felayga.unpixeldungeon.sprites.mobs.unused;
 
-import com.felayga.unpixeldungeon.items.weapon.missiles.CurareDart;
+import com.felayga.unpixeldungeon.items.weapon.missiles.simple.CurareDart;
 import com.felayga.unpixeldungeon.levels.Level;
 import com.felayga.unpixeldungeon.sprites.MissileSprite;
 import com.watabou.utils.Callback;
@@ -41,7 +41,7 @@ public class GnollTricksterSprite extends GnollSprite {
 
 	@Override
 	public void attack( int cell ) {
-		if (!Level.adjacent(cell, ch.pos)) {
+		if (!Level.canReach(cell, ch.pos)) {
 
 			((MissileSprite)parent.recycle( MissileSprite.class )).
 					reset( ch.pos, cell, new CurareDart(), new Callback() {

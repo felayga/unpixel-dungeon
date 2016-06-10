@@ -24,8 +24,6 @@
  */
 package com.felayga.unpixeldungeon.items;
 
-import android.util.Log;
-
 import com.felayga.unpixeldungeon.Dungeon;
 //import com.felayga.unpixeldungeon.actors.mobs.npcs.Ghost;
 import com.felayga.unpixeldungeon.actors.mobs.npcs.Wandmaker.Rotberry;
@@ -37,20 +35,8 @@ import com.felayga.unpixeldungeon.items.armor.medium.MailArmor;
 import com.felayga.unpixeldungeon.items.armor.medium.ScaleArmor;
 import com.felayga.unpixeldungeon.items.artifacts.*;
 import com.felayga.unpixeldungeon.items.bags.Bag;
-import com.felayga.unpixeldungeon.items.food.Food;
-import com.felayga.unpixeldungeon.items.food.MysteryMeat;
 import com.felayga.unpixeldungeon.items.food.Pasty;
-import com.felayga.unpixeldungeon.items.gemstones.Gemstone;
-import com.felayga.unpixeldungeon.items.gemstones.black.GemstoneBlackOpal;
-import com.felayga.unpixeldungeon.items.gemstones.black.GemstoneJetStone;
-import com.felayga.unpixeldungeon.items.gemstones.black.GemstoneObsidian;
-import com.felayga.unpixeldungeon.items.gemstones.blue.GemstoneLapisLazuli;
-import com.felayga.unpixeldungeon.items.gemstones.blue.GemstoneSapphire;
-import com.felayga.unpixeldungeon.items.gemstones.brown.GemstoneAmber;
-import com.felayga.unpixeldungeon.items.gemstones.brown.GemstoneTigersEye;
-import com.felayga.unpixeldungeon.items.gemstones.randomized.GemstoneAgate;
-import com.felayga.unpixeldungeon.items.gemstones.white.GemstoneDiamond;
-import com.felayga.unpixeldungeon.items.gemstones.white.GemstoneDilithium;
+import com.felayga.unpixeldungeon.items.food.Ration;
 import com.felayga.unpixeldungeon.items.potions.*;
 import com.felayga.unpixeldungeon.items.rings.*;
 import com.felayga.unpixeldungeon.items.scrolls.*;
@@ -67,7 +53,13 @@ import com.felayga.unpixeldungeon.items.weapon.melee.simple.Knuckles;
 import com.felayga.unpixeldungeon.items.weapon.melee.simple.Mace;
 import com.felayga.unpixeldungeon.items.weapon.melee.simple.Quarterstaff;
 import com.felayga.unpixeldungeon.items.weapon.melee.simple.Spear;
-import com.felayga.unpixeldungeon.items.weapon.missiles.*;
+import com.felayga.unpixeldungeon.items.weapon.missiles.martial.Boomerang;
+import com.felayga.unpixeldungeon.items.weapon.missiles.martial.Javelin;
+import com.felayga.unpixeldungeon.items.weapon.missiles.martial.Shuriken;
+import com.felayga.unpixeldungeon.items.weapon.missiles.martial.Tomahawk;
+import com.felayga.unpixeldungeon.items.weapon.missiles.simple.CurareDart;
+import com.felayga.unpixeldungeon.items.weapon.missiles.simple.Dart;
+import com.felayga.unpixeldungeon.items.weapon.missiles.simple.IncendiaryDart;
 import com.felayga.unpixeldungeon.plants.*;
 import com.felayga.unpixeldungeon.utils.GLog;
 import com.watabou.utils.Bundle;
@@ -88,7 +80,7 @@ public class Generator {
 		RING(15, Ring.class),
 		ARTIFACT(15, Artifact_old.class),
 		SEED(50, Plant.Seed.class),
-		FOOD(0, Food.class),
+		FOOD(0, Ration.class),
 		GOLD(500, Gold.class),
         GEMSTONE(400, Gemstone.class);
 
@@ -122,157 +114,178 @@ public class Generator {
 
 	static {
 
-		Category.GOLD.classes = new Class<?>[]{
-				Gold.class};
-		Category.GOLD.probs = new float[]{1};
+        Category.GOLD.classes = new Class<?>[]{
+                Gold.class};
+        Category.GOLD.probs = new float[]{1};
 
-		Category.SCROLL.classes = new Class<?>[]{
-				ScrollOfIdentify.class,
-				ScrollOfTeleportation.class,
-				ScrollOfRemoveCurse.class,
-				ScrollOfUpgrade.class,
-				ScrollOfRecharging.class,
-				ScrollOfMagicMapping.class,
-				ScrollOfRage.class,
-				ScrollOfTerror.class,
-				ScrollOfLullaby.class,
-				ScrollOfMagicalInfusion.class,
-				ScrollOfPsionicBlast.class,
-				ScrollOfMirrorImage.class,
-				BlankScroll.class
-		};
-		Category.SCROLL.probs = new float[]{30, 10, 15, 0, 15, 15, 12, 8, 8, 0, 4, 10};
+        Category.SCROLL.classes = new Class<?>[]{
+                ScrollOfIdentify.class,
+                ScrollOfTeleportation.class,
+                ScrollOfRemoveCurse.class,
+                ScrollOfUpgrade.class,
+                ScrollOfRecharging.class,
+                ScrollOfMagicMapping.class,
+                ScrollOfRage.class,
+                ScrollOfTerror.class,
+                ScrollOfLullaby.class,
+                ScrollOfMagicalInfusion.class,
+                ScrollOfPsionicBlast.class,
+                ScrollOfMirrorImage.class,
+                BlankScroll.class
+        };
+        Category.SCROLL.probs = new float[]{30, 10, 15, 0, 15, 15, 12, 8, 8, 0, 4, 10};
 
-		Category.POTION.classes = new Class<?>[]{
-				PotionOfHealing.class,
-				PotionOfExperience.class,
-				PotionOfToxicGas.class,
-				PotionOfParalyticGas.class,
-				PotionOfLiquidFlame.class,
-				PotionOfLevitation.class,
-				PotionOfStrength.class,
-				PotionOfMindVision.class,
-				PotionOfPurity.class,
-				PotionOfInvisibility.class,
-				PotionOfMight.class,
-				PotionOfFrost.class,
-				PotionOfBooze.class,
-				PotionOfExtraHealing.class,
-				PotionOfHallucination.class,
-				PotionOfWater.class
-		};
-		Category.POTION.probs = new float[]{45, 4, 15, 10, 15, 10, 0, 20, 12, 10, 0, 10, 10, 20, 45, 40};
+        Category.POTION.classes = new Class<?>[]{
+                PotionOfHealing.class,
+                PotionOfExperience.class,
+                PotionOfToxicGas.class,
+                PotionOfParalyticGas.class,
+                PotionOfLiquidFlame.class,
+                PotionOfLevitation.class,
+                PotionOfStrength.class,
+                PotionOfMindVision.class,
+                PotionOfPurity.class,
+                PotionOfInvisibility.class,
+                PotionOfMight.class,
+                PotionOfFrost.class,
+                PotionOfBooze.class,
+                PotionOfExtraHealing.class,
+                PotionOfHallucination.class,
+                PotionOfWater.class
+        };
+        Category.POTION.probs = new float[]{45, 4, 15, 10, 15, 10, 0, 20, 12, 10, 0, 10, 10, 20, 45, 40};
 
-		//TODO: add last ones when implemented
-		Category.WAND.classes = new Class<?>[]{
-				WandOfMagicMissile.class,
-				WandOfLightning.class,
-				WandOfDisintegration.class,
-				WandOfFireblast.class,
-				WandOfVenom.class,
-				//WandOfBlastWave.class,
-				//WandOfLivingEarth.class,
-				WandOfFrost.class,
-				//WandOfPrismaticLight.class,
-				//WandOfWarding.class,
-				//WandOfTransfusion.class,
-				//WandOfCorruption.class,
-				WandOfRegrowth.class};
-		Category.WAND.probs = new float[]{4, 4, 4, 4, 4, 3, 3, /*3, 3, 3, 3, 3, 3*/};
+        //TODO: add last ones when implemented
+        Category.WAND.classes = new Class<?>[]{
+                WandOfMagicMissile.class,
+                WandOfLightning.class,
+                WandOfDisintegration.class,
+                WandOfFireblast.class,
+                WandOfVenom.class,
+                //WandOfBlastWave.class,
+                //WandOfLivingEarth.class,
+                WandOfFrost.class,
+                //WandOfPrismaticLight.class,
+                //WandOfWarding.class,
+                //WandOfTransfusion.class,
+                //WandOfCorruption.class,
+                WandOfRegrowth.class};
+        Category.WAND.probs = new float[]{4, 4, 4, 4, 4, 3, 3, /*3, 3, 3, 3, 3, 3*/};
 
-		Category.WEAPON.classes = new Class<?>[]{
-				Dagger.class,
-				Knuckles.class,
-				Quarterstaff.class,
-				Spear.class,
-				Mace.class,
-				Sword.class,
-				Longsword.class,
-				BattleAxe.class,
-				WarHammer.class,
-				Glaive.class,
-				ShortSword.class,
-				Dart.class,
-				Javelin.class,
-				IncendiaryDart.class,
-				CurareDart.class,
-				Shuriken.class,
-				Boomerang.class,
-				Tomahawk.class};
-		Category.WEAPON.probs = new float[]{1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0, 0, 1, 1, 1, 1, 0, 1};
+        Category.WEAPON.classes = new Class<?>[]{
+                Dagger.class,
+                Knuckles.class,
+                Quarterstaff.class,
+                Spear.class,
+                Mace.class,
+                Sword.class,
+                Longsword.class,
+                BattleAxe.class,
+                WarHammer.class,
+                Glaive.class,
+                ShortSword.class,
+                Dart.class,
+                Javelin.class,
+                IncendiaryDart.class,
+                CurareDart.class,
+                Shuriken.class,
+                Boomerang.class,
+                Tomahawk.class};
+        Category.WEAPON.probs = new float[]{1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0, 0, 1, 1, 1, 1, 0, 1};
 
-		Category.ARMOR.classes = new Class<?>[]{
-				ClothArmor.class,
-				LeatherArmor.class,
-				MailArmor.class,
-				ScaleArmor.class,
-				HalfPlateArmor.class};
-		Category.ARMOR.probs = new float[]{1, 1, 1, 1, 1};
+        Category.ARMOR.classes = new Class<?>[]{
+                ClothArmor.class,
+                LeatherArmor.class,
+                MailArmor.class,
+                ScaleArmor.class,
+                HalfPlateArmor.class};
+        Category.ARMOR.probs = new float[]{1, 1, 1, 1, 1};
 
-		Category.FOOD.classes = new Class<?>[]{
-				Food.class,
-				Pasty.class,
-				MysteryMeat.class};
-		Category.FOOD.probs = new float[]{4, 1, 0};
+        Category.FOOD.classes = new Class<?>[]{
+                Ration.class,
+                Pasty.class,
+                /*MysteryMeat.class*/};
+        Category.FOOD.probs = new float[]{4, 1, 0};
 
-		Category.RING.classes = new Class<?>[]{
-				RingOfAccuracy.class,
-				RingOfEvasion.class,
-				RingOfElements.class,
-				RingOfForce.class,
-				RingOfFuror.class,
-				RingOfHaste.class,
-				RingOfMagic.class, //currently removed from drop tables, pending rework
-				RingOfMight.class,
-				RingOfSharpshooting.class,
-				RingOfTenacity.class,
-				RingOfWealth.class};
-		Category.RING.probs = new float[]{1, 1, 1, 1, 1, 1, 0, 1, 1, 1, 1};
+        Category.RING.classes = new Class<?>[]{
+                RingOfAccuracy.class,
+                RingOfEvasion.class,
+                RingOfElements.class,
+                RingOfForce.class,
+                RingOfFuror.class,
+                RingOfHaste.class,
+                RingOfMagic.class, //currently removed from drop tables, pending rework
+                RingOfMight.class,
+                RingOfSharpshooting.class,
+                RingOfTenacity.class,
+                RingOfWealth.class};
+        Category.RING.probs = new float[]{1, 1, 1, 1, 1, 1, 0, 1, 1, 1, 1};
 
-		Category.ARTIFACT.classes = new Class<?>[]{
-				CapeOfThorns.class,
-				ChaliceOfBlood.class,
-				CloakOfShadows.class,
-				HornOfPlenty.class,
-				MasterThievesArmband.class,
-				SandalsOfNature.class,
-				TalismanOfForesight.class,
-				TimekeepersHourglass.class,
-				UnstableSpellbook.class,
-				AlchemistsToolkit.class, //currently removed from drop tables, pending rework.
-				//DriedRose.class, //starts with no chance of spawning, chance is set directly after beating ghost quest.
-				//LloydsBeacon.class,
-				EtherealChains.class
-		};
-		Category.ARTIFACT.probs = INITIAL_ARTIFACT_PROBS.clone();
+        Category.ARTIFACT.classes = new Class<?>[]{
+                CapeOfThorns.class,
+                ChaliceOfBlood.class,
+                CloakOfShadows.class,
+                HornOfPlenty.class,
+                MasterThievesArmband.class,
+                SandalsOfNature.class,
+                TalismanOfForesight.class,
+                TimekeepersHourglass.class,
+                UnstableSpellbook.class,
+                AlchemistsToolkit.class, //currently removed from drop tables, pending rework.
+                //DriedRose.class, //starts with no chance of spawning, chance is set directly after beating ghost quest.
+                //LloydsBeacon.class,
+                EtherealChains.class
+        };
+        Category.ARTIFACT.probs = INITIAL_ARTIFACT_PROBS.clone();
 
-		Category.SEED.classes = new Class<?>[]{
-				Firebloom.Seed.class,
-				Icecap.Seed.class,
-				Sorrowmoss.Seed.class,
-				Blindweed.Seed.class,
-				Sungrass.Seed.class,
-				Earthroot.Seed.class,
-				Fadeleaf.Seed.class,
-				Rotberry.Seed.class,
-				BlandfruitBush.Seed.class,
-				Dreamfoil.Seed.class,
-				Stormvine.Seed.class,
-				Starflower.Seed.class};
-		Category.SEED.probs = new float[]{12, 12, 12, 12, 12, 12, 12, 0, 4, 12, 12, 1};
+        Category.SEED.classes = new Class<?>[]{
+                Firebloom.Seed.class,
+                Icecap.Seed.class,
+                Sorrowmoss.Seed.class,
+                Blindweed.Seed.class,
+                Sungrass.Seed.class,
+                Earthroot.Seed.class,
+                Fadeleaf.Seed.class,
+                Rotberry.Seed.class,
+                BlandfruitBush.Seed.class,
+                Dreamfoil.Seed.class,
+                Stormvine.Seed.class,
+                Starflower.Seed.class};
+        Category.SEED.probs = new float[]{12, 12, 12, 12, 12, 12, 12, 0, 4, 12, 12, 1};
 
         Category.GEMSTONE.classes = new Class<?>[]{
-                GemstoneBlackOpal.class,
-                GemstoneJetStone.class,
-                GemstoneObsidian.class,
-                GemstoneLapisLazuli.class,
-                GemstoneSapphire.class,
-                GemstoneAmber.class,
-                GemstoneTigersEye.class,
+                Gemstone.BlackOpal.class,
+                Gemstone.JetStone.class,
+                Gemstone.Obsidian.class,
+                Gemstone.Garnet.class,
+                Gemstone.Jasper.class,
+                Gemstone.Ruby.class,
+                Gemstone.Jacinth.class,
+                Gemstone.Sunstone.class,
+                Gemstone.Chrysoberyl.class,
+                Gemstone.Citrine.class,
+                Gemstone.Amber.class,
+                Gemstone.TigersEye.class,
+                Gemstone.Topaz.class,
+                Gemstone.Emerald.class,
+                Gemstone.Jade.class,
+                Gemstone.LapisLazuli.class,
+                Gemstone.Sapphire.class,
+                Gemstone.Amethyst.class,
+                Gemstone.Diamond.class,
+                Gemstone.Dilithium.class,
+                Gemstone.Opal.class,
+                Gemstone.Agate.class,
+                Gemstone.Aquamarine.class,
+                Gemstone.Fluorite.class,
+                Gemstone.Glass.class,
+                Gemstone.Onyx.class,
+                Gemstone.Tanzanite.class,
+                Gemstone.Turquoise.class,
+                Gemstone.Zircon.class};
+        Category.GEMSTONE.probs = new float[]{1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 9, 2, 4, 2000, 2, 2, 2, 5};
 
-        };
-
-	}
+    }
 
 	public static void reset() {
 		for (Category cat : Category.values()) {
@@ -281,7 +294,9 @@ public class Generator {
 	}
 
 	public static Item random() {
-		return random(Random.chances(categoryProbs));
+        Category category = Random.chances(categoryProbs);
+        GLog.d("try category="+category);
+		return random(category);
 	}
 
 	public static Item random(Category cat) {
@@ -297,6 +312,8 @@ public class Generator {
 					Item item = randomArtifact();
 					//if we're out of artifacts, return a ring instead.
 					return item != null ? item : random(Category.RING);
+                case GEMSTONE:
+                    return randomGemstone();
 				default:
 					return ((Item) cat.classes[Random.chances(cat.probs)].newInstance()).random();
 			}
@@ -411,7 +428,21 @@ public class Generator {
 		spawnedArtifacts = new ArrayList<String>();
 	}
 
-	private static ArrayList<String> spawnedArtifacts = new ArrayList<String>();
+    public static Gemstone randomGemstone() {
+        int index = Random.chances(Category.GEMSTONE.probs);
+        try {
+            Class c = Category.GEMSTONE.classes[index];
+            return (Gemstone)c.newInstance();
+        } catch (Exception whocares) {
+            GLog.d("gemstone failed index="+index);
+            GLog.d(whocares);
+            return null;
+        }
+    }
+
+
+
+    private static ArrayList<String> spawnedArtifacts = new ArrayList<String>();
 
 	private static final String ARTIFACTS = "artifacts";
 

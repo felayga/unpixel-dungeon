@@ -24,11 +24,10 @@
  */
 package com.felayga.unpixeldungeon.items.armor.glyphs;
 
-import com.felayga.unpixeldungeon.actors.Actor;
 import com.felayga.unpixeldungeon.actors.Char;
 import com.felayga.unpixeldungeon.actors.buffs.Buff;
-import com.felayga.unpixeldungeon.actors.buffs.Burning;
-import com.felayga.unpixeldungeon.actors.buffs.Frost;
+import com.felayga.unpixeldungeon.actors.buffs.negative.Burning;
+import com.felayga.unpixeldungeon.actors.buffs.negative.Frost;
 import com.felayga.unpixeldungeon.effects.CellEmitter;
 import com.felayga.unpixeldungeon.effects.particles.FlameParticle;
 import com.felayga.unpixeldungeon.effects.particles.SnowParticle;
@@ -51,7 +50,7 @@ public class AntiEntropy extends Glyph {
 
 		int level = Math.max( 0, armor.level );
 		
-		if (Level.adjacent( attacker.pos, defender.pos ) && Random.Int( level + 6 ) >= 5) {
+		if (Level.canReach( attacker.pos, defender.pos ) && Random.Int( level + 6 ) >= 5) {
 			
 			Buff.prolong( attacker, Frost.class, Frost.duration( attacker ) * Random.Long(GameTime.TICK, GameTime.TICK * 3 / 2) / GameTime.TICK);
 			CellEmitter.get( attacker.pos ).start( SnowParticle.FACTORY, 0.2f, 6 );

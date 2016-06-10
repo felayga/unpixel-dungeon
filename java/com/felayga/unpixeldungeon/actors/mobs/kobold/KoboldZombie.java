@@ -25,7 +25,7 @@
 
 package com.felayga.unpixeldungeon.actors.mobs.kobold;
 
-import com.felayga.unpixeldungeon.actors.buffs.Encumbrance;
+import com.felayga.unpixeldungeon.actors.buffs.hero.Encumbrance;
 import com.felayga.unpixeldungeon.actors.mobs.Mob;
 import com.felayga.unpixeldungeon.items.weapon.melee.mob.MeleeMobAttack;
 import com.felayga.unpixeldungeon.mechanics.CorpseEffect;
@@ -37,7 +37,6 @@ import com.felayga.unpixeldungeon.sprites.mobs.kobold.KoboldZombieSprite;
  * Created by HELLO on 5/21/2016.
  */
 public class KoboldZombie extends Mob {
-
     public KoboldZombie()
     {
         super(0);

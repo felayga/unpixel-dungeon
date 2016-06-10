@@ -42,7 +42,7 @@ public class Bounce extends Glyph {
 	{
 		int level = Math.max( 0, armorlevel );
 
-		if (Level.adjacent( attacker.pos, defender.pos ) && Random.Int( level + 5) >= 4) {
+		if (Level.canReach( attacker.pos, defender.pos ) && Random.Int( level + 5) >= 4) {
 
 			for (int i=0; i < Level.NEIGHBOURS8.length; i++) {
 				int ofs = Level.NEIGHBOURS8[i];

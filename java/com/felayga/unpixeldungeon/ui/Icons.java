@@ -63,6 +63,7 @@ public enum Icons {
 	RESUME,
 	SPELLBOOK,
 	TREASURECHEST,
+    FLOORHEAP,
 	BUTTON_LEFT,
 	BUTTON_RIGHT;
 
@@ -175,6 +176,9 @@ public enum Icons {
 			case TREASURECHEST:
 				icon.frame(icon.texture.uvRect(103, 43, 113, 53));
 				break;
+            case FLOORHEAP:
+                icon.frame(icon.texture.uvRect(113, 43, 123, 53));
+                break;
 			case BUTTON_LEFT:
 				icon.frame(icon.texture.uvRect(0, 64, 12, 76));
 				break;

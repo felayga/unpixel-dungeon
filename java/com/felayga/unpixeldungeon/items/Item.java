@@ -28,7 +28,7 @@ import com.felayga.unpixeldungeon.Assets;
 import com.felayga.unpixeldungeon.Dungeon;
 import com.felayga.unpixeldungeon.actors.Actor;
 import com.felayga.unpixeldungeon.actors.Char;
-import com.felayga.unpixeldungeon.actors.buffs.SnipersMark;
+import com.felayga.unpixeldungeon.actors.buffs.hero.SnipersMark;
 import com.felayga.unpixeldungeon.actors.hero.Hero;
 import com.felayga.unpixeldungeon.effects.Speck;
 import com.felayga.unpixeldungeon.items.bags.IBag;
@@ -39,6 +39,7 @@ import com.felayga.unpixeldungeon.mechanics.GameTime;
 import com.felayga.unpixeldungeon.scenes.CellSelector;
 import com.felayga.unpixeldungeon.scenes.GameScene;
 import com.felayga.unpixeldungeon.sprites.ItemSprite;
+import com.felayga.unpixeldungeon.sprites.ItemSpriteSheet;
 import com.felayga.unpixeldungeon.sprites.MissileSprite;
 import com.felayga.unpixeldungeon.ui.QuickSlotButton;
 import com.felayga.unpixeldungeon.utils.GLog;
@@ -63,28 +64,33 @@ public class Item implements Bundlable {
 	protected static final long TIME_TO_PICK_UP = GameTime.TICK;
 	protected static final long TIME_TO_DROP = GameTime.TICK / 2;
 
-	public static final String AC_DROP = "DROP";
+	public static final String AC_DROP  = "DROP";
 	public static final String AC_THROW = "THROW";
 	public static final String AC_APPLY = "APPLY";
-	public static final String AC_KICK = "KICK";
+	public static final String AC_KICK  = "KICK";
 	public static final String AC_FORCE = "FORCE";
+    public static final String AC_SHOOT = "SHOOT";
+
+    public static final String AC_TAKE  = "TAKE";
 
 	public String defaultAction;
 	public boolean usesTargeting;
 
-	public IBag parent = null;
+	private IBag parent_whut = null;
+    public IBag parent() { return parent_whut; }
+    public void parent(IBag parent) { this.parent_whut = parent; }
 
-	protected String name = "smth";
-	public int image = 0;
+
+	protected String name;
+    protected String pickupSound;
+	public int image;
 
 	public boolean stackable = false;
-	protected int quantity = 1;
 
 	public boolean droppable = true;
 	public boolean fragile = false;
-	private int weight = 0;
 
-    protected int price = 0;
+    protected int price;
 
     public final int price() {
         int price = this.price;
@@ -105,6 +111,8 @@ public class Item implements Bundlable {
         return price * quantity;
     }
 
+    private int weight;
+
     public int weight() {
         return weight;
     }
@@ -114,15 +122,49 @@ public class Item implements Bundlable {
             return;
         }
 
-        if (parent != null) {
-            parent.onWeightChanged((newWeight - weight) * quantity);
-        }
+        int weightChange = (newWeight - weight) * quantity;
 
         weight = newWeight;
+
+        if (parent() != null) {
+            parent().onWeightChanged(weightChange);
+        }
+    }
+
+    private int quantity;
+
+    public int quantity() { return quantity; }
+
+    public void quantity(int newQuantity) {
+        if (quantity == newQuantity) {
+            return;
+        }
+
+        int weightChange = (newQuantity - quantity) * weight;
+
+        quantity = newQuantity;
+
+        if (parent() != null) {
+            parent().onWeightChanged(weightChange);
+        }
+    }
+
+    public Item setQuantity(int newQuantity) {
+        quantity(newQuantity);
+
+        return this;
+    }
+
+    public Item() {
+        name = "smth";
+        image = ItemSpriteSheet.NULLWARN;
+        pickupSound = Assets.SND_ITEM;
+        quantity = 1;
+        weight = 0;
+        price = 0;
     }
 
 	public int level = 0;
-    public int levelSoftCap = 3;
 	public boolean levelKnown = false;
 	public boolean hasLevels = true;
 
@@ -162,36 +204,6 @@ public class Item implements Bundlable {
 		return this;
 	}
 
-    public Item randomizeStatus() {
-        BUCStatus newStatus;
-        switch (Random.Int(10)) {
-            case 6:
-            case 7:
-            case 8:
-                newStatus = BUCStatus.Cursed;
-                break;
-            case 9:
-                newStatus = BUCStatus.Blessed;
-                break;
-            default:
-                newStatus = BUCStatus.Uncursed;
-                break;
-        }
-
-        if (hasLevels) {
-            levelKnown = false;
-            level = 0;
-
-            int direction = Random.Int(3)==0 ? 1:-1;
-
-            while (level < levelSoftCap + 2 && Random.Int(level >= levelSoftCap ? 10 : 5)==0) {
-                level += direction;
-            }
-        }
-
-        return bucStatus(newStatus, false);
-    }
-
 	public void hasBuc(boolean state){
 		if (hasBuc != state)
 		{
@@ -221,23 +233,59 @@ public class Item implements Bundlable {
 		return actions;
 	}
 
+    public final ArrayList<String> actionsExternal(Hero hero) {
+        ArrayList<String> retval = actions(hero);
+
+        for (int n=retval.size()-1;n>=0;n--) {
+            if (!canPerformActionExternally(hero, retval.get(n))) {
+                retval.remove(n);
+            }
+        }
+
+        retval.add(0, AC_TAKE);
+
+        return retval;
+    }
+
+    public final ArrayList<String> actions(Hero hero, boolean external) {
+        if (external) {
+            return actionsExternal(hero);
+        }
+
+        return actions(hero);
+    }
+
+    public boolean canPerformActionExternally(Hero hero, String action) {
+        return AC_TAKE.equals(action);
+    }
+
 	public boolean doPickUp(Hero hero) {
 		if (hero.levitating) {
 			GLog.w("You can't reach the floor.");
 			return false;
-		} else if (hero.belongings.collect(this)) {
-			GameScene.pickUp(this);
-			playPickupSound();
-			hero.spend(TIME_TO_PICK_UP, true);
-			return true;
-
-		} else {
-			return false;
 		}
+
+        IBag oldParent = parent();
+
+        if (parent().remove(this) == this) {
+
+            if (hero.belongings.collect(this)) {
+                GameScene.pickUp(this);
+                playPickupSound();
+                hero.spend(TIME_TO_PICK_UP, true);
+                return true;
+
+            } else {
+                oldParent.collect(this);
+                return false;
+            }
+        }
+
+        return false;
 	}
 
-	public void playPickupSound() {
-		Sample.INSTANCE.play(Assets.SND_ITEM);
+	public final void playPickupSound() {
+		Sample.INSTANCE.play(pickupSound);
 	}
 
 	public void doDrop(final Hero hero) {
@@ -245,14 +293,15 @@ public class Item implements Bundlable {
 			GameScene.show(new WndItemDropMultiple(this) {
 				@Override
 				public void doDrop(int quantity) {
-					if (quantity == Item.this.quantity) {
-						Dungeon.level.drop(hero.belongings.remove(Item.this), hero.pos).sprite.drop(hero.pos);
-					}
-					else {
-						Dungeon.level.drop(hero.belongings.remove(Item.this, quantity), hero.pos).sprite.drop(hero.pos);
-					}
-					hero.spend(TIME_TO_DROP, true);
-				}
+                    if (quantity == Item.this.quantity) {
+                        Dungeon.level.drop(hero.belongings.remove(Item.this), hero.pos).sprite.drop(hero.pos);
+                    } else if (quantity > 0) {
+                        Dungeon.level.drop(hero.belongings.remove(Item.this, quantity), hero.pos).sprite.drop(hero.pos);
+                    } else {
+                        GLog.w("You drop nothing.  The nothing clatters noisily as it impacts the ground.");
+                    }
+                    hero.spend(TIME_TO_DROP, true);
+                }
 			});
 		}
 		else {
@@ -289,21 +338,30 @@ public class Item implements Bundlable {
 	protected void onThrow(int cell, Char thrower) {
 		GLog.d("onthrow cell="+cell);
 		Heap heap = Dungeon.level.drop(this, cell);
-		if (!heap.isEmpty()) {
+		if (heap.size() > 0) {
 			heap.sprite.drop(cell);
 		}
 	}
 
 
-	public boolean isSimilar(Item item) {
-		return getClass() == item.getClass() && bucStatus == item.bucStatus && bucStatusKnown == item.bucStatusKnown;
+    public final boolean isSimilar(Item item) {
+		return this.checkSimilarity(item) && item.checkSimilarity(this);
 	}
+
+    public final boolean isStackableWith(Item item) {
+        return stackable && item.stackable && checkSimilarity(item);
+    }
+
+    protected boolean checkSimilarity(Item item) {
+        return getClass() == item.getClass() && (quantity == 0 || item.quantity == 0 || (bucStatus == item.bucStatus && bucStatusKnown == item.bucStatusKnown));
+    }
 
 	public void onDetach() {
 	}
 
 
 	public Item upgrade(Item source, int n) {
+        GLog.d("upgrayedd");
 		if (source != null) {
 			GLog.d("upgrade item="+getDisplayName()+" because "+source.getDisplayName()+" said so ("+n+")");
 			switch (source.bucStatus) {
@@ -376,8 +434,8 @@ public class Item implements Bundlable {
 			updateQuickslot = true;
 		}
 
-		if (parent != null && stackable) {
-			if (parent.tryMergeStack(this)) {
+		if (parent() != null && stackable) {
+			if (parent().tryMergeStack(this)) {
 				updateQuickslot = true;
 			}
 		}
@@ -454,18 +512,8 @@ public class Item implements Bundlable {
 		return "";
 	}
 
-	public int quantity() {
-		return quantity;
-	}
-
-	public Item quantity(int value) {
-		quantity = value;
-		return this;
-	}
-
 	public static Item virtual(Class<? extends Item> cl) {
 		try {
-
 			Item item = (Item) cl.newInstance();
 			item.quantity = 0;
 			return item;
@@ -509,15 +557,14 @@ public class Item implements Bundlable {
             }
         }
 
-
 		return this;
 	}
 
 	public String status() {
-		return quantity != 1 ? Integer.toString(quantity) : null;
+		return quantity != 1 || stackable ? Integer.toString(quantity) : null;
 	}
 
-	public void updateQuickslot() {
+	public final void updateQuickslot() {
 		QuickSlotButton.refresh();
 	}
 

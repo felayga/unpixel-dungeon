@@ -25,22 +25,24 @@
 
 package com.felayga.unpixeldungeon.actors.mobs.lichen;
 
-import com.felayga.unpixeldungeon.actors.buffs.Encumbrance;
+import com.felayga.unpixeldungeon.actors.Actor;
+import com.felayga.unpixeldungeon.actors.Char;
+import com.felayga.unpixeldungeon.actors.buffs.Buff;
+import com.felayga.unpixeldungeon.actors.buffs.hero.Encumbrance;
+import com.felayga.unpixeldungeon.actors.buffs.negative.Held;
 import com.felayga.unpixeldungeon.actors.mobs.Mob;
 import com.felayga.unpixeldungeon.items.weapon.melee.mob.MeleeMobAttack;
 import com.felayga.unpixeldungeon.mechanics.CorpseEffect;
 import com.felayga.unpixeldungeon.mechanics.GameTime;
 import com.felayga.unpixeldungeon.mechanics.MagicType;
 import com.felayga.unpixeldungeon.sprites.mobs.fungus.LichenSprite;
-import com.felayga.unpixeldungeon.sprites.mobs.jackal.FoxSprite;
 
 /**
  * Created by HELLO on 5/22/2016.
  */
 public class Lichen extends Mob {
 
-    public Lichen()
-    {
+    public Lichen() {
         super(0);
 
         name = "lichen";
@@ -54,9 +56,33 @@ public class Lichen extends Mob {
         weight = Encumbrance.UNIT * 20;
         nutrition = 200;
         immunityMagical = MagicType.None.value;
-        corpseEffects = CorpseEffect.Unrottable.value | CorpseEffect.Undecayable.value;
+        corpseEffects = CorpseEffect.Unrottable.value | CorpseEffect.Undecayable.value | CorpseEffect.Vegetable.value;
+    }
 
-        belongings.collectEquip(new MeleeMobAttack(GameTime.TICK, 0, 0));
+    @Override
+    protected boolean shouldTouch(Char enemy) {
+        return true;
+    }
+
+    Held buff;
+
+    @Override
+    protected void touch(Char enemy, boolean visible) {
+        Buff.prolong(enemy, Held.class, GameTime.TICK * GameTime.TICK / movementSpeed);
+        buff = enemy.buff(Held.class);
+        if (buff != null) {
+            buff.host = this;
+        }
+    }
+
+    @Override
+    public void die(Actor cause) {
+        if (buff != null && buff.host == this) {
+            Buff.detach(buff);
+            buff = null;
+        }
+
+        super.die(cause);
     }
 
     @Override

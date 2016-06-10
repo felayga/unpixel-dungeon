@@ -24,24 +24,6 @@
  */
 package com.felayga.unpixeldungeon.actors.mobs.unused;
 
-import java.util.HashSet;
-
-import com.felayga.unpixeldungeon.actors.Char;
-import com.felayga.unpixeldungeon.actors.buffs.Cripple;
-import com.felayga.unpixeldungeon.actors.buffs.Light;
-import com.felayga.unpixeldungeon.actors.buffs.Poison;
-import com.felayga.unpixeldungeon.actors.mobs.Mob;
-import com.felayga.unpixeldungeon.items.Item;
-import com.felayga.unpixeldungeon.items.food.MysteryMeat;
-import com.felayga.unpixeldungeon.items.potions.PotionOfHealing;
-import com.felayga.unpixeldungeon.items.weapon.enchantments.Leech;
-import com.felayga.unpixeldungeon.items.weapon.melee.mob.CrippleChance;
-import com.felayga.unpixeldungeon.levels.Level;
-import com.felayga.unpixeldungeon.mechanics.Ballistica;
-import com.felayga.unpixeldungeon.mechanics.GameTime;
-import com.felayga.unpixeldungeon.sprites.mobs.ScorpioSprite;
-import com.watabou.utils.Random;
-
 /*
 public class Scorpio extends Mob {
 

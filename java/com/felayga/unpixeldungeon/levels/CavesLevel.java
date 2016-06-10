@@ -231,8 +231,11 @@ public class CavesLevel extends RegularLevel {
 			return "Huge mushrooms block the view.";
 		case Terrain.WALL_DECO:
 			return "A vein of some ore is visible on the wall. Gold?";
+        /*
 		case Terrain.BOOKSHELF:
 			return "Who would need a bookshelf in a cave?";
+			// Exactly.
+		*/
 		default:
 			return super.tileDesc( tile );
 		}

@@ -29,7 +29,7 @@ import java.util.HashSet;
 import com.felayga.unpixeldungeon.actors.blobs.Blob;
 import com.felayga.unpixeldungeon.actors.blobs.GooWarn;
 import com.felayga.unpixeldungeon.actors.blobs.ToxicGas;
-import com.felayga.unpixeldungeon.actors.buffs.LockedFloor;
+import com.felayga.unpixeldungeon.actors.buffs.hero.LockedFloor;
 import com.felayga.unpixeldungeon.items.KindOfWeapon;
 import com.felayga.unpixeldungeon.items.keys.SkeletonOldKey;
 import com.felayga.unpixeldungeon.items.weapon.melee.mob.AcidChance;

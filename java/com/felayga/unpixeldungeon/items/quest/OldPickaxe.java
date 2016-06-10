@@ -26,14 +26,13 @@ package com.felayga.unpixeldungeon.items.quest;
 
 import java.util.ArrayList;
 
-import com.felayga.unpixeldungeon.actors.Actor;
 import com.felayga.unpixeldungeon.mechanics.GameTime;
 import com.felayga.unpixeldungeon.mechanics.WeaponSkill;
 import com.watabou.noosa.audio.Sample;
 import com.felayga.unpixeldungeon.Assets;
 import com.felayga.unpixeldungeon.Dungeon;
 import com.felayga.unpixeldungeon.actors.Char;
-import com.felayga.unpixeldungeon.actors.buffs.Hunger;
+import com.felayga.unpixeldungeon.actors.buffs.hero.Hunger;
 import com.felayga.unpixeldungeon.actors.hero.Hero;
 //import com.felayga.unpixeldungeon.actors.mobs.Bat;
 import com.felayga.unpixeldungeon.effects.CellEmitter;

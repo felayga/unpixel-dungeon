@@ -24,16 +24,15 @@
  */
 package com.felayga.unpixeldungeon.actors.mobs.rat;
 
-import com.felayga.unpixeldungeon.actors.buffs.Encumbrance;
+import com.felayga.unpixeldungeon.actors.buffs.hero.Encumbrance;
 import com.felayga.unpixeldungeon.actors.mobs.Mob;
 import com.felayga.unpixeldungeon.items.weapon.melee.mob.MeleeMobAttack;
+import com.felayga.unpixeldungeon.mechanics.CorpseEffect;
 import com.felayga.unpixeldungeon.mechanics.GameTime;
 import com.felayga.unpixeldungeon.mechanics.MagicType;
-import com.felayga.unpixeldungeon.sprites.mobs.newt.NewtSprite;
 import com.felayga.unpixeldungeon.sprites.mobs.rat.RatSprite;
 
 public class SewerRat extends Mob {
-
     public SewerRat()
     {
         super(0);
@@ -49,6 +48,7 @@ public class SewerRat extends Mob {
         weight = Encumbrance.UNIT * 20;
         nutrition = 12;
         immunityMagical = MagicType.None.value;
+        corpseEffects = CorpseEffect.None.value;
 
         belongings.collectEquip(new MeleeMobAttack(GameTime.TICK, 1, 3));
     }

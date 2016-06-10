@@ -24,7 +24,7 @@
  */
 package com.felayga.unpixeldungeon.items.armor.light;
 
-import com.felayga.unpixeldungeon.actors.buffs.Encumbrance;
+import com.felayga.unpixeldungeon.actors.buffs.hero.Encumbrance;
 import com.felayga.unpixeldungeon.sprites.ItemSpriteSheet;
 
 public class LeatherArmor extends LightArmor {

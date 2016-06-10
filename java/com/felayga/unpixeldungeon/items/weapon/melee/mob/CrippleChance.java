@@ -27,7 +27,7 @@ package com.felayga.unpixeldungeon.items.weapon.melee.mob;
 
 import com.felayga.unpixeldungeon.actors.Char;
 import com.felayga.unpixeldungeon.actors.buffs.Buff;
-import com.felayga.unpixeldungeon.actors.buffs.Cripple;
+import com.felayga.unpixeldungeon.actors.buffs.negative.Cripple;
 import com.watabou.utils.Random;
 
 /**

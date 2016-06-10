@@ -26,8 +26,8 @@ package com.felayga.unpixeldungeon;
 
 import com.felayga.unpixeldungeon.actors.Actor;
 import com.felayga.unpixeldungeon.actors.Char;
-import com.felayga.unpixeldungeon.actors.buffs.Amok;
-import com.felayga.unpixeldungeon.actors.buffs.Light;
+import com.felayga.unpixeldungeon.actors.buffs.negative.Amok;
+import com.felayga.unpixeldungeon.actors.buffs.positive.Light;
 import com.felayga.unpixeldungeon.actors.hero.Hero;
 import com.felayga.unpixeldungeon.actors.hero.HeroClass;
 import com.felayga.unpixeldungeon.actors.mobs.npcs.Blacksmith;
@@ -192,6 +192,7 @@ public class Dungeon {
 		Badges.reset();
 
 		HeroClass.toHeroClass(WndInitHero.heroClassSelected).initHero(hero);
+
 		//todo: fart
 		//StartScene.curClass.initHero( hero );
 	}
@@ -729,9 +730,8 @@ public class Dungeon {
 	
 	private static boolean[] passable = new boolean[Level.LENGTH];
 	
-	public static int findPath( Char ch, int from, int to, boolean pass[], boolean[] visible ) {
-		
-		if (Level.adjacent( from, to )) {
+	public static int findPath( Char ch, int from, int to, boolean pass[], boolean[] diagonal, boolean[] visible ) {
+		if (Level.canStep(from, to, diagonal)) {
 			return Actor.findChar( to ) == null && (pass[to] || Level.avoid[to]) ? to : -1;
 		}
 		
@@ -747,7 +747,7 @@ public class Dungeon {
 			}
 		}
 		
-		return PathFinder.getStep( from, to, passable );
+		return PathFinder.getStep( from, to, passable, diagonal );
 		
 	}
 	

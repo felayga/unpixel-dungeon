@@ -24,6 +24,8 @@
  */
 package com.felayga.unpixeldungeon.utils;
 
+import com.felayga.unpixeldungeon.levels.Level;
+import com.felayga.unpixeldungeon.mechanics.Constant;
 import com.watabou.utils.Signal;
 
 import android.util.Log;
@@ -51,6 +53,20 @@ public class GLog {
 
 	public static void d( String text, Object... args ) { i(NEGATIVE + text, args); }
     public static void d( Throwable throwable) { d(Log.getStackTraceString(throwable)); }
+    public static void d( int pos, int relativePos ) {
+        int x = pos % Level.WIDTH;
+        int y = pos / Level.WIDTH;
+
+        if (relativePos != Constant.POS_NONE) {
+            int rx = relativePos % Level.WIDTH;
+            int ry = relativePos / Level.WIDTH;
+
+            d("pos=" + x + "," + y + " relative=" + (rx - x) + "," + (ry - y));
+        }
+        else {
+            d("pos=" + x + "," + y);
+        }
+    }
 	
 	public static void p( String text, Object... args ) {
 		i( POSITIVE + text, args );

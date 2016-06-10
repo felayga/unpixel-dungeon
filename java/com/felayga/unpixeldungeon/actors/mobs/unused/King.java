@@ -26,8 +26,8 @@ package com.felayga.unpixeldungeon.actors.mobs.unused;
 /*
 import java.util.HashSet;
 
-import com.felayga.unpixeldungeon.actors.buffs.LockedFloor;
-import com.felayga.unpixeldungeon.actors.buffs.Vertigo;
+import com.felayga.unpixeldungeon.actors.buffs.hero.LockedFloor;
+import com.felayga.unpixeldungeon.actors.buffs.negative.Vertigo;
 import com.felayga.unpixeldungeon.items.KindOfWeapon;
 import com.felayga.unpixeldungeon.items.artifacts.LloydsBeacon;
 import com.felayga.unpixeldungeon.items.keys.SkeletonOldKey;
@@ -44,7 +44,7 @@ import com.felayga.unpixeldungeon.Dungeon;
 import com.felayga.unpixeldungeon.actors.Actor;
 import com.felayga.unpixeldungeon.actors.Char;
 import com.felayga.unpixeldungeon.actors.blobs.ToxicGas;
-import com.felayga.unpixeldungeon.actors.buffs.Paralysis;
+import com.felayga.unpixeldungeon.actors.buffs.negative.Paralysis;
 import com.felayga.unpixeldungeon.effects.Flare;
 import com.felayga.unpixeldungeon.effects.Speck;
 import com.felayga.unpixeldungeon.items.ArmorKit;

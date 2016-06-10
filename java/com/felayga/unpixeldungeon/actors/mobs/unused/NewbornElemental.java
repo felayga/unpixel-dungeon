@@ -26,8 +26,8 @@ package com.felayga.unpixeldungeon.actors.mobs.unused;
 /*
 import com.felayga.unpixeldungeon.Dungeon;
 import com.felayga.unpixeldungeon.actors.buffs.Buff;
-import com.felayga.unpixeldungeon.actors.buffs.Chill;
-import com.felayga.unpixeldungeon.actors.buffs.Frost;
+import com.felayga.unpixeldungeon.actors.buffs.negative.Chill;
+import com.felayga.unpixeldungeon.actors.buffs.negative.Frost;
 import com.felayga.unpixeldungeon.items.quest.Embers;
 import com.felayga.unpixeldungeon.items.weapon.melee.mob.IgniteChance;
 import com.felayga.unpixeldungeon.mechanics.GameTime;

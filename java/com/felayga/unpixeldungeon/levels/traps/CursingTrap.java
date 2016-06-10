@@ -37,6 +37,8 @@ import com.felayga.unpixeldungeon.sprites.TrapSprite;
 import com.felayga.unpixeldungeon.utils.GLog;
 import com.watabou.noosa.audio.Sample;
 
+import java.util.Iterator;
+
 public class CursingTrap extends Trap {
 
 	{
@@ -54,7 +56,10 @@ public class CursingTrap extends Trap {
 
 		Heap heap = Dungeon.level.heaps.get( pos );
 		if (heap != null){
-			for (Item item : heap.items){
+            Iterator<Item> iterator = heap.iterator(false);
+			while (iterator.hasNext()){
+                Item item = iterator.next();
+
 				if (item.isUpgradable()) {
 					item.bucStatus(BUCStatus.Cursed, false);
 				}

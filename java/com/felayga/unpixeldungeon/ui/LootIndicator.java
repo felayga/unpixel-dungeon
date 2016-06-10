@@ -25,20 +25,24 @@
 package com.felayga.unpixeldungeon.ui;
 
 import com.felayga.unpixeldungeon.Dungeon;
+import com.felayga.unpixeldungeon.actors.hero.HeroAction;
 import com.felayga.unpixeldungeon.items.Heap;
 import com.felayga.unpixeldungeon.items.Item;
+import com.felayga.unpixeldungeon.utils.GLog;
 
 public class LootIndicator extends Tag {
-	
 	private ItemSlot slot;
 	
 	private Item lastItem = null;
 	private int lastQuantity = 0;
+    private int lastHeapSize = 0;
 	
 	public LootIndicator() {
-		super( 0x1F75CC );
-		
-		setSize( 24, 24 );
+		super(0x1F75CC);
+        slot.topRight.hardlight(ItemSlot.UPGRADED);
+        slot.topRight.alpha(1.0f);
+
+        setSize(24, 24);
 		
 		visible = false;
 	}
@@ -49,10 +53,11 @@ public class LootIndicator extends Tag {
 		
 		slot = new ItemSlot() {
 			protected void onClick() {
-				Dungeon.hero.handle( Dungeon.hero.pos );
+                Dungeon.hero.curAction = new HeroAction.HandleHeap(Dungeon.hero.pos);
+                Dungeon.hero.motivate(true);
 			};
 		};
-		slot.showParams( true, false, false );
+		slot.showParams( true, true, false );
 		add( slot );
 	}
 	
@@ -65,11 +70,9 @@ public class LootIndicator extends Tag {
 	
 	@Override
 	public void update() {
-		
 		if (Dungeon.hero.ready) {
 			Heap heap = Dungeon.level.heaps.get( Dungeon.hero.pos );
 			if (heap != null) {
-				
 				Item item =
 					heap.type == Heap.Type.CHEST || heap.type == Heap.Type.MIMIC ? ItemSlot.CHEST :
 					heap.type == Heap.Type.LOCKED_CHEST ? ItemSlot.LOCKED_CHEST :
@@ -78,20 +81,33 @@ public class LootIndicator extends Tag {
 					heap.type == Heap.Type.SKELETON ? ItemSlot.SKELETON :
 					heap.type == Heap.Type.REMAINS ? ItemSlot.REMAINS :
 					heap.peek();
-				if (item != lastItem || item.quantity() != lastQuantity) {
+
+                int heapSize = heap.size();
+
+				if (item != lastItem || item.quantity() != lastQuantity || heapSize != lastHeapSize) {
 					lastItem = item;
 					lastQuantity = item.quantity();
+                    lastHeapSize = heapSize;
 					
 					slot.item( item );
 					flash();
 				}
+
+                if (heapSize > 1) {
+                    slot.topRight.text("" + heapSize);
+                    slot.topRight.measure();
+                    slot.topRight.visible = true;
+                }
+                else {
+                    slot.topRight.visible = false;
+                }
+
+                slot.layout();
+
 				visible = true;
-				
 			} else {
-				
 				lastItem = null;
 				visible = false;
-				
 			}
 		}
 		

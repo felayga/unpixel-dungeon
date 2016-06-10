@@ -65,7 +65,7 @@ public class WndItemDropMultiple extends Window {
         };
 
 
-        slider = new OptionSlider("How many?", "1", "" + item.quantity(), 1, item.quantity(), 5) {
+        slider = new OptionSlider("How many?", "0", "" + item.quantity(), 0, item.quantity(), 5) {
             @Override
             protected void onChange() {
                 dropButton.text("DROP " + getSelectedValue());

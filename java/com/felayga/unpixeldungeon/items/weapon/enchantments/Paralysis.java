@@ -24,7 +24,6 @@
  */
 package com.felayga.unpixeldungeon.items.weapon.enchantments;
 
-import com.felayga.unpixeldungeon.actors.Actor;
 import com.felayga.unpixeldungeon.actors.Char;
 import com.felayga.unpixeldungeon.actors.buffs.Buff;
 import com.felayga.unpixeldungeon.items.weapon.Weapon;
@@ -48,7 +47,7 @@ public class Paralysis extends Weapon.Enchantment {
 		
 		if (Random.Int( level + 8 ) >= 7) {
 			
-			Buff.prolong( defender, com.felayga.unpixeldungeon.actors.buffs.Paralysis.class,
+			Buff.prolong( defender, com.felayga.unpixeldungeon.actors.buffs.negative.Paralysis.class,
 				Random.Long( GameTime.TICK, GameTime.TICK * 3 / 2 + GameTime.TICK * level ) );
 			
 			return true;

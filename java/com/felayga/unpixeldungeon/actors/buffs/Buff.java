@@ -47,9 +47,12 @@ public class Buff extends Actor {
 	public HashSet<Class<?>> resistances = new HashSet<>();
 
 	public HashSet<Class<?>> immunities = new HashSet<>();
+
+    public String attachedMessage(boolean isHero) {
+        return null;
+    }
 	
 	public boolean attachTo( Char target ) {
-
 		//todo: Buff attachment immunity/resistance
 		/*
 		if (target.immunities().contains( getClass() )) {

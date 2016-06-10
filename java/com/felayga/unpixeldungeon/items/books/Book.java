@@ -26,8 +26,8 @@ package com.felayga.unpixeldungeon.items.books;
 
 import com.felayga.unpixeldungeon.Assets;
 import com.felayga.unpixeldungeon.Badges;
-import com.felayga.unpixeldungeon.actors.buffs.Blindness;
-import com.felayga.unpixeldungeon.actors.buffs.Encumbrance;
+import com.felayga.unpixeldungeon.actors.buffs.negative.Blindness;
+import com.felayga.unpixeldungeon.actors.buffs.hero.Encumbrance;
 import com.felayga.unpixeldungeon.actors.hero.Hero;
 import com.felayga.unpixeldungeon.items.Item;
 import com.felayga.unpixeldungeon.items.ItemStatusHandler;
@@ -156,6 +156,8 @@ public abstract class Book extends Item {
     public Book() {
         super();
 
+        pickupSound = Assets.SND_ITEM_PAPER;
+
         weight(Encumbrance.UNIT * 50);
 
         stackable = true;
@@ -243,11 +245,6 @@ public abstract class Book extends Item {
         return isKnown() ? initials : null;
     }
     */
-
-    @Override
-    public void playPickupSound() {
-        Sample.INSTANCE.play( Assets.SND_ITEM_PAPER );
-    }
 
     @Override
     public boolean isUpgradable() {

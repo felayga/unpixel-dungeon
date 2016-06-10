@@ -51,10 +51,11 @@ public class Gold extends Item {
 	{
 		name = "gold";
 		image = ItemSpriteSheet.GOLD;
+        pickupSound = Assets.SND_GOLD;
 		stackable = true;
 		hasBuc(false);
 
-		this.quantity = quantity;
+		quantity(quantity);
 		weight(1);
 	}
 	
@@ -96,39 +97,28 @@ public class Gold extends Item {
 	
 	@Override
 	public String info() {
-		switch (quantity) {
+		switch (quantity()) {
 		case 0:
 			return TXT_COLLECT;
 		case 1:
 			return TXT_INFO_1;
 		default:
-			return Utils.format( TXT_INFO, quantity );
+			return Utils.format( TXT_INFO, quantity() );
 		}
 	}
 
 	@Override
 	public String getDisplayName()
 	{
-		return quantity + " " + super.getDisplayName();
+		return quantity() + " " + super.getDisplayName();
 	}
 	
 	@Override
 	public Item random() {
-		quantity = Random.Int( 30 + (Dungeon.depth * 3/8 + Dungeon.hero.level / 8) * 10, 60 + (Dungeon.depth * 3/8 + Dungeon.hero.level / 8) * 20 );
+		quantity(Random.Int( 30 + (Dungeon.depth * 3/8 + Dungeon.hero.level / 8) * 10, 60 + (Dungeon.depth * 3/8 + Dungeon.hero.level / 8) * 20 ));
 		return this;
 	}
 	
 	private static final String VALUE	= "value";
-	
-	@Override
-	public void storeInBundle( Bundle bundle ) {
-		super.storeInBundle( bundle );
-		bundle.put( VALUE, quantity );
-	}
-	
-	@Override
-	public void restoreFromBundle( Bundle bundle ) {
-		super.restoreFromBundle(bundle);
-		quantity = bundle.getInt( VALUE );
-	}
+
 }

@@ -25,15 +25,7 @@
 
 package com.felayga.unpixeldungeon.items.weapon.melee.mob;
 
-import com.felayga.unpixeldungeon.Dungeon;
 import com.felayga.unpixeldungeon.actors.Char;
-import com.felayga.unpixeldungeon.actors.buffs.Bleeding;
-import com.felayga.unpixeldungeon.actors.buffs.Buff;
-import com.felayga.unpixeldungeon.actors.buffs.Poison;
-import com.felayga.unpixeldungeon.actors.hero.Hero;
-import com.felayga.unpixeldungeon.items.Item;
-import com.felayga.unpixeldungeon.utils.GLog;
-import com.watabou.utils.Random;
 
 /**
  * Created by HELLO on 3/11/2016.

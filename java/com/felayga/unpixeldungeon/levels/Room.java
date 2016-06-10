@@ -60,7 +60,7 @@ public class Room extends Rect implements Graph.Node, Bundlable {
 		BLACKSMITH	( BlacksmithPainter.class ),
 		TREASURY	( TreasuryPainter.class ),
 		ARMORY		( ArmoryPainter.class ),
-		LIBRARY		( LibraryPainter.class ),
+		//LIBRARY		( LibraryPainter.class ),
 		LABORATORY	( LaboratoryPainter.class ),
 		VAULT		( VaultPainter.class ),
 		TRAPS		( TrapsPainter.class ),
@@ -99,7 +99,7 @@ public class Room extends Rect implements Graph.Node, Bundlable {
 	}
 	
 	public static final ArrayList<Type> SPECIALS = new ArrayList<>( Arrays.asList(
-		Type.WEAK_FLOOR, Type.MAGIC_WELL, Type.CRYPT, /*Type.POOL,*/ Type.GARDEN, Type.LIBRARY, Type.ARMORY,
+		Type.WEAK_FLOOR, Type.MAGIC_WELL, Type.CRYPT, /*Type.POOL,*/ Type.GARDEN, /*Type.LIBRARY,*/ Type.ARMORY,
 		Type.TREASURY, Type.TRAPS, Type.STORAGE, /*Type.STATUE,*/ Type.LABORATORY, Type.VAULT
 	) );
 	
@@ -249,7 +249,7 @@ public class Room extends Rect implements Graph.Node, Bundlable {
 	public static class Door extends Point {
 		
 		public enum Type {
-			EMPTY, TUNNEL, REGULAR, UNLOCKED, HIDDEN, BARRICADE, LOCKED
+			EMPTY, TUNNEL, REGULAR, UNLOCKED, HIDDEN, HIDDENLOCKED, BARRICADE, LOCKED
 		}
 		public Type type = Type.EMPTY;
 		

@@ -29,8 +29,8 @@ import com.felayga.unpixeldungeon.Badges;
 import com.felayga.unpixeldungeon.Dungeon;
 import com.felayga.unpixeldungeon.Statistics;
 import com.felayga.unpixeldungeon.actors.buffs.Buff;
-import com.felayga.unpixeldungeon.actors.buffs.Hunger;
-import com.felayga.unpixeldungeon.actors.buffs.LockedFloor;
+import com.felayga.unpixeldungeon.actors.buffs.hero.Hunger;
+import com.felayga.unpixeldungeon.actors.buffs.hero.LockedFloor;
 import com.felayga.unpixeldungeon.actors.hero.Hero;
 import com.felayga.unpixeldungeon.effects.Speck;
 import com.felayga.unpixeldungeon.effects.SpellSprite;
@@ -228,7 +228,8 @@ public class HornOfPlenty extends Artifact_old {
 					hero.busy();
 					hero.spend(TIME_TO_EAT, false);
 
-					curItem.upgrade(item, ((Food) item).hornValue);
+                    //todo: horn of plenty upgrading if keeping it at all
+					//curItem.upgrade(item, ((Food) item).hornValue);
 					if (curItem.level >= 30){
 						curItem.level = 30;
 						GLog.p("your horn has consumed all the food it can!");

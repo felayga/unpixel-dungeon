@@ -45,93 +45,12 @@ import java.util.ArrayList;
 /**
  * Created by HELLO on 5/25/2016.
  */
-public class Pickaxe extends SimpleMeleeWeapon implements ITool {
-    public static final String NAME = "digging tool";
-
+public class Pickaxe extends DiggingTool {
     public Pickaxe() {
         super( GameTime.TICK, 1, 6 );
 
         name = "pickaxe";
         image = ItemSpriteSheet.PICKAXE;
-
-        defaultAction = AC_APPLY;
     }
 
-    @Override
-    public String desc() {
-        return "This tool is built for digging through rock.";
-    }
-
-    @Override
-    public void playPickupSound() {
-        Sample.INSTANCE.play(Assets.SND_ITEM_BLADE);
-    }
-
-
-    private static Pickaxe curTool;
-
-    @Override
-    public ArrayList<String> actions( Hero hero ) {
-        ArrayList<String> actions = super.actions( hero );
-        actions.add(AC_APPLY);
-        return actions;
-    }
-
-    public String getToolClass() {
-        return NAME;
-    }
-
-    @Override
-    public boolean execute(Hero hero, String action) {
-        curUser = hero;
-        curTool = this;
-
-        if (action.equals(AC_APPLY)) {
-            GameScene.selectCell(applier);
-
-            return false;
-        }
-        else {
-            return super.execute(hero, action);
-        }
-    }
-
-    public void apply(Hero hero, int target) {
-        if (!hero.belongings.isEquipped(this)) {
-            if (!hero.belongings.equip(this)) {
-                return;
-            }
-
-            GLog.i("You ready your " + getDisplayName());
-        }
-
-        Mob mob = Dungeon.level.findMob(target);
-
-        if (Dungeon.level.solid[target]) {
-            hero.curAction = new HeroAction.Dig(this, target, 101);
-        } else if (mob != null) {
-            if (mob instanceof Boulder) {
-                mob.die(null);
-            }
-            else {
-                hero.curAction = new HeroAction.Attack(this, false, mob);
-            }
-        } else {
-            GLog.n("Your " + getToolClass() + " can't be applied there.");
-        }
-    }
-
-    public static CellSelector.Listener applier = new CellSelector.Listener() {
-        @Override
-        public void onSelect(Integer target) {
-            if (target != null) {
-                curTool.apply(curUser, target);
-            }
-        }
-
-        @Override
-        public String prompt() {
-            return "Apply " + curTool.getToolClass();
-        }
-    };
 }

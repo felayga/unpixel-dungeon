@@ -28,7 +28,7 @@ import com.felayga.unpixeldungeon.sprites.MissileSprite;
 import com.felayga.unpixeldungeon.sprites.MobSprite;
 import com.watabou.noosa.TextureFilm;
 import com.felayga.unpixeldungeon.Assets;
-import com.felayga.unpixeldungeon.items.weapon.missiles.Shuriken;
+import com.felayga.unpixeldungeon.items.weapon.missiles.martial.Shuriken;
 import com.felayga.unpixeldungeon.levels.Level;
 import com.felayga.unpixeldungeon.scenes.GameScene;
 import com.watabou.utils.Callback;
@@ -79,7 +79,7 @@ public class TenguSprite extends MobSprite {
 	
 	@Override
 	public void attack( int cell ) {
-		if (!Level.adjacent( cell, ch.pos )) {
+		if (!Level.canReach( cell, ch.pos )) {
 			
 			((MissileSprite)parent.recycle( MissileSprite.class )).
 				reset( ch.pos, cell, new Shuriken(), new Callback() {

@@ -36,16 +36,12 @@ public class Quarterstaff extends SimpleMeleeWeapon {
 
 		name = "quarterstaff";
 		image = ItemSpriteSheet.QUARTERSTAFF;
+        pickupSound = Assets.SND_ITEM_WOOD;
 	}
 	
 	@Override
 	public String desc() {
 		return "A staff of hardwood, its ends are shod with iron.";
-	}
-
-	@Override
-	public void playPickupSound() {
-		Sample.INSTANCE.play( Assets.SND_ITEM_WOOD );
 	}
 
 }

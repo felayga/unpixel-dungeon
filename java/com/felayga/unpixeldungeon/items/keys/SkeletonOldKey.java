@@ -45,7 +45,7 @@ public class SkeletonOldKey extends OldKey {
 	}
 	
 	@Override
-	public boolean isSimilar( Item item ) {
+    protected boolean checkSimilarity(Item item) {
 		return false;
 	}
 	

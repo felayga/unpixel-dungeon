@@ -24,7 +24,6 @@
  */
 package com.felayga.unpixeldungeon.items.scrolls;
 
-import com.felayga.unpixeldungeon.actors.Actor;
 //import com.felayga.unpixeldungeon.actors.mobs.Mimic;
 import com.felayga.unpixeldungeon.items.Heap;
 import com.felayga.unpixeldungeon.levels.Level;
@@ -32,9 +31,9 @@ import com.felayga.unpixeldungeon.mechanics.GameTime;
 import com.watabou.noosa.audio.Sample;
 import com.felayga.unpixeldungeon.Assets;
 import com.felayga.unpixeldungeon.Dungeon;
-import com.felayga.unpixeldungeon.actors.buffs.Amok;
+import com.felayga.unpixeldungeon.actors.buffs.negative.Amok;
 import com.felayga.unpixeldungeon.actors.buffs.Buff;
-import com.felayga.unpixeldungeon.actors.buffs.Invisibility;
+import com.felayga.unpixeldungeon.actors.buffs.positive.Invisibility;
 import com.felayga.unpixeldungeon.actors.mobs.Mob;
 import com.felayga.unpixeldungeon.effects.Speck;
 import com.felayga.unpixeldungeon.utils.GLog;

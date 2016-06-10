@@ -92,26 +92,21 @@ public class Ballistica {
 		int dB;
 
 		if (dx > dy) {
-
 			stepA = stepX;
 			stepB = stepY * w;
 			dA = dx;
 			dB = dy;
-
 		} else {
-
 			stepA = stepY * w;
 			stepB = stepX;
 			dA = dy;
 			dB = dx;
-
 		}
 
 		int cell = from;
 
 		int err = dA / 2;
 		while (Level.insideMap(cell)) {
-
 			//if we're in a wall, collide with the previous cell along the path.
 			if (stopTerrain && cell != sourcePos && !Level.passable[cell] && !Level.avoid[cell]) {
 				collide(path.get(path.size() - 1));

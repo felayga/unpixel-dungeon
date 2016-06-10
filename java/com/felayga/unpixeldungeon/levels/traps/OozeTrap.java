@@ -27,7 +27,7 @@ package com.felayga.unpixeldungeon.levels.traps;
 import com.felayga.unpixeldungeon.actors.Actor;
 import com.felayga.unpixeldungeon.actors.Char;
 import com.felayga.unpixeldungeon.actors.buffs.Buff;
-import com.felayga.unpixeldungeon.actors.buffs.Ooze;
+import com.felayga.unpixeldungeon.actors.buffs.negative.Ooze;
 import com.felayga.unpixeldungeon.effects.Splash;
 import com.felayga.unpixeldungeon.sprites.TrapSprite;
 

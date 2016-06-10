@@ -24,7 +24,7 @@
  */
 package com.felayga.unpixeldungeon.items.armor.unused;
 /*
-import com.felayga.unpixeldungeon.actors.buffs.Invisibility;
+import com.felayga.unpixeldungeon.actors.buffs.positive.Invisibility;
 import com.felayga.unpixeldungeon.actors.hero.Hero;
 import com.felayga.unpixeldungeon.utils.GLog;
 import com.watabou.utils.Bundle;

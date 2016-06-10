@@ -25,20 +25,10 @@
 package com.felayga.unpixeldungeon.items.potions;
 
 import com.felayga.unpixeldungeon.Dungeon;
-import com.felayga.unpixeldungeon.actors.buffs.Bleeding;
 import com.felayga.unpixeldungeon.actors.buffs.Buff;
-import com.felayga.unpixeldungeon.actors.buffs.Cripple;
-import com.felayga.unpixeldungeon.actors.buffs.Hallucination;
-import com.felayga.unpixeldungeon.actors.buffs.Ooze;
-import com.felayga.unpixeldungeon.actors.buffs.Poison;
-import com.felayga.unpixeldungeon.actors.buffs.Vertigo;
-import com.felayga.unpixeldungeon.actors.buffs.Weakness;
+import com.felayga.unpixeldungeon.actors.buffs.negative.Hallucination;
 import com.felayga.unpixeldungeon.actors.hero.Hero;
-import com.felayga.unpixeldungeon.effects.Speck;
 import com.felayga.unpixeldungeon.mechanics.GameTime;
-import com.felayga.unpixeldungeon.sprites.CharSprite;
-import com.felayga.unpixeldungeon.utils.GLog;
-import com.watabou.utils.Random;
 
 public class PotionOfHallucination extends Potion {
 

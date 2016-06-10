@@ -32,9 +32,9 @@ import com.felayga.unpixeldungeon.actors.Char;
 import com.felayga.unpixeldungeon.actors.blobs.Acid;
 import com.felayga.unpixeldungeon.actors.blobs.Fire;
 import com.felayga.unpixeldungeon.actors.buffs.Buff;
-import com.felayga.unpixeldungeon.actors.buffs.Burning;
-import com.felayga.unpixeldungeon.actors.buffs.Encumbrance;
-import com.felayga.unpixeldungeon.actors.buffs.Ooze;
+import com.felayga.unpixeldungeon.actors.buffs.negative.Burning;
+import com.felayga.unpixeldungeon.actors.buffs.hero.Encumbrance;
+import com.felayga.unpixeldungeon.actors.buffs.negative.Ooze;
 import com.felayga.unpixeldungeon.mechanics.GameTime;
 import com.watabou.noosa.audio.Sample;
 import com.felayga.unpixeldungeon.Assets;
@@ -73,6 +73,39 @@ public class Potion extends Item {
 	protected boolean isHarmful = false;
 
 	private static final int NONRANDOMPOTIONSATENDOFLISTS = 1;
+    /*
+//todo: potions
+booze
+fruit juice
+see invisible
+sickness
+confusion
+extra healing
+hallucination
+healing
+restore ability
+sleeping
+blindness
+gain energy
+invisibility
+monster detection
+object detection
+enlightenment
+full healing
+levitation
+polymorph
+speed
+acid
+oil
+gain ability
+gain level
+paralysis
+
+frost
+purity
+toxic gas
+
+    */
 
 	private static final Class<?>[] potions = {
 			//RANDOMIZED
@@ -103,6 +136,7 @@ public class Potion extends Item {
 			"purple-red", "puce", "milky", "swirly", "bubbly",
 			"smoky", "cloudy", "effervescent", "black", "golden",
 			"brown", "fizzy", "dark", "white", "murky",
+            "dingy", "indigo", "creamy",
 			//NOT RANDOMIZED
 			"clear"
 	};
@@ -124,6 +158,7 @@ public class Potion extends Item {
 			ItemSpriteSheet.POTION_SWIRLY,
 			ItemSpriteSheet.POTION_BUBBLY,
 			ItemSpriteSheet.POTION_SMOKY,
+
 			ItemSpriteSheet.POTION_CLOUDY,
 			ItemSpriteSheet.POTION_EFFERVESCENT,
 			ItemSpriteSheet.POTION_BLACK,
@@ -133,6 +168,10 @@ public class Potion extends Item {
 			ItemSpriteSheet.POTION_DARK,
 			ItemSpriteSheet.POTION_WHITE,
 			ItemSpriteSheet.POTION_MURKY,
+            ItemSpriteSheet.POTION_DINGY,
+            ItemSpriteSheet.POTION_INDIGO,
+            ItemSpriteSheet.POTION_CREAMY,
+
 			//NOT RANDOMIZED
 			ItemSpriteSheet.POTION_CLEAR
 	};
@@ -159,8 +198,9 @@ public class Potion extends Item {
 
 	public Potion() {
 		super();
-
 		syncVisuals();
+
+        pickupSound = Assets.SND_ITEM_POTION;
 
 		stackable = true;
 		defaultAction = AC_DRINK;
@@ -328,11 +368,6 @@ public class Potion extends Item {
 
 	public String initials() {
 		return isKnown() ? initials : null;
-	}
-
-	@Override
-	public void playPickupSound() {
-		Sample.INSTANCE.play(Assets.SND_ITEM_POTION);
 	}
 
 	@Override

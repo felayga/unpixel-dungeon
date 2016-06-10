@@ -25,15 +25,9 @@
 
 package com.felayga.unpixeldungeon.items.weapon.melee.mob;
 
-import com.felayga.unpixeldungeon.Assets;
 import com.felayga.unpixeldungeon.actors.Char;
 import com.felayga.unpixeldungeon.actors.buffs.Buff;
-import com.felayga.unpixeldungeon.actors.buffs.Ooze;
-import com.felayga.unpixeldungeon.effects.CellEmitter;
-import com.felayga.unpixeldungeon.effects.particles.ElmoParticle;
-import com.felayga.unpixeldungeon.levels.Level;
-import com.watabou.noosa.Camera;
-import com.watabou.noosa.audio.Sample;
+import com.felayga.unpixeldungeon.actors.buffs.negative.Ooze;
 import com.watabou.utils.Random;
 
 /**

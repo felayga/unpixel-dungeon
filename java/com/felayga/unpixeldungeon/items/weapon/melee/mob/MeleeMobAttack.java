@@ -31,13 +31,18 @@ package com.felayga.unpixeldungeon.items.weapon.melee.mob;
 
 
 import com.felayga.unpixeldungeon.items.weapon.melee.MeleeWeapon;
+import com.felayga.unpixeldungeon.mechanics.MagicType;
 import com.felayga.unpixeldungeon.mechanics.WeaponSkill;
 import com.felayga.unpixeldungeon.sprites.ItemSpriteSheet;
 
 public class MeleeMobAttack extends MeleeWeapon {
-
     public MeleeMobAttack(long delay, int damageMin, int damageMax) {
+        this(delay, damageMin, damageMax, MagicType.Mundane);
+    }
+
+    public MeleeMobAttack(long delay, int damageMin, int damageMax, MagicType damageType) {
         super(WeaponSkill.None, delay, damageMin, damageMax );
+        this.damageType = damageType;
 
         name = "meleemobattack";
         image = ItemSpriteSheet.WEAPON;

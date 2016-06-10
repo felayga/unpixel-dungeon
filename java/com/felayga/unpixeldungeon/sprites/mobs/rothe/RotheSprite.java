@@ -43,10 +43,10 @@ public class RotheSprite extends MobSprite {
 
         int offset = index * FRAMES_PER_ROW;
 
-        idle = new Animation( 1, true );
+        idle = new Animation( 5, true );
         idle.frames( frames, offset + 0, offset + 0, offset + 0, offset + 1, offset + 2 );
 
-        run = new Animation( HeroSprite.RUN_FRAMERATE, true );
+        run = new Animation( 12, true );
         run.frames( frames, offset + 6, offset + 7, offset + 8, offset + 9, offset + 10, offset + 11 );
 
         die = new Animation( 20, false );

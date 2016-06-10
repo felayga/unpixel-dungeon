@@ -75,6 +75,8 @@ public class Armor extends EquippableItem {
 	public Armor(int armor, int armorBonusMaximum, int armorMagic, long speedModifier, long equipTime, int spellFailure) {
 		super(equipTime);
 
+        pickupSound = Assets.SND_ITEM_CLOTH;
+
 		price = 0;
 
 		this.armor = armor;
@@ -138,12 +140,15 @@ public class Armor extends EquippableItem {
 		super.onUnequip(owner);
 
 		if (owner instanceof Hero) {
-			setHeroSpriteArmor((HeroSprite)owner.sprite, false);
+			setHeroSpriteArmor((HeroSprite) owner.sprite, false);
 		}
 	}
 
 
 	protected void setHeroSpriteArmor(HeroSprite heroSprite, boolean equip) {
+        if (heroSprite == null) {
+            return;
+        }
 		if (equip) {
 			heroSprite.setArmor(this.textureIndex);
 		}
@@ -251,12 +256,6 @@ public class Armor extends EquippableItem {
 		}
 		
 		return info.toString();
-	}
-
-
-	@Override
-	public void playPickupSound() {
-		Sample.INSTANCE.play( Assets.SND_ITEM_CLOTH );
 	}
 
 	@Override

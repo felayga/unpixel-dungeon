@@ -25,13 +25,12 @@
 package com.felayga.unpixeldungeon.actors.blobs;
 
 import com.felayga.unpixeldungeon.items.potions.PotionOfFullHealing;
-import com.felayga.unpixeldungeon.mechanics.BUCStatus;
 import com.watabou.noosa.audio.Sample;
 import com.felayga.unpixeldungeon.Assets;
 import com.felayga.unpixeldungeon.Dungeon;
 import com.felayga.unpixeldungeon.Journal;
 import com.felayga.unpixeldungeon.Journal.Feature;
-import com.felayga.unpixeldungeon.actors.buffs.Hunger;
+import com.felayga.unpixeldungeon.actors.buffs.hero.Hunger;
 import com.felayga.unpixeldungeon.actors.hero.Hero;
 import com.felayga.unpixeldungeon.effects.BlobEmitter;
 import com.felayga.unpixeldungeon.effects.CellEmitter;
@@ -39,7 +38,6 @@ import com.felayga.unpixeldungeon.effects.Speck;
 import com.felayga.unpixeldungeon.effects.particles.ShaftParticle;
 import com.felayga.unpixeldungeon.items.DewVial;
 import com.felayga.unpixeldungeon.items.Item;
-import com.felayga.unpixeldungeon.items.potions.PotionOfHealing;
 import com.felayga.unpixeldungeon.utils.GLog;
 
 public class WaterOfHealth extends WellWater {

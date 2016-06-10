@@ -88,7 +88,7 @@ public class WellWater extends Blob {
 				} else if (oldItem.quantity() > 1) {
 
 					oldItem.quantity( oldItem.quantity() - 1 );
-					heap.drop( newItem );
+					heap.collect( newItem );
 					
 				} else {
 					heap.replace( oldItem, newItem );

@@ -236,6 +236,8 @@ public class CavesBossLevel extends Level {
             enteredArena = true;
             seal();
 
+            //todo: boss spawning
+            /*
             Mob boss = Bestiary.mob(Dungeon.depth, Dungeon.hero.level);
             boss.state = boss.WANDERING;
             do {
@@ -245,6 +247,7 @@ public class CavesBossLevel extends Level {
                             !outsideEntraceRoom(boss.pos) ||
                             Dungeon.visible[boss.pos]);
             GameScene.add(boss);
+            */
 
             set(arenaDoor, Terrain.WALL);
             GameScene.updateMap(arenaDoor);

@@ -24,14 +24,13 @@
  */
 package com.felayga.unpixeldungeon.items.scrolls;
 
-import com.felayga.unpixeldungeon.actors.Actor;
 import com.felayga.unpixeldungeon.actors.buffs.Buff;
 import com.felayga.unpixeldungeon.actors.buffs.FlavourBuff;
 import com.felayga.unpixeldungeon.mechanics.GameTime;
 import com.felayga.unpixeldungeon.ui.BuffIndicator;
 import com.watabou.noosa.audio.Sample;
 import com.felayga.unpixeldungeon.Assets;
-import com.felayga.unpixeldungeon.actors.buffs.Invisibility;
+import com.felayga.unpixeldungeon.actors.buffs.positive.Invisibility;
 import com.felayga.unpixeldungeon.actors.hero.Hero;
 import com.felayga.unpixeldungeon.effects.SpellSprite;
 import com.felayga.unpixeldungeon.effects.particles.EnergyParticle;

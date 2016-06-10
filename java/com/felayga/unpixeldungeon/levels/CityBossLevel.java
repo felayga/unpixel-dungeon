@@ -117,8 +117,8 @@ public class CityBossLevel extends Level {
         map[arenaDoor] = Terrain.DOOR;
 
         Painter.fill(this, LEFT, TOP + HALL_HEIGHT + 1, HALL_WIDTH, CHAMBER_HEIGHT, Terrain.EMPTY);
-        Painter.fill(this, LEFT, TOP + HALL_HEIGHT + 1, 1, CHAMBER_HEIGHT, Terrain.BOOKSHELF);
-        Painter.fill(this, LEFT + HALL_WIDTH - 1, TOP + HALL_HEIGHT + 1, 1, CHAMBER_HEIGHT, Terrain.BOOKSHELF);
+        Painter.fill(this, LEFT, TOP + HALL_HEIGHT + 1, 1, CHAMBER_HEIGHT, Terrain.BARRICADE);
+        Painter.fill(this, LEFT + HALL_WIDTH - 1, TOP + HALL_HEIGHT + 1, 1, CHAMBER_HEIGHT, Terrain.BARRICADE);
 
         entrance = (TOP + HALL_HEIGHT + 2 + Random.Int(CHAMBER_HEIGHT - 1)) * WIDTH + LEFT + (/*1 +*/ Random.Int(HALL_WIDTH - 2));
         map[entrance] = Terrain.ENTRANCE;
@@ -190,6 +190,8 @@ public class CityBossLevel extends Level {
             enteredArena = true;
             seal();
 
+            //todo: boss spawning
+            /*
             Mob boss = Bestiary.mob(Dungeon.depth, Dungeon.hero.level);
             boss.state = boss.WANDERING;
             int count = 0;
@@ -206,6 +208,7 @@ public class CityBossLevel extends Level {
                 boss.sprite.alpha(0);
                 boss.sprite.parent.add(new AlphaTweener(boss.sprite, 1, 0.1f));
             }
+            */
 
             set(arenaDoor, Terrain.LOCKED_DOOR);
             GameScene.updateMap(arenaDoor);
@@ -260,8 +263,6 @@ public class CityBossLevel extends Level {
             case Terrain.STATUE:
             case Terrain.STATUE_SP:
                 return "The statue depicts some dwarf standing in a heroic stance.";
-            case Terrain.BOOKSHELF:
-                return "The rows of books on different disciplines fill the bookshelf.";
             default:
                 return super.tileDesc(tile);
         }

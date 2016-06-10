@@ -24,17 +24,17 @@
  */
 package com.felayga.unpixeldungeon.items.food;
 
-import com.felayga.unpixeldungeon.actors.buffs.Hunger;
+import com.felayga.unpixeldungeon.actors.buffs.hero.Encumbrance;
 import com.felayga.unpixeldungeon.sprites.ItemSpriteSheet;
 
 public class Pasty extends Food {
 
     public Pasty()
 	{
+        super(750, Encumbrance.UNIT * 20);
+
 		name = "pasty";
 		image = ItemSpriteSheet.PASTY;
-		energy = 750;
-		hornValue = 5;
 
 		bones = true;
         price = 20;
@@ -42,7 +42,7 @@ public class Pasty extends Food {
 	
 	@Override
 	public String info() {
-		return "This is authentic Cornish pasty with traditional filling of beef and potato.";
+		return "This is authentic Cornish pasty with traditional filling of beef and potato." + super.info();
 	}
 
 }

@@ -80,14 +80,27 @@ public class SummoningTrap extends Trap {
             nMobs--;
         }
 
-        ArrayList<Mob> mobs = new ArrayList<>();
+        final ArrayList<Mob> mobs = new ArrayList<>();
 
-        for (Integer point : respawnPoints) {
-            Mob mob = Bestiary.mob(Dungeon.depth, Dungeon.hero.level);
-            mob.state = mob.WANDERING;
-            mob.pos = point;
-            GameScene.add(mob, DELAY);
-            mobs.add(mob);
+        for (final Integer point : respawnPoints) {
+            Bestiary.spawn(Dungeon.depth, Dungeon.hero.level, true, new Bestiary.SpawnParams() {
+                @Override
+                public Level level() {
+                    return Dungeon.level;
+                }
+
+                @Override
+                public int position() {
+                    return point;
+                }
+
+                @Override
+                public void initialize(Mob mob) {
+                    mob.state = mob.WANDERING;
+                    GameScene.add(mob, DELAY);
+                    mobs.add(mob);
+                }
+            });
         }
 
         //important to process the visuals and pressing of cells last, so spawned mobs have a chance to occupy cells first

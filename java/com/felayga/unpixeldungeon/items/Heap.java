@@ -28,32 +28,25 @@ import com.felayga.unpixeldungeon.Assets;
 import com.felayga.unpixeldungeon.Badges;
 import com.felayga.unpixeldungeon.Dungeon;
 import com.felayga.unpixeldungeon.Statistics;
-import com.felayga.unpixeldungeon.actors.Actor;
-import com.felayga.unpixeldungeon.actors.buffs.Buff;
-import com.felayga.unpixeldungeon.actors.buffs.Burning;
-import com.felayga.unpixeldungeon.actors.buffs.Frost;
 import com.felayga.unpixeldungeon.actors.hero.Hero;
 import com.felayga.unpixeldungeon.effects.CellEmitter;
 import com.felayga.unpixeldungeon.effects.Speck;
 import com.felayga.unpixeldungeon.effects.Splash;
 import com.felayga.unpixeldungeon.effects.particles.ElmoParticle;
-import com.felayga.unpixeldungeon.effects.particles.FlameParticle;
 import com.felayga.unpixeldungeon.effects.particles.ShadowParticle;
 import com.felayga.unpixeldungeon.items.artifacts.AlchemistsToolkit;
+import com.felayga.unpixeldungeon.items.bags.IBag;
+import com.felayga.unpixeldungeon.items.bags.ItemIterator;
 import com.felayga.unpixeldungeon.items.food.Blandfruit;
-import com.felayga.unpixeldungeon.items.food.ChargrilledMeat;
-import com.felayga.unpixeldungeon.items.food.FrozenCarpaccio;
-import com.felayga.unpixeldungeon.items.food.MysteryMeat;
 import com.felayga.unpixeldungeon.items.potions.Potion;
 import com.felayga.unpixeldungeon.items.potions.PotionOfExperience;
-import com.felayga.unpixeldungeon.items.potions.PotionOfHealing;
 import com.felayga.unpixeldungeon.items.scrolls.Scroll;
 import com.felayga.unpixeldungeon.mechanics.BUCStatus;
-import com.felayga.unpixeldungeon.mechanics.GameTime;
 import com.felayga.unpixeldungeon.mechanics.MagicType;
 import com.felayga.unpixeldungeon.plants.Plant.Seed;
 import com.felayga.unpixeldungeon.sprites.ItemSprite;
 import com.felayga.unpixeldungeon.sprites.ItemSpriteSheet;
+import com.felayga.unpixeldungeon.ui.Icons;
 import com.felayga.unpixeldungeon.utils.GLog;
 import com.watabou.noosa.audio.Sample;
 import com.watabou.utils.Bundlable;
@@ -62,9 +55,124 @@ import com.watabou.utils.Random;
 
 import java.util.Collection;
 import java.util.Collections;
+import java.util.Iterator;
 import java.util.LinkedList;
 
-public class Heap implements Bundlable {
+public class Heap implements Bundlable, IBag {
+    //region IBag
+
+    public Item self() {
+        return null;
+    }
+    public String action() { return null; }
+    public String getDisplayName() {
+        return "ground";
+    }
+    public Icons tabIcon() {
+        return Icons.FLOORHEAP;
+    }
+
+    public void onWeightChanged(int change) {
+
+    }
+
+    public boolean tryMergeStack(Item test) {
+        return collect(test);
+    }
+
+    public boolean collect(Item item) {
+        boolean retval = false;
+
+        if (item.stackable) {
+            for (Item subitem : items_derp) {
+                if (item.isStackableWith(subitem)) {
+                    subitem.quantity(subitem.quantity() + item.quantity());
+                    subitem.updateQuickslot();
+
+                    onWeightChanged(item.quantity() * item.weight());
+
+                    updateImage();
+                    retval = true;
+                }
+            }
+        }
+
+        if (!retval) {
+            retval = items_derp.add(item);
+            item.parent(this);
+        }
+
+        if (retval) {
+            updateImage();
+        }
+
+        return retval;
+    }
+
+    public boolean contains(Item item) {
+        for (Item i : items_derp) {
+            if (i == item) {
+                return true;
+            } else if (i instanceof IBag && ((IBag) i).contains(item)) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    public Item remove(Item item) {
+        if (items_derp.contains(item)) {
+            item.parent(null);
+            items_derp.remove(item);
+
+            updateImage();
+            return item;
+        }
+
+        return null;
+    }
+
+    public Item remove(Item item, int quantity) {
+        if (item.quantity() > quantity) {
+            try {
+                //pssh, who needs copy constructors?
+                Item detached = item.getClass().newInstance();
+                Bundle copy = new Bundle();
+                item.storeInBundle(copy);
+                detached.restoreFromBundle(copy);
+                detached.quantity(quantity);
+                detached.onDetach();
+
+                item.quantity(item.quantity() - quantity);
+                onWeightChanged(-item.weight() * quantity);
+
+                updateImage();
+                return detached;
+            } catch (Exception e) {
+                return null;
+            }
+        } else if (item.quantity() == quantity) {
+            return remove(item);
+        }
+
+        return null;
+    }
+
+    public boolean locked() { return false; }
+
+    public Item randomItem() {
+        return Random.element(items_derp);
+    }
+
+    public Iterator<Item> iterator() {
+        return iterator(true);
+    }
+
+    public Iterator<Item> iterator(boolean allowNested) {
+        return new ItemIterator(this, items_derp, allowNested);
+    }
+
+    //endregion
 
 	private static final String TXT_MIMIC = "This is a mimic!";
 
@@ -84,17 +192,20 @@ public class Heap implements Bundlable {
 	public Type type = Type.HEAP;
 	
 	public int pos = 0;
+    public int pos() {
+        return pos;
+    }
 	
 	public ItemSprite sprite;
 	public boolean seen = false;
 	
-	public LinkedList<Item> items = new LinkedList<Item>();
+	private LinkedList<Item> items_derp = new LinkedList<Item>();
 	
 	public int image() {
 		switch (type) {
 		case HEAP:
 		case FOR_SALE:
-			return size() > 0 ? items.peek().image() : 0;
+			return size() > 0 ? items_derp.peek().image() : 0;
 		case CHEST:
 		case MIMIC:
 			return ItemSpriteSheet.CHEST;
@@ -114,7 +225,7 @@ public class Heap implements Bundlable {
 	}
 	
 	public ItemSprite.Glowing glowing() {
-		return (type == Type.HEAP || type == Type.FOR_SALE) && items.size() > 0 ? items.peek().glowing() : null;
+		return (type == Type.HEAP || type == Type.FOR_SALE) && items_derp.size() > 0 ? items_derp.peek().glowing() : null;
 	}
 	
 	public void open( Hero hero ) {
@@ -135,7 +246,7 @@ public class Heap implements Bundlable {
 		case SKELETON:
 		case REMAINS:
 			CellEmitter.center( pos ).start( Speck.factory( Speck.RATTLE ), 0.1f, 3 );
-			for (Item item : items) {
+			for (Item item : items_derp) {
 				if (item.bucStatus == BUCStatus.Cursed) {
 					//todo: wraith spawn from opening remains maybe?
 					if (false/*Wraith.spawnAt( pos ) == null*/) {
@@ -159,19 +270,22 @@ public class Heap implements Bundlable {
 	}
 	
 	public int size() {
-		return items.size();
+        if (items_derp != null) {
+            return items_derp.size();
+        }
+
+        return 0;
 	}
 	
 	public Item pickUp() {
-		
-		Item item = items.removeFirst();
+		Item item = remove(items_derp.get(0));
 		updateImage();
 		
 		return item;
 	}
 
 	public void updateImage() {
-		if (items.isEmpty()) {
+		if (size() <= 0) {
 			destroy();
 		}
 		else if (sprite != null) {
@@ -180,44 +294,13 @@ public class Heap implements Bundlable {
 	}
 	
 	public Item peek() {
-		return items.peek();
+		return items_derp.peek();
 	}
-	
-	public void drop( Item item ) {
-		
-		if (item.stackable && type != Type.FOR_SALE) {
-			
-			for (Item i : items) {
-				if (i.isSimilar( item )) {
-					i.quantity += item.quantity;
-					item = i;
-					break;
-				}
-			}
 
-			items.remove( item );
-			
-		}
-		
-		if (item instanceof Dewdrop) {
-			items.add( item );
-		} else {
-			items.addFirst( item );
-		}
-		
-		if (sprite != null) {
-			if (type == Type.HEAP || type == Type.FOR_SALE)
-				sprite.view( items.peek() );
-			else
-				sprite.view( image(), glowing() );
-		}
-	}
-	
 	public void replace( Item a, Item b ) {
-		int index = items.indexOf( a );
-		if (index != -1) {
-			items.remove( index );
-			items.add( index, b );
+        if (contains(a)) {
+            remove(a);
+            collect(b);
 		}
 	}
 	
@@ -241,19 +324,24 @@ public class Heap implements Bundlable {
 		
 		boolean burnt = false;
 		boolean evaporated = false;
-		
-		for (Item item : items.toArray( new Item[0] )) {
+
+        Iterator<Item> iterator = iterator(false);
+        while (iterator.hasNext()) {
+            Item item = iterator.next();
+
 			if (item instanceof Scroll) {
-				items.remove( item );
+				iterator.remove();
 				burnt = true;
 			} else if (item instanceof Dewdrop) {
-				items.remove( item );
+                iterator.remove();
 				evaporated = true;
+                /*
 			} else if (item instanceof MysteryMeat) {
 				replace( item, ChargrilledMeat.cook( (MysteryMeat)item ) );
 				burnt = true;
+				*/
 			} else if (item instanceof Bomb) {
-				items.remove( item );
+                iterator.remove();
 				((Bomb) item).explode( pos );
 				//stop processing the burning, it will be replaced by the explosion.
 				return;
@@ -270,7 +358,7 @@ public class Heap implements Bundlable {
 				}
 			}
 			
-			if (isEmpty()) {
+			if (size() <= 0) {
 				destroy();
 			} else if (sprite != null) {
 				sprite.view( image(), glowing() );
@@ -291,31 +379,30 @@ public class Heap implements Bundlable {
 		}
 
 		if (type != Type.HEAP) {
-
 			return;
-
 		} else {
+            Iterator<Item> iterator = iterator(false);
 
-			for (Item item : items.toArray( new Item[0] )) {
+			while (iterator.hasNext()) {
+                Item item = iterator.next();
 
 				if (item instanceof Potion) {
-					items.remove( item );
+					iterator.remove();
 					((Potion) item).shatter(pos);
-
 				} else if (item instanceof Bomb) {
-					items.remove( item );
+					iterator.remove();
 					((Bomb) item).explode(pos);
 					//stop processing current explosion, it will be replaced by the new one.
 					return;
-
 				//unique and upgraded items can endure the blast
-				} else if (!(item.level > 0 || item.unique))
-					items.remove( item );
-
+				} else if (!(item.level > 0 || item.unique)) {
+                    iterator.remove();
+                }
 			}
 
-			if (items.isEmpty())
-				destroy();
+			if (items_derp.isEmpty()) {
+                destroy();
+            }
 		}
 	}
 	
@@ -337,12 +424,21 @@ public class Heap implements Bundlable {
 		}
 		
 		boolean frozen = false;
-		for (Item item : items.toArray( new Item[0] )) {
+
+        Iterator<Item> iterator = iterator(false);
+
+		while (iterator.hasNext()) {
+            Item item = iterator.next();
+
+            /*
 			if (item instanceof MysteryMeat) {
 				replace( item, FrozenCarpaccio.cook( (MysteryMeat)item ) );
 				frozen = true;
-			} else if (item instanceof Potion) {
-				items.remove(item);
+			} else
+			*/
+
+            if (item instanceof Potion) {
+				iterator.remove();
 				((Potion) item).shatter(pos);
 				frozen = true;
 			} else if (item instanceof Bomb){
@@ -352,7 +448,7 @@ public class Heap implements Bundlable {
 		}
 		
 		if (frozen) {
-			if (isEmpty()) {
+			if (size() <= 0) {
 				destroy();
 			} else if (sprite != null) {
 				sprite.view( image(), glowing() );
@@ -361,21 +457,20 @@ public class Heap implements Bundlable {
 	}
 	
 	public Item transmute() {
-		
 		CellEmitter.get( pos ).burst( Speck.factory( Speck.BUBBLE ), 3 );
-		Splash.at( pos, 0xFFFFFF, 3 );
+		Splash.at(pos, 0xFFFFFF, 3);
 		
-		float chances[] = new float[items.size()];
+		float chances[] = new float[items_derp.size()];
 		int count = 0;
 
 
-		if (items.size() == 2 && items.get(0) instanceof Seed && items.get(1) instanceof Blandfruit ) {
+		if (items_derp.size() == 2 && items_derp.get(0) instanceof Seed && items_derp.get(1) instanceof Blandfruit ) {
 
 			Sample.INSTANCE.play( Assets.SND_PUFF );
 			CellEmitter.center( pos ).burst( Speck.factory( Speck.EVOKE ), 3 );
 
 			Blandfruit result = new Blandfruit();
-			result.cook((Seed)items.get(0));
+			result.cook((Seed)items_derp.get(0));
 
 			destroy();
 
@@ -384,10 +479,15 @@ public class Heap implements Bundlable {
 		}
 		
 		int index = 0;
-		for (Item item : items) {
+
+        Iterator<Item> iterator = iterator(false);
+
+		while (iterator.hasNext()) {
+            Item item = iterator.next();
+
 			if (item instanceof Seed) {
-				count += item.quantity;
-				chances[index++] = item.quantity;
+				count += item.quantity();
+				chances[index++] = item.quantity();
 			}  else{
 				count = 0;
 				break;
@@ -418,7 +518,7 @@ public class Heap implements Bundlable {
 
 			} else {
 
-				Seed proto = (Seed)items.get( Random.chances( chances ) );
+				Seed proto = (Seed)items_derp.get( Random.chances( chances ) );
 				Class<? extends Item> itemClass = proto.alchemyClass;
 
 				destroy();
@@ -459,15 +559,11 @@ public class Heap implements Bundlable {
 	
 	public static void burnFX( int pos ) {
 		CellEmitter.get( pos ).burst( ElmoParticle.FACTORY, 6 );
-		Sample.INSTANCE.play( Assets.SND_BURNING );
+		Sample.INSTANCE.play(Assets.SND_BURNING);
 	}
 	
 	public static void evaporateFX( int pos ) {
 		CellEmitter.get( pos ).burst( Speck.factory( Speck.STEAM ), 5 );
-	}
-	
-	public boolean isEmpty() {
-		return items == null || items.size() == 0;
 	}
 	
 	public void destroy() {
@@ -475,8 +571,10 @@ public class Heap implements Bundlable {
 		if (sprite != null) {
 			sprite.kill();
 		}
-		items.clear();
-		items = null;
+        if (items_derp != null) {
+            items_derp.clear();
+        }
+        items_derp = null;
 	}
 
 	private static final String POS		= "pos";
@@ -487,11 +585,18 @@ public class Heap implements Bundlable {
 	@SuppressWarnings("unchecked")
 	@Override
 	public void restoreFromBundle( Bundle bundle ) {
-		pos = bundle.getInt( POS );
-		seen = bundle.getBoolean( SEEN );
-		type = Type.valueOf( bundle.getString( TYPE ) );
-		items = new LinkedList<Item>( (Collection<Item>) ((Collection<?>) bundle.getCollection( ITEMS )) );
-		items.removeAll(Collections.singleton(null));
+		pos = bundle.getInt(POS);
+		seen = bundle.getBoolean(SEEN);
+		type = Type.valueOf(bundle.getString(TYPE));
+
+        items_derp = new LinkedList<Item>();
+
+        Collection<Item> restored = (Collection<Item>) ((Collection<?>) bundle.getCollection( ITEMS ));
+        restored.removeAll(Collections.singleton(null));
+
+        for (Item item : restored) {
+            collect(item);
+        }
 	}
 
 	@Override
@@ -499,7 +604,7 @@ public class Heap implements Bundlable {
 		bundle.put( POS, pos );
 		bundle.put( SEEN, seen );
 		bundle.put( TYPE, type.toString() );
-		bundle.put( ITEMS, items );
+		bundle.put( ITEMS, items_derp );
 	}
 	
 }

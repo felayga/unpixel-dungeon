@@ -26,7 +26,7 @@ package com.felayga.unpixeldungeon.items.scrolls;
 
 import com.watabou.noosa.audio.Sample;
 import com.felayga.unpixeldungeon.Assets;
-import com.felayga.unpixeldungeon.actors.buffs.Invisibility;
+import com.felayga.unpixeldungeon.actors.buffs.positive.Invisibility;
 import com.felayga.unpixeldungeon.items.Item;
 import com.felayga.unpixeldungeon.scenes.GameScene;
 import com.felayga.unpixeldungeon.windows.WndBackpack;

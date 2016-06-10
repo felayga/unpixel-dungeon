@@ -28,6 +28,7 @@ import java.util.Locale;
 
 import com.felayga.unpixeldungeon.sprites.hero.HeroSprite;
 import com.felayga.unpixeldungeon.ui.Window;
+import com.felayga.unpixeldungeon.utils.GLog;
 import com.felayga.unpixeldungeon.windows.IconTitle;
 import com.felayga.unpixeldungeon.windows.WndCatalogus;
 import com.felayga.unpixeldungeon.windows.WndInfoBuff;
@@ -230,7 +231,7 @@ public class WndHero extends WndTabbed {
 
 				txt = PixelScene.createText( buff.toString(), 8 );
 				txt.x = icon.width + GAP;
-				txt.y = this.y + (int)(icon.height - txt.baseLine()) / 2;
+				txt.y = icon.y + (int)(icon.height - txt.baseLine()) / 2;
 				add( txt );
 
 			}
@@ -240,7 +241,7 @@ public class WndHero extends WndTabbed {
 				super.layout();
 				icon.y = this.y;
 				txt.x = icon.width + GAP;
-				txt.y = pos + (int)(icon.height - txt.baseLine()) / 2;
+				txt.y = icon.y + (int)(icon.height - txt.baseLine()) / 2;
 			}
 
 			@Override

@@ -107,7 +107,7 @@ public class CapeOfThorns extends Artifact_old {
 
 				if (attacker instanceof Char) {
 					Char c = (Char)attacker;
-					if (Level.adjacent(c.pos, defender.pos)) {
+					if (Level.canReach(c.pos, defender.pos)) {
 						c.damage(deflected, MagicType.Mundane, null);
 					}
 				}

@@ -48,7 +48,7 @@ public class Potential extends Glyph {
 
 		int level = Math.max( 0, armor.level );
 		
-		if (Level.adjacent( attacker.pos, defender.pos ) && Random.Int( level + 7 ) >= 6) {
+		if (Level.canReach( attacker.pos, defender.pos ) && Random.Int( level + 7 ) >= 6) {
 			
 			int dmg = Random.IntRange( 1, damage );
 			attacker.damage( dmg, MagicType.Shock, null );

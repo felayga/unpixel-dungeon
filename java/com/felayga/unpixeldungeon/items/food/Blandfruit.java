@@ -24,28 +24,22 @@
  */
 package com.felayga.unpixeldungeon.items.food;
 
-import com.felayga.unpixeldungeon.Assets;
-import com.felayga.unpixeldungeon.Badges;
-import com.felayga.unpixeldungeon.Statistics;
-import com.felayga.unpixeldungeon.actors.buffs.Barkskin;
-import com.felayga.unpixeldungeon.actors.buffs.Bleeding;
+import com.felayga.unpixeldungeon.actors.buffs.hero.Encumbrance;
+import com.felayga.unpixeldungeon.actors.buffs.positive.Barkskin;
+import com.felayga.unpixeldungeon.actors.buffs.negative.Bleeding;
 import com.felayga.unpixeldungeon.actors.buffs.Buff;
-import com.felayga.unpixeldungeon.actors.buffs.Cripple;
-import com.felayga.unpixeldungeon.actors.buffs.EarthImbue;
-import com.felayga.unpixeldungeon.actors.buffs.FireImbue;
-import com.felayga.unpixeldungeon.actors.buffs.Hunger;
-import com.felayga.unpixeldungeon.actors.buffs.Invisibility;
-import com.felayga.unpixeldungeon.actors.buffs.Poison;
-import com.felayga.unpixeldungeon.actors.buffs.ToxicImbue;
-import com.felayga.unpixeldungeon.actors.buffs.Weakness;
+import com.felayga.unpixeldungeon.actors.buffs.negative.Cripple;
+import com.felayga.unpixeldungeon.actors.buffs.hero.EarthImbue;
+import com.felayga.unpixeldungeon.actors.buffs.hero.FireImbue;
+import com.felayga.unpixeldungeon.actors.buffs.positive.Invisibility;
+import com.felayga.unpixeldungeon.actors.buffs.negative.Poison;
+import com.felayga.unpixeldungeon.actors.buffs.hero.ToxicImbue;
+import com.felayga.unpixeldungeon.actors.buffs.negative.Weakness;
 import com.felayga.unpixeldungeon.actors.hero.Hero;
 import com.felayga.unpixeldungeon.actors.mobs.npcs.Wandmaker;
 import com.felayga.unpixeldungeon.effects.Speck;
-import com.felayga.unpixeldungeon.effects.SpellSprite;
 import com.felayga.unpixeldungeon.items.Item;
 import com.felayga.unpixeldungeon.items.potions.*;
-import com.felayga.unpixeldungeon.items.scrolls.ScrollOfRecharging;
-import com.felayga.unpixeldungeon.mechanics.GameTime;
 import com.felayga.unpixeldungeon.plants.Blindweed;
 import com.felayga.unpixeldungeon.plants.Dreamfoil;
 import com.felayga.unpixeldungeon.plants.Earthroot;
@@ -59,7 +53,6 @@ import com.felayga.unpixeldungeon.plants.Sungrass;
 import com.felayga.unpixeldungeon.sprites.ItemSprite;
 import com.felayga.unpixeldungeon.sprites.ItemSpriteSheet;
 import com.felayga.unpixeldungeon.utils.GLog;
-import com.watabou.noosa.audio.Sample;
 import com.watabou.utils.Bundle;
 import com.watabou.utils.Random;
 
@@ -73,18 +66,18 @@ public class Blandfruit extends Food {
 
     public Blandfruit()
 	{
+        super(250, Encumbrance.UNIT * 20);
+
 		name = "Blandfruit";
 		stackable = true;
 		image = ItemSpriteSheet.BLANDFRUIT;
-		energy = 250;
-		hornValue = 6; //only applies when blandfruit is cooked
 
 		bones = true;
         price = 20;
 	}
 
 	@Override
-	public boolean isSimilar( Item item ) {
+    protected boolean checkSimilarity(Item item) {
 		if (item instanceof Blandfruit){
 			if (potionAttrib == null){
 				if (((Blandfruit)item).potionAttrib == null)
@@ -97,101 +90,54 @@ public class Blandfruit extends Food {
 		return false;
 	}
 
-	@Override
-	public boolean execute( Hero hero, String action ) {
-		if (action.equals( AC_EAT )){
-			if (potionAttrib == null) {
-				hero.belongings.remove(this, 1);
+    @Override
+    protected void doneEating(Hero hero, boolean stuffed) {
+        super.doneEating(hero, stuffed);
 
-				((Hunger) hero.buff(Hunger.class)).satisfy_new(energy);
-				GLog.i(message);
-
-				hero.sprite.operate(hero.pos);
-				hero.busy();
-				SpellSprite.show(hero, SpellSprite.FOOD);
-				Sample.INSTANCE.play(Assets.SND_EAT);
-
-				hero.spend(GameTime.TICK, false);
-
-				Statistics.foodEaten++;
-				Badges.validateFoodEaten();
-			} else {
-				((Hunger) hero.buff(Hunger.class)).satisfy_new(energy * 2);
-
-				hero.belongings.remove(this, 1);
-
-				hero.spend(GameTime.TICK, false);
-				hero.busy();
-
-				if (potionAttrib instanceof PotionOfFrost) {
-					GLog.i("the Icefruit tastes a bit like Frozen Carpaccio.");
-					switch (Random.Int(5)) {
-						case 0:
-							GLog.i("You see your hands turn invisible!");
-							Buff.affect(hero, Invisibility.class, Invisibility.DURATION);
-							break;
-						case 1:
-							GLog.i("You feel your skin harden!");
-							Buff.affect(hero, Barkskin.class).level(hero.HT / 4);
-							break;
-						case 2:
-							GLog.i("Refreshing!");
-							Buff.detach(hero, Poison.class);
-							Buff.detach(hero, Cripple.class);
-							Buff.detach(hero, Weakness.class);
-							Buff.detach(hero, Bleeding.class);
-							break;
-						case 3:
-							GLog.i("You feel better!");
-							if (hero.HP < hero.HT) {
-								hero.HP = Math.min(hero.HP + hero.HT / 4, hero.HT);
-								hero.sprite.emitter().burst(Speck.factory(Speck.HEALING), 1);
-							}
-							break;
-					}
-				} else if (potionAttrib instanceof PotionOfLiquidFlame){
-					GLog.i("You feel a great fire burning within you!");
-					Buff.affect(hero, FireImbue.class).set(FireImbue.DURATION);
-				} else if (potionAttrib instanceof PotionOfToxicGas) {
-					GLog.i("You are imbued with vile toxic power!");
-					Buff.affect(hero, ToxicImbue.class).set(ToxicImbue.DURATION);
-				} else if (potionAttrib instanceof PotionOfParalyticGas) {
-					GLog.i("You feel the power of the earth coursing through you!");
-					Buff.affect(hero, EarthImbue.class, EarthImbue.DURATION);
-				} else
-					potionAttrib.apply(hero);
-
-				Sample.INSTANCE.play( Assets.SND_EAT );
-				SpellSprite.show(hero, SpellSprite.FOOD);
-				hero.sprite.operate(hero.pos);
-
-				switch (hero.heroClass) {
-					case WARRIOR:
-						if (hero.HP < hero.HT) {
-							hero.HP = Math.min( hero.HP + 5, hero.HT );
-							hero.sprite.emitter().burst( Speck.factory(Speck.HEALING), 1 );
-						}
-						break;
-					case MAGE:
-						//1 charge
-						Buff.affect(hero, ScrollOfRecharging.Recharging.class, GameTime.TICK * 4);
-						ScrollOfRecharging.charge(hero);
-						break;
-					case ROGUE:
-					case HUNTRESS:
-						break;
-				}
-			}
-
-			return false;
-		} else {
-			return super.execute(hero, action);
-		}
-	}
+        if (potionAttrib != null) {
+            if (potionAttrib instanceof PotionOfFrost) {
+                GLog.i("the Icefruit tastes a bit like Frozen Carpaccio.");
+                switch (Random.Int(5)) {
+                    case 0:
+                        GLog.i("You see your hands turn invisible!");
+                        Buff.affect(hero, Invisibility.class, Invisibility.DURATION);
+                        break;
+                    case 1:
+                        GLog.i("You feel your skin harden!");
+                        Buff.affect(hero, Barkskin.class).level(hero.HT / 4);
+                        break;
+                    case 2:
+                        GLog.i("Refreshing!");
+                        Buff.detach(hero, Poison.class);
+                        Buff.detach(hero, Cripple.class);
+                        Buff.detach(hero, Weakness.class);
+                        Buff.detach(hero, Bleeding.class);
+                        break;
+                    case 3:
+                        GLog.i("You feel better!");
+                        if (hero.HP < hero.HT) {
+                            hero.HP = Math.min(hero.HP + hero.HT / 4, hero.HT);
+                            hero.sprite.emitter().burst(Speck.factory(Speck.HEALING), 1);
+                        }
+                        break;
+                }
+            } else if (potionAttrib instanceof PotionOfLiquidFlame){
+                GLog.i("You feel a great fire burning within you!");
+                Buff.affect(hero, FireImbue.class).set(FireImbue.DURATION);
+            } else if (potionAttrib instanceof PotionOfToxicGas) {
+                GLog.i("You are imbued with vile toxic power!");
+                Buff.affect(hero, ToxicImbue.class).set(ToxicImbue.DURATION);
+            } else if (potionAttrib instanceof PotionOfParalyticGas) {
+                GLog.i("You feel the power of the earth coursing through you!");
+                Buff.affect(hero, EarthImbue.class, EarthImbue.DURATION);
+            } else
+                potionAttrib.apply(hero);
+        }
+    }
 
 	@Override
 	public String info() {
-		return info;
+		return info + super.info();
 	}
 
 	public Item cook(Seed seed){

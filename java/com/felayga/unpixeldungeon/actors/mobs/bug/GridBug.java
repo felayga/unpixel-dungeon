@@ -24,12 +24,12 @@
  */
 package com.felayga.unpixeldungeon.actors.mobs.bug;
 
-import com.felayga.unpixeldungeon.actors.buffs.Encumbrance;
+import com.felayga.unpixeldungeon.actors.buffs.hero.Encumbrance;
 import com.felayga.unpixeldungeon.actors.mobs.Mob;
 import com.felayga.unpixeldungeon.items.weapon.melee.mob.MeleeMobAttack;
+import com.felayga.unpixeldungeon.mechanics.CorpseEffect;
 import com.felayga.unpixeldungeon.mechanics.GameTime;
 import com.felayga.unpixeldungeon.mechanics.MagicType;
-import com.felayga.unpixeldungeon.mechanics.Roll;
 import com.felayga.unpixeldungeon.sprites.mobs.bug.GridBugSprite;
 
 public class GridBug extends Mob {
@@ -49,6 +49,7 @@ public class GridBug extends Mob {
         weight = Encumbrance.UNIT * 15;
         nutrition = 0;
         immunityMagical = MagicType.None.value;
+        corpseEffects = CorpseEffect.None.value;
 
         belongings.collectEquip(new MeleeMobAttack(GameTime.TICK, 1, 1));
     }

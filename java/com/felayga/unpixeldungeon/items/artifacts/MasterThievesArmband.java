@@ -31,7 +31,7 @@ import com.watabou.utils.Random;
 public class MasterThievesArmband extends Artifact_old {
 
 	{
-		name = "Master Thieves' Armband";
+		name = "Master Thieves' Bracer";
 		image = ItemSpriteSheet.ARTIFACT_ARMBAND;
 
 		level = 0;
@@ -40,7 +40,12 @@ public class MasterThievesArmband extends Artifact_old {
 		charge = 0;
 	}
 
-	private int exp = 0;
+    @Override
+    public Slot[] getSlots() {
+        return new Slot[]{ Slot.Gloves };
+    }
+
+    private int exp = 0;
 
 	@Override
 	protected ArtifactBuff passiveBuff() {
@@ -49,12 +54,12 @@ public class MasterThievesArmband extends Artifact_old {
 
 	@Override
 	public String desc() {
-		String desc = "This purple velvet armband bears the mark of a master thief. This doesn't belong to you, but " +
+		String desc = "This purple velvet bracer bears the mark of a master thief. This doesn't belong to you, but " +
 				"you doubt it belonged to the person you took it from either.";
 
 		if ( isEquipped (Dungeon.hero) )
-			desc += "\n\nWith the armband around your wrist you feel more dexterous and cunning. Every piece of gold " +
-					"you find makes you desire others property more. " +
+			desc += "\n\nWith the bracer around your wrist you feel more dexterous and cunning. Every piece of gold " +
+					"you find makes you desire others' property more. " +
 					"You wonder if Pixel Mart accepts the five finger discount...";
 
 		return desc;

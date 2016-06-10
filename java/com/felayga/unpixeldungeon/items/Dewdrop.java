@@ -47,7 +47,6 @@ public class Dewdrop extends Item {
 	
 	@Override
 	public boolean doPickUp( Hero hero ) {
-		
 		DewVial vial = hero.belongings.getItem( DewVial.class );
 		
 		if (hero.HP < hero.HT || vial == null || vial.isFull()) {
@@ -57,7 +56,7 @@ public class Dewdrop extends Item {
 				value+=2;
 			}
 			
-			int effect = Math.min( hero.HT - hero.HP, value * quantity );
+			int effect = Math.min( hero.HT - hero.HP, value * quantity() );
 			if (effect > 0) {
 				hero.HP += effect;
 				hero.sprite.emitter().burst( Speck.factory( Speck.HEALING ), 1 );
@@ -81,8 +80,8 @@ public class Dewdrop extends Item {
 
 	@Override
 	//max of one dew in a stack
-	public Item quantity(int value) {
-		quantity = Math.min( value, 1);
+	public Item setQuantity(int value) {
+		quantity(Math.min(value, 1));
 		return this;
 	}
 

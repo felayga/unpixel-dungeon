@@ -35,6 +35,8 @@ import com.felayga.unpixeldungeon.ui.ItemSlot;
 import com.felayga.unpixeldungeon.ui.RedButton;
 import com.felayga.unpixeldungeon.ui.Window;
 
+import java.util.ArrayList;
+
 public class WndItem extends Window {
 
 	private static final float BUTTON_WIDTH		= 36;
@@ -44,7 +46,7 @@ public class WndItem extends Window {
 
 	private static final int WIDTH = 120;
 
-	public WndItem( final WndBackpack owner, final Item item ) {
+	public WndItem( final WndTabbed owner, final Item item, final WndBackpack.Listener listener ) {
 		super();
 
 		IconTitle titlebar = new IconTitle( item );
@@ -67,44 +69,52 @@ public class WndItem extends Window {
 		float y = info.y + info.height() + GAP;
 		float x = 0;
 
-		if (Dungeon.hero.isAlive() && owner != null) {
-			for (final String action:item.actions( Dungeon.hero )) {
-				RedButton btn = new RedButton( action ) {
-					@Override
-					protected void onClick() {
-						hide();
-						owner.hide();
+		if (Dungeon.hero.isAlive()) {
+            boolean external = listener != null;
 
-						if (action == Food.AC_EAT) {
-							Dungeon.hero.curAction = new HeroAction.EatItem(item, action);
-							GLog.d("wnditem deposit action");
-							Dungeon.hero.motivate(true);
-							//while (Dungeon.hero.act()) ;
-						}
-						else {
-							item.execute(Dungeon.hero, action);
-						}
-					};
-				};
-				btn.setSize( Math.max( BUTTON_WIDTH, btn.reqWidth() ), BUTTON_HEIGHT );
-				if (x + btn.width() > WIDTH) {
-					x = 0;
-					y += BUTTON_HEIGHT + GAP;
-				}
-				btn.setPos( x, y );
-				add( btn );
+			for (final String action:item.actions(Dungeon.hero, external)) {
+                RedButton btn = new RedButton(action) {
+                    @Override
+                    protected void onClick() {
+                        hide();
+                        if (owner != null) {
+                            owner.hide();
+                        }
 
-				if (action.equals(item.defaultAction)) {
-					btn.textColor( TITLE_COLOR );
-				}
+                        if (action == Food.AC_EAT) {
+                            Dungeon.hero.curAction = new HeroAction.EatItem(item, action);
+                            GLog.d("wnditem deposit action");
+                            Dungeon.hero.motivate(true);
+                            //while (Dungeon.hero.act()) ;
+                        } else if (action == Item.AC_TAKE) {
+                            listener.onSelect(item);
+                        } else {
+                            item.execute(Dungeon.hero, action);
+                        }
+                    }
 
-				x += btn.width() + GAP;
-			}
+                    ;
+                };
+                btn.setSize(Math.max(BUTTON_WIDTH, btn.reqWidth()), BUTTON_HEIGHT);
+                if (x + btn.width() > WIDTH) {
+                    x = 0;
+                    y += BUTTON_HEIGHT + GAP;
+                }
+                btn.setPos(x, y);
+                add(btn);
+
+                if ((!external && action.equals(item.defaultAction)) || (external && action.equals(Item.AC_TAKE))) {
+                    btn.textColor(TITLE_COLOR);
+                }
+
+                x += btn.width() + GAP;
+            }
 		}
 
 		resize( WIDTH, (int)(y + (x > 0 ? BUTTON_HEIGHT : 0)) );
 	}
 
+    /*
 	public WndItem( final WndBag owner, final Item item, final WndBackpack.Listener listener ) {
 		super();
 
@@ -129,7 +139,9 @@ public class WndItem extends Window {
 		float x = 0;
 
 		if (Dungeon.hero.isAlive() && owner != null) {
-			RedButton btn = new RedButton( "TAKE" ) {
+            ArrayList<String> actions = item.actions(Dungeon.hero);
+
+			RedButton btn = new RedButton( Item.AC_DROP ) {
 				@Override
 				protected void onClick() {
 					hide();
@@ -152,5 +164,5 @@ public class WndItem extends Window {
 
 		resize( WIDTH, (int)(y + (x > 0 ? BUTTON_HEIGHT : 0)) );
 	}
-
+    */
 }

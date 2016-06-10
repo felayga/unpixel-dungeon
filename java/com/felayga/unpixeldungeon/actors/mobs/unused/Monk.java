@@ -26,8 +26,8 @@ package com.felayga.unpixeldungeon.actors.mobs.unused;
 /*
 import java.util.HashSet;
 
-import com.felayga.unpixeldungeon.actors.buffs.Amok;
-import com.felayga.unpixeldungeon.actors.buffs.Terror;
+import com.felayga.unpixeldungeon.actors.buffs.negative.Amok;
+import com.felayga.unpixeldungeon.actors.buffs.negative.Terror;
 import com.felayga.unpixeldungeon.actors.mobs.npcs.Imp;
 import com.felayga.unpixeldungeon.items.food.Food;
 import com.felayga.unpixeldungeon.items.weapon.melee.mob.DisarmChance;

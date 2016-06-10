@@ -199,19 +199,25 @@ public class WndTabbed extends Window {
 		private BitmapText btLabel;
 		
 		public LabeledTab( String label ) {
-			
-			super();
-			
-			btLabel.text( label );
-			btLabel.measure();
+            this(label, 9);
 		}
+
+        public LabeledTab(String label, int fontSize ) {
+            super();
+
+            btLabel = PixelScene.createText(fontSize);
+            add( btLabel );
+
+            btLabel.text( label );
+            btLabel.measure();
+        }
 		
 		@Override
 		protected void createChildren() {
 			super.createChildren();
 			
-			btLabel = PixelScene.createText( 9 );
-			add( btLabel );
+			//btLabel = PixelScene.createText( fontSize );
+			//add( btLabel );
 		}
 		
 		@Override

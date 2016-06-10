@@ -26,8 +26,10 @@ package com.felayga.unpixeldungeon.items.food;
 
 import com.felayga.unpixeldungeon.actors.Char;
 import com.felayga.unpixeldungeon.actors.buffs.Buff;
-import com.felayga.unpixeldungeon.actors.buffs.DeathlySick;
-import com.felayga.unpixeldungeon.actors.buffs.Encumbrance;
+import com.felayga.unpixeldungeon.actors.buffs.hero.DeathlySick;
+import com.felayga.unpixeldungeon.actors.buffs.hero.Encumbrance;
+import com.felayga.unpixeldungeon.actors.buffs.negative.Hallucination;
+import com.felayga.unpixeldungeon.actors.buffs.negative.Paralysis;
 import com.felayga.unpixeldungeon.actors.hero.Hero;
 import com.felayga.unpixeldungeon.mechanics.AttributeType;
 import com.felayga.unpixeldungeon.mechanics.CorpseEffect;
@@ -36,7 +38,6 @@ import com.felayga.unpixeldungeon.items.Item;
 import com.felayga.unpixeldungeon.mechanics.BUCStatus;
 import com.felayga.unpixeldungeon.mechanics.GameTime;
 import com.felayga.unpixeldungeon.mechanics.MagicType;
-import com.felayga.unpixeldungeon.sprites.ItemSprite;
 import com.felayga.unpixeldungeon.sprites.ItemSpriteSheet;
 import com.felayga.unpixeldungeon.utils.GLog;
 import com.watabou.utils.Bundle;
@@ -49,33 +50,43 @@ public class Corpse extends Food implements IDecayable {
     }
 
     public Corpse(Char source) {
-        super();
+        super(source != null ? source.nutrition : 1, source != null ? source.weight : Encumbrance.UNIT);
 
         if (source != null) {
             name = source.name + " corpse";
-            energy = source.nutrition;
             effects = source.corpseEffects;
-            weight(source.weight);
+            resistances = source.corpseResistances;
             decayTime = source.getTime();
+            corpseLevel = source.level;
         } else {
             name = "unknown corpse";
-            energy = 1;
             effects = CorpseEffect.None.value;
-            weight(Encumbrance.UNIT);
+            resistances = MagicType.None.value;
         }
 
-        if (isRotten()) {
-            image = ItemSpriteSheet.MEAT_ROTTEN;
-        }
-        else {
-            image = ItemSpriteSheet.MEAT;
-        }
+        image = getSprite(isRotten(), isVegetable());
         stackable = false;
 
-        hornValue = 1;
         hasBuc(false);
 
         price = 5;
+    }
+
+    private static int getSprite(boolean rotten, boolean vegetable) {
+        if (rotten) {
+            if (vegetable) {
+                return ItemSpriteSheet.LETTUCE_ROTTEN;
+            }
+
+            return ItemSpriteSheet.MEAT_ROTTEN;
+        }
+        else {
+            if (vegetable) {
+                return ItemSpriteSheet.LETTUCE;
+            }
+
+            return ItemSpriteSheet.MEAT;
+        }
     }
 
 
@@ -128,6 +139,8 @@ public class Corpse extends Food implements IDecayable {
     private int rottenness = 0;
     protected long decayTime;
     protected long effects;
+    protected long resistances;
+    protected int corpseLevel;
 
     protected void rot(int amount) {
         boolean rotten = isRotten();
@@ -137,12 +150,8 @@ public class Corpse extends Food implements IDecayable {
         boolean newRotten = isRotten();
 
         if (rotten != newRotten) {
-            if (newRotten) {
-                image = ItemSpriteSheet.MEAT_ROTTEN;
-            }
-            else {
-                image = ItemSpriteSheet.MEAT;
-            }
+            image = getSprite(newRotten, isVegetable());
+            updateQuickslot();
         }
     }
 
@@ -175,7 +184,6 @@ public class Corpse extends Food implements IDecayable {
     }
 
     public boolean isOld() {
-
         return decay >= GameTime.TICK * 20;
     }
 
@@ -195,9 +203,14 @@ public class Corpse extends Food implements IDecayable {
         return (effects & CorpseEffect.Unrottable.value) == 0 && rottenness >= 6;
     }
 
+    public boolean isVegetable() {
+        return (effects & CorpseEffect.Vegetable.value) != 0;
+    }
+
 
     @Override
-    public boolean isSimilar(Item item) {
+    protected boolean checkSimilarity(Item item) {
+        /*
         if (super.isSimilar(item)) {
             if (item instanceof Corpse) {
                 Corpse corpse = (Corpse) item;
@@ -205,6 +218,7 @@ public class Corpse extends Food implements IDecayable {
                 return name.equals(corpse.name);
             }
         }
+        */
 
         return false;
     }
@@ -216,6 +230,8 @@ public class Corpse extends Food implements IDecayable {
     private static final String ROTTENNESS = "rottenness";
     private static final String DECAYTIME = "decayTime";
     private static final String EFFECTS = "effects";
+    private static final String RESISTANCES = "resistances";
+    private static final String CORPSELEVEL = "corpseLevel";
 
     @Override
     public void storeInBundle(Bundle bundle) {
@@ -227,6 +243,8 @@ public class Corpse extends Food implements IDecayable {
         bundle.put(ROTTENNESS, rottenness);
         bundle.put(DECAYTIME, decayTime);
         bundle.put(EFFECTS, effects);
+        bundle.put(RESISTANCES, resistances);
+        bundle.put(CORPSELEVEL, corpseLevel);
     }
 
     @Override
@@ -239,16 +257,17 @@ public class Corpse extends Food implements IDecayable {
         rottenness = bundle.getInt(ROTTENNESS);
         decayTime = bundle.getLong(DECAYTIME);
         effects = bundle.getLong(EFFECTS);
+        resistances = bundle.getLong(RESISTANCES);
+        corpseLevel = bundle.getInt(CORPSELEVEL);
 
         rot(0);
     }
 
-    private void qualityCheck(Hero hero){
+    private void qualityCheck(Hero hero) {
         if (isTainted()) {
             GLog.n("Ulch - that food was tainted!");
             Buff.affect(hero, DeathlySick.class);
-        }
-        else if (isRotten()) {
+        } else if (isRotten()) {
             GLog.w("You feel sick.");
             hero.damage(Random.Int(0, 8) + 1, MagicType.Mundane, null);
         }
@@ -267,15 +286,16 @@ public class Corpse extends Food implements IDecayable {
 
         qualityCheck(hero);
 
+        //region effects
+
         if ((effects & CorpseEffect.Poisonous.value) != 0) {
             GLog.w("Ecch - that must have been poisonous!");
             if ((hero.immunityMagical & MagicType.Poison.value) != 0) {
                 GLog.p("You seem unaffected by the poison.");
-            }
-            else {
+            } else {
                 hero.damage(Random.Int(1, 15), MagicType.Poison, null);
 
-                int strabuse = (int)(Hero.attributeUseRequirement(hero.STRCON) * (1.0 + Random.Float()));
+                int strabuse = (int) (Hero.attributeUseRequirement(hero.STRCON) * (1.0 + Random.Float()));
                 hero.useAttribute(AttributeType.STRCON, -strabuse);
             }
         }
@@ -291,16 +311,72 @@ public class Corpse extends Food implements IDecayable {
                 }
             }
         }
+
+        if ((effects & CorpseEffect.Stunning.value) != 0) {
+            long rounds = 15 * GameTime.TICK;
+            for (int n = 0; n < 3; n++) {
+                rounds += Random.Long(0, 6) * GameTime.TICK;
+            }
+
+            Buff.prolong(hero, Paralysis.class, rounds);
+        }
+
+        if ((effects & CorpseEffect.Hallucinogenic.value) != 0) {
+            long rounds = 15 * GameTime.TICK;
+            for (int n=0;n<3;n++) {
+                rounds += Random.Long(0, 6) * GameTime.TICK;
+            }
+
+            Buff.prolong(hero, Hallucination.class, rounds);
+        }
+
+        if ((effects & CorpseEffect.Unstoning.value) != 0) {
+            //todo: CorpseEffect.Unstoning
+            GLog.d("remove petrification");
+        }
+
+        if ((effects & CorpseEffect.Acidic.value) != 0) {
+            if ((hero.immunityMagical & MagicType.Acid.value) == 0) {
+                GLog.p("Ecch.  That really burns!");
+                hero.damage(Random.Int(1, 15), MagicType.Acid, null);
+            }
+        }
+
+        //endregion
+        //region resistances
+
+        if ((resistances & MagicType.Poison.value) != 0 && Random.Float() <= (float)corpseLevel / 15.0) {
+            int test = hero.immunityMagical;
+            hero.immunityMagical |= MagicType.Poison.value;
+
+            if (test != hero.immunityMagical) {
+                if ((hero.immunityMagical & MagicType.Poison.value) != 0) {
+                    GLog.p("You feel healthy.");
+                } else {
+                    GLog.n("You feel unhealthy.");
+                }
+            }
+        }
+
+        //endregion
     }
 
     @Override
     public String info() {
-        return "Eat at your own risk!";
+        String retval = "This is a " + name + "'s corpse.";
+
+        if (isRotten()) {
+            retval += "\n\nIt doesn't look very fresh.";
+        }
+        else {
+            retval += "  Tasty!";
+        }
+
+        return retval + super.info();
     }
 
     @Override
-    public String message()
-    {
+    public String message() {
         return "This " + name + " tastes terrible!";
     }
 

@@ -25,9 +25,12 @@
 package com.felayga.unpixeldungeon.actors.hero;
 
 import com.felayga.unpixeldungeon.actors.Char;
+import com.felayga.unpixeldungeon.actors.mobs.npcs.Boulder;
 import com.felayga.unpixeldungeon.actors.mobs.npcs.NPC;
 import com.felayga.unpixeldungeon.items.Item;
 import com.felayga.unpixeldungeon.items.KindOfWeapon;
+import com.felayga.unpixeldungeon.items.bags.IBag;
+import com.felayga.unpixeldungeon.items.tools.digging.DiggingTool;
 import com.felayga.unpixeldungeon.items.tools.digging.Pickaxe;
 import com.felayga.unpixeldungeon.items.tools.unlocking.UnlockingTool;
 
@@ -42,23 +45,41 @@ public class HeroAction {
 		}
 	}
 	
-	public static class PickUp extends HeroAction {
-		public boolean forced;
+	public static class HandleHeap extends HeroAction {
+        public HandleHeap(int dst) {
+            this.dst = dst;
+        }
 
-		public PickUp(int dst) {
-			this(dst, false);
-		}
+        public static class OpenBag extends HandleHeap {
+            public IBag bag;
 
-		public PickUp(int dst, boolean forced) {
-			this.dst = dst;
-			this.forced = forced;
-		}
-	}
+            public OpenBag(int dst, IBag bag) {
+                super(dst);
 
-	public static class OpenBag extends HeroAction {
-		public OpenBag(int dst) {
-			this.dst = dst;
-		}
+                this.bag = bag;
+            }
+        }
+
+        public static class InteractItem extends HandleHeap {
+            public Item item;
+
+            public InteractItem(int dst, Item item) {
+                super(dst);
+
+                this.item = item;
+            }
+        }
+
+        public static class PickUp extends InteractItem {
+            public boolean forced;
+
+            public PickUp(int dst, Item item) { this(dst, item, false); }
+            public PickUp(int dst, Item item, boolean forced) {
+                super(dst, item);
+
+                this.forced = forced;
+            }
+        }
 	}
 
 	public static class OpenChest extends HeroAction {
@@ -124,12 +145,10 @@ public class HeroAction {
 	public static class Attack extends HeroAction {
 		public Char target;
 		public KindOfWeapon weapon;
-		public boolean weaponThrown;
-		public Attack( KindOfWeapon weapon, boolean thrown, Char target )
+		public Attack( KindOfWeapon weapon, Char target )
 		{
 			this.target = target;
 			this.weapon = weapon;
-			this.weaponThrown = thrown;
 		}
 	}
 
@@ -157,7 +176,7 @@ public class HeroAction {
 	}
 
 	public static class EatItem extends UseItem{
-		public boolean targetOutsideInventory;
+		public IBag targetOutsideInventory;
 		public boolean startedEating;
 		public boolean stoppedEating;
 		public boolean forced;
@@ -171,21 +190,38 @@ public class HeroAction {
 
 			this.forced = forced;
 
-			targetOutsideInventory = false;
+			targetOutsideInventory = null;
 			startedEating = false;
 			stoppedEating = false;
 		}
 	}
 
 	public static class Dig extends HeroAction {
-		public Pickaxe tool;
+		public DiggingTool tool;
 		public int pos;
 		public int effort;
 
-		public Dig(Pickaxe tool, int pos, int effort) {
+        public Boulder boulder;
+        public int direction;
+
+        public Dig(DiggingTool tool, int pos, int effort) {
+            this(tool, pos, effort, 0, null);
+        }
+
+        public Dig(DiggingTool tool, Boulder boulder, int effort) {
+            this(tool, boulder.pos, effort, 0, boulder);
+        }
+
+        public Dig(DiggingTool tool, int pos, int effort, int direction) {
+            this(tool, pos, effort, direction, null);
+        }
+
+		public Dig(DiggingTool tool, int pos, int effort, int direction, Boulder boulder) {
 			this.tool = tool;
 			this.pos = pos;
 			this.effort = effort;
+            this.direction = direction;
+            this.boulder = boulder;
 		}
 	}
 }

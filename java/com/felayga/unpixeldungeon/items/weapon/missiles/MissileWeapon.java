@@ -30,16 +30,16 @@ import com.felayga.unpixeldungeon.Dungeon;
 import com.felayga.unpixeldungeon.actors.Actor;
 import com.felayga.unpixeldungeon.actors.Char;
 import com.felayga.unpixeldungeon.actors.buffs.Buff;
-import com.felayga.unpixeldungeon.actors.buffs.PinCushion;
+import com.felayga.unpixeldungeon.actors.buffs.hero.PinCushion;
 import com.felayga.unpixeldungeon.actors.hero.Hero;
 import com.felayga.unpixeldungeon.actors.hero.HeroClass;
-import com.felayga.unpixeldungeon.items.Item;
 import com.felayga.unpixeldungeon.items.rings.RingOfSharpshooting;
 import com.felayga.unpixeldungeon.items.weapon.Weapon;
+import com.felayga.unpixeldungeon.items.weapon.missiles.martial.Boomerang;
+import com.felayga.unpixeldungeon.items.weapon.ranged.AmmunitionType;
+import com.felayga.unpixeldungeon.items.weapon.ranged.RangedWeapon;
 import com.felayga.unpixeldungeon.mechanics.WeaponSkill;
-import com.felayga.unpixeldungeon.scenes.GameScene;
 import com.felayga.unpixeldungeon.utils.GLog;
-import com.felayga.unpixeldungeon.windows.WndOptions;
 import com.watabou.utils.Random;
 
 public class MissileWeapon extends Weapon {
@@ -50,27 +50,52 @@ public class MissileWeapon extends Weapon {
 	private static final String TXT_R_U_SURE	=
 		"Do you really want to equip it as a melee weapon?";
 
-	public MissileWeapon(WeaponSkill weaponSkill, long delay, int damageMin, int damageMax, int quantity)
-	{
-		super(weaponSkill, delay, damageMin, damageMax);
+    public boolean throwable;
+    public AmmunitionType ammunitionType;
 
-		stackable = true;
-		levelKnown = true;
-		this.quantity = quantity;
+	public MissileWeapon(WeaponSkill weaponSkill, long delay, int damageMin, int damageMax, int quantity, boolean throwable, AmmunitionType ammunitionType) {
+        super(weaponSkill, delay, damageMin, damageMax);
 
-		defaultAction = AC_THROW;
-		usesTargeting = true;
-	}
+        stackable = true;
+        levelKnown = true;
+        quantity(quantity);
+
+        this.throwable = throwable;
+        this.ammunitionType = ammunitionType;
+
+        if (throwable) {
+            defaultAction = AC_THROW;
+        } else if (ammunitionType != AmmunitionType.None) {
+            defaultAction = AC_EQUIP;
+        }
+
+        usesTargeting = true;
+    }
 	
 	@Override
 	public ArrayList<String> actions( Hero hero ) {
 		ArrayList<String> actions = super.actions( hero );
+        /*
 		if (hero.heroClass != HeroClass.HUNTRESS && hero.heroClass != HeroClass.ROGUE) {
 			actions.remove( AC_EQUIP );
 			actions.remove( AC_UNEQUIP );
 		}
+		*/
 		return actions;
 	}
+
+    public RangedWeapon launcher;
+
+    @Override
+    public int damageRoll() {
+        int retval = super.damageRoll();
+
+        if (launcher != null) {
+            retval += launcher.damageRoll();
+        }
+
+        return retval;
+    }
 
 	@Override
 	protected void onThrow( int cell, Char thrower ) {
@@ -116,9 +141,7 @@ public class MissileWeapon extends Weapon {
 		if (attacker instanceof Hero) {
 			Hero hero = (Hero) attacker;
 			if (stackable) {
-				GLog.d("this="+name+" quantity="+quantity);
-
-				quantity--;
+				quantity(quantity()-1);
 				/*
 				if (quantity == 1) {
 					GLog.d("MissileWeapon:doUnequip()");

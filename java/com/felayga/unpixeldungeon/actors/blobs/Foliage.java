@@ -27,7 +27,7 @@ package com.felayga.unpixeldungeon.actors.blobs;
 import com.felayga.unpixeldungeon.Dungeon;
 import com.felayga.unpixeldungeon.Journal;
 import com.felayga.unpixeldungeon.actors.buffs.Buff;
-import com.felayga.unpixeldungeon.actors.buffs.Shadows;
+import com.felayga.unpixeldungeon.actors.buffs.hero.Shadows;
 import com.felayga.unpixeldungeon.actors.hero.Hero;
 import com.felayga.unpixeldungeon.effects.BlobEmitter;
 import com.felayga.unpixeldungeon.effects.particles.ShaftParticle;

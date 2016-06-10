@@ -32,7 +32,9 @@ import com.felayga.unpixeldungeon.items.armor.gloves.LeatherGloves;
 import com.felayga.unpixeldungeon.items.armor.heavy.HalfPlateArmor;
 import com.felayga.unpixeldungeon.items.armor.medium.ScaleArmor;
 import com.felayga.unpixeldungeon.items.artifacts.CloakOfShadows;
-import com.felayga.unpixeldungeon.items.food.Food;
+import com.felayga.unpixeldungeon.items.artifacts.MasterThievesArmband;
+import com.felayga.unpixeldungeon.items.bags.SeedPouch;
+import com.felayga.unpixeldungeon.items.food.Ration;
 import com.felayga.unpixeldungeon.items.potions.PotionOfMindVision;
 import com.felayga.unpixeldungeon.items.potions.PotionOfStrength;
 import com.felayga.unpixeldungeon.items.rings.RingOfWealth;
@@ -43,8 +45,8 @@ import com.felayga.unpixeldungeon.items.weapon.melee.martial.Longsword;
 import com.felayga.unpixeldungeon.items.weapon.melee.simple.MagesStaff;
 import com.felayga.unpixeldungeon.items.wands.WandOfMagicMissile;
 import com.felayga.unpixeldungeon.items.tools.digging.Pickaxe;
-import com.felayga.unpixeldungeon.items.weapon.missiles.Dart;
-import com.felayga.unpixeldungeon.items.weapon.missiles.Boomerang;
+import com.felayga.unpixeldungeon.items.weapon.missiles.simple.Dart;
+import com.felayga.unpixeldungeon.items.weapon.missiles.martial.Boomerang;
 import com.felayga.unpixeldungeon.mechanics.WeaponSkill;
 import com.watabou.utils.Bundle;
 import com.watabou.utils.Random;
@@ -164,7 +166,7 @@ public enum HeroClass {
 		}
 
 		if (!Dungeon.isChallenged(Challenges.NO_FOOD)) {
-			hero.belongings.collect(new Food().quantity(Random.Int(4, 8)).identify());
+			hero.belongings.collect(new Ration().setQuantity(Random.Int(4, 8)).identify());
 		}
 	}
 
@@ -199,6 +201,10 @@ public enum HeroClass {
         hero.belongings.ring1().upgrade(darts, 20);
 
 		hero.belongings.collect(new Pickaxe());
+
+        hero.belongings.collect(new SeedPouch());
+
+        hero.belongings.collectEquip(new MasterThievesArmband());
 	}
 
 	private static void initWarrior( Hero hero ) {

@@ -39,4 +39,5 @@ public class Constant {
     public static final int DEBUFF_ROOTS        = 1;
     public static final int DEBUFF_ENCUMBRANCE  = 2;
     public static final int DEBUFF_CRIPPLE      = 3;
+    public static final int DEBUFF_HELD         = 4;
 }

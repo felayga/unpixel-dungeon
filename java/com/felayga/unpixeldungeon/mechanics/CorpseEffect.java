@@ -34,7 +34,12 @@ public enum CorpseEffect {
     Undecayable         (0x0002),
     Unrottable          (0x0004),
     Poisonous           (0x0008),
-    ManaBoost           (0x0010);
+    ManaBoost           (0x0010),
+    Stunning            (0x0020),
+    Vegetable           (0x0040),
+    Unstoning           (0x0080),
+    Acidic              (0x0100),
+    Hallucinogenic      (0x0200);
 
     public final int value;
 

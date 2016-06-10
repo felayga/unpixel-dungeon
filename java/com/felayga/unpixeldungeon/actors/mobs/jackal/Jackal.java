@@ -25,9 +25,10 @@
 
 package com.felayga.unpixeldungeon.actors.mobs.jackal;
 
-import com.felayga.unpixeldungeon.actors.buffs.Encumbrance;
+import com.felayga.unpixeldungeon.actors.buffs.hero.Encumbrance;
 import com.felayga.unpixeldungeon.actors.mobs.Mob;
 import com.felayga.unpixeldungeon.items.weapon.melee.mob.MeleeMobAttack;
+import com.felayga.unpixeldungeon.mechanics.CorpseEffect;
 import com.felayga.unpixeldungeon.mechanics.GameTime;
 import com.felayga.unpixeldungeon.mechanics.MagicType;
 import com.felayga.unpixeldungeon.sprites.mobs.jackal.JackalSprite;
@@ -36,7 +37,6 @@ import com.felayga.unpixeldungeon.sprites.mobs.jackal.JackalSprite;
  * Created by HELLO on 5/21/2016.
  */
 public class Jackal extends Mob {
-
     public Jackal()
     {
         super(0);
@@ -52,6 +52,7 @@ public class Jackal extends Mob {
         weight = Encumbrance.UNIT * 300;
         nutrition = 250;
         immunityMagical = MagicType.None.value;
+        corpseEffects = CorpseEffect.None.value;
 
         belongings.collectEquip(new MeleeMobAttack(GameTime.TICK, 1, 2));
     }

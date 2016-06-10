@@ -48,7 +48,7 @@ public class JackalSprite extends MobSprite {
         run = new Animation( 12, true );
         run.frames( frames, offset + 6, offset + 7, offset + 8, offset + 9 );
 
-        attack = new Animation( 12, false );
+        attack = new Animation( 18, false );
         attack.frames( frames, offset + 3, offset + 4, offset + 5, offset + 4, offset + 5, offset + 4 );
 
         die = new Animation( 12, false );

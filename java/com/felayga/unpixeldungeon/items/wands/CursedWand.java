@@ -36,11 +36,10 @@ import com.felayga.unpixeldungeon.actors.blobs.ParalyticGas;
 import com.felayga.unpixeldungeon.actors.blobs.Regrowth;
 import com.felayga.unpixeldungeon.actors.blobs.ToxicGas;
 import com.felayga.unpixeldungeon.actors.buffs.Buff;
-import com.felayga.unpixeldungeon.actors.buffs.Burning;
-import com.felayga.unpixeldungeon.actors.buffs.Frost;
+import com.felayga.unpixeldungeon.actors.buffs.negative.Burning;
+import com.felayga.unpixeldungeon.actors.buffs.negative.Frost;
 import com.felayga.unpixeldungeon.actors.hero.Hero;
 //import com.felayga.unpixeldungeon.actors.mobs.Mimic;
-import com.felayga.unpixeldungeon.actors.mobs.Mob;
 import com.felayga.unpixeldungeon.actors.mobs.npcs.Sheep;
 import com.felayga.unpixeldungeon.effects.CellEmitter;
 import com.felayga.unpixeldungeon.effects.Flare;
@@ -77,7 +76,6 @@ import com.watabou.utils.Callback;
 import com.watabou.utils.Random;
 
 import java.io.IOException;
-import java.util.ArrayList;
 
 //helper class to contain all the cursed wand zapping logic, so the main wand class doesn't get huge.
 public class CursedWand {

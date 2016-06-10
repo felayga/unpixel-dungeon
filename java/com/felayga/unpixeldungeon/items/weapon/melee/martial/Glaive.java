@@ -36,16 +36,12 @@ public class Glaive extends MartialMeleeWeapon {
 
 		name = "glaive";
 		image = ItemSpriteSheet.GLAIVE;
+        pickupSound = Assets.SND_ITEM_WOOD;
 	}
 	
 	@Override
 	public String desc() {
 		return "A polearm consisting of a sword blade on the end of a pole.";
-	}
-
-	@Override
-	public void playPickupSound() {
-		Sample.INSTANCE.play( Assets.SND_ITEM_WOOD );
 	}
 
 }

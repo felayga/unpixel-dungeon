@@ -25,13 +25,14 @@
 
 package com.felayga.unpixeldungeon.actors.mobs.orc;
 
-import com.felayga.unpixeldungeon.actors.buffs.Encumbrance;
+import com.felayga.unpixeldungeon.actors.buffs.hero.Encumbrance;
 import com.felayga.unpixeldungeon.actors.mobs.Mob;
 import com.felayga.unpixeldungeon.items.armor.helmet.Helmet;
 import com.felayga.unpixeldungeon.items.armor.helmet.HelmetCrude;
 import com.felayga.unpixeldungeon.items.weapon.Weapon;
 import com.felayga.unpixeldungeon.items.weapon.melee.mob.MeleeMobAttack;
 import com.felayga.unpixeldungeon.items.weapon.melee.simple.DaggerCrude;
+import com.felayga.unpixeldungeon.mechanics.CorpseEffect;
 import com.felayga.unpixeldungeon.mechanics.GameTime;
 import com.felayga.unpixeldungeon.mechanics.MagicType;
 import com.felayga.unpixeldungeon.sprites.mobs.humanoid.orc.GoblinSprite;
@@ -57,20 +58,21 @@ public class Goblin extends Mob {
         weight = Encumbrance.UNIT * 400;
         nutrition = 100;
         immunityMagical = MagicType.None.value;
+        corpseEffects = CorpseEffect.None.value;
 
         if (Random.Int(2)==0) {
             belongings.collectEquip(new MeleeMobAttack(GameTime.TICK, 1, 4));
         }
         else {
             Weapon weapon = new DaggerCrude();
-            weapon.randomizeStatus();
+            weapon.random();
 
             belongings.collectEquip(weapon);
         }
 
         if (Random.Int(2)==0) {
             Helmet helmet = new HelmetCrude();
-            helmet.randomizeStatus();
+            helmet.random();
 
             belongings.collectEquip(helmet);
         }

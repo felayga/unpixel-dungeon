@@ -27,7 +27,7 @@ package com.felayga.unpixeldungeon.plants;
 import com.felayga.unpixeldungeon.Dungeon;
 import com.felayga.unpixeldungeon.actors.Actor;
 import com.felayga.unpixeldungeon.actors.Char;
-import com.felayga.unpixeldungeon.actors.buffs.Bless;
+import com.felayga.unpixeldungeon.actors.buffs.positive.Bless;
 import com.felayga.unpixeldungeon.actors.buffs.Buff;
 import com.felayga.unpixeldungeon.items.potions.PotionOfExperience;
 import com.felayga.unpixeldungeon.mechanics.GameTime;

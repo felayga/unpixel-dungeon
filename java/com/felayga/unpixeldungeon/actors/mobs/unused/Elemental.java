@@ -27,9 +27,9 @@ package com.felayga.unpixeldungeon.actors.mobs.unused;
 import java.util.HashSet;
 
 import com.felayga.unpixeldungeon.actors.buffs.Buff;
-import com.felayga.unpixeldungeon.actors.buffs.Burning;
-import com.felayga.unpixeldungeon.actors.buffs.Chill;
-import com.felayga.unpixeldungeon.actors.buffs.Frost;
+import com.felayga.unpixeldungeon.actors.buffs.negative.Burning;
+import com.felayga.unpixeldungeon.actors.buffs.negative.Chill;
+import com.felayga.unpixeldungeon.actors.buffs.negative.Frost;
 import com.felayga.unpixeldungeon.effects.Speck;
 import com.felayga.unpixeldungeon.items.potions.PotionOfLiquidFlame;
 import com.felayga.unpixeldungeon.items.wands.WandOfFireblast;

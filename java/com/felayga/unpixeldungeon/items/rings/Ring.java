@@ -28,10 +28,7 @@ import java.util.ArrayList;
 
 import com.felayga.unpixeldungeon.Badges;
 import com.felayga.unpixeldungeon.Dungeon;
-import com.felayga.unpixeldungeon.ShatteredPixelDungeon;
-import com.felayga.unpixeldungeon.actors.Actor;
-import com.felayga.unpixeldungeon.actors.buffs.Encumbrance;
-import com.felayga.unpixeldungeon.items.IActivateable;
+import com.felayga.unpixeldungeon.actors.buffs.hero.Encumbrance;
 import com.felayga.unpixeldungeon.items.KindofMisc;
 import com.felayga.unpixeldungeon.actors.Char;
 import com.felayga.unpixeldungeon.actors.buffs.Buff;
@@ -40,14 +37,10 @@ import com.felayga.unpixeldungeon.actors.hero.HeroClass;
 import com.felayga.unpixeldungeon.items.Item;
 import com.felayga.unpixeldungeon.items.ItemStatusHandler;
 import com.felayga.unpixeldungeon.mechanics.BUCStatus;
-import com.felayga.unpixeldungeon.mechanics.Constant;
 import com.felayga.unpixeldungeon.mechanics.GameTime;
 import com.felayga.unpixeldungeon.sprites.ItemSpriteSheet;
 import com.felayga.unpixeldungeon.utils.GLog;
-import com.felayga.unpixeldungeon.utils.Utils;
-import com.felayga.unpixeldungeon.windows.WndOptions;
 import com.watabou.utils.Bundle;
-import com.watabou.utils.Random;
 
 public class Ring extends KindofMisc {
 
@@ -180,7 +173,7 @@ public class Ring extends KindofMisc {
 				GLog.n( "your " + this.getDisplayName() + " tightens around your finger painfully" );
 			}
 			else {
-				//todo: other ring cursed description
+				//todo: ring cursed in enemy hands description
 			}
 		}
 	}

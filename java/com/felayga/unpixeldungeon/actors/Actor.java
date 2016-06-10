@@ -175,52 +175,50 @@ public abstract class Actor implements Bundlable {
 	}
 
 	public static void process() {
-		if (current != null) {
-			return;
-		}
-	
-		boolean doNext;
+        if (current != null) {
+            return;
+        }
 
-		//GLog.d("process start");
-		do {
-			now = Long.MAX_VALUE;
-			current = null;
+        boolean doNext;
 
-			
-			for (Actor actor : all) {
-				//some actors will always go before others if time is equal.
-				if (actor.time < now || actor.time == now && (current == null || actor.actPriority < current.actPriority)) {
-					now = actor.time;
-					current = actor;
-				}
+        //GLog.d("process start");
+        do {
+            now = Long.MAX_VALUE;
+            current = null;
 
-			}
+            for (Actor actor : all) {
+                //some actors will always go before others if time is equal.
+                if (actor.time < now || actor.time == now && (current == null || actor.actPriority < current.actPriority)) {
+                    now = actor.time;
+                    current = actor;
+                }
 
+            }
 
-			if  (current != null) {
-				if (current instanceof Char && ((Char)current).sprite.isMoving) {
-					// If it's character's turn to act, but its sprite
-					// is moving, wait till the movement is over
-					current = null;
-					break;
-				}
+            if (current != null) {
+                if (current instanceof Char && ((Char) current).sprite.isMoving) {
+                    // If it's character's turn to act, but its sprite
+                    // is moving, wait till the movement is over
+                    current = null;
+                    break;
+                }
 
-				doNext = current.act();
-				if (doNext && !Dungeon.hero.isAlive()) {
-					doNext = false;
-					current = null;
-				}
-			} else {
-				doNext = false;
-			}
+                doNext = current.act();
+                if (doNext && !Dungeon.hero.isAlive()) {
+                    doNext = false;
+                    current = null;
+                }
+            } else {
+                doNext = false;
+            }
 
-			if (Dungeon.level != null) {
-				Dungeon.level.decay(now, true, false);
-			}
-			
-		} while (doNext);
-		//GLog.d("process end");
-	}
+            if (Dungeon.level != null) {
+                Dungeon.level.decay(now, true, false);
+            }
+
+        } while (doNext);
+        //GLog.d("process end");
+    }
 	
 	public static void add( Actor actor ) {
 		add( actor, now );

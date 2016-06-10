@@ -27,7 +27,7 @@ package com.felayga.unpixeldungeon.plants;
 import com.felayga.unpixeldungeon.actors.Actor;
 import com.felayga.unpixeldungeon.actors.Char;
 import com.felayga.unpixeldungeon.actors.buffs.Buff;
-import com.felayga.unpixeldungeon.actors.buffs.Vertigo;
+import com.felayga.unpixeldungeon.actors.buffs.negative.Vertigo;
 import com.felayga.unpixeldungeon.items.potions.PotionOfLevitation;
 import com.felayga.unpixeldungeon.sprites.ItemSpriteSheet;
 

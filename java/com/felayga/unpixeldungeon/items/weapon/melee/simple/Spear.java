@@ -36,16 +36,12 @@ public class Spear extends SimpleMeleeWeapon {
 
 		name = "spear";
 		image = ItemSpriteSheet.SPEAR;
+        pickupSound = Assets.SND_ITEM_WOOD;
 	}
 	
 	@Override
 	public String desc() {
 		return "A slender wooden rod tipped with sharpened iron.";
-	}
-
-	@Override
-	public void playPickupSound() {
-		Sample.INSTANCE.play( Assets.SND_ITEM_WOOD );
 	}
 
 }

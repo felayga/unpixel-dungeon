@@ -34,22 +34,19 @@ import com.watabou.utils.Bundle;
 public class OldKey extends Item {
 
 	public static final long TIME_TO_UNLOCK = GameTime.TICK;
-	
+
+    public OldKey()
 	{
+        pickupSound = Assets.SND_ITEM_KEY;
 		stackable = true;
 		unique = true;
 	}
 
 
-	@Override
-	public void playPickupSound() {
-		Sample.INSTANCE.play( Assets.SND_ITEM_KEY );
-	}
-
 	public int depth;
 	
 	@Override
-	public boolean isSimilar( Item item ) {
+    protected boolean checkSimilarity(Item item) {
 		return item.getClass() == getClass() && ((OldKey)item).depth == depth;
 	}
 	

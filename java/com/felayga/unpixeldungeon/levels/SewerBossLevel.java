@@ -220,6 +220,8 @@ public class SewerBossLevel extends RegularLevel {
 
     @Override
     protected void createMobs() {
+        //todo: boss spawning
+        /*
         Mob mob = Bestiary.mob(Dungeon.depth, Dungeon.hero.level);
         Room room;
         do {
@@ -227,6 +229,7 @@ public class SewerBossLevel extends RegularLevel {
         } while (room.type != Type.STANDARD);
         mob.pos = room.random();
         mobs.add(mob);
+        */
     }
 
     public Actor respawner() {

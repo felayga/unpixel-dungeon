@@ -137,8 +137,6 @@ public class CityLevel extends RegularLevel {
 		case Terrain.STATUE:
 		case Terrain.STATUE_SP:
 			return "The statue depicts some dwarf standing in a heroic stance.";
-		case Terrain.BOOKSHELF:
-			return "The rows of books on different disciplines fill the bookshelf.";
 		default:
 			return super.tileDesc( tile );
 		}

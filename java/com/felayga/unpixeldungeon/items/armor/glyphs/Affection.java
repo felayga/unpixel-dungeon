@@ -24,10 +24,9 @@
  */
 package com.felayga.unpixeldungeon.items.armor.glyphs;
 
-import com.felayga.unpixeldungeon.actors.Actor;
 import com.felayga.unpixeldungeon.actors.Char;
 import com.felayga.unpixeldungeon.actors.buffs.Buff;
-import com.felayga.unpixeldungeon.actors.buffs.Charm;
+import com.felayga.unpixeldungeon.actors.buffs.negative.Charm;
 import com.felayga.unpixeldungeon.effects.Speck;
 import com.felayga.unpixeldungeon.items.armor.Armor;
 import com.felayga.unpixeldungeon.items.armor.Armor.Glyph;
@@ -49,7 +48,7 @@ public class Affection extends Glyph {
 
 		int level = (int)GameMath.gate( 0, armor.level, 6 );
 		
-		if (Level.adjacent( attacker.pos, defender.pos ) && Random.Int( level / 2 + 5 ) >= 4) {
+		if (Level.canReach( attacker.pos, defender.pos ) && Random.Int( level / 2 + 5 ) >= 4) {
 			
 			long duration = Random.LongRange(GameTime.TICK * 3, GameTime.TICK * 7);
 

@@ -30,6 +30,7 @@ import com.felayga.unpixeldungeon.actors.Char;
 import com.felayga.unpixeldungeon.actors.hero.Hero;
 import com.felayga.unpixeldungeon.mechanics.AttributeType;
 import com.felayga.unpixeldungeon.mechanics.GameTime;
+import com.felayga.unpixeldungeon.mechanics.MagicType;
 import com.felayga.unpixeldungeon.mechanics.WeaponSkill;
 import com.felayga.unpixeldungeon.utils.GLog;
 import com.watabou.utils.Random;
@@ -42,6 +43,7 @@ public class KindOfWeapon extends EquippableItem {
 	public long delay_new = GameTime.TICK;
     public int damageMin = 1;
     public int damageMax = 4;
+    public MagicType damageType = MagicType.Mundane;
 
     public int accuracy = 10;
     public int damage = 10;
@@ -86,10 +88,14 @@ public class KindOfWeapon extends EquippableItem {
 				GLog.n( TXT_EQUIP_CURSED, getDisplayName() );
 			}
 			else {
-				//todo: weapon cursed
+				//todo: weapon cursed in enemy hands
 			}
 		}
 	}
+
+    public MagicType damageType() {
+        return damageType;
+    }
 	
 	public int damageRoll() {
 		return Random.NormalIntRange( damageMin, damageMax ) + this.level;

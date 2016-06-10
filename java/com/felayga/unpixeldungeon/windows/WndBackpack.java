@@ -46,7 +46,7 @@ import com.felayga.unpixeldungeon.items.scrolls.Scroll;
 import com.felayga.unpixeldungeon.items.spells.Spell;
 import com.felayga.unpixeldungeon.items.wands.Wand;
 import com.felayga.unpixeldungeon.items.weapon.melee.MeleeWeapon;
-import com.felayga.unpixeldungeon.items.weapon.missiles.Boomerang;
+import com.felayga.unpixeldungeon.items.weapon.missiles.martial.Boomerang;
 import com.felayga.unpixeldungeon.mechanics.BUCStatus;
 import com.felayga.unpixeldungeon.plants.Plant.Seed;
 import com.felayga.unpixeldungeon.scenes.GameScene;
@@ -63,6 +63,7 @@ import com.watabou.noosa.Image;
 import com.watabou.noosa.audio.Sample;
 import com.watabou.utils.PointF;
 
+import java.util.HashSet;
 import java.util.Iterator;
 
 public class WndBackpack extends WndTabbed {
@@ -108,9 +109,9 @@ public class WndBackpack extends WndTabbed {
 	private static Mode lastMode;
 	private static Bag lastBag;
 
-	private Item excluded;
+	private HashSet<Item> excluded;
 
-	public WndBackpack(Bag bag, Listener listener, Mode mode, String title, Item excluded) {
+	public WndBackpack(Bag bag, Listener listener, Mode mode, String title, Item... excluded) {
 
 		super();
 		Belongings stuff = Dungeon.hero.belongings;
@@ -118,7 +119,14 @@ public class WndBackpack extends WndTabbed {
 		this.listener = listener;
 		this.mode = mode;
 		this.title = title;
-		this.excluded = excluded;
+		this.excluded = new HashSet<>();
+
+        for (Item item : excluded) {
+            while (item != null) {
+                this.excluded.add(item);
+                item = item.parent().self();
+            }
+        }
 
 		lastMode = mode;
 		lastBag = bag;
@@ -163,7 +171,7 @@ public class WndBackpack extends WndTabbed {
 		layoutTabs();
 	}
 
-	public static WndBackpack lastBag(Listener listener, Mode mode, String title, Item excluded) {
+	public static WndBackpack lastBag(Listener listener, Mode mode, String title, Item... excluded) {
 		//todo: make sure this is right
 		//commented out section is for scroll of identify multiple uses
 		if (mode == lastMode && lastBag != null/* &&
@@ -181,8 +189,8 @@ public class WndBackpack extends WndTabbed {
 	public static WndBackpack getBag(Class<? extends Bag> bagClass, Listener listener, Mode mode, String title) {
 		Bag bag = Dungeon.hero.belongings.getItem(bagClass);
 		return bag != null ?
-				new WndBackpack(bag, listener, mode, title, null) :
-				lastBag(listener, mode, title, null);
+				new WndBackpack(bag, listener, mode, title) :
+				lastBag(listener, mode, title);
 	}
 
 	protected void placeItems(Bag container) {
@@ -286,7 +294,7 @@ public class WndBackpack extends WndTabbed {
 	@Override
 	protected void onClick(Tab tab) {
 		hide();
-		GameScene.show(new WndBackpack(((BagTab) tab).bag, listener, mode, title, excluded));
+		GameScene.show(new WndBackpack(((BagTab) tab).bag, listener, mode, title, excluded.toArray(new Item[]{})));
 	}
 
 	@Override
@@ -432,7 +440,7 @@ public class WndBackpack extends WndTabbed {
 				bg.texture(TextureCache.createSolid(item.isEquipped(Dungeon.hero) ? EQUIPPED : NORMAL));
 				BUCStatus.colorizeBackground(bg, item.visibleBucStatus());
 
-				if (item.getDisplayName() == null || item == excluded) {
+				if (item.getDisplayName() == null || excluded.contains(item)) {
 					enable(false);
 				} else {
 					enable(
@@ -482,7 +490,7 @@ public class WndBackpack extends WndTabbed {
 
 			} else {
 
-				WndBackpack.this.add(new WndItem(WndBackpack.this, item));
+				WndBackpack.this.add(new WndItem(WndBackpack.this, item, null));
 
 			}
 		}

@@ -104,7 +104,7 @@ public class AttackIndicator extends Tag {
 		int v = Dungeon.hero.visibleEnemies();
 		for (int i=0; i < v; i++) {
 			Mob mob = Dungeon.hero.visibleEnemy( i );
-			if (Level.adjacent( heroPos, mob.pos )) {
+			if (Level.canReach( heroPos, mob.pos )) {
 				candidates.add( mob );
 			}
 		}
@@ -168,7 +168,7 @@ public class AttackIndicator extends Tag {
 	@Override
 	protected void onClick() {
 		if (enabled) {
-			Dungeon.hero.handle( lastTarget.pos );
+			Dungeon.hero.handle( lastTarget.pos, false );
 		}
 	}
 	

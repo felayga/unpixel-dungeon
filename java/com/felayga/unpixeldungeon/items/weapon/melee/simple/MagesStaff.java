@@ -66,6 +66,7 @@ public class MagesStaff extends SimpleMeleeWeapon {
 
 		name = "staff";
 		image = ItemSpriteSheet.MAGES_STAFF;
+        pickupSound = Assets.SND_ITEM_WOOD;
 
 		defaultAction = AC_ZAP;
 		usesTargeting = true;
@@ -228,11 +229,6 @@ public class MagesStaff extends SimpleMeleeWeapon {
 	@Override
 	public String info() {
 		return super.info();
-	}
-
-	@Override
-	public void playPickupSound() {
-		Sample.INSTANCE.play( Assets.SND_ITEM_WOOD );
 	}
 
 	@Override

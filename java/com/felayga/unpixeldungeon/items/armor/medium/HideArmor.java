@@ -24,7 +24,7 @@
  */
 package com.felayga.unpixeldungeon.items.armor.medium;
 
-import com.felayga.unpixeldungeon.actors.buffs.Encumbrance;
+import com.felayga.unpixeldungeon.actors.buffs.hero.Encumbrance;
 import com.felayga.unpixeldungeon.sprites.ItemSpriteSheet;
 
 public class HideArmor extends MediumArmor {

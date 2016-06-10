@@ -30,13 +30,13 @@ import com.felayga.unpixeldungeon.Dungeon;
 import com.felayga.unpixeldungeon.Statistics;
 import com.felayga.unpixeldungeon.actors.Actor;
 import com.felayga.unpixeldungeon.actors.Char;
-import com.felayga.unpixeldungeon.actors.buffs.Amok;
+import com.felayga.unpixeldungeon.actors.buffs.negative.Amok;
 import com.felayga.unpixeldungeon.actors.buffs.Buff;
-import com.felayga.unpixeldungeon.actors.buffs.Corruption;
-import com.felayga.unpixeldungeon.actors.buffs.Hunger;
-import com.felayga.unpixeldungeon.actors.buffs.Sleep;
-import com.felayga.unpixeldungeon.actors.buffs.SoulMark;
-import com.felayga.unpixeldungeon.actors.buffs.Terror;
+import com.felayga.unpixeldungeon.actors.buffs.negative.Corruption;
+import com.felayga.unpixeldungeon.actors.buffs.hero.Hunger;
+import com.felayga.unpixeldungeon.actors.buffs.negative.Sleep;
+import com.felayga.unpixeldungeon.actors.buffs.hero.SoulMark;
+import com.felayga.unpixeldungeon.actors.buffs.negative.Terror;
 import com.felayga.unpixeldungeon.actors.hero.Hero;
 import com.felayga.unpixeldungeon.actors.hero.HeroSubClass;
 import com.felayga.unpixeldungeon.effects.Speck;
@@ -46,12 +46,9 @@ import com.felayga.unpixeldungeon.items.Generator;
 import com.felayga.unpixeldungeon.items.Item;
 import com.felayga.unpixeldungeon.items.KindOfWeapon;
 import com.felayga.unpixeldungeon.items.artifacts.TimekeepersHourglass;
-import com.felayga.unpixeldungeon.items.rings.RingOfAccuracy;
 import com.felayga.unpixeldungeon.items.rings.RingOfWealth;
-import com.felayga.unpixeldungeon.items.weapon.Weapon;
 import com.felayga.unpixeldungeon.levels.Level;
 import com.felayga.unpixeldungeon.levels.Level.Feeling;
-import com.felayga.unpixeldungeon.mechanics.AttributeType;
 import com.felayga.unpixeldungeon.mechanics.GameTime;
 import com.felayga.unpixeldungeon.mechanics.MagicType;
 import com.felayga.unpixeldungeon.mechanics.Roll;
@@ -285,18 +282,6 @@ public abstract class Mob extends Char {
 		}
 	}
 	
-	protected boolean canAttack( Char enemy ) {
-		return Level.adjacent( pos, enemy.pos );
-	}
-
-	protected boolean canTouch( Char enemy ) {
-		return Level.adjacent(pos, enemy.pos);
-	}
-
-	protected boolean shouldTouch( Char enemy) {
-		return false;
-	}
-	
 	protected boolean getCloser( int target ) {
 		long speed = speed();
 
@@ -305,15 +290,16 @@ public abstract class Mob extends Char {
 		}
 
 		int len = Level.LENGTH;
-		boolean[] p = Level.passable;
-		boolean[] a = Level.pathable;
-		boolean[] passable = new boolean[len];
+		boolean[] passable = Level.passable;
+		boolean[] pathable = Level.pathable;
+        boolean[] diagonal = Level.diagonal;
+		boolean[] candidate = new boolean[len];
 		for (int i=0; i < len; i++) {
-			passable[i] = p[i] || (a[i] && (canOpenDoors || isEthereal));
+			candidate[i] = passable[i] || (pathable[i] && (canOpenDoors || isEthereal));
 		}
 		
 		int step = Dungeon.findPath(this, pos, target,
-                passable,
+                candidate, diagonal,
                 Level.fieldOfView);
 		if (step != -1) {
 			move( step );
@@ -359,7 +345,7 @@ public abstract class Mob extends Char {
 		}
 	}
 	
-	protected boolean doAttack( boolean thrown, Char enemy ) {
+	protected boolean doAttack( Char enemy ) {
 		boolean visible = Dungeon.visible[pos];
 
         KindOfWeapon weapon = (KindOfWeapon)belongings.weapon();
@@ -367,7 +353,7 @@ public abstract class Mob extends Char {
 		if (visible) {
 			sprite.attack( enemy.pos );
 		} else {
-			attack( weapon, thrown, enemy );
+			attack( weapon, enemy );
 		}
 				
 		spend(attackDelay(weapon.delay_new), false);
@@ -378,7 +364,7 @@ public abstract class Mob extends Char {
 	@Override
 	public void onAttackComplete() {
         KindOfWeapon weapon = (KindOfWeapon)belongings.weapon();
-		attack( weapon, false, enemy );
+		attack( weapon, enemy );
 		super.onAttackComplete();
 	}
 
@@ -430,7 +416,7 @@ public abstract class Mob extends Char {
 	}
 
 	@Override
-	public void damage( int dmg, MagicType type, Actor source ) {
+	public int damage( int dmg, MagicType type, Actor source ) {
 		Terror.recover( this );
 
 		if (state == SLEEPING) {
@@ -438,7 +424,7 @@ public abstract class Mob extends Char {
 		}
 		alerted = true;
 		
-		super.damage( dmg, type, source );
+		return super.damage( dmg, type, source );
 	}
 	
 	
@@ -631,7 +617,7 @@ public abstract class Mob extends Char {
 		public boolean act( boolean enemyInFOV, boolean justAlerted ) {
 			enemySeen = enemyInFOV;
 			if (enemyInFOV && !isCharmedBy( enemy ) && canAttack( enemy )) {
-				return doAttack( false, enemy );
+				return doAttack( enemy );
 			} else {
 				if (enemyInFOV) {
 					target = enemy.pos;

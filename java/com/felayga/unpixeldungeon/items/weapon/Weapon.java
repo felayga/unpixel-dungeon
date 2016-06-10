@@ -68,6 +68,8 @@ public class Weapon extends KindOfWeapon {
 
 	public Weapon(WeaponSkill weaponSkill, long delay, int damageMin, int damageMax) {
 		super(weaponSkill, delay, damageMin, damageMax);
+
+        pickupSound = Assets.SND_ITEM_BLADE;
 	}
 
 	@Override
@@ -164,12 +166,6 @@ public class Weapon extends KindOfWeapon {
 		}
 
 		return name;
-	}
-
-
-	@Override
-	public void playPickupSound() {
-		Sample.INSTANCE.play( Assets.SND_ITEM_BLADE );
 	}
 	
 	public Weapon enchant( Enchantment ench ) {

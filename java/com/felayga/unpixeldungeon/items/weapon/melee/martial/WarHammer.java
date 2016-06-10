@@ -36,6 +36,7 @@ public class WarHammer extends MartialMeleeWeapon {
 
 		name = "war hammer";
 		image = ItemSpriteSheet.WAR_HAMMER;
+        pickupSound = Assets.SND_ITEM_WOOD;
 	}
 	
 	@Override
@@ -43,11 +44,6 @@ public class WarHammer extends MartialMeleeWeapon {
 		return
 			"Few creatures can withstand the crushing blow of this towering mass of lead and steel, " +
 			"but only the strongest of adventurers can use it effectively.";
-	}
-
-	@Override
-	public void playPickupSound() {
-		Sample.INSTANCE.play( Assets.SND_ITEM_WOOD );
 	}
 
 }

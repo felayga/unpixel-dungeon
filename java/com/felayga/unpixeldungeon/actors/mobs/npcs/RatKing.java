@@ -56,7 +56,8 @@ public class RatKing extends NPC {
 	}
 	
 	@Override
-	public void damage( int dmg, MagicType type, Actor source ) {
+	public int damage( int dmg, MagicType type, Actor source ) {
+        return 0;
 	}
 	
 	@Override

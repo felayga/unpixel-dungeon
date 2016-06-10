@@ -37,18 +37,57 @@ import com.felayga.unpixeldungeon.effects.particles.ShadowParticle;
 
 public abstract class EquippableItem extends Item {
 	public enum Slot {
-		Weapon,
-		Offhand,
-		Armor,
-		Gloves,
-		Boots,
-		Ring1,
-		Ring2,
-		Amulet,
-		Cloak,
-		Face,
-        Helmet,
-        Pants
+		Weapon(0),
+		Offhand(1),
+
+        Face(2),
+        Amulet(3),
+        Ring1(4),
+        Ring2(5),
+
+        Cloak(6),
+		Armor(7),
+        Helmet(8),
+		Gloves(9),
+        Pants(10),
+        Boots(11);
+
+        public final int value;
+
+        Slot(int value) {
+            this.value = value;
+        }
+
+        public static int HIGHEST() { return Boots.value; }
+
+        public static Slot fromInt(int value) {
+            switch(value) {
+                case 0:
+                    return Weapon;
+                case 1:
+                    return Offhand;
+                case 2:
+                    return Face;
+                case 3:
+                    return Amulet;
+                case 4:
+                    return Ring1;
+                case 5:
+                    return Ring2;
+                case 6:
+                    return Cloak;
+                case 7:
+                    return Armor;
+                case 8:
+                    return Helmet;
+                case 9:
+                    return Gloves;
+                case 10:
+                    return Pants;
+                default:
+                    return Boots;
+            }
+        }
 	}
 
 	public static final String AC_EQUIP		= "EQUIP";
@@ -99,7 +138,7 @@ public abstract class EquippableItem extends Item {
 	public void cast( final Hero user, int dst ) {
 
 		if (isEquipped( user )) {
-			if (quantity == 1 && !user.belongings.unequip(this, true)) {
+			if (quantity() == 1 && !user.belongings.unequip(this, true)) {
 				return;
 			}
 		}

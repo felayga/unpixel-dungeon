@@ -28,10 +28,10 @@ import java.util.HashSet;
 
 import com.felayga.unpixeldungeon.actors.blobs.Blob;
 import com.felayga.unpixeldungeon.actors.blobs.Web;
-import com.felayga.unpixeldungeon.actors.buffs.Poison;
-import com.felayga.unpixeldungeon.actors.buffs.Roots;
-import com.felayga.unpixeldungeon.actors.buffs.Terror;
-import com.felayga.unpixeldungeon.items.food.MysteryMeat;
+import com.felayga.unpixeldungeon.actors.buffs.negative.Poison;
+import com.felayga.unpixeldungeon.actors.buffs.negative.Roots;
+import com.felayga.unpixeldungeon.actors.buffs.negative.Terror;
+import com.felayga.unpixeldungeon.items.food.unused.MysteryMeat;
 import com.felayga.unpixeldungeon.items.weapon.melee.mob.PoisonChance;
 import com.felayga.unpixeldungeon.mechanics.GameTime;
 import com.felayga.unpixeldungeon.scenes.GameScene;

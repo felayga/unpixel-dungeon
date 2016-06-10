@@ -30,14 +30,12 @@ import com.felayga.unpixeldungeon.ShatteredPixelDungeon;
 import com.felayga.unpixeldungeon.actors.Actor;
 import com.felayga.unpixeldungeon.actors.Char;
 import com.felayga.unpixeldungeon.actors.buffs.Buff;
-import com.felayga.unpixeldungeon.actors.buffs.Paralysis;
-import com.felayga.unpixeldungeon.actors.buffs.Roots;
 import com.felayga.unpixeldungeon.actors.hero.Hero;
 import com.felayga.unpixeldungeon.effects.CellEmitter;
 import com.felayga.unpixeldungeon.effects.Speck;
 import com.felayga.unpixeldungeon.items.tools.ITool;
 import com.felayga.unpixeldungeon.items.tools.digging.Pickaxe;
-import com.felayga.unpixeldungeon.items.weapon.missiles.Rock;
+import com.felayga.unpixeldungeon.items.weapon.missiles.simple.Rock;
 import com.felayga.unpixeldungeon.levels.Level;
 import com.felayga.unpixeldungeon.levels.Terrain;
 import com.felayga.unpixeldungeon.mechanics.Constant;
@@ -52,7 +50,6 @@ import com.watabou.utils.Bundle;
 import com.watabou.utils.Random;
 
 import java.util.ArrayList;
-import java.util.HashSet;
 import java.util.List;
 
 public class Boulder extends NPC {
@@ -66,9 +63,10 @@ public class Boulder extends NPC {
 
         name = "boulder";
         spriteClass = BoulderSprite.class;
+        HP = HT = 101;
 
         state = PASSIVE;
-        actPriority = -8;
+        actPriority = -1; // gotta be before the hero if pushed
     }
 
     @Override
@@ -85,7 +83,8 @@ public class Boulder extends NPC {
     protected Char chooseEnemy() { return null; }
 
     @Override
-    public void damage( int dmg, MagicType type, Actor source ) {
+    public int damage( int dmg, MagicType type, Actor source ) {
+        return 0;
     }
 
     @Override
@@ -276,7 +275,8 @@ public class Boulder extends NPC {
     public void die(Actor cause)
     {
         if (!pluggingPit){
-            Dungeon.level.drop( new Rock( Random.Int(6, 66) ), pos );
+            Dungeon.level.spawnGemstones(pos);
+            Dungeon.level.drop( new Rock( Random.Int(3, 23) ), pos );
 
             Level.losBlocking[storedPos] = storedFlag;
             GameScene.updateMap(storedPos);

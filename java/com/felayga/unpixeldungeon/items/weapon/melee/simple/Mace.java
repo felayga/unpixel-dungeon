@@ -36,6 +36,7 @@ public class Mace extends SimpleMeleeWeapon {
 
 		name = "mace";
 		image = ItemSpriteSheet.MACE;
+        pickupSound = Assets.SND_ITEM_WOOD;
 	}
 	
 	@Override
@@ -43,8 +44,4 @@ public class Mace extends SimpleMeleeWeapon {
 		return "The iron head of this weapon inflicts substantial damage.";
 	}
 
-	@Override
-	public void playPickupSound() {
-		Sample.INSTANCE.play( Assets.SND_ITEM_WOOD );
-	}
 }

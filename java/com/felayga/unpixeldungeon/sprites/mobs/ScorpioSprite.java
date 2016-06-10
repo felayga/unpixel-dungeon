@@ -28,7 +28,7 @@ import com.felayga.unpixeldungeon.sprites.MissileSprite;
 import com.felayga.unpixeldungeon.sprites.MobSprite;
 import com.watabou.noosa.TextureFilm;
 import com.felayga.unpixeldungeon.Assets;
-import com.felayga.unpixeldungeon.items.weapon.missiles.Dart;
+import com.felayga.unpixeldungeon.items.weapon.missiles.simple.Dart;
 import com.felayga.unpixeldungeon.levels.Level;
 import com.watabou.utils.Callback;
 
@@ -67,7 +67,7 @@ public class ScorpioSprite extends MobSprite {
 	
 	@Override
 	public void attack( int cell ) {
-		if (!Level.adjacent( cell, ch.pos )) {
+		if (!Level.canReach( cell, ch.pos )) {
 			
 			cellToAttack = cell;
 			turnTo( ch.pos , cell );

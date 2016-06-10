@@ -27,6 +27,7 @@ package com.felayga.unpixeldungeon.levels;
 import com.felayga.unpixeldungeon.Bones;
 import com.felayga.unpixeldungeon.Challenges;
 import com.felayga.unpixeldungeon.Dungeon;
+import com.felayga.unpixeldungeon.Statistics;
 import com.felayga.unpixeldungeon.actors.Actor;
 import com.felayga.unpixeldungeon.actors.buffs.Buff;
 import com.felayga.unpixeldungeon.actors.mobs.Bestiary;
@@ -42,6 +43,7 @@ import com.felayga.unpixeldungeon.levels.Room.Type;
 import com.felayga.unpixeldungeon.levels.painters.Painter;
 import com.felayga.unpixeldungeon.levels.painters.ShopPainter;
 import com.felayga.unpixeldungeon.levels.traps.*;
+import com.felayga.unpixeldungeon.scenes.GameScene;
 import com.watabou.utils.Bundle;
 import com.watabou.utils.Graph;
 import com.watabou.utils.Random;
@@ -186,7 +188,7 @@ public abstract class RegularLevel extends Level {
     protected boolean initRooms() {
 
         rooms = new HashSet<Room>();
-        split(new Rect(0, 0, WIDTH - 1, HEIGHT - 1));
+        split(new Rect(0 + Level.EDGEBUFFER, 0 + Level.EDGEBUFFER, WIDTH - 1 - Level.EDGEBUFFER, HEIGHT - 1 - Level.EDGEBUFFER));
 
         if (rooms.size() < 8) {
             return false;
@@ -223,7 +225,7 @@ public abstract class RegularLevel extends Level {
                         specials.remove(Type.ARMORY);
                         specials.remove(Type.CRYPT);
                         specials.remove(Type.LABORATORY);
-                        specials.remove(Type.LIBRARY);
+                        //specials.remove(Type.LIBRARY);
                         //specials.remove( Type.STATUE );
                         specials.remove(Type.TREASURY);
                         specials.remove(Type.VAULT);
@@ -507,11 +509,21 @@ public abstract class RegularLevel extends Level {
                 case HIDDEN:
                     map[door] = Terrain.SECRET_DOOR;
                     break;
+                case HIDDENLOCKED:
+                    map[door] = Terrain.SECRET_LOCKED_DOOR;
                 case BARRICADE:
-                    map[door] = Random.Int(3) == 0 ? Terrain.BOOKSHELF : Terrain.BARRICADE;
+                    map[door] = Terrain.BARRICADE;
                     break;
                 case LOCKED:
-                    map[door] = Terrain.LOCKED_DOOR;
+                    if (Dungeon.depth <= 1) {
+                        map[door] = Terrain.LOCKED_DOOR;
+                    } else {
+                        boolean secret = (Dungeon.depth < 6 ? Random.Int(12 - Dungeon.depth) : Random.Int(6)) == 0;
+                        map[door] = secret ? Terrain.SECRET_LOCKED_DOOR : Terrain.LOCKED_DOOR;
+                        if (secret) {
+                            secretDoors++;
+                        }
+                    }
                     break;
             }
         }
@@ -593,10 +605,32 @@ public abstract class RegularLevel extends Level {
         Iterator<Room> stdRoomIter = stdRooms.iterator();
 
         while (mobsToSpawn > 0) {
-            if (!stdRoomIter.hasNext())
+            if (!stdRoomIter.hasNext()) {
                 stdRoomIter = stdRooms.iterator();
-            Room roomToSpawn = stdRoomIter.next();
+            }
 
+            final Room roomToSpawn = stdRoomIter.next();
+
+            Bestiary.spawn(Dungeon.depth, Dungeon.hero.level, true, new Bestiary.SpawnParams() {
+                @Override
+                public Level level() {
+                    return RegularLevel.this;
+                }
+
+                @Override
+                public int position() {
+                    return roomToSpawn.random();
+                }
+
+                @Override
+                public void initialize(Mob mob) {
+                    mobs.add(mob);
+                }
+            });
+
+            mobsToSpawn--;
+
+            /*
             Mob mob = Bestiary.mob(Dungeon.depth, Dungeon.hero.level);
             mob.pos = roomToSpawn.random();
 
@@ -615,6 +649,7 @@ public abstract class RegularLevel extends Level {
                     }
                 }
             }
+            */
         }
     }
 

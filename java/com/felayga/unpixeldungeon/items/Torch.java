@@ -29,7 +29,7 @@ import java.util.ArrayList;
 import com.felayga.unpixeldungeon.mechanics.GameTime;
 import com.watabou.noosa.particles.Emitter;
 import com.felayga.unpixeldungeon.actors.buffs.Buff;
-import com.felayga.unpixeldungeon.actors.buffs.Light;
+import com.felayga.unpixeldungeon.actors.buffs.positive.Light;
 import com.felayga.unpixeldungeon.actors.hero.Hero;
 import com.felayga.unpixeldungeon.effects.particles.FlameParticle;
 import com.felayga.unpixeldungeon.sprites.ItemSpriteSheet;

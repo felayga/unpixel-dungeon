@@ -37,7 +37,7 @@ import com.felayga.unpixeldungeon.actors.Char;
 import com.felayga.unpixeldungeon.actors.blobs.Blob;
 import com.felayga.unpixeldungeon.actors.blobs.ToxicGas;
 import com.felayga.unpixeldungeon.actors.buffs.Buff;
-import com.felayga.unpixeldungeon.actors.buffs.Roots;
+import com.felayga.unpixeldungeon.actors.buffs.negative.Roots;
 import com.felayga.unpixeldungeon.items.Item;
 import com.felayga.unpixeldungeon.items.potions.PotionOfStrength;
 import com.felayga.unpixeldungeon.items.quest.CorpseDust;
@@ -130,7 +130,8 @@ public class Wandmaker extends NPC {
 	}
 	
 	@Override
-	public void damage( int dmg, MagicType type, Actor source) {
+	public int damage( int dmg, MagicType type, Actor source) {
+        return 0;
 	}
 	
 	@Override

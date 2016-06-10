@@ -43,16 +43,16 @@ public class MonkeySprite extends MobSprite {
 
         int offset = index * FRAMES_PER_ROW;
 
-        idle = new Animation( 1, true );
+        idle = new Animation( 6, true );
         idle.frames( frames, offset + 0, offset + 0, offset + 0, offset + 0, offset + 0, offset + 0, offset + 1, offset + 2, offset + 1, offset + 2, offset + 1 );
 
-        run = new Animation( HeroSprite.RUN_FRAMERATE, true );
+        run = new Animation( 12, true );
         run.frames( frames, offset + 6, offset + 7, offset + 8, offset + 9, offset + 10, offset + 11 );
 
         die = new Animation( 20, false );
         die.frames( frames, offset + 0, offset + 12, offset + 13, offset + 14, offset + 15 );
 
-        attack = new Animation( 15, false );
+        attack = new Animation( 12, false );
         attack.frames( frames, offset + 3, offset + 4, offset + 5, offset + 0 );
 
         play(idle);

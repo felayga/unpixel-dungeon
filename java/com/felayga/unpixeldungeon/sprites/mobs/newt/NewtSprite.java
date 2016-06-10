@@ -46,7 +46,7 @@ public class NewtSprite extends MobSprite {
 
         initAnimationIdle(frames, offset);
 
-        run = new Animation( HeroSprite.RUN_FRAMERATE, true );
+        run = new Animation( 12, true );
         run.frames( frames, offset + 6, offset + 7, offset + 8, offset + 9 );
 
         initAnimationAttack(frames, offset);
@@ -58,13 +58,13 @@ public class NewtSprite extends MobSprite {
     }
 
     protected void initAnimationIdle(TextureFilm frames, int offset) {
-        idle = new Animation( 1, true );
+        idle = new Animation( 10, true );
         idle.frames(frames, offset + 0, offset + 0, offset + 0, offset + 0, offset + 1, offset + 0, offset + 1, offset + 0, offset + 0, offset + 0,
                 offset + 0, offset + 2, offset + 2, offset + 2, offset + 3, offset + 2, offset + 3, offset + 2, offset + 2, offset + 2);
     }
 
     protected void initAnimationAttack(TextureFilm frames, int offset) {
-        attack = new Animation( 15, false );
+        attack = new Animation( 25, false );
         attack.frames( frames, offset + 0, offset + 4, offset + 5, offset + 0 );
     }
 

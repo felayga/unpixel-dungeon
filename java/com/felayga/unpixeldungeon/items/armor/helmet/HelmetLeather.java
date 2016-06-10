@@ -25,7 +25,7 @@
 
 package com.felayga.unpixeldungeon.items.armor.helmet;
 
-import com.felayga.unpixeldungeon.actors.buffs.Encumbrance;
+import com.felayga.unpixeldungeon.actors.buffs.hero.Encumbrance;
 import com.felayga.unpixeldungeon.mechanics.GameTime;
 import com.felayga.unpixeldungeon.sprites.ItemSpriteSheet;
 
@@ -34,7 +34,7 @@ import com.felayga.unpixeldungeon.sprites.ItemSpriteSheet;
  */
 public class HelmetLeather extends Helmet {
     public HelmetLeather() {
-        super(1, 0, GameTime.TICK, 0);
+        super(0, 0, GameTime.TICK, 0);
 
         name = "leather helmet";
         image = ItemSpriteSheet.HELMET_LEATHER;

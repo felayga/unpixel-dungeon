@@ -26,8 +26,8 @@ package com.felayga.unpixeldungeon.items.scrolls;
 
 import com.felayga.unpixeldungeon.Assets;
 import com.felayga.unpixeldungeon.Badges;
-import com.felayga.unpixeldungeon.actors.buffs.Blindness;
-import com.felayga.unpixeldungeon.actors.buffs.Encumbrance;
+import com.felayga.unpixeldungeon.actors.buffs.negative.Blindness;
+import com.felayga.unpixeldungeon.actors.buffs.hero.Encumbrance;
 import com.felayga.unpixeldungeon.actors.hero.Hero;
 import com.felayga.unpixeldungeon.items.Item;
 import com.felayga.unpixeldungeon.items.ItemStatusHandler;
@@ -152,6 +152,8 @@ public abstract class Scroll extends Item {
 		super();
 		syncVisuals();
 
+        pickupSound = Assets.SND_ITEM_PAPER;
+
 		stackable = true;
 		defaultAction = AC_READ;
 
@@ -238,11 +240,6 @@ public abstract class Scroll extends Item {
 
 	public String initials(){
 		return isKnown() ? initials : null;
-	}
-
-	@Override
-	public void playPickupSound() {
-		Sample.INSTANCE.play( Assets.SND_ITEM_PAPER );
 	}
 
 	@Override
