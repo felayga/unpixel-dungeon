@@ -24,20 +24,20 @@
  */
 package com.felayga.unpixeldungeon.items.scrolls;
 
-import com.felayga.unpixeldungeon.ResultDescriptions;
-import com.felayga.unpixeldungeon.actors.buffs.negative.Paralysis;
-import com.felayga.unpixeldungeon.mechanics.MagicType;
-import com.felayga.unpixeldungeon.utils.GLog;
-import com.felayga.unpixeldungeon.utils.Utils;
-import com.watabou.noosa.audio.Sample;
 import com.felayga.unpixeldungeon.Assets;
 import com.felayga.unpixeldungeon.Dungeon;
-import com.felayga.unpixeldungeon.actors.buffs.negative.Blindness;
+import com.felayga.unpixeldungeon.ResultDescriptions;
 import com.felayga.unpixeldungeon.actors.buffs.Buff;
+import com.felayga.unpixeldungeon.actors.buffs.negative.Blindness;
+import com.felayga.unpixeldungeon.actors.buffs.negative.Paralysis;
 import com.felayga.unpixeldungeon.actors.buffs.positive.Invisibility;
 import com.felayga.unpixeldungeon.actors.mobs.Mob;
 import com.felayga.unpixeldungeon.levels.Level;
+import com.felayga.unpixeldungeon.mechanics.MagicType;
 import com.felayga.unpixeldungeon.scenes.GameScene;
+import com.felayga.unpixeldungeon.utils.GLog;
+import com.felayga.unpixeldungeon.utils.Utils;
+import com.watabou.noosa.audio.Sample;
 import com.watabou.utils.Random;
 
 public class ScrollOfPsionicBlast extends Scroll {
@@ -73,7 +73,7 @@ public class ScrollOfPsionicBlast extends Scroll {
 		
 		setKnown();
 		
-		curUser.spend( TIME_TO_READ, true );
+		curUser.spend_new( TIME_TO_READ, true );
 
 		if (!curUser.isAlive()) {
 			Dungeon.fail( Utils.format(ResultDescriptions.ITEM, name ));

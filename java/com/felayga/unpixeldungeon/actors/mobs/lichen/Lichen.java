@@ -31,7 +31,6 @@ import com.felayga.unpixeldungeon.actors.buffs.Buff;
 import com.felayga.unpixeldungeon.actors.buffs.hero.Encumbrance;
 import com.felayga.unpixeldungeon.actors.buffs.negative.Held;
 import com.felayga.unpixeldungeon.actors.mobs.Mob;
-import com.felayga.unpixeldungeon.items.weapon.melee.mob.MeleeMobAttack;
 import com.felayga.unpixeldungeon.mechanics.CorpseEffect;
 import com.felayga.unpixeldungeon.mechanics.GameTime;
 import com.felayga.unpixeldungeon.mechanics.MagicType;
@@ -49,8 +48,8 @@ public class Lichen extends Mob {
         spriteClass = LichenSprite.class;
 
         experience = 4;
-        movementSpeed = 1;
-        attackSpeed = GameTime.TICK;
+        movementSpeed(GameTime.TICK * 12);
+        attackSpeed(GameTime.TICK);
         defenseMundane = 11;
         defenseMagical = 0;
         weight = Encumbrance.UNIT * 20;
@@ -68,7 +67,7 @@ public class Lichen extends Mob {
 
     @Override
     protected void touch(Char enemy, boolean visible) {
-        Buff.prolong(enemy, Held.class, GameTime.TICK * GameTime.TICK / movementSpeed);
+        Buff.prolong(enemy, Held.class, movementSpeed());
         buff = enemy.buff(Held.class);
         if (buff != null) {
             buff.host = this;

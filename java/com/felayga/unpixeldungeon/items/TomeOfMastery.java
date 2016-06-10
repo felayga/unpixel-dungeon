@@ -24,24 +24,24 @@
  */
 package com.felayga.unpixeldungeon.items;
 
-import java.util.ArrayList;
-
-import com.felayga.unpixeldungeon.mechanics.GameTime;
-import com.watabou.noosa.audio.Sample;
 import com.felayga.unpixeldungeon.Assets;
 import com.felayga.unpixeldungeon.Badges;
-import com.felayga.unpixeldungeon.actors.buffs.negative.Blindness;
 import com.felayga.unpixeldungeon.actors.buffs.Buff;
 import com.felayga.unpixeldungeon.actors.buffs.hero.Fury;
+import com.felayga.unpixeldungeon.actors.buffs.negative.Blindness;
 import com.felayga.unpixeldungeon.actors.hero.Hero;
 import com.felayga.unpixeldungeon.actors.hero.HeroSubClass;
 import com.felayga.unpixeldungeon.effects.Speck;
 import com.felayga.unpixeldungeon.effects.SpellSprite;
+import com.felayga.unpixeldungeon.mechanics.GameTime;
 import com.felayga.unpixeldungeon.scenes.GameScene;
 import com.felayga.unpixeldungeon.sprites.ItemSpriteSheet;
 import com.felayga.unpixeldungeon.utils.GLog;
 import com.felayga.unpixeldungeon.utils.Utils;
 import com.felayga.unpixeldungeon.windows.hero.WndChooseWay;
+import com.watabou.noosa.audio.Sample;
+
+import java.util.ArrayList;
 
 public class TomeOfMastery extends Item {
 
@@ -131,7 +131,7 @@ public class TomeOfMastery extends Item {
 	public void choose( HeroSubClass way ) {
 		curUser.belongings.remove(this, 1);
 
-		curUser.spend( TomeOfMastery.TIME_TO_READ, false );
+		curUser.spend_new(TomeOfMastery.TIME_TO_READ, false);
 		curUser.busy();
 		
 		curUser.subClass = way;

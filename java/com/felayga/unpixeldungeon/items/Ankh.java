@@ -25,13 +25,12 @@
 package com.felayga.unpixeldungeon.items;
 
 import com.felayga.unpixeldungeon.Assets;
-import com.felayga.unpixeldungeon.actors.Actor;
 import com.felayga.unpixeldungeon.actors.hero.Hero;
 import com.felayga.unpixeldungeon.effects.CellEmitter;
 import com.felayga.unpixeldungeon.effects.Speck;
 import com.felayga.unpixeldungeon.mechanics.GameTime;
-import com.felayga.unpixeldungeon.sprites.ItemSpriteSheet;
 import com.felayga.unpixeldungeon.sprites.ItemSprite.Glowing;
+import com.felayga.unpixeldungeon.sprites.ItemSpriteSheet;
 import com.felayga.unpixeldungeon.utils.GLog;
 import com.watabou.noosa.audio.Sample;
 import com.watabou.utils.Bundle;
@@ -91,7 +90,7 @@ public class Ankh extends Item {
 				blessed = true;
 				vial.empty();
 				GLog.p( TXT_BLESS );
-				hero.spend( GameTime.TICK, false );
+				hero.spend_new(GameTime.TICK, false);
 				hero.busy();
 
 

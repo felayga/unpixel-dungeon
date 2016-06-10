@@ -110,7 +110,7 @@ public class ChaliceOfBlood extends Artifact_old {
 
 		hero.sprite.operate( hero.pos );
 		hero.busy();
-		hero.spend(GameTime.TICK * 3, false);
+		hero.spend_new(GameTime.TICK * 3, false);
 		if (damage <= 0){
 			GLog.i("You prick yourself, and your blood drips into the chalice.");
 		} else if (damage < 25){

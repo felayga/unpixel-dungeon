@@ -24,10 +24,6 @@
  */
 package com.felayga.unpixeldungeon.items.bags;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Iterator;
-
 import com.felayga.unpixeldungeon.Badges;
 import com.felayga.unpixeldungeon.Dungeon;
 import com.felayga.unpixeldungeon.actors.Char;
@@ -45,6 +41,10 @@ import com.felayga.unpixeldungeon.windows.WndBag;
 import com.watabou.utils.Bundlable;
 import com.watabou.utils.Bundle;
 import com.watabou.utils.Random;
+
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Iterator;
 
 public class Bag extends Item implements Iterable<Item>, IBag {
 	private static final String TXT_PACK_FULL = "Your pack is too full for the %s.";
@@ -68,7 +68,7 @@ public class Bag extends Item implements Iterable<Item>, IBag {
     public Item self() {
         return this;
     }
-    public int pos() { return Constant.POS_NONE; }
+    public int pos() { return Constant.Position.NONE; }
     public String action() { return null; }
 
 	public Char owner;
@@ -112,7 +112,7 @@ public class Bag extends Item implements Iterable<Item>, IBag {
                 GameScene.show(new WndBag(this, null, WndBackpack.Mode.ALL, null, heap.pos));
             }
             else {
-                GameScene.show(new WndBag(this, null, WndBackpack.Mode.ALL, null, Constant.POS_NONE));
+                GameScene.show(new WndBag(this, null, WndBackpack.Mode.ALL, null, Constant.Position.NONE));
             }
 
 			return false;

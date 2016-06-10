@@ -25,6 +25,7 @@
 
 package com.felayga.unpixeldungeon.items.armor.boots;
 
+import com.felayga.unpixeldungeon.mechanics.Constant;
 import com.felayga.unpixeldungeon.mechanics.GameTime;
 import com.felayga.unpixeldungeon.sprites.ItemSpriteSheet;
 import com.felayga.unpixeldungeon.utils.GLog;
@@ -45,6 +46,6 @@ public class LeatherBoots extends Boots {
     public void restoreFromBundle(Bundle bundle) {
         super.restoreFromBundle(bundle);
 
-        GLog.d("defaultaction="+defaultAction+" good="+defaultAction.equals(AC_KICK));
+        GLog.d("defaultaction="+defaultAction+" good="+defaultAction.equals(Constant.Action.KICK));
     }
 }

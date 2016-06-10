@@ -24,8 +24,6 @@
  */
 package com.felayga.unpixeldungeon.items.scrolls;
 
-import com.felayga.unpixeldungeon.mechanics.BUCStatus;
-import com.watabou.noosa.audio.Sample;
 import com.felayga.unpixeldungeon.Assets;
 import com.felayga.unpixeldungeon.Dungeon;
 import com.felayga.unpixeldungeon.actors.buffs.positive.Invisibility;
@@ -34,8 +32,10 @@ import com.felayga.unpixeldungeon.effects.Speck;
 import com.felayga.unpixeldungeon.effects.SpellSprite;
 import com.felayga.unpixeldungeon.levels.Level;
 import com.felayga.unpixeldungeon.levels.Terrain;
+import com.felayga.unpixeldungeon.mechanics.BUCStatus;
 import com.felayga.unpixeldungeon.scenes.GameScene;
 import com.felayga.unpixeldungeon.utils.GLog;
+import com.watabou.noosa.audio.Sample;
 import com.watabou.utils.Random;
 
 public class ScrollOfMagicMapping extends Scroll {
@@ -120,7 +120,7 @@ public class ScrollOfMagicMapping extends Scroll {
 		
 		setKnown();
 		
-		curUser.spend( TIME_TO_READ, true );
+		curUser.spend_new(TIME_TO_READ, true);
 	}
 	
 	@Override

@@ -24,7 +24,7 @@
  */
 package com.felayga.unpixeldungeon.actors.buffs;
 
-import java.text.DecimalFormat;
+import com.felayga.unpixeldungeon.mechanics.GameTime;
 
 //buff whose only logic is to wait and detach after a time.
 public class FlavourBuff extends Buff {
@@ -38,7 +38,7 @@ public class FlavourBuff extends Buff {
 	//flavour buffs can all just rely on cooldown()
 	protected String dispTurns() {
 		//add one turn as buffs act last, we want them to end at 1 visually, even if they end at 0 internally.
-		double visualTurnsLeft = cooldown()+1f;
-		return visualTurnsLeft == 1 ? "1 more turn" : new DecimalFormat("#.##").format(visualTurnsLeft) + " more turns";
+		long visualTurnsLeft = (cooldown() + GameTime.TICK) / GameTime.TICK;
+		return visualTurnsLeft == 1 ? "1 more turn" : visualTurnsLeft + " more turns";
 	}
 }

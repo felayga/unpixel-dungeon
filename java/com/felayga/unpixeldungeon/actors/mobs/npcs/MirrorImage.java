@@ -24,8 +24,6 @@
  */
 package com.felayga.unpixeldungeon.actors.mobs.npcs;
 
-import java.util.HashSet;
-
 import com.felayga.unpixeldungeon.Dungeon;
 import com.felayga.unpixeldungeon.actors.Char;
 import com.felayga.unpixeldungeon.actors.hero.Hero;
@@ -37,6 +35,8 @@ import com.felayga.unpixeldungeon.sprites.CharSprite;
 import com.felayga.unpixeldungeon.sprites.MirrorSprite;
 import com.watabou.utils.Bundle;
 import com.watabou.utils.Random;
+
+import java.util.HashSet;
 
 public class MirrorImage extends NPC {
 
@@ -111,7 +111,6 @@ public class MirrorImage extends NPC {
 
 	@Override
 	public void interact() {
-		
 		int curPos = pos;
 		
 		moveSprite( pos, Dungeon.hero.pos );
@@ -120,7 +119,7 @@ public class MirrorImage extends NPC {
 		Dungeon.hero.sprite.move( Dungeon.hero.pos, curPos );
 		Dungeon.hero.move( curPos );
 		
-		Dungeon.hero.spend( GameTime.TICK * GameTime.TICK / Dungeon.hero.speed(), false );
+		Dungeon.hero.spend_new(Dungeon.hero.movementSpeed(), false);
 		Dungeon.hero.busy();
 	}
 

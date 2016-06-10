@@ -24,29 +24,30 @@
  */
 package com.felayga.unpixeldungeon.items.quest;
 
-import java.util.ArrayList;
-
-import com.felayga.unpixeldungeon.mechanics.GameTime;
-import com.felayga.unpixeldungeon.mechanics.WeaponSkill;
-import com.watabou.noosa.audio.Sample;
 import com.felayga.unpixeldungeon.Assets;
 import com.felayga.unpixeldungeon.Dungeon;
 import com.felayga.unpixeldungeon.actors.Char;
 import com.felayga.unpixeldungeon.actors.buffs.hero.Hunger;
 import com.felayga.unpixeldungeon.actors.hero.Hero;
-//import com.felayga.unpixeldungeon.actors.mobs.Bat;
 import com.felayga.unpixeldungeon.effects.CellEmitter;
 import com.felayga.unpixeldungeon.effects.Speck;
 import com.felayga.unpixeldungeon.items.weapon.Weapon;
 import com.felayga.unpixeldungeon.levels.Level;
 import com.felayga.unpixeldungeon.levels.Terrain;
+import com.felayga.unpixeldungeon.mechanics.GameTime;
+import com.felayga.unpixeldungeon.mechanics.WeaponSkill;
 import com.felayga.unpixeldungeon.scenes.GameScene;
-import com.felayga.unpixeldungeon.sprites.ItemSpriteSheet;
 import com.felayga.unpixeldungeon.sprites.ItemSprite.Glowing;
+import com.felayga.unpixeldungeon.sprites.ItemSpriteSheet;
 import com.felayga.unpixeldungeon.ui.BuffIndicator;
 import com.felayga.unpixeldungeon.utils.GLog;
+import com.watabou.noosa.audio.Sample;
 import com.watabou.utils.Bundle;
 import com.watabou.utils.Callback;
+
+import java.util.ArrayList;
+
+//import com.felayga.unpixeldungeon.actors.mobs.Bat;
 
 public class OldPickaxe extends Weapon {
 	
@@ -93,7 +94,7 @@ public class OldPickaxe extends Weapon {
 				final int pos = hero.pos + Level.NEIGHBOURS8[i];
 				if (Dungeon.level.map[pos] == Terrain.WALL_DECO) {
 				
-					hero.spend( TIME_TO_MINE, false );
+					hero.spend_new(TIME_TO_MINE, false);
 					hero.busy();
 					
 					hero.sprite.attack( pos, new Callback() {

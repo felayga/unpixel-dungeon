@@ -178,7 +178,7 @@ public class Food extends Item {
             }
 
             //GLog.d("foodtick energy="+energy+" subenergy="+subenergy+"time="+time);
-            hero.spend(time, false);
+            hero.spend_new(time, false);
 
             if (!energyLeft()) {
                 doneEating(hero, hunger.isStuffed());

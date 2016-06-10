@@ -22,22 +22,13 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>
  *
  */
-package com.felayga.unpixeldungeon.actors.buffs.positive;
 
-import com.felayga.unpixeldungeon.actors.buffs.FlavourBuff;
-import com.felayga.unpixeldungeon.actors.buffs.ISpeedModifierBuff;
-import com.felayga.unpixeldungeon.mechanics.GameTime;
+package com.felayga.unpixeldungeon.actors.buffs;
 
-public class Speed extends FlavourBuff implements ISpeedModifierBuff {
-	public static final float DURATION = 10f;
-
-    @Override
-    public long movementModifier() {
-        return GameTime.TICK / 2;
-    }
-
-    @Override
-    public long attackModifier() {
-        return GameTime.TICK / 2;
-    }
+/**
+ * Created by HELLO on 6/10/2016.
+ */
+public interface ISpeedModifierBuff {
+    long movementModifier();
+    long attackModifier();
 }

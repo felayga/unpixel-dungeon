@@ -98,7 +98,7 @@ public class Stylus extends Item {
 		curUser.sprite.centerEmitter(-1).start( PurpleParticle.BURST, 0.05f, 10 );
 		Sample.INSTANCE.play( Assets.SND_BURNING );
 		
-		curUser.spend( TIME_TO_INSCRIBE, false );
+		curUser.spend_new( TIME_TO_INSCRIBE, false );
 		curUser.busy();
 	}
 	

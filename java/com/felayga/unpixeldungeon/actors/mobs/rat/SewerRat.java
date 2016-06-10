@@ -41,8 +41,8 @@ public class SewerRat extends Mob {
         spriteClass = RatSprite.class;
 
         experience = 1;
-        movementSpeed = GameTime.TICK;
-        attackSpeed = GameTime.TICK;
+        movementSpeed(GameTime.TICK);
+        attackSpeed(GameTime.TICK);
         defenseMundane = 13;
         defenseMagical = 0;
         weight = Encumbrance.UNIT * 20;

@@ -113,7 +113,7 @@ public class ShortSword extends MartialMeleeWeapon {
 				GLog.w( TXT_REFORGED, item.getDisplayName() );
 				
 				((MeleeWeapon)item).upgrade(item, 1);
-				curUser.spend( TIME_TO_REFORGE, true );
+				curUser.spend_new( TIME_TO_REFORGE, true );
 				
 				Badges.validateItemLevelAquired( item );
 				

@@ -204,7 +204,7 @@ public class Hunger extends Buff implements Hero.Doom {
 
 			long STEP = GameTime.TICK;
 			long step = ((Hero)target).heroClass == HeroClass.ROGUE ? STEP * 12 / 10 : STEP;
-			spend( target.buff( Shadows.class ) == null ? step : step * 3 / 2, false );
+            spend_new( target.buff( Shadows.class ) == null ? step : step * 3 / 2, false );
 		} else {
 			deactivate();
 		}

@@ -27,7 +27,6 @@ package com.felayga.unpixeldungeon.items.weapon.missiles.martial;
 import com.felayga.unpixeldungeon.Dungeon;
 import com.felayga.unpixeldungeon.actors.Char;
 import com.felayga.unpixeldungeon.actors.hero.Hero;
-import com.felayga.unpixeldungeon.items.Item;
 import com.felayga.unpixeldungeon.items.weapon.missiles.MissileWeapon;
 import com.felayga.unpixeldungeon.items.weapon.ranged.AmmunitionType;
 import com.felayga.unpixeldungeon.mechanics.GameTime;
@@ -83,7 +82,7 @@ public class Boomerang extends MissileWeapon {
 
 			if (throwEquiped) {
 				hero.belongings.collectEquip(this);
-				hero.spend(-TIME_TO_EQUIP, false);
+				hero.spend_new(-TIME_TO_EQUIP, false);
 				Dungeon.quickslot.replaceSimilar(this);
 				updateQuickslot();
 			} else if (!curUser.belongings.collect(this)) {

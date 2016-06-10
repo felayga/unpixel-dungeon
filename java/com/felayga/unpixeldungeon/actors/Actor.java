@@ -24,8 +24,6 @@
  */
 package com.felayga.unpixeldungeon.actors;
 
-import java.util.HashSet;
-
 import android.util.SparseArray;
 
 import com.felayga.unpixeldungeon.Dungeon;
@@ -33,9 +31,10 @@ import com.felayga.unpixeldungeon.Statistics;
 import com.felayga.unpixeldungeon.actors.blobs.Blob;
 import com.felayga.unpixeldungeon.actors.buffs.Buff;
 import com.felayga.unpixeldungeon.actors.mobs.Mob;
-import com.felayga.unpixeldungeon.utils.GLog;
 import com.watabou.utils.Bundlable;
 import com.watabou.utils.Bundle;
+
+import java.util.HashSet;
 
 public abstract class Actor implements Bundlable {
 	private long time;
@@ -49,7 +48,7 @@ public abstract class Actor implements Bundlable {
 
 	protected abstract boolean act();
 	
-	protected void spend( long time, boolean andnext ) {
+	public void spend_new( long time, boolean andnext ) {
 		this.time += time;
 	}
 	

@@ -141,7 +141,7 @@ public class Viscosity extends Glyph {
 					
 					Badges.validateDeathFromGlyph();
 				}
-				spend( GameTime.TICK, false );
+                spend_new( GameTime.TICK, false );
 				
 				if (--damage <= 0) {
 					detach();

@@ -65,7 +65,7 @@ public class DeathlySick extends Buff implements Hero.Doom {
         if (target.isAlive()) {
             Hero hero = (Hero)target;
 
-            spend(GameTime.TICK, false);
+            spend_new(GameTime.TICK, false);
             roundsLeft -= GameTime.TICK;
 
             if (roundsLeft <= 0) {

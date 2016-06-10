@@ -45,8 +45,8 @@ public class Newt extends Mob {
         spriteClass = NewtSprite.class;
 
         experience = 1;
-        movementSpeed = GameTime.TICK / 2;
-        attackSpeed = GameTime.TICK;
+        movementSpeed(GameTime.TICK * 2);
+        attackSpeed(GameTime.TICK);
         defenseMundane = 12;
         defenseMagical = 0;
         weight = Encumbrance.UNIT * 10;

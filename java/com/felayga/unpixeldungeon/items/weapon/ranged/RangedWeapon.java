@@ -26,18 +26,10 @@
 package com.felayga.unpixeldungeon.items.weapon.ranged;
 
 import com.felayga.unpixeldungeon.Dungeon;
-import com.felayga.unpixeldungeon.actors.Actor;
-import com.felayga.unpixeldungeon.actors.Char;
-import com.felayga.unpixeldungeon.actors.buffs.Buff;
-import com.felayga.unpixeldungeon.actors.buffs.hero.PinCushion;
 import com.felayga.unpixeldungeon.actors.hero.Hero;
-import com.felayga.unpixeldungeon.actors.hero.HeroClass;
-import com.felayga.unpixeldungeon.items.KindOfWeapon;
-import com.felayga.unpixeldungeon.items.rings.RingOfSharpshooting;
 import com.felayga.unpixeldungeon.items.weapon.Weapon;
-import com.felayga.unpixeldungeon.items.weapon.missiles.martial.Boomerang;
+import com.felayga.unpixeldungeon.mechanics.Constant;
 import com.felayga.unpixeldungeon.mechanics.WeaponSkill;
-import com.watabou.utils.Random;
 
 import java.util.ArrayList;
 
@@ -55,7 +47,7 @@ public class RangedWeapon extends Weapon {
         stackable = false;
         levelKnown = false;
 
-        defaultAction = AC_SHOOT;
+        defaultAction = Constant.Action.SHOOT;
 
         usesTargeting = true;
     }
@@ -69,7 +61,7 @@ public class RangedWeapon extends Weapon {
         ArrayList<String> actions = super.actions( hero );
 
         if (isEquipped(hero)) {
-            actions.add(AC_SHOOT);
+            actions.add(Constant.Action.SHOOT);
         }
 
         return actions;

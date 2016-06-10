@@ -28,8 +28,8 @@ import com.felayga.unpixeldungeon.Dungeon;
 import com.felayga.unpixeldungeon.actors.Actor;
 import com.felayga.unpixeldungeon.actors.Char;
 import com.felayga.unpixeldungeon.actors.buffs.Buff;
-import com.felayga.unpixeldungeon.actors.buffs.negative.Cripple;
 import com.felayga.unpixeldungeon.actors.buffs.hero.LockedFloor;
+import com.felayga.unpixeldungeon.actors.buffs.negative.Cripple;
 import com.felayga.unpixeldungeon.actors.hero.Hero;
 import com.felayga.unpixeldungeon.effects.Chains;
 import com.felayga.unpixeldungeon.effects.Pushing;
@@ -130,7 +130,7 @@ public class EtherealChains extends Artifact_old {
 								Actor.add(new Pushing(affected, affected.pos, newMobPos));
 								affected.pos = newMobPos;
 								Dungeon.observe();
-								curUser.spend(GameTime.TICK, true);
+								curUser.spend_new(GameTime.TICK, true);
 								Dungeon.level.press(newMobPos, affected);
 							}
 						}));
@@ -165,7 +165,7 @@ public class EtherealChains extends Artifact_old {
 										Dungeon.level.press(newHeroPos, curUser);
 									}
 								}));
-								curUser.spend(GameTime.TICK, true);
+								curUser.spend_new(GameTime.TICK, true);
 								curUser.pos = newHeroPos;
 								Dungeon.observe();
 							}
@@ -228,7 +228,7 @@ public class EtherealChains extends Artifact_old {
 
 			updateQuickslot();
 
-			spend( GameTime.TICK, false );
+            spend_new(GameTime.TICK, false);
 
 			return true;
 		}

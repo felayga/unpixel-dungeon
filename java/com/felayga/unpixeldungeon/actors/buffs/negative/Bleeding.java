@@ -89,8 +89,8 @@ public class Bleeding extends Buff {
 					Dungeon.fail( ResultDescriptions.BLEEDING );
 					GLog.n( "You bled to death..." );
 				}
-				
-				spend(GameTime.TICK, false );
+
+                spend_new(GameTime.TICK, false );
 			} else {
 				detach();
 			}

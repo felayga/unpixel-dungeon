@@ -29,16 +29,16 @@ import com.felayga.unpixeldungeon.Dungeon;
 import com.felayga.unpixeldungeon.ResultDescriptions;
 import com.felayga.unpixeldungeon.actors.Char;
 import com.felayga.unpixeldungeon.actors.buffs.Buff;
+import com.felayga.unpixeldungeon.actors.buffs.ISpeedModifierBuff;
 import com.felayga.unpixeldungeon.actors.hero.Hero;
 import com.felayga.unpixeldungeon.mechanics.AttributeType;
-import com.felayga.unpixeldungeon.mechanics.Constant;
 import com.felayga.unpixeldungeon.mechanics.GameTime;
 import com.felayga.unpixeldungeon.mechanics.MagicType;
 import com.felayga.unpixeldungeon.ui.BuffIndicator;
 import com.felayga.unpixeldungeon.utils.GLog;
 import com.watabou.utils.Bundle;
 
-public class Encumbrance extends Buff implements Hero.Doom {
+public class Encumbrance extends Buff implements Hero.Doom, ISpeedModifierBuff {
     public static final int UNIT = 128;
 
     private static final String TXT_INCREASETO_OVERLOADED	= "You collapse under your load.";
@@ -66,6 +66,7 @@ public class Encumbrance extends Buff implements Hero.Doom {
 
     private static final String HPDECREASETICK  = "hpDecreaseTick";
     private static final String CONSUMPTIONTICK = "consumptionTick";
+    private static final String MOVEMENTMODIFIER = "movementModifier";
 
     public Encumbrance()
     {
@@ -82,15 +83,19 @@ public class Encumbrance extends Buff implements Hero.Doom {
     @Override
     public void storeInBundle( Bundle bundle ) {
         super.storeInBundle(bundle);
+
         bundle.put(HPDECREASETICK, hpDecreaseTick);
         bundle.put(CONSUMPTIONTICK, consumptionTick);
+        bundle.put(MOVEMENTMODIFIER, movementModifier);
     }
 
     @Override
     public void restoreFromBundle( Bundle bundle ) {
         super.restoreFromBundle(bundle);
+
         hpDecreaseTick = bundle.getInt(HPDECREASETICK);
         consumptionTick = bundle.getInt(CONSUMPTIONTICK);
+        movementModifier = bundle.getLong(MOVEMENTMODIFIER);
     }
 
     @Override
@@ -114,7 +119,7 @@ public class Encumbrance extends Buff implements Hero.Doom {
     @Override
     public boolean act() {
         if (update()) {
-            spend( GameTime.TICK / 2, false );
+            spend_new(GameTime.TICK / 2, false);
         } else {
             deactivate();
         }
@@ -228,6 +233,16 @@ public class Encumbrance extends Buff implements Hero.Doom {
         return EncumbranceLevel.fromInt(level, getCapacity(strcon));
     }
 
+    private long movementModifier = GameTime.TICK;
+
+    public long movementModifier() {
+        return movementModifier;
+    }
+
+    public long attackModifier() {
+        return GameTime.TICK;
+    }
+
     private boolean weightChanged( int weight, int strcon ) {
         int oldValue = getCapacity(this.strcon);
         EncumbranceLevel oldEncumbrance = EncumbranceLevel.fromInt(this.level, oldValue);
@@ -245,45 +260,45 @@ public class Encumbrance extends Buff implements Hero.Doom {
                 switch (newEncumbrance) {
                     case OVERLOADED:
                         GLog.n(TXT_INCREASETO_OVERLOADED);
-                        target.crippled.put(Constant.DEBUFF_ENCUMBRANCE, 0L);
+                        movementModifier = 0L;
                         break;
                     case OVERTAXED:
                         GLog.n(TXT_INCREASETO_OVERTAXED);
-                        target.crippled.put(Constant.DEBUFF_ENCUMBRANCE, GameTime.TICK / 8);
+                        movementModifier = GameTime.TICK * 8;
                         break;
                     case STRAINED:
                         GLog.n(TXT_INCREASETO_STRAINED);
-                        target.crippled.put(Constant.DEBUFF_ENCUMBRANCE, GameTime.TICK / 4);
+                        movementModifier = GameTime.TICK * 4;
                         break;
                     case STRESSED:
                         GLog.w(TXT_INCREASETO_STRESSED);
-                        target.crippled.put(Constant.DEBUFF_ENCUMBRANCE, GameTime.TICK / 2);
+                        movementModifier = GameTime.TICK * 2;
                         break;
                     case BURDENED:
                         GLog.w(TXT_INCREASETO_BURDENED);
-                        target.crippled.put(Constant.DEBUFF_ENCUMBRANCE, GameTime.TICK * 3 / 4);
+                        movementModifier = GameTime.TICK * 4 / 3;
                         break;
                 }
             } else {
                 switch (newEncumbrance) {
                     case OVERTAXED:
-                        target.crippled.put(Constant.DEBUFF_ENCUMBRANCE, GameTime.TICK / 8);
+                        movementModifier = GameTime.TICK * 8;
                         break;
                     case STRAINED:
                         GLog.p(TXT_DECREASETO_STRAINED);
-                        target.crippled.put(Constant.DEBUFF_ENCUMBRANCE, GameTime.TICK / 4);
+                        movementModifier = GameTime.TICK * 4;
                         break;
                     case STRESSED:
                         GLog.p(TXT_DECREASETO_STRESSED);
-                        target.crippled.put(Constant.DEBUFF_ENCUMBRANCE, GameTime.TICK / 2);
+                        movementModifier = GameTime.TICK * 2;
                         break;
                     case BURDENED:
                         GLog.p(TXT_DECREASETO_BURDENED);
-                        target.crippled.put(Constant.DEBUFF_ENCUMBRANCE, GameTime.TICK * 3 / 4);
+                        movementModifier = GameTime.TICK * 4 / 3;
                         break;
                     case UNENCUMBERED:
                         GLog.p(TXT_DECREASETO_UNENCUMBERED);
-                        target.crippled.remove(Constant.DEBUFF_ENCUMBRANCE);
+                        movementModifier = GameTime.TICK;
                         break;
                 }
             }

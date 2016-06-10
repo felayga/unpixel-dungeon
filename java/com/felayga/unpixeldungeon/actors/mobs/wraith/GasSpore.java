@@ -31,15 +31,10 @@ import com.felayga.unpixeldungeon.actors.buffs.hero.Encumbrance;
 import com.felayga.unpixeldungeon.actors.mobs.Mob;
 import com.felayga.unpixeldungeon.items.Bomb;
 import com.felayga.unpixeldungeon.items.weapon.melee.mob.MeleeMobAttack;
-import com.felayga.unpixeldungeon.levels.Level;
 import com.felayga.unpixeldungeon.mechanics.CorpseEffect;
 import com.felayga.unpixeldungeon.mechanics.GameTime;
 import com.felayga.unpixeldungeon.mechanics.MagicType;
-import com.felayga.unpixeldungeon.sprites.mobs.fungus.BrownMoldSprite;
 import com.felayga.unpixeldungeon.sprites.mobs.wraith.GasSporeSprite;
-import com.felayga.unpixeldungeon.utils.GLog;
-import com.watabou.utils.Bundle;
-import com.watabou.utils.Random;
 
 /**
  * Created by HELLO on 6/9/2016.
@@ -52,8 +47,8 @@ public class GasSpore extends Mob {
         spriteClass = GasSporeSprite.class;
 
         experience = 12;
-        movementSpeed = GameTime.TICK / 4;
-        attackSpeed = GameTime.TICK;
+        movementSpeed(GameTime.TICK * 4);
+        attackSpeed(GameTime.TICK);
         defenseMundane = 10;
         defenseMagical = 0;
         weight = Encumbrance.UNIT * 10;

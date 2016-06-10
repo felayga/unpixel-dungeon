@@ -24,22 +24,23 @@
  */
 package com.felayga.unpixeldungeon.items.scrolls;
 
+import com.felayga.unpixeldungeon.Assets;
+import com.felayga.unpixeldungeon.Dungeon;
 import com.felayga.unpixeldungeon.ShatteredPixelDungeon;
 import com.felayga.unpixeldungeon.actors.Char;
+import com.felayga.unpixeldungeon.actors.buffs.positive.Invisibility;
+import com.felayga.unpixeldungeon.actors.hero.Hero;
 import com.felayga.unpixeldungeon.effects.Speck;
-//import com.felayga.unpixeldungeon.items.artifacts.DriedRose;
 import com.felayga.unpixeldungeon.mechanics.Constant;
 import com.felayga.unpixeldungeon.scenes.InterlevelScene;
+import com.felayga.unpixeldungeon.utils.GLog;
 import com.felayga.unpixeldungeon.windows.WndOptions;
 import com.watabou.noosa.Game;
 import com.watabou.noosa.audio.Sample;
-import com.felayga.unpixeldungeon.Assets;
-import com.felayga.unpixeldungeon.Dungeon;
-import com.felayga.unpixeldungeon.actors.buffs.positive.Invisibility;
-import com.felayga.unpixeldungeon.actors.hero.Hero;
-import com.felayga.unpixeldungeon.utils.GLog;
 import com.watabou.noosa.tweeners.AlphaTweener;
 import com.watabou.utils.Random;
+
+//import com.felayga.unpixeldungeon.items.artifacts.DriedRose;
 
 public class ScrollOfTeleportation extends Scroll {
 
@@ -63,7 +64,7 @@ public class ScrollOfTeleportation extends Scroll {
 		Invisibility.dispel();
 
 		setKnown();
-		curUser.spend(TIME_TO_READ, true);
+		curUser.spend_new(TIME_TO_READ, true);
 
 		if (canTeleport(curUser)) {
 			switch (bucStatus) {
@@ -84,7 +85,7 @@ public class ScrollOfTeleportation extends Scroll {
 
 						InterlevelScene.mode = InterlevelScene.Mode.TELEPORT;
 						InterlevelScene.teleportDepth = target;
-						InterlevelScene.teleportPos = Constant.POS_RANDOM;
+						InterlevelScene.teleportPos = Constant.Position.RANDOM;
 						Game.switchScene(InterlevelScene.class);
 					}
 					else {

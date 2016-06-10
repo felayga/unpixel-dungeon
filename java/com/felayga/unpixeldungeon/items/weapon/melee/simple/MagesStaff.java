@@ -32,7 +32,14 @@ import com.felayga.unpixeldungeon.actors.hero.HeroSubClass;
 import com.felayga.unpixeldungeon.items.Item;
 import com.felayga.unpixeldungeon.items.scrolls.ScrollOfRecharging;
 import com.felayga.unpixeldungeon.items.scrolls.ScrollOfUpgrade;
-import com.felayga.unpixeldungeon.items.wands.*;
+import com.felayga.unpixeldungeon.items.wands.Wand;
+import com.felayga.unpixeldungeon.items.wands.WandOfDisintegration;
+import com.felayga.unpixeldungeon.items.wands.WandOfFireblast;
+import com.felayga.unpixeldungeon.items.wands.WandOfFrost;
+import com.felayga.unpixeldungeon.items.wands.WandOfLightning;
+import com.felayga.unpixeldungeon.items.wands.WandOfMagicMissile;
+import com.felayga.unpixeldungeon.items.wands.WandOfRegrowth;
+import com.felayga.unpixeldungeon.items.wands.WandOfVenom;
 import com.felayga.unpixeldungeon.mechanics.BUCStatus;
 import com.felayga.unpixeldungeon.mechanics.GameTime;
 import com.felayga.unpixeldungeon.scenes.GameScene;
@@ -323,7 +330,7 @@ public class MagesStaff extends SimpleMeleeWeapon {
 
 									imbueWand((Wand) item, curUser);
 
-									curUser.spend(GameTime.TICK * 2, true);
+									curUser.spend_new(GameTime.TICK * 2, true);
 
 									updateQuickslot();
 								}

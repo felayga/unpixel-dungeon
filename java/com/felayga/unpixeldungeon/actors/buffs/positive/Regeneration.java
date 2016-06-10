@@ -53,11 +53,11 @@ public class Regeneration extends Buff {
 
 			if (regenBuff != null)
 				if (regenBuff.isCursed())
-					spend( REGENERATION_DELAY * 3 / 2, false );
+                    spend_new(REGENERATION_DELAY * 3 / 2, false);
 				else
-					spend( REGENERATION_DELAY - regenBuff.level() * 9 / 10, false );
+                    spend_new(REGENERATION_DELAY - regenBuff.level() * 9 / 10, false);
 			else
-				spend( REGENERATION_DELAY, false );
+                spend_new( REGENERATION_DELAY, false );
 			
 		} else {
 			

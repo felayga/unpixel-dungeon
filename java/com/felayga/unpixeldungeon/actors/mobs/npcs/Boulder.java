@@ -39,7 +39,6 @@ import com.felayga.unpixeldungeon.items.weapon.missiles.simple.Rock;
 import com.felayga.unpixeldungeon.levels.Level;
 import com.felayga.unpixeldungeon.levels.Terrain;
 import com.felayga.unpixeldungeon.mechanics.Constant;
-import com.felayga.unpixeldungeon.mechanics.GameTime;
 import com.felayga.unpixeldungeon.mechanics.MagicType;
 import com.felayga.unpixeldungeon.scenes.GameScene;
 import com.felayga.unpixeldungeon.sprites.npcs.BoulderSprite;
@@ -72,11 +71,6 @@ public class Boulder extends NPC {
     @Override
     public String defenseVerb() {
         return "undamaged";
-    }
-
-    @Override
-    public long speed() {
-        return GameTime.TICK;
     }
 
     @Override
@@ -125,7 +119,7 @@ public class Boulder extends NPC {
         final String diggingToolName_WTFJAVA = diggingToolName;
 
 
-        actions.add(Constant.TXT_CANCEL);
+        actions.add(Constant.Action.CANCEL);
         actionOptions.add(true);
 
 

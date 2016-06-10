@@ -221,7 +221,7 @@ public class SandalsOfNature extends Artifact_old {
 					hero.sprite.operate(hero.pos);
 					Sample.INSTANCE.play(Assets.SND_PLANT);
 					hero.busy();
-					hero.spend(GameTime.TICK * 2, false);
+					hero.spend_new(GameTime.TICK * 2, false);
 					if (seeds.size() >= 5+(level*2)){
 						seeds.clear();
 						upgrade(item, 1);

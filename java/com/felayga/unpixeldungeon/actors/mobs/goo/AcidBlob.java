@@ -47,8 +47,8 @@ public class AcidBlob extends Mob {
         spriteClass = AcidBlobSprite.class;
 
         experience = 9;
-        movementSpeed = GameTime.TICK / 4;
-        attackSpeed = GameTime.TICK;
+        movementSpeed(GameTime.TICK * 4);
+        attackSpeed(GameTime.TICK);
         defenseMundane = 12;
         defenseMagical = 0;
         weight = Encumbrance.UNIT * 30;

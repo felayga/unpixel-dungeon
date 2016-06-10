@@ -25,7 +25,6 @@
 package com.felayga.unpixeldungeon.actors.buffs.negative;
 
 import com.felayga.unpixeldungeon.Dungeon;
-import com.felayga.unpixeldungeon.actors.buffs.negative.Poison;
 import com.felayga.unpixeldungeon.actors.hero.Hero;
 import com.felayga.unpixeldungeon.mechanics.GameTime;
 import com.felayga.unpixeldungeon.mechanics.MagicType;
@@ -87,7 +86,7 @@ public class Venom extends Poison implements Hero.Doom {
 				damage++;
 
 			//want it to act after the cloud of venom it came from.
-			spend(GameTime.TICK + 1, false );
+            spend_new(GameTime.TICK + 1, false );
 			if ((left -= GameTime.TICK) <= 0) {
 				detach();
 			}

@@ -28,7 +28,6 @@ import com.felayga.unpixeldungeon.Dungeon;
 import com.felayga.unpixeldungeon.actors.Actor;
 import com.felayga.unpixeldungeon.actors.Char;
 import com.felayga.unpixeldungeon.actors.buffs.Buff;
-
 import com.felayga.unpixeldungeon.mechanics.GameTime;
 import com.felayga.unpixeldungeon.mechanics.MagicType;
 import com.felayga.unpixeldungeon.sprites.npcs.RatKingSprite;
@@ -41,13 +40,9 @@ public class RatKing extends NPC {
 
 		name = "rat king";
 		spriteClass = RatKingSprite.class;
+        movementSpeed(GameTime.TICK / 2);
 		
 		state = SLEEPING;
-	}
-	
-	@Override
-	public long speed() {
-		return GameTime.TICK * 2;
 	}
 	
 	@Override

@@ -26,7 +26,6 @@ package com.felayga.unpixeldungeon.actors.mobs.npcs;
 
 import com.felayga.unpixeldungeon.Dungeon;
 import com.felayga.unpixeldungeon.actors.Actor;
-import com.felayga.unpixeldungeon.actors.Char;
 import com.felayga.unpixeldungeon.actors.buffs.Buff;
 import com.felayga.unpixeldungeon.effects.CellEmitter;
 import com.felayga.unpixeldungeon.effects.particles.ElmoParticle;
@@ -65,7 +64,7 @@ public class Shopkeeper extends NPC {
 		throwItem();
 		
 		sprite.turnTo( pos, Dungeon.hero.pos );
-		spend(GameTime.TICK, false );
+		spend_new(GameTime.TICK, false);
 		return true;
 	}
 

@@ -33,6 +33,7 @@ import com.felayga.unpixeldungeon.actors.hero.Hero;
 import com.felayga.unpixeldungeon.actors.mobs.Mob;
 import com.felayga.unpixeldungeon.items.Item;
 import com.felayga.unpixeldungeon.mechanics.BUCStatus;
+import com.felayga.unpixeldungeon.mechanics.Constant;
 import com.felayga.unpixeldungeon.mechanics.GameTime;
 import com.felayga.unpixeldungeon.scenes.GameScene;
 import com.felayga.unpixeldungeon.sprites.CharSprite;
@@ -221,11 +222,11 @@ public class TimekeepersHourglass extends Artifact_old {
 					}
 				}
 			} else if (bucStatus == BUCStatus.Cursed && Random.Int(10) == 0)
-				((Hero) target).spend(GameTime.TICK, false );
+				((Hero) target).spend_new(GameTime.TICK, false);
 
 			updateQuickslot();
 
-			spend( GameTime.TICK, false );
+            spend_new(GameTime.TICK, false);
 
 			return true;
 		}
@@ -236,8 +237,8 @@ public class TimekeepersHourglass extends Artifact_old {
 		@Override
 		public boolean attachTo(Char target) {
 			//buffs always act last, so the stasis buff should end a turn early.
-			spend(GameTime.TICK * (charge-1), false);
-			((Hero)target).spend(GameTime.TICK * charge, true);
+            spend_new(GameTime.TICK * (charge - 1), false);
+			((Hero)target).spend_new(GameTime.TICK * charge, true);
 
 			//shouldn't punish the player for going into stasis frequently
 			Hunger hunger = target.buff(Hunger.class);
@@ -373,7 +374,7 @@ public class TimekeepersHourglass extends Artifact_old {
 					GLog.p("Your hourglass is filled with magical sand!");
 				else
 					GLog.i("you add the sand to your hourglass.");
-				hero.spend(TIME_TO_PICK_UP, true);
+				hero.spend_new(Constant.Time.ITEM_PICKUP, true);
 				return true;
 			} else {
 				GLog.w("You have no hourglass to place this sand into.");

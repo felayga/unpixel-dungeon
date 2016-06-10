@@ -24,21 +24,20 @@
  */
 package com.felayga.unpixeldungeon.items;
 
-import java.util.ArrayList;
-
-import com.felayga.unpixeldungeon.Dungeon;
-import com.felayga.unpixeldungeon.actors.Actor;
-import com.felayga.unpixeldungeon.actors.hero.HeroClass;
-import com.felayga.unpixeldungeon.mechanics.GameTime;
-import com.watabou.noosa.audio.Sample;
 import com.felayga.unpixeldungeon.Assets;
+import com.felayga.unpixeldungeon.Dungeon;
 import com.felayga.unpixeldungeon.actors.hero.Hero;
+import com.felayga.unpixeldungeon.actors.hero.HeroClass;
 import com.felayga.unpixeldungeon.effects.Speck;
+import com.felayga.unpixeldungeon.mechanics.GameTime;
 import com.felayga.unpixeldungeon.sprites.CharSprite;
 import com.felayga.unpixeldungeon.sprites.ItemSpriteSheet;
 import com.felayga.unpixeldungeon.utils.GLog;
 import com.felayga.unpixeldungeon.utils.Utils;
+import com.watabou.noosa.audio.Sample;
 import com.watabou.utils.Bundle;
+
+import java.util.ArrayList;
 
 public class DewVial extends Item {
 
@@ -109,7 +108,7 @@ public class DewVial extends Item {
 
 				volume = 0;
 
-				hero.spend( TIME_TO_DRINK, false );
+				hero.spend_new(TIME_TO_DRINK, false);
 				hero.busy();
 
 				Sample.INSTANCE.play( Assets.SND_DRINK );

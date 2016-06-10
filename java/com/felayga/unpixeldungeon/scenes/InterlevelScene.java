@@ -311,7 +311,7 @@ public class InterlevelScene extends PixelScene {
 					break;
 				}
 			}
-			Dungeon.switchLevel( Dungeon.loadLevel( WndInitHero.savedGameIndex ), Constant.POS_EXIT);
+			Dungeon.switchLevel( Dungeon.loadLevel( WndInitHero.savedGameIndex ), Constant.Position.EXIT);
 		} else {
 			Level level = Dungeon.loadLevel( WndInitHero.savedGameIndex );
 			Dungeon.switchLevel( level, Level.resizingNeeded ? level.adjustPos( Dungeon.hero.pos ) : Dungeon.hero.pos );

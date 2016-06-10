@@ -24,13 +24,13 @@
  */
 package com.felayga.unpixeldungeon.actors.buffs.hero;
 
-import com.felayga.unpixeldungeon.actors.buffs.positive.Invisibility;
-import com.felayga.unpixeldungeon.mechanics.GameTime;
-import com.watabou.noosa.audio.Sample;
 import com.felayga.unpixeldungeon.Assets;
 import com.felayga.unpixeldungeon.Dungeon;
 import com.felayga.unpixeldungeon.actors.Char;
+import com.felayga.unpixeldungeon.actors.buffs.positive.Invisibility;
+import com.felayga.unpixeldungeon.mechanics.GameTime;
 import com.felayga.unpixeldungeon.ui.BuffIndicator;
+import com.watabou.noosa.audio.Sample;
 import com.watabou.utils.Bundle;
 
 public class Shadows extends Invisibility {
@@ -76,8 +76,8 @@ public class Shadows extends Invisibility {
 	@Override
 	public boolean act() {
 		if (target.isAlive()) {
-			
-			spend(GameTime.TICK * 2, false );
+
+            spend_new(GameTime.TICK * 2, false);
 			
 			if (--left <= 0 || Dungeon.hero.visibleEnemies() > 0) {
 				detach();

@@ -32,7 +32,6 @@ import com.felayga.unpixeldungeon.levels.Level;
 import com.felayga.unpixeldungeon.mechanics.CorpseEffect;
 import com.felayga.unpixeldungeon.mechanics.GameTime;
 import com.felayga.unpixeldungeon.mechanics.MagicType;
-import com.felayga.unpixeldungeon.sprites.mobs.fungus.GreenMoldSprite;
 import com.felayga.unpixeldungeon.sprites.mobs.fungus.ShriekerSprite;
 import com.watabou.utils.Random;
 
@@ -47,8 +46,8 @@ public class Shrieker extends Mob {
         spriteClass = ShriekerSprite.class;
 
         experience = 28;
-        movementSpeed = 1;
-        attackSpeed = GameTime.TICK;
+        movementSpeed(1);
+        attackSpeed(GameTime.TICK);
         defenseMundane = 13;
         defenseMagical = 0;
         weight = Encumbrance.UNIT * 100;

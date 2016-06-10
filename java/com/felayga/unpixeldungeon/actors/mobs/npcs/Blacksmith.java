@@ -24,33 +24,33 @@
  */
 package com.felayga.unpixeldungeon.actors.mobs.npcs;
 
-import java.util.Collection;
-
-import com.felayga.unpixeldungeon.actors.Actor;
-import com.felayga.unpixeldungeon.items.EquippableItem;
-import com.felayga.unpixeldungeon.mechanics.BUCStatus;
-import com.felayga.unpixeldungeon.mechanics.GameTime;
-import com.felayga.unpixeldungeon.mechanics.MagicType;
-import com.watabou.noosa.audio.Sample;
 import com.felayga.unpixeldungeon.Assets;
 import com.felayga.unpixeldungeon.Badges;
 import com.felayga.unpixeldungeon.Dungeon;
 import com.felayga.unpixeldungeon.Journal;
+import com.felayga.unpixeldungeon.actors.Actor;
 import com.felayga.unpixeldungeon.actors.buffs.Buff;
 import com.felayga.unpixeldungeon.actors.hero.Hero;
+import com.felayga.unpixeldungeon.items.EquippableItem;
 import com.felayga.unpixeldungeon.items.Item;
 import com.felayga.unpixeldungeon.items.quest.DarkGold;
 import com.felayga.unpixeldungeon.items.quest.OldPickaxe;
 import com.felayga.unpixeldungeon.items.scrolls.ScrollOfUpgrade;
 import com.felayga.unpixeldungeon.levels.Room;
 import com.felayga.unpixeldungeon.levels.Room.Type;
+import com.felayga.unpixeldungeon.mechanics.BUCStatus;
+import com.felayga.unpixeldungeon.mechanics.GameTime;
+import com.felayga.unpixeldungeon.mechanics.MagicType;
 import com.felayga.unpixeldungeon.scenes.GameScene;
 import com.felayga.unpixeldungeon.sprites.npcs.BlacksmithSprite;
 import com.felayga.unpixeldungeon.utils.GLog;
 import com.felayga.unpixeldungeon.windows.quest.WndBlacksmith;
 import com.felayga.unpixeldungeon.windows.quest.WndQuest;
+import com.watabou.noosa.audio.Sample;
 import com.watabou.utils.Bundle;
 import com.watabou.utils.Random;
+
+import java.util.Collection;
 
 public class Blacksmith extends NPC {
 
@@ -223,7 +223,7 @@ public class Blacksmith extends NPC {
 		}
 		first.upgrade(null, 1);
 		GLog.p(TXT_LOOKS_BETTER, first.getDisplayName());
-		Dungeon.hero.spend(GameTime.TICK * 2, true);
+		Dungeon.hero.spend_new(GameTime.TICK * 2, true);
 		Badges.validateItemLevelAquired(first);
 		
 		if (second.isEquipped( Dungeon.hero )) {

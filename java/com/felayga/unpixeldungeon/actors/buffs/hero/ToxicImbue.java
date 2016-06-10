@@ -63,7 +63,7 @@ public class ToxicImbue extends Buff {
 	public boolean act() {
 		GameScene.add(Blob.seed(target.pos, 50, ToxicGas.class));
 
-		spend(GameTime.TICK, false);
+        spend_new(GameTime.TICK, false);
 		left -= GameTime.TICK;
 		if (left <= 0)
 			detach();

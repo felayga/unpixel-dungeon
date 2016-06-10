@@ -30,7 +30,6 @@ import com.felayga.unpixeldungeon.actors.Actor;
 import com.felayga.unpixeldungeon.actors.buffs.Buff;
 import com.felayga.unpixeldungeon.actors.hero.Hero;
 import com.felayga.unpixeldungeon.actors.mobs.Mob;
-//import com.felayga.unpixeldungeon.actors.mobs.Wraith;
 import com.felayga.unpixeldungeon.items.Item;
 import com.felayga.unpixeldungeon.levels.Level;
 import com.felayga.unpixeldungeon.mechanics.BUCStatus;
@@ -42,6 +41,8 @@ import com.watabou.utils.Bundle;
 import com.watabou.utils.Random;
 
 import java.util.ArrayList;
+
+//import com.felayga.unpixeldungeon.actors.mobs.Wraith;
 
 public class CorpseDust extends Item {
 	
@@ -124,7 +125,7 @@ public class CorpseDust extends Item {
 				Sample.INSTANCE.play(Assets.SND_CURSED);
 			}
 
-			spend(GameTime.TICK, false);
+            spend_new(GameTime.TICK, false);
 			return true;
 		}
 

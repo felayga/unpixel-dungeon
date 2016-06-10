@@ -79,7 +79,7 @@ public class WndItemDropMultiple extends Window {
         dropButton.setRect(width / 2 + GAP / 2, slider.bottom() + GAP, width / 2 - GAP - GAP / 2, BTN_HEIGHT);
         add(dropButton);
 
-        RedButton cancelButton = new RedButton(Constant.TXT_CANCEL, true) {
+        RedButton cancelButton = new RedButton(Constant.Action.CANCEL, true) {
             @Override
             public void onClick() {
                 hide();

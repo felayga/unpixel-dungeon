@@ -28,15 +28,11 @@ package com.felayga.unpixeldungeon.actors.mobs.lichen;
 import com.felayga.unpixeldungeon.actors.Char;
 import com.felayga.unpixeldungeon.actors.buffs.hero.Encumbrance;
 import com.felayga.unpixeldungeon.actors.mobs.Mob;
-import com.felayga.unpixeldungeon.items.weapon.melee.mob.MeleeMobAttack;
 import com.felayga.unpixeldungeon.levels.Level;
 import com.felayga.unpixeldungeon.mechanics.CorpseEffect;
 import com.felayga.unpixeldungeon.mechanics.GameTime;
 import com.felayga.unpixeldungeon.mechanics.MagicType;
-import com.felayga.unpixeldungeon.sprites.mobs.fungus.BrownMoldSprite;
 import com.felayga.unpixeldungeon.sprites.mobs.fungus.RedMoldSprite;
-import com.felayga.unpixeldungeon.utils.GLog;
-import com.watabou.utils.Bundle;
 import com.watabou.utils.Random;
 
 /**
@@ -50,8 +46,8 @@ public class RedMold extends Mob {
         spriteClass = RedMoldSprite.class;
 
         experience = 9;
-        movementSpeed = 0;
-        attackSpeed = GameTime.TICK;
+        movementSpeed(0);
+        attackSpeed(GameTime.TICK);
         defenseMundane = 11;
         defenseMagical = 0;
         weight = Encumbrance.UNIT * 50;

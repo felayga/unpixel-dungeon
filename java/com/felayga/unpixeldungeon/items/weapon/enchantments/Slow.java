@@ -49,7 +49,7 @@ public class Slow extends Weapon.Enchantment {
 		if (Random.Int( level + 4 ) >= 3) {
 			
 			Buff.affect( defender, Chill.class,
-				Random.Long(GameTime.TICK, GameTime.TICK * 3) );
+				Random.LongRange(1, 3) * GameTime.TICK );
 			
 			return true;
 		} else {

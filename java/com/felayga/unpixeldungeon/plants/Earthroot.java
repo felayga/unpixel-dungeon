@@ -24,18 +24,18 @@
  */
 package com.felayga.unpixeldungeon.plants;
 
-import com.felayga.unpixeldungeon.actors.Actor;
-import com.felayga.unpixeldungeon.mechanics.GameTime;
-import com.watabou.noosa.Camera;
 import com.felayga.unpixeldungeon.Dungeon;
+import com.felayga.unpixeldungeon.actors.Actor;
 import com.felayga.unpixeldungeon.actors.Char;
 import com.felayga.unpixeldungeon.actors.buffs.Buff;
 import com.felayga.unpixeldungeon.effects.CellEmitter;
 import com.felayga.unpixeldungeon.effects.particles.EarthParticle;
 import com.felayga.unpixeldungeon.items.potions.PotionOfParalyticGas;
+import com.felayga.unpixeldungeon.mechanics.GameTime;
 import com.felayga.unpixeldungeon.sprites.ItemSpriteSheet;
 import com.felayga.unpixeldungeon.ui.BuffIndicator;
 import com.felayga.unpixeldungeon.utils.Utils;
+import com.watabou.noosa.Camera;
 import com.watabou.utils.Bundle;
 
 public class Earthroot extends Plant {
@@ -109,7 +109,7 @@ public class Earthroot extends Plant {
 			if (target.pos != pos) {
 				detach();
 			}
-			spend( STEP, false );
+            spend_new(STEP, false);
 			return true;
 		}
 		

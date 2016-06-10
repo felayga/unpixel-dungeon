@@ -37,7 +37,7 @@ public class LockedFloor extends Buff {
 
 	@Override
 	public boolean act() {
-		spend(GameTime.TICK, false);
+        spend_new(GameTime.TICK, false);
 
 		if (!Dungeon.level.locked)
 			detach();

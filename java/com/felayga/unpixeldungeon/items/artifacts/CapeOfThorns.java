@@ -86,7 +86,7 @@ public class CapeOfThorns extends Artifact_old {
 				}
 				updateQuickslot();
 			}
-			spend(GameTime.TICK, false);
+            spend_new(GameTime.TICK, false);
 			return true;
 		}
 

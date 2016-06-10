@@ -45,8 +45,8 @@ public class Jackal extends Mob {
         spriteClass = JackalSprite.class;
 
         experience = 1;
-        movementSpeed = GameTime.TICK;
-        attackSpeed = GameTime.TICK;
+        movementSpeed(GameTime.TICK);
+        attackSpeed(GameTime.TICK);
         defenseMundane = 13;
         defenseMagical = 0;
         weight = Encumbrance.UNIT * 300;

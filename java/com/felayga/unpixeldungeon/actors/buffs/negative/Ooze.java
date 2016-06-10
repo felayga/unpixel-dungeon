@@ -81,7 +81,7 @@ public class Ooze extends Buff {
 				Dungeon.fail( ResultDescriptions.OOZE );
 				GLog.n( TXT_HERO_KILLED, toString() );
 			}
-			spend(GameTime.TICK, false );
+            spend_new(GameTime.TICK, false );
 		}
 		if (Level.water[target.pos]) {
 			detach();

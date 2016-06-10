@@ -45,8 +45,8 @@ public class Fox extends Mob {
         spriteClass = FoxSprite.class;
 
         experience = 4;
-        movementSpeed = GameTime.TICK * 5 / 4;
-        attackSpeed = GameTime.TICK;
+        movementSpeed(GameTime.TICK * 4 / 5);
+        attackSpeed(GameTime.TICK);
         defenseMundane = 13;
         defenseMagical = 0;
         weight = Encumbrance.UNIT * 300;

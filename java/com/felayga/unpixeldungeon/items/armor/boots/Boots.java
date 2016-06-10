@@ -35,6 +35,7 @@ import com.felayga.unpixeldungeon.items.Item;
 import com.felayga.unpixeldungeon.items.armor.Armor;
 import com.felayga.unpixeldungeon.levels.Terrain;
 import com.felayga.unpixeldungeon.mechanics.AttributeType;
+import com.felayga.unpixeldungeon.mechanics.Constant;
 import com.felayga.unpixeldungeon.mechanics.GameTime;
 import com.felayga.unpixeldungeon.mechanics.MagicType;
 import com.felayga.unpixeldungeon.scenes.CellSelector;
@@ -67,7 +68,7 @@ public class Boots extends Armor {
     public ArrayList<String> actions( Hero hero ) {
         ArrayList<String> actions = super.actions( hero );
         if (isEquipped(hero)) {
-            actions.add(AC_KICK);
+            actions.add(Constant.Action.KICK);
         }
         return actions;
     }
@@ -81,7 +82,7 @@ public class Boots extends Armor {
     public void onEquip(Char owner, boolean cursed) {
         super.onEquip(owner, cursed);
 
-        defaultAction = AC_KICK;
+        defaultAction = Constant.Action.KICK;
 
         if (owner instanceof Hero) {
             int index = Dungeon.quickslot.getPlaceholder(this);
@@ -111,7 +112,7 @@ public class Boots extends Armor {
         curUser = hero;
         curBoots = this;
 
-        if (action.equals(AC_KICK)) {
+        if (action.equals(Constant.Action.KICK)) {
             GameScene.selectCell(kicker);
 
             return false;
@@ -130,7 +131,7 @@ public class Boots extends Armor {
             return;
         }
 
-        hero.spend(GameTime.TICK, false);
+        hero.spend_new(GameTime.TICK, false);
 
         Heap heap = Dungeon.level.heaps.get(target);
         if (heap != null) {

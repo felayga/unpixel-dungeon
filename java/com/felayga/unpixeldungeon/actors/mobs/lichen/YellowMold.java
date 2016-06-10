@@ -25,14 +25,11 @@
 
 package com.felayga.unpixeldungeon.actors.mobs.lichen;
 
-import com.felayga.unpixeldungeon.actors.Actor;
 import com.felayga.unpixeldungeon.actors.Char;
 import com.felayga.unpixeldungeon.actors.buffs.Buff;
 import com.felayga.unpixeldungeon.actors.buffs.hero.Encumbrance;
-import com.felayga.unpixeldungeon.actors.buffs.negative.Held;
 import com.felayga.unpixeldungeon.actors.buffs.negative.Paralysis;
 import com.felayga.unpixeldungeon.actors.mobs.Mob;
-import com.felayga.unpixeldungeon.items.weapon.melee.mob.MeleeMobAttack;
 import com.felayga.unpixeldungeon.levels.Level;
 import com.felayga.unpixeldungeon.mechanics.CorpseEffect;
 import com.felayga.unpixeldungeon.mechanics.GameTime;
@@ -51,8 +48,8 @@ public class YellowMold extends Mob {
         spriteClass = YellowMoldSprite.class;
 
         experience = 8;
-        movementSpeed = 0;
-        attackSpeed = GameTime.TICK;
+        movementSpeed(0);
+        attackSpeed(GameTime.TICK);
         defenseMundane = 11;
         defenseMagical = 0;
         weight = Encumbrance.UNIT * 50;

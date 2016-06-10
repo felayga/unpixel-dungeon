@@ -26,18 +26,16 @@
 package com.felayga.unpixeldungeon.items.tools.unlocking;
 
 import com.felayga.unpixeldungeon.Dungeon;
-import com.felayga.unpixeldungeon.QuickSlot;
 import com.felayga.unpixeldungeon.actors.Char;
 import com.felayga.unpixeldungeon.actors.hero.Hero;
 import com.felayga.unpixeldungeon.actors.hero.HeroAction;
 import com.felayga.unpixeldungeon.items.Heap;
 import com.felayga.unpixeldungeon.items.Item;
 import com.felayga.unpixeldungeon.items.bags.Bag;
-import com.felayga.unpixeldungeon.items.bags.TreasureChest;
 import com.felayga.unpixeldungeon.items.tools.ITool;
 import com.felayga.unpixeldungeon.items.tools.Tool;
 import com.felayga.unpixeldungeon.levels.Terrain;
-import com.felayga.unpixeldungeon.ui.QuickSlotButton;
+import com.felayga.unpixeldungeon.mechanics.Constant;
 import com.felayga.unpixeldungeon.utils.GLog;
 
 import java.util.ArrayList;
@@ -52,13 +50,13 @@ public class UnlockingTool extends Tool implements ITool {
     {
         super();
 
-        defaultAction = AC_APPLY;
+        defaultAction = Constant.Action.APPLY;
     }
 
     @Override
     public ArrayList<String> actions( Hero hero ) {
         ArrayList<String> actions = super.actions( hero );
-        actions.add(AC_APPLY);
+        actions.add(Constant.Action.APPLY);
         return actions;
     }
 

@@ -35,12 +35,10 @@ import com.felayga.unpixeldungeon.actors.mobs.npcs.Boulder;
 import com.felayga.unpixeldungeon.items.tools.ITool;
 import com.felayga.unpixeldungeon.items.weapon.melee.simple.SimpleMeleeWeapon;
 import com.felayga.unpixeldungeon.mechanics.AttributeType;
-import com.felayga.unpixeldungeon.mechanics.GameTime;
+import com.felayga.unpixeldungeon.mechanics.Constant;
 import com.felayga.unpixeldungeon.scenes.CellSelector;
 import com.felayga.unpixeldungeon.scenes.GameScene;
-import com.felayga.unpixeldungeon.sprites.ItemSpriteSheet;
 import com.felayga.unpixeldungeon.utils.GLog;
-import com.watabou.noosa.audio.Sample;
 import com.watabou.utils.Random;
 
 import java.util.ArrayList;
@@ -56,7 +54,7 @@ public abstract class DiggingTool extends SimpleMeleeWeapon implements ITool {
 
         pickupSound = Assets.SND_ITEM_BLADE;
 
-        defaultAction = AC_APPLY;
+        defaultAction = Constant.Action.APPLY;
     }
 
     @Override
@@ -70,7 +68,7 @@ public abstract class DiggingTool extends SimpleMeleeWeapon implements ITool {
     @Override
     public ArrayList<String> actions( Hero hero ) {
         ArrayList<String> actions = super.actions( hero );
-        actions.add(AC_APPLY);
+        actions.add(Constant.Action.APPLY);
         return actions;
     }
 
@@ -83,7 +81,7 @@ public abstract class DiggingTool extends SimpleMeleeWeapon implements ITool {
         curUser = hero;
         curTool = this;
 
-        if (action.equals(AC_APPLY)) {
+        if (action.equals(Constant.Action.APPLY)) {
             GameScene.selectCell(applier);
 
             return false;
@@ -124,7 +122,7 @@ public abstract class DiggingTool extends SimpleMeleeWeapon implements ITool {
                 hero.curAction = new HeroAction.Dig(this, (Boulder)mob, 101);
             }
             else {
-                hero.curAction = new HeroAction.Attack(this, mob);
+                hero.curAction = new HeroAction.Attack(mob);
             }
             hero.motivate(true);
         } else {

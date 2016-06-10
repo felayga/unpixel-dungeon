@@ -272,7 +272,7 @@ public class AlchemistsToolkit extends Artifact_old {
 					Hero hero = Dungeon.hero;
 					hero.sprite.operate(hero.pos);
 					hero.busy();
-					hero.spend(GameTime.TICK * 2, false);
+					hero.spend_new(GameTime.TICK * 2, false);
 					Sample.INSTANCE.play(Assets.SND_DRINK);
 
 					hero.belongings.remove(item, 1);

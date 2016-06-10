@@ -45,8 +45,8 @@ public class GiantRat extends Mob {
         spriteClass = GiantRatSprite.class;
 
         experience = 8;
-        movementSpeed = GameTime.TICK * 10 / 12;
-        attackSpeed = GameTime.TICK;
+        movementSpeed(GameTime.TICK * 12 / 10);
+        attackSpeed(GameTime.TICK);
         defenseMundane = 13;
         defenseMagical = 0;
         weight = Encumbrance.UNIT * 30;

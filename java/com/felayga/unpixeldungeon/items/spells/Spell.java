@@ -86,12 +86,12 @@ public abstract class Spell extends Item {
                 }
 
                 if (castTimeLeft > GameTime.TICK) {
-                    hero.spend(GameTime.TICK, false);
+                    hero.spend_new(GameTime.TICK, false);
                     castTimeLeft -= GameTime.TICK;
 
                     return true;
                 } else {
-                    hero.spend(castTimeLeft, false);
+                    hero.spend_new(castTimeLeft, false);
                     castTimeLeft = 0;
 
                     prepareCast(hero);

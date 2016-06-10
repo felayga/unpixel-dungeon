@@ -24,13 +24,13 @@
  */
 package com.felayga.unpixeldungeon.items.scrolls;
 
-import com.watabou.noosa.audio.Sample;
 import com.felayga.unpixeldungeon.Assets;
 import com.felayga.unpixeldungeon.actors.buffs.positive.Invisibility;
 import com.felayga.unpixeldungeon.items.Item;
 import com.felayga.unpixeldungeon.scenes.GameScene;
 import com.felayga.unpixeldungeon.windows.WndBackpack;
 import com.felayga.unpixeldungeon.windows.WndOptions;
+import com.watabou.noosa.audio.Sample;
 
 public abstract class InventoryScroll extends Scroll {
 
@@ -62,7 +62,7 @@ public abstract class InventoryScroll extends Scroll {
 			protected void onSelect(int index) {
 				switch (index) {
 					case 0:
-						curUser.spend(TIME_TO_READ, true);
+						curUser.spend_new(TIME_TO_READ, true);
 						identifiedByUse = false;
 						break;
 					case 1:
@@ -79,7 +79,7 @@ public abstract class InventoryScroll extends Scroll {
 	}
 
 	protected void onItemSelected(Item item) {
-		curUser.spend(TIME_TO_READ, true);
+		curUser.spend_new(TIME_TO_READ, true);
 
 		Sample.INSTANCE.play(Assets.SND_READ);
 		Invisibility.dispel();

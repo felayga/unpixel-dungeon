@@ -108,7 +108,7 @@ public class Weightstone extends Item {
 		curUser.sprite.operate( curUser.pos );
 		Sample.INSTANCE.play( Assets.SND_MISS );
 
-		curUser.spend( TIME_TO_APPLY, false );
+		curUser.spend_new( TIME_TO_APPLY, false );
 		curUser.busy();
 	}
 

@@ -46,8 +46,8 @@ public class Kobold extends Mob {
         spriteClass = KoboldSprite.class;
 
         experience = 6;
-        movementSpeed = GameTime.TICK / 2;
-        attackSpeed = GameTime.TICK;
+        movementSpeed(GameTime.TICK * 2);
+        attackSpeed(GameTime.TICK);
         defenseMundane = 10;
         defenseMagical = 0;
         weight = Encumbrance.UNIT * 400;

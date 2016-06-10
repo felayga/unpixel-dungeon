@@ -26,8 +26,8 @@ package com.felayga.unpixeldungeon.items.artifacts;
 
 import com.felayga.unpixeldungeon.Assets;
 import com.felayga.unpixeldungeon.Dungeon;
-import com.felayga.unpixeldungeon.actors.buffs.negative.Blindness;
 import com.felayga.unpixeldungeon.actors.buffs.hero.LockedFloor;
+import com.felayga.unpixeldungeon.actors.buffs.negative.Blindness;
 import com.felayga.unpixeldungeon.actors.hero.Hero;
 import com.felayga.unpixeldungeon.effects.particles.ElmoParticle;
 import com.felayga.unpixeldungeon.items.Generator;
@@ -220,7 +220,7 @@ public class UnstableSpellbook extends Artifact_old {
 
 			updateQuickslot();
 
-			spend(GameTime.TICK, false );
+            spend_new(GameTime.TICK, false);
 
 			return true;
 		}
@@ -236,7 +236,7 @@ public class UnstableSpellbook extends Artifact_old {
 					if (scrolls.get(i).equals(scroll)){
 						hero.sprite.operate(hero.pos);
 						hero.busy();
-						hero.spend(GameTime.TICK * 2, false );
+						hero.spend_new(GameTime.TICK * 2, false);
 						Sample.INSTANCE.play(Assets.SND_BURNING);
 						hero.sprite.emitter().burst(ElmoParticle.FACTORY, 12);
 

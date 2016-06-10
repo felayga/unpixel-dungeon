@@ -24,15 +24,16 @@
  */
 package com.felayga.unpixeldungeon.items;
 
-import com.felayga.unpixeldungeon.actors.hero.HeroSubClass;
-import com.felayga.unpixeldungeon.utils.GLog;
-import com.watabou.noosa.audio.Sample;
 import com.felayga.unpixeldungeon.Assets;
 import com.felayga.unpixeldungeon.Dungeon;
 import com.felayga.unpixeldungeon.actors.hero.Hero;
+import com.felayga.unpixeldungeon.actors.hero.HeroSubClass;
 import com.felayga.unpixeldungeon.effects.Speck;
+import com.felayga.unpixeldungeon.mechanics.Constant;
 import com.felayga.unpixeldungeon.sprites.CharSprite;
 import com.felayga.unpixeldungeon.sprites.ItemSpriteSheet;
+import com.felayga.unpixeldungeon.utils.GLog;
+import com.watabou.noosa.audio.Sample;
 
 public class Dewdrop extends Item {
 
@@ -73,7 +74,7 @@ public class Dewdrop extends Item {
 		}
 		
 		Sample.INSTANCE.play( Assets.SND_DEWDROP );
-		hero.spend( TIME_TO_PICK_UP, true );
+		hero.spend_new(Constant.Time.ITEM_PICKUP, true);
 		
 		return true;
 	}

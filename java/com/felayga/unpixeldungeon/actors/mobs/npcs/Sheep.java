@@ -25,7 +25,6 @@
 package com.felayga.unpixeldungeon.actors.mobs.npcs;
 
 import com.felayga.unpixeldungeon.actors.Actor;
-import com.felayga.unpixeldungeon.actors.Char;
 import com.felayga.unpixeldungeon.mechanics.GameTime;
 import com.felayga.unpixeldungeon.mechanics.MagicType;
 import com.felayga.unpixeldungeon.sprites.SheepSprite;
@@ -57,7 +56,7 @@ public class Sheep extends NPC {
 
 		} else {
 			initialized = true;
-			spend( lifespan + Random.Long(GameTime.TICK * 3), false );
+			spend_new(lifespan + Random.Long(GameTime.TICK * 3), false);
 		}
 		return true;
 	}

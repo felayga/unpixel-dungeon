@@ -27,21 +27,21 @@ package com.felayga.unpixeldungeon.actors;
 import com.felayga.unpixeldungeon.Assets;
 import com.felayga.unpixeldungeon.Dungeon;
 import com.felayga.unpixeldungeon.ResultDescriptions;
-import com.felayga.unpixeldungeon.actors.buffs.*;
+import com.felayga.unpixeldungeon.actors.buffs.Buff;
+import com.felayga.unpixeldungeon.actors.buffs.ISpeedModifierBuff;
 import com.felayga.unpixeldungeon.actors.buffs.hero.EarthImbue;
 import com.felayga.unpixeldungeon.actors.buffs.hero.FireImbue;
 import com.felayga.unpixeldungeon.actors.buffs.negative.Charm;
-import com.felayga.unpixeldungeon.actors.buffs.negative.Chill;
 import com.felayga.unpixeldungeon.actors.buffs.negative.Frost;
 import com.felayga.unpixeldungeon.actors.buffs.negative.Held;
 import com.felayga.unpixeldungeon.actors.buffs.negative.Paralysis;
-import com.felayga.unpixeldungeon.actors.buffs.negative.Slow;
 import com.felayga.unpixeldungeon.actors.buffs.negative.Vertigo;
 import com.felayga.unpixeldungeon.actors.buffs.positive.MagicalSleep;
-import com.felayga.unpixeldungeon.actors.buffs.positive.Speed;
 import com.felayga.unpixeldungeon.actors.hero.Belongings;
 import com.felayga.unpixeldungeon.actors.mobs.Bestiary;
+import com.felayga.unpixeldungeon.items.EquippableItem;
 import com.felayga.unpixeldungeon.items.KindOfWeapon;
+import com.felayga.unpixeldungeon.items.armor.Armor;
 import com.felayga.unpixeldungeon.items.armor.glyphs.Bounce;
 import com.felayga.unpixeldungeon.items.food.Corpse;
 import com.felayga.unpixeldungeon.levels.Level;
@@ -52,16 +52,14 @@ import com.felayga.unpixeldungeon.mechanics.MagicType;
 import com.felayga.unpixeldungeon.sprites.CharSprite;
 import com.felayga.unpixeldungeon.utils.GLog;
 import com.felayga.unpixeldungeon.utils.Utils;
-import com.watabou.noosa.audio.Sample;
 import com.watabou.noosa.Camera;
+import com.watabou.noosa.audio.Sample;
 import com.watabou.utils.Bundlable;
 import com.watabou.utils.Bundle;
 import com.watabou.utils.GameMath;
 import com.watabou.utils.Random;
 
-import java.util.HashMap;
 import java.util.HashSet;
-import java.util.Iterator;
 
 public abstract class Char extends Actor {
 
@@ -117,15 +115,86 @@ public abstract class Char extends Actor {
 
     public Belongings belongings;
 
-    protected long movementSpeed = GameTime.TICK;
-    protected long attackSpeed = GameTime.TICK;
+    private long _movementSpeed = GameTime.TICK;
 
-    public long attackDelay(long weaponAttackSpeed) {
-        return attackSpeed * weaponAttackSpeed / GameTime.TICK;
+    public long movementSpeed() {
+        long bestSlow = GameTime.TICK;
+        long bestFast = GameTime.TICK;
+
+        HashSet<Buff> buffs = buffs();
+
+        for(Buff buff : buffs) {
+            if (buff instanceof ISpeedModifierBuff) {
+                ISpeedModifierBuff speedBuff = (ISpeedModifierBuff)buff;
+                long modifier = speedBuff.movementModifier();
+
+                if (modifier < GameTime.TICK && modifier < bestFast) {
+                    bestFast = modifier;
+                }
+                else if (modifier > GameTime.TICK && modifier > bestSlow) {
+                    bestSlow = modifier;
+                }
+            }
+        }
+
+        long armorDelay = GameTime.TICK;
+
+        EquippableItem item = belongings.armor();
+
+        if (item instanceof Armor) {
+            Armor armor = (Armor)item;
+
+            armorDelay = armor.speedModifier;
+        }
+
+
+        return _movementSpeed * bestFast / GameTime.TICK * bestSlow / GameTime.TICK * armorDelay / GameTime.TICK;
+    }
+
+    public void movementSpeed(long newMovementSpeed) {
+        _movementSpeed = newMovementSpeed;
+    }
+
+    private long _attackSpeed = GameTime.TICK;
+
+    public long attackSpeed() {
+        long bestSlow = GameTime.TICK;
+        long bestFast = GameTime.TICK;
+
+        HashSet<Buff> buffs = buffs();
+
+        for(Buff buff : buffs) {
+            if (buff instanceof ISpeedModifierBuff) {
+                ISpeedModifierBuff speedBuff = (ISpeedModifierBuff)buff;
+                long modifier = speedBuff.attackModifier();
+
+                if (modifier < GameTime.TICK && modifier < bestFast) {
+                    bestFast = modifier;
+                }
+                else if (modifier > GameTime.TICK && modifier > bestSlow) {
+                    bestSlow = modifier;
+                }
+            }
+        }
+
+        long weaponDelay = GameTime.TICK;
+
+        EquippableItem item = belongings.weapon();
+
+        if (item instanceof KindOfWeapon) {
+            KindOfWeapon weapon = (KindOfWeapon)item;
+
+            weaponDelay = weapon.delay_new;
+        }
+
+        return _attackSpeed * bestFast / GameTime.TICK * bestSlow / GameTime.TICK * weaponDelay / GameTime.TICK;
+    }
+
+    public void attackSpeed(long newAttackSpeed) {
+        this._attackSpeed = newAttackSpeed;
     }
 
     public int paralysed = 0;
-    public HashMap<Integer, Long> crippled = new HashMap<>();
     public boolean flying = false;
     public int invisible = 0;
 
@@ -206,8 +275,18 @@ public abstract class Char extends Actor {
         return false;
     }
 
+    public boolean attack(Char enemy) {
+        EquippableItem item = belongings.weapon();
+
+        KindOfWeapon weapon = null;
+        if (item instanceof KindOfWeapon) {
+            weapon = (KindOfWeapon)item;
+        }
+
+        return attack(weapon, enemy);
+    }
+
     public boolean attack(KindOfWeapon weapon, Char enemy) {
-        GLog.d("Char.attack()");
         boolean visibleFight = Dungeon.visible[pos] || Dungeon.visible[enemy.pos];
         boolean retval = false;
 
@@ -411,21 +490,6 @@ public abstract class Char extends Actor {
         return damage;
     }
 
-    public long speed() {
-        long retval = movementSpeed;
-
-        if (!crippled.isEmpty()) {
-            Iterator<Long> iterator = crippled.values().iterator();
-            while (iterator.hasNext()) {
-                Long value = iterator.next();
-
-                retval = retval * value / GameTime.TICK;
-            }
-        }
-
-        return retval;
-    }
-
     public int damage(int dmg, MagicType type, Actor source) {
         if (HP <= 0 || dmg < 0) {
             return 0;
@@ -491,22 +555,6 @@ public abstract class Char extends Actor {
 
     public boolean isAlive() {
         return HP > 0;
-    }
-
-    @Override
-    public void spend(long time, boolean andnext) {
-        long timeScale = GameTime.TICK;
-        if (buff(Slow.class) != null) {
-            timeScale *= 2;
-            //slowed and chilled do not stack
-        } else if (buff(Chill.class) != null) {
-            timeScale = timeScale * GameTime.TICK / buff(Chill.class).speedFactor();
-        }
-        if (buff(Speed.class) != null) {
-            timeScale /= 2;
-        }
-
-        super.spend(time * timeScale / GameTime.TICK, andnext);
     }
 
     public HashSet<Buff> buffs() {

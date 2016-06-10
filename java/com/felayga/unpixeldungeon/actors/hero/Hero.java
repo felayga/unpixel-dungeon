@@ -34,19 +34,19 @@ import com.felayga.unpixeldungeon.ShatteredPixelDungeon;
 import com.felayga.unpixeldungeon.Statistics;
 import com.felayga.unpixeldungeon.actors.Actor;
 import com.felayga.unpixeldungeon.actors.Char;
-import com.felayga.unpixeldungeon.actors.buffs.positive.Bless;
 import com.felayga.unpixeldungeon.actors.buffs.Buff;
-import com.felayga.unpixeldungeon.actors.buffs.negative.Burning;
 import com.felayga.unpixeldungeon.actors.buffs.hero.DeathlySick;
-import com.felayga.unpixeldungeon.actors.buffs.negative.Drowsy;
 import com.felayga.unpixeldungeon.actors.buffs.hero.Encumbrance;
 import com.felayga.unpixeldungeon.actors.buffs.hero.Fury;
 import com.felayga.unpixeldungeon.actors.buffs.hero.Hunger;
-import com.felayga.unpixeldungeon.actors.buffs.positive.Invisibility;
+import com.felayga.unpixeldungeon.actors.buffs.negative.Burning;
+import com.felayga.unpixeldungeon.actors.buffs.negative.Drowsy;
 import com.felayga.unpixeldungeon.actors.buffs.negative.Ooze;
 import com.felayga.unpixeldungeon.actors.buffs.negative.Paralysis;
 import com.felayga.unpixeldungeon.actors.buffs.negative.Poison;
 import com.felayga.unpixeldungeon.actors.buffs.negative.Vertigo;
+import com.felayga.unpixeldungeon.actors.buffs.positive.Bless;
+import com.felayga.unpixeldungeon.actors.buffs.positive.Invisibility;
 import com.felayga.unpixeldungeon.actors.mobs.Mob;
 import com.felayga.unpixeldungeon.actors.mobs.npcs.Boulder;
 import com.felayga.unpixeldungeon.actors.mobs.npcs.NPC;
@@ -65,7 +65,6 @@ import com.felayga.unpixeldungeon.items.Item;
 import com.felayga.unpixeldungeon.items.KindOfWeapon;
 import com.felayga.unpixeldungeon.items.armor.Armor;
 import com.felayga.unpixeldungeon.items.artifacts.CapeOfThorns;
-//import com.felayga.unpixeldungeon.items.artifacts.DriedRose;
 import com.felayga.unpixeldungeon.items.artifacts.EtherealChains;
 import com.felayga.unpixeldungeon.items.artifacts.TalismanOfForesight;
 import com.felayga.unpixeldungeon.items.artifacts.TimekeepersHourglass;
@@ -74,7 +73,6 @@ import com.felayga.unpixeldungeon.items.bags.IBag;
 import com.felayga.unpixeldungeon.items.food.Food;
 import com.felayga.unpixeldungeon.items.keys.OldKey;
 import com.felayga.unpixeldungeon.items.rings.RingOfEvasion;
-import com.felayga.unpixeldungeon.items.rings.RingOfHaste;
 import com.felayga.unpixeldungeon.items.rings.RingOfMight;
 import com.felayga.unpixeldungeon.items.rings.RingOfTenacity;
 import com.felayga.unpixeldungeon.items.scrolls.ScrollOfMagicMapping;
@@ -100,7 +98,6 @@ import com.felayga.unpixeldungeon.scenes.GameScene;
 import com.felayga.unpixeldungeon.scenes.InterlevelScene;
 import com.felayga.unpixeldungeon.scenes.SurfaceScene;
 import com.felayga.unpixeldungeon.sprites.CharSprite;
-import com.felayga.unpixeldungeon.sprites.hero.HeroSprite;
 import com.felayga.unpixeldungeon.ui.AttackIndicator;
 import com.felayga.unpixeldungeon.ui.BuffIndicator;
 import com.felayga.unpixeldungeon.ui.QuickSlotButton;
@@ -111,9 +108,9 @@ import com.felayga.unpixeldungeon.windows.WndBag;
 import com.felayga.unpixeldungeon.windows.WndItem;
 import com.felayga.unpixeldungeon.windows.WndMessage;
 import com.felayga.unpixeldungeon.windows.WndOptions;
-import com.felayga.unpixeldungeon.windows.hero.WndResurrect;
 import com.felayga.unpixeldungeon.windows.WndTradeItem;
 import com.felayga.unpixeldungeon.windows.hero.WndInitHero;
+import com.felayga.unpixeldungeon.windows.hero.WndResurrect;
 import com.watabou.noosa.Camera;
 import com.watabou.noosa.Game;
 import com.watabou.noosa.audio.Sample;
@@ -122,6 +119,8 @@ import com.watabou.utils.Random;
 
 import java.util.ArrayList;
 import java.util.List;
+
+//import com.felayga.unpixeldungeon.items.artifacts.DriedRose;
 
 public class Hero extends Char {
 
@@ -328,8 +327,6 @@ public class Hero extends Char {
 	}
 	*/
 
-	public MissileWeapon missileWeapon;
-
 	private static final String DEFENSE						= "defenseSkill";
 	private static final String WEAPONSKILL 				= "weaponSkill";
 	private static final String STRENGTHCONSTITUTION		= "STRCON";
@@ -417,16 +414,15 @@ public class Hero extends Char {
 		Buff.affect(this, Encumbrance.class);
 	}
 
-	public boolean shoot( Char enemy, MissileWeapon wep) {
+	public boolean shoot(Char enemy, MissileWeapon wep) {
+        boolean result = attack(wep, enemy);
+        Invisibility.dispel();
 
-		boolean result = attack(wep, enemy);
-		Invisibility.dispel();
-
-		return result;
-	}
+        return result;
+    }
 
 	public void pushBoulder(int newPos) {
-		spend(speed() * 2, true);
+        spend_new(movementSpeed(), true);
 		useAttribute(AttributeType.STRCON, 1);
 
 		GLog.i("With great effort you move the boulder.");
@@ -462,42 +458,13 @@ public class Hero extends Char {
         return accuracy;
 	}
 
-	
-	@Override
-	public long speed() {
-		long speed = super.speed();
-
-		int hasteLevel = 0;
-		for (Buff buff : buffs( RingOfHaste.Haste.class )) {
-			hasteLevel += ((RingOfHaste.Haste)buff).level;
-		}
-
-		if (hasteLevel != 0)
-			speed *= Math.pow(1.2, hasteLevel);
-
-        Armor armor = (Armor)belongings.armor();
-		if (armor != null) {
-			
-			return speed * (armor).speedModifier / GameTime.TICK;
-			
-		} else {
-
-			return ((HeroSprite)sprite).sprint( subClass == HeroSubClass.FREERUNNER && !isStarving() ) ?
-					invisible > 0 ?
-							speed * 2 :
-							speed * 2 / 3 :
-					speed;
-			
-		}
-	}
-
 	public void motivate(boolean andnext) {
 		if (andnext)
 		{
 			busy();
 		}
 
-		super.spend(1, false);
+		super.spend_new(1, false);
 		motivation++;
 
 		if (andnext)
@@ -507,18 +474,18 @@ public class Hero extends Char {
 	}
 
 	@Override
-	public void spend( long time, boolean andnext ) {
+	public void spend_new( long time, boolean andnext ) {
 		if (andnext)
 		{
 			busy();
 		}
 
 		if (motivation < time) {
-			super.spend(time - motivation, false);
+			super.spend_new(time - motivation, false);
 			motivation = 0;
 		}
 		else {
-			super.spend(1, false);
+			super.spend_new(1, false);
 			motivation -= time - 1;
 		}
 
@@ -530,14 +497,12 @@ public class Hero extends Char {
 	
 	@Override
 	public boolean act() {
-
         super.act();
 
         if (paralysed > 0) {
-
             curAction = null;
 
-            spend(GameTime.TICK, true);
+            spend_new(GameTime.TICK, true);
             return false;
         }
 
@@ -546,7 +511,7 @@ public class Hero extends Char {
         if (curAction == null) {
 
             if (resting) {
-                spend(TIME_TO_REST, false);
+                spend_new(TIME_TO_REST, false);
                 next();
                 return false;
             }
@@ -756,7 +721,7 @@ public class Hero extends Char {
         if (action.effort > 0 && (Level.canReach(pos, digPos) || pos == digPos)) {
             if (pos == digPos && action.direction == 0) {
                 ShatteredPixelDungeon.scene().add(
-                        new WndOptions("Dig Here", TXT_DIG_HERE, TXT_DIG_HERE_DOWN, TXT_DIG_HERE_UP, Constant.TXT_CANCEL) {
+                        new WndOptions("Dig Here", TXT_DIG_HERE, TXT_DIG_HERE_DOWN, TXT_DIG_HERE_UP, Constant.Action.CANCEL) {
 
                             @Override
                             protected void onSelect(int index) {
@@ -797,7 +762,7 @@ public class Hero extends Char {
                 hunger.satisfy_new(-1);
             }
 
-            spend(GameTime.TICK, false);
+            spend_new(attackSpeed(), false);
 
             if (action.boulder != null) {
                 action.boulder.HP -= currentEffort;
@@ -826,7 +791,7 @@ public class Hero extends Char {
                         sprite.turnTo(pos, digPos);
 
                         sprite.attack(digPos);
-                        spend(GameTime.TICK, false);
+                        spend_new(attackSpeed(), false);
 
                         if (Dungeon.level.stone[digPos]) {
                             if (terrain == Terrain.WALL_STONE) {
@@ -1082,8 +1047,8 @@ public class Hero extends Char {
                     case OVERTAXED:
                         ShatteredPixelDungeon.scene().add(
                                 new WndOptions("Pick Up Item", Utils.format(pickupMessage, item.getDisplayName()) + "  Continue?",
-                                        "YES",
-                                        Constant.TXT_CANCEL) {
+                                        Constant.Action.YES,
+                                        Constant.Action.CANCEL) {
 
                                     @Override
                                     protected void onSelect(int index) {
@@ -1210,7 +1175,7 @@ public class Hero extends Char {
 					Sample.INSTANCE.play( Assets.SND_UNLOCK );
 				}
 				
-				spend( OldKey.TIME_TO_UNLOCK, false );
+				spend_new(OldKey.TIME_TO_UNLOCK, false);
 				sprite.operate( dst );
 				
 			} else {
@@ -1246,7 +1211,7 @@ public class Hero extends Char {
 				useAttribute(AttributeType.STRCON, 1);
 			}
 
-			spend(OldKey.TIME_TO_UNLOCK, true);
+			spend_new(OldKey.TIME_TO_UNLOCK, true);
 			ready();
 
 			return false;
@@ -1281,7 +1246,7 @@ public class Hero extends Char {
 				Door.hit(doorCell);
 			}
 
-			spend(OldKey.TIME_TO_UNLOCK, false);
+			spend_new(OldKey.TIME_TO_UNLOCK, false);
 			sprite.attack(doorCell);
 
 			return false;
@@ -1311,7 +1276,7 @@ public class Hero extends Char {
 			}
 
 			useAttribute(AttributeType.DEXCHA, 1);
-			spend(OldKey.TIME_TO_UNLOCK, false);
+			spend_new(OldKey.TIME_TO_UNLOCK, false);
 			ready();
 
 			return false;
@@ -1335,7 +1300,7 @@ public class Hero extends Char {
 				List<Boolean> actionOptions = new ArrayList<>();
 
 				if (belongings.boots() != null) {
-					actions.add(Item.AC_KICK);
+					actions.add(Constant.Action.KICK);
 					actionOptions.add(false);
 				}
 
@@ -1362,7 +1327,7 @@ public class Hero extends Char {
 				}
 
 
-				actions.add(Constant.TXT_CANCEL);
+				actions.add(Constant.Action.CANCEL);
 				actionOptions.add(true);
 
 
@@ -1383,7 +1348,7 @@ public class Hero extends Char {
 								protected void onSelect(int index) {
 									String selection = index >= 0 ? actions.get(index) : "";
 
-									if (selection.equals(Item.AC_KICK)) {
+									if (selection.equals(Constant.Action.KICK)) {
 										curAction = new HeroAction.HandleDoor.KickDoor(doorCell);
 										motivate(true);
 									} else if (selection.equals(unlockingToolName_WTFJAVA)) {
@@ -1523,12 +1488,7 @@ public class Hero extends Char {
 			Encumbrance encumbrance = buff(Encumbrance.class);
 			encumbrance.isAttacking();
 
-			if (action.weapon != null) {
-				spend(attackDelay(action.weapon.delay_new), false);
-			}
-			else {
-				spend(GameTime.TICK, false);
-			}
+            spend_new(attackSpeed(), false);
 			sprite.attack(enemy.pos);
 
 			return false;
@@ -1548,7 +1508,7 @@ public class Hero extends Char {
 	}
 	
 	public void rest( boolean fullRest ) {
-		spend(TIME_TO_REST, true);
+		spend_new(TIME_TO_REST, true);
 		if (!fullRest) {
 			sprite.showStatus(CharSprite.DEFAULT, TXT_WAIT);
 		}
@@ -1702,7 +1662,7 @@ public class Hero extends Char {
     }
 	
 	private boolean getCloser( final int target ) {
-		long speed = speed();
+		long speed = movementSpeed();
 
 		if (speed == 0) {
 			Camera.main.shake( 1, 1f );
@@ -1747,15 +1707,12 @@ public class Hero extends Char {
             sprite.move(pos, step);
             move(step);
 			attributeIncreaseCheck();
-			spend(GameTime.TICK * GameTime.TICK / speed, false);
+			spend_new(speed, false);
 
             return true;
 		} else {
-
 			return false;
-			
 		}
-
 	}
 	
 	public boolean handle( int cell, boolean fromGameScene ) {
@@ -1773,11 +1730,7 @@ public class Hero extends Char {
 			if (ch instanceof NPC) {
 				curAction = new HeroAction.Interact((NPC) ch);
 			} else {
-				if (missileWeapon != null) {
-					curAction = new HeroAction.Attack(missileWeapon, ch);
-				} else {
-					curAction = new HeroAction.Attack((KindOfWeapon)belongings.weapon(), ch);
-				}
+                curAction = new HeroAction.Attack(ch);
 			}
 		} else if ((heap = Dungeon.level.heaps.get(cell)) != null && !Dungeon.level.solid[cell]) {
 			switch (heap.type) {
@@ -1963,7 +1916,7 @@ public class Hero extends Char {
 
 			//ensures that you'll get to act first in almost any case, to prevent reviving and then instantly dieing again.
 			Buff.detach(this, Paralysis.class);
-			spend(-cooldown(), false);
+			spend_new(-cooldown(), false);
 
 			new Flare(8, 32).color(0xFFFF66, true).show(sprite, 2f);
 			CellEmitter.get(this.pos).start(Speck.factory(Speck.LIGHT), 0.2f, 3);
@@ -2057,7 +2010,7 @@ public class Hero extends Char {
 
 		if (curAction instanceof HeroAction.Attack) {
 			HeroAction.Attack action = (HeroAction.Attack) curAction;
-			attack(action.weapon, enemy);
+			attack(enemy);
 		}
 		curAction = null;
 		
@@ -2179,9 +2132,9 @@ public class Hero extends Char {
             sprite.operate(pos);
             if (foresight != null && foresight.isCursed()) {
                 GLog.n("You can't concentrate, searching takes a while.");
-                spend(TIME_TO_SEARCH * 3, true);
+                spend_new(TIME_TO_SEARCH * 3, true);
             } else {
-                spend(TIME_TO_SEARCH, true);
+                spend_new(TIME_TO_SEARCH, true);
             }
 
         }

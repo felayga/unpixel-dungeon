@@ -24,16 +24,17 @@
  */
 package com.felayga.unpixeldungeon.items;
 
-import java.util.ArrayList;
-
 import com.felayga.unpixeldungeon.actors.Char;
 import com.felayga.unpixeldungeon.actors.hero.Hero;
 import com.felayga.unpixeldungeon.mechanics.AttributeType;
+import com.felayga.unpixeldungeon.mechanics.Constant;
 import com.felayga.unpixeldungeon.mechanics.GameTime;
 import com.felayga.unpixeldungeon.mechanics.MagicType;
 import com.felayga.unpixeldungeon.mechanics.WeaponSkill;
 import com.felayga.unpixeldungeon.utils.GLog;
 import com.watabou.utils.Random;
+
+import java.util.ArrayList;
 
 public class KindOfWeapon extends EquippableItem {
 	private static final String TXT_EQUIP_CURSED	= "The %s welds itself to your hand!";
@@ -70,7 +71,7 @@ public class KindOfWeapon extends EquippableItem {
 	@Override
 	public ArrayList<String> actions( Hero hero ) {
 		ArrayList<String> actions = super.actions( hero );
-		actions.add( isEquipped( hero ) ? AC_UNEQUIP : AC_EQUIP );
+		actions.add( isEquipped( hero ) ? Constant.Action.UNEQUIP : Constant.Action.EQUIP );
 		return actions;
 	}
 

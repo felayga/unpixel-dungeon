@@ -24,6 +24,9 @@
  */
 package com.felayga.unpixeldungeon.items.rings;
 
+import com.felayga.unpixeldungeon.actors.buffs.ISpeedModifierBuff;
+import com.felayga.unpixeldungeon.mechanics.GameTime;
+
 public class RingOfHaste extends Ring {
 
 	{
@@ -43,6 +46,20 @@ public class RingOfHaste extends Ring {
 			super.desc();
 	}
 	
-	public class Haste extends RingBuff {
+	public class Haste extends RingBuff implements ISpeedModifierBuff {
+        @Override
+        public long movementModifier() {
+            if (level > 0) {
+                return GameTime.TICK - level * 8 / 5;
+            }
+            else {
+                return GameTime.TICK - level * 16 / 5;
+            }
+        }
+
+        @Override
+        public long attackModifier() {
+            return movementModifier();
+        }
 	}
 }

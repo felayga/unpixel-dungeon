@@ -45,8 +45,8 @@ public class Coyote extends Mob {
         spriteClass = CoyoteSprite.class;
 
         experience = 8;
-        movementSpeed = GameTime.TICK;
-        attackSpeed = GameTime.TICK;
+        movementSpeed(GameTime.TICK);
+        attackSpeed(GameTime.TICK);
         defenseMundane = 13;
         defenseMagical = 0;
         weight = Encumbrance.UNIT * 300;

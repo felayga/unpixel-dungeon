@@ -24,7 +24,6 @@
  */
 package com.felayga.unpixeldungeon.actors.buffs.positive;
 
-import com.felayga.unpixeldungeon.actors.Actor;
 import com.felayga.unpixeldungeon.actors.Char;
 import com.felayga.unpixeldungeon.actors.buffs.Buff;
 import com.felayga.unpixeldungeon.actors.hero.Hero;
@@ -72,7 +71,7 @@ public class MagicalSleep extends Buff {
 				detach();
 			}
 		}
-		spend( STEP, false );
+        spend_new(STEP, false);
 		return true;
 	}
 

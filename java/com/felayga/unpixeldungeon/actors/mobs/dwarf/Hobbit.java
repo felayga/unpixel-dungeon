@@ -27,19 +27,14 @@ package com.felayga.unpixeldungeon.actors.mobs.dwarf;
 
 import com.felayga.unpixeldungeon.actors.buffs.hero.Encumbrance;
 import com.felayga.unpixeldungeon.actors.mobs.Mob;
-import com.felayga.unpixeldungeon.items.armor.helmet.Helmet;
-import com.felayga.unpixeldungeon.items.armor.helmet.HelmetCrude;
 import com.felayga.unpixeldungeon.items.weapon.Weapon;
-import com.felayga.unpixeldungeon.items.weapon.melee.mob.MeleeMobAttack;
 import com.felayga.unpixeldungeon.items.weapon.melee.simple.Dagger;
-import com.felayga.unpixeldungeon.items.weapon.melee.simple.DaggerCrude;
 import com.felayga.unpixeldungeon.items.weapon.melee.simple.DaggerRuned;
 import com.felayga.unpixeldungeon.items.weapon.ranged.simple.Sling;
 import com.felayga.unpixeldungeon.mechanics.CorpseEffect;
 import com.felayga.unpixeldungeon.mechanics.GameTime;
 import com.felayga.unpixeldungeon.mechanics.MagicType;
 import com.felayga.unpixeldungeon.sprites.mobs.humanoid.dwarf.HobbitSprite;
-import com.felayga.unpixeldungeon.sprites.mobs.humanoid.orc.GoblinSprite;
 import com.watabou.utils.Random;
 
 /**
@@ -55,8 +50,8 @@ public class Hobbit extends Mob {
         spriteClass = HobbitSprite.class;
 
         experience = 13;
-        movementSpeed = GameTime.TICK * 13 / 12;
-        attackSpeed = GameTime.TICK;
+        movementSpeed(GameTime.TICK * 12 / 13);
+        attackSpeed(GameTime.TICK);
         defenseMundane = 10;
         defenseMagical = 0;
         weight = Encumbrance.UNIT * 500;

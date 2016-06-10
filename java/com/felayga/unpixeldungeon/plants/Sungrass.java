@@ -130,7 +130,7 @@ public class Sungrass extends Plant {
 			}
 			if (level <= 0)
 				detach();
-			spend( STEP, false );
+            spend_new( STEP, false );
 			return true;
 		}
 

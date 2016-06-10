@@ -68,7 +68,7 @@ public class FireImbue extends Buff {
 			GameScene.updateMap(target.pos);
 		}
 
-		spend(GameTime.TICK, false);
+        spend_new(GameTime.TICK, false);
 		left -= GameTime.TICK;
 		if (left <= 0)
 			detach();

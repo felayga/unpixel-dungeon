@@ -24,14 +24,14 @@
  */
 package com.felayga.unpixeldungeon.actors.buffs.negative;
 
-import com.felayga.unpixeldungeon.actors.Actor;
 import com.felayga.unpixeldungeon.actors.Char;
 import com.felayga.unpixeldungeon.actors.buffs.FlavourBuff;
+import com.felayga.unpixeldungeon.actors.buffs.ISpeedModifierBuff;
 import com.felayga.unpixeldungeon.items.rings.RingOfElements.Resistance;
 import com.felayga.unpixeldungeon.mechanics.GameTime;
 import com.felayga.unpixeldungeon.ui.BuffIndicator;
 
-public class Slow extends FlavourBuff {
+public class Slow extends FlavourBuff implements ISpeedModifierBuff {
 
 	{
 		type = buffType.NEGATIVE;
@@ -62,4 +62,14 @@ public class Slow extends FlavourBuff {
 		Resistance r = ch.buff( Resistance.class );
 		return r != null ? r.durationFactor() * DURATION : DURATION;
 	}
+
+    @Override
+    public long movementModifier() {
+        return GameTime.TICK * 2;
+    }
+
+    @Override
+    public long attackModifier() {
+        return movementModifier();
+    }
 }

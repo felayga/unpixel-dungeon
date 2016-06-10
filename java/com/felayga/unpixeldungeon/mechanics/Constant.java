@@ -29,15 +29,32 @@ package com.felayga.unpixeldungeon.mechanics;
  * Created by HELLO on 3/16/2016.
  */
 public class Constant {
-    public static final int POS_ENTRANCE    = -2;
-    public static final int POS_EXIT        = -1;
-    public static final int POS_RANDOM      = -3;
-    public static final int POS_NONE        = -1048576;
+    public static class Position {
+        public static final int ENTRANCE    = -2;
+        public static final int EXIT        = -1;
+        public static final int RANDOM      = -3;
+        public static final int NONE        = -1048576;
+    }
 
-    public static final String TXT_CANCEL   = "CANCEL";
+    public static class Action {
+        public static final String DROP     = "DROP";
+        public static final String THROW    = "THROW";
+        public static final String APPLY    = "APPLY";
+        public static final String KICK     = "KICK";
+        public static final String FORCE    = "FORCE";
+        public static final String SHOOT    = "SHOOT";
+        public static final String TAKE     = "TAKE";
+        public static final String EQUIP    = "EQUIP";
+        public static final String UNEQUIP  = "UNEQUIP";
 
-    public static final int DEBUFF_ROOTS        = 1;
-    public static final int DEBUFF_ENCUMBRANCE  = 2;
-    public static final int DEBUFF_CRIPPLE      = 3;
-    public static final int DEBUFF_HELD         = 4;
+        public static final String YES      = "YES";
+        public static final String CANCEL   = "CANCEL";
+    }
+
+    public static class Time {
+        public static final long ITEM_THROW = GameTime.TICK;
+        public static final long ITEM_PICKUP = GameTime.TICK;
+        public static final long ITEM_DROP = GameTime.TICK / 2;
+    }
+
 }

@@ -29,8 +29,8 @@ import com.felayga.unpixeldungeon.Dungeon;
 import com.felayga.unpixeldungeon.actors.Actor;
 import com.felayga.unpixeldungeon.actors.Char;
 import com.felayga.unpixeldungeon.actors.buffs.Buff;
-import com.felayga.unpixeldungeon.actors.buffs.negative.Chill;
 import com.felayga.unpixeldungeon.actors.buffs.FlavourBuff;
+import com.felayga.unpixeldungeon.actors.buffs.negative.Chill;
 import com.felayga.unpixeldungeon.actors.buffs.negative.Frost;
 import com.felayga.unpixeldungeon.effects.MagicMissile;
 import com.felayga.unpixeldungeon.items.Heap;
@@ -69,7 +69,7 @@ public class WandOfFrost extends Wand {
 				return; //do nothing, can't affect a frozen target
 			}
 			if (ch.buff(Chill.class) != null){
-				damage = (int)Math.round(damage * ch.buff(Chill.class).speedFactor());
+				damage = (int)(damage * ch.buff(Chill.class).movementModifier() / GameTime.TICK);
 			} else {
 				ch.sprite.burst( 0xFF99CCFF, level / 2 + 2 );
 			}
@@ -81,7 +81,7 @@ public class WandOfFrost extends Wand {
 				if (Level.water[ch.pos]){
 					//20+(10*level)% chance
 					if (Random.Int(10) >= 8-level )
-						Buff.affect(ch, Frost.class, Frost.duration(ch)*Random.Long(GameTime.TICK * 2, GameTime.TICK * 4) / GameTime.TICK);
+						Buff.affect(ch, Frost.class, Frost.duration(ch)*Random.LongRange(2, 4) * GameTime.TICK / GameTime.TICK);
 					else
 						Buff.prolong(ch, Chill.class, 6+level);
 				} else {
@@ -101,7 +101,7 @@ public class WandOfFrost extends Wand {
 	//TODO: balancing, this could be mighty OP
 	public void onHit(MagesStaff staff, Char attacker, Char defender, int damage) {
 		Chill chill = defender.buff(Chill.class);
-		if (chill != null && Random.Float() > chill.speedFactor()){
+		if (chill != null && Random.PassFail((int)chill.movementModifier())){
 			//need to delay this through an actor so that the freezing isn't broken by taking damage from the staff hit.
 			new FlavourBuff(){
 				{actPriority = Integer.MIN_VALUE;}

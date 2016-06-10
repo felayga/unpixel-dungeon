@@ -32,7 +32,6 @@ import com.felayga.unpixeldungeon.mechanics.CorpseEffect;
 import com.felayga.unpixeldungeon.mechanics.GameTime;
 import com.felayga.unpixeldungeon.mechanics.MagicType;
 import com.felayga.unpixeldungeon.sprites.mobs.kobold.KoboldLargeSprite;
-import com.felayga.unpixeldungeon.sprites.mobs.kobold.KoboldSprite;
 
 /**
  * Created by HELLO on 6/9/2016.
@@ -47,8 +46,8 @@ public class KoboldLarge extends Mob {
         spriteClass = KoboldLargeSprite.class;
 
         experience = 13;
-        movementSpeed = GameTime.TICK / 2;
-        attackSpeed = GameTime.TICK;
+        movementSpeed(GameTime.TICK * 2);
+        attackSpeed(GameTime.TICK);
         defenseMundane = 10;
         defenseMagical = 0;
         weight = Encumbrance.UNIT * 450;

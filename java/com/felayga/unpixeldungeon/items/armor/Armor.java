@@ -24,8 +24,6 @@
  */
 package com.felayga.unpixeldungeon.items.armor;
 
-import java.util.ArrayList;
-
 import com.felayga.unpixeldungeon.Assets;
 import com.felayga.unpixeldungeon.Badges;
 import com.felayga.unpixeldungeon.Dungeon;
@@ -34,16 +32,27 @@ import com.felayga.unpixeldungeon.actors.Char;
 import com.felayga.unpixeldungeon.actors.hero.Hero;
 import com.felayga.unpixeldungeon.items.EquippableItem;
 import com.felayga.unpixeldungeon.items.Item;
-import com.felayga.unpixeldungeon.items.armor.glyphs.*;
+import com.felayga.unpixeldungeon.items.armor.glyphs.Affection;
+import com.felayga.unpixeldungeon.items.armor.glyphs.AntiEntropy;
+import com.felayga.unpixeldungeon.items.armor.glyphs.Bounce;
+import com.felayga.unpixeldungeon.items.armor.glyphs.Displacement;
+import com.felayga.unpixeldungeon.items.armor.glyphs.Entanglement;
+import com.felayga.unpixeldungeon.items.armor.glyphs.Metabolism;
+import com.felayga.unpixeldungeon.items.armor.glyphs.Multiplicity;
+import com.felayga.unpixeldungeon.items.armor.glyphs.Potential;
+import com.felayga.unpixeldungeon.items.armor.glyphs.Stench;
+import com.felayga.unpixeldungeon.items.armor.glyphs.Viscosity;
 import com.felayga.unpixeldungeon.mechanics.BUCStatus;
-import com.felayga.unpixeldungeon.sprites.hero.HeroSprite;
+import com.felayga.unpixeldungeon.mechanics.Constant;
 import com.felayga.unpixeldungeon.sprites.ItemSprite;
+import com.felayga.unpixeldungeon.sprites.hero.HeroSprite;
 import com.felayga.unpixeldungeon.utils.GLog;
 import com.felayga.unpixeldungeon.utils.Utils;
-import com.watabou.noosa.audio.Sample;
 import com.watabou.utils.Bundlable;
 import com.watabou.utils.Bundle;
 import com.watabou.utils.Random;
+
+import java.util.ArrayList;
 
 public class Armor extends EquippableItem {
 
@@ -108,7 +117,7 @@ public class Armor extends EquippableItem {
 	@Override
 	public ArrayList<String> actions( Hero hero ) {
 		ArrayList<String> actions = super.actions( hero );
-		actions.add(isEquipped(hero) ? AC_UNEQUIP : AC_EQUIP);
+		actions.add(isEquipped(hero) ? Constant.Action.UNEQUIP : Constant.Action.EQUIP);
 		return actions;
 	}
 

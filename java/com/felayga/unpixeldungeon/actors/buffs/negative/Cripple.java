@@ -24,14 +24,12 @@
  */
 package com.felayga.unpixeldungeon.actors.buffs.negative;
 
-import com.felayga.unpixeldungeon.actors.Actor;
-import com.felayga.unpixeldungeon.actors.Char;
 import com.felayga.unpixeldungeon.actors.buffs.FlavourBuff;
-import com.felayga.unpixeldungeon.mechanics.Constant;
+import com.felayga.unpixeldungeon.actors.buffs.ISpeedModifierBuff;
 import com.felayga.unpixeldungeon.mechanics.GameTime;
 import com.felayga.unpixeldungeon.ui.BuffIndicator;
 
-public class Cripple extends FlavourBuff {
+public class Cripple extends FlavourBuff implements ISpeedModifierBuff {
 
 	public static final long DURATION	= GameTime.TICK * 10;
 
@@ -39,21 +37,13 @@ public class Cripple extends FlavourBuff {
 		type = buffType.NEGATIVE;
 	}
 
-	@Override
-	public boolean attachTo( Char target ) {
-		if (super.attachTo(target)) {
-			target.crippled.put(Constant.DEBUFF_CRIPPLE, GameTime.TICK / 2);
-			return true;
-		} else {
-			return false;
-		}
-	}
+    public long movementModifier() {
+        return GameTime.TICK * 2;
+    }
 
-	@Override
-	public void detach() {
-		target.crippled.remove(Constant.DEBUFF_CRIPPLE);
-		super.detach();
-	}
+    public long attackModifier() {
+        return GameTime.TICK;
+    }
 
 	@Override
 	public int icon() {

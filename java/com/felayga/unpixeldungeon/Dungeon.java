@@ -31,8 +31,6 @@ import com.felayga.unpixeldungeon.actors.buffs.positive.Light;
 import com.felayga.unpixeldungeon.actors.hero.Hero;
 import com.felayga.unpixeldungeon.actors.hero.HeroClass;
 import com.felayga.unpixeldungeon.actors.mobs.npcs.Blacksmith;
-//import com.felayga.unpixeldungeon.actors.mobs.npcs.Ghost;
-//import com.felayga.unpixeldungeon.actors.mobs.npcs.Imp;
 import com.felayga.unpixeldungeon.actors.mobs.npcs.Wandmaker;
 import com.felayga.unpixeldungeon.items.Ankh;
 import com.felayga.unpixeldungeon.items.Generator;
@@ -61,8 +59,8 @@ import com.felayga.unpixeldungeon.scenes.GameScene;
 import com.felayga.unpixeldungeon.ui.QuickSlotButton;
 import com.felayga.unpixeldungeon.utils.BArray;
 import com.felayga.unpixeldungeon.utils.Utils;
-import com.felayga.unpixeldungeon.windows.hero.WndResurrect;
 import com.felayga.unpixeldungeon.windows.hero.WndInitHero;
+import com.felayga.unpixeldungeon.windows.hero.WndResurrect;
 import com.watabou.noosa.Game;
 import com.watabou.utils.Bundlable;
 import com.watabou.utils.Bundle;
@@ -76,6 +74,9 @@ import java.io.OutputStream;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashSet;
+
+//import com.felayga.unpixeldungeon.actors.mobs.npcs.Ghost;
+//import com.felayga.unpixeldungeon.actors.mobs.npcs.Imp;
 
 public class Dungeon {
 	public static final int HIGHESTLEVEL = 27;
@@ -321,15 +322,15 @@ public class Dungeon {
 			Actor.add( level.respawner() );
 		}
 
-		if (pos == Constant.POS_EXIT)
+		if (pos == Constant.Position.EXIT)
 		{
 			hero.pos = level.exit;
 		}
-		else if (pos == Constant.POS_ENTRANCE)
+		else if (pos == Constant.Position.ENTRANCE)
 		{
 			hero.pos = level.entrance;
 		}
-		else if (pos == Constant.POS_RANDOM)
+		else if (pos == Constant.Position.RANDOM)
 		{
 			while (pos < 0 || (Terrain.flags[level.map[pos]] & Terrain.FLAG_PASSABLE) == 0) {
 				pos = Random.Int(level.WIDTH - 1) + 1 + (Random.Int(level.HEIGHT - 1) + 1) * level.WIDTH;
@@ -751,8 +752,8 @@ public class Dungeon {
 		
 	}
 	
-	public static int flee( Char ch, int cur, int from, boolean pass[], boolean[] visible ) {
-		
+	public static int flee( Char ch, int cur, int from, boolean pass[], boolean[] diagonal, boolean[] visible ) {
+
 		if (ch.flying) {
 			BArray.or( pass, Level.avoid, passable );
 		} else {
@@ -764,9 +765,10 @@ public class Dungeon {
 				passable[c.pos] = false;
 			}
 		}
+
 		passable[cur] = true;
 		
-		return PathFinder.getStepBack( cur, from, passable );
+		return PathFinder.getStepBack( cur, from, passable, diagonal );
 		
 	}
 

@@ -24,8 +24,6 @@
  */
 package com.felayga.unpixeldungeon.actors.blobs;
 
-import java.util.Arrays;
-
 import com.felayga.unpixeldungeon.Dungeon;
 import com.felayga.unpixeldungeon.ShatteredPixelDungeon;
 import com.felayga.unpixeldungeon.actors.Actor;
@@ -34,6 +32,8 @@ import com.felayga.unpixeldungeon.levels.Level;
 import com.felayga.unpixeldungeon.mechanics.GameTime;
 import com.felayga.unpixeldungeon.utils.BArray;
 import com.watabou.utils.Bundle;
+
+import java.util.Arrays;
 
 public class Blob extends Actor {
 
@@ -124,8 +124,8 @@ public class Blob extends Actor {
 	
 	@Override
 	public boolean act() {
-		
-		spend(GameTime.TICK, false );
+
+        spend_new(GameTime.TICK, false);
 		
 		if (volume > 0) {
 

@@ -85,7 +85,7 @@ public class CloakOfShadows extends Artifact_old {
 				else if (charge <= 1)  GLog.i("Your cloak hasn't recharged enough to be usable yet.");
 				else {
 					stealthed = true;
-					hero.spend( GameTime.TICK, false );
+					hero.spend_new(GameTime.TICK, false);
 					hero.busy();
 					Sample.INSTANCE.play(Assets.SND_MELD);
 					activeBuff = activeBuff();
@@ -206,7 +206,7 @@ public class CloakOfShadows extends Artifact_old {
 
 			updateQuickslot();
 
-			spend( GameTime.TICK, false );
+            spend_new(GameTime.TICK, false);
 
 			return true;
 		}
@@ -252,7 +252,7 @@ public class CloakOfShadows extends Artifact_old {
 			else    turnsToCost--;
 			updateQuickslot();
 
-			spend( GameTime.TICK, false );
+            spend_new( GameTime.TICK, false );
 
 			return true;
 		}

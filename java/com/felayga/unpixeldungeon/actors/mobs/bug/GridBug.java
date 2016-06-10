@@ -42,8 +42,8 @@ public class GridBug extends Mob {
         spriteClass = GridBugSprite.class;
 
         experience = 1;
-        movementSpeed = GameTime.TICK;
-        attackSpeed = GameTime.TICK;
+        movementSpeed(GameTime.TICK);
+        attackSpeed(GameTime.TICK);
         defenseMundane = 11;
         defenseMagical = 0;
         weight = Encumbrance.UNIT * 15;

@@ -24,17 +24,12 @@
  */
 package com.felayga.unpixeldungeon.plants;
 
-import java.util.ArrayList;
-
-import com.felayga.unpixeldungeon.actors.Actor;
-import com.felayga.unpixeldungeon.items.artifacts.SandalsOfNature;
-import com.felayga.unpixeldungeon.mechanics.GameTime;
-import com.watabou.noosa.audio.Sample;
 import com.felayga.unpixeldungeon.Assets;
 import com.felayga.unpixeldungeon.Dungeon;
+import com.felayga.unpixeldungeon.actors.Actor;
 import com.felayga.unpixeldungeon.actors.Char;
-import com.felayga.unpixeldungeon.actors.buffs.positive.Barkskin;
 import com.felayga.unpixeldungeon.actors.buffs.Buff;
+import com.felayga.unpixeldungeon.actors.buffs.positive.Barkskin;
 import com.felayga.unpixeldungeon.actors.hero.Hero;
 import com.felayga.unpixeldungeon.actors.hero.HeroSubClass;
 import com.felayga.unpixeldungeon.effects.CellEmitter;
@@ -42,13 +37,19 @@ import com.felayga.unpixeldungeon.effects.particles.LeafParticle;
 import com.felayga.unpixeldungeon.items.Dewdrop;
 import com.felayga.unpixeldungeon.items.Generator;
 import com.felayga.unpixeldungeon.items.Item;
+import com.felayga.unpixeldungeon.items.artifacts.SandalsOfNature;
 import com.felayga.unpixeldungeon.levels.Level;
 import com.felayga.unpixeldungeon.levels.Terrain;
+import com.felayga.unpixeldungeon.mechanics.Constant;
+import com.felayga.unpixeldungeon.mechanics.GameTime;
 import com.felayga.unpixeldungeon.sprites.PlantSprite;
 import com.felayga.unpixeldungeon.utils.Utils;
+import com.watabou.noosa.audio.Sample;
 import com.watabou.utils.Bundlable;
 import com.watabou.utils.Bundle;
 import com.watabou.utils.Random;
+
+import java.util.ArrayList;
 
 public abstract class Plant implements Bundlable {
 
@@ -132,7 +133,7 @@ public abstract class Plant implements Bundlable {
 
         {
             stackable = true;
-            defaultAction = AC_THROW;
+            defaultAction = Constant.Action.THROW;
         }
 
         protected Class<? extends Plant> plantClass;
@@ -159,7 +160,7 @@ public abstract class Plant implements Bundlable {
         @Override
         public boolean execute(Hero hero, String action) {
             if (action.equals(AC_PLANT)) {
-                hero.spend(TIME_TO_PLANT, false);
+                hero.spend_new(TIME_TO_PLANT, false);
                 hero.busy();
                 ((Seed) hero.belongings.remove(this, 1)).onThrow(hero.pos, hero);
 

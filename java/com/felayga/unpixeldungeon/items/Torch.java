@@ -24,15 +24,15 @@
  */
 package com.felayga.unpixeldungeon.items;
 
-import java.util.ArrayList;
-
-import com.felayga.unpixeldungeon.mechanics.GameTime;
-import com.watabou.noosa.particles.Emitter;
 import com.felayga.unpixeldungeon.actors.buffs.Buff;
 import com.felayga.unpixeldungeon.actors.buffs.positive.Light;
 import com.felayga.unpixeldungeon.actors.hero.Hero;
 import com.felayga.unpixeldungeon.effects.particles.FlameParticle;
+import com.felayga.unpixeldungeon.mechanics.GameTime;
 import com.felayga.unpixeldungeon.sprites.ItemSpriteSheet;
+import com.watabou.noosa.particles.Emitter;
+
+import java.util.ArrayList;
 
 public class Torch extends Item {
 
@@ -62,7 +62,7 @@ public class Torch extends Item {
 	public boolean execute( Hero hero, String action ) {
 		if (action.equals( AC_LIGHT )) {
 			
-			hero.spend(TIME_TO_LIGHT, false);
+			hero.spend_new(TIME_TO_LIGHT, false);
 			hero.busy();
 			
 			hero.sprite.operate(hero.pos);

@@ -28,10 +28,8 @@ import com.felayga.unpixeldungeon.actors.Char;
 import com.felayga.unpixeldungeon.actors.mobs.npcs.Boulder;
 import com.felayga.unpixeldungeon.actors.mobs.npcs.NPC;
 import com.felayga.unpixeldungeon.items.Item;
-import com.felayga.unpixeldungeon.items.KindOfWeapon;
 import com.felayga.unpixeldungeon.items.bags.IBag;
 import com.felayga.unpixeldungeon.items.tools.digging.DiggingTool;
-import com.felayga.unpixeldungeon.items.tools.digging.Pickaxe;
 import com.felayga.unpixeldungeon.items.tools.unlocking.UnlockingTool;
 
 
@@ -144,11 +142,10 @@ public class HeroAction {
 	
 	public static class Attack extends HeroAction {
 		public Char target;
-		public KindOfWeapon weapon;
-		public Attack( KindOfWeapon weapon, Char target )
+
+		public Attack( Char target )
 		{
 			this.target = target;
-			this.weapon = weapon;
 		}
 	}
 

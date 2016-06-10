@@ -46,8 +46,8 @@ public class Bat extends Mob {
         spriteClass = BatSprite.class;
 
         experience = 6;
-        movementSpeed = GameTime.TICK * 22 / 12;
-        attackSpeed = GameTime.TICK;
+        movementSpeed(GameTime.TICK * 12 / 22);
+        attackSpeed(GameTime.TICK);
         defenseMundane = 12;
         defenseMagical = 0;
         weight = Encumbrance.UNIT * 20;

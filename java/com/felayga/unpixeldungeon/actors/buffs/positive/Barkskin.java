@@ -36,7 +36,7 @@ public class Barkskin extends Buff {
 	public boolean act() {
 		if (target.isAlive()) {
 
-			spend(GameTime.TICK, false );
+            spend_new(GameTime.TICK, false );
 			if (--level <= 0) {
 				detach();
 			}

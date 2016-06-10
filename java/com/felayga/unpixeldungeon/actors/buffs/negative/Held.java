@@ -28,8 +28,10 @@ package com.felayga.unpixeldungeon.actors.buffs.negative;
 import com.felayga.unpixeldungeon.Dungeon;
 import com.felayga.unpixeldungeon.actors.Char;
 import com.felayga.unpixeldungeon.actors.buffs.FlavourBuff;
+import com.felayga.unpixeldungeon.actors.buffs.ISpeedModifierBuff;
 import com.felayga.unpixeldungeon.levels.Level;
 import com.felayga.unpixeldungeon.mechanics.Constant;
+import com.felayga.unpixeldungeon.mechanics.GameTime;
 import com.felayga.unpixeldungeon.ui.BuffIndicator;
 import com.felayga.unpixeldungeon.utils.GLog;
 import com.watabou.utils.Bundle;
@@ -37,21 +39,19 @@ import com.watabou.utils.Bundle;
 /**
  * Created by HELLO on 6/5/2016.
  */
-public class Held extends FlavourBuff {
+public class Held extends FlavourBuff implements ISpeedModifierBuff {
     public Held() {
         type = buffType.NEGATIVE;
-        hostPos = Constant.POS_NONE;
+        hostPos = Constant.Position.NONE;
         actPriority = Integer.MIN_VALUE + 1; //has to go before everything else, in case of load -> pending linkage to host
     }
 
-    @Override
-    public boolean attachTo(Char target) {
-        if (!target.flying && super.attachTo(target)) {
-            target.crippled.put(Constant.DEBUFF_HELD, 0L);
-            return true;
-        } else {
-            return false;
-        }
+    public long movementModifier() {
+        return 0L;
+    }
+
+    public long attackModifier() {
+        return GameTime.TICK;
     }
 
     public int hostPos;
@@ -82,7 +82,7 @@ public class Held extends FlavourBuff {
     public boolean act() {
         boolean retval = super.act();
 
-        if (hostPos != Constant.POS_NONE && host == null) {
+        if (hostPos != Constant.Position.NONE && host == null) {
             host = Dungeon.level.findMob(hostPos);
 
             if (host == null) {
@@ -101,16 +101,10 @@ public class Held extends FlavourBuff {
                 GLog.d("couldn't find host at pos=" + x+","+y+" with target pos="+tx+","+ty);
             }
 
-            hostPos = Constant.POS_NONE;
+            hostPos = Constant.Position.NONE;
         }
 
         return retval;
-    }
-
-    @Override
-    public void detach() {
-        target.crippled.remove(Constant.DEBUFF_HELD);
-        super.detach();
     }
 
     @Override

@@ -108,7 +108,7 @@ public class Poison extends Buff implements Hero.Doom {
 		if (target.isAlive()) {
 			
 			target.damage( (int)(left / 3) + 1, MagicType.Poison, null );
-			spend(GameTime.TICK, false );
+            spend_new(GameTime.TICK, false );
 			
 			if ((left -= GameTime.TICK) <= 0) {
 				detach();

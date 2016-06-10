@@ -124,7 +124,7 @@ public class HornOfPlenty extends Artifact_old {
 				Sample.INSTANCE.play(Assets.SND_EAT);
 				GLog.i("You eat from the horn.");
 
-				hero.spend(TIME_TO_EAT, false);
+				hero.spend_new(TIME_TO_EAT, false);
 
 				Badges.validateFoodEaten();
 
@@ -209,7 +209,7 @@ public class HornOfPlenty extends Artifact_old {
 			} else
 				partialCharge = 0;
 
-			spend( GameTime.TICK, false );
+            spend_new(GameTime.TICK, false);
 
 			return true;
 		}
@@ -226,7 +226,7 @@ public class HornOfPlenty extends Artifact_old {
 					Hero hero = Dungeon.hero;
 					hero.sprite.operate(hero.pos);
 					hero.busy();
-					hero.spend(TIME_TO_EAT, false);
+					hero.spend_new(TIME_TO_EAT, false);
 
                     //todo: horn of plenty upgrading if keeping it at all
 					//curItem.upgrade(item, ((Food) item).hornValue);

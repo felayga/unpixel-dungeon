@@ -24,23 +24,24 @@
  */
 package com.felayga.unpixeldungeon.items;
 
-import com.felayga.unpixeldungeon.actors.hero.Hero;
-import com.felayga.unpixeldungeon.mechanics.MagicType;
-import com.felayga.unpixeldungeon.sprites.CharSprite;
-import com.felayga.unpixeldungeon.sprites.ItemSprite;
-import com.felayga.unpixeldungeon.utils.GLog;
-import com.watabou.noosa.audio.Sample;
 import com.felayga.unpixeldungeon.Assets;
 import com.felayga.unpixeldungeon.Dungeon;
 import com.felayga.unpixeldungeon.actors.Actor;
 import com.felayga.unpixeldungeon.actors.Char;
+import com.felayga.unpixeldungeon.actors.hero.Hero;
 import com.felayga.unpixeldungeon.effects.CellEmitter;
 import com.felayga.unpixeldungeon.effects.particles.BlastParticle;
 import com.felayga.unpixeldungeon.effects.particles.SmokeParticle;
 import com.felayga.unpixeldungeon.levels.Level;
 import com.felayga.unpixeldungeon.levels.Terrain;
+import com.felayga.unpixeldungeon.mechanics.Constant;
+import com.felayga.unpixeldungeon.mechanics.MagicType;
 import com.felayga.unpixeldungeon.scenes.GameScene;
+import com.felayga.unpixeldungeon.sprites.CharSprite;
+import com.felayga.unpixeldungeon.sprites.ItemSprite;
 import com.felayga.unpixeldungeon.sprites.ItemSpriteSheet;
+import com.felayga.unpixeldungeon.utils.GLog;
+import com.watabou.noosa.audio.Sample;
 import com.watabou.utils.Bundle;
 import com.watabou.utils.Random;
 
@@ -83,7 +84,7 @@ public class Bomb extends Item {
 	public boolean execute(Hero hero, String action) {
 		if (action.equals( AC_LIGHTTHROW )){
 			lightingFuse = true;
-			action = AC_THROW;
+			action = Constant.Action.THROW;
 		} else {
 			lightingFuse = false;
 		}

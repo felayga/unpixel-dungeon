@@ -24,8 +24,6 @@
  */
 package com.felayga.unpixeldungeon.items.weapon.missiles;
 
-import java.util.ArrayList;
-
 import com.felayga.unpixeldungeon.Dungeon;
 import com.felayga.unpixeldungeon.actors.Actor;
 import com.felayga.unpixeldungeon.actors.Char;
@@ -38,9 +36,11 @@ import com.felayga.unpixeldungeon.items.weapon.Weapon;
 import com.felayga.unpixeldungeon.items.weapon.missiles.martial.Boomerang;
 import com.felayga.unpixeldungeon.items.weapon.ranged.AmmunitionType;
 import com.felayga.unpixeldungeon.items.weapon.ranged.RangedWeapon;
+import com.felayga.unpixeldungeon.mechanics.Constant;
 import com.felayga.unpixeldungeon.mechanics.WeaponSkill;
-import com.felayga.unpixeldungeon.utils.GLog;
 import com.watabou.utils.Random;
+
+import java.util.ArrayList;
 
 public class MissileWeapon extends Weapon {
 
@@ -64,9 +64,9 @@ public class MissileWeapon extends Weapon {
         this.ammunitionType = ammunitionType;
 
         if (throwable) {
-            defaultAction = AC_THROW;
+            defaultAction = Constant.Action.THROW;
         } else if (ammunitionType != AmmunitionType.None) {
-            defaultAction = AC_EQUIP;
+            defaultAction = Constant.Action.EQUIP;
         }
 
         usesTargeting = true;
@@ -74,7 +74,7 @@ public class MissileWeapon extends Weapon {
 	
 	@Override
 	public ArrayList<String> actions( Hero hero ) {
-		ArrayList<String> actions = super.actions( hero );
+		ArrayList<String> actions = super.actions(hero);
         /*
 		if (hero.heroClass != HeroClass.HUNTRESS && hero.heroClass != HeroClass.ROGUE) {
 			actions.remove( AC_EQUIP );
@@ -99,7 +99,7 @@ public class MissileWeapon extends Weapon {
 
 	@Override
 	protected void onThrow( int cell, Char thrower ) {
-		Char enemy = Actor.findChar( cell );
+		Char enemy = Actor.findChar(cell);
 		if (enemy == null || enemy == curUser) {
 			if (this instanceof Boomerang)
 				super.onThrow( cell, thrower );

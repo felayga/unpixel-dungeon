@@ -24,9 +24,9 @@
  */
 package com.felayga.unpixeldungeon.actors.buffs.negative;
 
-import com.felayga.unpixeldungeon.Dungeon;
 import com.felayga.unpixeldungeon.actors.Char;
 import com.felayga.unpixeldungeon.actors.buffs.FlavourBuff;
+import com.felayga.unpixeldungeon.actors.buffs.ISpeedModifierBuff;
 import com.felayga.unpixeldungeon.items.Item;
 import com.felayga.unpixeldungeon.items.potions.Potion;
 import com.felayga.unpixeldungeon.mechanics.GameTime;
@@ -37,7 +37,7 @@ import com.watabou.utils.Random;
 
 import java.text.DecimalFormat;
 
-public class Chill extends FlavourBuff {
+public class Chill extends FlavourBuff implements ISpeedModifierBuff {
 
 	private static final String TXT_FREEZES = "%s freezes!";
 
@@ -54,23 +54,19 @@ public class Chill extends FlavourBuff {
 			Burning.detach(target, Burning.class);
 
 			//chance of potion breaking is the same as speed factor.
-			if (Random.Float(1f) > speedFactor()) {
+			if (Random.PassFail((int)movementModifier())) {
 				Item item = target.belongings.randomUnequipped();
 				if (item instanceof Potion) {
-
 					item = target.belongings.remove(item, 1);
 					GLog.w(TXT_FREEZES, item.toString());
 					((Potion) item).shatter(target.pos);
-
 				} /*else if (item instanceof MysteryMeat) {
-
 					item = target.belongings.remove(item, 1);
 					FrozenCarpaccio carpaccio = new FrozenCarpaccio();
 					if (!target.belongings.collect(carpaccio)) {
 						Dungeon.level.drop( carpaccio, target.pos ).sprite.drop();
 					}
 					GLog.w(TXT_FREEZES, item.toString());
-
 				}*/
 			}
 			return true;
@@ -79,10 +75,15 @@ public class Chill extends FlavourBuff {
 		}
 	}
 
-	//reduces speed by 10% for every turn remaining, capping at 50%
-	public long speedFactor(){
-		return Math.max(GameTime.TICK, GameTime.TICK * (1 - cooldown()) / 10);
-	}
+    @Override
+    public long movementModifier() {
+        return Math.max(GameTime.TICK, cooldown() / 2);
+    }
+
+    @Override
+    public long attackModifier() {
+        return movementModifier();
+    }
 
 	@Override
 	public int icon() {
@@ -108,6 +109,6 @@ public class Chill extends FlavourBuff {
 				"At it's worst, this is equivalent to being slowed.\n" +
 				"\n" +
 				"This chilled will last for " + dispTurns() + ", " +
-				"and is currently reducing speed by " + new DecimalFormat("#.##").format((1f-speedFactor())*100f) + "%";
+				"and is currently reducing speed to " + new DecimalFormat("#.##").format((float)GameTime.TICK / movementModifier() * 100.0f) + "%";
 	}
 }

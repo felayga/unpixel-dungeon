@@ -48,7 +48,7 @@ public class Corruption extends Buff {
 		if (damage > 0)
 			target.damage(damage, MagicType.Magic, null);
 
-		spend(GameTime.TICK, false);
+        spend_new(GameTime.TICK, false);
 
 		return true;
 	}

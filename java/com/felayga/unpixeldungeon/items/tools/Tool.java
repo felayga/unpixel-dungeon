@@ -26,6 +26,7 @@ package com.felayga.unpixeldungeon.items.tools;
 
 import com.felayga.unpixeldungeon.actors.hero.Hero;
 import com.felayga.unpixeldungeon.items.Item;
+import com.felayga.unpixeldungeon.mechanics.Constant;
 import com.felayga.unpixeldungeon.scenes.CellSelector;
 import com.felayga.unpixeldungeon.scenes.GameScene;
 
@@ -46,7 +47,7 @@ public abstract class Tool extends Item implements ITool {
         curUser = hero;
         curTool = this;
 
-        if (action.equals(AC_APPLY)) {
+        if (action.equals(Constant.Action.APPLY)) {
             GameScene.selectCell(applier);
 
             return false;

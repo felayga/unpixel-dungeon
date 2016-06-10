@@ -30,12 +30,12 @@ import com.felayga.unpixeldungeon.Dungeon;
 import com.felayga.unpixeldungeon.Statistics;
 import com.felayga.unpixeldungeon.actors.Actor;
 import com.felayga.unpixeldungeon.actors.Char;
-import com.felayga.unpixeldungeon.actors.buffs.negative.Amok;
 import com.felayga.unpixeldungeon.actors.buffs.Buff;
-import com.felayga.unpixeldungeon.actors.buffs.negative.Corruption;
 import com.felayga.unpixeldungeon.actors.buffs.hero.Hunger;
-import com.felayga.unpixeldungeon.actors.buffs.negative.Sleep;
 import com.felayga.unpixeldungeon.actors.buffs.hero.SoulMark;
+import com.felayga.unpixeldungeon.actors.buffs.negative.Amok;
+import com.felayga.unpixeldungeon.actors.buffs.negative.Corruption;
+import com.felayga.unpixeldungeon.actors.buffs.negative.Sleep;
 import com.felayga.unpixeldungeon.actors.buffs.negative.Terror;
 import com.felayga.unpixeldungeon.actors.hero.Hero;
 import com.felayga.unpixeldungeon.actors.hero.HeroSubClass;
@@ -100,9 +100,10 @@ public abstract class Mob extends Char {
 	public boolean hostile = true;
 	public boolean ally = false;
 	
-	private static final String STATE	= "state";
-	private static final String SEEN	= "seen";
-	private static final String TARGET	= "target";
+	private static final String STATE	        = "state";
+	private static final String SEEN	        = "seen";
+	private static final String TARGET	        = "target";
+    private static final String MOVEMENTBUDGET  = "movementBudget";
 	
 	@Override
 	public void storeInBundle( Bundle bundle ) {
@@ -121,6 +122,7 @@ public abstract class Mob extends Char {
 		}
 		bundle.put( SEEN, enemySeen );
 		bundle.put( TARGET, target );
+        bundle.put(MOVEMENTBUDGET, movementBudget);
 	}
 	
 	@Override
@@ -141,8 +143,8 @@ public abstract class Mob extends Char {
 		}
 
 		enemySeen = bundle.getBoolean(SEEN);
-
-		target = bundle.getInt( TARGET );
+		target = bundle.getInt(TARGET);
+        movementBudget = bundle.getLong(MOVEMENTBUDGET);
 	}
 	
 	public CharSprite sprite() {
@@ -165,7 +167,7 @@ public abstract class Mob extends Char {
 		
 		if (paralysed > 0) {
 			enemySeen = false;
-			spend( GameTime.TICK, false );
+			spend_new(GameTime.TICK, false);
 			return true;
 		}
 		
@@ -296,38 +298,48 @@ public abstract class Mob extends Char {
         return retval;
     }
 
-	protected boolean getCloser( int target ) {
-		long speed = speed();
+    private long movementBudget = 0;
 
-		if (speed == 0) {
-			return false;
-		}
+	protected boolean getCloser_new( int target ) {
+        long speed = movementSpeed();
 
+        if (speed == 0) {
+            return false;
+        }
+
+        long bestSpeed = Math.min(speed, attackSpeed());
+
+        movementBudget += bestSpeed;
+
+        if (movementBudget >= speed) {
+            movementBudget -= speed;
+
+            boolean[] candidate = getCloserStepCandidate();
+            boolean[] diagonal = Level.diagonal;
+
+            int step = Dungeon.findPath(this, pos, target,
+                    candidate, diagonal,
+                    Level.fieldOfView);
+            if (step != -1) {
+                spend_new(bestSpeed, false);
+                move(step);
+                return true;
+            } else {
+                return false;
+            }
+        }
+        else {
+            spend_new(bestSpeed, false);
+            return true;
+        }
+    }
+	
+	protected boolean getFurther( int target ) {
         boolean[] candidate = getCloserStepCandidate();
         boolean[] diagonal = Level.diagonal;
 
-		int step = Dungeon.findPath(this, pos, target,
-                candidate, diagonal,
-                Level.fieldOfView);
-		if (step != -1) {
-			move( step );
-			return true;
-		} else {
-			return false;
-		}
-	}
-	
-	protected boolean getFurther( int target ) {
-		int len = Level.LENGTH;
-		boolean[] p = Level.passable;
-		boolean[] a = Level.pathable;
-		boolean[] passable = new boolean[len];
-		for (int i=0; i < len; i++) {
-			passable[i] = p[i] || (a[i] && (canOpenDoors || isEthereal));
-		}
-
 		int step = Dungeon.flee(this, pos, target,
-				passable,
+                candidate, diagonal,
 				Level.fieldOfView);
 		if (step != -1) {
 			move( step );
@@ -361,10 +373,10 @@ public abstract class Mob extends Char {
 		if (visible) {
 			sprite.attack( enemy.pos );
 		} else {
-			attack( weapon, enemy );
+			attack( enemy );
 		}
 				
-		spend(attackDelay(weapon.delay_new), false);
+		spend_new(attackSpeed(), false);
 		
 		return !visible;
 	}
@@ -372,7 +384,7 @@ public abstract class Mob extends Char {
 	@Override
 	public void onAttackComplete() {
         KindOfWeapon weapon = (KindOfWeapon)belongings.weapon();
-		attack( weapon, enemy );
+		attack( enemy );
 		super.onAttackComplete();
 	}
 
@@ -567,13 +579,13 @@ public abstract class Mob extends Char {
 					}
 				}
 
-				spend( TIME_TO_WAKE_UP, false );
+				spend_new(TIME_TO_WAKE_UP, false);
 
 			} else {
 
 				enemySeen = false;
 
-				spend( GameTime.TICK, false );
+                spend_new(GameTime.TICK, false);
 
 			}
 			return true;
@@ -600,12 +612,12 @@ public abstract class Mob extends Char {
 				enemySeen = false;
 
 				int oldPos = pos;
-				if (target != -1 && getCloser( target )) {
-					spend( GameTime.TICK * GameTime.TICK / speed(), false );
+				if (target != -1 && getCloser_new(target)) {
+					//spend( GameTime.TICK * GameTime.TICK / speed(), false );
 					return moveSprite( oldPos, pos );
 				} else {
 					target = Dungeon.level.randomDestination();
-					spend( GameTime.TICK, false );
+					spend_new(GameTime.TICK, false);
 				}
 
 			}
@@ -632,14 +644,11 @@ public abstract class Mob extends Char {
 				}
 
 				int oldPos = pos;
-				if (target != -1 && getCloser( target )) {
-
-					spend( GameTime.TICK * GameTime.TICK / speed(), false );
+				if (target != -1 && getCloser_new(target)) {
+					//spend( GameTime.TICK * GameTime.TICK / speed(), false );
 					return moveSprite( oldPos,  pos );
-
 				} else {
-
-					spend( GameTime.TICK, false );
+					spend_new(GameTime.TICK, false);
 					state = WANDERING;
 					target = Dungeon.level.randomDestination();
 					return true;
@@ -668,13 +677,11 @@ public abstract class Mob extends Char {
 
 			int oldPos = pos;
 			if (target != -1 && getFurther( target )) {
-
-				spend( GameTime.TICK * GameTime.TICK / speed(), false );
+				//spend( GameTime.TICK * GameTime.TICK / speed(), false );
 				return moveSprite( oldPos, pos );
 
 			} else {
-
-				spend( GameTime.TICK, false );
+				spend_new(GameTime.TICK, false);
 				nowhereToRun();
 
 				return true;
@@ -696,7 +703,7 @@ public abstract class Mob extends Char {
 		@Override
 		public boolean act( boolean enemyInFOV, boolean justAlerted ) {
 			enemySeen = false;
-			spend( GameTime.TICK, false );
+			spend_new(GameTime.TICK, false);
 			return true;
 		}
 

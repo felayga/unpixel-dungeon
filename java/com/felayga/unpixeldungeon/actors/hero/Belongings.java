@@ -24,13 +24,6 @@
  */
 package com.felayga.unpixeldungeon.actors.hero;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Map;
-
 import com.felayga.unpixeldungeon.Assets;
 import com.felayga.unpixeldungeon.Badges;
 import com.felayga.unpixeldungeon.Dungeon;
@@ -39,23 +32,23 @@ import com.felayga.unpixeldungeon.actors.Char;
 import com.felayga.unpixeldungeon.effects.particles.ShadowParticle;
 import com.felayga.unpixeldungeon.items.EquippableItem;
 import com.felayga.unpixeldungeon.items.Gold;
-import com.felayga.unpixeldungeon.items.bags.IBag;
-import com.felayga.unpixeldungeon.items.tools.ITool;
-import com.felayga.unpixeldungeon.mechanics.Constant;
-import com.felayga.unpixeldungeon.mechanics.IDecayable;
 import com.felayga.unpixeldungeon.items.Item;
 import com.felayga.unpixeldungeon.items.armor.Armor;
 import com.felayga.unpixeldungeon.items.bags.Bag;
+import com.felayga.unpixeldungeon.items.bags.IBag;
 import com.felayga.unpixeldungeon.items.bags.backpack.ConsumablesBackpack;
+import com.felayga.unpixeldungeon.items.bags.backpack.EquipmentBackpack;
 import com.felayga.unpixeldungeon.items.bags.backpack.Spellbook;
 import com.felayga.unpixeldungeon.items.bags.backpack.UncategorizedBackpack;
-import com.felayga.unpixeldungeon.items.bags.backpack.EquipmentBackpack;
 import com.felayga.unpixeldungeon.items.keys.IronOldKey;
 import com.felayga.unpixeldungeon.items.keys.OldKey;
+import com.felayga.unpixeldungeon.items.tools.ITool;
 import com.felayga.unpixeldungeon.items.wands.Wand;
 import com.felayga.unpixeldungeon.items.weapon.missiles.martial.Boomerang;
 import com.felayga.unpixeldungeon.levels.Level;
 import com.felayga.unpixeldungeon.mechanics.BUCStatus;
+import com.felayga.unpixeldungeon.mechanics.Constant;
+import com.felayga.unpixeldungeon.mechanics.IDecayable;
 import com.felayga.unpixeldungeon.ui.Icons;
 import com.felayga.unpixeldungeon.utils.GLog;
 import com.felayga.unpixeldungeon.windows.WndOptions;
@@ -63,6 +56,13 @@ import com.watabou.noosa.audio.Sample;
 import com.watabou.utils.Bundlable;
 import com.watabou.utils.Bundle;
 import com.watabou.utils.Random;
+
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Map;
 
 public class Belongings implements Iterable<Item>, IDecayable, IBag {
     //region IBag
@@ -83,7 +83,7 @@ public class Belongings implements Iterable<Item>, IDecayable, IBag {
         return null;
     }
     public String action() { return null; }
-    public int pos() { return Constant.POS_NONE; }
+    public int pos() { return Constant.Position.NONE; }
     public String getDisplayName() {
         return "belongings";
     }
@@ -267,7 +267,7 @@ public class Belongings implements Iterable<Item>, IDecayable, IBag {
 			options.add(items[n].getDisplayName());
 		}
 
-		options.add(Constant.TXT_CANCEL);
+		options.add(Constant.Action.CANCEL);
 
 		ShatteredPixelDungeon.scene().add(
 				new WndOptions("Unequip One Item", "No empty equipment slots for this item. Choose an item to swap out.", options) {
@@ -403,14 +403,14 @@ public class Belongings implements Iterable<Item>, IDecayable, IBag {
 			item.updateQuickslot();
 		}
 
-		owner.spend(item.equipTime, false);
+		owner.spend_new(item.equipTime, false);
 	}
 
 	private void onItemUnequipped(Char owner, EquippableItem item, boolean single) {
 		item.onUnequip(owner);
 		weight -= item.weight() * item.quantity();
 
-		owner.spend(item.equipTime, single);
+		owner.spend_new(item.equipTime, single);
 		GLog.d("weight1="+weight+" "+backpack1.weight()+" "+backpack2.weight()+" "+backpack3.weight()+" "+backpack4.weight());
 	}
 

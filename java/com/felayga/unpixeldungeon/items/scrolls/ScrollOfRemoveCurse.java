@@ -24,16 +24,16 @@
  */
 package com.felayga.unpixeldungeon.items.scrolls;
 
-import com.felayga.unpixeldungeon.actors.Char;
-import com.felayga.unpixeldungeon.mechanics.BUCStatus;
-import com.watabou.noosa.audio.Sample;
 import com.felayga.unpixeldungeon.Assets;
-import com.felayga.unpixeldungeon.actors.buffs.positive.Invisibility;
+import com.felayga.unpixeldungeon.actors.Char;
 import com.felayga.unpixeldungeon.actors.buffs.negative.Weakness;
+import com.felayga.unpixeldungeon.actors.buffs.positive.Invisibility;
 import com.felayga.unpixeldungeon.effects.Flare;
 import com.felayga.unpixeldungeon.effects.particles.ShadowParticle;
 import com.felayga.unpixeldungeon.items.Item;
+import com.felayga.unpixeldungeon.mechanics.BUCStatus;
 import com.felayga.unpixeldungeon.utils.GLog;
+import com.watabou.noosa.audio.Sample;
 
 public class ScrollOfRemoveCurse extends Scroll {
 
@@ -88,7 +88,7 @@ public class ScrollOfRemoveCurse extends Scroll {
 		
 		setKnown();
 		
-		curUser.spend( TIME_TO_READ, true );
+		curUser.spend_new(TIME_TO_READ, true);
 	}
 	
 	@Override

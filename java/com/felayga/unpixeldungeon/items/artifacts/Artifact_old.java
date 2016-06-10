@@ -25,19 +25,16 @@
 package com.felayga.unpixeldungeon.items.artifacts;
 
 import com.felayga.unpixeldungeon.Dungeon;
-import com.felayga.unpixeldungeon.ShatteredPixelDungeon;
 import com.felayga.unpixeldungeon.actors.Char;
 import com.felayga.unpixeldungeon.actors.buffs.Buff;
 import com.felayga.unpixeldungeon.actors.hero.Hero;
-import com.felayga.unpixeldungeon.items.Item;
 import com.felayga.unpixeldungeon.items.KindofMisc;
 import com.felayga.unpixeldungeon.mechanics.BUCStatus;
+import com.felayga.unpixeldungeon.mechanics.Constant;
 import com.felayga.unpixeldungeon.mechanics.GameTime;
 import com.felayga.unpixeldungeon.utils.GLog;
 import com.felayga.unpixeldungeon.utils.Utils;
-import com.felayga.unpixeldungeon.windows.WndOptions;
 import com.watabou.utils.Bundle;
-import com.watabou.utils.Random;
 
 import java.util.ArrayList;
 
@@ -89,7 +86,7 @@ public class Artifact_old extends KindofMisc {
 	@Override
 	public ArrayList<String> actions( Hero hero ) {
 		ArrayList<String> actions = super.actions( hero );
-		actions.add(isEquipped(hero) ? AC_UNEQUIP : AC_EQUIP);
+		actions.add(isEquipped(hero) ? Constant.Action.UNEQUIP : Constant.Action.EQUIP);
 		return actions;
 	}
 

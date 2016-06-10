@@ -24,16 +24,16 @@
  */
 package com.felayga.unpixeldungeon.items.scrolls;
 
-import java.util.ArrayList;
-
-import com.watabou.noosa.audio.Sample;
 import com.felayga.unpixeldungeon.Assets;
 import com.felayga.unpixeldungeon.actors.Actor;
 import com.felayga.unpixeldungeon.actors.buffs.positive.Invisibility;
 import com.felayga.unpixeldungeon.actors.mobs.npcs.MirrorImage;
 import com.felayga.unpixeldungeon.levels.Level;
 import com.felayga.unpixeldungeon.scenes.GameScene;
+import com.watabou.noosa.audio.Sample;
 import com.watabou.utils.Random;
+
+import java.util.ArrayList;
 
 public class ScrollOfMirrorImage extends Scroll {
 
@@ -76,7 +76,7 @@ public class ScrollOfMirrorImage extends Scroll {
 		Sample.INSTANCE.play( Assets.SND_READ );
 		Invisibility.dispel();
 		
-		curUser.spend( TIME_TO_READ, true );
+		curUser.spend_new( TIME_TO_READ, true );
 	}
 	
 	@Override

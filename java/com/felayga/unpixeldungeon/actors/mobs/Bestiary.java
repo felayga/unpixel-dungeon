@@ -44,7 +44,6 @@ import com.felayga.unpixeldungeon.actors.mobs.lichen.RedMold;
 import com.felayga.unpixeldungeon.actors.mobs.lichen.YellowMold;
 import com.felayga.unpixeldungeon.actors.mobs.newt.Gecko;
 import com.felayga.unpixeldungeon.actors.mobs.newt.Newt;
-//import com.felayga.unpixeldungeon.actors.mobs.npcs.Ghost;
 import com.felayga.unpixeldungeon.actors.mobs.orc.Goblin;
 import com.felayga.unpixeldungeon.actors.mobs.rat.GiantRat;
 import com.felayga.unpixeldungeon.actors.mobs.rat.SewerRat;
@@ -55,9 +54,10 @@ import com.felayga.unpixeldungeon.utils.GLog;
 import com.watabou.utils.Random;
 
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
+
+//import com.felayga.unpixeldungeon.actors.mobs.npcs.Ghost;
 
 public class Bestiary {
     public static void spawn(int depth, int heroLevel, boolean rares, SpawnParams params) {
@@ -91,12 +91,12 @@ public class Bestiary {
             }
 
             int retries = 5;
-            int pos = Constant.POS_NONE;
+            int pos = Constant.Position.NONE;
             ArrayList<Integer> positions = null;
 
-            while (pos == Constant.POS_NONE && retries > 0 && positions == null) {
+            while (pos == Constant.Position.NONE && retries > 0 && positions == null) {
                 pos = params.position();
-                if (pos != Constant.POS_NONE) {
+                if (pos != Constant.Position.NONE) {
                     positions = placeMob(params.level(), spawner.quantity, pos);
                 }
                 retries--;

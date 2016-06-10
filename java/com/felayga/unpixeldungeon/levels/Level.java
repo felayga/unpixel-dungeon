@@ -33,12 +33,12 @@ import com.felayga.unpixeldungeon.actors.Char;
 import com.felayga.unpixeldungeon.actors.blobs.Alchemy;
 import com.felayga.unpixeldungeon.actors.blobs.Blob;
 import com.felayga.unpixeldungeon.actors.blobs.WellWater;
-import com.felayga.unpixeldungeon.actors.buffs.positive.Awareness;
-import com.felayga.unpixeldungeon.actors.buffs.negative.Blindness;
 import com.felayga.unpixeldungeon.actors.buffs.Buff;
 import com.felayga.unpixeldungeon.actors.buffs.hero.LockedFloor;
-import com.felayga.unpixeldungeon.actors.buffs.positive.MindVision;
 import com.felayga.unpixeldungeon.actors.buffs.hero.Shadows;
+import com.felayga.unpixeldungeon.actors.buffs.negative.Blindness;
+import com.felayga.unpixeldungeon.actors.buffs.positive.Awareness;
+import com.felayga.unpixeldungeon.actors.buffs.positive.MindVision;
 import com.felayga.unpixeldungeon.actors.hero.Hero;
 import com.felayga.unpixeldungeon.actors.hero.HeroClass;
 import com.felayga.unpixeldungeon.actors.mobs.Bestiary;
@@ -54,7 +54,6 @@ import com.felayga.unpixeldungeon.items.Stylus;
 import com.felayga.unpixeldungeon.items.Torch;
 import com.felayga.unpixeldungeon.items.armor.Armor;
 import com.felayga.unpixeldungeon.items.artifacts.AlchemistsToolkit;
-//import com.felayga.unpixeldungeon.items.artifacts.DriedRose;
 import com.felayga.unpixeldungeon.items.artifacts.TimekeepersHourglass;
 import com.felayga.unpixeldungeon.items.bags.ScrollHolder;
 import com.felayga.unpixeldungeon.items.bags.SeedPouch;
@@ -65,21 +64,22 @@ import com.felayga.unpixeldungeon.items.potions.PotionOfMight;
 import com.felayga.unpixeldungeon.items.potions.PotionOfStrength;
 import com.felayga.unpixeldungeon.items.rings.RingOfWealth;
 import com.felayga.unpixeldungeon.items.scrolls.Scroll;
-import com.felayga.unpixeldungeon.items.scrolls.ScrollOfUpgrade;
 import com.felayga.unpixeldungeon.items.scrolls.ScrollOfMagicalInfusion;
+import com.felayga.unpixeldungeon.items.scrolls.ScrollOfUpgrade;
 import com.felayga.unpixeldungeon.levels.features.Chasm;
 import com.felayga.unpixeldungeon.levels.features.Door;
 import com.felayga.unpixeldungeon.levels.features.HighGrass;
 import com.felayga.unpixeldungeon.levels.painters.Painter;
-import com.felayga.unpixeldungeon.levels.traps.*;
+import com.felayga.unpixeldungeon.levels.traps.Trap;
+import com.felayga.unpixeldungeon.levels.traps.WornTrap;
 import com.felayga.unpixeldungeon.mechanics.GameTime;
 import com.felayga.unpixeldungeon.mechanics.IDecayable;
 import com.felayga.unpixeldungeon.mechanics.ShadowCaster;
 import com.felayga.unpixeldungeon.plants.BlandfruitBush;
 import com.felayga.unpixeldungeon.plants.Plant;
 import com.felayga.unpixeldungeon.scenes.GameScene;
-import com.felayga.unpixeldungeon.ui.CustomTileVisual;
 import com.felayga.unpixeldungeon.sprites.ItemSprite;
+import com.felayga.unpixeldungeon.ui.CustomTileVisual;
 import com.felayga.unpixeldungeon.utils.GLog;
 import com.watabou.noosa.Game;
 import com.watabou.noosa.Group;
@@ -96,6 +96,8 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
+
+//import com.felayga.unpixeldungeon.items.artifacts.DriedRose;
 
 public abstract class Level implements Bundlable, IDecayable {
 
@@ -631,7 +633,7 @@ public abstract class Level implements Bundlable, IDecayable {
                         }
                     });
                 }
-                spend(Dungeon.level.feeling == Feeling.DARK || Statistics.amuletObtained ? TIME_TO_RESPAWN / 2 : TIME_TO_RESPAWN, false);
+                spend_new(Dungeon.level.feeling == Feeling.DARK || Statistics.amuletObtained ? TIME_TO_RESPAWN / 2 : TIME_TO_RESPAWN, false);
                 return true;
             }
         };

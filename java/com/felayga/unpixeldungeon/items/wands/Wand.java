@@ -24,33 +24,33 @@
  */
 package com.felayga.unpixeldungeon.items.wands;
 
-import java.util.ArrayList;
-
-import com.felayga.unpixeldungeon.Dungeon;
-import com.felayga.unpixeldungeon.actors.buffs.hero.Encumbrance;
-import com.felayga.unpixeldungeon.actors.buffs.hero.SoulMark;
-import com.felayga.unpixeldungeon.actors.hero.HeroClass;
-import com.felayga.unpixeldungeon.actors.hero.HeroSubClass;
-import com.felayga.unpixeldungeon.items.weapon.melee.simple.MagesStaff;
-import com.felayga.unpixeldungeon.mechanics.BUCStatus;
-import com.felayga.unpixeldungeon.mechanics.GameTime;
-import com.watabou.noosa.audio.Sample;
 import com.felayga.unpixeldungeon.Assets;
+import com.felayga.unpixeldungeon.Dungeon;
 import com.felayga.unpixeldungeon.actors.Actor;
 import com.felayga.unpixeldungeon.actors.Char;
+import com.felayga.unpixeldungeon.actors.buffs.hero.Encumbrance;
+import com.felayga.unpixeldungeon.actors.buffs.hero.SoulMark;
 import com.felayga.unpixeldungeon.actors.buffs.positive.Invisibility;
 import com.felayga.unpixeldungeon.actors.hero.Hero;
+import com.felayga.unpixeldungeon.actors.hero.HeroClass;
+import com.felayga.unpixeldungeon.actors.hero.HeroSubClass;
 import com.felayga.unpixeldungeon.effects.MagicMissile;
 import com.felayga.unpixeldungeon.items.Item;
+import com.felayga.unpixeldungeon.items.weapon.melee.simple.MagesStaff;
+import com.felayga.unpixeldungeon.mechanics.BUCStatus;
 import com.felayga.unpixeldungeon.mechanics.Ballistica;
+import com.felayga.unpixeldungeon.mechanics.GameTime;
 import com.felayga.unpixeldungeon.scenes.CellSelector;
 import com.felayga.unpixeldungeon.scenes.GameScene;
 import com.felayga.unpixeldungeon.ui.QuickSlotButton;
 import com.felayga.unpixeldungeon.utils.GLog;
+import com.watabou.noosa.audio.Sample;
 import com.watabou.utils.Bundle;
 import com.watabou.utils.Callback;
 import com.watabou.utils.PointF;
 import com.watabou.utils.Random;
+
+import java.util.ArrayList;
 
 public abstract class Wand extends Item {
 
@@ -271,7 +271,8 @@ public abstract class Wand extends Item {
 			updateQuickslot();
 		}
 
-		curUser.spend( TIME_TO_ZAP, true );
+        //todo: wand zap time verification
+		curUser.spend_new(TIME_TO_ZAP, true);
 	}
 
 	private static final String UNFAMILIRIARITY        = "unfamiliarity";

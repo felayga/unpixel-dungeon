@@ -24,18 +24,17 @@
  */
 package com.felayga.unpixeldungeon.windows;
 
-import com.felayga.unpixeldungeon.actors.hero.HeroAction;
-import com.felayga.unpixeldungeon.items.food.Food;
-import com.felayga.unpixeldungeon.utils.GLog;
-import com.watabou.noosa.BitmapTextMultiline;
 import com.felayga.unpixeldungeon.Dungeon;
+import com.felayga.unpixeldungeon.actors.hero.HeroAction;
 import com.felayga.unpixeldungeon.items.Item;
+import com.felayga.unpixeldungeon.items.food.Food;
+import com.felayga.unpixeldungeon.mechanics.Constant;
 import com.felayga.unpixeldungeon.scenes.PixelScene;
 import com.felayga.unpixeldungeon.ui.ItemSlot;
 import com.felayga.unpixeldungeon.ui.RedButton;
 import com.felayga.unpixeldungeon.ui.Window;
-
-import java.util.ArrayList;
+import com.felayga.unpixeldungeon.utils.GLog;
+import com.watabou.noosa.BitmapTextMultiline;
 
 public class WndItem extends Window {
 
@@ -86,7 +85,7 @@ public class WndItem extends Window {
                             GLog.d("wnditem deposit action");
                             Dungeon.hero.motivate(true);
                             //while (Dungeon.hero.act()) ;
-                        } else if (action == Item.AC_TAKE) {
+                        } else if (action == Constant.Action.TAKE) {
                             listener.onSelect(item);
                         } else {
                             item.execute(Dungeon.hero, action);
@@ -103,7 +102,7 @@ public class WndItem extends Window {
                 btn.setPos(x, y);
                 add(btn);
 
-                if ((!external && action.equals(item.defaultAction)) || (external && action.equals(Item.AC_TAKE))) {
+                if ((!external && action.equals(item.defaultAction)) || (external && action.equals(Constant.Action.TAKE))) {
                     btn.textColor(TITLE_COLOR);
                 }
 

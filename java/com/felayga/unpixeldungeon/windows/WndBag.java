@@ -25,6 +25,7 @@
 package com.felayga.unpixeldungeon.windows;
 
 import android.graphics.RectF;
+
 import com.felayga.unpixeldungeon.Assets;
 import com.felayga.unpixeldungeon.Dungeon;
 import com.felayga.unpixeldungeon.ShatteredPixelDungeon;
@@ -48,7 +49,6 @@ import com.felayga.unpixeldungeon.items.weapon.melee.MeleeWeapon;
 import com.felayga.unpixeldungeon.items.weapon.missiles.martial.Boomerang;
 import com.felayga.unpixeldungeon.mechanics.BUCStatus;
 import com.felayga.unpixeldungeon.mechanics.Constant;
-import com.felayga.unpixeldungeon.mechanics.GameTime;
 import com.felayga.unpixeldungeon.plants.Plant.Seed;
 import com.felayga.unpixeldungeon.scenes.GameScene;
 import com.felayga.unpixeldungeon.scenes.PixelScene;
@@ -201,14 +201,14 @@ public class WndBag extends WndTabbed {
         public void onSelect(Item item) {
             if (item != null) {
                 int pos = lastBag.pos();
-                if (pos == Constant.POS_NONE) {
+                if (pos == Constant.Position.NONE) {
                     pos = Dungeon.hero.pos;
                 }
 
                 Item test = lastBag.remove(item);
                 if (test == item) {
                     if (Dungeon.hero.belongings.collect(item)) {
-                        Dungeon.hero.spend(GameTime.TICK / 2, true);
+                        Dungeon.hero.spend_new(Constant.Time.ITEM_PICKUP, true);
                     }
                     else {
                         Dungeon.level.drop(item, pos);

@@ -24,12 +24,11 @@
  */
 package com.felayga.unpixeldungeon.sprites.npcs;
 
+import com.felayga.unpixeldungeon.Assets;
 import com.felayga.unpixeldungeon.sprites.MobSprite;
 import com.watabou.noosa.TextureFilm;
-import com.felayga.unpixeldungeon.Assets;
 
 public class BoulderSprite extends MobSprite {
-
     public BoulderSprite() {
         super();
 
@@ -41,7 +40,7 @@ public class BoulderSprite extends MobSprite {
         idle.frames( frames, 0 );
 
         run = new Animation( 10, true );
-        run.frames( frames, 0, 1, 2, 3 );
+        run.frames( frames, 1, 2, 3, 0 );
 
         attack = new Animation( 10, false );
         attack.frames( frames, 0 );

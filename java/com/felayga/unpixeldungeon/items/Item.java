@@ -35,7 +35,7 @@ import com.felayga.unpixeldungeon.items.bags.IBag;
 import com.felayga.unpixeldungeon.items.weapon.missiles.MissileWeapon;
 import com.felayga.unpixeldungeon.mechanics.BUCStatus;
 import com.felayga.unpixeldungeon.mechanics.Ballistica;
-import com.felayga.unpixeldungeon.mechanics.GameTime;
+import com.felayga.unpixeldungeon.mechanics.Constant;
 import com.felayga.unpixeldungeon.scenes.CellSelector;
 import com.felayga.unpixeldungeon.scenes.GameScene;
 import com.felayga.unpixeldungeon.sprites.ItemSprite;
@@ -59,19 +59,6 @@ public class Item implements Bundlable {
 	private static final String TXT_TO_STRING_X = "%s x%d";
 	private static final String TXT_TO_STRING_LVL = "%s%+d";
 	private static final String TXT_TO_STRING_LVL_X = "%s%+d x%d";
-
-	protected static final long TIME_TO_THROW = GameTime.TICK;
-	protected static final long TIME_TO_PICK_UP = GameTime.TICK;
-	protected static final long TIME_TO_DROP = GameTime.TICK / 2;
-
-	public static final String AC_DROP  = "DROP";
-	public static final String AC_THROW = "THROW";
-	public static final String AC_APPLY = "APPLY";
-	public static final String AC_KICK  = "KICK";
-	public static final String AC_FORCE = "FORCE";
-    public static final String AC_SHOOT = "SHOOT";
-
-    public static final String AC_TAKE  = "TAKE";
 
 	public String defaultAction;
 	public boolean usesTargeting;
@@ -228,8 +215,8 @@ public class Item implements Bundlable {
 
 	public ArrayList<String> actions(Hero hero) {
 		ArrayList<String> actions = new ArrayList<String>();
-		actions.add(AC_DROP);
-		actions.add(AC_THROW);
+		actions.add(Constant.Action.DROP);
+		actions.add(Constant.Action.THROW);
 		return actions;
 	}
 
@@ -242,7 +229,7 @@ public class Item implements Bundlable {
             }
         }
 
-        retval.add(0, AC_TAKE);
+        retval.add(0, Constant.Action.TAKE);
 
         return retval;
     }
@@ -256,7 +243,7 @@ public class Item implements Bundlable {
     }
 
     public boolean canPerformActionExternally(Hero hero, String action) {
-        return AC_TAKE.equals(action);
+        return Constant.Action.TAKE.equals(action);
     }
 
 	public boolean doPickUp(Hero hero) {
@@ -272,7 +259,7 @@ public class Item implements Bundlable {
             if (hero.belongings.collect(this)) {
                 GameScene.pickUp(this);
                 playPickupSound();
-                hero.spend(TIME_TO_PICK_UP, true);
+                hero.spend_new(Constant.Time.ITEM_PICKUP, true);
                 return true;
 
             } else {
@@ -300,13 +287,13 @@ public class Item implements Bundlable {
                     } else {
                         GLog.w("You drop nothing.  The nothing clatters noisily as it impacts the ground.");
                     }
-                    hero.spend(TIME_TO_DROP, true);
+                    hero.spend_new(Constant.Time.ITEM_DROP, true);
                 }
 			});
 		}
 		else {
 			Dungeon.level.drop(hero.belongings.remove(this), hero.pos).sprite.drop(hero.pos);
-			hero.spend(TIME_TO_DROP, true);
+			hero.spend_new(Constant.Time.ITEM_DROP, true);
 		}
 	}
 
@@ -322,9 +309,9 @@ public class Item implements Bundlable {
 		curUser = hero;
 		curItem = this;
 
-		if (action.equals(AC_DROP)) {
+		if (action.equals(Constant.Action.DROP)) {
 			doDrop(hero);
-		} else if (action.equals(AC_THROW)) {
+		} else if (action.equals(Constant.Action.THROW)) {
 			doThrow(hero);
 		}
 
@@ -635,7 +622,7 @@ public class Item implements Bundlable {
 		QuickSlotButton.target(enemy);
 
 		// FIXME!!!
-		long delay = TIME_TO_THROW;
+		long delay = Constant.Time.ITEM_THROW;
 		if (this instanceof MissileWeapon) {
 			//delay *= ((MissileWeapon)this).speedFactor( user );
 			if (enemy != null) {
@@ -655,7 +642,7 @@ public class Item implements Bundlable {
 					@Override
 					public void call() {
 						user.belongings.remove(Item.this, 1).onThrow(cell, user);
-						user.spend(finalDelay, true);
+						user.spend_new(finalDelay, true);
 					}
 				});
 	}

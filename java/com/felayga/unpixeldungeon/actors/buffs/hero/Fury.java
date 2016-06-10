@@ -41,8 +41,8 @@ public class Fury extends Buff {
 		if (target.HP > target.HT * LEVEL) {
 			detach();
 		}
-		
-		spend(GameTime.TICK, false );
+
+        spend_new(GameTime.TICK, false );
 		
 		return true;
 	}

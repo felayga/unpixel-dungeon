@@ -24,23 +24,24 @@
  */
 package com.felayga.unpixeldungeon.items.rings;
 
-import java.util.ArrayList;
-
 import com.felayga.unpixeldungeon.Badges;
 import com.felayga.unpixeldungeon.Dungeon;
-import com.felayga.unpixeldungeon.actors.buffs.hero.Encumbrance;
-import com.felayga.unpixeldungeon.items.KindofMisc;
 import com.felayga.unpixeldungeon.actors.Char;
 import com.felayga.unpixeldungeon.actors.buffs.Buff;
+import com.felayga.unpixeldungeon.actors.buffs.hero.Encumbrance;
 import com.felayga.unpixeldungeon.actors.hero.Hero;
 import com.felayga.unpixeldungeon.actors.hero.HeroClass;
 import com.felayga.unpixeldungeon.items.Item;
 import com.felayga.unpixeldungeon.items.ItemStatusHandler;
+import com.felayga.unpixeldungeon.items.KindofMisc;
 import com.felayga.unpixeldungeon.mechanics.BUCStatus;
+import com.felayga.unpixeldungeon.mechanics.Constant;
 import com.felayga.unpixeldungeon.mechanics.GameTime;
 import com.felayga.unpixeldungeon.sprites.ItemSpriteSheet;
 import com.felayga.unpixeldungeon.utils.GLog;
 import com.watabou.utils.Bundle;
+
+import java.util.ArrayList;
 
 public class Ring extends KindofMisc {
 
@@ -155,7 +156,7 @@ public class Ring extends KindofMisc {
 	@Override
 	public ArrayList<String> actions( Hero hero ) {
 		ArrayList<String> actions = super.actions( hero );
-		actions.add(isEquipped(hero) ? AC_UNEQUIP : AC_EQUIP);
+		actions.add(isEquipped(hero) ? Constant.Action.UNEQUIP : Constant.Action.EQUIP);
 		return actions;
 	}
 
@@ -323,7 +324,7 @@ public class Ring extends KindofMisc {
 				Badges.validateItemLevelAquired( Ring.this );
 			}
 			
-			spend( GameTime.TICK, false );
+			spend_new(GameTime.TICK, false);
 			
 			return true;
 		}

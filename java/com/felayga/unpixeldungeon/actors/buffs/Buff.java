@@ -111,7 +111,7 @@ public class Buff extends Actor {
 
 	public static<T extends FlavourBuff> T append( Char target, Class<T> buffClass, long duration ) {
 		T buff = append( target, buffClass );
-		buff.spend( duration, false );
+		buff.spend_new(duration, false);
 		return buff;
 	}
 
@@ -127,7 +127,7 @@ public class Buff extends Actor {
 	
 	public static<T extends FlavourBuff> T affect( Char target, Class<T> buffClass, long duration ) {
 		T buff = affect( target, buffClass );
-		buff.spend( duration, false );
+		buff.spend_new( duration, false );
 		return buff;
 	}
 

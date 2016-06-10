@@ -26,37 +26,39 @@ package com.felayga.unpixeldungeon.actors.buffs.negative;
 
 import com.felayga.unpixeldungeon.actors.Char;
 import com.felayga.unpixeldungeon.actors.buffs.FlavourBuff;
-import com.felayga.unpixeldungeon.mechanics.Constant;
+import com.felayga.unpixeldungeon.actors.buffs.ISpeedModifierBuff;
+import com.felayga.unpixeldungeon.mechanics.GameTime;
 import com.felayga.unpixeldungeon.ui.BuffIndicator;
 
-public class Roots extends FlavourBuff {
+public class Roots extends FlavourBuff implements ISpeedModifierBuff {
     public Roots()
 	{
 		type = buffType.NEGATIVE;
 	}
-	
-	@Override
-	public boolean attachTo( Char target ) {
-		if (!target.flying && super.attachTo( target )) {
-			target.crippled.put(Constant.DEBUFF_ROOTS, 0L);
-			return true;
-		} else {
-			return false;
-		}
-	}
-	
-	@Override
-	public void detach() {
-		target.crippled.remove(Constant.DEBUFF_ROOTS);
-		super.detach();
-	}
+
+    public long movementModifier() {
+        return 0L;
+    }
+
+    public long attackModifier() {
+        return GameTime.TICK;
+    }
 	
 	@Override
 	public int icon() {
 		return BuffIndicator.ROOTS;
 	}
-	
-	@Override
+
+    @Override
+    public boolean attachTo(Char target) {
+        if (!target.flying) {
+            return super.attachTo(target);
+        }
+
+        return false;
+    }
+
+    @Override
 	public String toString() {
 		return "Rooted";
 	}

@@ -24,16 +24,9 @@
  */
 package com.felayga.unpixeldungeon.items;
 
-import com.felayga.unpixeldungeon.Dungeon;
-import com.felayga.unpixeldungeon.actors.Actor;
 import com.felayga.unpixeldungeon.actors.Char;
-import com.felayga.unpixeldungeon.mechanics.BUCStatus;
-import com.felayga.unpixeldungeon.mechanics.GameTime;
-import com.felayga.unpixeldungeon.utils.GLog;
-import com.watabou.noosa.audio.Sample;
-import com.felayga.unpixeldungeon.Assets;
 import com.felayga.unpixeldungeon.actors.hero.Hero;
-import com.felayga.unpixeldungeon.effects.particles.ShadowParticle;
+import com.felayga.unpixeldungeon.mechanics.Constant;
 
 public abstract class EquippableItem extends Item {
 	public enum Slot {
@@ -90,9 +83,6 @@ public abstract class EquippableItem extends Item {
         }
 	}
 
-	public static final String AC_EQUIP		= "EQUIP";
-	public static final String AC_UNEQUIP	= "UNEQUIP";
-
 	public long equipTime;
 	public boolean twoHanded = false;
 
@@ -105,15 +95,16 @@ public abstract class EquippableItem extends Item {
 
 	@Override
 	public boolean execute( Hero hero, String action ) {
-		switch (action) {
-			case AC_EQUIP:
-				hero.belongings.equip(this);
-				return false;
-			case AC_UNEQUIP:
-				hero.belongings.unequip(this, true);
-				return false;
-			default:
-				return super.execute(hero, action);
+        if (Constant.Action.EQUIP.equals(action)) {
+            hero.belongings.equip(this);
+            return false;
+        }
+        else if (Constant.Action.UNEQUIP.equals(action)) {
+            hero.belongings.unequip(this, true);
+            return false;
+        }
+        else {
+            return super.execute(hero, action);
 		}
 	}
 

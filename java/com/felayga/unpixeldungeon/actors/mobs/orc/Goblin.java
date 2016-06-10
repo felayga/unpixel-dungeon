@@ -51,8 +51,8 @@ public class Goblin extends Mob {
         spriteClass = GoblinSprite.class;
 
         experience = 6;
-        movementSpeed = GameTime.TICK * 3 / 4;
-        attackSpeed = GameTime.TICK;
+        movementSpeed(GameTime.TICK * 4 / 3);
+        attackSpeed(GameTime.TICK);
         defenseMundane = 10;
         defenseMagical = 0;
         weight = Encumbrance.UNIT * 400;

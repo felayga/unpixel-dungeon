@@ -24,34 +24,34 @@
  */
 package com.felayga.unpixeldungeon.items.potions;
 
-import java.util.ArrayList;
-import java.util.HashSet;
-
+import com.felayga.unpixeldungeon.Assets;
+import com.felayga.unpixeldungeon.Badges;
+import com.felayga.unpixeldungeon.Dungeon;
 import com.felayga.unpixeldungeon.actors.Actor;
 import com.felayga.unpixeldungeon.actors.Char;
 import com.felayga.unpixeldungeon.actors.blobs.Acid;
 import com.felayga.unpixeldungeon.actors.blobs.Fire;
 import com.felayga.unpixeldungeon.actors.buffs.Buff;
-import com.felayga.unpixeldungeon.actors.buffs.negative.Burning;
 import com.felayga.unpixeldungeon.actors.buffs.hero.Encumbrance;
+import com.felayga.unpixeldungeon.actors.buffs.negative.Burning;
 import com.felayga.unpixeldungeon.actors.buffs.negative.Ooze;
-import com.felayga.unpixeldungeon.mechanics.GameTime;
-import com.watabou.noosa.audio.Sample;
-import com.felayga.unpixeldungeon.Assets;
-import com.felayga.unpixeldungeon.Badges;
-import com.felayga.unpixeldungeon.Dungeon;
 import com.felayga.unpixeldungeon.actors.hero.Hero;
 import com.felayga.unpixeldungeon.effects.Splash;
 import com.felayga.unpixeldungeon.items.Item;
 import com.felayga.unpixeldungeon.items.ItemStatusHandler;
 import com.felayga.unpixeldungeon.levels.Level;
 import com.felayga.unpixeldungeon.levels.Terrain;
+import com.felayga.unpixeldungeon.mechanics.GameTime;
 import com.felayga.unpixeldungeon.scenes.GameScene;
 import com.felayga.unpixeldungeon.sprites.ItemSprite;
 import com.felayga.unpixeldungeon.sprites.ItemSpriteSheet;
 import com.felayga.unpixeldungeon.utils.GLog;
 import com.felayga.unpixeldungeon.windows.WndOptions;
+import com.watabou.noosa.audio.Sample;
 import com.watabou.utils.Bundle;
+
+import java.util.ArrayList;
+import java.util.HashSet;
 
 public class Potion extends Item {
 
@@ -276,7 +276,7 @@ toxic gas
 	protected void drink(Hero hero) {
 		hero.belongings.remove(this, 1);
 
-		hero.spend(TIME_TO_DRINK, false);
+		hero.spend_new(TIME_TO_DRINK, false);
 		hero.busy();
 		apply(hero);
 
