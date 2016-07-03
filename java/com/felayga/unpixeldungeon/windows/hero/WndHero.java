@@ -24,11 +24,18 @@
  */
 package com.felayga.unpixeldungeon.windows.hero;
 
-import java.util.Locale;
-
+import com.felayga.unpixeldungeon.Assets;
+import com.felayga.unpixeldungeon.Dungeon;
+import com.felayga.unpixeldungeon.Statistics;
+import com.felayga.unpixeldungeon.actors.buffs.Buff;
+import com.felayga.unpixeldungeon.actors.hero.Hero;
+import com.felayga.unpixeldungeon.scenes.GameScene;
+import com.felayga.unpixeldungeon.scenes.PixelScene;
 import com.felayga.unpixeldungeon.sprites.hero.HeroSprite;
+import com.felayga.unpixeldungeon.ui.BuffIndicator;
+import com.felayga.unpixeldungeon.ui.RedButton;
 import com.felayga.unpixeldungeon.ui.Window;
-import com.felayga.unpixeldungeon.utils.GLog;
+import com.felayga.unpixeldungeon.utils.Utils;
 import com.felayga.unpixeldungeon.windows.IconTitle;
 import com.felayga.unpixeldungeon.windows.WndCatalogus;
 import com.felayga.unpixeldungeon.windows.WndInfoBuff;
@@ -40,17 +47,9 @@ import com.watabou.noosa.BitmapText;
 import com.watabou.noosa.Group;
 import com.watabou.noosa.Image;
 import com.watabou.noosa.TextureFilm;
-import com.felayga.unpixeldungeon.Assets;
-import com.felayga.unpixeldungeon.Dungeon;
-import com.felayga.unpixeldungeon.Statistics;
-import com.felayga.unpixeldungeon.actors.buffs.Buff;
-import com.felayga.unpixeldungeon.actors.hero.Hero;
-import com.felayga.unpixeldungeon.scenes.GameScene;
-import com.felayga.unpixeldungeon.scenes.PixelScene;
-import com.felayga.unpixeldungeon.ui.BuffIndicator;
-import com.felayga.unpixeldungeon.ui.RedButton;
-import com.felayga.unpixeldungeon.utils.Utils;
 import com.watabou.noosa.ui.Button;
+
+import java.util.Locale;
 
 public class WndHero extends WndTabbed {
 

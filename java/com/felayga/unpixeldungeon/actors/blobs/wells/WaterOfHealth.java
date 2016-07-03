@@ -24,8 +24,6 @@
  */
 package com.felayga.unpixeldungeon.actors.blobs.wells;
 
-import com.felayga.unpixeldungeon.items.potions.PotionOfFullHealing;
-import com.watabou.noosa.audio.Sample;
 import com.felayga.unpixeldungeon.Assets;
 import com.felayga.unpixeldungeon.Dungeon;
 import com.felayga.unpixeldungeon.Journal;
@@ -38,7 +36,9 @@ import com.felayga.unpixeldungeon.effects.Speck;
 import com.felayga.unpixeldungeon.effects.particles.ShaftParticle;
 import com.felayga.unpixeldungeon.items.DewVial;
 import com.felayga.unpixeldungeon.items.Item;
+import com.felayga.unpixeldungeon.items.potions.PotionOfFullHealing;
 import com.felayga.unpixeldungeon.utils.GLog;
+import com.watabou.noosa.audio.Sample;
 
 public class WaterOfHealth extends WellWater {
 

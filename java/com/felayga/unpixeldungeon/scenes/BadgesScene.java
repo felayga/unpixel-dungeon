@@ -24,11 +24,6 @@
  */
 package com.felayga.unpixeldungeon.scenes;
 
-import com.watabou.noosa.BitmapText;
-import com.watabou.noosa.Camera;
-import com.watabou.noosa.Game;
-import com.watabou.noosa.NinePatch;
-import com.watabou.noosa.audio.Music;
 import com.felayga.unpixeldungeon.Assets;
 import com.felayga.unpixeldungeon.Badges;
 import com.felayga.unpixeldungeon.Chrome;
@@ -38,6 +33,11 @@ import com.felayga.unpixeldungeon.ui.BadgesList;
 import com.felayga.unpixeldungeon.ui.ExitButton;
 import com.felayga.unpixeldungeon.ui.ScrollPane;
 import com.felayga.unpixeldungeon.ui.Window;
+import com.watabou.noosa.BitmapText;
+import com.watabou.noosa.Camera;
+import com.watabou.noosa.Game;
+import com.watabou.noosa.NinePatch;
+import com.watabou.noosa.audio.Music;
 import com.watabou.utils.Callback;
 
 public class BadgesScene extends PixelScene {

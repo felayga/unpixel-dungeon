@@ -24,11 +24,11 @@
  */
 package com.felayga.unpixeldungeon.ui;
 
+import com.felayga.unpixeldungeon.Chrome;
+import com.felayga.unpixeldungeon.scenes.PixelScene;
 import com.watabou.noosa.BitmapText;
 import com.watabou.noosa.NinePatch;
 import com.watabou.noosa.ui.Component;
-import com.felayga.unpixeldungeon.Chrome;
-import com.felayga.unpixeldungeon.scenes.PixelScene;
 
 public class Toast extends Component {
 

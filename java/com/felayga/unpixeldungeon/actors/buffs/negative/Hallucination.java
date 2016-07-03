@@ -24,8 +24,6 @@
  */
 package com.felayga.unpixeldungeon.actors.buffs.negative;
 
-import com.felayga.unpixeldungeon.Dungeon;
-import com.felayga.unpixeldungeon.actors.Char;
 import com.felayga.unpixeldungeon.actors.buffs.FlavourBuff;
 import com.felayga.unpixeldungeon.actors.hero.Hero;
 import com.felayga.unpixeldungeon.scenes.GameScene;

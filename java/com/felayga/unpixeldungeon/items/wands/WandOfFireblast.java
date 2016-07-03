@@ -24,14 +24,6 @@
  */
 package com.felayga.unpixeldungeon.items.wands;
 
-import com.felayga.unpixeldungeon.actors.buffs.negative.Cripple;
-import com.felayga.unpixeldungeon.actors.buffs.negative.Paralysis;
-import com.felayga.unpixeldungeon.effects.MagicMissile;
-import com.felayga.unpixeldungeon.items.weapon.melee.simple.MagesStaff;
-import com.felayga.unpixeldungeon.mechanics.GameTime;
-import com.felayga.unpixeldungeon.mechanics.MagicType;
-import com.felayga.unpixeldungeon.sprites.ItemSpriteSheet;
-import com.watabou.noosa.audio.Sample;
 import com.felayga.unpixeldungeon.Assets;
 import com.felayga.unpixeldungeon.actors.Actor;
 import com.felayga.unpixeldungeon.actors.Char;
@@ -39,9 +31,17 @@ import com.felayga.unpixeldungeon.actors.blobs.Blob;
 import com.felayga.unpixeldungeon.actors.blobs.Fire;
 import com.felayga.unpixeldungeon.actors.buffs.Buff;
 import com.felayga.unpixeldungeon.actors.buffs.negative.Burning;
+import com.felayga.unpixeldungeon.actors.buffs.negative.Cripple;
+import com.felayga.unpixeldungeon.actors.buffs.negative.Paralysis;
+import com.felayga.unpixeldungeon.effects.MagicMissile;
+import com.felayga.unpixeldungeon.items.weapon.melee.simple.MagesStaff;
 import com.felayga.unpixeldungeon.levels.Level;
 import com.felayga.unpixeldungeon.mechanics.Ballistica;
+import com.felayga.unpixeldungeon.mechanics.GameTime;
+import com.felayga.unpixeldungeon.mechanics.MagicType;
 import com.felayga.unpixeldungeon.scenes.GameScene;
+import com.felayga.unpixeldungeon.sprites.ItemSpriteSheet;
+import com.watabou.noosa.audio.Sample;
 import com.watabou.utils.Callback;
 import com.watabou.utils.Random;
 

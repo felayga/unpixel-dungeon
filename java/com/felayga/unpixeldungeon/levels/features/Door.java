@@ -24,15 +24,14 @@
  */
 package com.felayga.unpixeldungeon.levels.features;
 
-import com.felayga.unpixeldungeon.effects.CellEmitter;
-import com.felayga.unpixeldungeon.effects.Speck;
-import com.felayga.unpixeldungeon.utils.GLog;
-import com.watabou.noosa.audio.Sample;
 import com.felayga.unpixeldungeon.Assets;
 import com.felayga.unpixeldungeon.Dungeon;
+import com.felayga.unpixeldungeon.effects.CellEmitter;
+import com.felayga.unpixeldungeon.effects.Speck;
 import com.felayga.unpixeldungeon.levels.Level;
 import com.felayga.unpixeldungeon.levels.Terrain;
 import com.felayga.unpixeldungeon.scenes.GameScene;
+import com.watabou.noosa.audio.Sample;
 
 public class Door {
 

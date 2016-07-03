@@ -25,10 +25,8 @@
 package com.felayga.unpixeldungeon.items.weapon.melee.martial;
 
 import com.felayga.unpixeldungeon.Assets;
-import com.felayga.unpixeldungeon.items.weapon.melee.MeleeWeapon;
 import com.felayga.unpixeldungeon.mechanics.GameTime;
 import com.felayga.unpixeldungeon.sprites.ItemSpriteSheet;
-import com.watabou.noosa.audio.Sample;
 
 public class WarHammer extends MartialMeleeWeapon {
 	public WarHammer() {

@@ -24,30 +24,13 @@
  */
 package com.felayga.unpixeldungeon.scenes;
 
-import java.io.IOException;
-import java.util.ArrayList;
-
-import com.felayga.unpixeldungeon.*;
-//import com.felayga.unpixeldungeon.items.Honeypot;
-import com.felayga.unpixeldungeon.items.potions.Potion;
-import com.felayga.unpixeldungeon.items.scrolls.ScrollOfTeleportation;
-import com.felayga.unpixeldungeon.levels.branches.DungeonBranch;
-import com.felayga.unpixeldungeon.levels.traps.Trap;
-import com.felayga.unpixeldungeon.ui.CustomTileVisual;
-import com.felayga.unpixeldungeon.sprites.TrapSprite;
-import com.felayga.unpixeldungeon.ui.HallucinationOverlay;
-import com.felayga.unpixeldungeon.ui.LootIndicator;
-import com.felayga.unpixeldungeon.ui.ResumeIndicator;
-import com.felayga.unpixeldungeon.windows.WndInfoTrap;
-import com.watabou.noosa.Camera;
-import com.watabou.noosa.Game;
-import com.watabou.noosa.Group;
-import com.watabou.noosa.SkinnedBlock;
-import com.watabou.noosa.Visual;
-import com.watabou.noosa.audio.Music;
-import com.watabou.noosa.audio.Sample;
-import com.watabou.noosa.particles.Emitter;
+import com.felayga.unpixeldungeon.Assets;
+import com.felayga.unpixeldungeon.Badges;
+import com.felayga.unpixeldungeon.Dungeon;
+import com.felayga.unpixeldungeon.DungeonTilemap;
+import com.felayga.unpixeldungeon.FogOfWar;
 import com.felayga.unpixeldungeon.ShatteredPixelDungeon;
+import com.felayga.unpixeldungeon.Statistics;
 import com.felayga.unpixeldungeon.actors.Actor;
 import com.felayga.unpixeldungeon.actors.blobs.Blob;
 import com.felayga.unpixeldungeon.actors.mobs.Mob;
@@ -60,43 +43,66 @@ import com.felayga.unpixeldungeon.effects.Ripple;
 import com.felayga.unpixeldungeon.effects.SpellSprite;
 import com.felayga.unpixeldungeon.items.Heap;
 import com.felayga.unpixeldungeon.items.Item;
+import com.felayga.unpixeldungeon.items.potions.Potion;
+import com.felayga.unpixeldungeon.items.scrolls.ScrollOfTeleportation;
 import com.felayga.unpixeldungeon.levels.Level;
 import com.felayga.unpixeldungeon.levels.RegularLevel;
+import com.felayga.unpixeldungeon.levels.branches.DungeonBranch;
 import com.felayga.unpixeldungeon.levels.features.Chasm;
+import com.felayga.unpixeldungeon.levels.traps.Trap;
 import com.felayga.unpixeldungeon.plants.Plant;
 import com.felayga.unpixeldungeon.sprites.CharSprite;
 import com.felayga.unpixeldungeon.sprites.DiscardedItemSprite;
-import com.felayga.unpixeldungeon.sprites.hero.HeroSprite;
 import com.felayga.unpixeldungeon.sprites.ItemSprite;
 import com.felayga.unpixeldungeon.sprites.PlantSprite;
+import com.felayga.unpixeldungeon.sprites.TrapSprite;
+import com.felayga.unpixeldungeon.sprites.hero.HeroSprite;
 import com.felayga.unpixeldungeon.ui.AttackIndicator;
 import com.felayga.unpixeldungeon.ui.Banner;
 import com.felayga.unpixeldungeon.ui.BusyIndicator;
+import com.felayga.unpixeldungeon.ui.CustomTileVisual;
 import com.felayga.unpixeldungeon.ui.GameLog;
+import com.felayga.unpixeldungeon.ui.HallucinationOverlay;
 import com.felayga.unpixeldungeon.ui.HealthIndicator;
+import com.felayga.unpixeldungeon.ui.LootIndicator;
 import com.felayga.unpixeldungeon.ui.QuickSlotButton;
+import com.felayga.unpixeldungeon.ui.ResumeIndicator;
 import com.felayga.unpixeldungeon.ui.StatusPane;
 import com.felayga.unpixeldungeon.ui.Toast;
 import com.felayga.unpixeldungeon.ui.Toolbar;
 import com.felayga.unpixeldungeon.ui.Window;
 import com.felayga.unpixeldungeon.utils.GLog;
-import com.felayga.unpixeldungeon.windows.WndGame;
 import com.felayga.unpixeldungeon.windows.WndBackpack;
-import com.felayga.unpixeldungeon.windows.hero.WndHero;
+import com.felayga.unpixeldungeon.windows.WndGame;
 import com.felayga.unpixeldungeon.windows.WndInfoCell;
 import com.felayga.unpixeldungeon.windows.WndInfoItem;
 import com.felayga.unpixeldungeon.windows.WndInfoMob;
 import com.felayga.unpixeldungeon.windows.WndInfoPlant;
+import com.felayga.unpixeldungeon.windows.WndInfoTrap;
 import com.felayga.unpixeldungeon.windows.WndMessage;
 import com.felayga.unpixeldungeon.windows.WndStory;
 import com.felayga.unpixeldungeon.windows.WndTradeItem;
+import com.felayga.unpixeldungeon.windows.hero.WndHero;
+import com.watabou.noosa.Camera;
+import com.watabou.noosa.Game;
+import com.watabou.noosa.Group;
+import com.watabou.noosa.SkinnedBlock;
+import com.watabou.noosa.Visual;
+import com.watabou.noosa.audio.Music;
+import com.watabou.noosa.audio.Sample;
+import com.watabou.noosa.particles.Emitter;
 import com.watabou.utils.GameMath;
 import com.watabou.utils.Random;
 
+import java.io.IOException;
+import java.util.ArrayList;
+
+//import com.felayga.unpixeldungeon.items.Honeypot;
+
 public class GameScene extends PixelScene {
 	
-	private static final String TXT_WELCOME			= "Welcome to level %d of Pixel Dungeon!";
-	private static final String TXT_WELCOME_BACK	= "Welcome back to level %d of Pixel Dungeon!";
+	private static final String TXT_WELCOME			= "Welcome to level %s of Pixel Dungeon!";
+	private static final String TXT_WELCOME_BACK	= "Welcome back to level %s of Pixel Dungeon!";
 	
 	private static final String TXT_CHASM	= "Your steps echo across the dungeon.";
 	private static final String TXT_WATER	= "You hear water splashing around you.";

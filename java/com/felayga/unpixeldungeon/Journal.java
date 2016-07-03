@@ -24,10 +24,10 @@
  */
 package com.felayga.unpixeldungeon;
 
-import java.util.ArrayList;
-
 import com.watabou.utils.Bundlable;
 import com.watabou.utils.Bundle;
+
+import java.util.ArrayList;
 
 public class Journal {
 

@@ -24,20 +24,17 @@
  */
 package com.felayga.unpixeldungeon.levels;
 
-import com.watabou.noosa.Group;
-import com.watabou.noosa.tweeners.AlphaTweener;
 import com.felayga.unpixeldungeon.Assets;
 import com.felayga.unpixeldungeon.Bones;
 import com.felayga.unpixeldungeon.Dungeon;
 import com.felayga.unpixeldungeon.actors.Actor;
 import com.felayga.unpixeldungeon.actors.Char;
-import com.felayga.unpixeldungeon.actors.mobs.Bestiary;
-import com.felayga.unpixeldungeon.actors.mobs.Mob;
 import com.felayga.unpixeldungeon.items.Heap;
 import com.felayga.unpixeldungeon.items.Item;
 import com.felayga.unpixeldungeon.items.keys.SkeletonOldKey;
 import com.felayga.unpixeldungeon.levels.painters.Painter;
 import com.felayga.unpixeldungeon.scenes.GameScene;
+import com.watabou.noosa.Group;
 import com.watabou.utils.Bundle;
 import com.watabou.utils.Random;
 

@@ -26,15 +26,15 @@
 package com.felayga.unpixeldungeon.items.weapon.melee.mob;
 
 import com.felayga.unpixeldungeon.actors.Char;
-import com.felayga.unpixeldungeon.actors.buffs.Buff;
 import com.felayga.unpixeldungeon.actors.buffs.negative.Poison;
-//import com.felayga.unpixeldungeon.actors.mobs.Spinner;
-//import com.felayga.unpixeldungeon.actors.mobs.Thief;
-//import com.felayga.unpixeldungeon.items.Honeypot;
 import com.felayga.unpixeldungeon.actors.hero.Hero;
 import com.felayga.unpixeldungeon.mechanics.AttributeType;
 import com.felayga.unpixeldungeon.mechanics.MagicType;
 import com.watabou.utils.Random;
+
+//import com.felayga.unpixeldungeon.actors.mobs.Spinner;
+//import com.felayga.unpixeldungeon.actors.mobs.Thief;
+//import com.felayga.unpixeldungeon.items.Honeypot;
 
 /**
  * Created by HELLO on 3/9/2016.

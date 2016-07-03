@@ -24,20 +24,10 @@
  */
 package com.felayga.unpixeldungeon.items;
 
-import java.util.ArrayList;
-
-import com.felayga.unpixeldungeon.items.artifacts.MasterThievesArmband;
-import com.watabou.noosa.audio.Sample;
 import com.felayga.unpixeldungeon.Assets;
-import com.felayga.unpixeldungeon.Badges;
 import com.felayga.unpixeldungeon.Dungeon;
-import com.felayga.unpixeldungeon.Statistics;
-import com.felayga.unpixeldungeon.actors.hero.Hero;
-import com.felayga.unpixeldungeon.scenes.GameScene;
-import com.felayga.unpixeldungeon.sprites.CharSprite;
 import com.felayga.unpixeldungeon.sprites.ItemSpriteSheet;
 import com.felayga.unpixeldungeon.utils.Utils;
-import com.watabou.utils.Bundle;
 import com.watabou.utils.Random;
 
 public class Gold extends Item {

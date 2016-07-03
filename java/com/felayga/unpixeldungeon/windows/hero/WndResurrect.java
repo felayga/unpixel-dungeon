@@ -24,9 +24,6 @@
  */
 package com.felayga.unpixeldungeon.windows.hero;
 
-import com.felayga.unpixeldungeon.windows.IconTitle;
-import com.watabou.noosa.BitmapTextMultiline;
-import com.watabou.noosa.Game;
 import com.felayga.unpixeldungeon.Rankings;
 import com.felayga.unpixeldungeon.Statistics;
 import com.felayga.unpixeldungeon.actors.hero.Hero;
@@ -36,6 +33,9 @@ import com.felayga.unpixeldungeon.scenes.PixelScene;
 import com.felayga.unpixeldungeon.sprites.ItemSprite;
 import com.felayga.unpixeldungeon.ui.RedButton;
 import com.felayga.unpixeldungeon.ui.Window;
+import com.felayga.unpixeldungeon.windows.IconTitle;
+import com.watabou.noosa.BitmapTextMultiline;
+import com.watabou.noosa.Game;
 
 public class WndResurrect extends Window {
 	

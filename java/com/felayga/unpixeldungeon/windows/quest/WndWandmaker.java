@@ -24,14 +24,12 @@
  */
 package com.felayga.unpixeldungeon.windows.quest;
 
-import com.felayga.unpixeldungeon.items.quest.CorpseDust;
-import com.felayga.unpixeldungeon.items.quest.Embers;
-import com.felayga.unpixeldungeon.windows.IconTitle;
-import com.watabou.noosa.BitmapTextMultiline;
 import com.felayga.unpixeldungeon.Dungeon;
 import com.felayga.unpixeldungeon.actors.hero.Hero;
 import com.felayga.unpixeldungeon.actors.mobs.npcs.Wandmaker;
 import com.felayga.unpixeldungeon.items.Item;
+import com.felayga.unpixeldungeon.items.quest.CorpseDust;
+import com.felayga.unpixeldungeon.items.quest.Embers;
 import com.felayga.unpixeldungeon.items.wands.Wand;
 import com.felayga.unpixeldungeon.scenes.PixelScene;
 import com.felayga.unpixeldungeon.sprites.ItemSprite;
@@ -39,6 +37,8 @@ import com.felayga.unpixeldungeon.ui.RedButton;
 import com.felayga.unpixeldungeon.ui.Window;
 import com.felayga.unpixeldungeon.utils.GLog;
 import com.felayga.unpixeldungeon.utils.Utils;
+import com.felayga.unpixeldungeon.windows.IconTitle;
+import com.watabou.noosa.BitmapTextMultiline;
 
 public class WndWandmaker extends Window {
 

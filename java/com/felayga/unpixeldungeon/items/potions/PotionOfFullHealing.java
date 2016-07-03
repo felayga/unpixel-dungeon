@@ -25,7 +25,6 @@
 package com.felayga.unpixeldungeon.items.potions;
 
 import com.felayga.unpixeldungeon.actors.hero.Hero;
-import com.watabou.utils.Random;
 
 public class PotionOfFullHealing extends PotionOfExtraHealing {
 

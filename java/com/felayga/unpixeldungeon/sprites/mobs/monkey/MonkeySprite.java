@@ -24,10 +24,9 @@
  */
 package com.felayga.unpixeldungeon.sprites.mobs.monkey;
 
-import com.felayga.unpixeldungeon.sprites.MobSprite;
-import com.felayga.unpixeldungeon.sprites.hero.HeroSprite;
-import com.watabou.noosa.TextureFilm;
 import com.felayga.unpixeldungeon.Assets;
+import com.felayga.unpixeldungeon.sprites.MobSprite;
+import com.watabou.noosa.TextureFilm;
 
 public class MonkeySprite extends MobSprite {
     private static int FRAMES_PER_ROW = 16;

@@ -25,7 +25,6 @@
 package com.felayga.unpixeldungeon.actors.buffs.hero;
 
 import com.felayga.unpixeldungeon.Badges;
-import com.felayga.unpixeldungeon.actors.Actor;
 import com.felayga.unpixeldungeon.actors.Char;
 import com.felayga.unpixeldungeon.actors.buffs.Buff;
 import com.felayga.unpixeldungeon.mechanics.GameTime;

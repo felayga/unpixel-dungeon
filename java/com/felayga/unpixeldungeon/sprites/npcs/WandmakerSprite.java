@@ -24,18 +24,18 @@
  */
 package com.felayga.unpixeldungeon.sprites.npcs;
 
-import javax.microedition.khronos.opengles.GL10;
-
 import android.opengl.GLES20;
 
-import com.felayga.unpixeldungeon.sprites.MobSprite;
-import com.watabou.noosa.Game;
-import com.watabou.noosa.TextureFilm;
 import com.felayga.unpixeldungeon.Assets;
 import com.felayga.unpixeldungeon.actors.Char;
 import com.felayga.unpixeldungeon.effects.Halo;
 import com.felayga.unpixeldungeon.effects.particles.ElmoParticle;
+import com.felayga.unpixeldungeon.sprites.MobSprite;
+import com.watabou.noosa.Game;
+import com.watabou.noosa.TextureFilm;
 import com.watabou.utils.PointF;
+
+import javax.microedition.khronos.opengles.GL10;
 
 public class WandmakerSprite extends MobSprite {
 	

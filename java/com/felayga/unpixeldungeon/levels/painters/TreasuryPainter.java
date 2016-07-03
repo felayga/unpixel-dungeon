@@ -24,11 +24,8 @@
  */
 package com.felayga.unpixeldungeon.levels.painters;
 
-import com.felayga.unpixeldungeon.Dungeon;
 import com.felayga.unpixeldungeon.items.Gold;
-import com.felayga.unpixeldungeon.items.Heap;
 import com.felayga.unpixeldungeon.items.bags.TreasureChest;
-import com.felayga.unpixeldungeon.items.keys.IronOldKey;
 import com.felayga.unpixeldungeon.levels.Level;
 import com.felayga.unpixeldungeon.levels.Room;
 import com.felayga.unpixeldungeon.levels.Terrain;
@@ -63,7 +60,9 @@ public class TreasuryPainter extends Painter {
             } while (level.map[pos] != Terrain.EMPTY);
             level.drop( new Gold( Random.IntRange( 5, 12 ) ), pos );
 		}
-		
-		room.entrance().set( Room.Door.Type.LOCKED );
+
+        for (Room.Door door : room.connected.values()) {
+            door.set(Room.Door.Type.LOCKED);
+        }
 	}
 }

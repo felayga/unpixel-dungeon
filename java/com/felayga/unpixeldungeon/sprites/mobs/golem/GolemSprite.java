@@ -24,10 +24,10 @@
  */
 package com.felayga.unpixeldungeon.sprites.mobs.golem;
 
-import com.felayga.unpixeldungeon.sprites.MobSprite;
-import com.watabou.noosa.TextureFilm;
 import com.felayga.unpixeldungeon.Assets;
 import com.felayga.unpixeldungeon.effects.particles.ElmoParticle;
+import com.felayga.unpixeldungeon.sprites.MobSprite;
+import com.watabou.noosa.TextureFilm;
 
 public class GolemSprite extends MobSprite {
 	private static int FRAMES_PER_ROW = 16;

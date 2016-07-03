@@ -25,27 +25,23 @@
 package com.felayga.unpixeldungeon.levels;
 
 import com.felayga.unpixeldungeon.Bones;
-import com.felayga.unpixeldungeon.Challenges;
 import com.felayga.unpixeldungeon.Dungeon;
-import com.felayga.unpixeldungeon.Statistics;
 import com.felayga.unpixeldungeon.actors.Actor;
-import com.felayga.unpixeldungeon.actors.buffs.Buff;
 import com.felayga.unpixeldungeon.actors.mobs.Bestiary;
 import com.felayga.unpixeldungeon.actors.mobs.Mob;
 import com.felayga.unpixeldungeon.items.Generator;
-import com.felayga.unpixeldungeon.items.Gold;
 import com.felayga.unpixeldungeon.items.Heap;
 import com.felayga.unpixeldungeon.items.Item;
 import com.felayga.unpixeldungeon.items.bags.TreasureChest;
-import com.felayga.unpixeldungeon.items.rings.RingOfWealth;
 import com.felayga.unpixeldungeon.items.scrolls.Scroll;
 import com.felayga.unpixeldungeon.levels.Room.Type;
 import com.felayga.unpixeldungeon.levels.branches.DungeonBranch;
 import com.felayga.unpixeldungeon.levels.painters.Painter;
 import com.felayga.unpixeldungeon.levels.painters.ShopPainter;
-import com.felayga.unpixeldungeon.levels.traps.*;
+import com.felayga.unpixeldungeon.levels.traps.FireTrap;
+import com.felayga.unpixeldungeon.levels.traps.Trap;
+import com.felayga.unpixeldungeon.levels.traps.WornTrap;
 import com.felayga.unpixeldungeon.mechanics.Roll;
-import com.felayga.unpixeldungeon.scenes.GameScene;
 import com.felayga.unpixeldungeon.utils.GLog;
 import com.watabou.utils.Bundle;
 import com.watabou.utils.Graph;
@@ -55,7 +51,6 @@ import com.watabou.utils.Rect;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
-import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.LinkedList;
@@ -311,7 +306,7 @@ public abstract class RegularLevel extends Level {
                 int connections = r.connected.size();
                 if (connections == 0) {
 
-                } else if (Random.Int(connections * connections) == 0) {
+                } else if (Random.Int(connections * connections + 40) == 0) {
                     r.type = Type.STANDARD;
                     count++;
                 } else {
@@ -320,7 +315,7 @@ public abstract class RegularLevel extends Level {
             }
         }
 
-        while (count < 6) {
+        while (count + specialRooms < 6 || count < 2) {
             Room r = randomRoom(Type.TUNNEL, 1);
             if (r != null) {
                 r.type = Type.STANDARD;
@@ -427,33 +422,25 @@ public abstract class RegularLevel extends Level {
     }
 
     protected int minRoomSize = 7; //original=7
-    protected int maxRoomSize = 13; //original=9
+    protected int maxRoomSize = 13; //original=9 -> 13
 
     protected int splitMargin = 2;
 
     protected void split(Rect rect) {
-
         int w = rect.width();
         int h = rect.height();
 
-        if (w > maxRoomSize && h < minRoomSize) {
-
+        if (w > minRoomSize * 2 && h < minRoomSize) {
             int vw = Random.Int(rect.left + splitMargin, rect.right - splitMargin);
             split(new Rect(rect.left, rect.top, vw, rect.bottom));
             split(new Rect(vw, rect.top, rect.right, rect.bottom));
-
-        } else if (h > maxRoomSize && w < minRoomSize) {
-
+        } else if (h > minRoomSize * 2 && w < minRoomSize) {
             int vh = Random.Int(rect.top + splitMargin, rect.bottom - splitMargin);
             split(new Rect(rect.left, rect.top, rect.right, vh));
             split(new Rect(rect.left, vh, rect.right, rect.bottom));
-
         } else if ((Math.random() <= (minRoomSize * minRoomSize / rect.square()) && w <= maxRoomSize && h <= maxRoomSize) || w < minRoomSize || h < minRoomSize) {
-
             rooms.add((Room) new Room().set(rect));
-
         } else {
-
             if (Random.Float() < (float) (w - 2) / (w + h - 4)) {
                 int vw = Random.Int(rect.left + splitMargin, rect.right - splitMargin);
                 split(new Rect(rect.left, rect.top, vw, rect.bottom));
@@ -463,7 +450,6 @@ public abstract class RegularLevel extends Level {
                 split(new Rect(rect.left, rect.top, rect.right, vh));
                 split(new Rect(rect.left, vh, rect.right, rect.bottom));
             }
-
         }
     }
 
@@ -523,7 +509,7 @@ public abstract class RegularLevel extends Level {
                     map[door] = tunnelTile();
                     break;
                 case REGULAR:
-                    assignDoor(door, Terrain.DOOR, Terrain.SECRET_DOOR, Terrain.LOCKED_DOOR, Terrain.SECRET_LOCKED_DOOR);
+                    assignDoor(door, Terrain.DOOR, Terrain.SECRET_DOOR, Terrain.WOOD_DEBRIS, Terrain.LOCKED_DOOR, Terrain.SECRET_LOCKED_DOOR);
                     break;
                 case UNLOCKED:
                     map[door] = Terrain.DOOR;
@@ -537,13 +523,13 @@ public abstract class RegularLevel extends Level {
                     map[door] = Terrain.BARRICADE;
                     break;
                 case LOCKED:
-                    assignDoor(door, Terrain.LOCKED_DOOR, Terrain.SECRET_LOCKED_DOOR, Terrain.DOOR, Terrain.SECRET_DOOR);
+                    assignDoor(door, Terrain.LOCKED_DOOR, Terrain.SECRET_LOCKED_DOOR, Terrain.LOCKED_DOOR, Terrain.DOOR, Terrain.SECRET_DOOR);
                     break;
             }
         }
     }
 
-    private void assignDoor(int pos, int regular, int regularHidden, int other, int otherHidden) {
+    private void assignDoor(int pos, int regular, int regularHidden, int regularBroken, int other, int otherHidden) {
         if (Dungeon._depth <= 1) {
             map[pos] = regular;
         } else {
@@ -559,7 +545,11 @@ public abstract class RegularLevel extends Level {
                 secretDoors++;
             }
             else {
-                map[pos] = regular;
+                if (Random.Int(4) == 0) {
+                    map[pos] = regularBroken;
+                } else {
+                    map[pos] = regular;
+                }
             }
         }
     }

@@ -24,16 +24,16 @@
  */
 package com.felayga.unpixeldungeon.items;
 
-import java.io.IOException;
-import java.util.ArrayList;
-
-import com.watabou.noosa.Game;
 import com.felayga.unpixeldungeon.Badges;
 import com.felayga.unpixeldungeon.Dungeon;
 import com.felayga.unpixeldungeon.Statistics;
 import com.felayga.unpixeldungeon.actors.hero.Hero;
 import com.felayga.unpixeldungeon.scenes.AmuletScene;
 import com.felayga.unpixeldungeon.sprites.ItemSpriteSheet;
+import com.watabou.noosa.Game;
+
+import java.io.IOException;
+import java.util.ArrayList;
 
 public class Amulet extends Item {
 	

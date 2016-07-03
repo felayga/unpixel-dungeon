@@ -24,8 +24,8 @@
  */
 package com.felayga.unpixeldungeon.sprites.mobs.humanoid.dwarf;
 
-import com.felayga.unpixeldungeon.sprites.mobs.humanoid.HumanoidSprite;
 import com.felayga.unpixeldungeon.Assets;
+import com.felayga.unpixeldungeon.sprites.mobs.humanoid.HumanoidSprite;
 
 public class DwarfSprite extends HumanoidSprite {
     private static int FRAMES_PER_ROW = 21;

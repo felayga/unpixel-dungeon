@@ -24,8 +24,8 @@
  */
 package com.felayga.unpixeldungeon.scenes;
 
-import com.watabou.noosa.Game;
 import com.felayga.unpixeldungeon.windows.WndStory;
+import com.watabou.noosa.Game;
 
 public class IntroScene extends PixelScene {
 

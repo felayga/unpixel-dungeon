@@ -24,10 +24,10 @@
  */
 package com.felayga.unpixeldungeon.ui;
 
-import com.watabou.noosa.Camera;
-import com.watabou.noosa.Image;
 import com.felayga.unpixeldungeon.Dungeon;
 import com.felayga.unpixeldungeon.DungeonTilemap;
+import com.watabou.noosa.Camera;
+import com.watabou.noosa.Image;
 import com.watabou.utils.PointF;
 
 public class Compass extends Image {

@@ -24,10 +24,6 @@
  */
 package com.felayga.unpixeldungeon.windows;
 
-import com.felayga.unpixeldungeon.items.artifacts.Artifact_old;
-import com.felayga.unpixeldungeon.items.rings.Ring;
-import com.felayga.unpixeldungeon.items.wands.Wand;
-import com.watabou.noosa.BitmapTextMultiline;
 import com.felayga.unpixeldungeon.items.Heap;
 import com.felayga.unpixeldungeon.items.Heap.Type;
 import com.felayga.unpixeldungeon.items.Item;
@@ -36,6 +32,7 @@ import com.felayga.unpixeldungeon.sprites.ItemSprite;
 import com.felayga.unpixeldungeon.ui.ItemSlot;
 import com.felayga.unpixeldungeon.ui.Window;
 import com.felayga.unpixeldungeon.utils.Utils;
+import com.watabou.noosa.BitmapTextMultiline;
 
 public class WndInfoItem extends Window {
 	

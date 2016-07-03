@@ -24,8 +24,6 @@
  */
 package com.felayga.unpixeldungeon.items.armor.glyphs;
 
-import java.util.ArrayList;
-
 import com.felayga.unpixeldungeon.actors.Actor;
 import com.felayga.unpixeldungeon.actors.Char;
 import com.felayga.unpixeldungeon.actors.hero.Hero;
@@ -39,6 +37,8 @@ import com.felayga.unpixeldungeon.scenes.GameScene;
 import com.felayga.unpixeldungeon.sprites.ItemSprite;
 import com.felayga.unpixeldungeon.sprites.ItemSprite.Glowing;
 import com.watabou.utils.Random;
+
+import java.util.ArrayList;
 
 public class Multiplicity extends Glyph {
 

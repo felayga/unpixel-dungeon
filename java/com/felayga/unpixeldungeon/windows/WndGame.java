@@ -24,16 +24,18 @@
  */
 package com.felayga.unpixeldungeon.windows;
 
-import java.io.IOException;
-
-import com.felayga.unpixeldungeon.ui.*;
-import com.watabou.noosa.Game;
 import com.felayga.unpixeldungeon.Dungeon;
 import com.felayga.unpixeldungeon.ShatteredPixelDungeon;
 import com.felayga.unpixeldungeon.scenes.GameScene;
 import com.felayga.unpixeldungeon.scenes.InterlevelScene;
 import com.felayga.unpixeldungeon.scenes.RankingsScene;
 import com.felayga.unpixeldungeon.scenes.TitleScene;
+import com.felayga.unpixeldungeon.ui.Icons;
+import com.felayga.unpixeldungeon.ui.RedButton;
+import com.felayga.unpixeldungeon.ui.Window;
+import com.watabou.noosa.Game;
+
+import java.io.IOException;
 
 public class WndGame extends Window {
 	

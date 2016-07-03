@@ -24,13 +24,13 @@
  */
 package com.felayga.unpixeldungeon.windows;
 
-import com.watabou.noosa.BitmapText;
-import com.watabou.noosa.BitmapTextMultiline;
-import com.watabou.noosa.Image;
 import com.felayga.unpixeldungeon.Badges;
 import com.felayga.unpixeldungeon.effects.BadgeBanner;
 import com.felayga.unpixeldungeon.scenes.PixelScene;
 import com.felayga.unpixeldungeon.ui.Window;
+import com.watabou.noosa.BitmapText;
+import com.watabou.noosa.BitmapTextMultiline;
+import com.watabou.noosa.Image;
 
 public class WndBadge extends Window {
 	

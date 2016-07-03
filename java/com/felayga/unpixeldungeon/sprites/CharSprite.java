@@ -24,18 +24,10 @@
  */
 package com.felayga.unpixeldungeon.sprites;
 
-import com.felayga.unpixeldungeon.effects.DarkBlock;
-import com.felayga.unpixeldungeon.effects.particles.SnowParticle;
-import com.watabou.noosa.Game;
-import com.watabou.noosa.MovieClip;
-import com.watabou.noosa.Visual;
-import com.watabou.noosa.audio.Sample;
-import com.watabou.noosa.particles.Emitter;
-import com.watabou.noosa.tweeners.PosTweener;
-import com.watabou.noosa.tweeners.Tweener;
 import com.felayga.unpixeldungeon.Assets;
 import com.felayga.unpixeldungeon.DungeonTilemap;
 import com.felayga.unpixeldungeon.actors.Char;
+import com.felayga.unpixeldungeon.effects.DarkBlock;
 import com.felayga.unpixeldungeon.effects.EmoIcon;
 import com.felayga.unpixeldungeon.effects.FloatingText;
 import com.felayga.unpixeldungeon.effects.IceBlock;
@@ -43,10 +35,18 @@ import com.felayga.unpixeldungeon.effects.Speck;
 import com.felayga.unpixeldungeon.effects.Splash;
 import com.felayga.unpixeldungeon.effects.TorchHalo;
 import com.felayga.unpixeldungeon.effects.particles.FlameParticle;
+import com.felayga.unpixeldungeon.effects.particles.SnowParticle;
 import com.felayga.unpixeldungeon.items.potions.PotionOfInvisibility;
 import com.felayga.unpixeldungeon.levels.Level;
 import com.felayga.unpixeldungeon.scenes.GameScene;
 import com.felayga.unpixeldungeon.utils.Utils;
+import com.watabou.noosa.Game;
+import com.watabou.noosa.MovieClip;
+import com.watabou.noosa.Visual;
+import com.watabou.noosa.audio.Sample;
+import com.watabou.noosa.particles.Emitter;
+import com.watabou.noosa.tweeners.PosTweener;
+import com.watabou.noosa.tweeners.Tweener;
 import com.watabou.utils.Callback;
 import com.watabou.utils.PointF;
 import com.watabou.utils.Random;

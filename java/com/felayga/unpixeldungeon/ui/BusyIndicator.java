@@ -24,8 +24,8 @@
  */
 package com.felayga.unpixeldungeon.ui;
 
-import com.watabou.noosa.Image;
 import com.felayga.unpixeldungeon.Dungeon;
+import com.watabou.noosa.Image;
 
 public class BusyIndicator extends Image {
 	

@@ -24,22 +24,22 @@
  */
 package com.felayga.unpixeldungeon.effects;
 
-import javax.microedition.khronos.opengles.GL10;
-
 import android.opengl.GLES20;
 
+import com.felayga.unpixeldungeon.Assets;
+import com.felayga.unpixeldungeon.DungeonTilemap;
 import com.watabou.noosa.Game;
 import com.watabou.noosa.Group;
 import com.watabou.noosa.Image;
 import com.watabou.noosa.audio.Sample;
-import com.felayga.unpixeldungeon.Assets;
-import com.felayga.unpixeldungeon.DungeonTilemap;
 import com.watabou.utils.Callback;
 import com.watabou.utils.PointF;
 import com.watabou.utils.Random;
 
 import java.util.Arrays;
 import java.util.List;
+
+import javax.microedition.khronos.opengles.GL10;
 
 public class Lightning extends Group {
 

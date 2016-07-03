@@ -25,7 +25,6 @@
 package com.felayga.unpixeldungeon.levels.painters;
 
 import com.felayga.unpixeldungeon.items.Generator;
-//import com.felayga.unpixeldungeon.items.Honeypot;
 import com.felayga.unpixeldungeon.items.Item;
 import com.felayga.unpixeldungeon.items.potions.PotionOfAcid;
 import com.felayga.unpixeldungeon.items.potions.PotionOfLiquidFlame;
@@ -33,6 +32,8 @@ import com.felayga.unpixeldungeon.levels.Level;
 import com.felayga.unpixeldungeon.levels.Room;
 import com.felayga.unpixeldungeon.levels.Terrain;
 import com.watabou.utils.Random;
+
+//import com.felayga.unpixeldungeon.items.Honeypot;
 
 public class StoragePainter extends Painter {
 

@@ -25,10 +25,8 @@
 package com.felayga.unpixeldungeon.items.keys;
 
 import com.felayga.unpixeldungeon.Assets;
-import com.felayga.unpixeldungeon.actors.Actor;
 import com.felayga.unpixeldungeon.items.Item;
 import com.felayga.unpixeldungeon.mechanics.GameTime;
-import com.watabou.noosa.audio.Sample;
 import com.watabou.utils.Bundle;
 
 public class OldKey extends Item {

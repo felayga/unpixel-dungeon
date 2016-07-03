@@ -24,8 +24,8 @@
  */
 package com.felayga.unpixeldungeon.sprites.mobs;
 
-import com.watabou.noosa.TextureFilm;
 import com.felayga.unpixeldungeon.Assets;
+import com.watabou.noosa.TextureFilm;
 
 public class AcidicSprite extends ScorpioSprite {
 	

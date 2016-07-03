@@ -24,10 +24,6 @@
  */
 package com.felayga.unpixeldungeon.sprites.mobs.bug;
 
-import com.felayga.unpixeldungeon.sprites.MobSprite;
-import com.watabou.noosa.TextureFilm;
-import com.felayga.unpixeldungeon.Assets;
-
 public class SoldierAntSprite extends BugSprite {
 
     public SoldierAntSprite() { super(4); }

@@ -24,12 +24,9 @@
  */
 package com.felayga.unpixeldungeon.windows.quest;
 
-import com.felayga.unpixeldungeon.actors.Char;
-import com.felayga.unpixeldungeon.windows.IconTitle;
-import com.watabou.noosa.BitmapTextMultiline;
 import com.felayga.unpixeldungeon.Dungeon;
+import com.felayga.unpixeldungeon.actors.Char;
 import com.felayga.unpixeldungeon.actors.hero.Hero;
-//import com.felayga.unpixeldungeon.actors.mobs.npcs.Imp;
 import com.felayga.unpixeldungeon.items.Item;
 import com.felayga.unpixeldungeon.items.quest.DwarfToken;
 import com.felayga.unpixeldungeon.scenes.PixelScene;
@@ -38,6 +35,10 @@ import com.felayga.unpixeldungeon.ui.RedButton;
 import com.felayga.unpixeldungeon.ui.Window;
 import com.felayga.unpixeldungeon.utils.GLog;
 import com.felayga.unpixeldungeon.utils.Utils;
+import com.felayga.unpixeldungeon.windows.IconTitle;
+import com.watabou.noosa.BitmapTextMultiline;
+
+//import com.felayga.unpixeldungeon.actors.mobs.npcs.Imp;
 
 public class WndImp extends Window {
 	

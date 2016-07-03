@@ -24,7 +24,6 @@
  */
 package com.felayga.unpixeldungeon.actors.buffs.hero;
 
-import com.felayga.unpixeldungeon.actors.Actor;
 import com.felayga.unpixeldungeon.actors.Char;
 import com.felayga.unpixeldungeon.actors.buffs.FlavourBuff;
 import com.felayga.unpixeldungeon.effects.particles.ShadowParticle;

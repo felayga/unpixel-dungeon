@@ -24,14 +24,14 @@
  */
 package com.felayga.unpixeldungeon.windows;
 
-import java.util.ArrayList;
-
-import com.watabou.noosa.BitmapText;
 import com.felayga.unpixeldungeon.Challenges;
 import com.felayga.unpixeldungeon.ShatteredPixelDungeon;
 import com.felayga.unpixeldungeon.scenes.PixelScene;
 import com.felayga.unpixeldungeon.ui.CheckBox;
 import com.felayga.unpixeldungeon.ui.Window;
+import com.watabou.noosa.BitmapText;
+
+import java.util.ArrayList;
 
 public class WndChallenges extends Window {
 

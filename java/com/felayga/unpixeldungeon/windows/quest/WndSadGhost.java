@@ -28,17 +28,18 @@ import com.felayga.unpixeldungeon.Challenges;
 import com.felayga.unpixeldungeon.Dungeon;
 import com.felayga.unpixeldungeon.actors.Char;
 import com.felayga.unpixeldungeon.actors.hero.Hero;
-//import com.felayga.unpixeldungeon.actors.mobs.npcs.Ghost;
 import com.felayga.unpixeldungeon.items.Item;
 import com.felayga.unpixeldungeon.scenes.PixelScene;
-//import com.felayga.unpixeldungeon.sprites.mobs.rat.MarsupialRatFetid;
-import com.felayga.unpixeldungeon.sprites.mobs.unused.GnollTricksterSprite;
 import com.felayga.unpixeldungeon.sprites.mobs.GreatCrabSprite;
+import com.felayga.unpixeldungeon.sprites.mobs.unused.GnollTricksterSprite;
 import com.felayga.unpixeldungeon.ui.RedButton;
 import com.felayga.unpixeldungeon.ui.Window;
 import com.felayga.unpixeldungeon.utils.GLog;
 import com.felayga.unpixeldungeon.windows.IconTitle;
 import com.watabou.noosa.BitmapTextMultiline;
+
+//import com.felayga.unpixeldungeon.actors.mobs.npcs.Ghost;
+//import com.felayga.unpixeldungeon.sprites.mobs.rat.MarsupialRatFetid;
 
 public class WndSadGhost extends Window {
 

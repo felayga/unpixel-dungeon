@@ -24,9 +24,9 @@
  */
 package com.felayga.unpixeldungeon.sprites.mobs.wraith;
 
+import com.felayga.unpixeldungeon.Assets;
 import com.felayga.unpixeldungeon.sprites.MobSprite;
 import com.watabou.noosa.TextureFilm;
-import com.felayga.unpixeldungeon.Assets;
 
 public class WraithSprite extends MobSprite {
 	private static final int FRAMES_PER_ROW = 9;

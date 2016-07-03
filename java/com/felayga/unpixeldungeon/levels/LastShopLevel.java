@@ -27,7 +27,6 @@ package com.felayga.unpixeldungeon.levels;
 import com.felayga.unpixeldungeon.Assets;
 import com.felayga.unpixeldungeon.Bones;
 import com.felayga.unpixeldungeon.actors.Actor;
-//import com.felayga.unpixeldungeon.actors.mobs.npcs.Imp;
 import com.felayga.unpixeldungeon.items.Heap;
 import com.felayga.unpixeldungeon.items.Item;
 import com.felayga.unpixeldungeon.levels.Room.Type;
@@ -36,6 +35,8 @@ import com.watabou.utils.Graph;
 import com.watabou.utils.Random;
 
 import java.util.List;
+
+//import com.felayga.unpixeldungeon.actors.mobs.npcs.Imp;
 
 public class LastShopLevel extends RegularLevel {
 

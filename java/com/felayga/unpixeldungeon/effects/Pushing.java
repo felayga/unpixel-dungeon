@@ -24,11 +24,11 @@
  */
 package com.felayga.unpixeldungeon.effects;
 
-import com.watabou.noosa.Game;
-import com.watabou.noosa.Visual;
 import com.felayga.unpixeldungeon.actors.Actor;
 import com.felayga.unpixeldungeon.actors.Char;
 import com.felayga.unpixeldungeon.sprites.CharSprite;
+import com.watabou.noosa.Game;
+import com.watabou.noosa.Visual;
 import com.watabou.utils.Callback;
 import com.watabou.utils.PointF;
 

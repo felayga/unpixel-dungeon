@@ -25,6 +25,7 @@
 package com.felayga.unpixeldungeon.windows;
 
 import android.graphics.RectF;
+
 import com.felayga.unpixeldungeon.Assets;
 import com.felayga.unpixeldungeon.Dungeon;
 import com.felayga.unpixeldungeon.ShatteredPixelDungeon;

@@ -24,10 +24,10 @@
  */
 package com.felayga.unpixeldungeon.effects;
 
-import com.watabou.noosa.Game;
-import com.watabou.noosa.Image;
 import com.felayga.unpixeldungeon.DungeonTilemap;
 import com.felayga.unpixeldungeon.levels.Level;
+import com.watabou.noosa.Game;
+import com.watabou.noosa.Image;
 
 public class Ripple extends Image {
 

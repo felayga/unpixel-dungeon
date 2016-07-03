@@ -55,10 +55,7 @@ import com.felayga.unpixeldungeon.utils.GLog;
 import com.watabou.utils.Random;
 
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Iterator;
 
 //import com.felayga.unpixeldungeon.actors.mobs.npcs.Ghost;
 

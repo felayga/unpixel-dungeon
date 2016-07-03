@@ -24,14 +24,14 @@
  */
 package com.felayga.unpixeldungeon.items.rings;
 
-import java.util.HashSet;
-
 import com.felayga.unpixeldungeon.actors.blobs.ToxicGas;
 import com.felayga.unpixeldungeon.actors.buffs.negative.Burning;
 import com.felayga.unpixeldungeon.actors.buffs.negative.Poison;
 import com.felayga.unpixeldungeon.levels.traps.LightningTrap;
 import com.felayga.unpixeldungeon.mechanics.GameTime;
 import com.watabou.utils.Random;
+
+import java.util.HashSet;
 
 public class RingOfElements extends Ring {
 

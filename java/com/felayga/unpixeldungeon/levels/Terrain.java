@@ -24,7 +24,15 @@
  */
 package com.felayga.unpixeldungeon.levels;
 
-import com.felayga.unpixeldungeon.levels.traps.*;
+import com.felayga.unpixeldungeon.levels.traps.AlarmTrap;
+import com.felayga.unpixeldungeon.levels.traps.FireTrap;
+import com.felayga.unpixeldungeon.levels.traps.GrippingTrap;
+import com.felayga.unpixeldungeon.levels.traps.LightningTrap;
+import com.felayga.unpixeldungeon.levels.traps.ParalyticTrap;
+import com.felayga.unpixeldungeon.levels.traps.PoisonTrap;
+import com.felayga.unpixeldungeon.levels.traps.SummoningTrap;
+import com.felayga.unpixeldungeon.levels.traps.ToxicTrap;
+import com.felayga.unpixeldungeon.levels.traps.Trap;
 import com.watabou.utils.SparseArray;
 
 public class Terrain {

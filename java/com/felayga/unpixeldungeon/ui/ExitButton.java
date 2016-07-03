@@ -24,13 +24,13 @@
  */
 package com.felayga.unpixeldungeon.ui;
 
-		import com.watabou.noosa.Game;
-		import com.watabou.noosa.Image;
-		import com.watabou.noosa.audio.Sample;
-		import com.watabou.noosa.ui.Button;
-		import com.felayga.unpixeldungeon.Assets;
-		import com.felayga.unpixeldungeon.ShatteredPixelDungeon;
-		import com.felayga.unpixeldungeon.scenes.TitleScene;
+import com.felayga.unpixeldungeon.Assets;
+import com.felayga.unpixeldungeon.ShatteredPixelDungeon;
+import com.felayga.unpixeldungeon.scenes.TitleScene;
+import com.watabou.noosa.Game;
+import com.watabou.noosa.Image;
+import com.watabou.noosa.audio.Sample;
+import com.watabou.noosa.ui.Button;
 
 public class ExitButton extends Button {
 

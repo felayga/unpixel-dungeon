@@ -26,7 +26,6 @@ package com.felayga.unpixeldungeon.mechanics;
 
 import com.felayga.unpixeldungeon.actors.Actor;
 import com.felayga.unpixeldungeon.levels.Level;
-import com.felayga.unpixeldungeon.utils.GLog;
 
 import java.util.ArrayList;
 import java.util.List;

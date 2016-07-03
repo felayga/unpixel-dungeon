@@ -24,13 +24,6 @@
  */
 package com.felayga.unpixeldungeon.windows.quest;
 
-import com.felayga.unpixeldungeon.windows.IconTitle;
-import com.felayga.unpixeldungeon.windows.WndBackpack;
-import com.felayga.unpixeldungeon.windows.WndMessage;
-import com.watabou.noosa.BitmapTextMultiline;
-import com.watabou.noosa.NinePatch;
-import com.watabou.noosa.audio.Sample;
-import com.watabou.noosa.ui.Component;
 import com.felayga.unpixeldungeon.Assets;
 import com.felayga.unpixeldungeon.Chrome;
 import com.felayga.unpixeldungeon.actors.hero.Hero;
@@ -42,6 +35,13 @@ import com.felayga.unpixeldungeon.ui.ItemSlot;
 import com.felayga.unpixeldungeon.ui.RedButton;
 import com.felayga.unpixeldungeon.ui.Window;
 import com.felayga.unpixeldungeon.utils.Utils;
+import com.felayga.unpixeldungeon.windows.IconTitle;
+import com.felayga.unpixeldungeon.windows.WndBackpack;
+import com.felayga.unpixeldungeon.windows.WndMessage;
+import com.watabou.noosa.BitmapTextMultiline;
+import com.watabou.noosa.NinePatch;
+import com.watabou.noosa.audio.Sample;
+import com.watabou.noosa.ui.Component;
 
 public class WndBlacksmith extends Window {
 

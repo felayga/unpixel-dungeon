@@ -24,9 +24,9 @@
  */
 package com.felayga.unpixeldungeon.sprites.mobs.bug;
 
+import com.felayga.unpixeldungeon.Assets;
 import com.felayga.unpixeldungeon.sprites.MobSprite;
 import com.watabou.noosa.TextureFilm;
-import com.felayga.unpixeldungeon.Assets;
 
 public class BugSprite extends MobSprite {
     private static int FRAMES_PER_ROW = 16;

@@ -24,11 +24,7 @@
  */
 package com.felayga.unpixeldungeon.windows;
 
-import java.util.ArrayList;
-
 import com.felayga.unpixeldungeon.ShatteredPixelDungeon;
-import com.watabou.noosa.BitmapText;
-import com.watabou.noosa.ui.Component;
 import com.felayga.unpixeldungeon.items.Item;
 import com.felayga.unpixeldungeon.items.potions.Potion;
 import com.felayga.unpixeldungeon.items.scrolls.Scroll;
@@ -38,6 +34,10 @@ import com.felayga.unpixeldungeon.sprites.ItemSprite;
 import com.felayga.unpixeldungeon.ui.ScrollPane;
 import com.felayga.unpixeldungeon.ui.Window;
 import com.felayga.unpixeldungeon.utils.Utils;
+import com.watabou.noosa.BitmapText;
+import com.watabou.noosa.ui.Component;
+
+import java.util.ArrayList;
 
 public class WndCatalogus extends WndTabbed {
 

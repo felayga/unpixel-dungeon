@@ -24,11 +24,12 @@
  */
 package com.felayga.unpixeldungeon.scenes;
 
-import javax.microedition.khronos.opengles.GL10;
-
 import android.opengl.GLES20;
 
+import com.felayga.unpixeldungeon.Assets;
+import com.felayga.unpixeldungeon.Badges;
 import com.felayga.unpixeldungeon.ShatteredPixelDungeon;
+import com.felayga.unpixeldungeon.effects.BadgeBanner;
 import com.watabou.glwrap.Texture;
 import com.watabou.input.Touchscreen;
 import com.watabou.noosa.BitmapText;
@@ -38,10 +39,9 @@ import com.watabou.noosa.Camera;
 import com.watabou.noosa.ColorBlock;
 import com.watabou.noosa.Game;
 import com.watabou.noosa.Scene;
-import com.felayga.unpixeldungeon.Assets;
-import com.felayga.unpixeldungeon.Badges;
-import com.felayga.unpixeldungeon.effects.BadgeBanner;
 import com.watabou.utils.BitmapCache;
+
+import javax.microedition.khronos.opengles.GL10;
 
 public class PixelScene extends Scene {
 

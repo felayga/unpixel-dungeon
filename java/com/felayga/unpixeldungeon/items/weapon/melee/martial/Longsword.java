@@ -24,7 +24,6 @@
  */
 package com.felayga.unpixeldungeon.items.weapon.melee.martial;
 
-import com.felayga.unpixeldungeon.items.weapon.melee.MeleeWeapon;
 import com.felayga.unpixeldungeon.mechanics.GameTime;
 import com.felayga.unpixeldungeon.sprites.ItemSpriteSheet;
 

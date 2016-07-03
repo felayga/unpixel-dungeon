@@ -26,7 +26,6 @@
 package com.felayga.unpixeldungeon.items.weapon.ammunition;
 
 import com.felayga.unpixeldungeon.items.EquippableItem;
-import com.felayga.unpixeldungeon.items.weapon.Weapon;
 import com.felayga.unpixeldungeon.items.weapon.missiles.MissileWeapon;
 import com.felayga.unpixeldungeon.items.weapon.ranged.AmmunitionType;
 import com.felayga.unpixeldungeon.items.weapon.ranged.RangedWeapon;

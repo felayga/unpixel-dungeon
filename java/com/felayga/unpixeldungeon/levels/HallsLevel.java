@@ -24,28 +24,43 @@
  */
 package com.felayga.unpixeldungeon.levels;
 
-import javax.microedition.khronos.opengles.GL10;
-
 import android.opengl.GLES20;
 
-import com.felayga.unpixeldungeon.levels.traps.*;
-import com.watabou.noosa.Game;
-import com.watabou.noosa.Group;
-import com.watabou.noosa.particles.PixelParticle;
 import com.felayga.unpixeldungeon.Assets;
 import com.felayga.unpixeldungeon.Dungeon;
 import com.felayga.unpixeldungeon.DungeonTilemap;
 import com.felayga.unpixeldungeon.items.Torch;
+import com.felayga.unpixeldungeon.levels.traps.BlazingTrap;
+import com.felayga.unpixeldungeon.levels.traps.CursingTrap;
+import com.felayga.unpixeldungeon.levels.traps.DisarmingTrap;
+import com.felayga.unpixeldungeon.levels.traps.DisintegrationTrap;
+import com.felayga.unpixeldungeon.levels.traps.DistortionTrap;
+import com.felayga.unpixeldungeon.levels.traps.ExplosiveTrap;
+import com.felayga.unpixeldungeon.levels.traps.FlockTrap;
+import com.felayga.unpixeldungeon.levels.traps.FrostTrap;
+import com.felayga.unpixeldungeon.levels.traps.GrimTrap;
+import com.felayga.unpixeldungeon.levels.traps.GrippingTrap;
+import com.felayga.unpixeldungeon.levels.traps.LightningTrap;
+import com.felayga.unpixeldungeon.levels.traps.OozeTrap;
+import com.felayga.unpixeldungeon.levels.traps.SpearTrap;
+import com.felayga.unpixeldungeon.levels.traps.SummoningTrap;
+import com.felayga.unpixeldungeon.levels.traps.TeleportationTrap;
+import com.felayga.unpixeldungeon.levels.traps.VenomTrap;
+import com.felayga.unpixeldungeon.levels.traps.WarpingTrap;
+import com.felayga.unpixeldungeon.levels.traps.WeakeningTrap;
+import com.watabou.noosa.Game;
+import com.watabou.noosa.Group;
+import com.watabou.noosa.particles.PixelParticle;
 import com.watabou.utils.PointF;
 import com.watabou.utils.Random;
+
+import javax.microedition.khronos.opengles.GL10;
 
 public class HallsLevel extends RegularLevel {
 
     public HallsLevel()
 	{
         super(0);
-
-		minRoomSize = 6;
 		
 		//viewDistance = Math.max( 25 - Dungeon.depth, 1 );
 		

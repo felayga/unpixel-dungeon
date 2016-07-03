@@ -40,7 +40,6 @@ import com.felayga.unpixeldungeon.items.bags.backpack.ConsumablesBackpack;
 import com.felayga.unpixeldungeon.items.bags.backpack.EquipmentBackpack;
 import com.felayga.unpixeldungeon.items.bags.backpack.Spellbook;
 import com.felayga.unpixeldungeon.items.bags.backpack.UncategorizedBackpack;
-import com.felayga.unpixeldungeon.items.keys.IronOldKey;
 import com.felayga.unpixeldungeon.items.keys.OldKey;
 import com.felayga.unpixeldungeon.items.tools.ITool;
 import com.felayga.unpixeldungeon.items.wands.Wand;

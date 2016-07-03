@@ -24,9 +24,9 @@
  */
 package com.felayga.unpixeldungeon.ui;
 
-import com.watabou.noosa.Image;
 import com.felayga.unpixeldungeon.Assets;
 import com.felayga.unpixeldungeon.actors.hero.HeroClass;
+import com.watabou.noosa.Image;
 
 public enum Icons {
 	SKULL,

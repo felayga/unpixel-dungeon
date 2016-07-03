@@ -25,15 +25,12 @@
 package com.felayga.unpixeldungeon.sprites.mobs.goo;
 
 import com.felayga.unpixeldungeon.actors.Char;
-import com.felayga.unpixeldungeon.sprites.MobSprite;
 import com.watabou.noosa.TextureFilm;
 import com.watabou.noosa.particles.Emitter;
-import com.watabou.noosa.particles.PixelParticle;
 import com.watabou.noosa.particles.Emitter.Factory;
+import com.watabou.noosa.particles.PixelParticle;
 import com.watabou.utils.PointF;
 import com.watabou.utils.Random;
-
-import com.felayga.unpixeldungeon.Assets;
 
 public class BlackGooSprite extends GooSprite {
 	private Animation pump;

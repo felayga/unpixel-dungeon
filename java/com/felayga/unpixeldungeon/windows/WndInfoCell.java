@@ -24,17 +24,17 @@
  */
 package com.felayga.unpixeldungeon.windows;
 
-import com.felayga.unpixeldungeon.ui.CustomTileVisual;
-import com.felayga.unpixeldungeon.utils.GLog;
-import com.watabou.noosa.BitmapTextMultiline;
-import com.watabou.noosa.Image;
 import com.felayga.unpixeldungeon.Dungeon;
 import com.felayga.unpixeldungeon.DungeonTilemap;
 import com.felayga.unpixeldungeon.actors.blobs.Blob;
 import com.felayga.unpixeldungeon.levels.Level;
 import com.felayga.unpixeldungeon.levels.Terrain;
 import com.felayga.unpixeldungeon.scenes.PixelScene;
+import com.felayga.unpixeldungeon.ui.CustomTileVisual;
 import com.felayga.unpixeldungeon.ui.Window;
+import com.felayga.unpixeldungeon.utils.GLog;
+import com.watabou.noosa.BitmapTextMultiline;
+import com.watabou.noosa.Image;
 
 public class WndInfoCell extends Window {
 	

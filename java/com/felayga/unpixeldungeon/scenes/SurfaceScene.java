@@ -24,10 +24,14 @@
  */
 package com.felayga.unpixeldungeon.scenes;
 
-import java.nio.FloatBuffer;
-import java.util.Calendar;
-
+import com.felayga.unpixeldungeon.Assets;
+import com.felayga.unpixeldungeon.Badges;
+import com.felayga.unpixeldungeon.Dungeon;
 import com.felayga.unpixeldungeon.ShatteredPixelDungeon;
+import com.felayga.unpixeldungeon.actors.hero.HeroClass;
+import com.felayga.unpixeldungeon.sprites.mobs.rat.GiantRatSprite;
+import com.felayga.unpixeldungeon.ui.Archs;
+import com.felayga.unpixeldungeon.ui.RedButton;
 import com.watabou.gltextures.Gradient;
 import com.watabou.gltextures.SmartTexture;
 import com.watabou.glwrap.Matrix;
@@ -43,15 +47,11 @@ import com.watabou.noosa.TextureFilm;
 import com.watabou.noosa.TouchArea;
 import com.watabou.noosa.Visual;
 import com.watabou.noosa.audio.Music;
-import com.felayga.unpixeldungeon.Assets;
-import com.felayga.unpixeldungeon.Badges;
-import com.felayga.unpixeldungeon.Dungeon;
-import com.felayga.unpixeldungeon.actors.hero.HeroClass;
-import com.felayga.unpixeldungeon.sprites.mobs.rat.GiantRatSprite;
-import com.felayga.unpixeldungeon.ui.Archs;
-import com.felayga.unpixeldungeon.ui.RedButton;
 import com.watabou.utils.Point;
 import com.watabou.utils.Random;
+
+import java.nio.FloatBuffer;
+import java.util.Calendar;
 
 public class SurfaceScene extends PixelScene {
 

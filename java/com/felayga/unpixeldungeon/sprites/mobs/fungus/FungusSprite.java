@@ -24,8 +24,8 @@
  */
 package com.felayga.unpixeldungeon.sprites;
 
-import com.watabou.noosa.TextureFilm;
 import com.felayga.unpixeldungeon.Assets;
+import com.watabou.noosa.TextureFilm;
 
 public abstract class FungusSprite extends MobSprite {
     private static int FRAMES_PER_ROW = 8;

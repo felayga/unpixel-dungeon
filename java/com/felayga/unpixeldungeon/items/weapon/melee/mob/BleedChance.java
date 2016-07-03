@@ -26,8 +26,8 @@
 package com.felayga.unpixeldungeon.items.weapon.melee.mob;
 
 import com.felayga.unpixeldungeon.actors.Char;
-import com.felayga.unpixeldungeon.actors.buffs.negative.Bleeding;
 import com.felayga.unpixeldungeon.actors.buffs.Buff;
+import com.felayga.unpixeldungeon.actors.buffs.negative.Bleeding;
 import com.watabou.utils.Random;
 
 /**

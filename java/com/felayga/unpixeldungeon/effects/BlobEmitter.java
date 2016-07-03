@@ -24,10 +24,10 @@
  */
 package com.felayga.unpixeldungeon.effects;
 
-import com.watabou.noosa.particles.Emitter;
 import com.felayga.unpixeldungeon.Dungeon;
 import com.felayga.unpixeldungeon.DungeonTilemap;
 import com.felayga.unpixeldungeon.actors.blobs.Blob;
+import com.watabou.noosa.particles.Emitter;
 import com.watabou.utils.Random;
 
 public class BlobEmitter extends Emitter {

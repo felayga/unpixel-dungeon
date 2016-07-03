@@ -27,12 +27,10 @@ package com.felayga.unpixeldungeon.actors.mobs.snake;
 
 import com.felayga.unpixeldungeon.actors.buffs.hero.Encumbrance;
 import com.felayga.unpixeldungeon.actors.mobs.Mob;
-import com.felayga.unpixeldungeon.items.weapon.melee.mob.MeleeMobAttack;
 import com.felayga.unpixeldungeon.items.weapon.melee.mob.PoisonChance;
 import com.felayga.unpixeldungeon.mechanics.CorpseEffect;
 import com.felayga.unpixeldungeon.mechanics.GameTime;
 import com.felayga.unpixeldungeon.mechanics.MagicType;
-import com.felayga.unpixeldungeon.sprites.mobs.kobold.KoboldLargeSprite;
 import com.felayga.unpixeldungeon.sprites.mobs.snake.WaterMoccasinSprite;
 
 /**

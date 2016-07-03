@@ -24,9 +24,9 @@
  */
 package com.felayga.unpixeldungeon.effects;
 
+import com.felayga.unpixeldungeon.Assets;
 import com.watabou.gltextures.SmartTexture;
 import com.watabou.noosa.NinePatch;
-import com.felayga.unpixeldungeon.Assets;
 
 public class ShadowBox extends NinePatch {
 

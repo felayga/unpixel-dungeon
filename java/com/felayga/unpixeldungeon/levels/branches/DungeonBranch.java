@@ -25,7 +25,6 @@
 
 package com.felayga.unpixeldungeon.levels.branches;
 
-import com.felayga.unpixeldungeon.mechanics.Constant;
 import com.felayga.unpixeldungeon.utils.GLog;
 import com.watabou.utils.Bundle;
 import com.watabou.utils.Random;

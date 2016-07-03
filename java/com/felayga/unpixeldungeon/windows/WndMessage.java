@@ -25,9 +25,9 @@
 package com.felayga.unpixeldungeon.windows;
 
 import com.felayga.unpixeldungeon.ShatteredPixelDungeon;
-import com.watabou.noosa.BitmapTextMultiline;
 import com.felayga.unpixeldungeon.scenes.PixelScene;
 import com.felayga.unpixeldungeon.ui.Window;
+import com.watabou.noosa.BitmapTextMultiline;
 
 public class WndMessage extends Window {
 

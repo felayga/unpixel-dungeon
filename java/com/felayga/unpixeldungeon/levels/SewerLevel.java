@@ -24,20 +24,27 @@
  */
 package com.felayga.unpixeldungeon.levels;
 
-import com.felayga.unpixeldungeon.levels.traps.*;
+import com.felayga.unpixeldungeon.Assets;
+import com.felayga.unpixeldungeon.Dungeon;
+import com.felayga.unpixeldungeon.DungeonTilemap;
+import com.felayga.unpixeldungeon.levels.traps.AlarmTrap;
+import com.felayga.unpixeldungeon.levels.traps.ChillingTrap;
+import com.felayga.unpixeldungeon.levels.traps.FlockTrap;
+import com.felayga.unpixeldungeon.levels.traps.OozeTrap;
+import com.felayga.unpixeldungeon.levels.traps.SummoningTrap;
+import com.felayga.unpixeldungeon.levels.traps.TeleportationTrap;
+import com.felayga.unpixeldungeon.levels.traps.ToxicTrap;
+import com.felayga.unpixeldungeon.levels.traps.WornTrap;
+import com.felayga.unpixeldungeon.scenes.GameScene;
 import com.watabou.noosa.Game;
 import com.watabou.noosa.Group;
 import com.watabou.noosa.particles.Emitter;
 import com.watabou.noosa.particles.PixelParticle;
-import com.felayga.unpixeldungeon.Assets;
-import com.felayga.unpixeldungeon.Dungeon;
-import com.felayga.unpixeldungeon.DungeonTilemap;
-//import com.felayga.unpixeldungeon.actors.mobs.npcs.Ghost;
-import com.felayga.unpixeldungeon.items.DewVial;
-import com.felayga.unpixeldungeon.scenes.GameScene;
 import com.watabou.utils.ColorMath;
 import com.watabou.utils.PointF;
 import com.watabou.utils.Random;
+
+//import com.felayga.unpixeldungeon.actors.mobs.npcs.Ghost;
 
 public class SewerLevel extends RegularLevel {
 

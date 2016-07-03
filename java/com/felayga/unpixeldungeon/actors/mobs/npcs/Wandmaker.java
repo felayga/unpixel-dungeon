@@ -24,12 +24,7 @@
  */
 package com.felayga.unpixeldungeon.actors.mobs.npcs;
 
-import java.util.Collection;
-
 import com.felayga.unpixeldungeon.Challenges;
-import com.felayga.unpixeldungeon.items.Generator;
-import com.felayga.unpixeldungeon.items.quest.CeremonialCandle;
-import com.felayga.unpixeldungeon.items.quest.Embers;
 import com.felayga.unpixeldungeon.Dungeon;
 import com.felayga.unpixeldungeon.Journal;
 import com.felayga.unpixeldungeon.actors.Actor;
@@ -38,9 +33,12 @@ import com.felayga.unpixeldungeon.actors.blobs.Blob;
 import com.felayga.unpixeldungeon.actors.blobs.ToxicGas;
 import com.felayga.unpixeldungeon.actors.buffs.Buff;
 import com.felayga.unpixeldungeon.actors.buffs.negative.Roots;
+import com.felayga.unpixeldungeon.items.Generator;
 import com.felayga.unpixeldungeon.items.Item;
 import com.felayga.unpixeldungeon.items.potions.PotionOfStrength;
+import com.felayga.unpixeldungeon.items.quest.CeremonialCandle;
 import com.felayga.unpixeldungeon.items.quest.CorpseDust;
+import com.felayga.unpixeldungeon.items.quest.Embers;
 import com.felayga.unpixeldungeon.items.wands.Wand;
 import com.felayga.unpixeldungeon.levels.PrisonLevel;
 import com.felayga.unpixeldungeon.levels.Room;
@@ -56,6 +54,8 @@ import com.felayga.unpixeldungeon.windows.quest.WndQuest;
 import com.felayga.unpixeldungeon.windows.quest.WndWandmaker;
 import com.watabou.utils.Bundle;
 import com.watabou.utils.Random;
+
+import java.util.Collection;
 
 public class Wandmaker extends NPC {
 

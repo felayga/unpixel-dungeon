@@ -24,11 +24,11 @@
  */
 package com.felayga.unpixeldungeon.ui;
 
+import com.felayga.unpixeldungeon.Dungeon;
+import com.felayga.unpixeldungeon.scenes.PixelScene;
 import com.watabou.noosa.BitmapText;
 import com.watabou.noosa.Game;
 import com.watabou.noosa.ui.Component;
-import com.felayga.unpixeldungeon.Dungeon;
-import com.felayga.unpixeldungeon.scenes.PixelScene;
 
 public class GoldIndicator extends Component {
 

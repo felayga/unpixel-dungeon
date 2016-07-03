@@ -24,8 +24,8 @@
  */
 package com.felayga.unpixeldungeon.items.spells.inventory;
 
-import com.felayga.unpixeldungeon.items.spells.Spell;
 import com.felayga.unpixeldungeon.items.Item;
+import com.felayga.unpixeldungeon.items.spells.Spell;
 import com.felayga.unpixeldungeon.scenes.GameScene;
 import com.felayga.unpixeldungeon.windows.WndBackpack;
 

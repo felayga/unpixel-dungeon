@@ -24,10 +24,10 @@
  */
 package com.felayga.unpixeldungeon.sprites.mobs.werejackal;
 
+import com.felayga.unpixeldungeon.Assets;
 import com.felayga.unpixeldungeon.sprites.MobSprite;
 import com.felayga.unpixeldungeon.sprites.hero.HeroSprite;
 import com.watabou.noosa.TextureFilm;
-import com.felayga.unpixeldungeon.Assets;
 
 public class WerejackalSprite extends MobSprite {
     private static final int FRAMES_PER_ROW = 16;

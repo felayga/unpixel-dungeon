@@ -24,8 +24,6 @@
  */
 package com.felayga.unpixeldungeon.ui;
 
-import java.util.ArrayList;
-
 import com.felayga.unpixeldungeon.Dungeon;
 import com.felayga.unpixeldungeon.actors.Char;
 import com.felayga.unpixeldungeon.actors.mobs.Mob;
@@ -33,6 +31,8 @@ import com.felayga.unpixeldungeon.levels.Level;
 import com.felayga.unpixeldungeon.sprites.CharSprite;
 import com.watabou.noosa.Game;
 import com.watabou.utils.Random;
+
+import java.util.ArrayList;
 
 public class AttackIndicator extends Tag {
 	

@@ -24,11 +24,11 @@
  */
 package com.felayga.unpixeldungeon.ui;
 
+import com.felayga.unpixeldungeon.Assets;
+import com.felayga.unpixeldungeon.windows.WndSettings;
 import com.watabou.noosa.Image;
 import com.watabou.noosa.audio.Sample;
 import com.watabou.noosa.ui.Button;
-import com.felayga.unpixeldungeon.Assets;
-import com.felayga.unpixeldungeon.windows.WndSettings;
 
 public class PrefsButton extends Button {
 	

@@ -24,22 +24,22 @@
  */
 package com.felayga.unpixeldungeon.levels.traps;
 
-import com.felayga.unpixeldungeon.actors.Actor;
-import com.felayga.unpixeldungeon.items.Heap;
-import com.felayga.unpixeldungeon.items.Item;
-import com.felayga.unpixeldungeon.items.wands.Wand;
-import com.felayga.unpixeldungeon.mechanics.MagicType;
-import com.felayga.unpixeldungeon.sprites.TrapSprite;
-import com.watabou.noosa.Camera;
 import com.felayga.unpixeldungeon.Dungeon;
 import com.felayga.unpixeldungeon.ResultDescriptions;
+import com.felayga.unpixeldungeon.actors.Actor;
 import com.felayga.unpixeldungeon.actors.Char;
 import com.felayga.unpixeldungeon.effects.CellEmitter;
 import com.felayga.unpixeldungeon.effects.Lightning;
 import com.felayga.unpixeldungeon.effects.particles.SparkParticle;
+import com.felayga.unpixeldungeon.items.Heap;
+import com.felayga.unpixeldungeon.items.Item;
+import com.felayga.unpixeldungeon.items.wands.Wand;
 import com.felayga.unpixeldungeon.levels.Level;
+import com.felayga.unpixeldungeon.mechanics.MagicType;
+import com.felayga.unpixeldungeon.sprites.TrapSprite;
 import com.felayga.unpixeldungeon.utils.GLog;
 import com.felayga.unpixeldungeon.utils.Utils;
+import com.watabou.noosa.Camera;
 import com.watabou.utils.Random;
 
 import java.util.ArrayList;

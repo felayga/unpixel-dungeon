@@ -24,18 +24,17 @@
  */
 package com.felayga.unpixeldungeon.items.weapon.enchantments;
 
-import java.util.ArrayList;
-import java.util.HashSet;
-
 import com.felayga.unpixeldungeon.actors.Actor;
 import com.felayga.unpixeldungeon.actors.Char;
 import com.felayga.unpixeldungeon.effects.Lightning;
 import com.felayga.unpixeldungeon.effects.particles.SparkParticle;
 import com.felayga.unpixeldungeon.items.weapon.Weapon;
 import com.felayga.unpixeldungeon.levels.Level;
-import com.felayga.unpixeldungeon.levels.traps.LightningTrap;
 import com.felayga.unpixeldungeon.mechanics.MagicType;
 import com.watabou.utils.Random;
+
+import java.util.ArrayList;
+import java.util.HashSet;
 
 public class Shock extends Weapon.Enchantment {
 

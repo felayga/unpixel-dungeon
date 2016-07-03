@@ -24,9 +24,6 @@
  */
 package com.felayga.unpixeldungeon.items.bags;
 
-import com.felayga.unpixeldungeon.actors.Char;
-import com.felayga.unpixeldungeon.items.Item;
-import com.felayga.unpixeldungeon.plants.Plant;
 import com.felayga.unpixeldungeon.sprites.ItemSpriteSheet;
 import com.felayga.unpixeldungeon.ui.Icons;
 

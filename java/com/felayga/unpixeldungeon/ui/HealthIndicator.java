@@ -24,11 +24,11 @@
  */
 package com.felayga.unpixeldungeon.ui;
 
+import com.felayga.unpixeldungeon.actors.Char;
+import com.felayga.unpixeldungeon.sprites.CharSprite;
 import com.watabou.gltextures.TextureCache;
 import com.watabou.noosa.Image;
 import com.watabou.noosa.ui.Component;
-import com.felayga.unpixeldungeon.actors.Char;
-import com.felayga.unpixeldungeon.sprites.CharSprite;
 
 public class HealthIndicator extends Component {
 

@@ -24,9 +24,9 @@
  */
 package com.felayga.unpixeldungeon.mechanics;
 
-import java.util.Arrays;
-
 import com.felayga.unpixeldungeon.levels.Level;
+
+import java.util.Arrays;
 
 public final class ShadowCaster {
 

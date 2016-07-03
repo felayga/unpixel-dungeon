@@ -40,9 +40,11 @@ public class GardenPainter extends Painter {
 		
 		fill( level, room, Terrain.WALL );
 		fill( level, room, 1, Terrain.HIGH_GRASS );
-		fill( level, room, 2, Terrain.GRASS );
-		
-		room.entrance().set( Room.Door.Type.REGULAR );
+		fill(level, room, 2, Terrain.GRASS);
+
+        for (Room.Door door : room.connected.values()) {
+            door.set(Room.Door.Type.REGULAR);
+        }
 
 		if (Dungeon.isChallenged(Challenges.NO_FOOD)) {
 			if (Random.Int(2) == 0){

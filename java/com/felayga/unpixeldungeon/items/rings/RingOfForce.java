@@ -24,8 +24,6 @@
  */
 package com.felayga.unpixeldungeon.items.rings;
 
-import com.felayga.unpixeldungeon.Dungeon;
-
 public class RingOfForce extends Ring {
 
 	{

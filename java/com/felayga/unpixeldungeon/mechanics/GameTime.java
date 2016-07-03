@@ -27,10 +27,6 @@ package com.felayga.unpixeldungeon.mechanics;
 
 import com.felayga.unpixeldungeon.Dungeon;
 import com.felayga.unpixeldungeon.actors.Actor;
-import com.felayga.unpixeldungeon.items.Heap;
-import com.felayga.unpixeldungeon.items.Item;
-
-import java.util.Iterator;
 
 /**
  * Created by hello on 3/19/16.

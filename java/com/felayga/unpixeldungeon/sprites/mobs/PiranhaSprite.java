@@ -24,10 +24,10 @@
  */
 package com.felayga.unpixeldungeon.sprites.mobs;
 
-import com.felayga.unpixeldungeon.sprites.MobSprite;
-import com.watabou.noosa.TextureFilm;
 import com.felayga.unpixeldungeon.Assets;
 import com.felayga.unpixeldungeon.scenes.GameScene;
+import com.felayga.unpixeldungeon.sprites.MobSprite;
+import com.watabou.noosa.TextureFilm;
 
 public class PiranhaSprite extends MobSprite {
 	

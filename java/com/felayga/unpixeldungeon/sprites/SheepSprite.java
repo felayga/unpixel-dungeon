@@ -24,8 +24,8 @@
  */
 package com.felayga.unpixeldungeon.sprites;
 
-import com.watabou.noosa.TextureFilm;
 import com.felayga.unpixeldungeon.Assets;
+import com.watabou.noosa.TextureFilm;
 import com.watabou.utils.Random;
 
 public class SheepSprite extends MobSprite {

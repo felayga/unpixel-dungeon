@@ -24,17 +24,17 @@
  */
 package com.felayga.unpixeldungeon.ui;
 
-import java.util.Arrays;
-
 import android.graphics.Bitmap;
 import android.opengl.GLES20;
 
 import com.felayga.unpixeldungeon.DungeonTilemap;
+import com.felayga.unpixeldungeon.scenes.GameScene;
 import com.watabou.gltextures.SmartTexture;
 import com.watabou.gltextures.TextureCache;
 import com.watabou.glwrap.Texture;
 import com.watabou.noosa.Image;
-import com.felayga.unpixeldungeon.scenes.GameScene;
+
+import java.util.Arrays;
 
 import javax.microedition.khronos.opengles.GL10;
 

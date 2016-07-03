@@ -24,13 +24,13 @@
  */
 package com.felayga.unpixeldungeon.sprites;
 
-import com.watabou.noosa.Game;
-import com.watabou.noosa.Image;
-import com.watabou.noosa.TextureFilm;
 import com.felayga.unpixeldungeon.Assets;
 import com.felayga.unpixeldungeon.DungeonTilemap;
 import com.felayga.unpixeldungeon.levels.Level;
 import com.felayga.unpixeldungeon.plants.Plant;
+import com.watabou.noosa.Game;
+import com.watabou.noosa.Image;
+import com.watabou.noosa.TextureFilm;
 
 public class PlantSprite extends Image {
 

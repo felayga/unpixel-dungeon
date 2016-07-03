@@ -24,8 +24,6 @@
  */
 package com.felayga.unpixeldungeon.windows.hero;
 
-import com.felayga.unpixeldungeon.windows.IconTitle;
-import com.watabou.noosa.BitmapTextMultiline;
 import com.felayga.unpixeldungeon.actors.hero.HeroSubClass;
 import com.felayga.unpixeldungeon.items.TomeOfMastery;
 import com.felayga.unpixeldungeon.scenes.PixelScene;
@@ -33,6 +31,8 @@ import com.felayga.unpixeldungeon.sprites.ItemSprite;
 import com.felayga.unpixeldungeon.ui.RedButton;
 import com.felayga.unpixeldungeon.ui.Window;
 import com.felayga.unpixeldungeon.utils.Utils;
+import com.felayga.unpixeldungeon.windows.IconTitle;
+import com.watabou.noosa.BitmapTextMultiline;
 
 public class WndChooseWay extends Window {
 	

@@ -30,8 +30,6 @@ import com.felayga.unpixeldungeon.Dungeon;
 import com.felayga.unpixeldungeon.DungeonTilemap;
 import com.felayga.unpixeldungeon.actors.Actor;
 import com.felayga.unpixeldungeon.actors.mobs.npcs.Blacksmith;
-import com.felayga.unpixeldungeon.items.Torch;
-import com.felayga.unpixeldungeon.levels.painters.Painter;
 import com.felayga.unpixeldungeon.levels.traps.ConfusionTrap;
 import com.felayga.unpixeldungeon.levels.traps.ExplosiveTrap;
 import com.felayga.unpixeldungeon.levels.traps.FireTrap;
@@ -51,18 +49,13 @@ import com.felayga.unpixeldungeon.levels.traps.TeleportationTrap;
 import com.felayga.unpixeldungeon.levels.traps.VenomTrap;
 import com.felayga.unpixeldungeon.levels.traps.WarpingTrap;
 import com.felayga.unpixeldungeon.mechanics.SimplexNoise;
-import com.felayga.unpixeldungeon.utils.GLog;
 import com.watabou.noosa.Game;
 import com.watabou.noosa.Group;
 import com.watabou.noosa.particles.PixelParticle;
 import com.watabou.utils.PointF;
 import com.watabou.utils.Random;
-import com.watabou.utils.Rect;
 
 import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.List;
 
 /**
  * Created by HELLO on 6/29/2016.
@@ -85,14 +78,19 @@ public class MinesLevel extends RegularLevel {
         return Feeling.DARK;
     }
 
+    @Override
+    protected int fillBlockNormal() {
+        return Terrain.WALL_STONE;
+    }
+
     private int decorationPlaces;
 
     @Override
     public boolean build() {
         value = 0.0;
         xscale = 7.5;
-        yscale = 75.0;
-        offset = Random.Float() * 256.0;
+        yscale = 750000.0;
+        offset = Random.Float() * 524288.0;
 
         ghettorecursive = new ArrayList<Integer>();
         simplexPlain();
@@ -347,18 +345,18 @@ public class MinesLevel extends RegularLevel {
 
     @Override
     public String tilesTex() {
-        return Assets.TILES_CAVES;
+        return Assets.TILES_PRISON;
     }
 
     @Override
     public String waterTex() {
-        return Assets.WATER_CAVES;
+        return Assets.WATER_PRISON;
     }
 
     @Override
     public String waterUnderTex() {
         //todo: not use this texture
-        return Assets.WATER_UNDERSEWERS;
+        return Assets.WATER_UNDERPRISON;
     }
 
     protected boolean[] water() {

@@ -24,8 +24,8 @@
  */
 package com.felayga.unpixeldungeon.effects;
 
-import com.watabou.noosa.Image;
 import com.felayga.unpixeldungeon.Assets;
+import com.watabou.noosa.Image;
 
 public class Effects {
 

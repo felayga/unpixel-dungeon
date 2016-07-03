@@ -24,11 +24,6 @@
  */
 package com.felayga.unpixeldungeon.sprites.mobs.golem;
 
-import com.felayga.unpixeldungeon.sprites.MobSprite;
-import com.watabou.noosa.TextureFilm;
-import com.felayga.unpixeldungeon.Assets;
-import com.felayga.unpixeldungeon.effects.particles.ElmoParticle;
-
 public class PaperGolemSprite extends GolemSprite {
 
     public PaperGolemSprite() {

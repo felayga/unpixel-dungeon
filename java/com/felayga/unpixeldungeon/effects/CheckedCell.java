@@ -24,10 +24,10 @@
  */
 package com.felayga.unpixeldungeon.effects;
 
+import com.felayga.unpixeldungeon.DungeonTilemap;
 import com.watabou.gltextures.TextureCache;
 import com.watabou.noosa.Game;
 import com.watabou.noosa.Image;
-import com.felayga.unpixeldungeon.DungeonTilemap;
 
 public class CheckedCell extends Image {
 	

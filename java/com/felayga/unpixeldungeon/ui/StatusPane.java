@@ -24,8 +24,16 @@
  */
 package com.felayga.unpixeldungeon.ui;
 
-import com.felayga.unpixeldungeon.items.keys.IronOldKey;
+import com.felayga.unpixeldungeon.Assets;
+import com.felayga.unpixeldungeon.Dungeon;
+import com.felayga.unpixeldungeon.effects.Speck;
+import com.felayga.unpixeldungeon.effects.particles.BloodParticle;
 import com.felayga.unpixeldungeon.levels.branches.DungeonBranch;
+import com.felayga.unpixeldungeon.scenes.GameScene;
+import com.felayga.unpixeldungeon.scenes.PixelScene;
+import com.felayga.unpixeldungeon.sprites.hero.HeroSprite;
+import com.felayga.unpixeldungeon.windows.WndGame;
+import com.felayga.unpixeldungeon.windows.hero.WndHero;
 import com.watabou.input.Touchscreen.Touch;
 import com.watabou.noosa.BitmapText;
 import com.watabou.noosa.Camera;
@@ -36,15 +44,6 @@ import com.watabou.noosa.audio.Sample;
 import com.watabou.noosa.particles.Emitter;
 import com.watabou.noosa.ui.Button;
 import com.watabou.noosa.ui.Component;
-import com.felayga.unpixeldungeon.Assets;
-import com.felayga.unpixeldungeon.Dungeon;
-import com.felayga.unpixeldungeon.effects.Speck;
-import com.felayga.unpixeldungeon.effects.particles.BloodParticle;
-import com.felayga.unpixeldungeon.scenes.GameScene;
-import com.felayga.unpixeldungeon.scenes.PixelScene;
-import com.felayga.unpixeldungeon.sprites.hero.HeroSprite;
-import com.felayga.unpixeldungeon.windows.WndGame;
-import com.felayga.unpixeldungeon.windows.hero.WndHero;
 
 public class StatusPane extends Component {
 
@@ -61,11 +60,9 @@ public class StatusPane extends Component {
 	private BossHealthBar bossHP;
 
 	private int lastLvl = -1;
-	private int lastKeys = -1;
 
 	private BitmapText level;
 	private BitmapText depth;
-	private BitmapText keys;
 
 	private DangerIndicator danger;
 	private BuffIndicator buffs;
@@ -165,8 +162,6 @@ public class StatusPane extends Component {
 		depth.x = width - 24 - depth.width()    - 18;
 		depth.y = 6;
 
-		keys.y = 6;
-
 		danger.setPos( width - danger.width(), 20 );
 
 		buffs.setPos( 30, 11 );
@@ -210,14 +205,6 @@ public class StatusPane extends Component {
 			level.measure();
 			level.x = 27.0f - level.width() / 2;
 			level.y = 27.5f - level.baseLine() / 2;
-		}
-
-		int k = IronOldKey.curDepthQuantity;
-		if (k != lastKeys) {
-			lastKeys = k;
-			keys.text( Integer.toString( lastKeys ) );
-			keys.measure();
-			keys.x = width - 8 - keys.width()    - 18;
 		}
 
 		/*

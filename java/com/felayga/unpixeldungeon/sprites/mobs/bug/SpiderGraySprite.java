@@ -24,10 +24,6 @@
  */
 package com.felayga.unpixeldungeon.sprites.mobs.bug;
 
-import com.felayga.unpixeldungeon.sprites.MobSprite;
-import com.watabou.noosa.TextureFilm;
-import com.felayga.unpixeldungeon.Assets;
-
 public class SpiderGraySprite extends BugSprite {
 
     public SpiderGraySprite() { super(5); }

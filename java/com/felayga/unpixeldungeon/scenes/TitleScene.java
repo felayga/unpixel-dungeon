@@ -24,14 +24,19 @@
  */
 package com.felayga.unpixeldungeon.scenes;
 
-import javax.microedition.khronos.opengles.GL10;
-
 import android.opengl.GLES20;
 
+import com.felayga.unpixeldungeon.Assets;
 import com.felayga.unpixeldungeon.Badges;
+import com.felayga.unpixeldungeon.ShatteredPixelDungeon;
+import com.felayga.unpixeldungeon.effects.BannerSprites;
+import com.felayga.unpixeldungeon.effects.Fireball;
 import com.felayga.unpixeldungeon.sprites.ItemSprite;
 import com.felayga.unpixeldungeon.sprites.ItemSpriteSheet;
+import com.felayga.unpixeldungeon.ui.Archs;
 import com.felayga.unpixeldungeon.ui.ChangesButton;
+import com.felayga.unpixeldungeon.ui.ExitButton;
+import com.felayga.unpixeldungeon.ui.PrefsButton;
 import com.felayga.unpixeldungeon.windows.WndHardNotification;
 import com.watabou.noosa.BitmapText;
 import com.watabou.noosa.Camera;
@@ -40,13 +45,8 @@ import com.watabou.noosa.Image;
 import com.watabou.noosa.audio.Music;
 import com.watabou.noosa.audio.Sample;
 import com.watabou.noosa.ui.Button;
-import com.felayga.unpixeldungeon.Assets;
-import com.felayga.unpixeldungeon.ShatteredPixelDungeon;
-import com.felayga.unpixeldungeon.effects.BannerSprites;
-import com.felayga.unpixeldungeon.effects.Fireball;
-import com.felayga.unpixeldungeon.ui.Archs;
-import com.felayga.unpixeldungeon.ui.ExitButton;
-import com.felayga.unpixeldungeon.ui.PrefsButton;
+
+import javax.microedition.khronos.opengles.GL10;
 
 public class TitleScene extends PixelScene {
 

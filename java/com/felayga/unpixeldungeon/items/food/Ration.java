@@ -25,22 +25,8 @@
 
 package com.felayga.unpixeldungeon.items.food;
 
-import com.felayga.unpixeldungeon.Assets;
-import com.felayga.unpixeldungeon.Badges;
-import com.felayga.unpixeldungeon.Statistics;
 import com.felayga.unpixeldungeon.actors.buffs.hero.Encumbrance;
-import com.felayga.unpixeldungeon.actors.buffs.hero.Hunger;
-import com.felayga.unpixeldungeon.actors.hero.Hero;
-import com.felayga.unpixeldungeon.effects.SpellSprite;
-import com.felayga.unpixeldungeon.items.Item;
-import com.felayga.unpixeldungeon.mechanics.GameTime;
-import com.felayga.unpixeldungeon.mechanics.MagicType;
 import com.felayga.unpixeldungeon.sprites.ItemSpriteSheet;
-import com.felayga.unpixeldungeon.utils.GLog;
-import com.watabou.noosa.audio.Sample;
-import com.watabou.utils.Bundle;
-
-import java.util.ArrayList;
 
 /**
  * Created by HELLO on 6/7/2016.

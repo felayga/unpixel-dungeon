@@ -25,8 +25,8 @@
 package com.felayga.unpixeldungeon.effects.particles;
 
 import com.watabou.noosa.particles.Emitter;
-import com.watabou.noosa.particles.PixelParticle;
 import com.watabou.noosa.particles.Emitter.Factory;
+import com.watabou.noosa.particles.PixelParticle;
 import com.watabou.utils.Random;
 
 public class SmokeParticle extends PixelParticle {

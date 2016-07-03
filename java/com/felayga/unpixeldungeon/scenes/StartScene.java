@@ -24,9 +24,23 @@
  */
 package com.felayga.unpixeldungeon.scenes;
 
-import java.util.HashMap;
-
+import com.felayga.unpixeldungeon.Assets;
+import com.felayga.unpixeldungeon.Badges;
+import com.felayga.unpixeldungeon.Dungeon;
+import com.felayga.unpixeldungeon.GamesInProgress;
+import com.felayga.unpixeldungeon.ShatteredPixelDungeon;
+import com.felayga.unpixeldungeon.actors.hero.HeroClass;
+import com.felayga.unpixeldungeon.effects.BannerSprites;
+import com.felayga.unpixeldungeon.effects.BannerSprites.Type;
+import com.felayga.unpixeldungeon.effects.Speck;
 import com.felayga.unpixeldungeon.levels.branches.DungeonBranch;
+import com.felayga.unpixeldungeon.ui.Archs;
+import com.felayga.unpixeldungeon.ui.ExitButton;
+import com.felayga.unpixeldungeon.ui.Icons;
+import com.felayga.unpixeldungeon.ui.RedButton;
+import com.felayga.unpixeldungeon.windows.WndChallenges;
+import com.felayga.unpixeldungeon.windows.WndMessage;
+import com.felayga.unpixeldungeon.windows.WndOptions;
 import com.felayga.unpixeldungeon.windows.hero.WndInitHero;
 import com.watabou.noosa.BitmapText;
 import com.watabou.noosa.BitmapTextMultiline;
@@ -36,24 +50,10 @@ import com.watabou.noosa.Image;
 import com.watabou.noosa.audio.Sample;
 import com.watabou.noosa.particles.Emitter;
 import com.watabou.noosa.ui.Button;
-import com.felayga.unpixeldungeon.Assets;
-import com.felayga.unpixeldungeon.Badges;
-import com.felayga.unpixeldungeon.Dungeon;
-import com.felayga.unpixeldungeon.GamesInProgress;
-import com.felayga.unpixeldungeon.ShatteredPixelDungeon;
-import com.felayga.unpixeldungeon.actors.hero.HeroClass;
-import com.felayga.unpixeldungeon.effects.BannerSprites;
-import com.felayga.unpixeldungeon.effects.Speck;
-import com.felayga.unpixeldungeon.effects.BannerSprites.Type;
-import com.felayga.unpixeldungeon.ui.Archs;
-import com.felayga.unpixeldungeon.ui.ExitButton;
-import com.felayga.unpixeldungeon.ui.Icons;
-import com.felayga.unpixeldungeon.ui.RedButton;
-import com.felayga.unpixeldungeon.windows.WndChallenges;
-import com.felayga.unpixeldungeon.windows.WndMessage;
-import com.felayga.unpixeldungeon.windows.WndOptions;
 import com.watabou.utils.Callback;
 import com.watabou.utils.PointF;
+
+import java.util.HashMap;
 
 public class StartScene extends PixelScene {
 

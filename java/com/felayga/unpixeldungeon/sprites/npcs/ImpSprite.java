@@ -24,12 +24,13 @@
  */
 package com.felayga.unpixeldungeon.sprites.npcs;
 
-import com.felayga.unpixeldungeon.sprites.MobSprite;
-import com.watabou.noosa.TextureFilm;
 import com.felayga.unpixeldungeon.Assets;
 import com.felayga.unpixeldungeon.actors.Char;
-//import com.felayga.unpixeldungeon.actors.mobs.npcs.Imp;
 import com.felayga.unpixeldungeon.effects.Speck;
+import com.felayga.unpixeldungeon.sprites.MobSprite;
+import com.watabou.noosa.TextureFilm;
+
+//import com.felayga.unpixeldungeon.actors.mobs.npcs.Imp;
 
 public class ImpSprite extends MobSprite {
 	

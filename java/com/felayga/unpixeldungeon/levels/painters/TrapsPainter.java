@@ -26,14 +26,26 @@ package com.felayga.unpixeldungeon.levels.painters;
 
 import com.felayga.unpixeldungeon.Dungeon;
 import com.felayga.unpixeldungeon.items.Generator;
-import com.felayga.unpixeldungeon.items.Heap;
 import com.felayga.unpixeldungeon.items.Item;
 import com.felayga.unpixeldungeon.items.bags.TreasureChest;
 import com.felayga.unpixeldungeon.items.potions.PotionOfLevitation;
 import com.felayga.unpixeldungeon.levels.Level;
 import com.felayga.unpixeldungeon.levels.Room;
 import com.felayga.unpixeldungeon.levels.Terrain;
-import com.felayga.unpixeldungeon.levels.traps.*;
+import com.felayga.unpixeldungeon.levels.traps.BlazingTrap;
+import com.felayga.unpixeldungeon.levels.traps.ConfusionTrap;
+import com.felayga.unpixeldungeon.levels.traps.DisintegrationTrap;
+import com.felayga.unpixeldungeon.levels.traps.ExplosiveTrap;
+import com.felayga.unpixeldungeon.levels.traps.FlockTrap;
+import com.felayga.unpixeldungeon.levels.traps.GrimTrap;
+import com.felayga.unpixeldungeon.levels.traps.ParalyticTrap;
+import com.felayga.unpixeldungeon.levels.traps.SpearTrap;
+import com.felayga.unpixeldungeon.levels.traps.SummoningTrap;
+import com.felayga.unpixeldungeon.levels.traps.TeleportationTrap;
+import com.felayga.unpixeldungeon.levels.traps.ToxicTrap;
+import com.felayga.unpixeldungeon.levels.traps.Trap;
+import com.felayga.unpixeldungeon.levels.traps.VenomTrap;
+import com.felayga.unpixeldungeon.levels.traps.WarpingTrap;
 import com.felayga.unpixeldungeon.mechanics.Roll;
 import com.watabou.utils.Random;
 
@@ -62,26 +74,28 @@ public class TrapsPainter extends Painter {
 			fill(level, room, 1, Terrain.TRAP);
 		}
 		
-		Room.Door door = room.entrance();
-		door.set( Room.Door.Type.REGULAR );
+		Room.Door entrance = room.entrance();
+        for (Room.Door door : room.connected.values()) {
+            door.set(Room.Door.Type.REGULAR);
+        }
 		
 		int lastRow = level.map[room.left + 1 + (room.top + 1) * Level.WIDTH] == Terrain.CHASM ? Terrain.CHASM : Terrain.EMPTY;
 
 		int x = -1;
 		int y = -1;
-		if (door.x == room.left) {
+		if (entrance.x == room.left) {
 			x = room.right - 1;
 			y = room.top + room.height() / 2;
 			fill( level, x, room.top + 1, 1, room.height() - 1 , lastRow );
-		} else if (door.x == room.right) {
+		} else if (entrance.x == room.right) {
 			x = room.left + 1;
 			y = room.top + room.height() / 2;
 			fill( level, x, room.top + 1, 1, room.height() - 1 , lastRow );
-		} else if (door.y == room.top) {
+		} else if (entrance.y == room.top) {
 			x = room.left + room.width() / 2;
 			y = room.bottom - 1;
 			fill( level, room.left + 1, y, room.width() - 1, 1 , lastRow );
-		} else if (door.y == room.bottom) {
+		} else if (entrance.y == room.bottom) {
 			x = room.left + room.width() / 2;
 			y = room.top + 1;
 			fill( level, room.left + 1, y, room.width() - 1, 1 , lastRow );

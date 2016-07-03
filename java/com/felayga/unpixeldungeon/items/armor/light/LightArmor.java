@@ -25,7 +25,6 @@
 
 package com.felayga.unpixeldungeon.items.armor.light;
 
-import com.felayga.unpixeldungeon.actors.Actor;
 import com.felayga.unpixeldungeon.items.armor.Armor;
 import com.felayga.unpixeldungeon.mechanics.GameTime;
 

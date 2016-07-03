@@ -24,11 +24,9 @@
  */
 package com.felayga.unpixeldungeon.levels.painters;
 
-import com.felayga.unpixeldungeon.Dungeon;
 import com.felayga.unpixeldungeon.items.Bomb;
 import com.felayga.unpixeldungeon.items.Generator;
 import com.felayga.unpixeldungeon.items.Item;
-import com.felayga.unpixeldungeon.items.keys.IronOldKey;
 import com.felayga.unpixeldungeon.levels.Level;
 import com.felayga.unpixeldungeon.levels.Room;
 import com.felayga.unpixeldungeon.levels.Terrain;
@@ -65,8 +63,10 @@ public class ArmoryPainter extends Painter {
 			} while (level.map[pos] != Terrain.EMPTY || level.heaps.get( pos ) != null);
 			level.drop( prize( level ), pos );
 		}
-		
-		entrance.set( Room.Door.Type.LOCKED );
+
+        for (Room.Door door : room.connected.values()) {
+            door.set(Room.Door.Type.LOCKED);
+        }
 		//level.addItemToSpawn( new IronOldKey( Dungeon.depth ) );
 	}
 	

@@ -24,12 +24,12 @@
  */
 package com.felayga.unpixeldungeon.effects;
 
-import javax.microedition.khronos.opengles.GL10;
-
 import android.opengl.GLES20;
 
-import com.watabou.noosa.Game;
 import com.felayga.unpixeldungeon.sprites.CharSprite;
+import com.watabou.noosa.Game;
+
+import javax.microedition.khronos.opengles.GL10;
 
 public class TorchHalo extends Halo {
 

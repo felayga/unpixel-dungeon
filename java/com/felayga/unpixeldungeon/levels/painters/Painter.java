@@ -24,12 +24,12 @@
  */
 package com.felayga.unpixeldungeon.levels.painters;
 
-import java.util.Arrays;
-
 import com.felayga.unpixeldungeon.levels.Level;
 import com.felayga.unpixeldungeon.levels.Room;
 import com.watabou.utils.Point;
 import com.watabou.utils.Rect;
+
+import java.util.Arrays;
 
 public class Painter {
 

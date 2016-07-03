@@ -24,10 +24,10 @@
  */
 package com.felayga.unpixeldungeon.scenes;
 
+import com.felayga.unpixeldungeon.DungeonTilemap;
 import com.felayga.unpixeldungeon.ShatteredPixelDungeon;
 import com.watabou.input.Touchscreen.Touch;
 import com.watabou.noosa.TouchArea;
-import com.felayga.unpixeldungeon.DungeonTilemap;
 import com.watabou.utils.GameMath;
 import com.watabou.utils.PointF;
 

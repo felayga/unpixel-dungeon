@@ -27,7 +27,6 @@ package com.felayga.unpixeldungeon.sprites.mobs.humanoid;
 import com.felayga.unpixeldungeon.sprites.MobSprite;
 import com.felayga.unpixeldungeon.sprites.hero.HeroSprite;
 import com.watabou.noosa.TextureFilm;
-import com.felayga.unpixeldungeon.Assets;
 
 public class HumanoidSprite extends MobSprite {
 

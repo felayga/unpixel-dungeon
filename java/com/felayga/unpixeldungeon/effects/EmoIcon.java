@@ -24,11 +24,11 @@
  */
 package com.felayga.unpixeldungeon.effects;
 
-import com.watabou.noosa.Game;
-import com.watabou.noosa.Image;
 import com.felayga.unpixeldungeon.scenes.GameScene;
 import com.felayga.unpixeldungeon.sprites.CharSprite;
 import com.felayga.unpixeldungeon.ui.Icons;
+import com.watabou.noosa.Game;
+import com.watabou.noosa.Image;
 import com.watabou.utils.Random;
 
 public class EmoIcon extends Image {

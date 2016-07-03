@@ -24,12 +24,12 @@
  */
 package com.felayga.unpixeldungeon.levels.painters;
 
-import java.util.ArrayList;
-import java.util.Collections;
-
 import com.felayga.unpixeldungeon.levels.Level;
 import com.felayga.unpixeldungeon.levels.Room;
 import com.watabou.utils.Point;
+
+import java.util.ArrayList;
+import java.util.Collections;
 
 public class PassagePainter extends Painter {
 

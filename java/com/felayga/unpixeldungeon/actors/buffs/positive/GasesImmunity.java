@@ -24,7 +24,6 @@
  */
 package com.felayga.unpixeldungeon.actors.buffs.positive;
 
-import com.felayga.unpixeldungeon.actors.Actor;
 import com.felayga.unpixeldungeon.actors.blobs.ConfusionGas;
 import com.felayga.unpixeldungeon.actors.blobs.ParalyticGas;
 import com.felayga.unpixeldungeon.actors.blobs.StenchGas;

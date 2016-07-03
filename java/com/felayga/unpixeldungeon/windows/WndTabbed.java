@@ -24,17 +24,17 @@
  */
 package com.felayga.unpixeldungeon.windows;
 
-import java.util.ArrayList;
-
+import com.felayga.unpixeldungeon.Assets;
+import com.felayga.unpixeldungeon.Chrome;
+import com.felayga.unpixeldungeon.scenes.PixelScene;
+import com.felayga.unpixeldungeon.ui.Window;
 import com.watabou.noosa.BitmapText;
 import com.watabou.noosa.Game;
 import com.watabou.noosa.NinePatch;
 import com.watabou.noosa.audio.Sample;
 import com.watabou.noosa.ui.Button;
-import com.felayga.unpixeldungeon.Assets;
-import com.felayga.unpixeldungeon.Chrome;
-import com.felayga.unpixeldungeon.scenes.PixelScene;
-import com.felayga.unpixeldungeon.ui.Window;
+
+import java.util.ArrayList;
 
 public class WndTabbed extends Window {
 

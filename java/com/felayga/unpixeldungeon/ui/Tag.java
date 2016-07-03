@@ -24,10 +24,10 @@
  */
 package com.felayga.unpixeldungeon.ui;
 
+import com.felayga.unpixeldungeon.Chrome;
 import com.watabou.noosa.Game;
 import com.watabou.noosa.NinePatch;
 import com.watabou.noosa.ui.Button;
-import com.felayga.unpixeldungeon.Chrome;
 
 public class Tag extends Button {
 

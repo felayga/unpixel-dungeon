@@ -24,10 +24,10 @@
  */
 package com.felayga.unpixeldungeon.ui;
 
+import com.felayga.unpixeldungeon.Assets;
 import com.watabou.noosa.Game;
 import com.watabou.noosa.SkinnedBlock;
 import com.watabou.noosa.ui.Component;
-import com.felayga.unpixeldungeon.Assets;
 
 public class Archs extends Component {
 

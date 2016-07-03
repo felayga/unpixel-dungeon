@@ -24,14 +24,14 @@
  */
 package com.felayga.unpixeldungeon.effects;
 
-import java.util.HashMap;
-
-import com.watabou.noosa.Game;
-import com.watabou.noosa.Image;
-import com.watabou.noosa.TextureFilm;
 import com.felayga.unpixeldungeon.Assets;
 import com.felayga.unpixeldungeon.actors.Char;
 import com.felayga.unpixeldungeon.scenes.GameScene;
+import com.watabou.noosa.Game;
+import com.watabou.noosa.Image;
+import com.watabou.noosa.TextureFilm;
+
+import java.util.HashMap;
 
 public class SpellSprite extends Image {
 

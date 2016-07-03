@@ -27,10 +27,7 @@ package com.felayga.unpixeldungeon.levels.painters;
 import com.felayga.unpixeldungeon.Dungeon;
 import com.felayga.unpixeldungeon.items.Generator;
 import com.felayga.unpixeldungeon.items.Item;
-import com.felayga.unpixeldungeon.items.Heap.Type;
 import com.felayga.unpixeldungeon.items.bags.TreasureChest;
-import com.felayga.unpixeldungeon.items.keys.GoldenOldKey;
-import com.felayga.unpixeldungeon.items.keys.IronOldKey;
 import com.felayga.unpixeldungeon.levels.Level;
 import com.felayga.unpixeldungeon.levels.Room;
 import com.felayga.unpixeldungeon.levels.Terrain;
@@ -69,8 +66,10 @@ public class VaultPainter extends Painter {
 			set( level, c, Terrain.PEDESTAL );
 			break;
 		}
-		
-		room.entrance().set( Room.Door.Type.LOCKED );
+
+        for (Room.Door door : room.connected.values()) {
+            door.set(Room.Door.Type.LOCKED);
+        }
 	}
 
     private static void spawnLockedChest(Level level, int pos, Item prize) {

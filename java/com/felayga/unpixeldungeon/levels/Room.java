@@ -24,21 +24,43 @@
  */
 package com.felayga.unpixeldungeon.levels;
 
-import java.lang.reflect.Method;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collection;
-import java.util.HashMap;
-import java.util.HashSet;
-
 import com.felayga.unpixeldungeon.ShatteredPixelDungeon;
-import com.felayga.unpixeldungeon.levels.painters.*;
+import com.felayga.unpixeldungeon.levels.painters.ArmoryPainter;
+import com.felayga.unpixeldungeon.levels.painters.BlacksmithPainter;
+import com.felayga.unpixeldungeon.levels.painters.BossExitPainter;
+import com.felayga.unpixeldungeon.levels.painters.CryptPainter;
+import com.felayga.unpixeldungeon.levels.painters.EntranceAlternatePainter;
+import com.felayga.unpixeldungeon.levels.painters.EntrancePainter;
+import com.felayga.unpixeldungeon.levels.painters.ExitAlternatePainter;
+import com.felayga.unpixeldungeon.levels.painters.ExitPainter;
+import com.felayga.unpixeldungeon.levels.painters.GardenPainter;
+import com.felayga.unpixeldungeon.levels.painters.LaboratoryPainter;
+import com.felayga.unpixeldungeon.levels.painters.MagicWellPainter;
+import com.felayga.unpixeldungeon.levels.painters.Painter;
+import com.felayga.unpixeldungeon.levels.painters.PassagePainter;
+import com.felayga.unpixeldungeon.levels.painters.PitPainter;
+import com.felayga.unpixeldungeon.levels.painters.RitualSitePainter;
+import com.felayga.unpixeldungeon.levels.painters.ShopPainter;
+import com.felayga.unpixeldungeon.levels.painters.StandardPainter;
+import com.felayga.unpixeldungeon.levels.painters.StoragePainter;
+import com.felayga.unpixeldungeon.levels.painters.TrapsPainter;
+import com.felayga.unpixeldungeon.levels.painters.TreasuryPainter;
+import com.felayga.unpixeldungeon.levels.painters.TunnelPainter;
+import com.felayga.unpixeldungeon.levels.painters.VaultPainter;
+import com.felayga.unpixeldungeon.levels.painters.WeakFloorPainter;
 import com.watabou.utils.Bundlable;
 import com.watabou.utils.Bundle;
 import com.watabou.utils.Graph;
 import com.watabou.utils.Point;
 import com.watabou.utils.Random;
 import com.watabou.utils.Rect;
+
+import java.lang.reflect.Method;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collection;
+import java.util.HashMap;
+import java.util.HashSet;
 
 public class Room extends Rect implements Graph.Node, Bundlable {
 	

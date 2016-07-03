@@ -24,17 +24,17 @@
  */
 package com.felayga.unpixeldungeon.scenes;
 
-import com.felayga.unpixeldungeon.windows.hero.WndInitHero;
-import com.watabou.noosa.BitmapTextMultiline;
-import com.watabou.noosa.Camera;
-import com.watabou.noosa.Game;
-import com.watabou.noosa.Image;
 import com.felayga.unpixeldungeon.Assets;
 import com.felayga.unpixeldungeon.Dungeon;
 import com.felayga.unpixeldungeon.ResultDescriptions;
 import com.felayga.unpixeldungeon.effects.Flare;
 import com.felayga.unpixeldungeon.effects.Speck;
 import com.felayga.unpixeldungeon.ui.RedButton;
+import com.felayga.unpixeldungeon.windows.hero.WndInitHero;
+import com.watabou.noosa.BitmapTextMultiline;
+import com.watabou.noosa.Camera;
+import com.watabou.noosa.Game;
+import com.watabou.noosa.Image;
 import com.watabou.utils.Random;
 
 public class AmuletScene extends PixelScene {

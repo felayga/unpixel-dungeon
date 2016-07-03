@@ -24,8 +24,6 @@
  */
 package com.felayga.unpixeldungeon.levels.traps;
 
-import java.util.ArrayList;
-
 import com.felayga.unpixeldungeon.Dungeon;
 import com.felayga.unpixeldungeon.actors.Actor;
 import com.felayga.unpixeldungeon.actors.mobs.Bestiary;
@@ -36,6 +34,8 @@ import com.felayga.unpixeldungeon.mechanics.GameTime;
 import com.felayga.unpixeldungeon.scenes.GameScene;
 import com.felayga.unpixeldungeon.sprites.TrapSprite;
 import com.watabou.utils.Random;
+
+import java.util.ArrayList;
 
 public class SummoningTrap extends Trap {
 

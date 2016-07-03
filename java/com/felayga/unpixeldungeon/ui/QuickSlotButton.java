@@ -24,18 +24,18 @@
  */
 package com.felayga.unpixeldungeon.ui;
 
-import com.felayga.unpixeldungeon.levels.Level;
-import com.felayga.unpixeldungeon.mechanics.Ballistica;
-import com.felayga.unpixeldungeon.utils.GLog;
-import com.watabou.noosa.Image;
-import com.watabou.noosa.ui.Button;
 import com.felayga.unpixeldungeon.Dungeon;
 import com.felayga.unpixeldungeon.DungeonTilemap;
 import com.felayga.unpixeldungeon.actors.Actor;
 import com.felayga.unpixeldungeon.actors.Char;
 import com.felayga.unpixeldungeon.items.Item;
+import com.felayga.unpixeldungeon.levels.Level;
+import com.felayga.unpixeldungeon.mechanics.Ballistica;
 import com.felayga.unpixeldungeon.scenes.GameScene;
+import com.felayga.unpixeldungeon.utils.GLog;
 import com.felayga.unpixeldungeon.windows.WndBackpack;
+import com.watabou.noosa.Image;
+import com.watabou.noosa.ui.Button;
 
 public class QuickSlotButton extends Button implements WndBackpack.Listener {
 

@@ -24,12 +24,12 @@
  */
 package com.felayga.unpixeldungeon.items.potions;
 
-import com.felayga.unpixeldungeon.Dungeon;
-import com.watabou.noosa.audio.Sample;
 import com.felayga.unpixeldungeon.Assets;
+import com.felayga.unpixeldungeon.Dungeon;
 import com.felayga.unpixeldungeon.actors.blobs.Blob;
 import com.felayga.unpixeldungeon.actors.blobs.ParalyticGas;
 import com.felayga.unpixeldungeon.scenes.GameScene;
+import com.watabou.noosa.audio.Sample;
 
 public class PotionOfParalyticGas extends Potion {
 

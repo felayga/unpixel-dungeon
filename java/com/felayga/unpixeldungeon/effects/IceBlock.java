@@ -24,11 +24,11 @@
  */
 package com.felayga.unpixeldungeon.effects;
 
+import com.felayga.unpixeldungeon.Assets;
+import com.felayga.unpixeldungeon.sprites.CharSprite;
 import com.watabou.noosa.Game;
 import com.watabou.noosa.Gizmo;
 import com.watabou.noosa.audio.Sample;
-import com.felayga.unpixeldungeon.Assets;
-import com.felayga.unpixeldungeon.sprites.CharSprite;
 
 public class IceBlock extends Gizmo {
 	

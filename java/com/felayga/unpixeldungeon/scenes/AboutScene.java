@@ -28,17 +28,17 @@ import android.content.Intent;
 import android.net.Uri;
 
 import com.felayga.unpixeldungeon.ShatteredPixelDungeon;
+import com.felayga.unpixeldungeon.effects.Flare;
+import com.felayga.unpixeldungeon.ui.Archs;
 import com.felayga.unpixeldungeon.ui.ExitButton;
+import com.felayga.unpixeldungeon.ui.Icons;
+import com.felayga.unpixeldungeon.ui.Window;
 import com.watabou.input.Touchscreen.Touch;
 import com.watabou.noosa.BitmapTextMultiline;
 import com.watabou.noosa.Camera;
 import com.watabou.noosa.Game;
 import com.watabou.noosa.Image;
 import com.watabou.noosa.TouchArea;
-import com.felayga.unpixeldungeon.effects.Flare;
-import com.felayga.unpixeldungeon.ui.Archs;
-import com.felayga.unpixeldungeon.ui.Icons;
-import com.felayga.unpixeldungeon.ui.Window;
 
 public class AboutScene extends PixelScene {
 

@@ -24,16 +24,33 @@
  */
 package com.felayga.unpixeldungeon.levels;
 
-import com.felayga.unpixeldungeon.levels.traps.*;
-import com.watabou.noosa.Game;
-import com.watabou.noosa.Group;
-import com.watabou.noosa.particles.PixelParticle;
 import com.felayga.unpixeldungeon.Assets;
 import com.felayga.unpixeldungeon.Dungeon;
 import com.felayga.unpixeldungeon.DungeonTilemap;
 import com.felayga.unpixeldungeon.actors.mobs.npcs.Blacksmith;
 import com.felayga.unpixeldungeon.levels.Room.Type;
 import com.felayga.unpixeldungeon.levels.painters.Painter;
+import com.felayga.unpixeldungeon.levels.traps.ConfusionTrap;
+import com.felayga.unpixeldungeon.levels.traps.ExplosiveTrap;
+import com.felayga.unpixeldungeon.levels.traps.FireTrap;
+import com.felayga.unpixeldungeon.levels.traps.FlashingTrap;
+import com.felayga.unpixeldungeon.levels.traps.FlockTrap;
+import com.felayga.unpixeldungeon.levels.traps.FrostTrap;
+import com.felayga.unpixeldungeon.levels.traps.GrippingTrap;
+import com.felayga.unpixeldungeon.levels.traps.LightningTrap;
+import com.felayga.unpixeldungeon.levels.traps.OozeTrap;
+import com.felayga.unpixeldungeon.levels.traps.ParalyticTrap;
+import com.felayga.unpixeldungeon.levels.traps.PitfallTrap;
+import com.felayga.unpixeldungeon.levels.traps.PoisonTrap;
+import com.felayga.unpixeldungeon.levels.traps.RockfallTrap;
+import com.felayga.unpixeldungeon.levels.traps.SpearTrap;
+import com.felayga.unpixeldungeon.levels.traps.SummoningTrap;
+import com.felayga.unpixeldungeon.levels.traps.TeleportationTrap;
+import com.felayga.unpixeldungeon.levels.traps.VenomTrap;
+import com.felayga.unpixeldungeon.levels.traps.WarpingTrap;
+import com.watabou.noosa.Game;
+import com.watabou.noosa.Group;
+import com.watabou.noosa.particles.PixelParticle;
 import com.watabou.utils.PointF;
 import com.watabou.utils.Random;
 import com.watabou.utils.Rect;

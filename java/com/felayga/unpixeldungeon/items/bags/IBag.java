@@ -29,7 +29,6 @@ import com.felayga.unpixeldungeon.actors.Char;
 import com.felayga.unpixeldungeon.items.Item;
 import com.felayga.unpixeldungeon.ui.Icons;
 
-import java.util.AbstractList;
 import java.util.Iterator;
 
 /**

@@ -24,11 +24,11 @@
  */
 package com.felayga.unpixeldungeon.sprites.mobs;
 
+import com.felayga.unpixeldungeon.Assets;
+import com.felayga.unpixeldungeon.effects.MagicMissile;
 import com.felayga.unpixeldungeon.sprites.MobSprite;
 import com.watabou.noosa.TextureFilm;
 import com.watabou.noosa.audio.Sample;
-import com.felayga.unpixeldungeon.Assets;
-import com.felayga.unpixeldungeon.effects.MagicMissile;
 import com.watabou.utils.Callback;
 
 public class BurningFistSprite extends MobSprite {

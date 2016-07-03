@@ -24,14 +24,6 @@
  */
 package com.felayga.unpixeldungeon.items.wands;
 
-import java.util.ArrayList;
-
-import com.felayga.unpixeldungeon.items.weapon.enchantments.Shock;
-import com.felayga.unpixeldungeon.items.weapon.melee.simple.MagesStaff;
-import com.felayga.unpixeldungeon.mechanics.Ballistica;
-import com.felayga.unpixeldungeon.mechanics.MagicType;
-import com.felayga.unpixeldungeon.sprites.ItemSpriteSheet;
-import com.watabou.noosa.Camera;
 import com.felayga.unpixeldungeon.Dungeon;
 import com.felayga.unpixeldungeon.ResultDescriptions;
 import com.felayga.unpixeldungeon.actors.Actor;
@@ -39,12 +31,19 @@ import com.felayga.unpixeldungeon.actors.Char;
 import com.felayga.unpixeldungeon.effects.CellEmitter;
 import com.felayga.unpixeldungeon.effects.Lightning;
 import com.felayga.unpixeldungeon.effects.particles.SparkParticle;
+import com.felayga.unpixeldungeon.items.weapon.enchantments.Shock;
+import com.felayga.unpixeldungeon.items.weapon.melee.simple.MagesStaff;
 import com.felayga.unpixeldungeon.levels.Level;
-import com.felayga.unpixeldungeon.levels.traps.LightningTrap;
+import com.felayga.unpixeldungeon.mechanics.Ballistica;
+import com.felayga.unpixeldungeon.mechanics.MagicType;
+import com.felayga.unpixeldungeon.sprites.ItemSpriteSheet;
 import com.felayga.unpixeldungeon.utils.GLog;
 import com.felayga.unpixeldungeon.utils.Utils;
+import com.watabou.noosa.Camera;
 import com.watabou.utils.Callback;
 import com.watabou.utils.Random;
+
+import java.util.ArrayList;
 
 public class WandOfLightning extends Wand {
 

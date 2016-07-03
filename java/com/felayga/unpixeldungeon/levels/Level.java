@@ -32,7 +32,6 @@ import com.felayga.unpixeldungeon.actors.Actor;
 import com.felayga.unpixeldungeon.actors.Char;
 import com.felayga.unpixeldungeon.actors.blobs.Alchemy;
 import com.felayga.unpixeldungeon.actors.blobs.Blob;
-import com.felayga.unpixeldungeon.actors.blobs.wells.WellWater;
 import com.felayga.unpixeldungeon.actors.buffs.Buff;
 import com.felayga.unpixeldungeon.actors.buffs.hero.LockedFloor;
 import com.felayga.unpixeldungeon.actors.buffs.hero.Shadows;
@@ -70,7 +69,6 @@ import com.felayga.unpixeldungeon.levels.features.HighGrass;
 import com.felayga.unpixeldungeon.levels.painters.Painter;
 import com.felayga.unpixeldungeon.levels.traps.Trap;
 import com.felayga.unpixeldungeon.levels.traps.WornTrap;
-import com.felayga.unpixeldungeon.mechanics.Constant;
 import com.felayga.unpixeldungeon.mechanics.GameTime;
 import com.felayga.unpixeldungeon.mechanics.IDecayable;
 import com.felayga.unpixeldungeon.mechanics.ShadowCaster;
@@ -113,6 +111,7 @@ public abstract class Level implements Bundlable, IDecayable {
     public static final int HEIGHT      = 31; //21
     public static final int LENGTH      = WIDTH * HEIGHT;
     public static final int EDGEBUFFER  = 7;
+    public static final int ROOMBUFFER  = 2;
 
     public static final int[] NEIGHBOURS4 = {-WIDTH, +1, +WIDTH, -1};
     public static final int[] NEIGHBOURS8 = {-WIDTH, +1 - WIDTH, +1, +1 + WIDTH, +WIDTH, -1 + WIDTH, -1, -1 - WIDTH};
@@ -315,7 +314,15 @@ public abstract class Level implements Bundlable, IDecayable {
     }
 
     protected void initializeMap() {
-        Arrays.fill(map, feeling == Feeling.CHASM ? Terrain.CHASM : Terrain.WALL);
+        Arrays.fill(map, feeling == Feeling.CHASM ? fillBlockChasm() : fillBlockNormal());
+    }
+
+    protected int fillBlockNormal() {
+        return Terrain.WALL;
+    }
+
+    protected int fillBlockChasm() {
+        return Terrain.CHASM;
     }
 
     public void reset() {

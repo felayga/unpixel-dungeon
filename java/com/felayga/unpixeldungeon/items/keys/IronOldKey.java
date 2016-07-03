@@ -24,8 +24,6 @@
  */
 package com.felayga.unpixeldungeon.items.keys;
 
-import com.felayga.unpixeldungeon.Dungeon;
-import com.felayga.unpixeldungeon.items.bags.Bag;
 import com.felayga.unpixeldungeon.sprites.ItemSpriteSheet;
 import com.felayga.unpixeldungeon.utils.Utils;
 

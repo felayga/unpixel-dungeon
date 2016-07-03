@@ -24,15 +24,14 @@
  */
 package com.felayga.unpixeldungeon.items.potions;
 
-import com.felayga.unpixeldungeon.actors.blobs.ConfusionGas;
-import com.felayga.unpixeldungeon.actors.blobs.StenchGas;
-import com.felayga.unpixeldungeon.actors.blobs.VenomGas;
-import com.watabou.noosa.audio.Sample;
 import com.felayga.unpixeldungeon.Assets;
 import com.felayga.unpixeldungeon.Dungeon;
 import com.felayga.unpixeldungeon.actors.blobs.Blob;
+import com.felayga.unpixeldungeon.actors.blobs.ConfusionGas;
 import com.felayga.unpixeldungeon.actors.blobs.ParalyticGas;
+import com.felayga.unpixeldungeon.actors.blobs.StenchGas;
 import com.felayga.unpixeldungeon.actors.blobs.ToxicGas;
+import com.felayga.unpixeldungeon.actors.blobs.VenomGas;
 import com.felayga.unpixeldungeon.actors.buffs.Buff;
 import com.felayga.unpixeldungeon.actors.buffs.positive.GasesImmunity;
 import com.felayga.unpixeldungeon.actors.hero.Hero;
@@ -41,6 +40,7 @@ import com.felayga.unpixeldungeon.effects.Speck;
 import com.felayga.unpixeldungeon.levels.Level;
 import com.felayga.unpixeldungeon.utils.BArray;
 import com.felayga.unpixeldungeon.utils.GLog;
+import com.watabou.noosa.audio.Sample;
 import com.watabou.utils.PathFinder;
 
 public class PotionOfPurity extends Potion {

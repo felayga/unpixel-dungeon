@@ -26,10 +26,7 @@ package com.felayga.unpixeldungeon.levels;
 
 import com.felayga.unpixeldungeon.Assets;
 import com.felayga.unpixeldungeon.Bones;
-import com.felayga.unpixeldungeon.Dungeon;
 import com.felayga.unpixeldungeon.actors.Actor;
-import com.felayga.unpixeldungeon.actors.mobs.Bestiary;
-import com.felayga.unpixeldungeon.actors.mobs.Mob;
 import com.felayga.unpixeldungeon.items.Heap;
 import com.felayga.unpixeldungeon.items.Item;
 import com.felayga.unpixeldungeon.levels.Room.Type;

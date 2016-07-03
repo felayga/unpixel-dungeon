@@ -24,9 +24,9 @@
  */
 package com.felayga.unpixeldungeon.ui;
 
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
-
+import com.felayga.unpixeldungeon.Chrome;
+import com.felayga.unpixeldungeon.effects.ShadowBox;
+import com.felayga.unpixeldungeon.scenes.PixelScene;
 import com.watabou.input.Keys;
 import com.watabou.input.Keys.Key;
 import com.watabou.input.Touchscreen.Touch;
@@ -35,10 +35,10 @@ import com.watabou.noosa.Game;
 import com.watabou.noosa.Group;
 import com.watabou.noosa.NinePatch;
 import com.watabou.noosa.TouchArea;
-import com.felayga.unpixeldungeon.Chrome;
-import com.felayga.unpixeldungeon.effects.ShadowBox;
-import com.felayga.unpixeldungeon.scenes.PixelScene;
 import com.watabou.utils.Signal;
+
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 public class Window extends Group implements Signal.Listener<Key> {
 

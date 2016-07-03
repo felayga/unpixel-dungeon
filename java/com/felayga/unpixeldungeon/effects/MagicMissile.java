@@ -24,18 +24,18 @@
  */
 package com.felayga.unpixeldungeon.effects;
 
-import com.felayga.unpixeldungeon.effects.particles.RainbowParticle;
-import com.watabou.noosa.Game;
-import com.watabou.noosa.Group;
-import com.watabou.noosa.particles.Emitter;
-import com.watabou.noosa.particles.PixelParticle;
 import com.felayga.unpixeldungeon.DungeonTilemap;
 import com.felayga.unpixeldungeon.effects.particles.FlameParticle;
 import com.felayga.unpixeldungeon.effects.particles.LeafParticle;
 import com.felayga.unpixeldungeon.effects.particles.PoisonParticle;
 import com.felayga.unpixeldungeon.effects.particles.PurpleParticle;
+import com.felayga.unpixeldungeon.effects.particles.RainbowParticle;
 import com.felayga.unpixeldungeon.effects.particles.ShadowParticle;
 import com.felayga.unpixeldungeon.effects.particles.WoolParticle;
+import com.watabou.noosa.Game;
+import com.watabou.noosa.Group;
+import com.watabou.noosa.particles.Emitter;
+import com.watabou.noosa.particles.PixelParticle;
 import com.watabou.utils.Callback;
 import com.watabou.utils.ColorMath;
 import com.watabou.utils.PointF;

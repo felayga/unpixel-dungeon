@@ -24,25 +24,23 @@
  */
 package com.felayga.unpixeldungeon.levels;
 
-import com.felayga.unpixeldungeon.levels.traps.ToxicTrap;
-import com.felayga.unpixeldungeon.levels.traps.Trap;
-import com.watabou.noosa.Camera;
-import com.watabou.noosa.Group;
-import com.watabou.noosa.audio.Sample;
 import com.felayga.unpixeldungeon.Assets;
 import com.felayga.unpixeldungeon.Bones;
 import com.felayga.unpixeldungeon.Dungeon;
 import com.felayga.unpixeldungeon.actors.Actor;
 import com.felayga.unpixeldungeon.actors.Char;
-import com.felayga.unpixeldungeon.actors.mobs.Bestiary;
-import com.felayga.unpixeldungeon.actors.mobs.Mob;
 import com.felayga.unpixeldungeon.effects.CellEmitter;
 import com.felayga.unpixeldungeon.effects.Speck;
 import com.felayga.unpixeldungeon.items.Heap;
 import com.felayga.unpixeldungeon.items.Item;
 import com.felayga.unpixeldungeon.items.keys.SkeletonOldKey;
 import com.felayga.unpixeldungeon.levels.painters.Painter;
+import com.felayga.unpixeldungeon.levels.traps.ToxicTrap;
+import com.felayga.unpixeldungeon.levels.traps.Trap;
 import com.felayga.unpixeldungeon.scenes.GameScene;
+import com.watabou.noosa.Camera;
+import com.watabou.noosa.Group;
+import com.watabou.noosa.audio.Sample;
 import com.watabou.utils.Bundle;
 import com.watabou.utils.Random;
 

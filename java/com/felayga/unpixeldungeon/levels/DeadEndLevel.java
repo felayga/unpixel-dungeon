@@ -24,11 +24,11 @@
  */
 package com.felayga.unpixeldungeon.levels;
 
-import java.util.Arrays;
-
 import com.felayga.unpixeldungeon.Assets;
 import com.felayga.unpixeldungeon.actors.Actor;
 import com.watabou.utils.Random;
+
+import java.util.Arrays;
 
 public class DeadEndLevel extends Level {
 

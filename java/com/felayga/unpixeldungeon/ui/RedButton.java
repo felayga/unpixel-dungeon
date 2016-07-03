@@ -24,14 +24,14 @@
  */
 package com.felayga.unpixeldungeon.ui;
 
+import com.felayga.unpixeldungeon.Assets;
+import com.felayga.unpixeldungeon.Chrome;
+import com.felayga.unpixeldungeon.scenes.PixelScene;
 import com.watabou.noosa.BitmapText;
 import com.watabou.noosa.Image;
 import com.watabou.noosa.NinePatch;
 import com.watabou.noosa.audio.Sample;
 import com.watabou.noosa.ui.Button;
-import com.felayga.unpixeldungeon.Assets;
-import com.felayga.unpixeldungeon.Chrome;
-import com.felayga.unpixeldungeon.scenes.PixelScene;
 
 public class RedButton extends Button {
 	

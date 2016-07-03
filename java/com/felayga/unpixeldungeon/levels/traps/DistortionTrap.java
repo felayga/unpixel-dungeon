@@ -25,8 +25,6 @@
 package com.felayga.unpixeldungeon.levels.traps;
 
 import com.felayga.unpixeldungeon.Dungeon;
-import com.felayga.unpixeldungeon.items.Item;
-import com.felayga.unpixeldungeon.items.keys.OldKey;
 import com.felayga.unpixeldungeon.scenes.InterlevelScene;
 import com.felayga.unpixeldungeon.sprites.TrapSprite;
 import com.watabou.noosa.Game;

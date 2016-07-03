@@ -24,8 +24,8 @@
  */
 package com.felayga.unpixeldungeon.sprites.mobs.humanoid.orc;
 
-import com.felayga.unpixeldungeon.sprites.mobs.humanoid.HumanoidSprite;
 import com.felayga.unpixeldungeon.Assets;
+import com.felayga.unpixeldungeon.sprites.mobs.humanoid.HumanoidSprite;
 
 public class OrcSprite extends HumanoidSprite {
     private static int FRAMES_PER_ROW = 18;

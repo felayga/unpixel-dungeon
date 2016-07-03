@@ -24,9 +24,9 @@
  */
 package com.felayga.unpixeldungeon.effects;
 
-import com.watabou.noosa.particles.Emitter;
 import com.felayga.unpixeldungeon.DungeonTilemap;
 import com.felayga.unpixeldungeon.scenes.GameScene;
+import com.watabou.noosa.particles.Emitter;
 import com.watabou.utils.PointF;
 
 public class CellEmitter {

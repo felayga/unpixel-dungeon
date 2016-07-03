@@ -24,15 +24,15 @@
  */
 package com.felayga.unpixeldungeon.windows;
 
+import com.felayga.unpixeldungeon.Chrome;
+import com.felayga.unpixeldungeon.Dungeon;
 import com.felayga.unpixeldungeon.ShatteredPixelDungeon;
+import com.felayga.unpixeldungeon.scenes.PixelScene;
+import com.felayga.unpixeldungeon.ui.Window;
 import com.watabou.input.Touchscreen.Touch;
 import com.watabou.noosa.BitmapTextMultiline;
 import com.watabou.noosa.Game;
 import com.watabou.noosa.TouchArea;
-import com.felayga.unpixeldungeon.Chrome;
-import com.felayga.unpixeldungeon.Dungeon;
-import com.felayga.unpixeldungeon.scenes.PixelScene;
-import com.felayga.unpixeldungeon.ui.Window;
 import com.watabou.utils.SparseArray;
 
 public class WndStory extends Window {

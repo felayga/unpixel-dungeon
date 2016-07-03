@@ -26,7 +26,6 @@ package com.felayga.unpixeldungeon.sprites.mobs.unused;
 
 import com.felayga.unpixeldungeon.sprites.MobSprite;
 import com.watabou.noosa.TextureFilm;
-import com.felayga.unpixeldungeon.Assets;
 
 public class GnollSprite extends MobSprite {
 
