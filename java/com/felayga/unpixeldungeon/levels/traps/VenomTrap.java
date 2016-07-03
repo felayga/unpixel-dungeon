@@ -41,9 +41,9 @@ public class VenomTrap extends Trap {
 	@Override
 	public void activate() {
 
-		VenomGas venomGas = Blob.seed(pos, 80 + 5 * Dungeon.depth, VenomGas.class);
+		VenomGas venomGas = Blob.seed(pos, 80 + 5 * Dungeon.depthAdjusted, VenomGas.class);
 
-		venomGas.setStrength(1+Dungeon.depth/4);
+		venomGas.setStrength(1+Dungeon.depthAdjusted/4);
 
 		GameScene.add(venomGas);
 

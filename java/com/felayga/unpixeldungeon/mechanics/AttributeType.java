@@ -28,8 +28,14 @@ package com.felayga.unpixeldungeon.mechanics;
  * Created by hello on 12/23/15.
  */
 public enum AttributeType {
-    NONE,
-    STRCON,
-    DEXCHA,
-    INTWIS
+    NONE    (-1),
+    STRCON  (0),
+    DEXCHA  (1),
+    INTWIS  (2);
+
+    public final int value;
+
+    AttributeType(int value) {
+        this.value = value;
+    }
 }

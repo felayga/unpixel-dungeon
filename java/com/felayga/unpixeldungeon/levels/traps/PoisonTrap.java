@@ -47,7 +47,8 @@ public class PoisonTrap extends Trap{
 		Char ch = Actor.findChar( pos );
 
 		if (ch != null) {
-			Buff.affect( ch, Poison.class ).set( Poison.durationFactor( ch ) * (4 + Dungeon.depth / 2) );
+            //todo: poison damage rebalancing after buff update
+            Poison.affect(ch, 4 + Dungeon.depthAdjusted / 2);
 		}
 
 		CellEmitter.center( pos ).burst( PoisonParticle.SPLASH, 3 );

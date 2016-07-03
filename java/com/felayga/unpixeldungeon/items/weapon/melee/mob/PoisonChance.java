@@ -31,32 +31,55 @@ import com.felayga.unpixeldungeon.actors.buffs.negative.Poison;
 //import com.felayga.unpixeldungeon.actors.mobs.Spinner;
 //import com.felayga.unpixeldungeon.actors.mobs.Thief;
 //import com.felayga.unpixeldungeon.items.Honeypot;
+import com.felayga.unpixeldungeon.actors.hero.Hero;
+import com.felayga.unpixeldungeon.mechanics.AttributeType;
+import com.felayga.unpixeldungeon.mechanics.MagicType;
 import com.watabou.utils.Random;
 
 /**
  * Created by HELLO on 3/9/2016.
  */
 public class PoisonChance extends MeleeMobAttack {
+    private int poisonMin;
+    private int poisonMax;
 
-    public PoisonChance(long delay, int damageMin, int damageMax) {
+    public PoisonChance(long delay, int damageMin, int damageMax, int poisonMin, int poisonMax) {
         super(delay, damageMin, damageMax);
+
+        this.poisonMin = poisonMin;
+        this.poisonMax = poisonMax;
     }
 
     @Override
-    public int proc(Char attacker, boolean thrown, Char target, int damage)
-    {
+    public int proc(Char attacker, boolean thrown, Char target, int damage) {
         damage = super.proc(attacker, thrown, target, damage);
 
-        if (Random.Int(2) == 0) {
-            Buff.affect(target, Poison.class).set(Random.Int(7, 9) * Poison.durationFactor(target));
+        if (Random.Int(8) == 0) {
+            Poison.affect(target, Random.IntRange(poisonMin, poisonMax));
 
-            /*
-            if (attacker instanceof Spinner)
-            {
-                Spinner spinner = (Spinner)attacker;
-                spinner.flee();
+            if ((target.immunityMagical & MagicType.Poison.value) == 0) {
+                if (Random.Int(8) == 0) {
+                    if (target instanceof Hero) {
+                        Hero hero = (Hero) target;
+
+                        if (Random.Int(3) == 0) {
+                            hero.useAttribute(AttributeType.DEXCHA, -0.5f);
+                        } else {
+                            hero.useAttribute(AttributeType.STRCON, -0.5f);
+                        }
+                    } else {
+                        if (Random.Int(3) == 0) {
+                            target.damageAttribute(AttributeType.DEXCHA, 1);
+                        } else {
+                            target.damageAttribute(AttributeType.STRCON, 1);
+                        }
+                    }
+
+                    if (Random.Int(4) == 0) {
+                        Poison.affect(target, target.HT);
+                    }
+                }
             }
-            */
         }
 
         return damage;

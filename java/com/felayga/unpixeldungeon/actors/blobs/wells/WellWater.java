@@ -22,11 +22,12 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>
  *
  */
-package com.felayga.unpixeldungeon.actors.blobs;
+package com.felayga.unpixeldungeon.actors.blobs.wells;
 
 import com.felayga.unpixeldungeon.Dungeon;
 import com.felayga.unpixeldungeon.Journal;
 import com.felayga.unpixeldungeon.Journal.Feature;
+import com.felayga.unpixeldungeon.actors.blobs.Blob;
 import com.felayga.unpixeldungeon.actors.hero.Hero;
 import com.felayga.unpixeldungeon.items.Heap;
 import com.felayga.unpixeldungeon.items.Item;
@@ -68,28 +69,20 @@ public class WellWater extends Blob {
 	}
 	
 	protected boolean affect() {
-
 		Heap heap;
 		
 		if (pos == Dungeon.hero.pos && affectHero( Dungeon.hero )) {
-			
 			volume = off[pos] = cur[pos] = 0;
 			return true;
-			
 		} else if ((heap = Dungeon.level.heaps.get( pos )) != null) {
-			
 			Item oldItem = heap.peek();
 			Item newItem = affectItem( oldItem );
 			
 			if (newItem != null) {
-				
 				if (newItem == oldItem) {
-
 				} else if (oldItem.quantity() > 1) {
-
 					oldItem.quantity( oldItem.quantity() - 1 );
 					heap.collect( newItem );
-					
 				} else {
 					heap.replace( oldItem, newItem );
 				}
@@ -98,9 +91,7 @@ public class WellWater extends Blob {
 				volume = off[pos] = cur[pos] = 0;
 				
 				return true;
-				
 			} else {
-				
 				int newPlace;
 				do {
 					newPlace = pos + Level.NEIGHBOURS8[Random.Int( 8 )];
@@ -108,13 +99,9 @@ public class WellWater extends Blob {
 				Dungeon.level.drop( heap.pickUp(), newPlace ).sprite.drop( pos );
 				
 				return false;
-				
 			}
-			
 		} else {
-			
 			return false;
-			
 		}
 	}
 	
@@ -132,11 +119,14 @@ public class WellWater extends Blob {
 		pos = cell;
 		volume = cur[pos] = amount;
 	}
+
+
 	
 	public static void affectCell( int cell ) {
-		
 		Class<?>[] waters = {WaterOfHealth.class, WaterOfAwareness.class, WaterOfTransmutation.class};
-		
+
+        //new well effects in Hero
+
 		for (Class<?>waterClass : waters) {
 			WellWater water = (WellWater)Dungeon.level.blobs.get( waterClass );
 			if (water != null &&

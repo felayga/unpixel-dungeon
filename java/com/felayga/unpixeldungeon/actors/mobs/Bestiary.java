@@ -41,6 +41,7 @@ import com.felayga.unpixeldungeon.actors.mobs.lichen.BrownMold;
 import com.felayga.unpixeldungeon.actors.mobs.lichen.GreenMold;
 import com.felayga.unpixeldungeon.actors.mobs.lichen.Lichen;
 import com.felayga.unpixeldungeon.actors.mobs.lichen.RedMold;
+import com.felayga.unpixeldungeon.actors.mobs.lichen.Shrieker;
 import com.felayga.unpixeldungeon.actors.mobs.lichen.YellowMold;
 import com.felayga.unpixeldungeon.actors.mobs.newt.Gecko;
 import com.felayga.unpixeldungeon.actors.mobs.newt.Newt;
@@ -56,6 +57,8 @@ import com.watabou.utils.Random;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Iterator;
 
 //import com.felayga.unpixeldungeon.actors.mobs.npcs.Ghost;
 
@@ -70,7 +73,7 @@ public class Bestiary {
         Mob mob;
 
         try {
-            Class<?> classType = spawner.classType;
+            Class<?> classType = params.type(spawner.classType);
 
             if (rares) {
                 /*
@@ -94,10 +97,18 @@ public class Bestiary {
             int pos = Constant.Position.NONE;
             ArrayList<Integer> positions = null;
 
-            while (pos == Constant.Position.NONE && retries > 0 && positions == null) {
+            int quantity = params.quantity(spawner.quantity);
+
+            while (retries > 0 && positions == null) {
                 pos = params.position();
-                if (pos != Constant.Position.NONE) {
-                    positions = placeMob(params.level(), spawner.quantity, pos);
+                if (pos >= 0) {
+                    final Level level = params.level();
+                    positions = level.randomPositionsNear(pos, quantity, new Level.RandomPositionValidator() {
+                        @Override
+                        public boolean isValidPosition(int pos) {
+                            return Level.passable[pos] && (!Level.avoid[pos]) && level.findMob(pos) == null;
+                        }
+                    });
                 }
                 retries--;
             }
@@ -107,10 +118,10 @@ public class Bestiary {
                 return;
             }
 
-            GLog.d("prepare to spawn classtype="+classType.toString()+" quantity="+spawner.quantity);
+            GLog.d("prepare to spawn classtype="+classType.toString()+" quantity="+quantity+" positions="+positions.size());
 
-            for (int n=0;n<spawner.quantity;n++) {
-                mob = (Mob) classType.newInstance();
+            for (int n=0;n<quantity;n++) {
+                mob = (Mob)classType.newInstance();
                 mob.pos = positions.get(n);
 
                 params.initialize(mob);
@@ -122,57 +133,13 @@ public class Bestiary {
         }
     }
 
-    private static ArrayList<Integer> placeMob(Level level, int quantity, int pos) {
-        ArrayList<Integer> positionOffsets = new ArrayList<>();
-
-        for (Integer ofs : Level.NEIGHBOURS9) {
-            positionOffsets.add(ofs);
-        }
-
-        ArrayList<Integer> retval = new ArrayList<>();
-        int heroPos = Dungeon.hero.pos;
-
-        int repeatoffset = -1;
-
-        while (true) {
-            if (repeatoffset >= 0) {
-                if (retval.size() <= 0) {
-                    return null;
-                }
-
-                pos = retval.get(pos);
-            }
-
-            Collections.shuffle(positionOffsets);
-
-            for (Integer ofs : positionOffsets) {
-                int cell = pos + ofs;
-
-                if (!Level.insideMap(cell)) {
-                    continue;
-                }
-
-                GLog.d("mobs="+(level.mobs != null ? "not null":"null"));
-
-                boolean passable = Level.passable[cell] && level.findMob(cell) == null;
-
-                if (passable && Level.distance(heroPos, cell) >= 4) {
-                    retval.add(cell);
-
-                    if (retval.size() >= quantity) {
-                        Collections.shuffle(retval);
-                        return retval;
-                    }
-                }
-            }
-
-            repeatoffset++;
-        }
-    }
-
     public static interface SpawnParams {
         Level level();
         int position();
+
+        Class<?> type(Class<?> type);
+        int quantity(int quantity);
+
         void initialize(Mob mob);
     }
 
@@ -212,9 +179,11 @@ public class Bestiary {
             piles.add(new Pile(chance, classtype, size));
         }
 
+        @SuppressWarnings({"unchecked"})
         public void done() {
             int size = piles.size();
             chances = new float[size];
+            //classes = new Class<? extends Mob>[size]; //mmmkay...
             classes = new Class<?>[size];
             sizes = new Size[size];
 
@@ -276,6 +245,7 @@ public class Bestiary {
         group.add(1.0f, GasSpore.class, MobSpawnGroup.Size.Individual);
         group.add(2.0f, Hobbit.class, MobSpawnGroup.Size.Individual);
         group.add(1.0f, KoboldLarge.class, MobSpawnGroup.Size.Individual);
+        group.add(1.0f, Shrieker.class, MobSpawnGroup.Size.Individual);
         spawnGroups.put(1, group);
     }
 

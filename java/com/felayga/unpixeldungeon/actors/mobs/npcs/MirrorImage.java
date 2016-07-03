@@ -30,6 +30,7 @@ import com.felayga.unpixeldungeon.actors.hero.Hero;
 import com.felayga.unpixeldungeon.actors.mobs.Mob;
 import com.felayga.unpixeldungeon.items.weapon.melee.mob.SuicideAttack;
 import com.felayga.unpixeldungeon.levels.Level;
+import com.felayga.unpixeldungeon.mechanics.AttributeType;
 import com.felayga.unpixeldungeon.mechanics.GameTime;
 import com.felayga.unpixeldungeon.sprites.CharSprite;
 import com.felayga.unpixeldungeon.sprites.MirrorSprite;
@@ -53,30 +54,12 @@ public class MirrorImage extends NPC {
 	}
 	
 	private static final String TIER			= "tier";
-	private static final String STRCON_store	= "STRCON";
-	private static final String DEXCHA_store	= "DEXCHA";
-	private static final String INTWIS_store	= "INTWIS";
-	
-	@Override
-	public void storeInBundle( Bundle bundle ) {
-		super.storeInBundle(bundle);
-		bundle.put( STRCON_store, STRCON );
-		bundle.put( DEXCHA_store, DEXCHA );
-		bundle.put( INTWIS_store, INTWIS );
-	}
-	
-	@Override
-	public void restoreFromBundle( Bundle bundle ) {
-		super.restoreFromBundle( bundle );
-		STRCON = bundle.getInt( STRCON_store );
-		DEXCHA = bundle.getInt( DEXCHA_store );
-		INTWIS = bundle.getInt( INTWIS_store );
-	}
+
 	
 	public void duplicate( Hero hero ) {
-		STRCON = hero.STRCON;
-		DEXCHA = hero.DEXCHA;
-		INTWIS = hero.INTWIS;
+        increaseAttribute(AttributeType.STRCON, hero.STRCON() - STRCON());
+        increaseAttribute(AttributeType.DEXCHA, hero.DEXCHA() - DEXCHA());
+        increaseAttribute(AttributeType.INTWIS, hero.INTWIS() - INTWIS());
 	}
 	
 	protected Char chooseEnemy() {

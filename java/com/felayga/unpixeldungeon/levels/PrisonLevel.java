@@ -39,7 +39,10 @@ import com.watabou.utils.Random;
 
 public class PrisonLevel extends RegularLevel {
 
+    public PrisonLevel()
 	{
+        super(0);
+
 		color1 = 0x6a723d;
 		color2 = 0x88924c;
 	}

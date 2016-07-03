@@ -98,7 +98,7 @@ public class WndJournal extends Window {
 			depth.text( Integer.toString( d ) );
 			depth.measure();
 			
-			if (d == Dungeon.depth) {
+			if (d == Dungeon._depth) {
 				feature.hardlight( TITLE_COLOR );
 				depth.hardlight( TITLE_COLOR );
 			}

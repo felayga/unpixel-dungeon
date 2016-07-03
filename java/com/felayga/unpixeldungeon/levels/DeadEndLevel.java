@@ -33,8 +33,11 @@ import com.watabou.utils.Random;
 public class DeadEndLevel extends Level {
 
 	private static final int SIZE = 5;
-	
+
+    public DeadEndLevel()
 	{
+        super(FLAG_UNDIGGABLEBOULDERS | FLAG_UNDIGGABLEFLOOR | FLAG_UNDIGGABLEWALLS);
+
 		color1 = 0x534f3e;
 		color2 = 0xb9d661;
 	}
@@ -48,10 +51,15 @@ public class DeadEndLevel extends Level {
 	public String waterTex() {
 		return Assets.WATER_HALLS;
 	}
-	
+
+    @Override
+    public String waterUnderTex() {
+        //todo: not use this texture
+        return Assets.WATER_UNDERSEWERS;
+    }
+
 	@Override
 	protected boolean build() {
-
 		Arrays.fill( map, Terrain.WALL );
 		
 		for (int i=2; i < SIZE; i++) {
@@ -69,7 +77,7 @@ public class DeadEndLevel extends Level {
 		}
 		
 		entrance = SIZE * WIDTH + SIZE / 2 + 1;
-		map[entrance] = Terrain.ENTRANCE;
+		map[entrance] = Terrain.STAIRS_UP;
 		
 		map[(SIZE / 2 + 1) * (WIDTH + 1)] = Terrain.SIGN;
 		

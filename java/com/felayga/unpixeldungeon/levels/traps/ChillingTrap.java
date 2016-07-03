@@ -60,8 +60,8 @@ public class ChillingTrap extends Trap{
 
 		Char ch = Actor.findChar( pos );
 		if (ch != null){
-			Chill.prolong(ch, Chill.class, GameTime.TICK * (5 + Random.Long(Dungeon.depth)));
-			ch.damage(Random.NormalIntRange(1 , Dungeon.depth), MagicType.Cold, null);
+			Chill.prolong(ch, Chill.class, GameTime.TICK * (5 + Random.Long(Dungeon.depthAdjusted)));
+			ch.damage(Random.NormalIntRange(1 , Dungeon.depthAdjusted), MagicType.Cold, null);
 			if (!ch.isAlive() && ch == Dungeon.hero){
 				Dungeon.fail( Utils.format(ResultDescriptions.TRAP, name) );
 				GLog.n("You succumb to the chilling trap...");

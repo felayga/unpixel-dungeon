@@ -41,7 +41,7 @@ public class SkeletonKey extends UnlockingTool {
     }
 
     public boolean unlockDoor(Char user) {
-        int testfactor = 176 + user.DEXCHA * 3;
+        int testfactor = 176 + user.DEXCHA() * 3;
 
         if (bucStatus == BUCStatus.Cursed) {
             testfactor /= 2;
@@ -51,7 +51,7 @@ public class SkeletonKey extends UnlockingTool {
     }
 
     public boolean unlockChest(Char user) {
-        int testfactor = 192 + user.DEXCHA * 3;
+        int testfactor = 192 + user.DEXCHA() * 3;
 
         if (bucStatus == BUCStatus.Cursed) {
             testfactor /= 2;

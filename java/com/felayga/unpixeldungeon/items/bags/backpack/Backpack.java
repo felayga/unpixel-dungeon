@@ -34,7 +34,7 @@ import com.felayga.unpixeldungeon.ui.Icons;
  */
 public class Backpack extends Bag {
     public Backpack(Char owner) {
-        super(owner);
+        super(owner, false);
 
         tabIcon = Icons.BACKPACK;
 

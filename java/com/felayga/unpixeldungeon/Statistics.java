@@ -24,6 +24,7 @@
  */
 package com.felayga.unpixeldungeon;
 
+import com.felayga.unpixeldungeon.levels.branches.DungeonBranch;
 import com.watabou.utils.Bundle;
 
 public class Statistics {
@@ -47,9 +48,8 @@ public class Statistics {
 	public static void reset() {
 		
 		goldCollected	= 0;
-		floorsVisited = new boolean[Dungeon.HIGHESTLEVEL];
-		for (int n=0;n<Dungeon.HIGHESTLEVEL;n++)
-		{
+		floorsVisited = new boolean[DungeonBranch.MAXLEVEL];
+		for (int n=0;n<DungeonBranch.MAXLEVEL;n++) {
 			floorsVisited[n] = false;
 		}
 

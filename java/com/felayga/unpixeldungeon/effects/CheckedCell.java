@@ -33,7 +33,7 @@ public class CheckedCell extends Image {
 	
 	private float alpha;
 	
-	public CheckedCell() {
+	public CheckedCell(int pos) {
 		super( TextureCache.createSolid( 0xFF55AAFF ) );
 
 		origin.set( 0.5f );

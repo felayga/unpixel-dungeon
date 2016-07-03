@@ -26,6 +26,7 @@ package com.felayga.unpixeldungeon.ui;
 
 import com.felayga.unpixeldungeon.levels.Level;
 import com.felayga.unpixeldungeon.mechanics.Ballistica;
+import com.felayga.unpixeldungeon.utils.GLog;
 import com.watabou.noosa.Image;
 import com.watabou.noosa.ui.Button;
 import com.felayga.unpixeldungeon.Dungeon;
@@ -54,7 +55,7 @@ public class QuickSlotButton extends Button implements WndBackpack.Listener {
 	public QuickSlotButton( int slotNum ) {
 		super();
 		this.slotNum = slotNum;
-		item( select( slotNum ) );
+		item(select(slotNum));
 		
 		instance[slotNum] = this;
 	}
@@ -113,7 +114,7 @@ public class QuickSlotButton extends Button implements WndBackpack.Listener {
 		
 		crossB = Icons.TARGET.get();
 		crossB.visible = false;
-		add( crossB );
+		add(crossB);
 		
 		crossM = new Image();
 		crossM.copy( crossB );
@@ -153,6 +154,20 @@ public class QuickSlotButton extends Button implements WndBackpack.Listener {
 	}
 	
 	public void item( Item item ) {
+        String itemname;
+        int itemquantity;
+        if (item != null) {
+            itemname = item.getDisplayName();
+            itemquantity = item.quantity();
+        }
+        else {
+            itemname = "<null>";
+            itemquantity = -1;
+        }
+        GLog.d("QuickSlotButton item("+itemname+") quantity="+itemquantity);
+        if (itemname.equals("rock") && itemquantity == 1) {
+            GLog.d(""+1/0);
+        }
 		slot.item( item );
 		enableSlot();
 	}
@@ -171,7 +186,6 @@ public class QuickSlotButton extends Button implements WndBackpack.Listener {
 	}
 	
 	private void useTargeting() {
-
 		if (lastTarget != null &&
 				Actor.chars().contains( lastTarget ) &&
 				lastTarget.isAlive() &&

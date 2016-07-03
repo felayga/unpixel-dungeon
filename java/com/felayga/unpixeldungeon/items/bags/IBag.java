@@ -25,6 +25,7 @@
 
 package com.felayga.unpixeldungeon.items.bags;
 
+import com.felayga.unpixeldungeon.actors.Char;
 import com.felayga.unpixeldungeon.items.Item;
 import com.felayga.unpixeldungeon.ui.Icons;
 
@@ -39,13 +40,14 @@ public interface IBag {
     String action();
     String getDisplayName();
     Icons tabIcon();
+    Char owner();
 
     int size();
     int pos();
 
     void onWeightChanged(int change);
 
-    boolean tryMergeStack(Item test);
+    boolean tryMergeExistingStack(Item test);
 
     boolean collect(Item collectItem);
     Item remove(Item item);

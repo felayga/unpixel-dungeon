@@ -66,8 +66,7 @@ public class ItemSpriteSheet {
 	public static final int TOMB			= ROW_HEAPS + 7;
 	public static final int GRAVE			= ROW_HEAPS + 8;
 	public static final int CHEST			= ROW_HEAPS + 9;
-	public static final int LOCKED_CHEST	= ROW_HEAPS + 10;
-	public static final int CRYSTAL_CHEST	= ROW_HEAPS + 11;
+	public static final int CHEST_LOCKED	= ROW_HEAPS + 10;
 
 	// Placeholders
 	public static final int WEAPON	= ROW_PLACEHOLDERS + 0;

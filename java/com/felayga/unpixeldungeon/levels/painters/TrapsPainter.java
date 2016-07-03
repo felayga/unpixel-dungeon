@@ -28,11 +28,13 @@ import com.felayga.unpixeldungeon.Dungeon;
 import com.felayga.unpixeldungeon.items.Generator;
 import com.felayga.unpixeldungeon.items.Heap;
 import com.felayga.unpixeldungeon.items.Item;
+import com.felayga.unpixeldungeon.items.bags.TreasureChest;
 import com.felayga.unpixeldungeon.items.potions.PotionOfLevitation;
 import com.felayga.unpixeldungeon.levels.Level;
 import com.felayga.unpixeldungeon.levels.Room;
 import com.felayga.unpixeldungeon.levels.Terrain;
 import com.felayga.unpixeldungeon.levels.traps.*;
+import com.felayga.unpixeldungeon.mechanics.Roll;
 import com.watabou.utils.Random;
 
 public class TrapsPainter extends Painter {
@@ -47,10 +49,10 @@ public class TrapsPainter extends Painter {
 				trapClass = SpearTrap.class;
 				break;
 			case 1:
-				trapClass = !Dungeon.bossLevel(Dungeon.depth + 1)? null : SummoningTrap.class;
+				trapClass = SummoningTrap.class;
 				break;
 			case 2: case 3: case 4:
-				trapClass = Random.oneOf(levelTraps[Dungeon.depth/5]);
+				trapClass = Random.oneOf(levelTraps[Dungeon.depthAdjusted/5]);
 				break;
 		}
 
@@ -100,7 +102,17 @@ public class TrapsPainter extends Painter {
 			if (lastRow == Terrain.CHASM) {
 				set( level, pos, Terrain.EMPTY );
 			}
-			level.drop( prize( level ), pos ).type = Heap.Type.CHEST;
+
+            float dropBonusChance = Roll.DropBonusChance(Dungeon.hero) / 2.0f;
+
+            TreasureChest chest = new TreasureChest();
+            level.drop(chest, pos);
+
+            chest.collect(prize(level));
+
+            while (Random.Float() < dropBonusChance) {
+                chest.collect(Generator.random());
+            }
 		} else {
 			set( level, pos, Terrain.PEDESTAL );
 			level.drop( prize( level ), pos );

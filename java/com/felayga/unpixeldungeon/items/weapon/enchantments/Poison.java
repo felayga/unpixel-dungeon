@@ -45,10 +45,9 @@ public class Poison extends Weapon.Enchantment {
 		int level = Math.max( 0, weapon.level );
 		
 		if (Random.Int( level + 3 ) >= 2) {
-			
-			Buff.affect( defender, com.felayga.unpixeldungeon.actors.buffs.negative.Poison.class ).
-				set( com.felayga.unpixeldungeon.actors.buffs.negative.Poison.durationFactor(defender) * (level + 1) );
-			
+            //todo: poison rebalance with buff update
+            com.felayga.unpixeldungeon.actors.buffs.negative.Poison.affect(defender, weapon.damageRoll());
+
 			return true;
 		} else {
 			return false;

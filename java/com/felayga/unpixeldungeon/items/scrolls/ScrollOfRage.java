@@ -45,28 +45,26 @@ public class ScrollOfRage extends Scroll {
 		name = "Scroll of Rage";
 		initials = "Ra";
 	}
+
+    public static int enrage(int pos, int range) {
+        int retval = 0;
+
+        for (Mob mob : Dungeon.level.mobs.toArray( new Mob[Dungeon.level.mobs.size()] )) {
+            if (Level.distance(mob.pos, pos) <= range) {
+                mob.beckon(pos);
+                if (Level.fieldOfView[mob.pos]) {
+                    Buff.prolong(mob, Amok.class, GameTime.TICK * 5);
+                }
+            }
+            retval++;
+        }
+
+        return retval;
+    }
 	
 	@Override
 	protected void doRead() {
-
-		for (Mob mob : Dungeon.level.mobs.toArray( new Mob[Dungeon.level.mobs.size()] )) {
-			mob.beckon( curUser.pos );
-			if (Level.fieldOfView[mob.pos]) {
-				Buff.prolong(mob, Amok.class, GameTime.TICK * 5);
-			}
-		}
-
-		for (Heap heap : Dungeon.level.heaps.values()) {
-			if (heap.type == Heap.Type.MIMIC) {
-				/*
-				Mimic m = Mimic.spawnAt( heap.pos, heap.items );
-				if (m != null) {
-					m.beckon( curUser.pos );
-					heap.destroy();
-				}
-				*/
-			}
-		}
+        enrage(curUser.pos, Math.max(Dungeon.level.WIDTH, Dungeon.level.HEIGHT));
 
 		GLog.w( "The scroll emits an enraging roar that echoes throughout the dungeon!" );
 		setKnown();

@@ -33,7 +33,7 @@ public class WandHolster extends Bag {
 
 	public WandHolster()
 	{
-		super(null);
+		super(null, false);
 
 		name = "wand holster";
 		image = ItemSpriteSheet.HOLSTER;

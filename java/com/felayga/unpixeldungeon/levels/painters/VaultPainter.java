@@ -28,11 +28,13 @@ import com.felayga.unpixeldungeon.Dungeon;
 import com.felayga.unpixeldungeon.items.Generator;
 import com.felayga.unpixeldungeon.items.Item;
 import com.felayga.unpixeldungeon.items.Heap.Type;
+import com.felayga.unpixeldungeon.items.bags.TreasureChest;
 import com.felayga.unpixeldungeon.items.keys.GoldenOldKey;
 import com.felayga.unpixeldungeon.items.keys.IronOldKey;
 import com.felayga.unpixeldungeon.levels.Level;
 import com.felayga.unpixeldungeon.levels.Room;
 import com.felayga.unpixeldungeon.levels.Terrain;
+import com.felayga.unpixeldungeon.mechanics.Roll;
 import com.watabou.utils.Random;
 
 public class VaultPainter extends Painter {
@@ -49,8 +51,7 @@ public class VaultPainter extends Painter {
 		switch (Random.Int( 3 )) {
 		
 		case 0:
-			level.drop( prize( level ), c ).type = Type.LOCKED_CHEST;
-			level.addItemToSpawn( new GoldenOldKey( Dungeon.depth ) );
+            spawnLockedChest(level, c, prize(level));
 			break;
 			
 		case 1:
@@ -59,9 +60,8 @@ public class VaultPainter extends Painter {
 				i1 = prize( level );
 				i2 = prize( level );
 			} while (i1.getClass() == i2.getClass());
-			level.drop( i1, c ).type = Type.CRYSTAL_CHEST;
-			level.drop( i2, c + Level.NEIGHBOURS8[Random.Int( 8 )]).type = Type.CRYSTAL_CHEST;
-			level.addItemToSpawn( new GoldenOldKey( Dungeon.depth ) );
+            spawnLockedChest(level, c, i1);
+            spawnLockedChest(level, c + Level.NEIGHBOURS8[Random.Int(8)], i2);
 			break;
 			
 		case 2:
@@ -71,8 +71,21 @@ public class VaultPainter extends Painter {
 		}
 		
 		room.entrance().set( Room.Door.Type.LOCKED );
-		level.addItemToSpawn( new IronOldKey( Dungeon.depth ) );
 	}
+
+    private static void spawnLockedChest(Level level, int pos, Item prize) {
+        float dropBonusChance = Roll.DropBonusChance(Dungeon.hero) / 2.0f;
+
+        TreasureChest chest = new TreasureChest();
+        chest.locked(true);
+        level.drop(chest, pos);
+
+        chest.collect(prize);
+
+        while (Random.Float() < dropBonusChance) {
+            chest.collect(Generator.random());
+        }
+    }
 	
 	private static Item prize( Level level ) {
 		return Generator.random( Random.oneOf(

@@ -46,7 +46,7 @@ public class StandardPainter extends Painter {
 			door.set(Room.Door.Type.REGULAR);
 		}
 
-		if (!Dungeon.bossLevel() && Random.Int(5) == 0) {
+		if (Random.Int(5) == 0) {
 			switch (Random.Int(6)) {
 				case 0:
 					if (level.feeling != Level.Feeling.GRASS) {
@@ -59,11 +59,8 @@ public class StandardPainter extends Painter {
 						// Burned room
 					}
 				case 1:
-					if (Dungeon.depth > 1) {
-						paintBurned(level, room);
-						return;
-					}
-					break;
+                    paintBurned(level, room);
+                    return;
 				case 2:
 					if (Math.max(room.width(), room.height()) >= 4) {
 						paintStriped(level, room);
@@ -87,7 +84,7 @@ public class StandardPainter extends Painter {
 						// Fissure
 					}
 				case 5:
-					if (!Dungeon.bossLevel() && !Dungeon.bossLevel(Dungeon.depth + 1) &&
+					if ((level.flags & Level.FLAG_UNDIGGABLEFLOOR) == 0 &&
 							Math.min(room.width(), room.height()) >= 5) {
 						paintFissure(level, room);
 						return;
@@ -194,7 +191,7 @@ public class StandardPainter extends Painter {
 	private static void paintBridge( Level level, Room room ) {
 		
 		fill( level, room.left + 1, room.top + 1, room.width() - 1, room.height() - 1 ,
-			!Dungeon.bossLevel() && !Dungeon.bossLevel( Dungeon.depth + 1 ) && Random.Int( 3 ) == 0 ?
+            (level.flags & Level.FLAG_UNDIGGABLEFLOOR) == 0 && Random.Int( 3 ) == 0 ?
 				Terrain.CHASM :
 				Terrain.WATER );
 		

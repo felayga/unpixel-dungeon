@@ -84,56 +84,54 @@ public class MissileWeapon extends Weapon {
 		return actions;
 	}
 
-    public RangedWeapon launcher;
-
-    @Override
-    public int damageRoll() {
-        int retval = super.damageRoll();
-
-        if (launcher != null) {
-            retval += launcher.damageRoll();
-        }
-
-        return retval;
-    }
-
 	@Override
 	protected void onThrow( int cell, Char thrower ) {
 		Char enemy = Actor.findChar(cell);
-		if (enemy == null || enemy == curUser) {
+		if (enemy == null || enemy == thrower) {
 			if (this instanceof Boomerang)
 				super.onThrow( cell, thrower );
 			else
 				miss( cell, thrower );
 		} else {
-			if (!curUser.shoot( enemy, this )) {
+			if (!thrower.shoot( enemy, this )) {
 				miss( cell, thrower );
 			} else if (!(this instanceof Boomerang)){
 				int bonus = 0;
 
-				for (Buff buff : curUser.buffs(RingOfSharpshooting.Aim.class))
-					bonus += ((RingOfSharpshooting.Aim)buff).level;
+				for (Buff buff : thrower.buffs(RingOfSharpshooting.Aim.class)) {
+                    bonus += ((RingOfSharpshooting.Aim) buff).level;
+                }
 
-				if (curUser.heroClass == HeroClass.HUNTRESS && enemy.buff(PinCushion.class) == null)
-					bonus += 3;
+                /*
+				if (thrower.heroClass == HeroClass.HUNTRESS && enemy.buff(PinCushion.class) == null) {
+                    bonus += 3;
+                }
+                */
 
-				if (Random.Float() > Math.pow(0.7, bonus))
-					Buff.affect(enemy, PinCushion.class).stick(this);
+				if (Random.Float() > Math.pow(0.7, bonus)) {
+                    Buff.affect(enemy, PinCushion.class).stick(this);
+                }
 			}
 		}
 	}
 	
 	protected void miss( int cell, Char thrower ) {
-		int bonus = 0;
+        //todo: determine if any of this is cared about
+        super.onThrow(cell, thrower);
+        /*
+        int bonus = 0;
 		for (Buff buff : curUser.buffs(RingOfSharpshooting.Aim.class)) {
 			bonus += ((RingOfSharpshooting.Aim)buff).level;
 		}
 
 		//degraded ring of sharpshooting will even make missed shots break.
-		if (Random.Float() < Math.pow(0.6, -bonus))
-			super.onThrow( cell, thrower );
+		if (Random.Float() < Math.pow(0.6, -bonus)) {
+            super.onThrow(cell, thrower);
+        }
+        */
 	}
-	
+
+    /*
 	@Override
 	public int proc( Char attacker, boolean thrown, Char defender, int damage ) {
 		damage = super.proc( attacker, thrown, defender, damage );
@@ -142,19 +140,20 @@ public class MissileWeapon extends Weapon {
 			Hero hero = (Hero) attacker;
 			if (stackable) {
 				quantity(quantity()-1);
-				/*
-				if (quantity == 1) {
-					GLog.d("MissileWeapon:doUnequip()");
-					doUnequip(hero, false, false);
-				} else {
-					GLog.d("MissileWeapon:detach()");
-					detach(null);
-				}*/
+
+				//if (quantity == 1) {
+				//	GLog.d("MissileWeapon:doUnequip()");
+				//	doUnequip(hero, false, false);
+				//} else {
+				//	GLog.d("MissileWeapon:detach()");
+				//	detach(null);
+				//}
 			}
 		}
 
 		return damage;
 	}
+    */
 
 	/*
 	@Override

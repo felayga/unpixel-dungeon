@@ -28,6 +28,8 @@ package com.felayga.unpixeldungeon.actors.mobs.dwarf;
 import com.felayga.unpixeldungeon.actors.buffs.hero.Encumbrance;
 import com.felayga.unpixeldungeon.actors.mobs.Mob;
 import com.felayga.unpixeldungeon.items.weapon.Weapon;
+import com.felayga.unpixeldungeon.items.weapon.ammunition.AmmunitionWeapon;
+import com.felayga.unpixeldungeon.items.weapon.ammunition.simple.Rock;
 import com.felayga.unpixeldungeon.items.weapon.melee.simple.Dagger;
 import com.felayga.unpixeldungeon.items.weapon.melee.simple.DaggerRuned;
 import com.felayga.unpixeldungeon.items.weapon.ranged.simple.Sling;
@@ -60,6 +62,7 @@ public class Hobbit extends Mob {
         corpseEffects = CorpseEffect.None.value;
 
         Weapon weapon;
+        AmmunitionWeapon ammo = null;
         switch(Random.Int(3)) {
             case 1:
                 weapon = new Dagger();
@@ -69,11 +72,17 @@ public class Hobbit extends Mob {
                 break;
             default:
                 weapon = new Sling();
+                ammo = new Rock();
                 break;
         }
 
         weapon.random();
         belongings.collectEquip(weapon);
+
+        if (ammo != null) {
+            ammo.random();
+            belongings.collectEquip(ammo);
+        }
 
         if (Random.Int(10)==0) {
             //todo: elven mithril coat

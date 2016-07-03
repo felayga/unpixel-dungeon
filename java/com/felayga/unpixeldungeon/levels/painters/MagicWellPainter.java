@@ -24,11 +24,8 @@
  */
 package com.felayga.unpixeldungeon.levels.painters;
 
-import com.felayga.unpixeldungeon.Dungeon;
-import com.felayga.unpixeldungeon.actors.blobs.WaterOfAwareness;
-import com.felayga.unpixeldungeon.actors.blobs.WaterOfHealth;
-import com.felayga.unpixeldungeon.actors.blobs.WaterOfTransmutation;
-import com.felayga.unpixeldungeon.actors.blobs.WellWater;
+import com.felayga.unpixeldungeon.actors.blobs.wells.WaterFountain;
+import com.felayga.unpixeldungeon.actors.blobs.wells.WellWater;
 import com.felayga.unpixeldungeon.levels.Level;
 import com.felayga.unpixeldungeon.levels.Room;
 import com.felayga.unpixeldungeon.levels.Terrain;
@@ -37,27 +34,29 @@ import com.watabou.utils.Random;
 
 public class MagicWellPainter extends Painter {
 
+    /*
 	private static final Class<?>[] WATERS =
 		{WaterOfAwareness.class, WaterOfHealth.class, WaterOfTransmutation.class};
-	
-	public static void paint( Level level, Room room ) {
+	*/
 
-		fill( level, room, Terrain.WALL );
-		fill( level, room, 1, Terrain.EMPTY );
+	public static void paint( Level level, Room room ) {
+		fill(level, room, Terrain.WALL);
+		fill(level, room, 1, Terrain.EMPTY);
 		
 		Point c = room.center();
-		set( level, c.x, c.y, Terrain.WELL );
-		
+
+        if (Random.Int(7)==0) {
+            set(level, c.x, c.y, Terrain.WELL_MAGIC);
+        } else {
+            set(level, c.x, c.y, Terrain.WELL);
+        }
+
+        Class<? extends WellWater> waterClass = WaterFountain.class;
+        /*
 		@SuppressWarnings("unchecked")
-		Class<? extends WellWater> waterClass =
-			Dungeon.depth >= Dungeon.transmutation ?
-			WaterOfTransmutation.class :
-			(Class<? extends WellWater>)Random.element( WATERS );
-			
-		if (waterClass == WaterOfTransmutation.class) {
-			Dungeon.transmutation = Integer.MAX_VALUE;
-		}
-		
+		Class<? extends WellWater> waterClass = (Class<? extends WellWater>)Random.element( WATERS );
+		*/
+
 		WellWater water = (WellWater)level.blobs.get( waterClass );
 		if (water == null) {
 			try {

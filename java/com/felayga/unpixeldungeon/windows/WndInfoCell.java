@@ -25,6 +25,7 @@
 package com.felayga.unpixeldungeon.windows;
 
 import com.felayga.unpixeldungeon.ui.CustomTileVisual;
+import com.felayga.unpixeldungeon.utils.GLog;
 import com.watabou.noosa.BitmapTextMultiline;
 import com.watabou.noosa.Image;
 import com.felayga.unpixeldungeon.Dungeon;
@@ -76,7 +77,6 @@ public class WndInfoCell extends Window {
 			titlebar.label(vis.name);
 			desc += vis.desc();
 		} else {
-
 			if (tile == Terrain.WATER) {
 				Image water = new Image(Dungeon.level.waterTex());
 				water.frame(0, 0, DungeonTilemap.SIZE, DungeonTilemap.SIZE);
@@ -86,6 +86,8 @@ public class WndInfoCell extends Window {
 			}
 			titlebar.label(Dungeon.level.tileName(tile));
 			desc += Dungeon.level.tileDesc(tile);
+
+            GLog.d("tilepos=("+x+","+y+") tile="+tile);
 
 		}
 		titlebar.setRect(0, 0, WIDTH, 0);

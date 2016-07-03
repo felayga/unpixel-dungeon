@@ -349,25 +349,14 @@ public class Generator {
 	}
 
 	public static Weapon randomWeapon() {
-		//int curStr = Hero.STARTING_STR + Dungeon.limitedDrops.strengthPotions.count;
-		int curStr = 10 + Dungeon.limitedDrops.strengthPotions.count;
-
-		return randomWeapon(curStr);
-	}
-
-	public static Weapon randomWeapon(int targetStr) {
-
 		try {
 			Category cat = Category.WEAPON;
 
-			Weapon w1 = (Weapon) cat.classes[Random.chances(cat.probs)].newInstance();
-			Weapon w2 = (Weapon) cat.classes[Random.chances(cat.probs)].newInstance();
+            Weapon weapon = (Weapon)cat.classes[Random.chances(cat.probs)].newInstance();
 
-			w1.random();
-			w2.random();
+			weapon.random();
 
-			return Math.abs(targetStr - 10) < Math.abs(targetStr - 10) ? w1 : w2;
-			//return Math.abs( targetStr - w1.STR ) < Math.abs( targetStr - w2.STR ) ? w1 : w2;
+            return weapon;
 		} catch (Exception e) {
 			return null;
 		}

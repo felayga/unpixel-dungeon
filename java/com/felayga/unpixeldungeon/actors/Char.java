@@ -36,6 +36,7 @@ import com.felayga.unpixeldungeon.actors.buffs.negative.Frost;
 import com.felayga.unpixeldungeon.actors.buffs.negative.Held;
 import com.felayga.unpixeldungeon.actors.buffs.negative.Paralysis;
 import com.felayga.unpixeldungeon.actors.buffs.negative.Vertigo;
+import com.felayga.unpixeldungeon.actors.buffs.positive.Invisibility;
 import com.felayga.unpixeldungeon.actors.buffs.positive.MagicalSleep;
 import com.felayga.unpixeldungeon.actors.hero.Belongings;
 import com.felayga.unpixeldungeon.actors.mobs.Bestiary;
@@ -44,6 +45,9 @@ import com.felayga.unpixeldungeon.items.KindOfWeapon;
 import com.felayga.unpixeldungeon.items.armor.Armor;
 import com.felayga.unpixeldungeon.items.armor.glyphs.Bounce;
 import com.felayga.unpixeldungeon.items.food.Corpse;
+import com.felayga.unpixeldungeon.items.weapon.ammunition.AmmunitionWeapon;
+import com.felayga.unpixeldungeon.items.weapon.missiles.MissileWeapon;
+import com.felayga.unpixeldungeon.items.weapon.ranged.RangedWeapon;
 import com.felayga.unpixeldungeon.levels.Level;
 import com.felayga.unpixeldungeon.mechanics.AttributeType;
 import com.felayga.unpixeldungeon.mechanics.CorpseEffect;
@@ -86,9 +90,89 @@ public abstract class Char extends Actor {
     public int HT;
     public int HP;
 
-    public int STRCON;
-    public int DEXCHA;
-    public int INTWIS;
+    private int attribute[];
+
+    public int STRCON() {
+        return attribute[AttributeType.STRCON.value];
+    }
+
+    public int DEXCHA() {
+        return attribute[AttributeType.DEXCHA.value];
+    }
+
+    public int INTWIS() {
+        return attribute[AttributeType.INTWIS.value];
+    }
+
+    private int attributeDamage[];
+
+    public int STRCON_damage() {
+        return attributeDamage[AttributeType.STRCON.value];
+    }
+
+    public int DEXCHA_damage() {
+        return attributeDamage[AttributeType.DEXCHA.value];
+    }
+
+    public int INTWIS_damage() {
+        return attributeDamage[AttributeType.INTWIS.value];
+    }
+
+
+    public void increaseAttribute(AttributeType type, int amount) {
+        int attribute = this.attribute[type.value];
+        int damage = this.attributeDamage[type.value];
+
+        attribute += amount;
+
+        if (attribute + damage > 25) {
+            int overflow = attribute + damage - 25;
+
+            if (damage >= overflow) {
+                damage -= overflow;
+                overflow = 0;
+            } else if (damage < overflow) {
+                overflow -= damage;
+                damage = 0;
+            }
+
+            attribute -= overflow;
+        }
+
+        if (attribute < 1) {
+            attribute = 1;
+        }
+
+        this.attribute[type.value] = attribute;
+        this.attributeDamage[type.value] = damage;
+    }
+
+    public void damageAttribute(AttributeType type, int amount) {
+        int attribute = this.attribute[type.value];
+        int damage = this.attributeDamage[type.value];
+
+        if (amount > attribute - 1) {
+            amount = attribute - 1;
+        }
+
+        attribute -= amount;
+        damage += amount;
+
+        this.attribute[type.value] = attribute;
+        this.attributeDamage[type.value] = damage;
+    }
+
+    public void undamageAttributes() {
+        undamageAttribute(AttributeType.STRCON);
+        undamageAttribute(AttributeType.DEXCHA);
+        undamageAttribute(AttributeType.INTWIS);
+    }
+
+    public void undamageAttribute(AttributeType type) {
+        attribute[type.value] += attributeDamage[type.value];
+        attributeDamage[type.value] = 0;
+    }
+
 
     public int weight;
     public int nutrition;
@@ -96,21 +180,7 @@ public abstract class Char extends Actor {
     public long corpseResistances;
 
     public int getAttributeModifier(AttributeType type) {
-        int retval = 0;
-
-        switch (type) {
-            case STRCON:
-                retval = STRCON;
-                break;
-            case DEXCHA:
-                retval = DEXCHA;
-                break;
-            case INTWIS:
-                retval = INTWIS;
-                break;
-        }
-
-        return (retval - 8) / 2;
+        return (attribute[type.value] - 8) / 2;
     }
 
     public Belongings belongings;
@@ -214,9 +284,8 @@ public abstract class Char extends Actor {
         nutrition = 0;
         corpseEffects = CorpseEffect.None.value;
 
-        STRCON = 8;
-        DEXCHA = 8;
-        INTWIS = 8;
+        attribute = new int[]{10, 10, 10};
+        attributeDamage = new int[]{0, 0, 0};
     }
 
     public boolean visibilityOverride(boolean state) {
@@ -231,6 +300,12 @@ public abstract class Char extends Actor {
     }
 
     private static final String POS = "pos";
+    private static final String ATTRIBUTE0 = "attribute0";
+    private static final String ATTRIBUTE1 = "attribute1";
+    private static final String ATTRIBUTE2 = "attribute2";
+    private static final String ATTRIBUTE0DAMAGE = "attribute0Damage";
+    private static final String ATTRIBUTE1DAMAGE = "attribute1Damage";
+    private static final String ATTRIBUTE2DAMAGE = "attribute2Damage";
     private static final String TAG_HP = "HP";
     private static final String TAG_HT = "HT";
     private static final String BUFFS = "buffs";
@@ -239,6 +314,14 @@ public abstract class Char extends Actor {
     @Override
     public void storeInBundle(Bundle bundle) {
         super.storeInBundle(bundle);
+
+        bundle.put(ATTRIBUTE0, attribute[0]);
+        bundle.put(ATTRIBUTE1, attribute[1]);
+        bundle.put(ATTRIBUTE2, attribute[2]);
+
+        bundle.put(ATTRIBUTE0DAMAGE, attributeDamage[0]);
+        bundle.put(ATTRIBUTE1DAMAGE, attributeDamage[1]);
+        bundle.put(ATTRIBUTE2DAMAGE, attributeDamage[2]);
 
         bundle.put(POS, pos);
         bundle.put(TAG_HP, HP);
@@ -250,6 +333,18 @@ public abstract class Char extends Actor {
     @Override
     public void restoreFromBundle(Bundle bundle) {
         super.restoreFromBundle(bundle);
+
+        attribute = new int[]{
+            bundle.getInt(ATTRIBUTE0),
+            bundle.getInt(ATTRIBUTE1),
+            bundle.getInt(ATTRIBUTE2)
+        };
+
+        attributeDamage = new int[]{
+            bundle.getInt(ATTRIBUTE0DAMAGE),
+            bundle.getInt(ATTRIBUTE1DAMAGE),
+            bundle.getInt(ATTRIBUTE2DAMAGE)
+        };
 
         pos = bundle.getInt(POS);
         HP = bundle.getInt(TAG_HP);
@@ -283,10 +378,14 @@ public abstract class Char extends Actor {
             weapon = (KindOfWeapon)item;
         }
 
-        return attack(weapon, enemy);
+        return attack(weapon, false, enemy);
     }
 
     public boolean attack(KindOfWeapon weapon, Char enemy) {
+        return attack(weapon, false, enemy);
+    }
+
+    public boolean attack(KindOfWeapon weapon, boolean ranged, Char enemy) {
         boolean visibleFight = Dungeon.visible[pos] || Dungeon.visible[enemy.pos];
         boolean retval = false;
 
@@ -315,7 +414,7 @@ public abstract class Char extends Actor {
                     GLog.n(TXT_HELD, hostname, name + "'s");
                 }
             }
-        } else if (hit(this, weapon, false, enemy, touch)) {
+        } else if (tryHit(this, weapon, ranged, enemy, touch)) {
             if (!touch) {
                 hit(weapon, enemy, visibleFight);
             } else {
@@ -436,12 +535,12 @@ public abstract class Char extends Actor {
         return false;
     }
 
-    public static boolean hit(Char attacker, KindOfWeapon weapon, boolean thrown, Char defender, boolean touch) {
+    public static boolean tryHit(Char attacker, KindOfWeapon weapon, boolean thrown, Char defender, boolean touch) {
         int roll = Random.Int(1, 20);
         int skill = attacker.attackSkill(weapon, thrown, defender);
         int defense = defender.defenseMundane(attacker, touch);
 
-        GLog.n("roll=" + roll + " + " + skill + " >= " + defense + "?");
+        GLog.d("roll=" + roll + " + " + skill + " >= " + defense + "?");
 
         return roll + skill >= defense;
 
@@ -455,9 +554,17 @@ public abstract class Char extends Actor {
     }
 
     public int attackSkill(KindOfWeapon weapon, boolean thrown, Char target) {
-        if (thrown && Level.distance(pos, target.pos) == 1) {
-            GLog.d("thrown=" + thrown);
-            return -4;
+        if (Level.distance(pos, target.pos) <= 1) {
+            if (thrown) {
+                GLog.d("thrown weapon in melee");
+                return -4;
+            }
+            else {
+                if (weapon instanceof RangedWeapon) {
+                    GLog.d("ranged weapon in melee");
+                    return -4;
+                }
+            }
         }
 
         return 0;
@@ -502,7 +609,7 @@ public abstract class Char extends Actor {
         }
 
         if ((immunityMagical & type.value) != 0) {
-            dmg = 0;
+            dmg /= 2;
         }
         //else if (resistances().contains( srcClass )) {
         //	dmg = Random.IntRange( 0, dmg );
@@ -529,6 +636,15 @@ public abstract class Char extends Actor {
         }
 
         return dmg;
+    }
+
+    public boolean shoot(Char enemy, MissileWeapon wep) {
+        boolean result = attack(wep, true, enemy);
+        Invisibility.dispel();
+
+        //todo: strange bug here needs to be traced: ready state failing in the chain somewhere occasionally if: enemy dies (every occurrence of bug), player had one ammo item left (most occurrences) or player had more than one ammo item left (rare occurrences)
+
+        return result;
     }
 
     public void destroy() {

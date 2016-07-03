@@ -27,9 +27,16 @@ package com.felayga.unpixeldungeon.items.weapon.ranged;
 
 import com.felayga.unpixeldungeon.Dungeon;
 import com.felayga.unpixeldungeon.actors.hero.Hero;
+import com.felayga.unpixeldungeon.actors.hero.HeroAction;
+import com.felayga.unpixeldungeon.items.EquippableItem;
+import com.felayga.unpixeldungeon.items.Item;
 import com.felayga.unpixeldungeon.items.weapon.Weapon;
+import com.felayga.unpixeldungeon.items.weapon.ammunition.AmmunitionWeapon;
 import com.felayga.unpixeldungeon.mechanics.Constant;
 import com.felayga.unpixeldungeon.mechanics.WeaponSkill;
+import com.felayga.unpixeldungeon.scenes.CellSelector;
+import com.felayga.unpixeldungeon.scenes.GameScene;
+import com.felayga.unpixeldungeon.utils.GLog;
 
 import java.util.ArrayList;
 
@@ -68,8 +75,91 @@ public class RangedWeapon extends Weapon {
     }
 
     @Override
-    public String info() {
+    public boolean execute( Hero hero, String action ) {
+        if (Constant.Action.SHOOT.equals(action)) {
+            curUser = hero;
+            curLauncher = this;
+            curAmmo = findAmmunition(hero);
 
+            if (curAmmo != null) {
+                doShoot();
+            }
+            else {
+                GLog.w("No compatible ammunition equipped!");
+            }
+
+            return false;
+        }
+
+        return super.execute(hero, action);
+    }
+
+    protected AmmunitionWeapon findAmmunition(Hero hero) {
+        EquippableItem item = hero.belongings.offhand();
+
+        if (item instanceof AmmunitionWeapon) {
+            AmmunitionWeapon weapon = (AmmunitionWeapon)item;
+            if (ammunitionType == weapon.ammunitionType) {
+                return weapon;
+            }
+        }
+
+        return null;
+    }
+
+    protected void doShoot(){
+        GameScene.selectCell(shooter);
+    }
+
+    public void shoot(Hero hero, AmmunitionWeapon ammo, int target) {
+        if (equipIfNecessary(hero) != EquipIfNecessaryState.NotEquipped) {
+            if (ammo.quantity() == 1) {
+                hero.belongings.ranOutOfAmmo(ammo);
+            }
+            ammo.launcher = this;
+            GLog.d("RangedWeapon: ammo.cast()");
+            ammo.cast(hero, target);
+        }
+    }
+
+    @Override
+    public String status() {
+        Hero hero = Dungeon.hero;
+        if (isEquipped(hero)) {
+            AmmunitionWeapon ammo = findAmmunition(hero);
+
+            if (ammo != null) {
+                return ammo.quantity()+"";
+            }
+
+            return "0";
+        }
+        else {
+            return super.status();
+        }
+    }
+
+
+    private static RangedWeapon curLauncher;
+    private static AmmunitionWeapon curAmmo;
+
+    protected static CellSelector.Listener shooter = new CellSelector.Listener() {
+        @Override
+        public void onSelect(Integer target) {
+            GLog.d("onselectcell target="+target);
+            if (target != null) {
+                curLauncher.shoot(curUser, curAmmo, target);
+            }
+        }
+
+        @Override
+        public String prompt() {
+            return "Choose direction of shot";
+        }
+    };
+
+    @Override
+    public String info() {
         StringBuilder info = new StringBuilder( desc() );
 
         info.append( "\n\nAverage damage of this weapon equals to " + (damageMin + (damageMax - damageMin) / 2) + " points per hit. " );

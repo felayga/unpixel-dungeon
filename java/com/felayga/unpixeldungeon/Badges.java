@@ -579,7 +579,8 @@ public class Badges {
 			displayBadge( badge );
 		}
 	}
-	
+
+	/*
 	public static void validateBossSlain() {
 		Badge badge = null;
 		switch (Dungeon.depth) {
@@ -689,6 +690,7 @@ public class Badges {
 			}
 		}
 	}
+	*/
 	
 	public static void validateMastery() {
 		

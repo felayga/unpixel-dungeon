@@ -35,6 +35,7 @@ public class Journal {
 		WELL_OF_HEALTH			( "Well of Health" ),
 		WELL_OF_AWARENESS		( "Well of Awareness" ),
 		WELL_OF_TRANSMUTATION	( "Well of Transmutation" ),
+        WELL_FOUNTAIN           ( "Water Fountain" ),
 		ALCHEMY					( "Alchemy pot" ),
 		GARDEN					( "Garden" ),
 		STATUE					( "Animated statue" ),
@@ -108,19 +109,19 @@ public class Journal {
 		int size = records.size();
 		for (int i=0; i < size; i++) {
 			Record rec = records.get( i );
-			if (rec.feature == feature && rec.depth == Dungeon.depth) {
+			if (rec.feature == feature && rec.depth == Dungeon._depth) {
 				return;
 			}
 		}
 		
-		records.add( new Record( feature, Dungeon.depth ) );
+		records.add( new Record( feature, Dungeon._depth ) );
 	}
 	
 	public static void remove( Feature feature ) {
 		int size = records.size();
 		for (int i=0; i < size; i++) {
 			Record rec = records.get( i );
-			if (rec.feature == feature && rec.depth == Dungeon.depth) {
+			if (rec.feature == feature && rec.depth == Dungeon._depth) {
 				records.remove( i );
 				return;
 			}

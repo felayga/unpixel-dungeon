@@ -158,8 +158,11 @@ public class WndRanking extends WndTabbed {
 		private static final String TXT_CHALLENGES	= "Challenges";
 
 		private static final String TXT_HEALTH	= "Health";
-		private static final String TXT_STR		= "Strength";
-		
+
+        private static final String TXT_STRCON	= "Vitality";
+        private static final String TXT_DEXCHA	= "Cunning";
+        private static final String TXT_INTWIS	= "Sagacity";
+
 		private static final String TXT_DURATION	= "Game Duration";
 		
 		private static final String TXT_DEPTH	= "Maximum Depth";
@@ -201,7 +204,9 @@ public class WndRanking extends WndTabbed {
 
 			pos += GAP + GAP;
 			
-			pos = statSlot( this, TXT_STR, Integer.toString( Dungeon.hero.STRCON ), pos );
+			pos = statSlot( this, TXT_STRCON, Integer.toString( Dungeon.hero.STRCON() ), pos );
+            pos = statSlot( this, TXT_DEXCHA, Integer.toString( Dungeon.hero.DEXCHA() ), pos );
+            pos = statSlot( this, TXT_INTWIS, Integer.toString( Dungeon.hero.INTWIS() ), pos );
 			pos = statSlot( this, TXT_HEALTH, Integer.toString( Dungeon.hero.HT ), pos );
 			
 			pos += GAP;

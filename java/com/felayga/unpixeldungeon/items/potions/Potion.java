@@ -41,6 +41,7 @@ import com.felayga.unpixeldungeon.items.Item;
 import com.felayga.unpixeldungeon.items.ItemStatusHandler;
 import com.felayga.unpixeldungeon.levels.Level;
 import com.felayga.unpixeldungeon.levels.Terrain;
+import com.felayga.unpixeldungeon.mechanics.Constant;
 import com.felayga.unpixeldungeon.mechanics.GameTime;
 import com.felayga.unpixeldungeon.scenes.GameScene;
 import com.felayga.unpixeldungeon.sprites.ItemSprite;
@@ -54,9 +55,6 @@ import java.util.ArrayList;
 import java.util.HashSet;
 
 public class Potion extends Item {
-
-	public static final String AC_DRINK = "DRINK";
-
 	private static final String TXT_HARMFUL = "Harmful potion!";
 	private static final String TXT_BENEFICIAL = "Beneficial potion";
 	private static final String TXT_YES = "Yes, I know what I'm doing";
@@ -203,8 +201,9 @@ toxic gas
         pickupSound = Assets.SND_ITEM_POTION;
 
 		stackable = true;
-		defaultAction = AC_DRINK;
+		defaultAction = Constant.Action.DRINK;
 		fragile = true;
+        hasLevels = false;
 		weight(Encumbrance.UNIT * 20);
         price = 20;
 	}
@@ -220,13 +219,13 @@ toxic gas
 	@Override
 	public ArrayList<String> actions(Hero hero) {
 		ArrayList<String> actions = super.actions(hero);
-		actions.add(AC_DRINK);
+		actions.add(Constant.Action.DRINK);
 		return actions;
 	}
 
 	@Override
 	public boolean execute(final Hero hero, String action) {
-		if (action.equals(AC_DRINK)) {
+		if (action.equals(Constant.Action.DRINK)) {
 			if (isKnown() && isHarmful) {
 				GameScene.show(
 						new WndOptions(TXT_HARMFUL, TXT_R_U_SURE_DRINK, TXT_YES, TXT_NO) {

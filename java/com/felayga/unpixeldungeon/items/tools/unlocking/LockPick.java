@@ -45,7 +45,7 @@ public class LockPick extends UnlockingTool {
     }
 
     public boolean unlockDoor(Char user) {
-        int testfactor = 72 + user.DEXCHA * 9;
+        int testfactor = 72 + user.DEXCHA() * 9;
 
         if (bucStatus == BUCStatus.Cursed) {
             testfactor /= 2;
@@ -55,7 +55,7 @@ public class LockPick extends UnlockingTool {
     }
 
     public boolean unlockChest(Char user) {
-        int testfactor = 64 + user.DEXCHA * 10;
+        int testfactor = 64 + user.DEXCHA() * 10;
 
         if (bucStatus == BUCStatus.Cursed) {
             testfactor /= 2;

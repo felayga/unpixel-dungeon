@@ -43,7 +43,10 @@ import com.watabou.utils.Random;
 
 public class CityBossLevel extends Level {
 
+    public CityBossLevel()
     {
+        super(0);
+
         color1 = 0x4b6636;
         color2 = 0xf2f2f2;
     }
@@ -121,7 +124,7 @@ public class CityBossLevel extends Level {
         Painter.fill(this, LEFT + HALL_WIDTH - 1, TOP + HALL_HEIGHT + 1, 1, CHAMBER_HEIGHT, Terrain.BARRICADE);
 
         entrance = (TOP + HALL_HEIGHT + 2 + Random.Int(CHAMBER_HEIGHT - 1)) * WIDTH + LEFT + (/*1 +*/ Random.Int(HALL_WIDTH - 2));
-        map[entrance] = Terrain.ENTRANCE;
+        map[entrance] = Terrain.STAIRS_UP;
 
         return true;
     }
@@ -251,9 +254,11 @@ public class CityBossLevel extends Level {
     @Override
     public String tileDesc(int tile) {
         switch (tile) {
-            case Terrain.ENTRANCE:
+            case Terrain.STAIRS_UP:
+            case Terrain.STAIRS_UP_ALTERNATE:
                 return "A ramp leads up to the upper depth.";
-            case Terrain.EXIT:
+            case Terrain.STAIRS_DOWN:
+            case Terrain.STAIRS_DOWN_ALTERNATE:
                 return "A ramp leads down to the lower depth.";
             case Terrain.WALL_DECO:
             case Terrain.EMPTY_DECO:

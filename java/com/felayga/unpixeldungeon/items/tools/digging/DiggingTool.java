@@ -32,6 +32,7 @@ import com.felayga.unpixeldungeon.actors.hero.Hero;
 import com.felayga.unpixeldungeon.actors.hero.HeroAction;
 import com.felayga.unpixeldungeon.actors.mobs.Mob;
 import com.felayga.unpixeldungeon.actors.mobs.npcs.Boulder;
+import com.felayga.unpixeldungeon.items.EquippableItem;
 import com.felayga.unpixeldungeon.items.tools.ITool;
 import com.felayga.unpixeldungeon.items.weapon.melee.simple.SimpleMeleeWeapon;
 import com.felayga.unpixeldungeon.mechanics.AttributeType;
@@ -60,7 +61,7 @@ public abstract class DiggingTool extends SimpleMeleeWeapon implements ITool {
     @Override
     public String desc() {
         return "This tool is built for digging through dirt and rock, a process which is slow " +
-                "and tiring.\n\nMake sure you have plenty of refreshments on hand.";
+                "and tiring.\nMake sure you have plenty of refreshments on hand.";
     }
 
     private static DiggingTool curTool;
@@ -104,12 +105,8 @@ public abstract class DiggingTool extends SimpleMeleeWeapon implements ITool {
     }
 
     public void apply(Hero hero, int target) {
-        if (!hero.belongings.isEquipped(this)) {
-            if (!hero.belongings.equip(this)) {
-                return;
-            }
-
-            GLog.i("You ready your " + getDisplayName());
+        if (equipIfNecessary(hero) == EquippableItem.EquipIfNecessaryState.NotEquipped) {
+            return;
         }
 
         Mob mob = Dungeon.level.findMob(target);

@@ -53,7 +53,7 @@ public class Bones {
 	
 	public static void leave() {
 
-		depth = Dungeon.depth;
+		depth = Dungeon._depth;
 
 		//heroes which have won the game, who die far above their farthest depth, or who are challenged drop no bones.
 		if (Statistics.amuletObtained || /*(Statistics.deepestFloor - 5) >= depth ||*/ Dungeon.challenges > 0) {
@@ -142,7 +142,7 @@ public class Bones {
 
 		} else {
 			//heroes who are challenged cannot find bones
-			if (depth == Dungeon.depth && Dungeon.challenges == 0) {
+			if (depth == Dungeon._depth && Dungeon.challenges == 0) {
 				Game.instance.deleteFile( BONES_FILE );
 				depth = 0;
 
@@ -154,7 +154,7 @@ public class Bones {
 							//caps displayed artifactOld level
 							artifactOld.transferUpgrade(Math.min(
 									item.visiblyUpgraded(),
-									1 + ((Dungeon.depth * 3) / 10)));
+									1 + ((Dungeon.depthAdjusted * 3) / 10)));
 
 							return item;
 						} catch (Exception e) {
@@ -169,7 +169,7 @@ public class Bones {
 					item.bucStatus(BUCStatus.Cursed, true);
 					if (item.isUpgradable()) {
 						//gain 1 level every 3.333 floors down plus one additional level.
-						int lvl = 1 + ((Dungeon.depth * 3) / 10);
+						int lvl = 1 + ((Dungeon.depthAdjusted * 3) / 10);
 						if (lvl < item.level) {
 							item.upgrade( null, -(item.level - lvl) );
 						}

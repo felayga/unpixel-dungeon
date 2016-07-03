@@ -30,8 +30,10 @@ import com.felayga.unpixeldungeon.ShatteredPixelDungeon;
 import com.felayga.unpixeldungeon.Statistics;
 import com.felayga.unpixeldungeon.items.Generator;
 import com.felayga.unpixeldungeon.levels.Level;
+import com.felayga.unpixeldungeon.levels.branches.DungeonBranch;
 import com.felayga.unpixeldungeon.mechanics.Constant;
 import com.felayga.unpixeldungeon.mechanics.GameTime;
+import com.felayga.unpixeldungeon.utils.GLog;
 import com.felayga.unpixeldungeon.windows.WndError;
 import com.felayga.unpixeldungeon.windows.WndStory;
 import com.felayga.unpixeldungeon.windows.hero.WndInitHero;
@@ -70,8 +72,8 @@ public class InterlevelScene extends PixelScene {
 	public static int returnDepth;
 	public static int returnPos;
 
-	public static int teleportDepth;
-	public static int teleportPos;
+	public static int teleportDepth = 1;
+	public static int teleportPos = Constant.Position.ENTRANCE;
 	
 	public static boolean noStory = false;
 
@@ -132,17 +134,15 @@ public class InterlevelScene extends PixelScene {
 		thread = new Thread() {
 			@Override
 			public void run() {
-				
 				try {
-					
 					Generator.reset();
 
 					switch (mode) {
 						case DESCEND:
-							descend();
+                            moveLevel(teleportPos);
 							break;
 						case ASCEND:
-							ascend();
+                            moveLevel(teleportPos);
 							break;
 						case CONTINUE:
 							restore();
@@ -163,10 +163,13 @@ public class InterlevelScene extends PixelScene {
 							teleport();
 							break;
 					}
-					
+
+                    /*
+                    //todo: boss level loading sound for boss levels
 					if ((Dungeon.depth % 5) == 0) {
 						Sample.INSTANCE.load( Assets.SND_BOSS );
 					}
+					*/
 					
 				} catch (Exception e) {
 					
@@ -206,7 +209,7 @@ public class InterlevelScene extends PixelScene {
 		case FADE_OUT:
 			message.alpha( p );
 
-			if (mode == Mode.CONTINUE || (mode == Mode.DESCEND && Dungeon.depth == 1)) {
+			if (mode == Mode.CONTINUE || (mode == Mode.DESCEND && Dungeon._depth == 1)) {
 				Music.INSTANCE.volume( p * (ShatteredPixelDungeon.musicVol()/10f));
 			}
 			if ((timeLeft -= Game.elapsed) <= 0) {
@@ -234,6 +237,53 @@ public class InterlevelScene extends PixelScene {
 		}
 	}
 
+    private void moveLevel(int pos) throws IOException {
+        GameTime.fix();
+
+        if (Dungeon.hero == null) {
+            Dungeon.init();
+            if (noStory) {
+                Dungeon.chapters.add( WndStory.ID_SEWERS );
+                noStory = false;
+            }
+        } else {
+            Dungeon.saveLevel();
+        }
+
+        Level level;
+        if (Statistics.floorsVisited[teleportDepth]) {
+            Dungeon._depth = teleportDepth;
+            level = Dungeon.loadLevel(WndInitHero.savedGameIndex);
+        } else {
+            level = Dungeon.newLevel(teleportDepth);
+        }
+
+        switch(pos) {
+            case Constant.Position.ENTRANCE:
+                pos = level.entrance;
+                break;
+            case Constant.Position.EXIT:
+                pos = level.exit;
+                break;
+            case Constant.Position.RANDOM:
+                pos = level.randomDestination();
+                break;
+            case Constant.Position.ENTRANCE_ALTERNATE:
+                pos = level.entranceAlternate;
+                break;
+            case Constant.Position.EXIT_ALTERNATE:
+                pos = level.exitAlternate;
+                break;
+            default:
+                GLog.d("bad entrance position=" + pos);
+                GLog.d("" + 1 / 0);
+                break;
+        }
+
+        Dungeon.switchLevel( level, pos );
+    }
+
+    /*
 	private void descend() throws IOException {
 		GameTime.fix();
 		if (Dungeon.hero == null) {
@@ -251,25 +301,27 @@ public class InterlevelScene extends PixelScene {
 			Dungeon.depth++;
 			level = Dungeon.loadLevel(WndInitHero.savedGameIndex);
 		} else {
-			level = Dungeon.newLevel();
+			level = Dungeon.newLevel(Dungeon.depth);
 		}
 		Dungeon.switchLevel( level, level.entrance );
 	}
+	*/
 	
 	private void fall() throws IOException {
 		GameTime.fix();
 		Dungeon.saveLevel();
 
 		Level level;
-		if (Statistics.floorsVisited[Dungeon.depth + 1]) {
-			Dungeon.depth++;
+		if (Statistics.floorsVisited[Dungeon._depth + 1]) {
+			Dungeon._depth++;
 			level = Dungeon.loadLevel(WndInitHero.savedGameIndex);
 		} else {
-			level = Dungeon.newLevel();
+			level = Dungeon.newLevel(Dungeon._depth);
 		}
 		Dungeon.switchLevel( level, fallIntoPit ? level.pitCell() : level.randomRespawnCell() );
 	}
-	
+
+    /*
 	private void ascend() throws IOException {
 		GameTime.fix();
 		
@@ -281,18 +333,18 @@ public class InterlevelScene extends PixelScene {
 			level = Dungeon.loadLevel( WndInitHero.savedGameIndex );
 		}
 		else {
-			Dungeon.depth--;
-			level = Dungeon.newLevel();
+			level = Dungeon.newLevel(Dungeon.depth - 1);
 		}
 
 		Dungeon.switchLevel( level, level.exit );
 	}
+	*/
 	
 	private void returnTo() throws IOException {
 		GameTime.fix();
 		
 		Dungeon.saveLevel();
-		Dungeon.depth = returnDepth;
+		Dungeon._depth = returnDepth;
 		Level level = Dungeon.loadLevel( WndInitHero.savedGameIndex );
 		Dungeon.switchLevel(level, Level.resizingNeeded ? level.adjustPos(returnPos) : returnPos);
 	}
@@ -301,9 +353,10 @@ public class InterlevelScene extends PixelScene {
 		GameTime.fix();
 
 		Dungeon.loadGame(WndInitHero.savedGameIndex);
-		if (Dungeon.depth == -1) {
-			Dungeon.depth = 1;
-			for (int n = Dungeon.HIGHESTLEVEL - 1; n >= 1; n--)
+		if (Dungeon._depth == -1) {
+			Dungeon._depth = 1;
+            /*
+			for (int n = DungeonBranch.MAXLEVEL - 1; n >= 1; n--)
 			{
 				if (Statistics.floorsVisited[n])
 				{
@@ -311,6 +364,7 @@ public class InterlevelScene extends PixelScene {
 					break;
 				}
 			}
+			*/
 			Dungeon.switchLevel( Dungeon.loadLevel( WndInitHero.savedGameIndex ), Constant.Position.EXIT);
 		} else {
 			Level level = Dungeon.loadLevel( WndInitHero.savedGameIndex );
@@ -322,10 +376,13 @@ public class InterlevelScene extends PixelScene {
 		GameTime.fix();
 		
 		if (Dungeon.level.locked) {
-			Dungeon.hero.resurrect( Dungeon.depth );
+			Dungeon.hero.resurrect( Dungeon._depth );
+            //todo: overhaul/verify resurrection logic
+            /*
 			Dungeon.depth--;
-			Level level = Dungeon.newLevel();
+			Level level = Dungeon.newLevel(Dungeon.depth);
 			Dungeon.switchLevel( level, level.entrance );
+			*/
 		} else {
 			Dungeon.hero.resurrect( -1 );
 			Dungeon.resetLevel();
@@ -335,9 +392,12 @@ public class InterlevelScene extends PixelScene {
 	private void reset() throws IOException {
 		GameTime.fix();
 
+        /*
+        //todo: distortion trap dungeon reset logic
 		Dungeon.depth--;
-		Level level = Dungeon.newLevel();
+		Level level = Dungeon.newLevel(Dungeon.depth);
 		Dungeon.switchLevel(level, level.entrance);
+		*/
 	}
 
 	private void teleport() throws IOException {
@@ -346,12 +406,12 @@ public class InterlevelScene extends PixelScene {
 		Level level = null;
 
 		if (Statistics.floorsVisited[teleportDepth]) {
-			Dungeon.depth = teleportDepth;
+			Dungeon._depth = teleportDepth;
 			level = Dungeon.loadLevel( WndInitHero.savedGameIndex );
 		}
 		else {
-			Dungeon.depth = teleportDepth-1;
-			level = Dungeon.newLevel();
+			Dungeon._depth = teleportDepth-1;
+			level = Dungeon.newLevel(Dungeon._depth);
 		}
 
 		Dungeon.switchLevel( level, teleportPos );

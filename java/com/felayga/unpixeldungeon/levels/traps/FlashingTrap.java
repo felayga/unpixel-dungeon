@@ -52,7 +52,7 @@ public class FlashingTrap extends Trap {
 		Char ch = Actor.findChar(pos);
 
 		if (ch != null) {
-			int len = Random.Int(5, 10)+Dungeon.depth;
+			int len = Random.Int(5, 10)+Dungeon.depthAdjusted;
 			Buff.prolong( ch, Blindness.class, len );
 			Buff.prolong( ch, Cripple.class, len );
 			if (ch instanceof Mob) {

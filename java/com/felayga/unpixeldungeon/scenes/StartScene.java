@@ -26,6 +26,7 @@ package com.felayga.unpixeldungeon.scenes;
 
 import java.util.HashMap;
 
+import com.felayga.unpixeldungeon.levels.branches.DungeonBranch;
 import com.felayga.unpixeldungeon.windows.hero.WndInitHero;
 import com.watabou.noosa.BitmapText;
 import com.watabou.noosa.BitmapTextMultiline;
@@ -390,7 +391,7 @@ public class StartScene extends PixelScene {
 			if (info != null) {
 				txtInfo.text("Level " + info.level + "\n" +
 								(info.gender == 0 ? "Male" : "Female") + " " + HeroClass.toHeroClass(info.heroClass).toString().toLowerCase() + "\n" +
-								"Depth " + info.depth
+								"Depth " + DungeonBranch.getDepthText(info.depth)
 				);
 			}
 			else {

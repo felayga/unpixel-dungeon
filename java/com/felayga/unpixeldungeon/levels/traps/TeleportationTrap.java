@@ -34,6 +34,7 @@ import com.felayga.unpixeldungeon.effects.Speck;
 import com.felayga.unpixeldungeon.items.Heap;
 import com.felayga.unpixeldungeon.items.Item;
 import com.felayga.unpixeldungeon.items.scrolls.ScrollOfTeleportation;
+import com.felayga.unpixeldungeon.levels.Level;
 import com.felayga.unpixeldungeon.sprites.TrapSprite;
 import com.felayga.unpixeldungeon.utils.GLog;
 import com.watabou.noosa.audio.Sample;
@@ -67,7 +68,7 @@ public class TeleportationTrap extends Trap {
 				}
 			} while (pos == -1);
 
-			if (pos == -1 || Dungeon.bossLevel()) {
+			if (pos == -1 || (Dungeon.level.flags & Level.FLAG_NOTELEPORTATION) != 0) {
 
 				GLog.w(ScrollOfTeleportation.TXT_NO_TELEPORT);
 

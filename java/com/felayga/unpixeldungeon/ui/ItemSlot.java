@@ -68,15 +68,6 @@ public class ItemSlot extends Button {
 	private static final String TXT_CURSED    = "";//"-";
 
 	// Special "virtual items"
-	public static final Item CHEST = new Item() {
-		public int image() { return ItemSpriteSheet.CHEST; };
-	};
-	public static final Item LOCKED_CHEST = new Item() {
-		public int image() { return ItemSpriteSheet.LOCKED_CHEST; };
-	};
-	public static final Item CRYSTAL_CHEST = new Item() {
-		public int image() { return ItemSpriteSheet.CRYSTAL_CHEST; };
-	};
 	public static final Item TOMB = new Item() {
 		public int image() { return ItemSpriteSheet.TOMB; };
 	};

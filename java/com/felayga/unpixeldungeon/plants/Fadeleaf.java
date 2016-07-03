@@ -33,6 +33,7 @@ import com.felayga.unpixeldungeon.effects.CellEmitter;
 import com.felayga.unpixeldungeon.effects.Speck;
 import com.felayga.unpixeldungeon.items.potions.PotionOfMindVision;
 import com.felayga.unpixeldungeon.items.scrolls.ScrollOfTeleportation;
+import com.felayga.unpixeldungeon.levels.Level;
 import com.felayga.unpixeldungeon.sprites.ItemSpriteSheet;
 
 public class Fadeleaf extends Plant {
@@ -68,8 +69,7 @@ public class Fadeleaf extends Plant {
 				}
 			} while (newPos == -1);
 			
-			if (newPos != -1 && !Dungeon.bossLevel()) {
-			
+			if (newPos != -1 && (Dungeon.level.flags & Level.FLAG_NOTELEPORTATION) == 0) {
 				ch.pos = newPos;
 				ch.sprite.place( ch.pos );
 				ch.sprite.visible = Dungeon.visible[pos];

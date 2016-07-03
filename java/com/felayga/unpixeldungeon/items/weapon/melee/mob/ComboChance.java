@@ -24,7 +24,7 @@
  */
 
 package com.felayga.unpixeldungeon.items.weapon.melee.mob;
-
+/*
 import com.felayga.unpixeldungeon.actors.Char;
 import com.felayga.unpixeldungeon.actors.blobs.Blob;
 import com.felayga.unpixeldungeon.actors.blobs.Fire;
@@ -35,9 +35,8 @@ import com.felayga.unpixeldungeon.levels.Level;
 import com.felayga.unpixeldungeon.scenes.GameScene;
 import com.watabou.utils.Random;
 
-/**
- * Created by HELLO on 3/9/2016.
- */
+
+//Created by HELLO on 3/9/2016.
 public class ComboChance extends MeleeMobAttack {
     public ComboChance(long delay, int damageMin, int damageMax) {
         super(delay, damageMin, damageMax);
@@ -69,3 +68,4 @@ public class ComboChance extends MeleeMobAttack {
         return damage;
     }
 }
+*/

@@ -73,7 +73,7 @@ public class LaboratoryPainter extends Painter {
 		}
 		
 		entrance.set( Room.Door.Type.LOCKED );
-		level.addItemToSpawn( new IronOldKey( Dungeon.depth ) );
+		//level.addItemToSpawn( new IronOldKey( Dungeon.depth ) );
 	}
 	
 	private static Item prize( Level level ) {

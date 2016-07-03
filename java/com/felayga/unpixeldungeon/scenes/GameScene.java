@@ -31,6 +31,7 @@ import com.felayga.unpixeldungeon.*;
 //import com.felayga.unpixeldungeon.items.Honeypot;
 import com.felayga.unpixeldungeon.items.potions.Potion;
 import com.felayga.unpixeldungeon.items.scrolls.ScrollOfTeleportation;
+import com.felayga.unpixeldungeon.levels.branches.DungeonBranch;
 import com.felayga.unpixeldungeon.levels.traps.Trap;
 import com.felayga.unpixeldungeon.ui.CustomTileVisual;
 import com.felayga.unpixeldungeon.sprites.TrapSprite;
@@ -254,7 +255,7 @@ public class GameScene extends PixelScene {
 		
 		hero = new HeroSprite(Dungeon.hero);
 		hero.place(Dungeon.hero.pos);
-		mobs.add( hero );
+		mobs.add(hero);
 
 		add( new HealthIndicator() );
 		
@@ -262,12 +263,12 @@ public class GameScene extends PixelScene {
 		
 		StatusPane sb = new StatusPane();
 		sb.camera = uiCamera;
-		sb.setSize( uiCamera.width, 0 );
+		sb.setSize(uiCamera.width, 0);
 		add( sb );
 		
 		toolbar = new Toolbar();
 		toolbar.camera = uiCamera;
-		toolbar.setRect( 0,uiCamera.height - toolbar.height(), uiCamera.width, toolbar.height() );
+		toolbar.setRect(0, uiCamera.height - toolbar.height(), uiCamera.width, toolbar.height());
 		add( toolbar );
 		
 		attack = new AttackIndicator();
@@ -284,20 +285,20 @@ public class GameScene extends PixelScene {
 
 		log = new GameLog();
 		log.camera = uiCamera;
-		add( log );
+		add(log);
 
 		layoutTags();
 		
-		if (Statistics.floorsVisited[Dungeon.depth]) {
-			GLog.i(TXT_WELCOME_BACK, Dungeon.depth);
+		if (Statistics.floorsVisited[Dungeon._depth]) {
+			GLog.i(TXT_WELCOME_BACK, DungeonBranch.getDepthText(Dungeon._depth));
 		} else {
-			GLog.i(TXT_WELCOME, Dungeon.depth);
+			GLog.i(TXT_WELCOME, DungeonBranch.getDepthText(Dungeon._depth));
 			if (InterlevelScene.mode == InterlevelScene.Mode.DESCEND) Sample.INSTANCE.play(Assets.SND_DESCEND);
 		}
 
         Dungeon.hero.updateEncumbrance();
 
-		Statistics.floorsVisited[Dungeon.depth] = true;
+		Statistics.floorsVisited[Dungeon._depth] = true;
 
 		switch (Dungeon.level.feeling) {
 		case CHASM:
@@ -337,7 +338,7 @@ public class GameScene extends PixelScene {
 			Chasm.heroLand();
 			break;
 		case DESCEND:
-			switch (Dungeon.depth) {
+			switch (Dungeon._depth) {
 			case 1:
 				WndStory.showChapter( WndStory.ID_SEWERS );
 				break;
@@ -354,7 +355,7 @@ public class GameScene extends PixelScene {
 				WndStory.showChapter( WndStory.ID_HALLS );
 				break;
 			}
-			if (Dungeon.hero.isAlive() && Dungeon.depth != 22) {
+			if (Dungeon.hero.isAlive() && Dungeon._depth != 22) {
 				Badges.validateNoKilling();
 			}
 			break;
@@ -362,7 +363,7 @@ public class GameScene extends PixelScene {
 		}
 		InterlevelScene.mode = InterlevelScene.Mode.CONTINUE;
 
-		ArrayList<Item> dropped = Dungeon.droppedItems.get( Dungeon.depth );
+		ArrayList<Item> dropped = Dungeon.droppedItems.get( Dungeon._depth );
 		if (dropped != null) {
 			for (Item item : dropped) {
 				int pos = Dungeon.level.randomRespawnCell();
@@ -376,7 +377,7 @@ public class GameScene extends PixelScene {
 					Dungeon.level.drop( item, pos );
 				}
 			}
-			Dungeon.droppedItems.remove( Dungeon.depth );
+			Dungeon.droppedItems.remove( Dungeon._depth );
 		}
 
 		Dungeon.hero.next();
@@ -404,6 +405,10 @@ public class GameScene extends PixelScene {
 			//
 		}
 	}
+
+    public static synchronized void updateLootIndicator() {
+        scene.loot.update();
+    }
 
 	@Override
 	public synchronized void update() {
@@ -716,6 +721,7 @@ public class GameScene extends PixelScene {
 	}
 	
 	public static void handleCell( int cell ) {
+        GLog.d("handleCell");
 		cellSelector.select(cell);
 	}
 	

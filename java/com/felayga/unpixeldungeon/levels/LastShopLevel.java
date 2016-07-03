@@ -38,8 +38,11 @@ import com.watabou.utils.Random;
 import java.util.List;
 
 public class LastShopLevel extends RegularLevel {
-	
+
+    public LastShopLevel()
 	{
+        super(0);
+
 		color1 = 0x4b6636;
 		color2 = 0xf2f2f2;
 	}
@@ -136,27 +139,23 @@ public class LastShopLevel extends RegularLevel {
 	
 	@Override
 	protected void decorate() {
-		
-		for (int i=0; i < LENGTH; i++) {
-			if (map[i] == Terrain.EMPTY && Random.Int( 10 ) == 0) {
-				
-				map[i] = Terrain.EMPTY_DECO;
-				
-			} else if (map[i] == Terrain.WALL && Random.Int( 8 ) == 0) {
-				
-				map[i] = Terrain.WALL_DECO;
-				
-			} else if (map[i] == Terrain.SECRET_DOOR) {
-				
-				map[i] = Terrain.DOOR;
-				
-			}
-		}
-		
-		//if (Imp.Quest.isCompleted()) {
-			placeSign();
-		//}
-	}
+
+        for (int i = 0; i < LENGTH; i++) {
+            if (map[i] == Terrain.EMPTY && Random.Int(10) == 0) {
+                map[i] = Terrain.EMPTY_DECO;
+            } else if (map[i] == Terrain.WALL && Random.Int(8) == 0) {
+                map[i] = Terrain.WALL_DECO;
+            } else if (map[i] == Terrain.SECRET_DOOR) {
+                map[i] = Terrain.DOOR;
+            } else if (map[i] == Terrain.SECRET_LOCKED_DOOR) {
+                map[i] = Terrain.LOCKED_DOOR;
+            }
+        }
+
+        //if (Imp.Quest.isCompleted()) {
+        placeSign();
+        //}
+    }
 	
 	@Override
 	protected void createMobs() {
@@ -197,20 +196,22 @@ public class LastShopLevel extends RegularLevel {
 	
 	@Override
 	public String tileDesc(int tile) {
-		switch (tile) {
-		case Terrain.ENTRANCE:
-			return "A ramp leads up to the upper depth.";
-		case Terrain.EXIT:
-			return "A ramp leads down to the Inferno.";
-		case Terrain.WALL_DECO:
-		case Terrain.EMPTY_DECO:
-			return "Several tiles are missing here.";
-		case Terrain.EMPTY_SP:
-			return "Thick carpet covers the floor.";
-		default:
-			return super.tileDesc( tile );
-		}
-	}
+        switch (tile) {
+            case Terrain.STAIRS_UP:
+            case Terrain.STAIRS_UP_ALTERNATE:
+                return "A ramp leads up to the upper depth.";
+            case Terrain.STAIRS_DOWN:
+            case Terrain.STAIRS_DOWN_ALTERNATE:
+                return "A ramp leads down to the Inferno.";
+            case Terrain.WALL_DECO:
+            case Terrain.EMPTY_DECO:
+                return "Several tiles are missing here.";
+            case Terrain.EMPTY_SP:
+                return "Thick carpet covers the floor.";
+            default:
+                return super.tileDesc(tile);
+        }
+    }
 
 	@Override
 	protected boolean[] water() {

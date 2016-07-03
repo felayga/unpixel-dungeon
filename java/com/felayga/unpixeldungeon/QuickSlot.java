@@ -25,6 +25,7 @@
 package com.felayga.unpixeldungeon;
 
 import com.felayga.unpixeldungeon.items.Item;
+import com.felayga.unpixeldungeon.utils.GLog;
 import com.watabou.utils.Bundlable;
 import com.watabou.utils.Bundle;
 import com.watabou.utils.Random;
@@ -45,7 +46,11 @@ public class QuickSlot {
 
 
 	//direct array interaction methods, everything should build from these methods.
-	public void setSlot(int slot, Item item){
+	public void setSlot(int slot, Item item) {
+        GLog.d("QuickSlot: setSlot(" + slot + "," + item.getDisplayName() + ") quantity=" + item.quantity());
+        if (item.getDisplayName().equals("rock") && item.quantity()==1) {
+            GLog.d(""+1/0);
+        }
 		clearItem(item); //we don't want to allow the same item in multiple slots.
 		slots[slot] = item;
 	}

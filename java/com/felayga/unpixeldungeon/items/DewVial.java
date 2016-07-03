@@ -93,7 +93,7 @@ public class DewVial extends Item {
 	public boolean execute( final Hero hero, String action ) {
 		if (action.equals( AC_DRINK )) {
 			if (volume > 0) {
-				int value = 1 + (Dungeon.depth - 1) / 5;
+				int value = 1 + (Dungeon.depthAdjusted - 1) / 5;
 				if (hero.heroClass == HeroClass.HUNTRESS) {
 					value++;
 				}

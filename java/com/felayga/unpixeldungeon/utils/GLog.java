@@ -51,7 +51,9 @@ public class GLog {
 		update.dispatch( text );
 	}
 
-	public static void d( String text, Object... args ) { i(NEGATIVE + text, args); }
+	public static void d( String text, Object... args ) {
+        i(NEGATIVE + text, args);
+    }
     public static void d( Throwable throwable) { d(Log.getStackTraceString(throwable)); }
     public static void d( int pos, int relativePos ) {
         int x = pos % Level.WIDTH;

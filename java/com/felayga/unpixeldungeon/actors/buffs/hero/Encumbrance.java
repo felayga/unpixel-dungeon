@@ -128,7 +128,7 @@ public class Encumbrance extends Buff implements Hero.Doom, ISpeedModifierBuff {
     }
 
     public void updateAppearance(Hero hero) {
-        if ((hero.belongings.weight != level || hero.STRCON != strcon) && weightChanged(hero.belongings.weight, hero.STRCON)) {
+        if ((hero.belongings.weight != level || hero.STRCON() != strcon) && weightChanged(hero.belongings.weight, hero.STRCON())) {
             current = getEncumbranceLevel();
 
             Hunger hunger = hero.buff(Hunger.class);

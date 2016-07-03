@@ -64,7 +64,7 @@ public class NewtSprite extends MobSprite {
     }
 
     protected void initAnimationAttack(TextureFilm frames, int offset) {
-        attack = new Animation( 25, false );
+        attack = new Animation( 15, false );
         attack.frames( frames, offset + 0, offset + 4, offset + 5, offset + 0 );
     }
 

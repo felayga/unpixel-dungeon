@@ -70,13 +70,7 @@ public class HighGrass {
 				if (Random.Int(16 - ((int) (naturalismLevel * 3))) == 0) {
 					Item seed = Generator.random(Generator.Category.SEED);
 
-					if (seed instanceof BlandfruitBush.Seed) {
-						if (Random.Int(15) - Dungeon.limitedDrops.blandfruitSeed.count >= 0) {
-							level.drop(seed, pos).sprite.drop();
-							Dungeon.limitedDrops.blandfruitSeed.count++;
-						}
-					} else
-						level.drop(seed, pos).sprite.drop();
+					level.drop(seed, pos).sprite.drop();
 				}
 
 				// Dew, scales from 1/6 to 1/3

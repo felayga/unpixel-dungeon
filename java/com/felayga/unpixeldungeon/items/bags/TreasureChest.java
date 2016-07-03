@@ -31,10 +31,8 @@ import com.felayga.unpixeldungeon.sprites.ItemSpriteSheet;
 import com.felayga.unpixeldungeon.ui.Icons;
 
 public class TreasureChest extends Bag {
-
-    public TreasureChest()
-    {
-        super(null);
+    public TreasureChest() {
+        super(null, true);
 
         name = "treasure chest";
         image = ItemSpriteSheet.CHEST;
@@ -45,10 +43,17 @@ public class TreasureChest extends Bag {
         price = 50;
     }
 
+    @Override
+    protected void onLockedChanged() {
+        if (locked()) {
+            image = ItemSpriteSheet.CHEST_LOCKED;
+        } else {
+            image = ItemSpriteSheet.CHEST;
+        }
+    }
 
     @Override
     public String info() {
-        return
-                "This heavy chest is used to store items for safe keeping.";
+        return "This heavy chest is used to store items for safe keeping.";
     }
 }

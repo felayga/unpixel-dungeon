@@ -25,14 +25,18 @@
 
 package com.felayga.unpixeldungeon.actors.mobs.lichen;
 
+import com.felayga.unpixeldungeon.Dungeon;
 import com.felayga.unpixeldungeon.actors.Char;
 import com.felayga.unpixeldungeon.actors.buffs.hero.Encumbrance;
 import com.felayga.unpixeldungeon.actors.mobs.Mob;
+import com.felayga.unpixeldungeon.items.KindOfWeapon;
+import com.felayga.unpixeldungeon.items.scrolls.ScrollOfRage;
 import com.felayga.unpixeldungeon.levels.Level;
 import com.felayga.unpixeldungeon.mechanics.CorpseEffect;
 import com.felayga.unpixeldungeon.mechanics.GameTime;
 import com.felayga.unpixeldungeon.mechanics.MagicType;
 import com.felayga.unpixeldungeon.sprites.mobs.fungus.ShriekerSprite;
+import com.felayga.unpixeldungeon.utils.GLog;
 import com.watabou.utils.Random;
 
 /**
@@ -59,22 +63,39 @@ public class Shrieker extends Mob {
 
     @Override
     protected boolean canAttack(Char enemy) {
+        return true;
+    }
+
+    @Override
+    public boolean attack(KindOfWeapon weapon, boolean ranged, Char enemy) {
+        shriek();
         return false;
     }
 
     @Override
     public int defenseProc(Char enemy, int damage) {
-        int retval = super.defenseProc(enemy, damage);
+        shriek();
+        return super.defenseProc(enemy, damage);
+    }
 
-        if (Level.canReach(pos, enemy.pos) && Random.Int(2) == 0) {
-            int dmg = 0;
-            for (int n=0;n<=level;n++) {
-                dmg += Random.IntRange(1, 4);
-            }
-            dmg = enemy.damage(dmg, MagicType.Acid, null);
+    protected  void shriek() {
+        int distance = Math.max(Dungeon.level.WIDTH, Dungeon.level.HEIGHT) / 8;
+        int enrageDistance = 0;
+
+        for (int n = 0; n < 8; n++) {
+            enrageDistance += Random.Int(0, distance);
         }
 
-        return retval;
+
+        ScrollOfRage.enrage(pos, enrageDistance);
+
+        if (Random.Int(10) == 0) {
+            GLog.n("The shrieker shrieks!");
+
+            Dungeon.level.spawnMob();
+        } else {
+            GLog.w("The shrieker shrieks!");
+        }
     }
 
     @Override

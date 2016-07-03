@@ -77,18 +77,14 @@ public class Boomerang extends MissileWeapon {
 		((MissileSprite)curUser.sprite.parent.recycle( MissileSprite.class )).
 				reset( from, curUser.pos, curItem, null );
 
-		if (owner instanceof Hero) {
-			Hero hero = (Hero) owner;
-
-			if (throwEquiped) {
-				hero.belongings.collectEquip(this);
-				hero.spend_new(-TIME_TO_EQUIP, false);
-				Dungeon.quickslot.replaceSimilar(this);
-				updateQuickslot();
-			} else if (!curUser.belongings.collect(this)) {
-				Dungeon.level.drop(this, hero.pos).sprite.drop();
-			}
-		}
+        if (throwEquiped) {
+            owner.belongings.collectEquip(this);
+            owner.spend_new(-TIME_TO_EQUIP, false);
+            Dungeon.quickslot.replaceSimilar(this);
+            updateQuickslot();
+        } else if (!curUser.belongings.collect(this)) {
+            Dungeon.level.drop(this, owner.pos).sprite.drop();
+        }
 	}
 
 	private boolean throwEquiped;

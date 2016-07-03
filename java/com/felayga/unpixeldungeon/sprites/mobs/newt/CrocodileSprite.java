@@ -36,14 +36,14 @@ public class CrocodileSprite extends NewtSprite {
 
     @Override
     protected void initAnimationIdle(TextureFilm frames, int offset) {
-        idle = new Animation( 1, true );
+        idle = new Animation( 3, true );
         idle.frames(frames, offset + 0, offset + 0, offset + 0, offset + 0, offset + 1, offset + 2, offset + 3, offset + 3, offset + 3, offset + 3,
                 offset + 3, offset + 3, offset + 2, offset + 1, offset + 0, offset + 0, offset + 0, offset + 0, offset + 0, offset + 0);
     }
 
     @Override
     protected void initAnimationAttack(TextureFilm frames, int offset) {
-        attack = new Animation( 15, false );
+        attack = new Animation( 20, false );
         attack.frames( frames, offset + 0, offset + 2, offset + 4, offset + 5, offset + 4, offset + 5, offset + 0 );
     }
 }

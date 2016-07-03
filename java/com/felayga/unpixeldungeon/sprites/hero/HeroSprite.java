@@ -32,6 +32,7 @@ import com.felayga.unpixeldungeon.actors.hero.Hero;
 import com.felayga.unpixeldungeon.items.EquippableItem;
 import com.felayga.unpixeldungeon.items.armor.Armor;
 import com.felayga.unpixeldungeon.sprites.CharSprite;
+import com.felayga.unpixeldungeon.utils.GLog;
 import com.felayga.unpixeldungeon.windows.hero.WndInitHero;
 import com.watabou.gltextures.SmartTexture;
 import com.watabou.gltextures.TextureCache;
@@ -190,6 +191,7 @@ public class HeroSprite extends CharSprite {
 	}
 
 	public void setArmor(int armorIndex) {
+        GLog.d("setArmor("+armorIndex+")");
 		if (armorIndex < 2) {
 			armorIndex = heroGender;
 		}

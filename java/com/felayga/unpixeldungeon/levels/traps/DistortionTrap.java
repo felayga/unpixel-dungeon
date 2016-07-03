@@ -41,10 +41,10 @@ public class DistortionTrap extends Trap{
 
 	@Override
 	public void activate() {
-		InterlevelScene.returnDepth = Dungeon.depth;
+		InterlevelScene.returnDepth = Dungeon.depthAdjusted;
 
 		/*
-		//todo: seems pointless now
+		//todo: fix distortion trap if cared about
 		for (Item item : Dungeon.hero.belongings.backpack.items.toArray( new Item[Dungeon.hero.belongings.backpack.items.size()])){
 			if (item instanceof OldKey && ((OldKey)item).depth == Dungeon.depth){
 				item.detachAll(Dungeon.hero.belongings.backpack);

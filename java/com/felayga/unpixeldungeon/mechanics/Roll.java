@@ -25,6 +25,7 @@
 
 package com.felayga.unpixeldungeon.mechanics;
 
+import com.felayga.unpixeldungeon.actors.hero.Hero;
 import com.watabou.utils.Random;
 
 /**
@@ -49,5 +50,9 @@ public class Roll {
         }
 
         return retval;
+    }
+
+    public static float DropBonusChance(Hero hero) {
+        return 0.5f + (hero.luck() - 2.0f) * 0.04f;
     }
 }

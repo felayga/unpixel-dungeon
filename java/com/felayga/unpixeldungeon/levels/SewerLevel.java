@@ -41,7 +41,10 @@ import com.watabou.utils.Random;
 
 public class SewerLevel extends RegularLevel {
 
+    public SewerLevel()
 	{
+        super(0);
+
 		color1 = 0x48763c;
 		color2 = 0x59994a;
 	}
@@ -71,7 +74,7 @@ public class SewerLevel extends RegularLevel {
 
 	@Override
 	protected Class<?>[] trapClasses() {
-		return Dungeon.depth == 1 ?
+		return Dungeon._depth == 1 ?
 				new Class<?>[]{WornTrap.class} :
 				new Class<?>[]{ChillingTrap.class, ToxicTrap.class, WornTrap.class,
 						AlarmTrap.class, OozeTrap.class,
@@ -80,7 +83,7 @@ public class SewerLevel extends RegularLevel {
 
 	@Override
 	protected float[] trapChances() {
-		return Dungeon.depth == 1 ?
+		return Dungeon._depth == 1 ?
 				new float[]{1} :
 				new float[]{4, 4, 4,
 						2, 2,
@@ -125,11 +128,15 @@ public class SewerLevel extends RegularLevel {
 		}
 
 		//hides all doors in the entrance room on floor 2, teaches the player to search.
-		if (Dungeon.depth == 2)
+		if (Dungeon._depth == 2)
 			for (Room r : roomEntrance.connected.keySet()){
 				Room.Door d = roomEntrance.connected.get(r);
-				if (d.type == Room.Door.Type.REGULAR)
-					map[d.x + d.y * WIDTH] = Terrain.SECRET_DOOR;
+				if (d.type == Room.Door.Type.REGULAR) {
+                    map[d.x + d.y * WIDTH] = Terrain.SECRET_DOOR;
+                }
+                else if (d.type == Room.Door.Type.LOCKED) {
+                    map[d.x + d.y * WIDTH] = Terrain.SECRET_LOCKED_DOOR;
+                }
 			}
 		
 		placeSign();
@@ -137,11 +144,6 @@ public class SewerLevel extends RegularLevel {
 	
 	@Override
 	protected void createItems() {
-		if (!Dungeon.limitedDrops.dewVial.dropped() && Random.Int( 4 - Dungeon.depth ) == 0) {
-			addItemToSpawn( new DewVial() );
-			Dungeon.limitedDrops.dewVial.drop();
-		}
-
 		//Ghost.Quest.spawn( this );
 		
 		super.createItems();
@@ -182,43 +184,46 @@ public class SewerLevel extends RegularLevel {
 		}
 	}
 	
-	private static class Sink extends Emitter {
-		
-		private float rippleDelay = 0;
-		
-		private static final Emitter.Factory factory = new Factory() {
-			
-			@Override
-			public void emit( Emitter emitter, int index, float x, float y ) {
-				WaterParticle p = (WaterParticle)emitter.recycle( WaterParticle.class );
-				p.reset( x, y );
-			}
-		};
-		
-		public Sink( int pos ) {
-			super();
+	public static class Sink extends Emitter {
+        private float rippleDelay = 0;
 
-			this.pos = pos;
-			
-			PointF p = DungeonTilemap.tileCenterToWorld( pos );
-			pos( pos, p.x - 2, p.y + 1, 4, 0 );
-			
-			pour( factory, 0.05f );
-		}
-		
-		@Override
-		public void update() {
-			if (visible = Dungeon.visible[pos]) {
-				
-				super.update();
-				
-				if ((rippleDelay -= Game.elapsed) <= 0) {
-					GameScene.ripple( pos + WIDTH ).y -= DungeonTilemap.SIZE / 2;
-					rippleDelay = Random.Float( 0.2f, 0.3f );
-				}
-			}
-		}
-	}
+        private static final Emitter.Factory factory = new Factory() {
+
+            @Override
+            public void emit(Emitter emitter, int index, float x, float y) {
+                WaterParticle p = (WaterParticle) emitter.recycle(WaterParticle.class);
+                p.reset(x, y);
+            }
+        };
+
+        public Sink(int pos) {
+            this(pos, -2.0f, 1.0f);
+        }
+
+        public Sink(int pos, float xOffset, float yOffset) {
+            super();
+
+            this.pos = pos;
+
+            PointF p = DungeonTilemap.tileCenterToWorld(pos);
+            pos(pos, p.x + xOffset, p.y + yOffset, 4, 0);
+
+            pour(factory, 0.05f);
+        }
+
+        @Override
+        public void update() {
+            if (visible = Dungeon.visible[pos]) {
+
+                super.update();
+
+                if ((rippleDelay -= Game.elapsed) <= 0) {
+                    GameScene.ripple(pos + WIDTH).y -= DungeonTilemap.SIZE / 2;
+                    rippleDelay = Random.Float(0.2f, 0.3f);
+                }
+            }
+        }
+    }
 	
 	public static final class WaterParticle extends PixelParticle {
 		

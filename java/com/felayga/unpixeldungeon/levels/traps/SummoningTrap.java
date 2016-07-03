@@ -49,10 +49,7 @@ public class SummoningTrap extends Trap {
 
     @Override
     public void activate() {
-
-        if (Dungeon.bossLevel()) {
-            return;
-        }
+        //todo: no summons if boss present?
 
         int nMobs = 1;
         if (Random.Int(2) == 0) {
@@ -83,7 +80,7 @@ public class SummoningTrap extends Trap {
         final ArrayList<Mob> mobs = new ArrayList<>();
 
         for (final Integer point : respawnPoints) {
-            Bestiary.spawn(Dungeon.depth, Dungeon.hero.level, true, new Bestiary.SpawnParams() {
+            Bestiary.spawn(Dungeon.depthAdjusted, Dungeon.hero.level, true, new Bestiary.SpawnParams() {
                 @Override
                 public Level level() {
                     return Dungeon.level;
@@ -92,6 +89,16 @@ public class SummoningTrap extends Trap {
                 @Override
                 public int position() {
                     return point;
+                }
+
+                @Override
+                public Class<?> type(Class<?> type) {
+                    return type;
+                }
+
+                @Override
+                public int quantity(int quantity) {
+                    return quantity;
                 }
 
                 @Override

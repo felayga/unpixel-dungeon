@@ -149,7 +149,7 @@ public class Corpse extends Food implements IDecayable {
 
         boolean newRotten = isRotten();
 
-        if (rotten != newRotten) {
+        if (rotten != newRotten || amount == 0) {
             image = getSprite(newRotten, isVegetable());
             updateQuickslot();
         }
@@ -295,8 +295,7 @@ public class Corpse extends Food implements IDecayable {
             } else {
                 hero.damage(Random.Int(1, 15), MagicType.Poison, null);
 
-                int strabuse = (int) (Hero.attributeUseRequirement(hero.STRCON) * (1.0 + Random.Float()));
-                hero.useAttribute(AttributeType.STRCON, -strabuse);
+                hero.useAttribute(AttributeType.STRCON, -Random.Float(1.0f, 2.0f));
             }
         }
 

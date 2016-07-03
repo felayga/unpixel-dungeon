@@ -58,6 +58,11 @@ public class RedMold extends Mob {
     }
 
     @Override
+    protected boolean canAttack(Char enemy) {
+        return false;
+    }
+
+    @Override
     public int defenseProc(Char enemy, int damage) {
         int retval = super.defenseProc(enemy, damage);
 

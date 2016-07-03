@@ -40,7 +40,7 @@ public class BoulderSprite extends MobSprite {
         idle.frames( frames, 0 );
 
         run = new Animation( 10, true );
-        run.frames( frames, 1, 2, 3, 0 );
+        run.frames( frames, 0 );
 
         attack = new Animation( 10, false );
         attack.frames( frames, 0 );

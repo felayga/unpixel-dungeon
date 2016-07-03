@@ -44,7 +44,10 @@ import java.util.List;
 
 public class SewerBossLevel extends RegularLevel {
 
+    public SewerBossLevel()
     {
+        super(0);
+
         color1 = 0x48763c;
         color2 = 0x59994a;
     }
@@ -276,7 +279,7 @@ public class SewerBossLevel extends RegularLevel {
             entrance = stairs;
             stairs = 0;
 
-            set(entrance, Terrain.ENTRANCE);
+            set(entrance, Terrain.STAIRS_UP);
             GameScene.updateMap(entrance);
 
         }

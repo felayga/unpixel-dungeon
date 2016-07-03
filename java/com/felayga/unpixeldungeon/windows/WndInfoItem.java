@@ -83,10 +83,7 @@ public class WndInfoItem extends Window {
 			String title;
 			String info;
 			
-			if (heap.type == Type.CHEST || heap.type == Type.MIMIC) {
-				title = TTL_CHEST;
-				info = TXT_WONT_KNOW;
-			} else if (heap.type == Type.TOMB) {
+			if (heap.type == Type.TOMB) {
 				title = TTL_TOMB;
 				info = TXT_OWNER;
 			} else if (heap.type == Type.SKELETON) {
@@ -95,16 +92,6 @@ public class WndInfoItem extends Window {
 			} else if (heap.type == Type.REMAINS) {
 				title = TTL_REMAINS;
 				info = TXT_REMAINS;
-			} else if (heap.type == Type.CRYSTAL_CHEST) {
-				title = TTL_CRYSTAL_CHEST;
-				if (heap.peek() instanceof Artifact_old)
-					info = Utils.format( TXT_INSIDE, "an artifact" );
-				else if (heap.peek() instanceof Wand)
-					info = Utils.format( TXT_INSIDE, "a wand" );
-				else if (heap.peek() instanceof Ring)
-					info = Utils.format( TXT_INSIDE, "a ring" );
-				else
-					info = Utils.format( TXT_INSIDE, Utils.indefinite( heap.peek().getDisplayName() ) );
 			} else {
 				title = TTL_LOCKED_CHEST;
 				info = TXT_NEED_KEY;

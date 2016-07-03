@@ -139,9 +139,15 @@ public class Armor extends EquippableItem {
 				setHeroSpriteArmor((HeroSprite)owner.sprite, true);
 			}
 			else {
+                //todo: fix cursed message visibility name
 				GLog.d(TXT_EQUIP_CURSED_OTHER, getDisplayName());
 			}
 		}
+        else {
+            if (owner instanceof Hero) {
+                setHeroSpriteArmor((HeroSprite)owner.sprite, true);
+            }
+        }
 	}
 
 	@Override

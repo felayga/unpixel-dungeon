@@ -29,6 +29,7 @@ import com.felayga.unpixeldungeon.Dungeon;
 import com.felayga.unpixeldungeon.ResultDescriptions;
 import com.felayga.unpixeldungeon.actors.Char;
 import com.felayga.unpixeldungeon.actors.buffs.Buff;
+import com.felayga.unpixeldungeon.actors.buffs.FlavourBuff;
 import com.felayga.unpixeldungeon.actors.hero.Hero;
 import com.felayga.unpixeldungeon.effects.CellEmitter;
 import com.felayga.unpixeldungeon.effects.particles.PoisonParticle;
@@ -38,34 +39,50 @@ import com.felayga.unpixeldungeon.mechanics.MagicType;
 import com.felayga.unpixeldungeon.ui.BuffIndicator;
 import com.felayga.unpixeldungeon.utils.GLog;
 import com.watabou.utils.Bundle;
+import com.watabou.utils.Random;
 
 public class Poison extends Buff implements Hero.Doom {
+	protected int damageLeft;
 	
-	protected float left;
-	
-	private static final String LEFT	= "left";
+	private static final String DAMAGELEFT	= "damageLeft";
 
+    public Poison(int damage)
 	{
+        damageLeft = damage;
 		type = buffType.NEGATIVE;
 	}
-	
+
+    //creates a fresh instance of the buff and attaches that, this allows duplication.
+    public static Poison append( Char target, int damage ) {
+        Poison buff = new Poison(damage);
+        buff.attachTo(target);
+        return buff;
+    }
+
+    //same as append, but prevents duplication.
+    public static Poison affect( Char target, int damage ) {
+        Poison buff = target.buff( Poison.class );
+        if (buff != null) {
+            buff.damageLeft += damage;
+            return buff;
+        } else {
+            return append( target, damage );
+        }
+    }
+
 	@Override
 	public void storeInBundle( Bundle bundle ) {
-		super.storeInBundle( bundle );
-		bundle.put( LEFT, left );
+		super.storeInBundle(bundle);
+		bundle.put( DAMAGELEFT, damageLeft );
 		
 	}
 	
 	@Override
 	public void restoreFromBundle( Bundle bundle ) {
 		super.restoreFromBundle(bundle);
-		left = bundle.getFloat( LEFT );
+		damageLeft = bundle.getInt( DAMAGELEFT );
 	}
-	
-	public void set( float duration ) {
-		this.left = duration;
-	}
-	
+
 	@Override
 	public int icon() {
 		return BuffIndicator.POISON;
@@ -89,9 +106,9 @@ public class Poison extends Buff implements Hero.Doom {
 	public String desc() {
 		return "Poison works its way through the body, slowly impairing its internal functioning.\n" +
 				"\n" +
-				"Poison deals damage each turn proportional to how long until it expires.\n" +
-				"\n" +
-				"This poison will last for " + dispTurns(left)  + ".";
+				"Poison deals damage each turn proportional to how long until it expires."/* +
+				"\n\n" +
+				"This poison will last for " + dispTurns(left)  + "."*/;
 	}
 
 	@Override
@@ -106,11 +123,17 @@ public class Poison extends Buff implements Hero.Doom {
 	@Override
 	public boolean act() {
 		if (target.isAlive()) {
-			
-			target.damage( (int)(left / 3) + 1, MagicType.Poison, null );
+            int curDamage = Random.IntRange(1, damageLeft / 2);
+            if (curDamage < 1) {
+                curDamage = 1;
+            }
+
+            target.damage(curDamage, MagicType.Poison, null );
             spend_new(GameTime.TICK, false );
+
+            damageLeft -= curDamage;
 			
-			if ((left -= GameTime.TICK) <= 0) {
+			if (damageLeft <= 0) {
 				detach();
 			}
 			

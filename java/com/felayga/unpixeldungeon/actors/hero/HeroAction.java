@@ -31,6 +31,9 @@ import com.felayga.unpixeldungeon.items.Item;
 import com.felayga.unpixeldungeon.items.bags.IBag;
 import com.felayga.unpixeldungeon.items.tools.digging.DiggingTool;
 import com.felayga.unpixeldungeon.items.tools.unlocking.UnlockingTool;
+import com.felayga.unpixeldungeon.items.weapon.ammunition.AmmunitionWeapon;
+import com.felayga.unpixeldungeon.items.weapon.missiles.MissileWeapon;
+import com.felayga.unpixeldungeon.items.weapon.ranged.RangedWeapon;
 
 
 public class HeroAction {
@@ -121,27 +124,45 @@ public class HeroAction {
 			}
 		}
 	}
-	
-	public static class Descend extends HeroAction {
-		public Descend( int stairs ) {
-			this.dst = stairs;
-		}
-	}
-	
-	public static class Ascend extends HeroAction {
-		public Ascend( int stairs ) {
-			this.dst = stairs;
-		}
-	}
-	
-	public static class Cook extends HeroAction {
-		public Cook( int pot ) {
-			this.dst = pot;
-		}
-	}
+
+    public static class MoveLevel extends HeroAction
+    {
+        public int direction;
+        public boolean alternate;
+
+        public MoveLevel(int pos, int direction, boolean alternate) {
+            this.dst = pos;
+            this.direction = direction;
+            this.alternate = alternate;
+        }
+    }
+
+    public static class InteractPosition extends HeroAction {
+        public static class Cook extends InteractPosition {
+            public Cook(int pot) {
+                this.dst = pot;
+            }
+        }
+
+        public static class Well extends InteractPosition {
+            public String action;
+
+            public Well(int pos) {
+                this(pos, null);
+            }
+
+            public Well(int pos, String action) {
+                this.dst = pos;
+                this.action = action;
+            }
+        }
+    }
 	
 	public static class Attack extends HeroAction {
 		public Char target;
+        public RangedWeapon launcher;
+        public AmmunitionWeapon ammo;
+        public MissileWeapon missile;
 
 		public Attack( Char target )
 		{
@@ -160,14 +181,14 @@ public class HeroAction {
 		}
 	}
 
-	public static class UnlockBag extends HeroAction {
+	public static class UnlockBag extends UseItem {
 		public UnlockingTool tool;
-		public Item target;
 		public int location;
 
 		public UnlockBag(UnlockingTool tool, Item target, int location) {
+            super(target, null);
+
 			this.tool = tool;
-			this.target = target;
 			this.location = location;
 		}
 	}

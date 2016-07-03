@@ -23,7 +23,7 @@
  *
  */
 package com.felayga.unpixeldungeon.actors.buffs.negative;
-
+/*
 import com.felayga.unpixeldungeon.Dungeon;
 import com.felayga.unpixeldungeon.actors.hero.Hero;
 import com.felayga.unpixeldungeon.mechanics.GameTime;
@@ -98,3 +98,4 @@ public class Venom extends Poison implements Hero.Doom {
 	}
 
 }
+*/

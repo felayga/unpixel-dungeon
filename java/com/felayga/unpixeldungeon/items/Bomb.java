@@ -175,7 +175,7 @@ public class Bomb extends Item {
         //We're blowing up, so no need for a fuse anymore.
         this.fuse = null;
 
-        explode(cell, true, Dungeon.depth + 5, 10 + Dungeon.depth * 2);
+        explode(cell, true, Dungeon.depthAdjusted + 5, 10 + Dungeon.depthAdjusted * 2);
     }
 	
 	@Override

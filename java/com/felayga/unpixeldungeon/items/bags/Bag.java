@@ -51,14 +51,15 @@ public class Bag extends Item implements Iterable<Item>, IBag {
 
 	public static final String AC_OPEN = "OPEN";
 
-	public Bag(Char owner) {
+	public Bag(Char owner, boolean lockable) {
 		this.owner = owner;
 
 		image = 11;
 
 		defaultAction = AC_OPEN;
 
-		unique = true;
+		this.locked = false;
+        this.lockable = lockable;
 
 		priority = 16;
 
@@ -70,6 +71,7 @@ public class Bag extends Item implements Iterable<Item>, IBag {
     }
     public int pos() { return Constant.Position.NONE; }
     public String action() { return null; }
+    public Char owner() { return owner; }
 
 	public Char owner;
 
@@ -81,8 +83,22 @@ public class Bag extends Item implements Iterable<Item>, IBag {
         return tabIcon;
     }
 
-	protected boolean locked = false;
+	private boolean locked;
+    private boolean lockable;
+
     public boolean locked() { return locked; }
+    public void locked(boolean value) {
+        if (locked == value || (value && !lockable)) {
+            return;
+        }
+
+        locked = value;
+        onLockedChanged();
+        updateQuickslot();
+    }
+
+    protected void onLockedChanged() {
+    }
 
 	public int size = 1;
 
@@ -130,9 +146,7 @@ public class Bag extends Item implements Iterable<Item>, IBag {
 			for (Item item : items) {
 				if (collectItem.isStackableWith(item)) {
 					item.quantity(item.quantity() + collectItem.quantity());
-					item.updateQuickslot();
-
-					onWeightChanged(collectItem.quantity() * collectItem.weight());
+                    item.updateQuickslot();
 
 					return true;
 				}
@@ -147,10 +161,12 @@ public class Bag extends Item implements Iterable<Item>, IBag {
 			items.add(collectItem);
 			onItemAdded(collectItem);
 
-			if (collectItem.stackable || collectItem instanceof Boomerang) {
-				Dungeon.quickslot.replaceSimilar(collectItem);
-			}
-			collectItem.updateQuickslot();
+            if (this.owner instanceof Hero) {
+                if (collectItem.stackable || collectItem instanceof Boomerang) {
+                    Dungeon.quickslot.replaceSimilar(collectItem);
+                }
+                collectItem.updateQuickslot();
+            }
 			Collections.sort(items, collectItem.itemComparator);
 			return true;
 		} else {
@@ -161,7 +177,7 @@ public class Bag extends Item implements Iterable<Item>, IBag {
 		}
 	}
 
-	public boolean tryMergeStack(Item test) {
+	public boolean tryMergeExistingStack(Item test) {
 		int similarities = 0;
 		int index = -1;
 
@@ -196,22 +212,7 @@ public class Bag extends Item implements Iterable<Item>, IBag {
 
 	public Item remove(Item item, int quantity) {
 		if (item.quantity() > quantity) {
-			try {
-				//pssh, who needs copy constructors?
-				Item detached = item.getClass().newInstance();
-				Bundle copy = new Bundle();
-				item.storeInBundle(copy);
-				detached.restoreFromBundle(copy);
-				detached.quantity(quantity);
-				detached.onDetach();
-
-                item.quantity(item.quantity()-quantity);
-                onWeightChanged(-item.weight() * quantity);
-
-				return detached;
-			} catch (Exception e) {
-				return null;
-			}
+            return Item.ghettoSplitStack(item, quantity, owner);
 		}
 		else if (item.quantity() == quantity) {
 			return remove(item);
@@ -235,11 +236,16 @@ public class Bag extends Item implements Iterable<Item>, IBag {
 
 	@Override
 	public void onDetach() {
+        Char oldOwner = this.owner;
 		this.owner = null;
+
 		for (Item item : items) {
 			Dungeon.quickslot.clearItem(item);
 		}
-		updateQuickslot();
+
+        if (oldOwner instanceof Hero) {
+            updateQuickslot();
+        }
 	}
 
     @Override

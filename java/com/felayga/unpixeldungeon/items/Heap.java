@@ -28,6 +28,7 @@ import com.felayga.unpixeldungeon.Assets;
 import com.felayga.unpixeldungeon.Badges;
 import com.felayga.unpixeldungeon.Dungeon;
 import com.felayga.unpixeldungeon.Statistics;
+import com.felayga.unpixeldungeon.actors.Char;
 import com.felayga.unpixeldungeon.actors.hero.Hero;
 import com.felayga.unpixeldungeon.effects.CellEmitter;
 import com.felayga.unpixeldungeon.effects.Speck;
@@ -71,12 +72,13 @@ public class Heap implements Bundlable, IBag {
     public Icons tabIcon() {
         return Icons.FLOORHEAP;
     }
+    public Char owner() { return null; }
 
     public void onWeightChanged(int change) {
 
     }
 
-    public boolean tryMergeStack(Item test) {
+    public boolean tryMergeExistingStack(Item test) {
         return collect(test);
     }
 
@@ -88,8 +90,6 @@ public class Heap implements Bundlable, IBag {
                 if (item.isStackableWith(subitem)) {
                     subitem.quantity(subitem.quantity() + item.quantity());
                     subitem.updateQuickslot();
-
-                    onWeightChanged(item.quantity() * item.weight());
 
                     updateImage();
                     retval = true;
@@ -134,23 +134,7 @@ public class Heap implements Bundlable, IBag {
 
     public Item remove(Item item, int quantity) {
         if (item.quantity() > quantity) {
-            try {
-                //pssh, who needs copy constructors?
-                Item detached = item.getClass().newInstance();
-                Bundle copy = new Bundle();
-                item.storeInBundle(copy);
-                detached.restoreFromBundle(copy);
-                detached.quantity(quantity);
-                detached.onDetach();
-
-                item.quantity(item.quantity() - quantity);
-                onWeightChanged(-item.weight() * quantity);
-
-                updateImage();
-                return detached;
-            } catch (Exception e) {
-                return null;
-            }
+            return Item.ghettoSplitStack(item, quantity, owner());
         } else if (item.quantity() == quantity) {
             return remove(item);
         }
@@ -181,13 +165,9 @@ public class Heap implements Bundlable, IBag {
 	public enum Type {
 		HEAP,
 		FOR_SALE,
-		CHEST,
-		LOCKED_CHEST,
-		CRYSTAL_CHEST,
 		TOMB,
 		SKELETON,
-		REMAINS,
-		MIMIC
+		REMAINS
 	}
 	public Type type = Type.HEAP;
 	
@@ -206,13 +186,6 @@ public class Heap implements Bundlable, IBag {
 		case HEAP:
 		case FOR_SALE:
 			return size() > 0 ? items_derp.peek().image() : 0;
-		case CHEST:
-		case MIMIC:
-			return ItemSpriteSheet.CHEST;
-		case LOCKED_CHEST:
-			return ItemSpriteSheet.LOCKED_CHEST;
-		case CRYSTAL_CHEST:
-			return ItemSpriteSheet.CRYSTAL_CHEST;
 		case TOMB:
 			return ItemSpriteSheet.TOMB;
 		case SKELETON:
@@ -229,45 +202,34 @@ public class Heap implements Bundlable, IBag {
 	}
 	
 	public void open( Hero hero ) {
-		switch (type) {
-		case MIMIC:
-			//todo: mimic spawning
-			if (false/*Mimic.spawnAt(pos, items) != null*/) {
-				GLog.n(TXT_MIMIC);
-				destroy();
-			} else {
-				type = Type.CHEST;
-			}
-			break;
-		case TOMB:
-			//todo: wraith spawn maybe?
-			//Wraith.spawnAround( hero.pos );
-			break;
-		case SKELETON:
-		case REMAINS:
-			CellEmitter.center( pos ).start( Speck.factory( Speck.RATTLE ), 0.1f, 3 );
-			for (Item item : items_derp) {
-				if (item.bucStatus == BUCStatus.Cursed) {
-					//todo: wraith spawn from opening remains maybe?
-					if (false/*Wraith.spawnAt( pos ) == null*/) {
-						hero.sprite.emitter().burst( ShadowParticle.CURSE, 6 );
-						hero.damage( hero.HP / 2, MagicType.Magic, null );
-					}
-					Sample.INSTANCE.play( Assets.SND_CURSED );
-					item.bucStatusKnown = true;
-					break;
-				}
-			}
-			break;
-		default:
-		}
+        switch (type) {
+            case TOMB:
+                //todo: wraith spawn maybe?
+                //Wraith.spawnAround( hero.pos );
+                break;
+            case SKELETON:
+            case REMAINS:
+                CellEmitter.center(pos).start(Speck.factory(Speck.RATTLE), 0.1f, 3);
+                for (Item item : items_derp) {
+                    if (item.bucStatus == BUCStatus.Cursed) {
+                        //todo: wraith spawn from opening remains maybe?
+                        if (false/*Wraith.spawnAt( pos ) == null*/) {
+                            hero.sprite.emitter().burst(ShadowParticle.CURSE, 6);
+                            hero.damage(hero.HP / 2, MagicType.Magic, null);
+                        }
+                        Sample.INSTANCE.play(Assets.SND_CURSED);
+                        item.bucStatusKnown = true;
+                        break;
+                    }
+                }
+                break;
+            default:
+        }
 
-		if (type != Type.MIMIC) {
-			type = Type.HEAP;
-			sprite.link();
-			sprite.drop();
-		}
-	}
+        type = Type.HEAP;
+        sprite.link();
+        sprite.drop();
+    }
 	
 	public int size() {
         if (items_derp != null) {
@@ -305,19 +267,6 @@ public class Heap implements Bundlable, IBag {
 	}
 	
 	public void burn() {
-
-		if (type == Type.MIMIC) {
-			//todo: fix mimic burning
-			/*
-			Mimic m = Mimic.spawnAt( pos, items );
-			if (m != null) {
-				Buff.affect( m, Burning.class ).reignite( m );
-				m.sprite.emitter().burst( FlameParticle.FACTORY, 5 );
-				destroy();
-			}
-			*/
-		}
-
 		if (type != Type.HEAP) {
 			return;
 		}
@@ -369,9 +318,8 @@ public class Heap implements Bundlable, IBag {
 
 	//Note: should not be called to initiate an explosion, but rather by an explosion that is happening.
 	public void explode() {
-
 		//breaks open most standard containers, mimics die.
-		if (type == Type.MIMIC || type == Type.CHEST || type == Type.SKELETON) {
+		if (type == Type.SKELETON) {
 			type = Type.HEAP;
 			sprite.link();
 			sprite.drop();
@@ -407,18 +355,6 @@ public class Heap implements Bundlable, IBag {
 	}
 	
 	public void freeze() {
-
-		if (type == Type.MIMIC) {
-			//todo: fix mimic freezing
-			/*
-			Mimic m = Mimic.spawnAt( pos, items );
-			if (m != null) {
-				Buff.prolong( m, Frost.class, Frost.duration( m ) * Random.Long(GameTime.TICK, GameTime.TICK*3/2) / GameTime.TICK );
-				destroy();
-			}
-			*/
-		}
-
 		if (type != Type.HEAP) {
 			return;
 		}

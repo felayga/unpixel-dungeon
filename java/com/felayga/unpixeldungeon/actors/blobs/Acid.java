@@ -96,7 +96,7 @@ public class Acid extends Blob {
 	{
 		Buff.affect(ch, Ooze.class);
 
-		int levelDamage = 5 + Dungeon.depth * 5;
+		int levelDamage = 5 + Dungeon.depthAdjusted * 5;
 		int damage = (ch.HT + levelDamage) / 5;
 		if (Random.Int(5) < (ch.HT + levelDamage) % 5) {
 			damage++;

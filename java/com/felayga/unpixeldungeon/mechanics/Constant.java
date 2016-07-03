@@ -29,13 +29,6 @@ package com.felayga.unpixeldungeon.mechanics;
  * Created by HELLO on 3/16/2016.
  */
 public class Constant {
-    public static class Position {
-        public static final int ENTRANCE    = -2;
-        public static final int EXIT        = -1;
-        public static final int RANDOM      = -3;
-        public static final int NONE        = -1048576;
-    }
-
     public static class Action {
         public static final String DROP     = "DROP";
         public static final String THROW    = "THROW";
@@ -46,15 +39,33 @@ public class Constant {
         public static final String TAKE     = "TAKE";
         public static final String EQUIP    = "EQUIP";
         public static final String UNEQUIP  = "UNEQUIP";
+        public static final String DRINK    = "DRINK";
+        public static final String DIP      = "DIP ITEM";
 
         public static final String YES      = "YES";
         public static final String CANCEL   = "CANCEL";
     }
 
+    public static class Position {
+        public static final int ENTRANCE            = -2;
+        public static final int EXIT                = -1;
+        public static final int RANDOM              = -3;
+        public static final int ENTRANCE_ALTERNATE  = -4;
+        public static final int EXIT_ALTERNATE      = -5;
+        public static final int NONE                = -1048576;
+    }
+
+    public static class Text {
+        public static final String HERO_READIED = "You ready your %s.";
+    }
+
     public static class Time {
-        public static final long ITEM_THROW = GameTime.TICK;
-        public static final long ITEM_PICKUP = GameTime.TICK;
-        public static final long ITEM_DROP = GameTime.TICK / 2;
+        public static final long ITEM_THROW     = GameTime.TICK;
+        public static final long ITEM_PICKUP    = GameTime.TICK;
+        public static final long ITEM_DROP      = GameTime.TICK / 2;
+
+        public static final long HERO_REST		= GameTime.TICK;
+        public static final long HERO_SEARCH	= GameTime.TICK * 2;
     }
 
 }

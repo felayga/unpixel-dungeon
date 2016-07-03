@@ -37,7 +37,9 @@ import com.felayga.unpixeldungeon.items.bags.SeedPouch;
 import com.felayga.unpixeldungeon.items.food.Ration;
 import com.felayga.unpixeldungeon.items.potions.PotionOfMindVision;
 import com.felayga.unpixeldungeon.items.potions.PotionOfStrength;
+import com.felayga.unpixeldungeon.items.potions.PotionOfWater;
 import com.felayga.unpixeldungeon.items.rings.RingOfWealth;
+import com.felayga.unpixeldungeon.items.scrolls.ScrollOfIdentify;
 import com.felayga.unpixeldungeon.items.scrolls.ScrollOfMagicMapping;
 import com.felayga.unpixeldungeon.items.scrolls.ScrollOfUpgrade;
 import com.felayga.unpixeldungeon.items.weapon.melee.martial.BattleAxe;
@@ -47,6 +49,9 @@ import com.felayga.unpixeldungeon.items.wands.WandOfMagicMissile;
 import com.felayga.unpixeldungeon.items.tools.digging.Pickaxe;
 import com.felayga.unpixeldungeon.items.weapon.missiles.simple.Dart;
 import com.felayga.unpixeldungeon.items.weapon.missiles.martial.Boomerang;
+import com.felayga.unpixeldungeon.items.weapon.ammunition.simple.Rock;
+import com.felayga.unpixeldungeon.items.weapon.ranged.simple.Sling;
+import com.felayga.unpixeldungeon.mechanics.BUCStatus;
 import com.felayga.unpixeldungeon.mechanics.WeaponSkill;
 import com.watabou.utils.Bundle;
 import com.watabou.utils.Random;
@@ -166,7 +171,7 @@ public enum HeroClass {
 		}
 
 		if (!Dungeon.isChallenged(Challenges.NO_FOOD)) {
-			hero.belongings.collect(new Ration().setQuantity(Random.Int(4, 8)).identify());
+			hero.belongings.collect(new Ration().quantity(Random.Int(4, 8)).identify());
 		}
 	}
 
@@ -188,7 +193,9 @@ public enum HeroClass {
 		Dart darts = new Dart( 8 );
 		hero.belongings.collect(darts.identify());
 
-		Dungeon.quickslot.setSlot(0, darts);
+        hero.weaponSkill = WeaponSkill.Simple;
+
+        Dungeon.quickslot.setSlot(0, darts);
 
 		hero.belongings.collectEquip(new HalfPlateArmor());
         hero.belongings.armor().upgrade(darts, 20);
@@ -205,6 +212,22 @@ public enum HeroClass {
         hero.belongings.collect(new SeedPouch());
 
         hero.belongings.collectEquip(new MasterThievesArmband());
+
+        /*
+        hero.belongings.collect(new PotionOfWater().bucStatus(BUCStatus.Blessed, false));
+        hero.belongings.collect(new PotionOfWater().bucStatus(BUCStatus.Uncursed, false));
+        hero.belongings.collect(new PotionOfWater().bucStatus(BUCStatus.Cursed, false));
+        hero.belongings.collect(new PotionOfWater().bucStatus(BUCStatus.Blessed, true));
+        hero.belongings.collect(new PotionOfWater().bucStatus(BUCStatus.Uncursed, true));
+        hero.belongings.collect(new PotionOfWater().bucStatus(BUCStatus.Cursed, true));
+
+        hero.belongings.collect(new ScrollOfIdentify().bucStatus(BUCStatus.Blessed, true));
+        */
+
+        hero.belongings.collect(new ScrollOfMagicMapping().bucStatus(BUCStatus.Blessed, true).quantity(5));
+
+        hero.belongings.collect(new Sling());
+        hero.belongings.collect(new Rock(5));
 	}
 
 	private static void initWarrior( Hero hero ) {

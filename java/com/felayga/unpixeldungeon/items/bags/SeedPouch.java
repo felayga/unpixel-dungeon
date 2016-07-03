@@ -33,7 +33,7 @@ public class SeedPouch extends Bag {
 
 	public SeedPouch()
 	{
-		super(null);
+		super(null, false);
 
 		name = "seed pouch";
 		image = ItemSpriteSheet.POUCH;

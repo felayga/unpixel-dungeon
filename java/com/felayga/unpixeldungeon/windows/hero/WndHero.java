@@ -53,201 +53,209 @@ import com.felayga.unpixeldungeon.utils.Utils;
 import com.watabou.noosa.ui.Button;
 
 public class WndHero extends WndTabbed {
-	
-	private static final String TXT_STATS	= "Stats";
-	private static final String TXT_BUFFS	= "Buffs";
-	
-	private static final String TXT_EXP		= "Experience";
-	private static final String TXT_STR		= "Strength";
-	private static final String TXT_HEALTH	= "Health";
-	private static final String TXT_GOLD	= "Gold Collected";
-	private static final String TXT_DEPTH	= "Maximum Depth";
-	
-	private static final int WIDTH		= 100;
-	private static final int TAB_WIDTH	= 40;
-	
-	private StatsTab stats;
-	private BuffsTab buffs;
-	
-	private SmartTexture icons;
-	private TextureFilm film;
-	
-	public WndHero() {
-		
-		super();
-		
-		icons = TextureCache.get( Assets.BUFFS_LARGE );
-		film = new TextureFilm( icons, 16, 16 );
-		
-		stats = new StatsTab();
-		add( stats );
-		
-		buffs = new BuffsTab();
-		add( buffs );
-		
-		add( new LabeledTab( TXT_STATS ) {
-			protected void select( boolean value ) {
-				super.select( value );
-				stats.visible = stats.active = selected;
-			};
-		} );
-		add( new LabeledTab( TXT_BUFFS ) {
-			protected void select( boolean value ) {
-				super.select( value );
-				buffs.visible = buffs.active = selected;
-			};
-		} );
 
-		resize( WIDTH, (int)Math.max( stats.height(), buffs.height() ) );
+    private static final String TXT_STATS = "Stats";
+    private static final String TXT_BUFFS = "Buffs";
 
-		layoutTabs();
-		
-		select( 0 );
-	}
-	
-	private class StatsTab extends Group {
-		
-		private static final String TXT_TITLE		= "Level %d %s";
-		private static final String TXT_CATALOGUS	= "Catalogus";
-		private static final String TXT_JOURNAL		= "Journal";
-		
-		private static final int GAP = 5;
-		
-		private float pos;
-		
-		public StatsTab() {
-			super(-1);
+    private static final String TXT_EXP = "Experience";
 
-			Hero hero = Dungeon.hero;
+    private static final String TXT_STRCON = "Vitality";
+    private static final String TXT_DEXCHA = "Cunning";
+    private static final String TXT_INTWIS = "Sagacity";
 
-			IconTitle title = new IconTitle();
-			title.icon( HeroSprite.avatar(0, 0) );
-			title.label(Utils.format( TXT_TITLE, hero.level, hero.className() ).toUpperCase( Locale.ENGLISH ), 9);
-			title.color(Window.SHPX_COLOR);
-			title.setRect( 0, 0, WIDTH, 0 );
-			add(title);
+    private static final String TXT_HEALTH = "Health";
+    private static final String TXT_GOLD = "Gold Collected";
+    private static final String TXT_DEPTH = "Maximum Depth";
 
-			RedButton btnCatalogus = new RedButton( TXT_CATALOGUS ) {
-				@Override
-				protected void onClick() {
-					hide();
-					GameScene.show( new WndCatalogus() );
-				}
-			};
-			btnCatalogus.setRect( 0, title.height(), btnCatalogus.reqWidth() + 2, btnCatalogus.reqHeight() + 2 );
-			add( btnCatalogus );
+    private static final int WIDTH = 100;
+    private static final int TAB_WIDTH = 40;
 
-			RedButton btnJournal = new RedButton( TXT_JOURNAL ) {
-				@Override
-				protected void onClick() {
-					hide();
-					GameScene.show( new WndJournal() );
-				}
-			};
-			btnJournal.setRect(
-				btnCatalogus.right() + 1, btnCatalogus.top(),
-				btnJournal.reqWidth() + 2, btnJournal.reqHeight() + 2 );
-			add( btnJournal );
+    private StatsTab stats;
+    private BuffsTab buffs;
 
-			pos = btnCatalogus.bottom() + GAP;
+    private SmartTexture icons;
+    private TextureFilm film;
 
-			statSlot("STR/CON", hero.STRCON);
-			statSlot("DEX/CHA", hero.DEXCHA);
-			statSlot("INT/WIS", hero.INTWIS);
-			statSlot( TXT_HEALTH, hero.HP + "/" + hero.HT );
-			statSlot( TXT_EXP, hero.exp + "/" + hero.maxExp() );
+    public WndHero() {
 
-			pos += GAP;
+        super();
 
-			statSlot( TXT_GOLD, Statistics.goldCollected );
-			statSlot( TXT_DEPTH, "nope" );
+        icons = TextureCache.get(Assets.BUFFS_LARGE);
+        film = new TextureFilm(icons, 16, 16);
 
-			pos += GAP;
-		}
+        stats = new StatsTab();
+        add(stats);
 
-		private void statSlot( String label, String value ) {
+        buffs = new BuffsTab();
+        add(buffs);
 
-			BitmapText txt = PixelScene.createText( label, 8 );
-			txt.y = pos;
-			add( txt );
+        add(new LabeledTab(TXT_STATS) {
+            protected void select(boolean value) {
+                super.select(value);
+                stats.visible = stats.active = selected;
+            }
 
-			txt = PixelScene.createText( value, 8 );
-			txt.measure();
-			txt.x = 65;
-			txt.y = pos;
-			add( txt );
-			
-			pos += GAP + txt.baseLine();
-		}
-		
-		private void statSlot( String label, int value ) {
-			statSlot( label, Integer.toString( value ) );
-		}
-		
-		public float height() {
-			return pos;
-		}
-	}
-	
-	private class BuffsTab extends Group {
-		
-		private static final int GAP = 2;
-		
-		private float pos;
-		
-		public BuffsTab() {
-			super(-1);
+            ;
+        });
+        add(new LabeledTab(TXT_BUFFS) {
+            protected void select(boolean value) {
+                super.select(value);
+                buffs.visible = buffs.active = selected;
+            }
 
-			for (Buff buff : Dungeon.hero.buffs()) {
-				if (buff.icon() != BuffIndicator.NONE) {
-					BuffSlot slot = new BuffSlot(buff);
-					slot.setRect(0, pos, WIDTH, slot.icon.height());
-					add(slot);
-					pos += GAP + slot.height();
-				}
-			}
-		}
-		
-		public float height() {
-			return pos;
-		}
+            ;
+        });
 
-		private class BuffSlot extends Button{
+        resize(WIDTH, (int) Math.max(stats.height(), buffs.height()));
 
-			private Buff buff;
+        layoutTabs();
 
-			Image icon;
-			BitmapText txt;
+        select(0);
+    }
 
-			public BuffSlot( Buff buff ){
-				super();
-				this.buff = buff;
-				int index = buff.icon();
+    private class StatsTab extends Group {
 
-				icon = new Image( icons );
-				icon.frame( film.get( index ) );
-				icon.y = this.y;
-				add( icon );
+        private static final String TXT_TITLE = "Level %d %s";
+        private static final String TXT_CATALOGUS = "Catalogus";
+        private static final String TXT_JOURNAL = "Journal";
 
-				txt = PixelScene.createText( buff.toString(), 8 );
-				txt.x = icon.width + GAP;
-				txt.y = icon.y + (int)(icon.height - txt.baseLine()) / 2;
-				add( txt );
+        private static final int GAP = 5;
 
-			}
+        private float pos;
 
-			@Override
-			protected void layout() {
-				super.layout();
-				icon.y = this.y;
-				txt.x = icon.width + GAP;
-				txt.y = icon.y + (int)(icon.height - txt.baseLine()) / 2;
-			}
+        public StatsTab() {
+            super(-1);
 
-			@Override
-			protected void onClick() {
-				GameScene.show( new WndInfoBuff( buff ));
-			}
-		}
-	}
+            Hero hero = Dungeon.hero;
+
+            IconTitle title = new IconTitle();
+            title.icon(HeroSprite.avatar(0, 0));
+            title.label(Utils.format(TXT_TITLE, hero.level, hero.className()).toUpperCase(Locale.ENGLISH), 9);
+            title.color(Window.SHPX_COLOR);
+            title.setRect(0, 0, WIDTH, 0);
+            add(title);
+
+            RedButton btnCatalogus = new RedButton(TXT_CATALOGUS) {
+                @Override
+                protected void onClick() {
+                    hide();
+                    GameScene.show(new WndCatalogus());
+                }
+            };
+            btnCatalogus.setRect(0, title.height(), btnCatalogus.reqWidth() + 2, btnCatalogus.reqHeight() + 2);
+            add(btnCatalogus);
+
+            RedButton btnJournal = new RedButton(TXT_JOURNAL) {
+                @Override
+                protected void onClick() {
+                    hide();
+                    GameScene.show(new WndJournal());
+                }
+            };
+            btnJournal.setRect(
+                    btnCatalogus.right() + 1, btnCatalogus.top(),
+                    btnJournal.reqWidth() + 2, btnJournal.reqHeight() + 2);
+            add(btnJournal);
+
+            pos = btnCatalogus.bottom() + GAP;
+
+            statSlot(TXT_STRCON, hero.STRCON());
+            statSlot(TXT_DEXCHA, hero.DEXCHA());
+            statSlot(TXT_INTWIS, hero.INTWIS());
+            statSlot(TXT_HEALTH, hero.HP + "/" + hero.HT);
+            statSlot(TXT_EXP, hero.exp + "/" + hero.maxExp());
+
+            pos += GAP;
+
+            statSlot(TXT_GOLD, Statistics.goldCollected);
+            statSlot(TXT_DEPTH, "nope");
+
+            pos += GAP;
+        }
+
+        private void statSlot(String label, String value) {
+
+            BitmapText txt = PixelScene.createText(label, 8);
+            txt.y = pos;
+            add(txt);
+
+            txt = PixelScene.createText(value, 8);
+            txt.measure();
+            txt.x = 65;
+            txt.y = pos;
+            add(txt);
+
+            pos += GAP + txt.baseLine();
+        }
+
+        private void statSlot(String label, int value) {
+            statSlot(label, Integer.toString(value));
+        }
+
+        public float height() {
+            return pos;
+        }
+    }
+
+    private class BuffsTab extends Group {
+
+        private static final int GAP = 2;
+
+        private float pos;
+
+        public BuffsTab() {
+            super(-1);
+
+            for (Buff buff : Dungeon.hero.buffs()) {
+                if (buff.icon() != BuffIndicator.NONE) {
+                    BuffSlot slot = new BuffSlot(buff);
+                    slot.setRect(0, pos, WIDTH, slot.icon.height());
+                    add(slot);
+                    pos += GAP + slot.height();
+                }
+            }
+        }
+
+        public float height() {
+            return pos;
+        }
+
+        private class BuffSlot extends Button {
+
+            private Buff buff;
+
+            Image icon;
+            BitmapText txt;
+
+            public BuffSlot(Buff buff) {
+                super();
+                this.buff = buff;
+                int index = buff.icon();
+
+                icon = new Image(icons);
+                icon.frame(film.get(index));
+                icon.y = this.y;
+                add(icon);
+
+                txt = PixelScene.createText(buff.toString(), 8);
+                txt.x = icon.width + GAP;
+                txt.y = icon.y + (int) (icon.height - txt.baseLine()) / 2;
+                add(txt);
+
+            }
+
+            @Override
+            protected void layout() {
+                super.layout();
+                icon.y = this.y;
+                txt.x = icon.width + GAP;
+                txt.y = icon.y + (int) (icon.height - txt.baseLine()) / 2;
+            }
+
+            @Override
+            protected void onClick() {
+                GameScene.show(new WndInfoBuff(buff));
+            }
+        }
+    }
 }

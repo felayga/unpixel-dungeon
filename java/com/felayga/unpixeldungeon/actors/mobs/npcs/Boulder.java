@@ -26,30 +26,21 @@ package com.felayga.unpixeldungeon.actors.mobs.npcs;
 
 import com.felayga.unpixeldungeon.Assets;
 import com.felayga.unpixeldungeon.Dungeon;
-import com.felayga.unpixeldungeon.ShatteredPixelDungeon;
 import com.felayga.unpixeldungeon.actors.Actor;
 import com.felayga.unpixeldungeon.actors.Char;
 import com.felayga.unpixeldungeon.actors.buffs.Buff;
-import com.felayga.unpixeldungeon.actors.hero.Hero;
 import com.felayga.unpixeldungeon.effects.CellEmitter;
 import com.felayga.unpixeldungeon.effects.Speck;
-import com.felayga.unpixeldungeon.items.tools.ITool;
-import com.felayga.unpixeldungeon.items.tools.digging.Pickaxe;
-import com.felayga.unpixeldungeon.items.weapon.missiles.simple.Rock;
+import com.felayga.unpixeldungeon.items.weapon.ammunition.simple.Rock;
 import com.felayga.unpixeldungeon.levels.Level;
 import com.felayga.unpixeldungeon.levels.Terrain;
-import com.felayga.unpixeldungeon.mechanics.Constant;
 import com.felayga.unpixeldungeon.mechanics.MagicType;
 import com.felayga.unpixeldungeon.scenes.GameScene;
 import com.felayga.unpixeldungeon.sprites.npcs.BoulderSprite;
 import com.felayga.unpixeldungeon.utils.GLog;
-import com.felayga.unpixeldungeon.windows.WndOptions;
 import com.watabou.noosa.audio.Sample;
 import com.watabou.utils.Bundle;
 import com.watabou.utils.Random;
-
-import java.util.ArrayList;
-import java.util.List;
 
 public class Boulder extends NPC {
     public final static String TXT_PUSH = "PUSH";
@@ -92,6 +83,9 @@ public class Boulder extends NPC {
 
     @Override
     public void interact() {
+        interactPush();
+
+        /*
         final Boulder boulder = this;
         final Hero hero = Dungeon.hero;
 
@@ -135,37 +129,7 @@ public class Boulder extends NPC {
                         String selection = index >= 0 ? actions.get(index) : "";
 
                         if (selection == TXT_PUSH) {
-                            int newPos = boulder.pos * 2 - Dungeon.hero.pos;
-                            boolean mobBlock = false;
-
-                            for (Char c : Actor.chars()) {
-                                if (newPos == c.pos)
-                                {
-                                    mobBlock = true;
-                                    break;
-                                }
-                            }
-
-                            if (!mobBlock) {
-                                if (Level.passable[newPos]) {
-                                    move(newPos);
-                                    Dungeon.hero.pushBoulder(newPos);
-                                    CellEmitter.get(newPos).burst(Speck.factory(Speck.DUST), 2);
-                                } else if (Level.pit[newPos]) {
-                                    move(newPos);
-                                    Dungeon.hero.pushBoulder(newPos);
-                                    CellEmitter.get(newPos).burst(Speck.factory(Speck.DUST), 2);
-
-                                    pluggingPit = true;
-
-                                    GLog.p("The boulder settles into the pit, filling a hole.");
-                                } else {
-                                    GLog.n("You try to move the boulder, but in vain.");
-                                }
-                            }
-                            else {
-                                GLog.n("The boulder won't budge.");
-                            }
+                            interactPush();
                         }
                         else if (selection == diggingToolName_WTFJAVA) {
                             diggingTool_WTFJAVA.apply(hero, Boulder.this.pos);
@@ -175,7 +139,41 @@ public class Boulder extends NPC {
                         }
                     }
                 });
+        */
+    }
 
+    private void interactPush() {
+        int newPos = this.pos * 2 - Dungeon.hero.pos;
+        boolean mobBlock = false;
+
+        for (Char c : Actor.chars()) {
+            if (newPos == c.pos)
+            {
+                mobBlock = true;
+                break;
+            }
+        }
+
+        if (!mobBlock) {
+            if (Level.passable[newPos]) {
+                move(newPos);
+                Dungeon.hero.pushBoulder(this);
+                CellEmitter.get(newPos).burst(Speck.factory(Speck.DUST), 2);
+            } else if (Level.pit[newPos]) {
+                pluggingPit = true;
+
+                move(newPos);
+                Dungeon.hero.pushBoulder(this);
+                CellEmitter.get(newPos).burst(Speck.factory(Speck.DUST), 2);
+
+                GLog.p("The boulder settles into the pit, filling a hole.");
+            } else {
+                GLog.n("You try to move the boulder, but in vain.");
+            }
+        }
+        else {
+            GLog.n("The boulder won't budge.");
+        }
     }
 
     int storedPos = -1;
@@ -226,8 +224,15 @@ public class Boulder extends NPC {
         storedFlag = Level.losBlocking[newPos];
 
         if (!initializing) {
-            Sample.INSTANCE.play(Assets.SND_BOULDER_SCRAPE);
+            if (pluggingPit) {
+                Sample.INSTANCE.play(Assets.SND_BOULDER_PLUG);
+            }
+            else {
+                Sample.INSTANCE.play(Assets.SND_BOULDER_SCRAPE);
+            }
+        }
 
+        if (!initializing) {
             Level.losBlocking[tempPos] = tempFlag;
             GameScene.updateMap(tempPos);
         }
@@ -269,15 +274,15 @@ public class Boulder extends NPC {
     public void die(Actor cause)
     {
         if (!pluggingPit){
+            Sample.INSTANCE.play(Assets.SND_BOULDER_SMASH);
             Dungeon.level.spawnGemstones(pos);
-            Dungeon.level.drop( new Rock( Random.Int(3, 23) ), pos );
+            Dungeon.level.drop(new Rock(Random.Int(3, 23)), pos);
 
             Level.losBlocking[storedPos] = storedFlag;
             GameScene.updateMap(storedPos);
             Dungeon.observe();
         }
 
-        Sample.INSTANCE.play(Assets.SND_BOULDER_SMASH);
         CellEmitter.get(pos).burst(Speck.factory(Speck.DUST), 5);
 
         super.die(cause);

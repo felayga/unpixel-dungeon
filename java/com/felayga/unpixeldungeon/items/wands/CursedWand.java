@@ -167,8 +167,8 @@ public class CursedWand {
 											break;
 										}
 									} while (pos == -1);
-									if (pos == -1 || Dungeon.bossLevel()) {
-										GLog.w(ScrollOfTeleportation.TXT_NO_TELEPORT);
+									if (pos == -1 || !ScrollOfTeleportation.canTeleport(user)) {
+										//empty, canTeleport produces failure message
 									} else {
 										ch.pos = pos;
 										ch.sprite.place(ch.pos);
@@ -185,21 +185,21 @@ public class CursedWand {
 			//random gas at location
 			case 3:
 				cursedFX(user, bolt, new Callback() {
-					public void call() {
-						switch (Random.Int(3)) {
-							case 0:
-								GameScene.add( Blob.seed( bolt.collisionPos, 800, ConfusionGas.class ) );
-								break;
-							case 1:
-								GameScene.add( Blob.seed( bolt.collisionPos, 500, ToxicGas.class ) );
-								break;
-							case 2:
-								GameScene.add( Blob.seed( bolt.collisionPos, 200, ParalyticGas.class ) );
-								break;
-						}
-						wand.wandUsed();
-					}
-				});
+                    public void call() {
+                        switch (Random.Int(3)) {
+                            case 0:
+                                GameScene.add(Blob.seed(bolt.collisionPos, 800, ConfusionGas.class));
+                                break;
+                            case 1:
+                                GameScene.add(Blob.seed(bolt.collisionPos, 500, ToxicGas.class));
+                                break;
+                            case 2:
+                                GameScene.add(Blob.seed(bolt.collisionPos, 200, ParalyticGas.class));
+                                break;
+                        }
+                        wand.wandUsed();
+                    }
+                });
 				break;
 		}
 
@@ -261,11 +261,11 @@ public class CursedWand {
 			//Bomb explosion
 			case 2:
 				cursedFX(user, bolt, new Callback() {
-					public void call() {
-						new Bomb().explode(bolt.collisionPos);
-						wand.wandUsed();
-					}
-				});
+                    public void call() {
+                        new Bomb().explode(bolt.collisionPos);
+                        wand.wandUsed();
+                    }
+                });
 				break;
 
 			//shock and recharge
@@ -289,7 +289,7 @@ public class CursedWand {
 					public void call() {
 						Char ch = Actor.findChar( bolt.collisionPos );
 						//TODO: this is lazy, should think of a better way to ID bosses, or have this effect be more sophisticated.
-						if (ch != null && ch != user && !Dungeon.bossLevel()){
+						if (ch != null && ch != user){
 							Sheep sheep = new Sheep();
 							sheep.lifespan = GameTime.TICK * 10;
 							sheep.pos = ch.pos;
@@ -318,25 +318,28 @@ public class CursedWand {
 
 			//inter-level teleportation
 			case 2:
+                if (ScrollOfTeleportation.canTeleport(user)) {
+                    ScrollOfTeleportation.doLevelPort(user);
+                    wand.wandUsed();
+                }
+                /*
 				if (Dungeon.depth > 1 && !Dungeon.bossLevel()) {
 
-					//each depth has 1 more weight than the previous depth.
-					float[] depths = new float[Dungeon.depth-1];
-					for (int i = 1; i < Dungeon.depth; i++) depths[i-1] = i;
-					int depth = 1+Random.chances(depths);
+                    //each depth has 1 more weight than the previous depth.
+                    float[] depths = new float[Dungeon.depth-1];
+                    for (int i = 1; i < Dungeon.depth; i++) depths[i-1] = i;
+                    int depth = 1+Random.chances(depths);
 
-					Buff buff = Dungeon.hero.buff(TimekeepersHourglass.timeFreeze.class);
-					if (buff != null) buff.detach();
+                    Buff buff = Dungeon.hero.buff(TimekeepersHourglass.timeFreeze.class);
+                    if (buff != null) buff.detach();
 
-					/*
-					for (Mob mob : Dungeon.level.mobs.toArray( new Mob[0] ))
-						if (mob instanceof DriedRose.GhostHero) mob.destroy();
-					*/
+                    //for (Mob mob : Dungeon.level.mobs.toArray( new Mob[0] ))
+                    //    if (mob instanceof DriedRose.GhostHero) mob.destroy();
 
-					InterlevelScene.mode = InterlevelScene.Mode.RETURN;
-					InterlevelScene.returnDepth = depth;
-					InterlevelScene.returnPos = -1;
-					Game.switchScene(InterlevelScene.class);
+                    InterlevelScene.mode = InterlevelScene.Mode.RETURN;
+                    InterlevelScene.returnDepth = depth;
+                    InterlevelScene.returnPos = -1;
+                    Game.switchScene(InterlevelScene.class);
 
 				} else {
 					if (ScrollOfTeleportation.canTeleport(user)) {
@@ -344,6 +347,7 @@ public class CursedWand {
 					}
 					wand.wandUsed();
 				}
+                */
 				break;
 
 			//summon monsters

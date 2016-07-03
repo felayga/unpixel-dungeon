@@ -48,7 +48,7 @@ public class CryptPainter extends Painter {
 		Room.Door entrance = room.entrance();
 		
 		entrance.set( Room.Door.Type.LOCKED );
-		level.addItemToSpawn( new IronOldKey( Dungeon.depth ) );
+		//level.addItemToSpawn( new IronOldKey( Dungeon.depth ) );
 		
 		if (entrance.x == room.left) {
 			set( level, new Point( room.right-1, room.top+1 ), Terrain.STATUE );

@@ -85,10 +85,12 @@ public class OldPickaxe extends Weapon {
 	@Override
 	public boolean execute( final Hero hero, String action ) {
 		if (action == AC_MINE) {
+            /*
 			if (Dungeon.depth < 11 || Dungeon.depth > 15) {
 				GLog.w( TXT_NO_VEIN );
 				return false;
 			}
+			*/
 			
 			for (int i=0; i < Level.NEIGHBOURS8.length; i++) {
 				final int pos = hero.pos + Level.NEIGHBOURS8[i];

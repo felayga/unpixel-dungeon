@@ -48,7 +48,10 @@ import com.watabou.utils.Random;
 
 public class CavesBossLevel extends Level {
 
+    public CavesBossLevel()
     {
+        super(0);
+
         color1 = 0x534f3e;
         color2 = 0xb9d661;
 
@@ -139,7 +142,7 @@ public class CavesBossLevel extends Level {
 
         entrance = Random.Int(ROOM_LEFT + 1, ROOM_RIGHT - 1) +
                 Random.Int(ROOM_TOP + 1, ROOM_BOTTOM - 1) * WIDTH;
-        map[entrance] = Terrain.ENTRANCE;
+        map[entrance] = Terrain.STAIRS_UP;
 
         boolean[] patch = Patch.generate(0.45f, 6);
         for (int i = 0; i < LENGTH; i++) {
@@ -300,9 +303,11 @@ public class CavesBossLevel extends Level {
     @Override
     public String tileDesc(int tile) {
         switch (tile) {
-            case Terrain.ENTRANCE:
+            case Terrain.STAIRS_UP:
+            case Terrain.STAIRS_UP_ALTERNATE:
                 return "The ladder leads up to the upper depth.";
-            case Terrain.EXIT:
+            case Terrain.STAIRS_DOWN:
+            case Terrain.STAIRS_DOWN_ALTERNATE:
                 return "The ladder leads down to the lower depth.";
             case Terrain.HIGH_GRASS:
                 return "Huge mushrooms block the view.";

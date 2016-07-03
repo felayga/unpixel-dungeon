@@ -62,7 +62,7 @@ public class RockfallTrap extends Trap {
 		Char ch = Actor.findChar( pos );
 
 		if (ch != null){
-			int damage = Random.NormalIntRange(5+Dungeon.depth, 10+Dungeon.depth*3);
+			int damage = Random.NormalIntRange(5+Dungeon.depthAdjusted, 10+Dungeon.depthAdjusted*3);
 			ch.damage( Math.max(damage, 0) , MagicType.Mundane, null);
 
 			Buff.prolong( ch, Paralysis.class, Paralysis.duration(ch)*2);

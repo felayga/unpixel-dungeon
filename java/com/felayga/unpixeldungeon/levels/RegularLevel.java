@@ -40,10 +40,13 @@ import com.felayga.unpixeldungeon.items.bags.TreasureChest;
 import com.felayga.unpixeldungeon.items.rings.RingOfWealth;
 import com.felayga.unpixeldungeon.items.scrolls.Scroll;
 import com.felayga.unpixeldungeon.levels.Room.Type;
+import com.felayga.unpixeldungeon.levels.branches.DungeonBranch;
 import com.felayga.unpixeldungeon.levels.painters.Painter;
 import com.felayga.unpixeldungeon.levels.painters.ShopPainter;
 import com.felayga.unpixeldungeon.levels.traps.*;
+import com.felayga.unpixeldungeon.mechanics.Roll;
 import com.felayga.unpixeldungeon.scenes.GameScene;
+import com.felayga.unpixeldungeon.utils.GLog;
 import com.watabou.utils.Bundle;
 import com.watabou.utils.Graph;
 import com.watabou.utils.Random;
@@ -52,6 +55,7 @@ import com.watabou.utils.Rect;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.LinkedList;
@@ -65,8 +69,13 @@ public abstract class RegularLevel extends Level {
     protected Room roomExit;
 
     protected ArrayList<Room.Type> specials;
+    protected ArrayList<Room.Type> specialsExtra;
 
     public int secretDoors;
+
+    public RegularLevel(int flags) {
+        super(flags);
+    }
 
     @Override
     protected boolean build() {
@@ -125,7 +134,6 @@ public abstract class RegularLevel extends Level {
 
         int nConnected = (int) (rooms.size() * Random.Float(0.5f, 0.7f));
         while (connected.size() < nConnected) {
-
             Room cr = Random.element(connected);
             Room or = Random.element(cr.neigbours);
             if (!connected.contains(or)) {
@@ -135,26 +143,33 @@ public abstract class RegularLevel extends Level {
             }
         }
 
-        if (Dungeon.shopOnLevel()) {
-            Room shop = null;
-            for (Room r : roomEntrance.connected.keySet()) {
-                if (r.connected.size() == 1 && ((r.width() - 1) * (r.height() - 1) >= ShopPainter.spaceNeeded())) {
-                    shop = r;
-                    break;
-                }
-            }
+        specials = new ArrayList<Room.Type>(Room.SPECIALS);
+        specialsExtra = new ArrayList<Room.Type>();
 
-            if (shop == null) {
-                return false;
-            } else {
-                shop.type = Room.Type.SHOP;
+        if (Dungeon._depth >= 3 && Dungeon._depth >= DungeonBranch.Normal.levelMin && Dungeon._depth <= DungeonBranch.Normal.levelMax) {
+            if (3.0f / (float)(Dungeon.depthAdjusted - 1) >= Random.Float()) {
+                specialsExtra.add(Room.Type.SHOP);
             }
         }
 
-        specials = new ArrayList<Room.Type>(Room.SPECIALS);
-        if (Dungeon.bossLevel(Dungeon.depth + 1)) {
+        if ((flags & FLAG_UNDIGGABLEFLOOR) != 0) {
             specials.remove(Room.Type.WEAK_FLOOR);
         }
+
+        for (DungeonBranch branch : DungeonBranch.values()) {
+            if (branch.branchLevel() == Dungeon._depth) {
+                GLog.d("branch=" + branch + " level=" + branch.branchLevel() + " depth=" + Dungeon._depth + " (true)");
+                if (branch.branchDown) {
+                    specialsExtra.add(Type.EXIT_ALTERNATE);
+                } else {
+                    specialsExtra.add(Type.ENTRANCE_ALTERNATE);
+                }
+            } else {
+                GLog.d("branch="+branch+" level="+branch.branchLevel()+" depth="+Dungeon._depth+" (false)");
+            }
+        }
+
+        /*
         if (Dungeon.isChallenged(Challenges.NO_ARMOR)) {
             //no sense in giving an armor reward room on a run with no armor.
             specials.remove(Room.Type.CRYPT);
@@ -163,8 +178,10 @@ public abstract class RegularLevel extends Level {
             //sorry warden, no lucky sungrass or blandfruit seeds for you!
             specials.remove(Room.Type.GARDEN);
         }
-        if (!assignRoomType())
+        */
+        if (!assignRoomType()) {
             return false;
+        }
 
         paint();
         paintWater();
@@ -172,7 +189,7 @@ public abstract class RegularLevel extends Level {
 
         placeTraps();
 
-        return true;
+        return specialsExtra.size() == 0;
     }
 
     protected void placeSign() {
@@ -186,8 +203,7 @@ public abstract class RegularLevel extends Level {
     }
 
     protected boolean initRooms() {
-
-        rooms = new HashSet<Room>();
+        rooms = new HashSet<>();
         split(new Rect(0 + Level.EDGEBUFFER, 0 + Level.EDGEBUFFER, WIDTH - 1 - Level.EDGEBUFFER, HEIGHT - 1 - Level.EDGEBUFFER));
 
         if (rooms.size() < 8) {
@@ -205,20 +221,44 @@ public abstract class RegularLevel extends Level {
     }
 
     protected boolean assignRoomType() {
-
         int specialRooms = 0;
         boolean pitMade = false;
 
-        for (Room r : rooms) {
-            if (r.type == Type.NULL &&
-                    r.connected.size() == 1) {
+        while (specialsExtra.size() > 0) {
+            Room.Type type = specialsExtra.get(0);
 
+            Room r = null;
+            for (Room subr: rooms) {
+                if (subr.type == Type.NULL && subr.width() > 3 && subr.height() > 3 && subr.connected.size() > 0) {
+                    if (type == Type.SHOP) {
+                        if (subr.connected.size() == 1 && ((subr.width() - 1) * (subr.height() - 1) >= ShopPainter.spaceNeeded())) {
+                            r = subr;
+                        }
+                    }
+                    else {
+                        r = subr;
+                    }
+                    break;
+                }
+            }
+
+            if (r != null) {
+                r.type = type;
+                Room.useType(r.type);
+                GLog.d("placed specialextra room="+r.type.name()+" at r="+r.center());
+            } else {
+                GLog.d("failed to place specialextra room="+type.name());
+            }
+            specialsExtra.remove(0);
+        }
+
+        for (Room r : rooms) {
+            if (r.type == Type.NULL && r.connected.size() > 0) {
                 if (specials.size() > 0 &&
                         r.width() > 3 && r.height() > 3 &&
                         Random.Int(specialRooms * specialRooms + 2) == 0) {
 
                     if (pitRoomNeeded && !pitMade) {
-
                         r.type = Type.PIT;
                         pitMade = true;
 
@@ -226,27 +266,21 @@ public abstract class RegularLevel extends Level {
                         specials.remove(Type.CRYPT);
                         specials.remove(Type.LABORATORY);
                         //specials.remove(Type.LIBRARY);
-                        //specials.remove( Type.STATUE );
+                        //specials.remove(Type.STATUE);
                         specials.remove(Type.TREASURY);
                         specials.remove(Type.VAULT);
                         specials.remove(Type.WEAK_FLOOR);
 
-                    } else if (Dungeon.depth % 5 == 2 && specials.contains(Type.LABORATORY)) {
-
+                    } else if (specials.contains(Type.LABORATORY)) {
                         r.type = Type.LABORATORY;
-
-                    } else if (Dungeon.depth >= Dungeon.transmutation && specials.contains(Type.MAGIC_WELL)) {
-
+                    } else if (specials.contains(Type.MAGIC_WELL)) {
                         r.type = Type.MAGIC_WELL;
-
                     } else {
-
                         int n = specials.size();
                         r.type = specials.get(Math.min(Random.Int(n), Random.Int(n)));
                         if (r.type == Type.WEAK_FLOOR) {
                             weakFloorCreated = true;
                         }
-
                     }
 
                     Room.useType(r.type);
@@ -254,13 +288,11 @@ public abstract class RegularLevel extends Level {
                     specialRooms++;
 
                 } else if (Random.Int(2) == 0) {
-
                     HashSet<Room> neigbours = new HashSet<Room>();
                     for (Room n : r.neigbours) {
                         if (!r.connected.containsKey(n) &&
                                 !Room.SPECIALS.contains(n.type) &&
                                 n.type != Type.PIT) {
-
                             neigbours.add(n);
                         }
                     }
@@ -351,7 +383,7 @@ public abstract class RegularLevel extends Level {
         for (int i = 0; i < LENGTH; i++) {
             if (map[i] == Terrain.EMPTY) {
 
-                if (Dungeon.depth == 1) {
+                if (Dungeon._depth == 1) {
                     //extra check to prevent annoying inactive traps in hallways on floor 1
                     Room r = room(i);
                     if (r != null && r.type != Type.TUNNEL) {
@@ -383,7 +415,7 @@ public abstract class RegularLevel extends Level {
     }
 
     protected int nTraps() {
-        return Random.NormalIntRange(1, 4 + (Dungeon.depth / 2));
+        return Random.NormalIntRange(1, 4 + (Dungeon.depthAdjusted / 2));
     }
 
     protected Class<?>[] trapClasses() {
@@ -436,7 +468,6 @@ public abstract class RegularLevel extends Level {
     }
 
     protected void paint() {
-
         for (Room r : rooms) {
             if (r.type != Type.NULL) {
                 placeDoors(r);
@@ -477,7 +508,6 @@ public abstract class RegularLevel extends Level {
 
     protected void paintDoors(Room r) {
         for (Room n : r.connected.keySet()) {
-
             if (joinRooms(r, n)) {
                 continue;
             }
@@ -493,15 +523,7 @@ public abstract class RegularLevel extends Level {
                     map[door] = tunnelTile();
                     break;
                 case REGULAR:
-                    if (Dungeon.depth <= 1) {
-                        map[door] = Terrain.DOOR;
-                    } else {
-                        boolean secret = (Dungeon.depth < 6 ? Random.Int(12 - Dungeon.depth) : Random.Int(6)) == 0;
-                        map[door] = secret ? Terrain.SECRET_DOOR : Terrain.DOOR;
-                        if (secret) {
-                            secretDoors++;
-                        }
-                    }
+                    assignDoor(door, Terrain.DOOR, Terrain.SECRET_DOOR, Terrain.LOCKED_DOOR, Terrain.SECRET_LOCKED_DOOR);
                     break;
                 case UNLOCKED:
                     map[door] = Terrain.DOOR;
@@ -515,16 +537,29 @@ public abstract class RegularLevel extends Level {
                     map[door] = Terrain.BARRICADE;
                     break;
                 case LOCKED:
-                    if (Dungeon.depth <= 1) {
-                        map[door] = Terrain.LOCKED_DOOR;
-                    } else {
-                        boolean secret = (Dungeon.depth < 6 ? Random.Int(12 - Dungeon.depth) : Random.Int(6)) == 0;
-                        map[door] = secret ? Terrain.SECRET_LOCKED_DOOR : Terrain.LOCKED_DOOR;
-                        if (secret) {
-                            secretDoors++;
-                        }
-                    }
+                    assignDoor(door, Terrain.LOCKED_DOOR, Terrain.SECRET_LOCKED_DOOR, Terrain.DOOR, Terrain.SECRET_DOOR);
                     break;
+            }
+        }
+    }
+
+    private void assignDoor(int pos, int regular, int regularHidden, int other, int otherHidden) {
+        if (Dungeon._depth <= 1) {
+            map[pos] = regular;
+        } else {
+            if (Random.Int(4) == 0) {
+                regular = other;
+                regularHidden = otherHidden;
+            }
+
+            boolean secret = (Dungeon.depthAdjusted < 6 ? Random.Int(12 - Dungeon.depthAdjusted) : Random.Int(6)) == 0;
+
+            if (secret) {
+                map[pos] = regularHidden;
+                secretDoors++;
+            }
+            else {
+                map[pos] = regular;
             }
         }
     }
@@ -584,19 +619,19 @@ public abstract class RegularLevel extends Level {
 
     @Override
     public int nMobs() {
-        switch (Dungeon.depth) {
+        switch (Dungeon.depthAdjusted) {
             case 1:
                 //mobs are not randomly spawned on floor 1.
                 return 0;
             default:
-                return 4 + Dungeon.depth % 3 + Random.Int(12);
+                return 4 + Dungeon.depthAdjusted % 3 + Random.Int(12);
         }
     }
 
     @Override
     protected void createMobs() {
         //on floor 1, 10 rats are created so the player can get level 2.
-        int mobsToSpawn = Dungeon.depth == 1 ? 10 : nMobs();
+        int mobsToSpawn = Dungeon.depthAdjusted == 1 ? 10 : nMobs();
 
         HashSet<Room> stdRooms = new HashSet<>();
         for (Room room : rooms) {
@@ -611,7 +646,7 @@ public abstract class RegularLevel extends Level {
 
             final Room roomToSpawn = stdRoomIter.next();
 
-            Bestiary.spawn(Dungeon.depth, Dungeon.hero.level, true, new Bestiary.SpawnParams() {
+            Bestiary.spawn(Dungeon.depthAdjusted, Dungeon.hero.level, true, new Bestiary.SpawnParams() {
                 @Override
                 public Level level() {
                     return RegularLevel.this;
@@ -620,6 +655,16 @@ public abstract class RegularLevel extends Level {
                 @Override
                 public int position() {
                     return roomToSpawn.random();
+                }
+
+                @Override
+                public Class<?> type(Class<?> type) {
+                    return type;
+                }
+
+                @Override
+                public int quantity(int quantity) {
+                    return quantity;
                 }
 
                 @Override
@@ -701,48 +746,47 @@ public abstract class RegularLevel extends Level {
     protected void createItems() {
 
         int nItems = 5;
-        int luck = Dungeon.hero.luck();
 
-        float dropBonusChance = 0.5f + (luck - 2.0f) * 0.04f;
+        float dropBonusChance = Roll.DropBonusChance(Dungeon.hero);
         while (Random.Float() < dropBonusChance) {
             nItems++;
         }
 
         dropBonusChance /= 2.0;
         for (int i = 0; i < nItems; i++) {
+            int cell = randomDropCell();
             Heap.Type type = null;
+
             switch (Random.Int(20)) {
                 case 0:
                     type = Heap.Type.SKELETON;
                     break;
                 case 1:
+                    if (Dungeon.depthAdjusted > 1) {
+                        //todo: mimic spawning
+                        break;
+                    }
                 case 2:
                 case 3:
                 case 4:
-                    type = Heap.Type.CHEST;
-                    break;
                 case 5:
-                    type = Dungeon.depth > 1 ? Heap.Type.MIMIC : Heap.Type.CHEST;
+                    TreasureChest chest = new TreasureChest();
+                    drop(chest, cell);
+
+                    chest.collect(Generator.random());
+
+                    while (Random.Float() < dropBonusChance) {
+                        chest.collect(Generator.random());
+                    }
                     break;
                 default:
                     type = Heap.Type.HEAP;
+                    break;
             }
 
-            int cell = randomDropCell();
-
-            if (type == Heap.Type.CHEST) {
-                TreasureChest chest = new TreasureChest();
-                drop(chest, cell);
-
-                chest.collect(Generator.random());
-
-                while (Random.Float() < dropBonusChance) {
-                    chest.collect(Generator.random());
-                }
-            } else {
+            if (type != null) {
                 drop(Generator.random(), cell).type = type;
             }
-
 
         }
 
@@ -809,7 +853,10 @@ public abstract class RegularLevel extends Level {
     @Override
     public void storeInBundle(Bundle bundle) {
         super.storeInBundle(bundle);
-        bundle.put("rooms", rooms);
+
+        if (rooms != null) {
+            bundle.put("rooms", rooms);
+        }
     }
 
     @SuppressWarnings("unchecked")
@@ -817,16 +864,18 @@ public abstract class RegularLevel extends Level {
     public void restoreFromBundle(Bundle bundle) {
         super.restoreFromBundle(bundle);
 
-        rooms = new HashSet<>((Collection<Room>) ((Collection<?>) bundle.getCollection("rooms")));
-        for (Room r : rooms) {
-            if (r.type == Type.WEAK_FLOOR) {
-                weakFloorCreated = true;
-                break;
-            }
-            if (r.type == Type.ENTRANCE) {
-                roomEntrance = r;
-            } else if (r.type == Type.EXIT || r.type == Type.BOSS_EXIT) {
-                roomExit = r;
+        if (bundle.contains("rooms")) {
+            rooms = new HashSet<>((Collection<Room>) ((Collection<?>) bundle.getCollection("rooms")));
+            for (Room r : rooms) {
+                if (r.type == Type.WEAK_FLOOR) {
+                    weakFloorCreated = true;
+                    break;
+                }
+                if (r.type == Type.ENTRANCE) {
+                    roomEntrance = r;
+                } else if (r.type == Type.EXIT || r.type == Type.BOSS_EXIT) {
+                    roomExit = r;
+                }
             }
         }
     }

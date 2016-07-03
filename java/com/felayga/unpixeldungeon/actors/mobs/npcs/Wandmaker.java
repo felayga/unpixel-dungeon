@@ -322,7 +322,7 @@ public class Wandmaker extends NPC {
 		}
 		
 		public static boolean spawn( PrisonLevel level, Room room, Collection<Room> rooms ) {
-			if (!spawned && (type != 0 || (Dungeon.depth > 6 && Random.Int( 10 - Dungeon.depth ) == 0))) {
+			if (!spawned && (type != 0 || (Dungeon.depthAdjusted > 6 && Random.Int( 10 - Dungeon.depthAdjusted ) == 0))) {
 				// decide between 1,2, or 3 for quest type.
 				// but if the no herbalism challenge is enabled, only pick 1 or 2, no rotberry.
 				if (type == 0) type = Random.Int(Dungeon.isChallenged(Challenges.NO_HERBALISM) ? 2 : 3)+1;
@@ -333,7 +333,7 @@ public class Wandmaker extends NPC {
 					Wandmaker npc = new Wandmaker();
 					do {
 						npc.pos = room.random();
-					} while (level.map[npc.pos] == Terrain.ENTRANCE || level.map[npc.pos] == Terrain.SIGN);
+					} while (level.map[npc.pos] == Terrain.STAIRS_UP || level.map[npc.pos] == Terrain.SIGN);
 					level.mobs.add( npc );
 
 					spawned = true;

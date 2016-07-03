@@ -33,7 +33,7 @@ public class PotionBandolier extends Bag {
 
 	public PotionBandolier()
 	{
-		super(null);
+		super(null, false);
 
 		name = "potion bandolier";
 		image = ItemSpriteSheet.BANDOLIER;

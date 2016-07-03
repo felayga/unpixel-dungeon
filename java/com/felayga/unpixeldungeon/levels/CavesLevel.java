@@ -40,7 +40,10 @@ import com.watabou.utils.Rect;
 
 public class CavesLevel extends RegularLevel {
 
+    public CavesLevel()
 	{
+        super(0);
+
 		color1 = 0x534f3e;
 		color2 = 0xb9d661;
 		
@@ -85,7 +88,7 @@ public class CavesLevel extends RegularLevel {
 	protected boolean assignRoomType() {
 		super.assignRoomType();
 
-		if (!Blacksmith.Quest.spawn( rooms ) && Dungeon.depth == 14)
+		if (!Blacksmith.Quest.spawn( rooms ) && Dungeon._depth == 14)
 			return false;
 
 		return true;
@@ -93,7 +96,6 @@ public class CavesLevel extends RegularLevel {
 	
 	@Override
 	protected void decorate() {
-		
 		for (Room room : rooms) {
 			if (room.type != Room.Type.STANDARD) {
 				continue;
@@ -172,10 +174,12 @@ public class CavesLevel extends RegularLevel {
 		}
 		
 		placeSign();
-		
+
+        /*
 		if (Dungeon.bossLevel( Dungeon.depth + 1 )) {
 			return;
 		}
+		*/
 		
 		for (Room r : rooms) {
 			if (r.type == Type.STANDARD) {
@@ -222,24 +226,26 @@ public class CavesLevel extends RegularLevel {
 	
 	@Override
 	public String tileDesc( int tile ) {
-		switch (tile) {
-		case Terrain.ENTRANCE:
-			return "The ladder leads up to the upper depth.";
-		case Terrain.EXIT:
-			return "The ladder leads down to the lower depth.";
-		case Terrain.HIGH_GRASS:
-			return "Huge mushrooms block the view.";
-		case Terrain.WALL_DECO:
-			return "A vein of some ore is visible on the wall. Gold?";
+        switch (tile) {
+            case Terrain.STAIRS_UP:
+            case Terrain.STAIRS_UP_ALTERNATE:
+                return "The ladder leads up to the upper depth.";
+            case Terrain.STAIRS_DOWN:
+            case Terrain.STAIRS_DOWN_ALTERNATE:
+                return "The ladder leads down to the lower depth.";
+            case Terrain.HIGH_GRASS:
+                return "Huge mushrooms block the view.";
+            case Terrain.WALL_DECO:
+                return "A vein of some ore is visible on the wall. Gold?";
         /*
 		case Terrain.BOOKSHELF:
 			return "Who would need a bookshelf in a cave?";
 			// Exactly.
 		*/
-		default:
-			return super.tileDesc( tile );
-		}
-	}
+            default:
+                return super.tileDesc(tile);
+        }
+    }
 	
 	@Override
 	public Group addVisuals() {

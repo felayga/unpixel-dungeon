@@ -110,8 +110,8 @@ public class Sign {
 			GameScene.show( new WndMessage( TXT_DEAD_END ) );
 			
 		} else {
-			
-			int index = Dungeon.depth - 1;
+			//todo: updated sign messages
+			int index = Dungeon._depth - 1;
 			
 			if (index < TIPS.length) {
 				GameScene.show( new WndMessage( TIPS[index] ) );

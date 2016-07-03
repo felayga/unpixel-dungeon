@@ -28,9 +28,13 @@ import com.felayga.unpixeldungeon.Assets;
 import com.felayga.unpixeldungeon.Dungeon;
 import com.felayga.unpixeldungeon.ShatteredPixelDungeon;
 import com.felayga.unpixeldungeon.actors.Char;
+import com.felayga.unpixeldungeon.actors.buffs.Buff;
 import com.felayga.unpixeldungeon.actors.buffs.positive.Invisibility;
 import com.felayga.unpixeldungeon.actors.hero.Hero;
 import com.felayga.unpixeldungeon.effects.Speck;
+import com.felayga.unpixeldungeon.items.artifacts.TimekeepersHourglass;
+import com.felayga.unpixeldungeon.levels.Level;
+import com.felayga.unpixeldungeon.levels.branches.DungeonBranch;
 import com.felayga.unpixeldungeon.mechanics.Constant;
 import com.felayga.unpixeldungeon.scenes.InterlevelScene;
 import com.felayga.unpixeldungeon.utils.GLog;
@@ -70,23 +74,7 @@ public class ScrollOfTeleportation extends Scroll {
 			switch (bucStatus) {
 				case Cursed:
 					if (Random.Int(5) != 0) {
-						int target = Dungeon.depth;
-
-						while (target == Dungeon.depth) {
-							target = Random.Int(Dungeon.depth + 3) + 1;
-						}
-
-						GLog.d("cursed levelport to " + target);
-
-						/*
-						for (Mob mob : Dungeon.level.mobs.toArray(new Mob[0]))
-							if (mob instanceof DriedRose.GhostHero) mob.destroy();
-						*/
-
-						InterlevelScene.mode = InterlevelScene.Mode.TELEPORT;
-						InterlevelScene.teleportDepth = target;
-						InterlevelScene.teleportPos = Constant.Position.RANDOM;
-						Game.switchScene(InterlevelScene.class);
+						doLevelPort(curUser);
 					}
 					else {
 						GLog.w(TXT_MISSED_TELEPORT);
@@ -116,7 +104,7 @@ public class ScrollOfTeleportation extends Scroll {
 	}
 
 	public static boolean canTeleport(Char user) {
-		if (Dungeon.bossLevel())
+		if ((Level.flags & Level.FLAG_NOTELEPORTATION) != 0)
 		{
 			GLog.w(TXT_NO_TELEPORT);
 			return false;
@@ -124,6 +112,42 @@ public class ScrollOfTeleportation extends Scroll {
 
 		return true;
 	}
+
+    public static int doLevelPort(Char user) {
+        if (user instanceof Hero) {
+            int target = Dungeon._depth;
+
+            DungeonBranch branch = DungeonBranch.currentBranch(Dungeon._depth);
+
+            while (target == Dungeon._depth || branch != DungeonBranch.currentBranch(target)) {
+                target = Random.IntRange(branch.levelMin, Dungeon._depth + 3);
+            }
+
+            GLog.d("cursed levelport to " + target);
+
+            Buff buff = Dungeon.hero.buff(TimekeepersHourglass.timeFreeze.class);
+            if (buff != null) buff.detach();
+
+            /*
+            for (Mob mob : Dungeon.level.mobs.toArray(new Mob[0]))
+                if (mob instanceof DriedRose.GhostHero) mob.destroy();
+            */
+
+            InterlevelScene.mode = InterlevelScene.Mode.TELEPORT;
+            InterlevelScene.teleportDepth = target;
+            InterlevelScene.teleportPos = Constant.Position.RANDOM;
+            Game.switchScene(InterlevelScene.class);
+
+            return target;
+        } else {
+            GLog.d("levelport for non-hero");
+            //todo: implement non-hero levelport
+            user.destroy();
+            user.sprite.killAndErase();
+            Dungeon.level.mobs.remove(user);
+            return -1;
+        }
+    }
 
 	public static void doTeleport( Char user ) {
 		int count = 10;

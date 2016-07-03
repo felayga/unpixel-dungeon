@@ -218,4 +218,5 @@ public class Assets {
 	public static final String SND_ITEM_ROCK  = "snd_item_rock.mp3";
 	public static final String SND_BOULDER_SMASH = "snd_boulder_smash.mp3";
 	public static final String SND_BOULDER_SCRAPE = "snd_boulder_scrape.mp3";
+    public static final String SND_BOULDER_PLUG = "snd_boulder.plug.mp3";
 }

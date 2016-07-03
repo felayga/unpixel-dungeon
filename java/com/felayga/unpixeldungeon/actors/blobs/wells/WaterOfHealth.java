@@ -22,7 +22,7 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>
  *
  */
-package com.felayga.unpixeldungeon.actors.blobs;
+package com.felayga.unpixeldungeon.actors.blobs.wells;
 
 import com.felayga.unpixeldungeon.items.potions.PotionOfFullHealing;
 import com.watabou.noosa.audio.Sample;

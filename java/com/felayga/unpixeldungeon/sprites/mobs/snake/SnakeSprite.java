@@ -47,13 +47,13 @@ public class SnakeSprite extends MobSprite {
         idle.frames(frames, offset + 0, offset + 0, offset + 0, offset + 0, offset + 1, offset + 0, offset + 1, offset + 0, offset + 0, offset + 0,
                 offset + 0, offset + 2, offset + 2, offset + 2, offset + 3, offset + 2, offset + 3, offset + 2, offset + 2, offset + 2);
 
-        run = new Animation( 15, true );
+        run = new Animation( 10, true );
         run.frames( frames, offset + 4, offset + 5, offset + 6, offset + 7, offset + 8 );
 
-        die = new Animation( 20, false );
+        die = new Animation( 15, false );
         die.frames( frames, offset + 11, offset + 12, offset + 13, offset + 14, offset + 15 );
 
-        attack = new Animation( 25, false );
+        attack = new Animation( 10, false );
         attack.frames( frames, offset + 9, offset + 10, offset + 0 );
 
         play(idle);

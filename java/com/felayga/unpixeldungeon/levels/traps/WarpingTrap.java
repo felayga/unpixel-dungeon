@@ -36,6 +36,8 @@ import com.felayga.unpixeldungeon.items.Heap;
 import com.felayga.unpixeldungeon.items.Item;
 //import com.felayga.unpixeldungeon.items.artifacts.DriedRose;
 import com.felayga.unpixeldungeon.items.artifacts.TimekeepersHourglass;
+import com.felayga.unpixeldungeon.items.scrolls.ScrollOfTeleportation;
+import com.felayga.unpixeldungeon.levels.Level;
 import com.felayga.unpixeldungeon.scenes.InterlevelScene;
 import com.felayga.unpixeldungeon.sprites.TrapSprite;
 import com.watabou.noosa.Game;
@@ -58,12 +60,10 @@ public class WarpingTrap extends Trap {
 		CellEmitter.get(pos).start(Speck.factory(Speck.LIGHT), 0.2f, 3);
 		Sample.INSTANCE.play( Assets.SND_TELEPORT );
 
-		if (Dungeon.depth > 1 && !Dungeon.bossLevel()) {
+        Char ch = Actor.findChar( pos );
 
-			//each depth has 1 more weight than the previous depth.
-			float[] depths = new float[Dungeon.depth-1];
-			for (int i = 1; i < Dungeon.depth; i++) depths[i-1] = i;
-			int depth = 1+Random.chances(depths);
+		if (ScrollOfTeleportation.canTeleport(ch)) {
+			int depth = ScrollOfTeleportation.doLevelPort(ch);
 
 			Heap heap = Dungeon.level.heaps.get(pos);
 			if (heap != null) {
@@ -78,26 +78,6 @@ public class WarpingTrap extends Trap {
 					dropped.add(item);
 				}
 				heap.destroy();
-			}
-
-			Char ch = Actor.findChar( pos );
-			if (ch == Dungeon.hero){
-				Buff buff = Dungeon.hero.buff(TimekeepersHourglass.timeFreeze.class);
-				if (buff != null) buff.detach();
-
-				/*
-				for (Mob mob : Dungeon.level.mobs.toArray( new Mob[0] ))
-					if (mob instanceof DriedRose.GhostHero) mob.destroy();
-				*/
-
-				InterlevelScene.mode = InterlevelScene.Mode.RETURN;
-				InterlevelScene.returnDepth = depth;
-				InterlevelScene.returnPos = -1;
-				Game.switchScene(InterlevelScene.class);
-			} else if (ch != null) {
-				ch.destroy();
-				ch.sprite.killAndErase();
-				Dungeon.level.mobs.remove(ch);
 			}
 
 		}

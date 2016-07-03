@@ -62,7 +62,7 @@ public enum Rankings {
 		rec.win		= win;
 		rec.heroClass	= Dungeon.hero.heroClass;
 		rec.herolevel	= Dungeon.hero.level;
-		rec.depth		= Dungeon.depth;
+		rec.depth		= Dungeon._depth;
 		rec.score	= score( win );
 		
 		String gameFile = Utils.format( DETAILS_FILE, SystemTime.now );
@@ -107,7 +107,7 @@ public enum Rankings {
 	}
 
 	private int score( boolean win ) {
-		return (Statistics.goldCollected + Dungeon.hero.level * (win ? 26 : Dungeon.depth ) * 100) * (win ? 2 : 1);
+		return (Statistics.goldCollected + Dungeon.hero.level * (win ? 26 : Dungeon.depthAdjusted ) * 100) * (win ? 2 : 1);
 	}
 	
 	private static final String RECORDS	= "records";

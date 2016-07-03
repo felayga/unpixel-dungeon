@@ -27,6 +27,7 @@ package com.felayga.unpixeldungeon.items;
 import com.felayga.unpixeldungeon.actors.Char;
 import com.felayga.unpixeldungeon.actors.hero.Hero;
 import com.felayga.unpixeldungeon.mechanics.Constant;
+import com.felayga.unpixeldungeon.utils.GLog;
 
 public abstract class EquippableItem extends Item {
 	public enum Slot {
@@ -43,7 +44,9 @@ public abstract class EquippableItem extends Item {
         Helmet(8),
 		Gloves(9),
         Pants(10),
-        Boots(11);
+        Boots(11),
+
+        None(-1);
 
         public final int value;
 
@@ -77,8 +80,10 @@ public abstract class EquippableItem extends Item {
                     return Gloves;
                 case 10:
                     return Pants;
-                default:
+                case 11:
                     return Boots;
+                default:
+                    return None;
             }
         }
 	}
@@ -118,6 +123,26 @@ public abstract class EquippableItem extends Item {
 		return hero.belongings.isEquipped(this);
 	}
 
+    public static enum EquipIfNecessaryState {
+        NotEquipped,
+        JustEquipped,
+        AlreadyEquipped;
+    }
+
+    public EquipIfNecessaryState equipIfNecessary(Hero hero) {
+        if (!hero.belongings.isEquipped(this)) {
+            if (!hero.belongings.equip(this)) {
+                return EquipIfNecessaryState.NotEquipped;
+            }
+
+            GLog.i(Constant.Text.HERO_READIED, getDisplayName());
+
+            return EquipIfNecessaryState.JustEquipped;
+        }
+
+        return EquipIfNecessaryState.AlreadyEquipped;
+    }
+
 	@Override
 	public void doDrop( Hero hero ) {
 		if (!isEquipped( hero ) || hero.belongings.unequip(this, true)) {
@@ -127,13 +152,14 @@ public abstract class EquippableItem extends Item {
 
 	@Override
 	public void cast( final Hero user, int dst ) {
-
 		if (isEquipped( user )) {
 			if (quantity() == 1 && !user.belongings.unequip(this, true)) {
+                GLog.d("quantity=1, failed unequip, returned");
 				return;
 			}
 		}
 
+        GLog.d("EquippableItem: cast");
 		super.cast( user, dst );
 	}
 

@@ -86,7 +86,7 @@ public class WeakFloorPainter extends Painter {
 			name = "Distant well";
 
 			tx = Assets.WEAK_FLOOR;
-			txX = Dungeon.depth/5;
+			txX = Dungeon.depthAdjusted/5;
 			txY = 0;
 		}
 

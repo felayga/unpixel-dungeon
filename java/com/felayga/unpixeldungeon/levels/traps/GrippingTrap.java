@@ -49,7 +49,7 @@ public class GrippingTrap extends Trap {
 		Char c = Actor.findChar( pos );
 
 		if (c != null) {
-			int damage = Math.max( 0,  (Dungeon.depth) );
+			int damage = Math.max( 0,  (Dungeon.depthAdjusted) );
 			Buff.affect( c, Bleeding.class ).set( damage );
 			Buff.prolong( c, Cripple.class, GameTime.TICK * 15);
 			Buff.prolong( c, Roots.class, GameTime.TICK * 5);

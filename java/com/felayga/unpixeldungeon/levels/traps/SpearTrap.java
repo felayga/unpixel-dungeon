@@ -64,7 +64,7 @@ public class SpearTrap extends Trap {
 
 		Char ch = Actor.findChar( pos);
 		if (ch != null){
-			int damage = Random.NormalIntRange(Dungeon.depth, Dungeon.depth*2);
+			int damage = Random.NormalIntRange(Dungeon.depthAdjusted, Dungeon.depthAdjusted*2);
 			ch.damage( Math.max(damage, 0) , MagicType.Mundane, null);
 			if (!ch.isAlive() && ch == Dungeon.hero){
 				Dungeon.fail(Utils.format(ResultDescriptions.TRAP, name));

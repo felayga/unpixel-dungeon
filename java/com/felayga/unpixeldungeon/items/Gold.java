@@ -115,7 +115,7 @@ public class Gold extends Item {
 	
 	@Override
 	public Item random() {
-		quantity(Random.Int( 30 + (Dungeon.depth * 3/8 + Dungeon.hero.level / 8) * 10, 60 + (Dungeon.depth * 3/8 + Dungeon.hero.level / 8) * 20 ));
+		quantity(Random.Int( 30 + (Dungeon.depthAdjusted * 3/8 + Dungeon.hero.level / 8) * 10, 60 + (Dungeon.depthAdjusted * 3/8 + Dungeon.hero.level / 8) * 20 ));
 		return this;
 	}
 	

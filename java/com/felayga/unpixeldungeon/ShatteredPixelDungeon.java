@@ -186,7 +186,8 @@ public class ShatteredPixelDungeon extends Game {
                 Assets.SND_WALL_SMASH,
                 Assets.SND_ITEM_ROCK,
                 Assets.SND_BOULDER_SMASH,
-                Assets.SND_BOULDER_SCRAPE
+                Assets.SND_BOULDER_SCRAPE,
+                Assets.SND_BOULDER_PLUG
         );
     }
 

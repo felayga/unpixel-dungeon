@@ -122,22 +122,16 @@ public class Item implements Bundlable {
 
     public int quantity() { return quantity; }
 
-    public void quantity(int newQuantity) {
-        if (quantity == newQuantity) {
-            return;
+    public Item quantity(int newQuantity) {
+        if (quantity != newQuantity) {
+            int weightChange = (newQuantity - quantity) * weight;
+
+            quantity = newQuantity;
+
+            if (parent() != null) {
+                parent().onWeightChanged(weightChange);
+            }
         }
-
-        int weightChange = (newQuantity - quantity) * weight;
-
-        quantity = newQuantity;
-
-        if (parent() != null) {
-            parent().onWeightChanged(weightChange);
-        }
-    }
-
-    public Item setQuantity(int newQuantity) {
-        quantity(newQuantity);
 
         return this;
     }
@@ -302,6 +296,7 @@ public class Item implements Bundlable {
 	}
 
 	public void doThrow(Hero hero) {
+        GLog.d("Item: doThrow");
 		GameScene.selectCell(thrower);
 	}
 
@@ -346,6 +341,27 @@ public class Item implements Bundlable {
 	public void onDetach() {
 	}
 
+    public static Item ghettoSplitStack(Item item, int quantity, Char owner) {
+        try {
+            //pssh, who needs copy constructors?
+            Item detached = item.getClass().newInstance();
+            Bundle copy = new Bundle();
+            item.storeInBundle(copy);
+
+            copy.put(QUICKSLOT, (String) null);
+
+            detached.restoreFromBundle(copy);
+            detached.quantity(quantity);
+            detached.onDetach();
+
+            item.quantity(item.quantity() - quantity);
+            item.updateQuickslot();
+
+            return detached;
+        } catch (Exception e) {
+            return null;
+        }
+    }
 
 	public Item upgrade(Item source, int n) {
         GLog.d("upgrayedd");
@@ -422,7 +438,7 @@ public class Item implements Bundlable {
 		}
 
 		if (parent() != null && stackable) {
-			if (parent().tryMergeStack(this)) {
+			if (parent().tryMergeExistingStack(this)) {
 				updateQuickslot = true;
 			}
 		}
@@ -552,7 +568,18 @@ public class Item implements Bundlable {
 	}
 
 	public final void updateQuickslot() {
-		QuickSlotButton.refresh();
+        if (parent_whut != null && parent_whut.owner() instanceof Hero) {
+            QuickSlotButton.refresh();
+        }
+
+        if (parent_whut instanceof Heap && Dungeon.hero != null) {
+            Heap heap = (Heap)parent_whut;
+            heap.updateImage();
+
+            if (heap.pos == Dungeon.hero.pos) {
+                GameScene.updateLootIndicator();
+            }
+        }
 	}
 
 	private static final String QUANTITY = "quantity";
@@ -560,7 +587,6 @@ public class Item implements Bundlable {
 	private static final String LEVEL_KNOWN = "levelKnown";
 	private static final String BUCSTATUS = "bucStatus";
 	private static final String BUCSTATUS_KNOWN = "bucStatusKnown";
-	private static final String OLDSLOT = "quickslot";
 	private static final String QUICKSLOT = "quickslotpos";
 	private static final String DEFAULTACTION = "defaultAction";
     private static final String WEIGHT = "weight";
@@ -599,10 +625,7 @@ public class Item implements Bundlable {
 
 		//only want to populate slot on first load.
 		if (Dungeon.hero == null) {
-			//support for pre-0.2.3 saves and rankings
-			if (bundle.contains(OLDSLOT)) {
-				Dungeon.quickslot.setSlot(0, this);
-			} else if (bundle.contains(QUICKSLOT)) {
+			if (bundle.contains(QUICKSLOT)) {
 				Dungeon.quickslot.setSlot(bundle.getInt(QUICKSLOT), this);
 			}
 		}
@@ -637,11 +660,17 @@ public class Item implements Bundlable {
 		}
 		final long finalDelay = delay;
 
+        final Item item = user.belongings.remove(Item.this, 1);
+
+        if (enemy != null && Random.Int(2)==0) {
+            enemy.belongings.collect(item);
+        }
+
 		((MissileSprite) user.sprite.parent.recycle(MissileSprite.class)).
 				reset(user.pos, cell, this, new Callback() {
 					@Override
 					public void call() {
-						user.belongings.remove(Item.this, 1).onThrow(cell, user);
+                        item.onThrow(cell, user);
 						user.spend_new(finalDelay, true);
 					}
 				});

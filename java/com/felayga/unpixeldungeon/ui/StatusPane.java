@@ -25,6 +25,7 @@
 package com.felayga.unpixeldungeon.ui;
 
 import com.felayga.unpixeldungeon.items.keys.IronOldKey;
+import com.felayga.unpixeldungeon.levels.branches.DungeonBranch;
 import com.watabou.input.Touchscreen.Touch;
 import com.watabou.noosa.BitmapText;
 import com.watabou.noosa.Camera;
@@ -121,15 +122,17 @@ public class StatusPane extends Component {
 		level.hardlight( 0xFFEBA4 );
 		add( level );
 
-		depth = new BitmapText( Integer.toString( Dungeon.depth ), PixelScene.pixelFont);
+		depth = new BitmapText(DungeonBranch.getDepthText(Dungeon._depth), PixelScene.pixelFont);
 		depth.hardlight( 0xCACFC2 );
 		depth.measure();
 		add( depth );
 
+        /*
 		Dungeon.hero.belongings.countIronKeys();
 		keys = new BitmapText( PixelScene.pixelFont);
 		keys.hardlight( 0xCACFC2 );
 		add( keys );
+		*/
 
 		danger = new DangerIndicator();
 		add( danger );

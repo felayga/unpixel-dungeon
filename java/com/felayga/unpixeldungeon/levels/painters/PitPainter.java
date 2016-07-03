@@ -62,7 +62,7 @@ public class PitPainter extends Painter {
 			remains = room.random();
 		}
 		
-		level.drop( new IronOldKey( Dungeon.depth ), remains ).type = Type.SKELETON;
+		//level.drop( new IronOldKey( Dungeon.depth ), remains ).type = Type.SKELETON;
 		int loot = Random.Int( 3 );
 		if (loot == 0) {
 			level.drop( Generator.random( Generator.Category.RING ), remains );

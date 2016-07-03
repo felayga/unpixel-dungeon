@@ -44,6 +44,7 @@ import com.felayga.unpixeldungeon.items.keys.IronOldKey;
 import com.felayga.unpixeldungeon.items.keys.OldKey;
 import com.felayga.unpixeldungeon.items.tools.ITool;
 import com.felayga.unpixeldungeon.items.wands.Wand;
+import com.felayga.unpixeldungeon.items.weapon.ammunition.AmmunitionWeapon;
 import com.felayga.unpixeldungeon.items.weapon.missiles.martial.Boomerang;
 import com.felayga.unpixeldungeon.levels.Level;
 import com.felayga.unpixeldungeon.mechanics.BUCStatus;
@@ -91,6 +92,7 @@ public class Belongings implements Iterable<Item>, IDecayable, IBag {
         return Icons.BACKPACK;
     }
     public boolean locked() { return false; }
+    public Char owner() { return owner; }
 
     //endregion
 
@@ -107,39 +109,48 @@ public class Belongings implements Iterable<Item>, IDecayable, IBag {
 		weight += change;
 	}
 
-	public boolean collect(Item item) {
-		boolean retval = false;
-		if (backpack3.grab(item)) {
-			GLog.d("->bag3");
-			retval = backpack3.collect(item);
-		}
-		else if (backpack1.grab(item)) {
-			GLog.d("->bag1");
-			retval = backpack1.collect(item);
-		}
-		else if (backpack4.grab(item)) {
-			GLog.d("->bag4");
-			retval = backpack4.collect(item);
-		}
-		else {
-			GLog.d("->bag2");
-			retval = backpack2.collect(item);
-		}
+    public boolean collect(Item item) {
+        return collect(item, true);
+    }
 
-		GLog.d("collect " + item.getDisplayName() + " " + retval);
-		GLog.d("weight2="+weight+" "+backpack1.weight()+" "+backpack2.weight()+" "+backpack3.weight()+" "+backpack4.weight());
+	public boolean collect(Item item, boolean considerEquipped) {
+        boolean retval = false;
+        if (considerEquipped && tryMergeEquippedStack(item)) {
+            GLog.d(owner.name+"->equipped");
+            retval = true;
+        } else if (backpack3.grab(item)) {
+            GLog.d(owner.name+"->bag3");
+            retval = backpack3.collect(item);
+        } else if (backpack1.grab(item)) {
+            GLog.d(owner.name+"->bag1");
+            retval = backpack1.collect(item);
+        } else if (backpack4.grab(item)) {
+            GLog.d(owner.name+"->bag4");
+            retval = backpack4.collect(item);
+        } else {
+            GLog.d(owner.name+"->bag2");
+            retval = backpack2.collect(item);
+        }
 
-		return retval;
-	}
+        GLog.d("collect " + item.getDisplayName() + " " + retval);
+        GLog.d("weight2=" + weight + " " + backpack1.weight() + " " + backpack2.weight() + " " + backpack3.weight() + " " + backpack4.weight());
+
+        return retval;
+    }
 
     public Item remove(Item item) {
         return remove(item, true, true);
     }
 
 	public Item remove(Item item, boolean equipped, boolean unequipped) {
-        Dungeon.quickslot.clearItem(item);
+        if (owner instanceof Hero) {
+            Dungeon.quickslot.clearItem(item);
+        }
+
         item.updateQuickslot();
         Item retval = null;
+
+        GLog.d("remove");
 
         if (unequipped) {
             if (backpack3.contains(item)) {
@@ -155,6 +166,7 @@ public class Belongings implements Iterable<Item>, IDecayable, IBag {
 
         if (equipped && retval == null) {
             if (items.containsValue(item) && unequip((EquippableItem) item, false)) {
+                GLog.d("remove equipped");
                 retval = item;
             }
         }
@@ -166,10 +178,7 @@ public class Belongings implements Iterable<Item>, IDecayable, IBag {
 
 	public Item remove(Item item, int quantity) {
 		if (item.quantity() > quantity) {
-			Item detached = item.parent().remove(item, quantity);
-			item.updateQuickslot();
-
-			return detached;
+            return Item.ghettoSplitStack(item, quantity, owner);
 		} else if (item.quantity() == quantity) {
 			if (item.stackable || item instanceof Boomerang) {
 				Dungeon.quickslot.convertToPlaceholder(item);
@@ -198,9 +207,37 @@ public class Belongings implements Iterable<Item>, IDecayable, IBag {
 		return null;
 	}
 
-	public boolean tryMergeStack(Item test) {
+	public boolean tryMergeExistingStack(Item test) {
 		return false;
 	}
+
+    public boolean tryMergeEquippedStack(Item test) {
+        if (test.stackable) {
+            AmmunitionWeapon ammo = ranOutOfAmmo();
+            if (ammo != null && test.isStackableWith(ammo)) {
+                GLog.d("ranoutofammo: replace");
+                ranOutOfAmmo(null);
+                //todo: determine if general casing here is required, seems like a waste of effort
+                if (offhand() == null) {
+                    return collectEquip((EquippableItem)test, EquippableItem.Slot.Offhand);
+                }
+            }
+
+            Iterator<Item> iterator = iterator(true, false);
+            while (iterator.hasNext()) {
+                Item item = iterator.next();
+
+                if (test.isStackableWith(item)) {
+                    item.quantity(item.quantity() + test.quantity());
+                    item.updateQuickslot();
+
+                    return true;
+                }
+            }
+        }
+
+        return false;
+    }
 
 	public boolean contains(Item item) {
 		return backpack3.contains(item)
@@ -213,23 +250,23 @@ public class Belongings implements Iterable<Item>, IDecayable, IBag {
         if (!items.containsKey(slot) || unequip(items.get(slot), true)) {
             items.put(slot, item);
 
-            GLog.d("itemcount="+items.size());
+            //GLog.d("itemcount="+items.size());
 
             Iterator iterator = items.entrySet().iterator();
             while (iterator.hasNext()) {
                 Map.Entry<EquippableItem.Slot, EquippableItem> pair = (Map.Entry<EquippableItem.Slot, EquippableItem>)iterator.next();
-                GLog.d("slot="+pair.getKey()+" item="+pair.getValue().getDisplayName());
+                //GLog.d("slot="+pair.getKey()+" item="+pair.getValue().getDisplayName());
             }
-            GLog.d("end iterator");
+            //GLog.d("end iterator");
 
-            GLog.d("put item="+item.getDisplayName()+" in slot="+slot);
+            //GLog.d("put item="+item.getDisplayName()+" in slot="+slot);
             return true;
         }
 
 		return false;
 	}
 
-	private boolean tryReplaceOneHanded(final EquippableItem.Slot[] slots, final EquippableItem item, final int quickslot) {
+	private boolean tryReplaceOneHanded(final EquippableItem.Slot[] slots, final EquippableItem item, final int quickslot, final EquippableItem.Slot bestChoice) {
 		final EquippableItem[] items = new EquippableItem[slots.length];
 
 		for (int n = 0; n < slots.length; n++) {
@@ -264,6 +301,15 @@ public class Belongings implements Iterable<Item>, IDecayable, IBag {
 		final List<String> options = new ArrayList<String>();
 
 		for (int n = 0; n < items.length; n++) {
+            if (slots[n] == bestChoice) {
+                if (tryReplaceSimple(slots[n], item)) {
+                    onItemEquipped(owner, item, quickslot, true);
+                    return true;
+                }
+                else {
+                    return false;
+                }
+            }
 			options.add(items[n].getDisplayName());
 		}
 
@@ -332,7 +378,11 @@ public class Belongings implements Iterable<Item>, IDecayable, IBag {
 	}
 
     public boolean collectEquip(EquippableItem item) {
-        if (equip(item)) {
+        return collectEquip(item, EquippableItem.Slot.None);
+    }
+
+    public boolean collectEquip(EquippableItem item, EquippableItem.Slot bestChoice) {
+        if (equip(item, bestChoice)) {
             GLog.d("collectequip: equip (true)");
             return true;
         }
@@ -342,7 +392,11 @@ public class Belongings implements Iterable<Item>, IDecayable, IBag {
         return retval;
     }
 
-	public boolean equip(EquippableItem item) {
+    public boolean equip(EquippableItem item) {
+        return equip(item, EquippableItem.Slot.None);
+    }
+
+	public boolean equip(EquippableItem item, EquippableItem.Slot bestChoice) {
 		//In addition to equipping itself, item reassigns itself to the quickslot
 		//This is a special case as the item is being removed from inventory, but is staying with the hero.
 		int slot = -1;
@@ -355,14 +409,20 @@ public class Belongings implements Iterable<Item>, IDecayable, IBag {
 		boolean good = false;
 		if (slots.length == 1 && tryReplaceSimple(slots[0], item)) {
 			good = true;
+            GLog.d("tryReplaceSimple worked");
 		}
-		else if (!item.twoHanded && tryReplaceOneHanded(slots, item, slot)) {
+		else if (!item.twoHanded && tryReplaceOneHanded(slots, item, slot, bestChoice)) {
 			good = true;
+            GLog.d("tryReplaceOneHanded worked");
 		}
 		else if (item.twoHanded && tryReplaceTwoHanded(slots, item, slot))
 		{
 			good = true;
+            GLog.d("tryReplaceTwoHanded worked");
 		}
+        else {
+            GLog.d("equip failure");
+        }
 
 		if (good)
 		{
@@ -399,7 +459,7 @@ public class Belongings implements Iterable<Item>, IDecayable, IBag {
 		GLog.d("weight0=" + weight + " " + backpack1.weight() + " " + backpack2.weight() + " " + backpack3.weight() + " " + backpack4.weight());
 
 		if (quickslot != -1) {
-			Dungeon.quickslot.setSlot(quickslot, item);
+            Dungeon.quickslot.setSlot(quickslot, item);
 			item.updateQuickslot();
 		}
 
@@ -433,7 +493,7 @@ public class Belongings implements Iterable<Item>, IDecayable, IBag {
 		unequip(item);
 		onItemUnequipped(owner, item, single);
 
-		if (collect && !collect(item)) {
+		if (collect && !collect(item, false)) {
 			if (owner instanceof Hero) {
 				Dungeon.quickslot.clearItem(item);
 			}
@@ -448,7 +508,7 @@ public class Belongings implements Iterable<Item>, IDecayable, IBag {
 		EquippableItem.Slot[] slots = item.getSlots();
 
 		for (int n=0;n<slots.length;n++) {
-            if (items.get(slots[n]) != null) {
+            if (items.get(slots[n]) == item) {
                 items.remove(slots[n]);
             }
 		}
@@ -469,6 +529,16 @@ public class Belongings implements Iterable<Item>, IDecayable, IBag {
 	}
 
     private HashMap<EquippableItem.Slot, EquippableItem> items = new HashMap<>();
+    private AmmunitionWeapon _ranOutOfAmmo;
+
+    public void ranOutOfAmmo(AmmunitionWeapon ammo) {
+        GLog.d("set ranOutOfAmmo="+(ammo != null ? ammo.getDisplayName() : "<null>"));
+        _ranOutOfAmmo = ammo;
+    }
+
+    public AmmunitionWeapon ranOutOfAmmo() {
+        return _ranOutOfAmmo;
+    }
 
     public EquippableItem weapon() { return items.get(EquippableItem.Slot.Weapon); }
     public EquippableItem offhand() {
@@ -534,7 +604,8 @@ public class Belongings implements Iterable<Item>, IDecayable, IBag {
 	private static final String BACKPACK2	= "backpack2";
 	private static final String BACKPACK3	= "backpack3";
 	private static final String BACKPACK4	= "backpack4";
-    private static final String ITEM       = "equippedItem";
+    private static final String ITEM        = "equippedItem";
+    private static final String LASTAMMO    = "ranOutOfAmmo";
 
 	public void storeInBundle( Bundle bundle ) {
 		backpack1.storeInBundle(bundle, BACKPACK1);
@@ -548,6 +619,8 @@ public class Belongings implements Iterable<Item>, IDecayable, IBag {
 
             bundle.put(ITEM + pair.getKey().value, pair.getValue());
         }
+
+        bundle.put(LASTAMMO, _ranOutOfAmmo);
 	}
 	
 	public void restoreFromBundle( Bundle bundle ) {
@@ -590,6 +663,7 @@ public class Belongings implements Iterable<Item>, IDecayable, IBag {
 			}
 		}
 
+        _ranOutOfAmmo = (AmmunitionWeapon)bundle.get(LASTAMMO);
 	}
 
 	public Gold getGold()
@@ -732,6 +806,7 @@ public class Belongings implements Iterable<Item>, IDecayable, IBag {
 		return null;
 	}
 
+    /*
 	public void countIronKeys() {
 
 		IronOldKey.curDepthQuantity = 0;
@@ -746,7 +821,8 @@ public class Belongings implements Iterable<Item>, IDecayable, IBag {
 			}
 		}
 	}
-	
+	*/
+
 	public void identify() {
 		for (Item item : this) {
 			item.identify();

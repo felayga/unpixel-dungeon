@@ -22,11 +22,12 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>
  *
  */
-package com.felayga.unpixeldungeon.items.weapon.missiles.simple;
+package com.felayga.unpixeldungeon.items.weapon.ammunition.simple;
 
 import com.felayga.unpixeldungeon.Assets;
 import com.felayga.unpixeldungeon.actors.buffs.hero.Encumbrance;
 import com.felayga.unpixeldungeon.items.Item;
+import com.felayga.unpixeldungeon.items.weapon.ammunition.AmmunitionWeapon;
 import com.felayga.unpixeldungeon.items.weapon.missiles.MissileWeapon;
 import com.felayga.unpixeldungeon.items.weapon.ranged.AmmunitionType;
 import com.felayga.unpixeldungeon.mechanics.GameTime;
@@ -35,14 +36,12 @@ import com.felayga.unpixeldungeon.sprites.ItemSpriteSheet;
 import com.watabou.noosa.audio.Sample;
 import com.watabou.utils.Random;
 
-public class Rock extends MissileWeapon {
-
+public class Rock extends AmmunitionWeapon {
     public Rock() {
         this( 1 );
     }
 
-    public Rock(int quantity)
-    {
+    public Rock(int quantity) {
         super(WeaponSkill.Simple, GameTime.TICK, 0, 2, quantity, true, AmmunitionType.Stone);
 
         name = "rock";
@@ -52,11 +51,21 @@ public class Rock extends MissileWeapon {
         bones = false; //Finding them in bones would be semi-frequent and disappointing.
 
         hasLevels = false;
+        hasBuc(false);
 
         weight(Encumbrance.UNIT * 10);
         price = 0;
     }
 
+    @Override
+    public int damageRoll() {
+        return 32767;
+    }
+
+    @Override
+    public int accuracyFactor() {
+        return 32767;
+    }
 
     @Override
     public String desc() {

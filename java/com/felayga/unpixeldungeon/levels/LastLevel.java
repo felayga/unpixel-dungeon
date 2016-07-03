@@ -38,7 +38,10 @@ public class LastLevel extends Level {
 
 	private static final int SIZE = 30;
 
+    public LastLevel()
 	{
+        super(0);
+
 		color1 = 0x801500;
 		color2 = 0xa68521;
 
@@ -86,7 +89,7 @@ public class LastLevel extends Level {
 		//Painter.fill( this, SIZE/2, SIZE/2, 3, 3, Terrain.EMPTY_SP );
 
 		entrance = SIZE * WIDTH + SIZE / 2 + 1;
-		map[entrance] = Terrain.ENTRANCE;
+		map[entrance] = Terrain.STAIRS_UP;
 
 		pedestal = (SIZE / 2 + 1) * (WIDTH + 1) - 4*WIDTH;
 		map[pedestal] = Terrain.PEDESTAL;

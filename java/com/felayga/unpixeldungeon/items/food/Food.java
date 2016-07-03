@@ -41,7 +41,7 @@ import com.watabou.utils.Bundle;
 import java.util.ArrayList;
 
 public class Food extends Item {
-    private static final int AMOUNT_EATEN_PER_ROUND = 125;
+    public static final int AMOUNT_EATEN_PER_ROUND = 125;
 
     public static final String AC_EAT = "EAT";
     public static final String AC_EAT_START = "EAT_START"; // necessary for proper handling of "you started eating" messages

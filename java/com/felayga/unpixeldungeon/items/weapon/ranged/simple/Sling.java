@@ -38,6 +38,7 @@ public class Sling extends RangedWeapon {
     public Sling() {
         super(WeaponSkill.Simple, GameTime.TICK, 1, 2, AmmunitionType.Stone);
 
+        name = "sling";
         image = ItemSpriteSheet.SLING;
     }
 }

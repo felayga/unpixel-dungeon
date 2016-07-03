@@ -52,7 +52,7 @@ public class Dewdrop extends Item {
 		
 		if (hero.HP < hero.HT || vial == null || vial.isFull()) {
 			
-			int value = 1 + (Dungeon.depth - 1) / 5;
+			int value = 1 + (Dungeon.depthAdjusted - 1) / 5;
 			if (hero.subClass == HeroSubClass.WARDEN) {
 				value+=2;
 			}
@@ -77,13 +77,6 @@ public class Dewdrop extends Item {
 		hero.spend_new(Constant.Time.ITEM_PICKUP, true);
 		
 		return true;
-	}
-
-	@Override
-	//max of one dew in a stack
-	public Item setQuantity(int value) {
-		quantity(Math.min(value, 1));
-		return this;
 	}
 
 	@Override

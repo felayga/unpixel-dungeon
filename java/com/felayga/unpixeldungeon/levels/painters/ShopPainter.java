@@ -125,50 +125,47 @@ public class ShopPainter extends Painter {
 	private static void generateItems() {
 
 		itemsToSpawn = new ArrayList<Item>();
-		
-		switch (Dungeon.depth) {
+
+        //todo: update shop item spawns
+		switch (Dungeon._depth) {
 		case 6:
 			itemsToSpawn.add( (Random.Int( 2 ) == 0 ? new Quarterstaff() : new Spear()).identify() );
 			itemsToSpawn.add(Random.Int(2) == 0 ?
-                    new IncendiaryDart().setQuantity(Random.NormalIntRange(2, 4)) :
-                    new CurareDart().setQuantity(Random.NormalIntRange(1, 3)));
+                    new IncendiaryDart().quantity(Random.NormalIntRange(2, 4)) :
+                    new CurareDart().quantity(Random.NormalIntRange(1, 3)));
 			itemsToSpawn.add( new LeatherArmor().identify() );
 			break;
 			
 		case 11:
 			itemsToSpawn.add( (Random.Int( 2 ) == 0 ? new Sword() : new Mace()).identify() );
 			itemsToSpawn.add( Random.Int( 2 ) == 0 ?
-					new CurareDart().setQuantity(Random.NormalIntRange(2, 5)) :
-					new Shuriken().setQuantity(Random.NormalIntRange(3, 6)));
+					new CurareDart().quantity(Random.NormalIntRange(2, 5)) :
+					new Shuriken().quantity(Random.NormalIntRange(3, 6)));
 			itemsToSpawn.add( new MailArmor().identify() );
 			break;
 			
 		case 16:
 			itemsToSpawn.add( (Random.Int( 2 ) == 0 ? new Longsword() : new BattleAxe()).identify() );
 			itemsToSpawn.add( Random.Int( 2 ) == 0 ?
-					new Shuriken().setQuantity(Random.NormalIntRange(4, 7)) :
-					new Javelin().setQuantity(Random.NormalIntRange(3, 6)));
+					new Shuriken().quantity(Random.NormalIntRange(4, 7)) :
+					new Javelin().quantity(Random.NormalIntRange(3, 6)));
 			itemsToSpawn.add( new ScaleArmor().identify() );
 			break;
 			
 		case 21:
 			itemsToSpawn.add( Random.Int( 2 ) == 0 ? new Glaive().identify() : new WarHammer().identify() );
 			itemsToSpawn.add( Random.Int(2) == 0 ?
-					new Javelin().setQuantity(Random.NormalIntRange(4, 7)) :
-					new Tomahawk().setQuantity(Random.NormalIntRange(4, 7)));
+					new Javelin().quantity(Random.NormalIntRange(4, 7)) :
+					new Tomahawk().quantity(Random.NormalIntRange(4, 7)));
 			itemsToSpawn.add( new HalfPlateArmor().identify() );
 			itemsToSpawn.add( new Torch() );
 			itemsToSpawn.add( new Torch() );
 			break;
 		}
 
-		itemsToSpawn.add( new MerchantsBeacon() );
+		itemsToSpawn.add( new MerchantsBeacon());
 
-
-		ChooseBag(Dungeon.hero.belongings);
-
-
-		itemsToSpawn.add( new PotionOfHealing() );
+        itemsToSpawn.add( new PotionOfHealing() );
 		for (int i=0; i < 3; i++)
 			itemsToSpawn.add( Generator.random( Generator.Category.POTION ) );
 
@@ -201,7 +198,7 @@ public class ShopPainter extends Painter {
 		}
 
 
-		if (Dungeon.depth == 6) {
+		if (Dungeon._depth == 6) {
 			itemsToSpawn.add( new Ankh() );
 			itemsToSpawn.add( new Weightstone() );
 		} else {
@@ -214,7 +211,7 @@ public class ShopPainter extends Painter {
 			int bags = 0;
 			//creates the given float percent of the remaining bags to be dropped.
 			//this way players who get the hourglass late can still max it, usually.
-			switch (Dungeon.depth) {
+			switch (Dungeon._depth) {
 				case 6:
 					bags = (int)Math.ceil(( 5-hourglass.sandBags) * 0.20f ); break;
 				case 11:
@@ -262,44 +259,6 @@ public class ShopPainter extends Painter {
 			throw new RuntimeException("Shop attempted to carry more than 39 items!");
 
 		Collections.shuffle(itemsToSpawn);
-	}
-
-	private static void ChooseBag(Belongings pack){
-
-		int seeds = 0, scrolls = 0, potions = 0, wands = 0;
-
-		//count up items in the main bag, for bags which haven't yet been dropped.
-		/*
-		for (Item item : pack.backpack.items) {
-			if (!Dungeon.limitedDrops.seedBag.dropped() && item instanceof Plant.Seed)
-				seeds++;
-			else if (!Dungeon.limitedDrops.scrollBag.dropped() && item instanceof Scroll)
-				scrolls++;
-			else if (!Dungeon.limitedDrops.potionBag.dropped() && item instanceof Potion)
-				potions++;
-			else if (!Dungeon.limitedDrops.wandBag.dropped() && item instanceof Wand)
-				wands++;
-		}
-		*/
-
-		//then pick whichever valid bag has the most items available to put into it.
-		//note that the order here gives a perference if counts are otherwise equal
-		if (seeds >= scrolls && seeds >= potions && seeds >= wands && !Dungeon.limitedDrops.seedBag.dropped()) {
-			Dungeon.limitedDrops.seedBag.drop();
-			itemsToSpawn.add( new SeedPouch() );
-
-		} else if (scrolls >= potions && scrolls >= wands && !Dungeon.limitedDrops.scrollBag.dropped()) {
-			Dungeon.limitedDrops.scrollBag.drop();
-			itemsToSpawn.add( new ScrollHolder() );
-
-		} else if (potions >= wands && !Dungeon.limitedDrops.potionBag.dropped()) {
-			Dungeon.limitedDrops.potionBag.drop();
-			itemsToSpawn.add( new PotionBandolier() );
-
-		} else if (!Dungeon.limitedDrops.wandBag.dropped()) {
-			Dungeon.limitedDrops.wandBag.drop();
-			itemsToSpawn.add(new WandHolster());
-		}
 	}
 
 	public static int spaceNeeded(){

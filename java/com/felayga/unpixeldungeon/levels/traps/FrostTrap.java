@@ -62,8 +62,8 @@ public class FrostTrap extends Trap {
 
 		Char ch = Actor.findChar(pos);
 		if (ch != null){
-			ch.damage(Random.NormalIntRange(1 , Dungeon.depth), MagicType.Cold, null);
-			Chill.prolong(ch, Frost.class, GameTime.TICK * (10 + Random.Long(Dungeon.depth)));
+			ch.damage(Random.NormalIntRange(1 , Dungeon.depthAdjusted), MagicType.Cold, null);
+			Chill.prolong(ch, Frost.class, GameTime.TICK * (10 + Random.Long(Dungeon.depthAdjusted)));
 			if (!ch.isAlive() && ch == Dungeon.hero){
 				Dungeon.fail( Utils.format(ResultDescriptions.TRAP, name) );
 				GLog.n("You succumb to the freezing trap...");

@@ -134,7 +134,7 @@ public class Hunger extends Buff implements Hero.Doom {
 					if (lifeRegenTick >= test) {
 						lifeRegenTick = 0;
 
-						hero.HP += Random.Int(0, hero.STRCON) + 1;
+						hero.HP += Random.Int(0, hero.STRCON()) + 1;
 					}
 				} else {
 					test = 42 / (hero.level + 2) + 1;
@@ -157,7 +157,7 @@ public class Hunger extends Buff implements Hero.Doom {
 				if (manaRegenTick >= test) {
 					manaRegenTick = 0;
 
-					test = 1 + hero.INTWIS / 7;
+					test = 1 + hero.INTWIS() / 7;
 					if (test > 1) {
 						hero.MP += Random.Int(0, test) + 1;
 					} else {
@@ -290,7 +290,7 @@ public class Hunger extends Buff implements Hero.Doom {
 
 	public boolean choke(Char ch)
 	{
-		return Random.PassFail((level-1750) * 2 / ch.STRCON);
+		return Random.PassFail((level-1750) * 2 / ch.STRCON());
 	}
 
 	public enum HungerLevel {

@@ -37,7 +37,10 @@ import com.watabou.utils.Random;
 
 public class CityLevel extends RegularLevel {
 
+    public CityLevel()
 	{
+        super(0);
+
 		color1 = 0x4b6636;
 		color2 = 0xf2f2f2;
 	}
@@ -124,23 +127,25 @@ public class CityLevel extends RegularLevel {
 	
 	@Override
 	public String tileDesc(int tile) {
-		switch (tile) {
-		case Terrain.ENTRANCE:
-			return "A ramp leads up to the upper depth.";
-		case Terrain.EXIT:
-			return "A ramp leads down to the lower depth.";
-		case Terrain.WALL_DECO:
-		case Terrain.EMPTY_DECO:
-			return "Several tiles are missing here.";
-		case Terrain.EMPTY_SP:
-			return "Thick carpet covers the floor.";
-		case Terrain.STATUE:
-		case Terrain.STATUE_SP:
-			return "The statue depicts some dwarf standing in a heroic stance.";
-		default:
-			return super.tileDesc( tile );
-		}
-	}
+        switch (tile) {
+            case Terrain.STAIRS_UP:
+            case Terrain.STAIRS_UP_ALTERNATE:
+                return "A ramp leads up to the upper depth.";
+            case Terrain.STAIRS_DOWN:
+            case Terrain.STAIRS_DOWN_ALTERNATE:
+                return "A ramp leads down to the lower depth.";
+            case Terrain.WALL_DECO:
+            case Terrain.EMPTY_DECO:
+                return "Several tiles are missing here.";
+            case Terrain.EMPTY_SP:
+                return "Thick carpet covers the floor.";
+            case Terrain.STATUE:
+            case Terrain.STATUE_SP:
+                return "The statue depicts some dwarf standing in a heroic stance.";
+            default:
+                return super.tileDesc(tile);
+        }
+    }
 	
 	@Override
 	public Group addVisuals() {

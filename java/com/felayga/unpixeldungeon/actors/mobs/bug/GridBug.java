@@ -51,7 +51,7 @@ public class GridBug extends Mob {
         immunityMagical = MagicType.None.value;
         corpseEffects = CorpseEffect.None.value;
 
-        belongings.collectEquip(new MeleeMobAttack(GameTime.TICK, 1, 1));
+        belongings.collectEquip(new MeleeMobAttack(GameTime.TICK, 1, 1, MagicType.Shock));
     }
 
     @Override
