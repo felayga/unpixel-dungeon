@@ -37,7 +37,7 @@ import com.watabou.utils.Random;
 import java.util.ArrayList;
 
 public class KindOfWeapon extends EquippableItem {
-	private static final String TXT_EQUIP_CURSED	= "The %s welds itself to your hand!";
+	private static final String TXT_EQUIP_CURSED    = "The %s welds itself to your hand!";
 	
 	protected static final long TIME_TO_EQUIP = GameTime.TICK;
 

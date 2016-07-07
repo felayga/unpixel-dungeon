@@ -33,7 +33,7 @@ import com.watabou.utils.Random;
  * Created by HELLO on 6/17/2016.
  */
 public enum DungeonBranch {
-    Normal      ("", 1, 30, -1, -1, true),
+    Normal      ("", 1, 30, 0, 0, true),
     Mines       ("M", 32, 40, 2, 4, true),
     Puzzle      ("P", 42, 45, 5, 9, false);
 
@@ -55,6 +55,9 @@ public enum DungeonBranch {
 
         if (entranceMin > 0 && entranceMax > 0) {
             this.branchLevel = Random.IntRange(entranceMin, entranceMax);
+        }
+        else {
+            this.branchLevel = 0;
         }
         this.branchDown = branchDown;
     }

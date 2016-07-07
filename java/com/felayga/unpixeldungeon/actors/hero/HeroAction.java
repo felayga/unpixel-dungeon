@@ -28,12 +28,14 @@ import com.felayga.unpixeldungeon.actors.Char;
 import com.felayga.unpixeldungeon.actors.mobs.npcs.Boulder;
 import com.felayga.unpixeldungeon.actors.mobs.npcs.NPC;
 import com.felayga.unpixeldungeon.items.Item;
+import com.felayga.unpixeldungeon.items.KindOfWeapon;
 import com.felayga.unpixeldungeon.items.bags.IBag;
 import com.felayga.unpixeldungeon.items.tools.digging.DiggingTool;
 import com.felayga.unpixeldungeon.items.tools.unlocking.UnlockingTool;
 import com.felayga.unpixeldungeon.items.weapon.ammunition.AmmunitionWeapon;
 import com.felayga.unpixeldungeon.items.weapon.missiles.MissileWeapon;
 import com.felayga.unpixeldungeon.items.weapon.ranged.RangedWeapon;
+import com.felayga.unpixeldungeon.mechanics.Constant;
 
 
 public class HeroAction {
@@ -159,16 +161,16 @@ public class HeroAction {
     }
 	
 	public static class Attack extends HeroAction {
-		public Char target;
+        public Char target;
+        public KindOfWeapon melee;
         public RangedWeapon launcher;
         public AmmunitionWeapon ammo;
         public MissileWeapon missile;
 
-		public Attack( Char target )
-		{
-			this.target = target;
-		}
-	}
+        public Attack(Char target) {
+            this.target = target;
+        }
+    }
 
 	public static class UseItem extends HeroAction {
 		public Item target;
@@ -179,40 +181,57 @@ public class HeroAction {
 			this.target = target;
 			this.action = action;
 		}
+
+        public static class UnlockBag extends UseItem {
+            public UnlockingTool tool;
+            public int location;
+
+            public UnlockBag(UnlockingTool tool, Item target, int location) {
+                super(target, null);
+
+                this.tool = tool;
+                this.location = location;
+            }
+        }
+
+        public static class EatItem extends UseItem{
+            public IBag targetOutsideInventory;
+            public boolean startedEating;
+            public boolean stoppedEating;
+            public boolean forced;
+
+            public EatItem(Item target, String action) {
+                this(target, action, false);
+            }
+
+            public EatItem(Item target, String action, boolean forced) {
+                super(target, action);
+
+                this.forced = forced;
+
+                targetOutsideInventory = null;
+                startedEating = false;
+                stoppedEating = false;
+            }
+        }
+
+        public static class Kick extends UseItem {
+            public Char enemy;
+
+            public Kick(Item item, int target) {
+                super(item, Constant.Action.KICK);
+
+                this.dst = target;
+            }
+
+            public Kick(Item item, Char target) {
+                super(item, Constant.Action.KICK);
+
+                this.enemy = target;
+            }
+        }
 	}
 
-	public static class UnlockBag extends UseItem {
-		public UnlockingTool tool;
-		public int location;
-
-		public UnlockBag(UnlockingTool tool, Item target, int location) {
-            super(target, null);
-
-			this.tool = tool;
-			this.location = location;
-		}
-	}
-
-	public static class EatItem extends UseItem{
-		public IBag targetOutsideInventory;
-		public boolean startedEating;
-		public boolean stoppedEating;
-		public boolean forced;
-
-		public EatItem(Item target, String action) {
-			this(target, action, false);
-		}
-
-		public EatItem(Item target, String action, boolean forced) {
-			super(target, action);
-
-			this.forced = forced;
-
-			targetOutsideInventory = null;
-			startedEating = false;
-			stoppedEating = false;
-		}
-	}
 
 	public static class Dig extends HeroAction {
 		public DiggingTool tool;

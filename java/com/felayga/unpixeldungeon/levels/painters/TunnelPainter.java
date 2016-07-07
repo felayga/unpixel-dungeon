@@ -30,15 +30,17 @@ import com.watabou.utils.Point;
 import com.watabou.utils.Random;
 
 public class TunnelPainter extends Painter {
+    public static void _set( Level level, int x, int y, int value ) {
+        //level.setRepairing(x + y * Level.WIDTH, value, false, false);
+        set(level, x, y, value);
+    }
 
 	public static void paint( Level level, Room room ) {
-		
 		int floor = level.tunnelTile();
 		
 		Point c = room.center();
 		
 		if (room.width() > room.height() || (room.width() == room.height() && Random.Int( 2 ) == 0)) {
-			
 			int from = room.right - 1;
 			int to = room.left + 1;
 			
@@ -50,14 +52,14 @@ public class TunnelPainter extends Painter {
 					
 					from = room.left + 1;
 					for (int i=door.y; i != c.y; i += step) {
-						set( level, from, i, floor );
+                        _set(level, from, i, floor);
 					}
 					
 				} else if (door.x == room.right) {
 					
 					to = room.right - 1;
 					for (int i=door.y; i != c.y; i += step) {
-						set( level, to, i, floor );
+                        _set(level, to, i, floor);
 					}
 					
 				} else {
@@ -69,13 +71,13 @@ public class TunnelPainter extends Painter {
 					}
 					
 					for (int i=door.y+step; i != c.y; i += step) {
-						set( level, door.x, i, floor );
+                        _set(level, door.x, i, floor);
 					}
 				}
 			}
 			
 			for (int i=from; i <= to; i++) {
-				set( level, i, c.y, floor );
+                _set(level, i, c.y, floor);
 			}
 			
 		} else {
@@ -91,14 +93,14 @@ public class TunnelPainter extends Painter {
 					
 					from = room.top + 1;
 					for (int i=door.x; i != c.x; i += step) {
-						set( level, i, from, floor );
+                        _set(level, i, from, floor);
 					}
 					
 				} else if (door.y == room.bottom) {
 					
 					to = room.bottom - 1;
 					for (int i=door.x; i != c.x; i += step) {
-						set( level, i, to, floor );
+                        _set(level, i, to, floor);
 					}
 					
 				} else {
@@ -110,14 +112,14 @@ public class TunnelPainter extends Painter {
 					}
 					
 					for (int i=door.x+step; i != c.x; i += step) {
-						set( level, i, door.y, floor );
+                        _set(level, i, door.y, floor);
 					}
 				}
 			}
 			
 			for (int i=from; i <= to; i++) {
-				set( level, c.x, i, floor );
-			}
+                _set( level, c.x, i, floor);
+            }
 		}
 		
 		for (Room.Door door : room.connected.values()) {

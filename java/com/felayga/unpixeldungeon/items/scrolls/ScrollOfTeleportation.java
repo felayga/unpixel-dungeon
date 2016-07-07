@@ -31,6 +31,7 @@ import com.felayga.unpixeldungeon.actors.Char;
 import com.felayga.unpixeldungeon.actors.buffs.Buff;
 import com.felayga.unpixeldungeon.actors.buffs.positive.Invisibility;
 import com.felayga.unpixeldungeon.actors.hero.Hero;
+import com.felayga.unpixeldungeon.actors.hero.HeroAction;
 import com.felayga.unpixeldungeon.effects.Speck;
 import com.felayga.unpixeldungeon.items.artifacts.TimekeepersHourglass;
 import com.felayga.unpixeldungeon.levels.Level;
@@ -46,12 +47,9 @@ import com.watabou.utils.Random;
 
 //import com.felayga.unpixeldungeon.items.artifacts.DriedRose;
 
-public class ScrollOfTeleportation extends Scroll {
-
+public class ScrollOfTeleportation extends PositionScroll {
 	public static final String TXT_TELEPORTED = "In a blink of an eye you were teleported to another location of the level.";
-	
 	public static final String TXT_NO_TELEPORT = "A mysterious force prevents you from teleporting.";
-
 	public static final String TXT_MISSED_TELEPORT = "You feel disoriented for a moment.";
 
     public ScrollOfTeleportation()
@@ -61,13 +59,13 @@ public class ScrollOfTeleportation extends Scroll {
 
         price = 40;
 	}
-	
-	@Override
+
+    @Override
 	protected void doRead() {
+        super.doRead();
 		Sample.INSTANCE.play(Assets.SND_READ);
 		Invisibility.dispel();
 
-		setKnown();
 		curUser.spend_new(TIME_TO_READ, true);
 
 		if (canTeleport(curUser)) {
@@ -81,23 +79,10 @@ public class ScrollOfTeleportation extends Scroll {
 					}
 					break;
 				case Uncursed:
-					doTeleport(curUser);
+					doTeleport(curUser, Constant.Position.RANDOM);
 					break;
 				case Blessed:
-					ShatteredPixelDungeon.scene().add(
-							new WndOptions(getName(), "Do you wish to teleport?",
-								"YES",
-								"NO") {
-
-							@Override
-							protected void onSelect(int index) {
-								switch(index) {
-									case 0:
-										doTeleport(curUser);
-										break;
-								}
-							}
-						});
+                    doSelectCell(curUser);
 					break;
 			}
 		}
@@ -115,12 +100,12 @@ public class ScrollOfTeleportation extends Scroll {
 
     public static int doLevelPort(Char user) {
         if (user instanceof Hero) {
-            int target = Dungeon._depth;
+            int target = Dungeon.depth();
 
-            DungeonBranch branch = DungeonBranch.currentBranch(Dungeon._depth);
+            DungeonBranch branch = DungeonBranch.currentBranch(Dungeon.depth());
 
-            while (target == Dungeon._depth || branch != DungeonBranch.currentBranch(target)) {
-                target = Random.IntRange(branch.levelMin, Dungeon._depth + 3);
+            while (target == Dungeon.depth() || branch != DungeonBranch.currentBranch(target)) {
+                target = Random.IntRange(branch.levelMin, Dungeon.depth() + 3);
             }
 
             GLog.d("cursed levelport to " + target);
@@ -149,17 +134,46 @@ public class ScrollOfTeleportation extends Scroll {
         }
     }
 
-	public static void doTeleport( Char user ) {
-		int count = 10;
-		int pos;
-		do {
-			pos = Dungeon.level.randomRespawnCell();
-			if (count-- <= 0) {
-				break;
-			}
-		} while (pos == -1);
+    @Override
+    protected void onPositionSelected(Hero user, int position) {
+        super.onPositionSelected(user, position);
 
-		if (pos != -1) {
+        if (position == user.pos) {
+            position = Constant.Position.RANDOM;
+        }
+
+        doTeleport(user, position);
+    }
+
+	public static void doTeleport( Char user, int pos ) {
+		int count = 10;
+		switch(pos) {
+            case Constant.Position.ENTRANCE:
+                pos = Dungeon.level.entrance;
+                break;
+            case Constant.Position.ENTRANCE_ALTERNATE:
+                pos = Dungeon.level.entranceAlternate;
+                break;
+            case Constant.Position.EXIT:
+                pos = Dungeon.level.exit;
+                break;
+            case Constant.Position.EXIT_ALTERNATE:
+                pos = Dungeon.level.exitAlternate;
+                break;
+            case Constant.Position.RANDOM:
+                do {
+                    pos = Dungeon.level.randomRespawnCell();
+                    if (count-- <= 0) {
+                        break;
+                    }
+                } while (pos < 0);
+                break;
+            case Constant.Position.NONE:
+                pos = -1;
+                break;
+        }
+
+		if (pos >= 0) {
 			appear(user, pos);
 			Dungeon.level.press(pos, user);
 
@@ -174,7 +188,6 @@ public class ScrollOfTeleportation extends Scroll {
 	}
 
 	public static void appear( Char ch, int pos ) {
-
 		ch.sprite.interruptMotion();
 
 		ch.move( pos );

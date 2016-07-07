@@ -210,7 +210,7 @@ public class CityBossLevel extends Level {
             }
             */
 
-            set(arenaDoor, Terrain.LOCKED_DOOR);
+            set(arenaDoor, Terrain.LOCKED_DOOR, true);
             GameScene.updateMap(arenaDoor);
             Dungeon.observe();
         }
@@ -224,7 +224,7 @@ public class CityBossLevel extends Level {
             keyDropped = true;
             unseal();
 
-            set(arenaDoor, Terrain.DOOR);
+            set(arenaDoor, Terrain.DOOR, true);
             GameScene.updateMap(arenaDoor);
             Dungeon.observe();
         }

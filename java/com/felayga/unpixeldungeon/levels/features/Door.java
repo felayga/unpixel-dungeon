@@ -36,7 +36,7 @@ import com.watabou.noosa.audio.Sample;
 public class Door {
 
 	public static void open(int pos) {
-		Level.set(pos, Terrain.OPEN_DOOR);
+        Dungeon.level.set(pos, Terrain.OPEN_DOOR, true);
 		GameScene.updateMap(pos);
 		Dungeon.observe();
 
@@ -46,7 +46,7 @@ public class Door {
 	}
 
 	public static void kickOpen(int pos) {
-		Level.set(pos, Terrain.OPEN_DOOR);
+        Dungeon.level.set(pos, Terrain.OPEN_DOOR, true);
 		GameScene.updateMap(pos);
 		Dungeon.observe();
 
@@ -56,7 +56,7 @@ public class Door {
 	}
 
 	public static void unlock(int pos) {
-		Level.set(pos, Terrain.DOOR);
+        Dungeon.level.set(pos, Terrain.DOOR, true);
 		GameScene.updateMap(pos);
 		Dungeon.observe();
 
@@ -67,7 +67,7 @@ public class Door {
 
 	public static void close(int pos) {
 		if (Dungeon.level.heaps.get(pos) == null) {
-			Level.set(pos, Terrain.DOOR);
+            Dungeon.level.set(pos, Terrain.DOOR, true);
 			GameScene.updateMap(pos);
 			Dungeon.observe();
 		}
@@ -84,7 +84,7 @@ public class Door {
 	}
 
 	public static void smash(int pos) {
-		Level.set(pos, Terrain.WOOD_DEBRIS);
+        Dungeon.level.set(pos, Terrain.WOOD_DEBRIS, true);
 		GameScene.updateMap(pos);
 		Dungeon.observe();
 

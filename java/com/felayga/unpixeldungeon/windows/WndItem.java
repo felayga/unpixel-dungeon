@@ -81,7 +81,7 @@ public class WndItem extends Window {
                         }
 
                         if (action == Food.AC_EAT) {
-                            Dungeon.hero.curAction = new HeroAction.EatItem(item, action);
+                            Dungeon.hero.curAction = new HeroAction.UseItem.EatItem(item, action);
                             GLog.d("wnditem deposit action");
                             Dungeon.hero.motivate(true);
                             //while (Dungeon.hero.act()) ;

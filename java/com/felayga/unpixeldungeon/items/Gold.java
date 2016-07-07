@@ -27,6 +27,7 @@ package com.felayga.unpixeldungeon.items;
 import com.felayga.unpixeldungeon.Assets;
 import com.felayga.unpixeldungeon.Dungeon;
 import com.felayga.unpixeldungeon.sprites.ItemSpriteSheet;
+import com.felayga.unpixeldungeon.utils.GLog;
 import com.felayga.unpixeldungeon.utils.Utils;
 import com.watabou.utils.Random;
 
@@ -105,7 +106,11 @@ public class Gold extends Item {
 	
 	@Override
 	public Item random() {
-		quantity(Random.Int( 30 + (Dungeon.depthAdjusted * 3/8 + Dungeon.hero.level / 8) * 10, 60 + (Dungeon.depthAdjusted * 3/8 + Dungeon.hero.level / 8) * 20 ));
+        GLog.d("depth="+Dungeon.depth()+" adjusted="+Dungeon.depthAdjusted);
+		quantity(Random.Int(
+                30 + (Dungeon.depthAdjusted * 3 / 8 + Dungeon.hero.level / 8) * 10,
+                60 + (Dungeon.depthAdjusted * 3 / 8 + Dungeon.hero.level / 8) * 20
+        ));
 		return this;
 	}
 	

@@ -44,50 +44,49 @@ import com.watabou.utils.Random;
 
 public class HighGrass {
 
-	public static void trample( Level level, int pos, Char ch ) {
-		
-		Level.set( pos, Terrain.GRASS );
-		GameScene.updateMap( pos );
+    public static void trample(Level level, int pos, Char ch) {
+        Dungeon.level.set(pos, Terrain.GRASS, true);
+        GameScene.updateMap(pos);
 
-		if (!Dungeon.isChallenged( Challenges.NO_HERBALISM )) {
-			int naturalismLevel = 0;
+        if (!Dungeon.isChallenged(Challenges.NO_HERBALISM)) {
+            int naturalismLevel = 0;
 
-			if (ch != null) {
-				SandalsOfNature.Naturalism naturalism = ch.buff( SandalsOfNature.Naturalism.class );
-				if (naturalism != null) {
-					if (!naturalism.isCursed()) {
-						naturalismLevel = naturalism.level() + 1;
-						naturalism.charge();
-					} else {
-						naturalismLevel = -1;
-					}
-				}
-			}
+            if (ch != null) {
+                SandalsOfNature.Naturalism naturalism = ch.buff(SandalsOfNature.Naturalism.class);
+                if (naturalism != null) {
+                    if (!naturalism.isCursed()) {
+                        naturalismLevel = naturalism.level() + 1;
+                        naturalism.charge();
+                    } else {
+                        naturalismLevel = -1;
+                    }
+                }
+            }
 
-			if (naturalismLevel >= 0) {
-				// Seed, scales from 1/16 to 1/4
-				if (Random.Int(16 - ((int) (naturalismLevel * 3))) == 0) {
-					Item seed = Generator.random(Generator.Category.SEED);
+            if (naturalismLevel >= 0) {
+                // Seed, scales from 1/16 to 1/4
+                if (Random.Int(16 - ((int) (naturalismLevel * 3))) == 0) {
+                    Item seed = Generator.random(Generator.Category.SEED);
 
-					level.drop(seed, pos).sprite.drop();
-				}
+                    level.drop(seed, pos).sprite.drop();
+                }
 
-				// Dew, scales from 1/6 to 1/3
-				if (Random.Int(24 - naturalismLevel*3) <= 3) {
-					level.drop(new Dewdrop(), pos).sprite.drop();
-				}
-			}
-		}
+                // Dew, scales from 1/6 to 1/3
+                if (Random.Int(24 - naturalismLevel * 3) <= 3) {
+                    level.drop(new Dewdrop(), pos).sprite.drop();
+                }
+            }
+        }
 
-		int leaves = 4;
-		
-		// Barkskin
-		if (ch instanceof Hero && ((Hero)ch).subClass == HeroSubClass.WARDEN) {
-			Buff.affect( ch, Barkskin.class ).level( ch.HT / 3 );
-			leaves = 8;
-		}
-		
-		CellEmitter.get( pos ).burst( LeafParticle.LEVEL_SPECIFIC, leaves );
-		Dungeon.observe();
-	}
+        int leaves = 4;
+
+        // Barkskin
+        if (ch instanceof Hero && ((Hero) ch).subClass == HeroSubClass.WARDEN) {
+            Buff.affect(ch, Barkskin.class).level(ch.HT / 3);
+            leaves = 8;
+        }
+
+        CellEmitter.get(pos).burst(LeafParticle.LEVEL_SPECIFIC, leaves);
+        Dungeon.observe();
+    }
 }

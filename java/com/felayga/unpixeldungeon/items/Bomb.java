@@ -133,8 +133,8 @@ public class Bomb extends Item {
                 }
 
                 if (Level.wood[c]) {
-                    Level.set( c, Terrain.EMBERS );
-                    GameScene.updateMap( c );
+                    Dungeon.level.set(c, Terrain.EMBERS, true);
+                    GameScene.updateMap(c);
                     terrainAffected = true;
                 }
 

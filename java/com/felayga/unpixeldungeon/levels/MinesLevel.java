@@ -345,12 +345,12 @@ public class MinesLevel extends RegularLevel {
 
     @Override
     public String tilesTex() {
-        return Assets.TILES_PRISON;
+        return Assets.TILES_CAVES;
     }
 
     @Override
     public String waterTex() {
-        return Assets.WATER_PRISON;
+        return Assets.WATER_CAVES;
     }
 
     @Override

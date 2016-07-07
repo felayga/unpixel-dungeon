@@ -28,7 +28,7 @@ import com.felayga.unpixeldungeon.Dungeon;
 import com.felayga.unpixeldungeon.actors.Char;
 import com.felayga.unpixeldungeon.actors.buffs.Buff;
 import com.felayga.unpixeldungeon.actors.hero.Hero;
-import com.felayga.unpixeldungeon.items.KindofMisc;
+import com.felayga.unpixeldungeon.items.EquippableItem;
 import com.felayga.unpixeldungeon.mechanics.BUCStatus;
 import com.felayga.unpixeldungeon.mechanics.Constant;
 import com.felayga.unpixeldungeon.mechanics.GameTime;
@@ -38,7 +38,7 @@ import com.watabou.utils.Bundle;
 
 import java.util.ArrayList;
 
-public class Artifact_old extends KindofMisc {
+public class Artifact_old extends EquippableItem {
 
 	private static final long TIME_TO_EQUIP = GameTime.TICK;
 
@@ -94,17 +94,14 @@ public class Artifact_old extends KindofMisc {
 	public void onEquip(Char owner, boolean cursed) {
 		super.onEquip(owner, cursed);
 
+        passiveBuff = passiveBuff();
+        passiveBuff.attachTo(owner);
+
 		if (cursed) {
 			if (owner instanceof Hero) {
 				GLog.n("the " + this.name + " painfully binds itself to you");
 			}
 		}
-	}
-
-
-	public void activate( Char ch ) {
-		passiveBuff = passiveBuff();
-		passiveBuff.attachTo(ch);
 	}
 
 	@Override

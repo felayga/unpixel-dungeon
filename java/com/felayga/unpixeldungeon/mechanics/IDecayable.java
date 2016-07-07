@@ -30,6 +30,5 @@ package com.felayga.unpixeldungeon.mechanics;
  */
 public interface IDecayable {
     long decay();
-    void decay(long amount, boolean updateTime, boolean fixTime);
-    boolean decayed();
+    boolean decay(long currentTime, boolean updateTime, boolean fixTime);
 }

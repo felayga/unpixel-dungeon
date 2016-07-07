@@ -63,7 +63,6 @@ public class WndTradeItem extends Window {
 	private WndBackpack owner;
 	
 	public WndTradeItem( final Item item, WndBackpack owner ) {
-		
 		super();
 		
 		this.owner = owner;
@@ -71,7 +70,6 @@ public class WndTradeItem extends Window {
 		float pos = createDescription( item, false );
 		
 		if (item.quantity() == 1) {
-			
 			RedButton btnSell = new RedButton( Utils.format( TXT_SELL, item.price() ) ) {
 				@Override
 				protected void onClick() {
@@ -85,9 +83,9 @@ public class WndTradeItem extends Window {
 			pos = btnSell.bottom();
 			
 		} else {
-			
-			int priceAll= item.price();
-			RedButton btnSell1 = new RedButton( Utils.format( TXT_SELL_1, priceAll / item.quantity() ) ) {
+            int price = item.price();
+
+			RedButton btnSell1 = new RedButton( Utils.format( TXT_SELL_1, price ) ) {
 				@Override
 				protected void onClick() {
 					sellOne( item );
@@ -96,7 +94,7 @@ public class WndTradeItem extends Window {
 			};
 			btnSell1.setRect( 0, pos + GAP, WIDTH, BTN_HEIGHT );
 			add( btnSell1 );
-			RedButton btnSellAll = new RedButton( Utils.format( TXT_SELL_ALL, priceAll ) ) {
+			RedButton btnSellAll = new RedButton( Utils.format( TXT_SELL_ALL, price * item.quantity() ) ) {
 				@Override
 				protected void onClick() {
 					sell( item );
@@ -123,7 +121,6 @@ public class WndTradeItem extends Window {
 	}
 	
 	public WndTradeItem( final Heap heap, boolean canBuy ) {
-		
 		super();
 		
 		Item item = heap.peek();
@@ -204,18 +201,17 @@ public class WndTradeItem extends Window {
 		
 		if (owner != null) {
 			owner.hide();
-			Shopkeeper.sell();
+			Shopkeeper.sell(Shopkeeper.currentShopkeeper);
 		}
 	}
 	
 	private float createDescription( Item item, boolean forSale ) {
-		
 		// Title
 		IconTitle titlebar = new IconTitle();
 		titlebar.icon( new ItemSprite( item ) );
 		titlebar.label( forSale ?
-			Utils.format( TXT_SALE, item.toString(), price( item ) ) :
-			Utils.capitalize( item.toString() ) );
+			Utils.format( TXT_SALE, item.getDisplayName(), price( item ) ) :
+			Utils.capitalize( item.getDisplayName() ) );
 		titlebar.setRect( 0, 0, WIDTH, 0 );
 		add( titlebar );
 		
@@ -238,22 +234,21 @@ public class WndTradeItem extends Window {
 	}
 	
 	private void sell( Item item ) {
-		
 		Hero hero = Dungeon.hero;
 		
 		if (item.isEquipped( hero ) && !hero.belongings.unequip((EquippableItem) item, false)) {
 			return;
 		}
-		hero.belongings.remove(item, 1);
+		item = hero.belongings.remove(item);
+        Shopkeeper.currentShopkeeper.belongings.collect(item);
 
-		int price = item.price();
-		
-		new Gold( price ).doPickUp( hero );
+		int price = item.price() * item.quantity();
+
+        hero.belongings.collect(new Gold(price));
 		GLog.i( TXT_SOLD, item.getDisplayName(), price );
 	}
 	
 	private void sellOne( Item item ) {
-		
 		if (item.quantity() <= 1) {
 			sell( item );
 		} else {
@@ -261,15 +256,17 @@ public class WndTradeItem extends Window {
 			Hero hero = Dungeon.hero;
 			
 			item = hero.belongings.remove(item, 1);
-			int price = item.price();
-			
-			new Gold( price ).doPickUp( hero );
+            Shopkeeper.currentShopkeeper.belongings.collect(item);
+
+			int price = item.price() * item.quantity();
+
+            hero.belongings.collect(new Gold(price));
 			GLog.i( TXT_SOLD, item.getDisplayName(), price );
 		}
 	}
 	
 	private int price( Item item ) {
-		int price = item.price() * 3;
+		int price = item.price() * item.quantity() * 3;
 		return price;
 	}
 	
@@ -283,7 +280,7 @@ public class WndTradeItem extends Window {
 
 		GLog.i( TXT_BOUGHT, item.getDisplayName(), price );
 		
-		if (!item.doPickUp( hero )) {
+		if (!hero.belongings.collect(item)) {
 			Dungeon.level.drop( item, heap.pos ).sprite.drop();
 		}
 	}

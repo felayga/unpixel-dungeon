@@ -28,17 +28,22 @@ import com.felayga.unpixeldungeon.Badges;
 import com.felayga.unpixeldungeon.Challenges;
 import com.felayga.unpixeldungeon.Dungeon;
 import com.felayga.unpixeldungeon.ShatteredPixelDungeon;
+import com.felayga.unpixeldungeon.actors.mobs.newt.Newt;
+import com.felayga.unpixeldungeon.items.armor.boots.LeatherBoots;
 import com.felayga.unpixeldungeon.items.armor.gloves.LeatherGloves;
 import com.felayga.unpixeldungeon.items.armor.heavy.HalfPlateArmor;
 import com.felayga.unpixeldungeon.items.armor.medium.ScaleArmor;
 import com.felayga.unpixeldungeon.items.artifacts.CloakOfShadows;
 import com.felayga.unpixeldungeon.items.artifacts.MasterThievesArmband;
+import com.felayga.unpixeldungeon.items.bags.IceBox;
 import com.felayga.unpixeldungeon.items.bags.SeedPouch;
+import com.felayga.unpixeldungeon.items.food.Corpse;
 import com.felayga.unpixeldungeon.items.food.Ration;
 import com.felayga.unpixeldungeon.items.potions.PotionOfMindVision;
 import com.felayga.unpixeldungeon.items.potions.PotionOfStrength;
 import com.felayga.unpixeldungeon.items.rings.RingOfWealth;
 import com.felayga.unpixeldungeon.items.scrolls.ScrollOfMagicMapping;
+import com.felayga.unpixeldungeon.items.scrolls.ScrollOfTeleportation;
 import com.felayga.unpixeldungeon.items.scrolls.ScrollOfUpgrade;
 import com.felayga.unpixeldungeon.items.tools.digging.Pickaxe;
 import com.felayga.unpixeldungeon.items.wands.WandOfMagicMissile;
@@ -171,6 +176,8 @@ public enum HeroClass {
 		if (!Dungeon.isChallenged(Challenges.NO_FOOD)) {
 			hero.belongings.collect(new Ration().quantity(Random.Int(4, 8)).identify());
 		}
+
+        hero.belongings.collectEquip(new LeatherBoots());
 	}
 
 	public Badges.Badge masteryBadge() {
@@ -222,10 +229,15 @@ public enum HeroClass {
         hero.belongings.collect(new ScrollOfIdentify().bucStatus(BUCStatus.Blessed, true));
         */
 
-        hero.belongings.collect(new ScrollOfMagicMapping().bucStatus(BUCStatus.Blessed, true).quantity(5));
+        hero.belongings.collect(new ScrollOfMagicMapping().bucStatus(BUCStatus.Blessed, true).quantity(5).identify());
+        hero.belongings.collect(new ScrollOfTeleportation().bucStatus(BUCStatus.Blessed, true).quantity(5).identify());
 
-        hero.belongings.collect(new Sling());
-        hero.belongings.collect(new Rock(5));
+        //hero.belongings.collect(new Sling());
+        //hero.belongings.collect(new Rock(5));
+
+        IceBox icebox = new IceBox();
+        //icebox.collect(new Corpse(new Newt()));
+        hero.belongings.collect(icebox.random());
 	}
 
 	private static void initWarrior( Hero hero ) {

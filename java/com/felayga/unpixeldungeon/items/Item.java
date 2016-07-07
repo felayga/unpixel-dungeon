@@ -95,7 +95,7 @@ public class Item implements Bundlable {
             price = 1;
         }
 
-        return price * quantity;
+        return price;
     }
 
     private int weight;
@@ -680,11 +680,12 @@ public class Item implements Bundlable {
 	protected static Item curItem = null;
 	protected static CellSelector.Listener thrower = new CellSelector.Listener() {
 		@Override
-		public void onSelect(Integer target) {
+		public boolean onSelect(Integer target) {
 			GLog.d("onselectcell target="+target);
 			if (target != null) {
 				curItem.cast(curUser, target);
 			}
+            return true;
 		}
 
 		@Override

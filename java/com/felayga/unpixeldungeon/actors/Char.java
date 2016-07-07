@@ -369,17 +369,6 @@ public abstract class Char extends Actor {
         return false;
     }
 
-    public boolean attack(Char enemy) {
-        EquippableItem item = belongings.weapon();
-
-        KindOfWeapon weapon = null;
-        if (item instanceof KindOfWeapon) {
-            weapon = (KindOfWeapon)item;
-        }
-
-        return attack(weapon, false, enemy);
-    }
-
     public boolean attack(KindOfWeapon weapon, Char enemy) {
         return attack(weapon, false, enemy);
     }

@@ -60,6 +60,17 @@ import java.util.HashMap;
 //import com.felayga.unpixeldungeon.actors.mobs.npcs.Ghost;
 
 public class Bestiary {
+    public static Mob spawn(int depth, int heroLevel) {
+        try {
+            MobSpawn spawner = getMobSpawn(depth, heroLevel);
+            Class<?> classType = spawner.classType;
+            return (Mob) classType.newInstance();
+        }
+        catch (Exception e) {
+            return null;
+        }
+    }
+
     public static void spawn(int depth, int heroLevel, boolean rares, SpawnParams params) {
         if (!Dungeon.hero.isAlive()) {
             GLog.d("refused spawn, hero dead");
@@ -91,7 +102,7 @@ public class Bestiary {
             }
 
             int retries = 5;
-            int pos = Constant.Position.NONE;
+            int pos;
             ArrayList<Integer> positions = null;
 
             int quantity = params.quantity(spawner.quantity);
@@ -111,14 +122,14 @@ public class Bestiary {
             }
 
             if (positions == null && retries <= 0) {
-                GLog.d("failed spawning classtype="+classType.toString()+", no valid positions");
+                GLog.d("failed spawning classtype=" + classType.toString() + ", no valid positions");
                 return;
             }
 
-            GLog.d("prepare to spawn classtype="+classType.toString()+" quantity="+quantity+" positions="+positions.size());
+            GLog.d("prepare to spawn classtype=" + classType.toString() + " quantity=" + quantity + " positions=" + positions.size());
 
-            for (int n=0;n<quantity;n++) {
-                mob = (Mob)classType.newInstance();
+            for (int n = 0; n < quantity; n++) {
+                mob = (Mob) classType.newInstance();
                 mob.pos = positions.get(n);
 
                 params.initialize(mob);
@@ -130,7 +141,7 @@ public class Bestiary {
         }
     }
 
-    public static interface SpawnParams {
+    public interface SpawnParams {
         Level level();
         int position();
 

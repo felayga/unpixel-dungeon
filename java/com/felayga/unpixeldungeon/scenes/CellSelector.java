@@ -62,14 +62,11 @@ public class CellSelector extends TouchArea {
 	
 	public void select( int cell ) {
 		if (enabled && listener != null && cell != -1) {
-			
-			listener.onSelect( cell );
-			GameScene.ready();
-			
+			if (listener.onSelect(cell)) {
+                GameScene.ready();
+            }
 		} else {
-			
 			GameScene.cancel();
-			
 		}
 	}
 	
@@ -152,7 +149,6 @@ public class CellSelector extends TouchArea {
 	}
 	
 	public void cancel() {
-		
 		if (listener != null) {
 			listener.onSelect( null );
 		}
@@ -180,7 +176,7 @@ public class CellSelector extends TouchArea {
 	}
 
 	public interface Listener {
-		void onSelect( Integer cell );
+		boolean onSelect(Integer cell);
 		String prompt();
 	}
 }

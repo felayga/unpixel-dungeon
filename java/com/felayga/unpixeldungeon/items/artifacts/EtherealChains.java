@@ -93,7 +93,7 @@ public class EtherealChains extends Artifact_old {
 	private CellSelector.Listener caster = new CellSelector.Listener(){
 
 		@Override
-		public void onSelect(Integer target) {
+		public boolean onSelect(Integer target) {
 			if (target != null && (Dungeon.level.visited[target] || Dungeon.level.mapped[target])){
 
 				//ballistica does not go through walls on pre-rework boss arenas
@@ -119,7 +119,7 @@ public class EtherealChains extends Artifact_old {
 						int chargeUse = Level.distance(affected.pos, newMobPos);
 						if (chargeUse > charge){
 							GLog.w("Your chains do not have enough charge.");
-							return;
+							return true;
 						} else {
 							charge -= chargeUse;
 							updateQuickslot();
@@ -152,7 +152,7 @@ public class EtherealChains extends Artifact_old {
 						int chargeUse = Level.distance(curUser.pos, newHeroPos);
 						if (chargeUse > charge){
 							GLog.w("Your chains do not have enough charge.");
-							return;
+							return true;
 						} else {
 							charge -= chargeUse;
 							updateQuickslot();
@@ -178,6 +178,7 @@ public class EtherealChains extends Artifact_old {
 
 			}
 
+            return true;
 		}
 
 		@Override

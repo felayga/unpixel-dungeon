@@ -33,6 +33,7 @@ import com.felayga.unpixeldungeon.items.Heap;
 import com.felayga.unpixeldungeon.items.Item;
 import com.felayga.unpixeldungeon.items.weapon.missiles.martial.Boomerang;
 import com.felayga.unpixeldungeon.mechanics.Constant;
+import com.felayga.unpixeldungeon.mechanics.IDecayable;
 import com.felayga.unpixeldungeon.scenes.GameScene;
 import com.felayga.unpixeldungeon.ui.Icons;
 import com.felayga.unpixeldungeon.utils.GLog;
@@ -112,6 +113,30 @@ public class Bag extends Item implements Iterable<Item>, IBag {
 	public void onWeightChanged(int change) {
 		weight(weight() + change);
 	}
+
+    public long decay() {
+        return 0;
+    }
+
+    @Override
+    public boolean decay(long currentTime, boolean updateTime, boolean fixTime) {
+        boolean updated = false;
+        Iterator<Item> iterator = iterator(false);
+
+        while (iterator.hasNext()) {
+            Item item = iterator.next();
+
+            if (item instanceof IDecayable) {
+                IDecayable decayable = (IDecayable) item;
+                if (decayable.decay(currentTime, updateTime, fixTime)) {
+                    iterator.remove();
+                    updated = true;
+                }
+            }
+        }
+
+        return updated;
+    }
 
 	@Override
 	public ArrayList<String> actions( Hero hero ) {

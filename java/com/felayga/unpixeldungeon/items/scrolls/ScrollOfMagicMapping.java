@@ -76,11 +76,9 @@ public class ScrollOfMagicMapping extends Scroll {
 	
 	@Override
 	protected void doRead() {
-		
 		int length = Level.LENGTH;
 		
 		boolean noticed = false;
-
 
 		if (bucStatus == BUCStatus.Cursed) {
 			for (int i=0;i<length/14;i++) {

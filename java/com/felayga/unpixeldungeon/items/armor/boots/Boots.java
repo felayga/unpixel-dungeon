@@ -26,23 +26,20 @@
 package com.felayga.unpixeldungeon.items.armor.boots;
 
 import com.felayga.unpixeldungeon.Dungeon;
+import com.felayga.unpixeldungeon.actors.Actor;
 import com.felayga.unpixeldungeon.actors.Char;
-import com.felayga.unpixeldungeon.actors.buffs.negative.Cripple;
+import com.felayga.unpixeldungeon.actors.buffs.hero.Encumbrance;
 import com.felayga.unpixeldungeon.actors.hero.Hero;
 import com.felayga.unpixeldungeon.actors.hero.HeroAction;
-import com.felayga.unpixeldungeon.items.Heap;
-import com.felayga.unpixeldungeon.items.Item;
+import com.felayga.unpixeldungeon.actors.mobs.Mob;
 import com.felayga.unpixeldungeon.items.armor.Armor;
-import com.felayga.unpixeldungeon.levels.Terrain;
-import com.felayga.unpixeldungeon.mechanics.AttributeType;
+import com.felayga.unpixeldungeon.levels.Level;
 import com.felayga.unpixeldungeon.mechanics.Constant;
 import com.felayga.unpixeldungeon.mechanics.GameTime;
-import com.felayga.unpixeldungeon.mechanics.MagicType;
 import com.felayga.unpixeldungeon.scenes.CellSelector;
 import com.felayga.unpixeldungeon.scenes.GameScene;
 import com.felayga.unpixeldungeon.sprites.hero.HeroSprite;
 import com.felayga.unpixeldungeon.utils.GLog;
-import com.watabou.utils.Random;
 
 import java.util.ArrayList;
 
@@ -113,7 +110,16 @@ public class Boots extends Armor {
         curBoots = this;
 
         if (action.equals(Constant.Action.KICK)) {
-            GameScene.selectCell(kicker);
+            Encumbrance encumbrance = hero.buff(Encumbrance.class);
+            switch (encumbrance.current) {
+                case UNENCUMBERED:
+                case BURDENED:
+                    GameScene.selectCell(kicker);
+                    break;
+                default:
+                    GLog.n("You're carrying too much to balance yourself for a proper kick.");
+                    break;
+            }
 
             return false;
         }
@@ -123,53 +129,23 @@ public class Boots extends Armor {
     }
 
     public void kick(Hero hero, int target) {
-        int cell = Dungeon.level.map[target];
-
-        if (cell == Terrain.LOCKED_DOOR || cell == Terrain.DOOR) {
-            hero.curAction = new HeroAction.HandleDoor.KickDoor(target);
-            hero.motivate(true);
-            return;
+        Char ch;
+        if (Level.fieldOfView[target] && (ch = Actor.findChar(target)) instanceof Mob) {
+            hero.curAction = new HeroAction.UseItem.Kick(this, ch);
+        } else {
+            hero.curAction = new HeroAction.UseItem.Kick(this, target);
         }
 
-        hero.spend_new(GameTime.TICK, false);
-
-        Heap heap = Dungeon.level.heaps.get(target);
-        if (heap != null) {
-            Item item = heap.peek();
-
-            if (item != null) {
-            }
-        }
-
-        if (Dungeon.level.passable[target] || Dungeon.level.pit[target])
-        {
-            if (Random.Int(5)==0) {
-                GLog.n("Dumb move!  You strain a muscle.");
-                hero.useAttribute(AttributeType.STRCON, -1);
-                Cripple.prolong(hero, Cripple.class, GameTime.TICK * Random.IntRange(4, 12));
-            }
-            else {
-                GLog.w("You kick at empty space.");
-            }
-            return;
-        }
-        else {
-            GLog.n("Ouch!  That hurts.");
-            hero.damage(Random.IntRange(1,4), MagicType.Mundane, null);
-            if (Random.Int(3)==0) {
-                Cripple.prolong(hero, Cripple.class, GameTime.TICK * Random.IntRange(4, 12));
-            }
-            return;
-        }
-
+        hero.motivate(true);
     }
 
     protected static CellSelector.Listener kicker = new CellSelector.Listener() {
         @Override
-        public void onSelect(Integer target) {
+        public boolean onSelect(Integer target) {
             if (target != null) {
                 curBoots.kick(curUser, target);
             }
+            return true;
         }
 
         @Override

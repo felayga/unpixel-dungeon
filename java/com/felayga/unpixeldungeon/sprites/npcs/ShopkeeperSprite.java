@@ -26,29 +26,24 @@ package com.felayga.unpixeldungeon.sprites.npcs;
 
 import com.felayga.unpixeldungeon.Assets;
 import com.felayga.unpixeldungeon.sprites.MobSprite;
+import com.felayga.unpixeldungeon.sprites.hero.HeroSprite;
+import com.felayga.unpixeldungeon.sprites.mobs.humanoid.HumanoidSprite;
 import com.watabou.noosa.TextureFilm;
 import com.watabou.noosa.particles.PixelParticle;
 
-public class ShopkeeperSprite extends MobSprite {
-	
+public class ShopkeeperSprite extends HumanoidSprite {
 	private PixelParticle coin;
 	
 	public ShopkeeperSprite() {
-		super();
-		
-		texture( Assets.KEEPER );
-		TextureFilm film = new TextureFilm( texture, 14, 14 );
-		
-		idle = new Animation( 10, true );
-		idle.frames( film, 1, 1, 1, 1, 1, 0, 0, 0, 0 );
-		
-		run = idle.clone();
-		die = idle.clone();
-		attack = idle.clone();
-		
-		idle();
+		super(0, Assets.KEEPER, 14, 14, 18);
 	}
-	
+
+    @Override
+    protected void initAnimationIdle(TextureFilm frames, int offset) {
+        idle = new Animation( 10, true );
+        idle.frames(frames, offset + 1, offset + 1, offset + 1, offset + 1, offset + 1, offset + 0, offset + 0, offset + 0, offset + 0);
+    }
+
 	@Override
 	public void onComplete( Animation anim ) {
 		super.onComplete( anim );

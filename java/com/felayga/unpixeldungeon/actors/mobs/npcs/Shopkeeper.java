@@ -105,8 +105,12 @@ public class Shopkeeper extends NPC {
 			"This stout guy looks more appropriate for a trade district in some large city " +
 			"than for a dungeon. His prices explain why he prefers to do business here.";
 	}
+
+    public static Shopkeeper currentShopkeeper;
 	
-	public static WndBackpack sell() {
+	public static WndBackpack sell(Shopkeeper shopkeeper) {
+        currentShopkeeper = shopkeeper;
+
 		return GameScene.selectItem( itemSelector, WndBackpack.Mode.FOR_SALE, "Select an item to sell" );
 	}
 	
@@ -114,7 +118,7 @@ public class Shopkeeper extends NPC {
 		@Override
 		public void onSelect( Item item ) {
 			if (item != null) {
-				WndBackpack parentWnd = sell();
+				WndBackpack parentWnd = sell(currentShopkeeper);
 				GameScene.show( new WndTradeItem( item, parentWnd ) );
 			}
 		}
@@ -122,6 +126,6 @@ public class Shopkeeper extends NPC {
 
 	@Override
 	public void interact() {
-		sell();
+		sell(this);
 	}
 }

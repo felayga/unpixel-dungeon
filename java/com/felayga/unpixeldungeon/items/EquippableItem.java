@@ -123,10 +123,10 @@ public abstract class EquippableItem extends Item {
 		return hero.belongings.isEquipped(this);
 	}
 
-    public static enum EquipIfNecessaryState {
+    public enum EquipIfNecessaryState {
         NotEquipped,
         JustEquipped,
-        AlreadyEquipped;
+        AlreadyEquipped
     }
 
     public EquipIfNecessaryState equipIfNecessary(Hero hero) {

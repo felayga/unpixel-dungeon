@@ -66,31 +66,31 @@ public class WandOfDisintegration extends Wand {
 
 		int terrainPassed = 2, terrainBonus = 0;
 		for (int c : beam.subPath(1, maxDistance)) {
-			
-			Char ch;
-			if ((ch = Actor.findChar( c )) != null) {
 
-				//we don't want to count passed terrain after the last enemy hit. That would be a lot of bonus levels.
-				//terrainPassed starts at 2, equivalent of rounding up when /3 for integer arithmetic.
-				terrainBonus += terrainPassed/3;
-				terrainPassed = terrainPassed%3;
+            Char ch;
+            if ((ch = Actor.findChar(c)) != null) {
 
-				chars.add( ch );
-			}
+                //we don't want to count passed terrain after the last enemy hit. That would be a lot of bonus levels.
+                //terrainPassed starts at 2, equivalent of rounding up when /3 for integer arithmetic.
+                terrainBonus += terrainPassed / 3;
+                terrainPassed = terrainPassed % 3;
 
-			if (Level.wood[c]) {
-				
-				Level.set( c, Terrain.EMBERS );
-				GameScene.updateMap( c );
-				terrainAffected = true;
-				
-			}
+                chars.add(ch);
+            }
 
-			if (Level.solid[c])
-				terrainPassed++;
-			
-			CellEmitter.center( c ).burst( PurpleParticle.BURST, Random.IntRange( 1, 2 ) );
-		}
+            if (Level.wood[c]) {
+
+                Dungeon.level.set(c, Terrain.EMBERS, true);
+                GameScene.updateMap(c);
+                terrainAffected = true;
+
+            }
+
+            if (Level.solid[c])
+                terrainPassed++;
+
+            CellEmitter.center(c).burst(PurpleParticle.BURST, Random.IntRange(1, 2));
+        }
 		
 		if (terrainAffected) {
 			Dungeon.observe();

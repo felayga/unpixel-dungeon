@@ -31,9 +31,9 @@ import com.felayga.unpixeldungeon.actors.buffs.Buff;
 import com.felayga.unpixeldungeon.actors.buffs.hero.Encumbrance;
 import com.felayga.unpixeldungeon.actors.hero.Hero;
 import com.felayga.unpixeldungeon.actors.hero.HeroClass;
+import com.felayga.unpixeldungeon.items.EquippableItem;
 import com.felayga.unpixeldungeon.items.Item;
 import com.felayga.unpixeldungeon.items.ItemStatusHandler;
-import com.felayga.unpixeldungeon.items.KindofMisc;
 import com.felayga.unpixeldungeon.mechanics.BUCStatus;
 import com.felayga.unpixeldungeon.mechanics.Constant;
 import com.felayga.unpixeldungeon.mechanics.GameTime;
@@ -43,7 +43,7 @@ import com.watabou.utils.Bundle;
 
 import java.util.ArrayList;
 
-public class Ring extends KindofMisc {
+public class Ring extends EquippableItem {
 
 	private static final int TICKS_TO_KNOW    = 200;
 
@@ -167,7 +167,8 @@ public class Ring extends KindofMisc {
 
 	@Override
 	public void onEquip(Char owner, boolean cursed) {
-		activate(owner);
+		buff = buff();
+        buff.attachTo(owner);
 
 		if (cursed) {
 			if (owner instanceof Hero) {
@@ -184,20 +185,12 @@ public class Ring extends KindofMisc {
 		owner.remove( buff );
 		buff = null;
 	}
-
-	@Override
-	public void activate( Char ch ) {
-		buff = buff();
-		buff.attachTo(ch);
-	}
 	
 	@Override
 	public Item upgrade(Item source, int n) {
-		
 		super.upgrade(source, n);
 		
 		if (buff != null) {
-			
 			Char owner = buff.target;
 			buff.detach();
 			if ((buff = buff()) != null) {

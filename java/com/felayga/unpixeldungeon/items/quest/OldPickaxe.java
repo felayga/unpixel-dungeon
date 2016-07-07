@@ -95,39 +95,39 @@ public class OldPickaxe extends Weapon {
 			for (int i=0; i < Level.NEIGHBOURS8.length; i++) {
 				final int pos = hero.pos + Level.NEIGHBOURS8[i];
 				if (Dungeon.level.map[pos] == Terrain.WALL_DECO) {
-				
-					hero.spend_new(TIME_TO_MINE, false);
-					hero.busy();
-					
-					hero.sprite.attack( pos, new Callback() {
-						
-						@Override
-						public void call() {
-							CellEmitter.center( pos ).burst( Speck.factory( Speck.STAR ), 7 );
-							Sample.INSTANCE.play( Assets.SND_EVOKE );
-							
-							Level.set( pos, Terrain.WALL );
-							GameScene.updateMap( pos );
-							
-							DarkGold gold = new DarkGold();
-							if (gold.doPickUp( Dungeon.hero )) {
-								GLog.i( Hero.TXT_YOU_NOW_HAVE, gold.getDisplayName() );
-							} else {
-								Dungeon.level.drop( gold, hero.pos ).sprite.drop();
-							}
-							
-							Hunger hunger = hero.buff( Hunger.class );
-							if (hunger != null && !hunger.isStarving()) {
-								hunger.satisfy_new( 2 );
-								BuffIndicator.refreshHero();
-							}
-							
-							hero.onOperateComplete();
-						}
-					} );
-					
-					return false;
-				}
+
+                    hero.spend_new(TIME_TO_MINE, false);
+                    hero.busy();
+
+                    hero.sprite.attack(pos, new Callback() {
+
+                        @Override
+                        public void call() {
+                            CellEmitter.center(pos).burst(Speck.factory(Speck.STAR), 7);
+                            Sample.INSTANCE.play(Assets.SND_EVOKE);
+
+                            Dungeon.level.set(pos, Terrain.WALL, true);
+                            GameScene.updateMap(pos);
+
+                            DarkGold gold = new DarkGold();
+                            if (gold.doPickUp(Dungeon.hero)) {
+                                GLog.i(Hero.TXT_YOU_NOW_HAVE, gold.getDisplayName());
+                            } else {
+                                Dungeon.level.drop(gold, hero.pos).sprite.drop();
+                            }
+
+                            Hunger hunger = hero.buff(Hunger.class);
+                            if (hunger != null && !hunger.isStarving()) {
+                                hunger.satisfy_new(2);
+                                BuffIndicator.refreshHero();
+                            }
+
+                            hero.onOperateComplete();
+                        }
+                    });
+
+                    return false;
+                }
 			}
 			
 			GLog.w( TXT_NO_VEIN );

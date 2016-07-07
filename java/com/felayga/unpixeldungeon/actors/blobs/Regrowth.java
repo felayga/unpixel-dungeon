@@ -47,26 +47,26 @@ public class Regrowth extends Blob {
 			boolean mapUpdated = false;
 			
 			for (int i=0; i < LENGTH; i++) {
-				if (off[i] > 0) {
-					int c = Dungeon.level.map[i];
-					if (c == Terrain.EMPTY || c == Terrain.EMBERS || c == Terrain.EMPTY_DECO) {
-						
-						Level.set( i, cur[i] > 9 ? Terrain.HIGH_GRASS : Terrain.GRASS );
-						mapUpdated = true;
-						
-					} else if (c == Terrain.GRASS && cur[i] > 9 && Dungeon.level.plants.get(i) == null ) {
-						
-						Level.set( i, Terrain.HIGH_GRASS );
-						mapUpdated = true;
-						
-					}
-					
-					Char ch = Actor.findChar( i );
-					if (ch != null && cur[i] > 1) {
-						Buff.prolong( ch, Roots.class, GameTime.TICK );
-					}
-				}
-			}
+                if (off[i] > 0) {
+                    int c = Dungeon.level.map[i];
+                    if (c == Terrain.EMPTY || c == Terrain.EMBERS || c == Terrain.EMPTY_DECO) {
+
+                        Dungeon.level.set(i, cur[i] > 9 ? Terrain.HIGH_GRASS : Terrain.GRASS, true);
+                        mapUpdated = true;
+
+                    } else if (c == Terrain.GRASS && cur[i] > 9 && Dungeon.level.plants.get(i) == null) {
+
+                        Dungeon.level.set(i, Terrain.HIGH_GRASS, true);
+                        mapUpdated = true;
+
+                    }
+
+                    Char ch = Actor.findChar(i);
+                    if (ch != null && cur[i] > 1) {
+                        Buff.prolong(ch, Roots.class, GameTime.TICK);
+                    }
+                }
+            }
 			
 			if (mapUpdated) {
 				GameScene.updateMap();

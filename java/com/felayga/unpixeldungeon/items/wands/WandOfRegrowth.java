@@ -70,45 +70,45 @@ public class WandOfRegrowth extends Wand {
 	@Override
 	protected void onZap( Ballistica bolt ) {
 
-		//ignore tiles which can't have anything grow in them.
-		for (Iterator<Integer> i = affectedCells.iterator(); i.hasNext();) {
-			int c = Dungeon.level.map[i.next()];
-			if (!(c == Terrain.EMPTY ||
-					c == Terrain.EMBERS ||
-					c == Terrain.EMPTY_DECO ||
-					c == Terrain.GRASS ||
-					c == Terrain.HIGH_GRASS)) {
-				i.remove();
-			}
-		}
+        //ignore tiles which can't have anything grow in them.
+        for (Iterator<Integer> i = affectedCells.iterator(); i.hasNext(); ) {
+            int c = Dungeon.level.map[i.next()];
+            if (!(c == Terrain.EMPTY ||
+                    c == Terrain.EMBERS ||
+                    c == Terrain.EMPTY_DECO ||
+                    c == Terrain.GRASS ||
+                    c == Terrain.HIGH_GRASS)) {
+                i.remove();
+            }
+        }
 
-		float numPlants, numDews, numPods, numStars;
+        float numPlants, numDews, numPods, numStars;
 
-		int chrgUsed = chargesPerCast();
-		//numbers greater than n*100% means n garunteed plants, e.g. 210% = 2 plants w/10% chance for 3 plants.
-		numPlants = 0.2f + chrgUsed*chrgUsed*0.020f; //scales from 22% to 220%
-		numDews = 0.05f + chrgUsed*chrgUsed*0.016f; //scales from 6.6% to 165%
-		numPods = 0.02f + chrgUsed*chrgUsed*0.013f; //scales from 3.3% to 135%
-		numStars = (chrgUsed*chrgUsed*chrgUsed/5f)*0.005f; //scales from 0.1% to 100%
-		placePlants(numPlants, numDews, numPods, numStars);
+        int chrgUsed = chargesPerCast();
+        //numbers greater than n*100% means n garunteed plants, e.g. 210% = 2 plants w/10% chance for 3 plants.
+        numPlants = 0.2f + chrgUsed * chrgUsed * 0.020f; //scales from 22% to 220%
+        numDews = 0.05f + chrgUsed * chrgUsed * 0.016f; //scales from 6.6% to 165%
+        numPods = 0.02f + chrgUsed * chrgUsed * 0.013f; //scales from 3.3% to 135%
+        numStars = (chrgUsed * chrgUsed * chrgUsed / 5f) * 0.005f; //scales from 0.1% to 100%
+        placePlants(numPlants, numDews, numPods, numStars);
 
-		for (int i : affectedCells){
-			int c = Dungeon.level.map[i];
-			if (c == Terrain.EMPTY ||
-					c == Terrain.EMBERS ||
-					c == Terrain.EMPTY_DECO) {
-				Level.set( i, Terrain.GRASS );
-			}
+        for (int i : affectedCells) {
+            int c = Dungeon.level.map[i];
+            if (c == Terrain.EMPTY ||
+                    c == Terrain.EMBERS ||
+                    c == Terrain.EMPTY_DECO) {
+                Dungeon.level.set(i, Terrain.GRASS, true);
+            }
 
-			Char ch = Actor.findChar(i);
-			if (ch != null){
-				processSoulMark(ch, chargesPerCast());
-			}
+            Char ch = Actor.findChar(i);
+            if (ch != null) {
+                processSoulMark(ch, chargesPerCast());
+            }
 
-			GameScene.add( Blob.seed( i, 10, Regrowth.class ) );
+            GameScene.add(Blob.seed(i, 10, Regrowth.class));
 
-		}
-	}
+        }
+    }
 
 	private void spreadRegrowth(int cell, float strength){
 		if (strength >= 0 && Level.passable[cell] && !Level.losBlocking[cell]){

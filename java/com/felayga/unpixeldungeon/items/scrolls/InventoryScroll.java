@@ -33,8 +33,7 @@ import com.felayga.unpixeldungeon.windows.WndOptions;
 import com.watabou.noosa.audio.Sample;
 
 public abstract class InventoryScroll extends Scroll {
-
-	protected String inventoryTitle = "Select an item";
+	protected static String inventoryTitle = "Select an item";
 	protected WndBackpack.Mode mode = WndBackpack.Mode.ALL;
 
 	private static final String TXT_WARNING =
@@ -45,7 +44,6 @@ public abstract class InventoryScroll extends Scroll {
 
 	@Override
 	protected void doRead() {
-
 		if (!isKnown()) {
 			setKnown();
 			identifiedByUse = true;

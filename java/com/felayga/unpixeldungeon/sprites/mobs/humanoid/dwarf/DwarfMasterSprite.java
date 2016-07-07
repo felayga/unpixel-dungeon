@@ -22,16 +22,12 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>
  *
  */
-package com.felayga.unpixeldungeon.items;
 
-import com.felayga.unpixeldungeon.actors.Char;
+package com.felayga.unpixeldungeon.sprites.mobs.humanoid.dwarf;
 
-
-public abstract class KindofMisc extends EquippableItem {
-
-	public KindofMisc(long equipTime) {
-		super(equipTime);
-	}
-
-	public abstract void activate(Char ch);
+/**
+ * Created by HELLO on 7/4/2016.
+ */
+public class DwarfMasterSprite extends DwarfSprite {
+    public DwarfMasterSprite() { super(4); }
 }

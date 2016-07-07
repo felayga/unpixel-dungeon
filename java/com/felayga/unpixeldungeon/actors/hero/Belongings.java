@@ -531,7 +531,7 @@ public class Belongings implements Iterable<Item>, IDecayable, IBag {
     private AmmunitionWeapon _ranOutOfAmmo;
 
     public void ranOutOfAmmo(AmmunitionWeapon ammo) {
-        GLog.d("set ranOutOfAmmo="+(ammo != null ? ammo.getDisplayName() : "<null>"));
+        GLog.d("set ranOutOfAmmo=" + (ammo != null ? ammo.getDisplayName() : "<null>"));
         _ranOutOfAmmo = ammo;
     }
 
@@ -567,7 +567,6 @@ public class Belongings implements Iterable<Item>, IDecayable, IBag {
     public EquippableItem boots() {
         return items.get(EquippableItem.Slot.Boots);
     }
-
 
 	public int weight = 0;
 	
@@ -623,47 +622,47 @@ public class Belongings implements Iterable<Item>, IDecayable, IBag {
 	}
 	
 	public void restoreFromBundle( Bundle bundle ) {
-		backpack1.clear();
-		backpack2.clear();
-		backpack3.clear();
-		backpack4.clear();
+        backpack1.clear();
+        backpack2.clear();
+        backpack3.clear();
+        backpack4.clear();
 
-		for (Bundlable item : bundle.getCollection(BACKPACK1)) {
-			if (item != null) backpack1.collect((Item) item);
-		}
+        for (Bundlable item : bundle.getCollection(BACKPACK1)) {
+            if (item != null) backpack1.collect((Item) item);
+        }
 
-		for (Bundlable item : bundle.getCollection(BACKPACK2)) {
-			if (item != null) backpack2.collect((Item) item);
-		}
+        for (Bundlable item : bundle.getCollection(BACKPACK2)) {
+            if (item != null) backpack2.collect((Item) item);
+        }
 
-		for (Bundlable item : bundle.getCollection(BACKPACK3)) {
-			if (item != null) backpack3.collect((Item) item);
-		}
+        for (Bundlable item : bundle.getCollection(BACKPACK3)) {
+            if (item != null) backpack3.collect((Item) item);
+        }
 
-		for (Bundlable item : bundle.getCollection(BACKPACK4)) {
-			if (item != null) backpack4.collect((Item) item);
-		}
+        for (Bundlable item : bundle.getCollection(BACKPACK4)) {
+            if (item != null) backpack4.collect((Item) item);
+        }
 
         items.clear();
-        for (int n=0;n< EquippableItem.Slot.HIGHEST();n++) {
+        for (int n = 0; n <= EquippableItem.Slot.HIGHEST(); n++) {
             String key = ITEM + n;
             if (bundle.contains(key)) {
                 items.put(EquippableItem.Slot.fromInt(n), (EquippableItem) bundle.get(key));
             }
         }
 
-		Iterator<Item> iterator = iterator(true, false);
+        Iterator<Item> iterator = iterator(true, false);
 
-		while (iterator.hasNext()) {
-			Item item = iterator.next();
+        while (iterator.hasNext()) {
+            Item item = iterator.next();
 
-			if (item instanceof EquippableItem) {
-				onItemEquipped(owner, (EquippableItem)item, -1, false);
-			}
-		}
+            if (item instanceof EquippableItem) {
+                onItemEquipped(owner, (EquippableItem) item, -1, false);
+            }
+        }
 
-        _ranOutOfAmmo = (AmmunitionWeapon)bundle.get(LASTAMMO);
-	}
+        _ranOutOfAmmo = (AmmunitionWeapon) bundle.get(LASTAMMO);
+    }
 
 	public Gold getGold()
 	{
@@ -1131,26 +1130,15 @@ public class Belongings implements Iterable<Item>, IDecayable, IBag {
 	public long decay() {
 		return 0;
 	}
-	public void decay(long amount, boolean updateTime, boolean fixTime) {
-		Iterator<Item> iterator = iterator();
 
-		while (iterator.hasNext()) {
-			Item next = iterator.next();
+	public boolean decay(long currentTime, boolean updateTime, boolean fixTime) {
+        boolean updated = backpack1.decay(currentTime, updateTime, fixTime) |
+                backpack2.decay(currentTime, updateTime, fixTime) |
+                backpack3.decay(currentTime, updateTime, fixTime) |
+                backpack4.decay(currentTime, updateTime, fixTime);
 
-			if (next instanceof IDecayable) {
-				IDecayable decayable = (IDecayable)next;
-
-				decayable.decay(amount, updateTime, fixTime);
-				if (decayable.decayed()) {
-					iterator.remove();
-				}
-			}
-		}
+        return updated;
 	}
-	public boolean decayed() {
-		return false;
-	}
-
 
 	public ITool[] getToolTypes(boolean equipped, boolean unequipped, String... types) {
 		ITool[] retval = new ITool[types.length];

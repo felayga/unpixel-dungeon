@@ -41,61 +41,61 @@ import java.util.Iterator;
 
 public class PitfallTrap extends Trap {
 
-	{
-		name = "Pitfall trap";
-		color = TrapSprite.RED;
-		shape = TrapSprite.DIAMOND;
+    {
+        name = "Pitfall trap";
+        color = TrapSprite.RED;
+        shape = TrapSprite.DIAMOND;
 
-	}
+    }
 
-	@Override
-	public void activate() {
-		Heap heap = Dungeon.level.heaps.get( pos );
+    @Override
+    public void activate() {
+        Heap heap = Dungeon.level.heaps.get(pos);
 
-		if (heap != null){
+        if (heap != null) {
             Iterator<Item> iterator = heap.iterator(false);
-			while (iterator.hasNext()){
+            while (iterator.hasNext()) {
                 Item item = iterator.next();
-				Dungeon.dropToChasm(item);
-			}
-			heap.sprite.kill();
-			GameScene.discard(heap);
-			Dungeon.level.heaps.remove( pos );
-		}
+                Dungeon.dropToChasm(item);
+            }
+            heap.sprite.kill();
+            GameScene.discard(heap);
+            Dungeon.level.heaps.remove(pos);
+        }
 
-		Char ch = Actor.findChar( pos );
+        Char ch = Actor.findChar(pos);
 
-		if (ch == Dungeon.hero){
-			Chasm.heroFall( pos );
-		} else if (ch != null){
-			Chasm.mobFall((Mob)ch);
-		}
-	}
+        if (ch == Dungeon.hero) {
+            Chasm.heroFall(pos);
+        } else if (ch != null) {
+            Chasm.mobFall((Mob) ch);
+        }
+    }
 
-	@Override
-	protected void disarm() {
-		super.disarm();
+    @Override
+    protected void disarm() {
+        super.disarm();
 
-		//if making a pit here wouldn't block any paths, make a pit tile instead of a disarmed trap tile.
-		if (!(Dungeon.level.solid[pos - Level.WIDTH] && Dungeon.level.solid[pos + Level.WIDTH])
-				&& !(Dungeon.level.solid[pos - 1]&& Dungeon.level.solid[pos + 1])){
+        //if making a pit here wouldn't block any paths, make a pit tile instead of a disarmed trap tile.
+        if (!(Dungeon.level.solid[pos - Level.WIDTH] && Dungeon.level.solid[pos + Level.WIDTH])
+                && !(Dungeon.level.solid[pos - 1] && Dungeon.level.solid[pos + 1])) {
 
-			int c = Dungeon.level.map[pos - Level.WIDTH];
+            int c = Dungeon.level.map[pos - Level.WIDTH];
 
-			if (c == Terrain.WALL || c == Terrain.WALL_DECO) {
-				Level.set(pos, Terrain.CHASM_WALL);
-			} else {
-				Level.set( pos, Terrain.CHASM_FLOOR );
-			}
+            if (c == Terrain.WALL || c == Terrain.WALL_DECO) {
+                Dungeon.level.set(pos, Terrain.CHASM_WALL, true);
+            } else {
+                Dungeon.level.set(pos, Terrain.CHASM_FLOOR, true);
+            }
 
-			sprite.parent.add(new WindParticle.Wind(pos));
-			sprite.kill();
-			GameScene.updateMap( pos );
-		}
-	}
+            sprite.parent.add(new WindParticle.Wind(pos));
+            sprite.kill();
+            GameScene.updateMap(pos);
+        }
+    }
 
-	@Override
-	public String desc() {
-		return "This pressure plate rests atop a fairly weak floor, and will likely collapse into a pit if it is pressed.";
-	}
+    @Override
+    public String desc() {
+        return "This pressure plate rests atop a fairly weak floor, and will likely collapse into a pit if it is pressed.";
+    }
 }

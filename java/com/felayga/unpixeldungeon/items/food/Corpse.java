@@ -159,27 +159,28 @@ public class Corpse extends Food implements IDecayable {
         return decay;
     }
 
-    public void decay(long amount, boolean updateTime, boolean fixTime) {
+    public boolean decay(long currentTime, boolean updateTime, boolean fixTime) {
         if (fixTime || updateTime) {
-            long newAmount = amount - decayTime;
+            long newAmount = currentTime - decayTime;
             if (fixTime) {
                 decayTime = 0;
             } else {
-                decayTime = amount;
+                decayTime = currentTime;
             }
-            amount = newAmount;
+            currentTime = newAmount;
+        } else {
+            decayTime = currentTime;
+            currentTime = 0;
         }
 
-        decay += amount;
+        decay += currentTime;
 
         //GLog.d("decay="+decay+" rottenness="+rottenness);
         while (decayMark <= decay) {
             decayMark += Random.Long(GameTime.TICK * 10, GameTime.TICK * 30);
             rot(1);
         }
-    }
 
-    public boolean decayed() {
         return (effects & CorpseEffect.Undecayable.value) == 0 && decay > GameTime.TICK * 250;
     }
 
@@ -371,7 +372,7 @@ public class Corpse extends Food implements IDecayable {
             retval += "  Tasty!";
         }
 
-        return retval + super.info();
+        return retval + super.info() + "\n" + "decay="+decay+" decayTime="+decayTime;
     }
 
     @Override

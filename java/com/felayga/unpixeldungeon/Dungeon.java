@@ -41,6 +41,7 @@ import com.felayga.unpixeldungeon.items.scrolls.Scroll;
 import com.felayga.unpixeldungeon.items.weapon.melee.simple.MagesStaff;
 import com.felayga.unpixeldungeon.levels.DeadEndLevel;
 import com.felayga.unpixeldungeon.levels.Level;
+import com.felayga.unpixeldungeon.levels.MineTownLevel;
 import com.felayga.unpixeldungeon.levels.MinesLevel;
 import com.felayga.unpixeldungeon.levels.Room;
 import com.felayga.unpixeldungeon.levels.SewerLevel;
@@ -79,9 +80,21 @@ public class Dungeon {
 
     public static QuickSlot quickslot = new QuickSlot();
 
-    public static int _depth;
+    private static int __depth;
     public static int depthAdjusted;
-    //public static int gold;
+
+    public static int depth() {
+        return __depth;
+    }
+
+    public static void depth(int newDepth) {
+        if (__depth == newDepth) {
+            return;
+        }
+
+        __depth = newDepth;
+        depthAdjusted = DungeonBranch.getAdjustedDepth(__depth);
+    }
 
     // Reason of death
     public static String resultDescription;
@@ -114,7 +127,7 @@ public class Dungeon {
         quickslot.reset();
         QuickSlotButton.reset();
 
-        _depth = 0;
+        __depth = 0;
         depthAdjusted = 0;
         //gold = 0;
 
@@ -150,8 +163,7 @@ public class Dungeon {
         Dungeon.level = null;
         Actor.clear();
 
-        _depth = index;
-        depthAdjusted = DungeonBranch.getAdjustedDepth(index);
+        depth(index);
 
 		/*
 		if (depth > Statistics.deepestFloor) {
@@ -168,10 +180,18 @@ public class Dungeon {
         Arrays.fill(visible, false);
 
         Level level;
-        if (_depth >= DungeonBranch.Normal.levelMin && _depth <= DungeonBranch.Normal.levelMax) {
-            level = new SewerLevel();
-        } else if (_depth >= DungeonBranch.Mines.levelMin && _depth <= DungeonBranch.Mines.levelMax) {
-            level = new MinesLevel();
+        if (__depth >= DungeonBranch.Normal.levelMin && __depth <= DungeonBranch.Normal.levelMax) {
+            level = new MineTownLevel();
+        } else if (__depth >= DungeonBranch.Mines.levelMin && __depth <= DungeonBranch.Mines.levelMax) {
+            int offset = __depth - DungeonBranch.Mines.levelMin;
+
+            switch(offset) {
+                case 2:
+                    level = new MineTownLevel();
+                    break;
+                default:
+                    level = new MinesLevel();
+            }
         } else {
             level = new DeadEndLevel();
         }
@@ -313,7 +333,7 @@ public class Dungeon {
     }
 
     public static void dropToChasm(Item item) {
-        int depth = Dungeon._depth + 1;
+        int depth = Dungeon.__depth + 1;
         ArrayList<Item> dropped = (ArrayList<Item>) Dungeon.droppedItems.get(depth);
         if (dropped == null) {
             Dungeon.droppedItems.put(depth, dropped = new ArrayList<Item>());
@@ -370,7 +390,7 @@ public class Dungeon {
             bundle.put(CHALLENGES, challenges);
             bundle.put(HERO, hero);
             //bundle.put( GOLD, gold );
-            bundle.put(DEPTH, _depth);
+            bundle.put(DEPTH, __depth);
 
             GamesInProgress.Info info = GamesInProgress.check(WndInitHero.savedGameIndex);
             if (info == null) {
@@ -432,7 +452,7 @@ public class Dungeon {
         bundle.put(LEVEL, level);
 
         OutputStream output = Game.instance.openFileOutput(
-                Utils.format(depthFile(WndInitHero.savedGameIndex), _depth), Game.MODE_PRIVATE);
+                Utils.format(depthFile(WndInitHero.savedGameIndex), __depth), Game.MODE_PRIVATE);
         Bundle.write(bundle, output);
         output.close();
     }
@@ -444,7 +464,7 @@ public class Dungeon {
             saveGame(gameFile(WndInitHero.savedGameIndex));
             saveLevel();
 
-            GamesInProgress.set(WndInitHero.savedGameIndex, hero.heroClass, hero.level, _depth);
+            GamesInProgress.set(WndInitHero.savedGameIndex, hero.heroClass, hero.level, __depth);
 
         } else if (WndResurrect.instance != null) {
 
@@ -478,7 +498,7 @@ public class Dungeon {
         Dungeon.challenges = bundle.getInt(CHALLENGES);
 
         Dungeon.level = null;
-        Dungeon._depth = -1;
+        Dungeon.__depth = -1;
         Dungeon.depthAdjusted = -1;
 
         if (fullLoad) {
@@ -528,8 +548,7 @@ public class Dungeon {
         hero = (Hero) bundle.get(HERO);
 
         //gold = bundle.getInt( GOLD );
-        _depth = bundle.getInt(DEPTH);
-        depthAdjusted = DungeonBranch.getAdjustedDepth(_depth);
+        depth(bundle.getInt(DEPTH));
 
         Statistics.restoreFromBundle(bundle);
         Journal.restoreFromBundle(bundle);
@@ -558,11 +577,10 @@ public class Dungeon {
     }
 
     public static Level loadLevel(int index) throws IOException {
-
         Dungeon.level = null;
         Actor.clear();
 
-        InputStream input = Game.instance.openFileInput(Utils.format(depthFile(index), _depth));
+        InputStream input = Game.instance.openFileInput(Utils.format(depthFile(index), __depth));
         Bundle bundle = Bundle.read(input);
         input.close();
 

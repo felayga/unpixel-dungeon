@@ -35,6 +35,7 @@ import com.felayga.unpixeldungeon.items.Heap;
 import com.felayga.unpixeldungeon.items.Item;
 import com.felayga.unpixeldungeon.items.scrolls.ScrollOfTeleportation;
 import com.felayga.unpixeldungeon.levels.Level;
+import com.felayga.unpixeldungeon.mechanics.Constant;
 import com.felayga.unpixeldungeon.sprites.TrapSprite;
 import com.felayga.unpixeldungeon.utils.GLog;
 import com.watabou.noosa.audio.Sample;
@@ -56,7 +57,7 @@ public class TeleportationTrap extends Trap {
 		Char ch = Actor.findChar( pos);
 		if (ch instanceof Hero){
 			if (ScrollOfTeleportation.canTeleport(ch)) {
-				ScrollOfTeleportation.doTeleport(ch);
+				ScrollOfTeleportation.doTeleport(ch, Constant.Position.RANDOM);
 			}
 		} else if (ch != null){
 			int count = 10;

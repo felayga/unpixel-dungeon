@@ -61,10 +61,11 @@ public abstract class Tool extends Item implements ITool {
 
     public static CellSelector.Listener applier = new CellSelector.Listener() {
         @Override
-        public void onSelect(Integer target) {
+        public boolean onSelect(Integer target) {
             if (target != null) {
                 curTool.apply(curUser, target);
             }
+            return true;
         }
 
         @Override

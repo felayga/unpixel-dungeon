@@ -339,38 +339,42 @@ public abstract class Level implements Bundlable, IDecayable {
         return 0;
     }
 
-    public void decay(long amount, boolean updateTime, boolean fixTime) {
+    public boolean decay(long currentTime, boolean updateTime, boolean fixTime) {
         if (updateTime && !fixTime) {
-            if (time < amount) {
-                time = amount;
+            if (time < currentTime) {
+                time = currentTime;
             } else {
-                return;
+                return false;
             }
         }
+
+        boolean updated = false;
 
         for (int n = 0; n < heaps.size(); n++) {
             int key = heaps.keyAt(n);
             Heap heap = heaps.get(key);
 
-            Iterator<Item> iterator = heap.iterator();
-            boolean updated = false;
+            Iterator<Item> iterator = heap.iterator(false);
+            boolean subupdated = false;
             while (iterator.hasNext()) {
                 Item item = iterator.next();
                 if (item instanceof IDecayable) {
                     IDecayable decayable = (IDecayable) item;
-                    decayable.decay(amount, updateTime, fixTime);
-                    if (decayable.decayed()) {
+                    if (decayable.decay(currentTime, updateTime, fixTime)) {
                         iterator.remove();
-                        updated = true;
+                        subupdated = true;
                     }
                 }
             }
 
-            if (updated) {
+            if (subupdated) {
                 heap.updateImage();
                 n--;
+                updated = true;
             }
         }
+
+        return updated;
     }
 
     public boolean decayed() {
@@ -819,22 +823,26 @@ public abstract class Level implements Bundlable, IDecayable {
         return null;
     }
 
+    protected void updateFlagMap(int pos) {
+        int flags = Terrain.flags[map[pos]];
+        passable[pos] = (flags & Terrain.FLAG_PASSABLE) != 0;
+        pathable[pos] = (flags & (Terrain.FLAG_PASSABLE | Terrain.FLAG_PATHABLE)) != 0;
+        diagonal[pos] = (flags & Terrain.FLAG_DIAGONALPASSAGE) != 0;
+        losBlocking[pos] = (flags & Terrain.FLAG_LOSBLOCKING) != 0;
+        wood[pos] = (flags & Terrain.FLAG_WOOD) != 0;
+        secret[pos] = (flags & Terrain.FLAG_SECRET) != 0;
+        solid[pos] = (flags & Terrain.FLAG_SOLID) != 0;
+        avoid[pos] = (flags & Terrain.FLAG_AVOID) != 0;
+        water[pos] = (flags & Terrain.FLAG_LIQUID) != 0;
+        pit[pos] = (flags & Terrain.FLAG_PIT) != 0;
+        stone[pos] = (flags & Terrain.FLAG_STONE) != 0;
+    }
+
     protected void buildFlagMaps() {
         flags = flagsLocal;
 
         for (int i = 0; i < LENGTH; i++) {
-            int flags = Terrain.flags[map[i]];
-            passable[i] = (flags & Terrain.FLAG_PASSABLE) != 0;
-            pathable[i] = (flags & (Terrain.FLAG_PASSABLE | Terrain.FLAG_PATHABLE)) != 0;
-            diagonal[i] = (flags & Terrain.FLAG_DIAGONALPASSAGE) != 0;
-            losBlocking[i] = (flags & Terrain.FLAG_LOSBLOCKING) != 0;
-            wood[i] = (flags & Terrain.FLAG_WOOD) != 0;
-            secret[i] = (flags & Terrain.FLAG_SECRET) != 0;
-            solid[i] = (flags & Terrain.FLAG_SOLID) != 0;
-            avoid[i] = (flags & Terrain.FLAG_AVOID) != 0;
-            water[i] = (flags & Terrain.FLAG_LIQUID) != 0;
-            pit[i] = (flags & Terrain.FLAG_PIT) != 0;
-            stone[i] = (flags & Terrain.FLAG_STONE) != 0;
+            updateFlagMap(i);
         }
 
         int lastRow = LENGTH - WIDTH;
@@ -848,6 +856,7 @@ public abstract class Level implements Bundlable, IDecayable {
         }
 
         for (int i = WIDTH; i < LENGTH - WIDTH; i++) {
+            /*
             if (water[i]) {
                 int t = Terrain.WATER_TILES;
                 for (int j = 0; j < NEIGHBOURS4.length; j++) {
@@ -856,6 +865,10 @@ public abstract class Level implements Bundlable, IDecayable {
                     }
                 }
                 map[i] = t;
+            }
+            */
+            if (map[i] >= Terrain.FACED_TILE_MIN && map[i] <= Terrain.FACED_TILE_MAX) {
+                repair(i, false, true);
             }
 
             if (pit[i] && map[i] < Terrain.FACED_TILE_MIN) {
@@ -970,35 +983,68 @@ public abstract class Level implements Bundlable, IDecayable {
     }
 
 
-    public static void set(int cell, int terrain) {
-        Painter.set(Dungeon.level, cell, terrain);
+    public void set(int cell, int terrain, boolean flagUpdates) {
+        Painter.set(this, cell, terrain);
 
         if (terrain != Terrain.TRAP && terrain != Terrain.SECRET_TRAP && terrain != Terrain.INACTIVE_TRAP) {
-            Dungeon.level.traps.remove(cell);
+            traps.remove(cell);
         }
 
-        int flags = Terrain.flags[terrain];
-        passable[cell] = (flags & Terrain.FLAG_PASSABLE) != 0;
-        pathable[cell] = (flags & (Terrain.FLAG_PASSABLE | Terrain.FLAG_PATHABLE)) != 0;
-        losBlocking[cell] = (flags & Terrain.FLAG_LOSBLOCKING) != 0;
-        wood[cell] = (flags & Terrain.FLAG_WOOD) != 0;
-        secret[cell] = (flags & Terrain.FLAG_SECRET) != 0;
-        solid[cell] = (flags & Terrain.FLAG_SOLID) != 0;
-        avoid[cell] = (flags & Terrain.FLAG_AVOID) != 0;
-        pit[cell] = (flags & Terrain.FLAG_PIT) != 0;
-        water[cell] = terrain >= Terrain.WATER_TILES && terrain <= Terrain.WATER;
-        stone[cell] = (flags & Terrain.FLAG_STONE) != 0;
-        diagonal[cell] = (flags & Terrain.FLAG_DIAGONALPASSAGE) != 0;
+        if (flagUpdates) {
+            updateFlagMap(cell);
+        }
     }
 
-    public static void setRepairing(int cell, int terrain, boolean mapUpdates) {
-        int test = Dungeon.level.map[cell];
+    public void repair(int cell, boolean mapUpdates, boolean flagUpdates) {
+        int terrain = map[cell];
+        int cooperativeTerrain = cooperativeCell(terrain);
+
+        int terrainType = (terrain / Terrain.FACED_TILE_BLOCKSIZE) * Terrain.FACED_TILE_BLOCKSIZE;
+        terrain = terrainType + Terrain.FACED_TILE_BLOCKSIZE - 1;
+
+        int index;
+        int test;
+        int placedFlag = 1;
+        boolean good;
+
+        int placedTerrain = terrainType;
+        List<Integer> updates = new ArrayList<Integer>();
+
+        for (int n = 0; n < NEIGHBOURS4.length; n++) {
+            good = false;
+            index = cell + NEIGHBOURS4[n];
+            test = map[index];
+            if (test >= terrainType && test <= terrain) {
+                good = true;
+                updates.add(index);
+            } else if (test == cooperativeTerrain) {
+                good = true;
+            }
+            if (good) {
+                placedTerrain += placedFlag;
+            }
+            placedFlag <<= 1;
+        }
+
+        test = map[cell];
+        if (test == placedTerrain) {
+            return;
+        }
+
+        set(cell, placedTerrain, flagUpdates);
+        if (mapUpdates) {
+            GameScene.updateMap(cell);
+        }
+    }
+
+    private void setRepairing(int cell, int terrain, boolean mapUpdates, boolean flagUpdates) {
+        int test = map[cell];
 
         if (test == terrain) {
             return;
         }
 
-        set(cell, terrain);
+        set(cell, terrain, flagUpdates);
         if (mapUpdates) {
             GameScene.updateMap(cell);
         }
@@ -1006,35 +1052,35 @@ public abstract class Level implements Bundlable, IDecayable {
         determineSpecialFixes(cell, terrain, terrain);
     }
 
-    private static int cooperativeCellType(int cellType) {
+    private static int cooperativeCell(int cellType) {
         if (cellType >= Terrain.DIRT_TILES && cellType <= Terrain.DIRT)
         {
-            return Terrain.FLAG_SOLID;
+            return Terrain.WALL_STONE;
         }
         else if (cellType >= Terrain.WATER_TILES && cellType <= Terrain.WATER)
         {
-            return Terrain.FLAG_SOLID;
+            return Terrain.WALL;
         }
 
         return 0;
     }
 
-    public static void setEmpty(int cell, boolean mapUpdates) {
+    public void setEmpty(int cell, boolean mapUpdates, boolean flagUpdates) {
         setSetSpecialRecursiveInitialize();
-        setRepairing(cell, Terrain.EMPTY, mapUpdates);
-        setSpecialFixes(mapUpdates);
+        setRepairing(cell, Terrain.EMPTY, mapUpdates, flagUpdates);
+        setSpecialFixes(mapUpdates, flagUpdates);
     }
 
-    public static void setWoodDebris(int cell, boolean mapUpdates) {
+    public void setWoodDebris(int cell, boolean mapUpdates, boolean flagUpdates) {
         setSetSpecialRecursiveInitialize();
-        setRepairing(cell, Terrain.WOOD_DEBRIS, mapUpdates);
-        setSpecialFixes(mapUpdates);
+        setRepairing(cell, Terrain.WOOD_DEBRIS, mapUpdates, flagUpdates);
+        setSpecialFixes(mapUpdates, flagUpdates);
     }
 
-    public static void setDirt(int cell, boolean mapUpdates) {
+    public void setDirt(int cell, boolean mapUpdates, boolean flagUpdates) {
         setSetSpecialRecursiveInitialize();
-        setSpecialRecursive(cell, Terrain.DIRT, cooperativeCellType(Terrain.DIRT), mapUpdates);
-        setSpecialFixes(mapUpdates);
+        setSpecialRecursive(cell, Terrain.DIRT, cooperativeCell(Terrain.DIRT), mapUpdates, flagUpdates);
+        setSpecialFixes(mapUpdates, flagUpdates);
 
 		/*
 		//nope, too complicated / annoying / wasteful, who cares
@@ -1044,10 +1090,10 @@ public abstract class Level implements Bundlable, IDecayable {
 		*/
     }
 
-    public static void setDirtDeep(int cell, boolean mapUpdates) {
+    public void setDirtDeep(int cell, boolean mapUpdates, boolean flagUpdates) {
         setSetSpecialRecursiveInitialize();
-        setSpecialRecursive(cell, Terrain.DIRT_DEEP, cooperativeCellType(Terrain.DIRT_DEEP), mapUpdates);
-        setSpecialFixes(mapUpdates);
+        setSpecialRecursive(cell, Terrain.DIRT_DEEP, cooperativeCell(Terrain.DIRT_DEEP), mapUpdates, flagUpdates);
+        setSpecialFixes(mapUpdates, flagUpdates);
     }
 
     private static HashSet<Integer> setSpecialRecursive = new HashSet<>();
@@ -1058,12 +1104,12 @@ public abstract class Level implements Bundlable, IDecayable {
         setSpecialFixes.clear();
     }
 
-    private static void determineSpecialFixes(int cell, int terrainMin, int terrainMax) {
+    private void determineSpecialFixes(int cell, int terrainMin, int terrainMax) {
         int test;
         for (int n = 0; n < NEIGHBOURS4.length; n++) {
             int subcell = cell + NEIGHBOURS4[n];
 
-            test = Dungeon.level.map[subcell];
+            test = map[subcell];
             if (test >= Terrain.FACED_TILE_MIN && test <= Terrain.FACED_TILE_MAX) {
                 //GLog.d(cell, subcell);
                 if (test >= terrainMin && test <= terrainMax) {
@@ -1075,15 +1121,15 @@ public abstract class Level implements Bundlable, IDecayable {
         }
     }
 
-    private static void setSpecialFixes(boolean mapUpdates) {
+    private void setSpecialFixes(boolean mapUpdates, boolean flagUpdates) {
         for (Integer cell : setSpecialFixes.toArray(new Integer[]{})) {
-            int test = Dungeon.level.map[cell];
+            int test = map[cell];
             //GLog.d("try fix cell="+cell);
-            setSpecialRecursive(cell, test, cooperativeCellType(test), mapUpdates);
+            setSpecialRecursive(cell, test, cooperativeCell(test), mapUpdates, flagUpdates);
         }
     }
 
-    private static void setSpecialRecursive(int cell, int terrain, int cooperativeFlags, boolean mapUpdates) {
+    private void setSpecialRecursive(int cell, int terrain, int cooperativeTerrain, boolean mapUpdates, boolean flagUpdates) {
         setSpecialRecursive.add(cell);
 
         int terrainType = (terrain / Terrain.FACED_TILE_BLOCKSIZE) * Terrain.FACED_TILE_BLOCKSIZE;
@@ -1100,11 +1146,11 @@ public abstract class Level implements Bundlable, IDecayable {
         for (int n = 0; n < NEIGHBOURS4.length; n++) {
             good = false;
             index = cell + NEIGHBOURS4[n];
-            test = Dungeon.level.map[index];
+            test = map[index];
             if (test >= terrainType && test <= terrain) {
                 good = true;
                 updates.add(index);
-            } else if ((Terrain.flags[test] & cooperativeFlags) != 0) {
+            } else if (test == cooperativeTerrain) {
                 good = true;
             }
             if (good) {
@@ -1113,53 +1159,12 @@ public abstract class Level implements Bundlable, IDecayable {
             placedFlag <<= 1;
         }
 
-        /*
-        good = false;
-        index += WIDTH + 1;
-        test = Dungeon.level.map[index];
-        if (test >= terrainType && test <= terrain) {
-            good = true;
-            updates.add(index);
-        } else if ((Terrain.flags[test] & cooperativeFlags) != 0) {
-            good = true;
-        }
-        if (good) {
-            placedTerrain += 2;
-        }
-
-        good = false;
-        index += WIDTH - 1;
-        test = Dungeon.level.map[index];
-        if (test >= terrainType && test <= terrain) {
-            good = true;
-            updates.add(index);
-        } else if ((Terrain.flags[test] & cooperativeFlags) != 0) {
-            good = true;
-        }
-        if (good) {
-            placedTerrain += 4;
-        }
-
-        good = false;
-        index -= WIDTH + 1;
-        test = Dungeon.level.map[index];
-        if (test >= terrainType && test <= terrain) {
-            good = true;
-            updates.add(index);
-        } else if ((Terrain.flags[test] & cooperativeFlags) != 0) {
-            good = true;
-        }
-        if (good) {
-            placedTerrain += 8;
-        }
-        */
-
-        test = Dungeon.level.map[cell];
+        test = map[cell];
         if (test == placedTerrain) {
             return;
         }
 
-        set(cell, placedTerrain);
+        set(cell, placedTerrain, flagUpdates);
         if (mapUpdates) {
             GameScene.updateMap(cell);
         }
@@ -1172,7 +1177,7 @@ public abstract class Level implements Bundlable, IDecayable {
                 continue;
             }
 
-            setSpecialRecursive(newCell, terrain, cooperativeFlags, mapUpdates);
+            setSpecialRecursive(newCell, terrain, cooperativeTerrain, mapUpdates, flagUpdates);
         }
 
     }
@@ -1425,12 +1430,12 @@ public abstract class Level implements Bundlable, IDecayable {
     }
 
     public void disarmTrap(int pos) {
-        set(pos, Terrain.INACTIVE_TRAP);
+        set(pos, Terrain.INACTIVE_TRAP, true);
         GameScene.updateMap(pos);
     }
 
     public void discover(int cell) {
-        set(cell, Terrain.discover(map[cell]));
+        set(cell, Terrain.discover(map[cell]), true);
         Trap trap = traps.get(cell);
         if (trap != null) {
             trap.reveal();

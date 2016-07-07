@@ -40,9 +40,11 @@ public class StandardPainter extends Painter {
 	public static void paint( Level level, Room room ) {
 		fill(level, room, Terrain.WALL);
 
-		for (Room.Door door : room.connected.values()) {
-			door.set(Room.Door.Type.REGULAR);
-		}
+        if (room.connected != null) {
+            for (Room.Door door : room.connected.values()) {
+                door.set(Room.Door.Type.REGULAR);
+            }
+        }
 
 		if (Random.Int(5) == 0) {
 			switch (Random.Int(6)) {

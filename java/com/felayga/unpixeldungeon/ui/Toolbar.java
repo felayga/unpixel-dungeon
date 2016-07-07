@@ -275,9 +275,10 @@ public class Toolbar extends Component {
 	
 	private static CellSelector.Listener informer = new CellSelector.Listener() {
 		@Override
-		public void onSelect( Integer cell ) {
+		public boolean onSelect( Integer cell ) {
 			instance.examining = false;
 			GameScene.examineCell( cell );
+            return true;
 		}
 		@Override
 		public String prompt() {

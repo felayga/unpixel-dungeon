@@ -62,7 +62,7 @@ public enum Rankings {
 		rec.win		= win;
 		rec.heroClass	= Dungeon.hero.heroClass;
 		rec.herolevel	= Dungeon.hero.level;
-		rec.depth		= Dungeon._depth;
+		rec.depth		= Dungeon.depth();
 		rec.score	= score( win );
 		
 		String gameFile = Utils.format( DETAILS_FILE, SystemTime.now );

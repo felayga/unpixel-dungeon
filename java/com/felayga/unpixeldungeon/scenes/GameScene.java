@@ -295,16 +295,16 @@ public class GameScene extends PixelScene {
 
 		layoutTags();
 		
-		if (Statistics.floorsVisited[Dungeon._depth]) {
-			GLog.i(TXT_WELCOME_BACK, DungeonBranch.getDepthText(Dungeon._depth));
+		if (Statistics.floorsVisited[Dungeon.depth()]) {
+			GLog.i(TXT_WELCOME_BACK, DungeonBranch.getDepthText(Dungeon.depth()));
 		} else {
-			GLog.i(TXT_WELCOME, DungeonBranch.getDepthText(Dungeon._depth));
+			GLog.i(TXT_WELCOME, DungeonBranch.getDepthText(Dungeon.depth()));
 			if (InterlevelScene.mode == InterlevelScene.Mode.DESCEND) Sample.INSTANCE.play(Assets.SND_DESCEND);
 		}
 
         Dungeon.hero.updateEncumbrance();
 
-		Statistics.floorsVisited[Dungeon._depth] = true;
+		Statistics.floorsVisited[Dungeon.depth()] = true;
 
 		switch (Dungeon.level.feeling) {
 		case CHASM:
@@ -344,7 +344,7 @@ public class GameScene extends PixelScene {
 			Chasm.heroLand();
 			break;
 		case DESCEND:
-			switch (Dungeon._depth) {
+			switch (Dungeon.depth()) {
 			case 1:
 				WndStory.showChapter( WndStory.ID_SEWERS );
 				break;
@@ -361,7 +361,7 @@ public class GameScene extends PixelScene {
 				WndStory.showChapter( WndStory.ID_HALLS );
 				break;
 			}
-			if (Dungeon.hero.isAlive() && Dungeon._depth != 22) {
+			if (Dungeon.hero.isAlive() && Dungeon.depth() != 22) {
 				Badges.validateNoKilling();
 			}
 			break;
@@ -369,7 +369,7 @@ public class GameScene extends PixelScene {
 		}
 		InterlevelScene.mode = InterlevelScene.Mode.CONTINUE;
 
-		ArrayList<Item> dropped = Dungeon.droppedItems.get( Dungeon._depth );
+		ArrayList<Item> dropped = Dungeon.droppedItems.get( Dungeon.depth() );
 		if (dropped != null) {
 			for (Item item : dropped) {
 				int pos = Dungeon.level.randomRespawnCell();
@@ -383,7 +383,7 @@ public class GameScene extends PixelScene {
 					Dungeon.level.drop( item, pos );
 				}
 			}
-			Dungeon.droppedItems.remove( Dungeon._depth );
+			Dungeon.droppedItems.remove( Dungeon.depth() );
 		}
 
 		Dungeon.hero.next();
@@ -848,10 +848,11 @@ public class GameScene extends PixelScene {
 	
 	private static final CellSelector.Listener defaultCellListener = new CellSelector.Listener() {
 		@Override
-		public void onSelect( Integer cell ) {
+		public boolean onSelect( Integer cell ) {
 			if (Dungeon.hero.handle( cell, true )) {
 				Dungeon.hero.next();
 			}
+            return true;
 		}
 		@Override
 		public String prompt() {

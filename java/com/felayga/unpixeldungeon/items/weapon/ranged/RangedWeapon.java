@@ -143,11 +143,12 @@ public class RangedWeapon extends Weapon {
 
     protected static CellSelector.Listener shooter = new CellSelector.Listener() {
         @Override
-        public void onSelect(Integer target) {
+        public boolean onSelect(Integer target) {
             GLog.d("onselectcell target="+target);
             if (target != null) {
                 curLauncher.shoot(curUser, curAmmo, target);
             }
+            return true;
         }
 
         @Override

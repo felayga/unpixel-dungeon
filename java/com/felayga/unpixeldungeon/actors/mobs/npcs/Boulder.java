@@ -263,7 +263,7 @@ public class Boulder extends NPC {
         }
         else {
             die(null);
-            Level.set(pos, Terrain.EMPTY);
+            Dungeon.level.set(pos, Terrain.EMPTY, true);
         }
 
         GameScene.updateMap(pos);

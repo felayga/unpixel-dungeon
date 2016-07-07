@@ -27,7 +27,7 @@ package com.felayga.unpixeldungeon.levels.painters;
 import com.felayga.unpixeldungeon.Dungeon;
 import com.felayga.unpixeldungeon.items.Generator;
 import com.felayga.unpixeldungeon.items.Item;
-import com.felayga.unpixeldungeon.items.bags.TreasureChest;
+import com.felayga.unpixeldungeon.items.bags.Bag;
 import com.felayga.unpixeldungeon.levels.Level;
 import com.felayga.unpixeldungeon.levels.Room;
 import com.felayga.unpixeldungeon.levels.Terrain;
@@ -75,15 +75,9 @@ public class VaultPainter extends Painter {
     private static void spawnLockedChest(Level level, int pos, Item prize) {
         float dropBonusChance = Roll.DropBonusChance(Dungeon.hero) / 2.0f;
 
-        TreasureChest chest = new TreasureChest();
-        chest.locked(true);
-        level.drop(chest, pos);
-
+        Bag chest = (Bag)Generator.random(Generator.Category.CONTAINER);
         chest.collect(prize);
-
-        while (Random.Float() < dropBonusChance) {
-            chest.collect(Generator.random());
-        }
+        level.drop(chest, pos);
     }
 	
 	private static Item prize( Level level ) {

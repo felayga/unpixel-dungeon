@@ -121,12 +121,14 @@ public class TimekeepersHourglass extends Artifact_old {
 		}
 	}
 
-	@Override
-	public void activate(Char ch) {
-		super.activate(ch);
-		if (activeBuff != null)
-			activeBuff.attachTo(ch);
-	}
+    @Override
+    public void onEquip(Char owner, boolean cursed) {
+        super.onEquip(owner, cursed);
+
+        if (activeBuff != null) {
+            activeBuff.attachTo(owner);
+        }
+    }
 
 	@Override
 	public void onUnequip(Char owner) {

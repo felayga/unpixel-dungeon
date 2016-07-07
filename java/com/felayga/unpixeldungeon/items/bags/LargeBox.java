@@ -25,44 +25,38 @@
 
 package com.felayga.unpixeldungeon.items.bags;
 
-import com.felayga.unpixeldungeon.actors.Char;
-import com.felayga.unpixeldungeon.items.Item;
-import com.felayga.unpixeldungeon.mechanics.IDecayable;
+import com.felayga.unpixeldungeon.actors.buffs.hero.Encumbrance;
+import com.felayga.unpixeldungeon.sprites.ItemSpriteSheet;
 import com.felayga.unpixeldungeon.ui.Icons;
 
-import java.util.Iterator;
-
 /**
- * Created by HELLO on 3/29/2016.
+ * Created by HELLO on 7/6/2016.
  */
-public interface IBag extends IDecayable {
-    Item self();
-    String action();
-    String getDisplayName();
-    Icons tabIcon();
-    Char owner();
+public class LargeBox extends LargeChest {
+    public LargeBox() {
+        super(null, true);
 
-    int size();
-    int pos();
+        name = "large box";
+        image = ItemSpriteSheet.LARGEBOX;
+        tabIcon = Icons.TREASURECHEST;
 
-    void onWeightChanged(int change);
+        size = 36;
+        priority = 8;
+        price = 8;
+        weight(Encumbrance.UNIT * 350);
+    }
 
-    boolean tryMergeExistingStack(Item test);
+    @Override
+    protected void onLockedChanged() {
+        if (locked()) {
+            image = ItemSpriteSheet.LARGEBOX_LOCKED;
+        } else {
+            image = ItemSpriteSheet.LARGEBOX;
+        }
+    }
 
-    boolean collect(Item collectItem);
-    Item remove(Item item);
-    Item remove(Item item, int quantity);
-
-    boolean contains(Item item);
-
-    boolean locked();
-
-    Item randomItem();
-
-    Iterator<Item> iterator(boolean allowNested);
-
-
-    long decay();
-    boolean decay(long amount, boolean updateTime, boolean fixTime);
-
+    @Override
+    public String info() {
+        return "This heavy chest is used to store items for safe keeping.";
+    }
 }

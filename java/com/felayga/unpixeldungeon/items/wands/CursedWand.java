@@ -58,6 +58,7 @@ import com.felayga.unpixeldungeon.levels.traps.LightningTrap;
 import com.felayga.unpixeldungeon.levels.traps.SummoningTrap;
 import com.felayga.unpixeldungeon.mechanics.BUCStatus;
 import com.felayga.unpixeldungeon.mechanics.Ballistica;
+import com.felayga.unpixeldungeon.mechanics.Constant;
 import com.felayga.unpixeldungeon.mechanics.GameTime;
 import com.felayga.unpixeldungeon.mechanics.MagicType;
 import com.felayga.unpixeldungeon.plants.Plant;
@@ -148,7 +149,7 @@ public class CursedWand {
 				switch(Random.Int(2)){
 					case 0:
 						if (ScrollOfTeleportation.canTeleport(user)) {
-							ScrollOfTeleportation.doTeleport(user);
+							ScrollOfTeleportation.doTeleport(user, Constant.Position.RANDOM);
 						}
 						wand.wandUsed();
 						break;

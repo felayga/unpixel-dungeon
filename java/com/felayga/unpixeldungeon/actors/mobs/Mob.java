@@ -42,6 +42,7 @@ import com.felayga.unpixeldungeon.actors.hero.HeroSubClass;
 import com.felayga.unpixeldungeon.effects.Speck;
 import com.felayga.unpixeldungeon.effects.Surprise;
 import com.felayga.unpixeldungeon.effects.Wound;
+import com.felayga.unpixeldungeon.items.EquippableItem;
 import com.felayga.unpixeldungeon.items.Generator;
 import com.felayga.unpixeldungeon.items.Item;
 import com.felayga.unpixeldungeon.items.KindOfWeapon;
@@ -361,32 +362,43 @@ public abstract class Mob extends Char {
 		super.move(step);
 		
 		if (!flying) {
-			Dungeon.level.mobPress( this );
+			Dungeon.level.mobPress(this);
 		}
 	}
 	
 	protected boolean doAttack( Char enemy ) {
-		boolean visible = Dungeon.visible[pos];
+        boolean visible = Dungeon.visible[pos];
 
-        KindOfWeapon weapon = (KindOfWeapon)belongings.weapon();
-		
-		if (visible) {
-			sprite.attack( enemy.pos );
-		} else {
-			attack( enemy );
-		}
-				
-		spend_new(attackSpeed(), false);
-		
-		return !visible;
-	}
+        if (visible) {
+            sprite.attack(enemy.pos);
+        } else {
+            EquippableItem item = belongings.weapon();
+
+            KindOfWeapon weapon = null;
+            if (item instanceof KindOfWeapon) {
+                weapon = (KindOfWeapon) item;
+            }
+
+            attack(weapon, enemy);
+        }
+
+        spend_new(attackSpeed(), false);
+
+        return !visible;
+    }
 	
 	@Override
 	public void onAttackComplete() {
-        KindOfWeapon weapon = (KindOfWeapon)belongings.weapon();
-		attack( enemy );
-		super.onAttackComplete();
-	}
+        EquippableItem item = belongings.weapon();
+
+        KindOfWeapon weapon = null;
+        if (item instanceof KindOfWeapon) {
+            weapon = (KindOfWeapon) item;
+        }
+
+        attack(weapon, enemy);
+        super.onAttackComplete();
+    }
 
 	
 	@Override
@@ -412,7 +424,7 @@ public abstract class Mob extends Char {
 			int restoration = Math.max(damage, HP);
 			Dungeon.hero.buff(Hunger.class).satisfy_new(restoration);
 			Dungeon.hero.HP = (int)Math.ceil(Math.min(Dungeon.hero.HT, Dungeon.hero.HP+(restoration*0.25f)));
-			Dungeon.hero.sprite.emitter().burst( Speck.factory(Speck.HEALING), 1 );
+			Dungeon.hero.sprite.emitter().burst(Speck.factory(Speck.HEALING), 1);
 		}
 
 		return damage;

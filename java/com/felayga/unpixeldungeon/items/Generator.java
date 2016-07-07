@@ -44,6 +44,9 @@ import com.felayga.unpixeldungeon.items.artifacts.TalismanOfForesight;
 import com.felayga.unpixeldungeon.items.artifacts.TimekeepersHourglass;
 import com.felayga.unpixeldungeon.items.artifacts.UnstableSpellbook;
 import com.felayga.unpixeldungeon.items.bags.Bag;
+import com.felayga.unpixeldungeon.items.bags.IceBox;
+import com.felayga.unpixeldungeon.items.bags.LargeBox;
+import com.felayga.unpixeldungeon.items.bags.LargeChest;
 import com.felayga.unpixeldungeon.items.food.Pasty;
 import com.felayga.unpixeldungeon.items.food.Ration;
 import com.felayga.unpixeldungeon.items.potions.Potion;
@@ -151,7 +154,8 @@ public class Generator {
 		SEED(50, Plant.Seed.class),
 		FOOD(0, Ration.class),
 		GOLD(500, Gold.class),
-        GEMSTONE(400, Gemstone.class);
+        GEMSTONE(400, Gemstone.class),
+        CONTAINER(150, Bag.class);
 
 		public Class<?>[] classes;
 		public float[] probs;
@@ -354,6 +358,11 @@ public class Generator {
                 Gemstone.Zircon.class};
         Category.GEMSTONE.probs = new float[]{1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 9, 2, 4, 2000, 2, 2, 2, 5};
 
+        Category.CONTAINER.classes = new Class<?>[]{
+                LargeChest.class,
+                LargeBox.class,
+                IceBox.class};
+        Category.CONTAINER.probs = new float[]{8, 11, 1};
     }
 
 	public static void reset() {
@@ -396,9 +405,7 @@ public class Generator {
 
 	public static Item random(Class<? extends Item> cl) {
 		try {
-
 			return ((Item) cl.newInstance()).random();
-
 		} catch (Exception e) {
 
 			return null;

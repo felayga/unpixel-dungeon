@@ -32,7 +32,6 @@ import com.felayga.unpixeldungeon.actors.mobs.Mob;
 import com.felayga.unpixeldungeon.items.Generator;
 import com.felayga.unpixeldungeon.items.Heap;
 import com.felayga.unpixeldungeon.items.Item;
-import com.felayga.unpixeldungeon.items.bags.TreasureChest;
 import com.felayga.unpixeldungeon.items.scrolls.Scroll;
 import com.felayga.unpixeldungeon.levels.Room.Type;
 import com.felayga.unpixeldungeon.levels.branches.DungeonBranch;
@@ -72,23 +71,31 @@ public abstract class RegularLevel extends Level {
         super(flags);
     }
 
+    protected boolean determineEntranceExit() {
+        do {
+            roomEntrance = Random.element(rooms);
+        } while (roomEntrance.width() < 4 || roomEntrance.height() < 4);
+
+        do {
+            roomExit = Random.element(rooms);
+        } while (roomExit == roomEntrance || roomExit.width() < 4 || roomExit.height() < 4);
+
+        return true;
+    }
+
     @Override
     protected boolean build() {
         if (!initRooms()) {
             return false;
         }
 
-        int distance;
+        int distance = 0;
         int retry = 0;
         int minDistance = (int) Math.sqrt(rooms.size());
         do {
-            do {
-                roomEntrance = Random.element(rooms);
-            } while (roomEntrance.width() < 4 || roomEntrance.height() < 4);
-
-            do {
-                roomExit = Random.element(rooms);
-            } while (roomExit == roomEntrance || roomExit.width() < 4 || roomExit.height() < 4);
+            if (!determineEntranceExit()) {
+                continue;
+            }
 
             Graph.buildDistanceMap(rooms, roomExit);
             distance = roomEntrance.distance();
@@ -96,7 +103,6 @@ public abstract class RegularLevel extends Level {
             if (retry++ > 10) {
                 return false;
             }
-
         } while (distance < minDistance);
 
         roomEntrance.type = Type.ENTRANCE;
@@ -141,7 +147,7 @@ public abstract class RegularLevel extends Level {
         specials = new ArrayList<Room.Type>(Room.SPECIALS);
         specialsExtra = new ArrayList<Room.Type>();
 
-        if (Dungeon._depth >= 3 && Dungeon._depth >= DungeonBranch.Normal.levelMin && Dungeon._depth <= DungeonBranch.Normal.levelMax) {
+        if (Dungeon.depth() >= 3 && Dungeon.depth() >= DungeonBranch.Normal.levelMin && Dungeon.depth() <= DungeonBranch.Normal.levelMax) {
             if (3.0f / (float)(Dungeon.depthAdjusted - 1) >= Random.Float()) {
                 specialsExtra.add(Room.Type.SHOP);
             }
@@ -152,15 +158,15 @@ public abstract class RegularLevel extends Level {
         }
 
         for (DungeonBranch branch : DungeonBranch.values()) {
-            if (branch.branchLevel() == Dungeon._depth) {
-                GLog.d("branch=" + branch + " level=" + branch.branchLevel() + " depth=" + Dungeon._depth + " (true)");
+            if (branch.branchLevel() == Dungeon.depth()) {
+                GLog.d("branch=" + branch + " level=" + branch.branchLevel() + " depth=" + Dungeon.depth() + " (true)");
                 if (branch.branchDown) {
                     specialsExtra.add(Type.EXIT_ALTERNATE);
                 } else {
                     specialsExtra.add(Type.ENTRANCE_ALTERNATE);
                 }
             } else {
-                GLog.d("branch="+branch+" level="+branch.branchLevel()+" depth="+Dungeon._depth+" (false)");
+                GLog.d("branch="+branch+" level="+branch.branchLevel()+" depth="+Dungeon.depth()+" (false)");
             }
         }
 
@@ -199,7 +205,7 @@ public abstract class RegularLevel extends Level {
 
     protected boolean initRooms() {
         rooms = new HashSet<>();
-        split(new Rect(0 + Level.EDGEBUFFER, 0 + Level.EDGEBUFFER, WIDTH - 1 - Level.EDGEBUFFER, HEIGHT - 1 - Level.EDGEBUFFER));
+        splitRooms();
 
         if (rooms.size() < 8) {
             return false;
@@ -215,6 +221,10 @@ public abstract class RegularLevel extends Level {
         return true;
     }
 
+    protected void splitRooms() {
+        split(new Rect(0 + Level.EDGEBUFFER, 0 + Level.EDGEBUFFER, WIDTH - 1 - Level.EDGEBUFFER, HEIGHT - 1 - Level.EDGEBUFFER));
+    }
+
     protected boolean assignRoomType() {
         int specialRooms = 0;
         boolean pitMade = false;
@@ -226,7 +236,7 @@ public abstract class RegularLevel extends Level {
             for (Room subr: rooms) {
                 if (subr.type == Type.NULL && subr.width() > 3 && subr.height() > 3 && subr.connected.size() > 0) {
                     if (type == Type.SHOP) {
-                        if (subr.connected.size() == 1 && ((subr.width() - 1) * (subr.height() - 1) >= ShopPainter.spaceNeeded())) {
+                        if (subr.connected.size() == 1/* && ((subr.width() - 1) * (subr.height() - 1) >= ShopPainter.spaceNeeded())*/) {
                             r = subr;
                         }
                     }
@@ -315,7 +325,7 @@ public abstract class RegularLevel extends Level {
             }
         }
 
-        while (count + specialRooms < 6 || count < 2) {
+        while (count + specialRooms < minimumRooms() || count < 2) {
             Room r = randomRoom(Type.TUNNEL, 1);
             if (r != null) {
                 r.type = Type.STANDARD;
@@ -324,6 +334,10 @@ public abstract class RegularLevel extends Level {
         }
 
         return true;
+    }
+
+    protected int minimumRooms() {
+        return 6;
     }
 
     protected void paintWater() {
@@ -368,7 +382,6 @@ public abstract class RegularLevel extends Level {
     protected abstract boolean[] grass();
 
     protected void placeTraps() {
-
         int nTraps = nTraps();
         float[] trapChances = trapChances();
         Class<?>[] trapClasses = trapClasses();
@@ -378,7 +391,7 @@ public abstract class RegularLevel extends Level {
         for (int i = 0; i < LENGTH; i++) {
             if (map[i] == Terrain.EMPTY) {
 
-                if (Dungeon._depth == 1) {
+                if (Dungeon.depth() == 1) {
                     //extra check to prevent annoying inactive traps in hallways on floor 1
                     Room r = room(i);
                     if (r != null && r.type != Type.TUNNEL) {
@@ -501,36 +514,39 @@ public abstract class RegularLevel extends Level {
             Room.Door d = r.connected.get(n);
             int door = d.x + d.y * WIDTH;
 
-            switch (d.type) {
-                case EMPTY:
-                    map[door] = Terrain.EMPTY;
-                    break;
-                case TUNNEL:
-                    map[door] = tunnelTile();
-                    break;
-                case REGULAR:
-                    assignDoor(door, Terrain.DOOR, Terrain.SECRET_DOOR, Terrain.WOOD_DEBRIS, Terrain.LOCKED_DOOR, Terrain.SECRET_LOCKED_DOOR);
-                    break;
-                case UNLOCKED:
-                    map[door] = Terrain.DOOR;
-                    break;
-                case HIDDEN:
-                    map[door] = Terrain.SECRET_DOOR;
-                    break;
-                case HIDDENLOCKED:
-                    map[door] = Terrain.SECRET_LOCKED_DOOR;
-                case BARRICADE:
-                    map[door] = Terrain.BARRICADE;
-                    break;
-                case LOCKED:
-                    assignDoor(door, Terrain.LOCKED_DOOR, Terrain.SECRET_LOCKED_DOOR, Terrain.LOCKED_DOOR, Terrain.DOOR, Terrain.SECRET_DOOR);
-                    break;
-            }
+            paintDoor(door, d.type);
         }
     }
 
+    protected void paintDoor(int pos, Room.Door.Type doorType) {
+        switch (doorType) {
+            case EMPTY:
+                map[pos] = Terrain.EMPTY;
+                break;
+            case TUNNEL:
+                map[pos] = tunnelTile();
+                break;
+            case REGULAR:
+                assignDoor(pos, Terrain.DOOR, Terrain.SECRET_DOOR, Terrain.WOOD_DEBRIS, Terrain.LOCKED_DOOR, Terrain.SECRET_LOCKED_DOOR);
+                break;
+            case UNLOCKED:
+                map[pos] = Terrain.DOOR;
+                break;
+            case HIDDEN:
+                map[pos] = Terrain.SECRET_DOOR;
+                break;
+            case HIDDENLOCKED:
+                map[pos] = Terrain.SECRET_LOCKED_DOOR;
+            case BARRICADE:
+                map[pos] = Terrain.BARRICADE;
+                break;
+            case LOCKED:
+                assignDoor(pos, Terrain.LOCKED_DOOR, Terrain.SECRET_LOCKED_DOOR, Terrain.LOCKED_DOOR, Terrain.DOOR, Terrain.SECRET_DOOR);
+                break;
+        }    }
+
     private void assignDoor(int pos, int regular, int regularHidden, int regularBroken, int other, int otherHidden) {
-        if (Dungeon._depth <= 1) {
+        if (Dungeon.depth() <= 1) {
             map[pos] = regular;
         } else {
             if (Random.Int(4) == 0) {
@@ -742,7 +758,6 @@ public abstract class RegularLevel extends Level {
             nItems++;
         }
 
-        dropBonusChance /= 2.0;
         for (int i = 0; i < nItems; i++) {
             int cell = randomDropCell();
             Heap.Type type = null;
@@ -760,14 +775,8 @@ public abstract class RegularLevel extends Level {
                 case 3:
                 case 4:
                 case 5:
-                    TreasureChest chest = new TreasureChest();
+                    Item chest = Generator.random(Generator.Category.CONTAINER);
                     drop(chest, cell);
-
-                    chest.collect(Generator.random());
-
-                    while (Random.Float() < dropBonusChance) {
-                        chest.collect(Generator.random());
-                    }
                     break;
                 default:
                     type = Heap.Type.HEAP;

@@ -81,7 +81,7 @@ public class SewerLevel extends RegularLevel {
 
 	@Override
 	protected Class<?>[] trapClasses() {
-		return Dungeon._depth == 1 ?
+		return Dungeon.depth() == 1 ?
 				new Class<?>[]{WornTrap.class} :
 				new Class<?>[]{ChillingTrap.class, ToxicTrap.class, WornTrap.class,
 						AlarmTrap.class, OozeTrap.class,
@@ -90,7 +90,7 @@ public class SewerLevel extends RegularLevel {
 
 	@Override
 	protected float[] trapChances() {
-		return Dungeon._depth == 1 ?
+		return Dungeon.depth() == 1 ?
 				new float[]{1} :
 				new float[]{4, 4, 4,
 						2, 2,
@@ -135,7 +135,7 @@ public class SewerLevel extends RegularLevel {
 		}
 
 		//hides all doors in the entrance room on floor 2, teaches the player to search.
-		if (Dungeon._depth == 2)
+		if (Dungeon.depth() == 2)
 			for (Room r : roomEntrance.connected.keySet()){
 				Room.Door d = roomEntrance.connected.get(r);
 				if (d.type == Room.Door.Type.REGULAR) {

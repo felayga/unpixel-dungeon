@@ -112,14 +112,15 @@ public class CloakOfShadows extends Artifact_old {
 		}
 	}
 
-	@Override
-	public void activate(Char ch){
-		super.activate(ch);
-		if (stealthed){
-			activeBuff = activeBuff();
-			activeBuff.attachTo(ch);
-		}
-	}
+    @Override
+    public void onEquip(Char owner, boolean cursed) {
+        super.onEquip(owner, cursed);
+
+        if (stealthed) {
+            activeBuff = activeBuff();
+            activeBuff.attachTo(owner);
+        }
+    }
 
 	@Override
 	public void onUnequip(Char owner) {

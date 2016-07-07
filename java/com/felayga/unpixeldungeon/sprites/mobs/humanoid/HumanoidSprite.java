@@ -39,8 +39,7 @@ public class HumanoidSprite extends MobSprite {
 
         int offset = index * framesPerRow;
 
-        idle = new Animation( 1, true );
-        idle.frames( frames, offset + 0, offset + 0, offset + 0, offset + 1, offset + 0, offset + 0, offset + 1, offset + 1 );
+        initAnimationIdle(frames, offset);
 
         run = new Animation( HeroSprite.RUN_FRAMERATE, true );
         run.frames( frames, offset + 2, offset + 3, offset + 4, offset + 5, offset + 6, offset + 7 );
@@ -52,6 +51,11 @@ public class HumanoidSprite extends MobSprite {
         attack.frames( frames, offset + 8, offset + 9, offset + 10, offset + 0 );
 
         play(idle);
+    }
+
+    protected void initAnimationIdle(TextureFilm frames, int offset) {
+        idle = new Animation( 1, true );
+        idle.frames( frames, offset + 0, offset + 0, offset + 0, offset + 1, offset + 0, offset + 0, offset + 1, offset + 1 );
     }
 
 }

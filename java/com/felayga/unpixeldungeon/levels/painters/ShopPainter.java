@@ -65,32 +65,81 @@ import com.felayga.unpixeldungeon.levels.Level;
 import com.felayga.unpixeldungeon.levels.Room;
 import com.felayga.unpixeldungeon.levels.Terrain;
 import com.felayga.unpixeldungeon.mechanics.BUCStatus;
+import com.felayga.unpixeldungeon.windows.WndItemDropMultiple;
+import com.felayga.unpixeldungeon.windows.quest.WndImp;
 import com.watabou.utils.Point;
 import com.watabou.utils.Random;
 
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.HashMap;
+import java.util.HashSet;
 
 //import com.felayga.unpixeldungeon.items.Honeypot;
 
 public class ShopPainter extends Painter {
-
-	private static int pasWidth;
-	private static int pasHeight;
+	//private static int pasWidth;
+	//private static int pasHeight;
 
 	private static ArrayList<Item> itemsToSpawn;
 	
 	public static void paint( Level level, Room room ) {
-		fill( level, room, Terrain.WALL );
-		fill( level, room, 1, Terrain.EMPTY_SP );
-		
+        fill(level, room, Terrain.WALL);
+        fill(level, room, 1, Terrain.EMPTY_SP);
+
+        HashSet<Integer> itempositions = new HashSet<Integer>();
+        int shopkeeperpos = -1;
+
+        for (int y = room.top + 1; y <= room.bottom - 1; y++) {
+            for (int x = room.left + 1; x <= room.right - 1; x++) {
+                itempositions.add(x + y * Level.WIDTH);
+            }
+        }
+
+        Room.Door entrance = room.entrance();
+        int doorpos = entrance.x + entrance.y * Level.WIDTH;
+        int doorwaypos = doorpos;
+
+        if (entrance.y == room.top) {
+            doorwaypos = doorpos + Level.WIDTH;
+        } else if (entrance.y == room.bottom) {
+            doorwaypos = doorpos - Level.WIDTH;
+        } else if (entrance.x == room.left) {
+            doorwaypos = doorpos + 1;
+        } else if (entrance.x == room.right) {
+            doorwaypos = doorpos - 1;
+        }
+
+        if (itempositions.contains(doorwaypos)) {
+            itempositions.remove(doorwaypos);
+        }
+
+        for (int pos : Level.NEIGHBOURS8) {
+            int subpos = pos + doorpos;
+
+            if (itempositions.contains(subpos)) {
+                itempositions.remove(subpos);
+                shopkeeperpos = subpos;
+                break;
+            }
+        }
+
+        itemSpawnCheck(itempositions.size());
+
+        for (int pos : itempositions) {
+            Item item = itemsToSpawn.remove(itemsToSpawn.size() - 1);
+            level.drop(item, pos).type = Heap.Type.FOR_SALE;
+        }
+
+        Mob shopkeeper = level instanceof LastShopLevel ? new ImpShopkeeper() : new Shopkeeper();
+        shopkeeper.pos = shopkeeperpos;
+        level.mobs.add(shopkeeper);
+
+        /*
 		pasWidth = room.width() - 2;
 		pasHeight = room.height() - 2;
+
 		int per = pasWidth * 2 + pasHeight * 2;
-		
-		if (itemsToSpawn == null)
-			generateItems();
-		
 		int pos = xy2p( room, room.entrance() ) + (per - itemsToSpawn.size()) / 2;
 		for (Item item : itemsToSpawn) {
 			
@@ -107,20 +156,30 @@ public class ShopPainter extends Painter {
 			
 			pos++;
 		}
-		
-		placeShopkeeper( level, room );
-		
-		for (Room.Door door : room.connected.values()) {
-			door.set( Room.Door.Type.REGULAR );
-		}
 
-		itemsToSpawn = null;
-	}
+        placeShopkeeper(level, room);
+        */
+
+        if (room.connected != null) {
+            for (Room.Door door : room.connected.values()) {
+                door.set(Room.Door.Type.REGULAR);
+            }
+        }
+
+        itemsToSpawn = null;
+    }
 	
-	private static void generateItems() {
-		itemsToSpawn = new ArrayList<Item>();
+	private static void itemSpawnCheck(int count) {
+        if (itemsToSpawn==null) {
+            itemsToSpawn = new ArrayList<Item>();
+        }
+
+        while (itemsToSpawn.size() < count) {
+            itemsToSpawn.add(new ScrollOfMagicMapping().random());
+        }
 
         //todo: update shop item spawns
+        /*
 		switch (Dungeon._depth) {
 		case 6:
 			itemsToSpawn.add( (Random.Int( 2 ) == 0 ? new Quarterstaff() : new Spear()).identify() );
@@ -251,10 +310,12 @@ public class ShopPainter extends Painter {
 		//this is a hard limit, level gen allows for at most an 8x5 room, can't fit more than 39 items + 1 shopkeeper.
 		if (itemsToSpawn.size() > 39)
 			throw new RuntimeException("Shop attempted to carry more than 39 items!");
+        */
 
 		Collections.shuffle(itemsToSpawn);
 	}
 
+    /*
 	public static int spaceNeeded(){
 		if (itemsToSpawn == null)
 			generateItems();
@@ -283,7 +344,7 @@ public class ShopPainter extends Painter {
 			}
 		}
 	}
-	
+
 	private static int xy2p( Room room, Point xy ) {
 		if (xy.y == room.top) {
 			
@@ -327,4 +388,5 @@ public class ShopPainter extends Painter {
 			
 		}
 	}
+	*/
 }

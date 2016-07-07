@@ -61,7 +61,7 @@ public class Fire extends Blob {
 				if (fire <= 0 && flamable[pos]) {
 					
 					int oldTile = Dungeon.level.map[pos];
-					Level.set( pos, Terrain.EMBERS );
+                    Dungeon.level.set(pos, Terrain.EMBERS, true);
 					
 					observe = true;
 					GameScene.updateMap( pos );

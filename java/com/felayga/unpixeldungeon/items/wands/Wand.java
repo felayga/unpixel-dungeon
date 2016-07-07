@@ -303,8 +303,7 @@ public abstract class Wand extends Item {
 	protected static CellSelector.Listener zapper = new  CellSelector.Listener() {
 		
 		@Override
-		public void onSelect( Integer target ) {
-			
+		public boolean onSelect( Integer target ) {
 			if (target != null) {
 
 				final Wand curWand = (Wand)Wand.curItem;
@@ -314,7 +313,7 @@ public abstract class Wand extends Item {
 				
 				if (target == curUser.pos || cell == curUser.pos) {
 					GLog.i( TXT_SELF_TARGET );
-					return;
+					return false;
 				}
 
 				curUser.sprite.zap(cell);
@@ -353,6 +352,8 @@ public abstract class Wand extends Item {
 				}
 				
 			}
+
+            return true;
 		}
 		
 		@Override

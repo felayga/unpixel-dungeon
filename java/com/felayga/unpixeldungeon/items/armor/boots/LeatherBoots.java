@@ -40,6 +40,8 @@ public class LeatherBoots extends Boots {
 
         name = "leather boots";
         image = ItemSpriteSheet.BOOTS_LEATHER;
+        hasLevels = false;
+        hasBuc(false);
     }
 
     @Override

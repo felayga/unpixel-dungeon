@@ -27,7 +27,6 @@ package com.felayga.unpixeldungeon.levels.painters;
 import com.felayga.unpixeldungeon.Dungeon;
 import com.felayga.unpixeldungeon.items.Generator;
 import com.felayga.unpixeldungeon.items.Item;
-import com.felayga.unpixeldungeon.items.bags.TreasureChest;
 import com.felayga.unpixeldungeon.items.potions.PotionOfLevitation;
 import com.felayga.unpixeldungeon.levels.Level;
 import com.felayga.unpixeldungeon.levels.Room;
@@ -117,16 +116,7 @@ public class TrapsPainter extends Painter {
 				set( level, pos, Terrain.EMPTY );
 			}
 
-            float dropBonusChance = Roll.DropBonusChance(Dungeon.hero) / 2.0f;
-
-            TreasureChest chest = new TreasureChest();
-            level.drop(chest, pos);
-
-            chest.collect(prize(level));
-
-            while (Random.Float() < dropBonusChance) {
-                chest.collect(Generator.random());
-            }
+            level.drop(Generator.random(Generator.Category.CONTAINER), pos);
 		} else {
 			set( level, pos, Terrain.PEDESTAL );
 			level.drop( prize( level ), pos );

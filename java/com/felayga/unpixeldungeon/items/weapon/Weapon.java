@@ -49,181 +49,155 @@ import com.watabou.utils.Random;
 
 public class Weapon extends KindOfWeapon {
 
-	private static final int HITS_TO_KNOW    = 20;
+    private static final int HITS_TO_KNOW = 20;
 
-	private static final String TXT_IDENTIFY		=
-		"You are now familiar enough with your %s to identify it.";
-	private static final String TXT_INCOMPATIBLE	=
-		"Interaction of different types of magic has negated the enchantment on this weapon!";
-	private static final String TXT_TO_STRING		= "%s :%d";
+    private static final String TXT_IDENTIFY =
+            "You are now familiar enough with your %s to identify it.";
+    private static final String TXT_INCOMPATIBLE =
+            "Interaction of different types of magic has negated the enchantment on this weapon!";
+    private static final String TXT_TO_STRING = "%s :%d";
 
 
-	public long delay = GameTime.TICK;
+    public long delay = GameTime.TICK;
 
-	private int hitsToKnow = HITS_TO_KNOW;
+    private int hitsToKnow = HITS_TO_KNOW;
 
-	public Enchantment enchantment;
+    public Enchantment enchantment;
 
-	public Weapon(WeaponSkill weaponSkill, long delay, int damageMin, int damageMax) {
-		super(weaponSkill, delay, damageMin, damageMax);
+    public Weapon(WeaponSkill weaponSkill, long delay, int damageMin, int damageMax) {
+        super(weaponSkill, delay, damageMin, damageMax);
 
         pickupSound = Assets.SND_ITEM_BLADE;
-	}
+    }
 
-	@Override
-	public int proc( Char attacker, boolean thrown, Char defender, int damage ) {
-		damage = super.proc(attacker, thrown, defender, damage);
+    @Override
+    public int proc(Char attacker, boolean thrown, Char defender, int damage) {
+        damage = super.proc(attacker, thrown, defender, damage);
 
-		if (enchantment != null) {
-			enchantment.proc( this, attacker, defender, damage );
-		}
+        if (enchantment != null) {
+            enchantment.proc(this, attacker, defender, damage);
+        }
 
-		if (attacker instanceof Hero && !levelKnown) {
-			if (--hitsToKnow <= 0) {
-				levelKnown = true;
-				GLog.i( TXT_IDENTIFY, getDisplayName() );
-				Badges.validateItemLevelAquired( this );
-			}
-		}
+        if (attacker instanceof Hero && !levelKnown) {
+            if (--hitsToKnow <= 0) {
+                levelKnown = true;
+                GLog.i(TXT_IDENTIFY, getDisplayName());
+                Badges.validateItemLevelAquired(this);
+            }
+        }
 
-		return damage;
-	}
+        return damage;
+    }
 
-	private static final String UNFAMILIRIARITY	= "unfamiliarity";
-	private static final String ENCHANTMENT		= "enchantment";
-	//private static final String IMBUE			= "imbue";
-    private static final String ACCURACY        = "accuracy";
+    private static final String UNFAMILIRIARITY = "unfamiliarity";
+    private static final String ENCHANTMENT = "enchantment";
+    //private static final String IMBUE			= "imbue";
+    private static final String ACCURACY = "accuracy";
 
-	@Override
-	public void storeInBundle( Bundle bundle ) {
-		super.storeInBundle( bundle );
-		bundle.put(UNFAMILIRIARITY, hitsToKnow);
-		bundle.put( ENCHANTMENT, enchantment );
-        bundle.put( ACCURACY, accuracy);
-		//bundle.put( IMBUE, imbue );
-	}
-	
-	@Override
-	public void restoreFromBundle( Bundle bundle ) {
-		super.restoreFromBundle( bundle );
-		if ((hitsToKnow = bundle.getInt( UNFAMILIRIARITY )) == 0) {
-			hitsToKnow = HITS_TO_KNOW;
-		}
-		enchantment = (Enchantment)bundle.get( ENCHANTMENT );
-		//imbue = bundle.getEnum( IMBUE, Imbue.class );
+    @Override
+    public void storeInBundle(Bundle bundle) {
+        super.storeInBundle(bundle);
+        bundle.put(UNFAMILIRIARITY, hitsToKnow);
+        bundle.put(ENCHANTMENT, enchantment);
+        bundle.put(ACCURACY, accuracy);
+        //bundle.put( IMBUE, imbue );
+    }
+
+    @Override
+    public void restoreFromBundle(Bundle bundle) {
+        super.restoreFromBundle(bundle);
+        if ((hitsToKnow = bundle.getInt(UNFAMILIRIARITY)) == 0) {
+            hitsToKnow = HITS_TO_KNOW;
+        }
+        enchantment = (Enchantment) bundle.get(ENCHANTMENT);
+        //imbue = bundle.getEnum( IMBUE, Imbue.class );
         accuracy = bundle.getInt(ACCURACY);
-	}
+    }
 
-    /*
-	@Override
-	public float speedFactor( Hero hero ) {
 
-		int encumrance = STR - hero.STR();
-		if (this instanceof MissileWeapon && hero.heroClass == HeroClass.HUNTRESS) {
-			encumrance -= 2;
-		}
+    @Override
+    public String getName() {
+        String name = super.getName();
 
-		float DLY = this.DLY * (imbue == Imbue.LIGHT ? 0.667f : (imbue == Imbue.HEAVY ? 1.667f : 1.0f));
+        if (enchantment != null) {
+            name = enchantment.name(name);
+        }
 
-		int bonus = 0;
-		for (Buff buff : hero.buffs(RingOfFuror.Furor.class)) {
-			bonus += ((RingOfFuror.Furor)buff).level;
-		}
+        return name;
+    }
 
-		DLY = (float)(0.25 + (DLY - 0.25)*Math.pow(0.8, bonus));
+    @Override
+    public String getDisplayName() {
+        String name = super.getDisplayName();
 
-		return
-				(encumrance > 0 ? (float)(DLY * Math.pow( 1.2, encumrance )) : DLY);
-	}
-	*/
+        if (hasLevels && levelKnown) {
+            if (level >= 0) {
+                name = "+" + level + " " + name;
+            } else {
+                name = level + " " + name;
+            }
+        }
 
-	
-	@Override
-	public String getName() {
-		String name = super.getName();
+        return name;
+    }
 
-		if (enchantment != null)
-		{
-			name = enchantment.name(name);
-		}
+    public Weapon enchant(Enchantment ench) {
+        enchantment = ench;
+        return this;
+    }
 
-		return name;
-	}
+    public Weapon enchant() {
+        Class<? extends Enchantment> oldEnchantment = enchantment != null ? enchantment.getClass() : null;
+        Enchantment ench = Enchantment.random();
+        while (ench.getClass() == oldEnchantment) {
+            ench = Enchantment.random();
+        }
 
-	@Override
-	public String getDisplayName()
-	{
-		String name = super.getDisplayName();
+        return enchant(ench);
+    }
 
-		if (hasLevels && levelKnown) {
-			if (level >= 0) {
-				name = "+" + level + " " + name;
-			} else {
-				name = level + " " + name;
-			}
-		}
+    public boolean isEnchanted() {
+        return enchantment != null;
+    }
 
-		return name;
-	}
-	
-	public Weapon enchant( Enchantment ench ) {
-		enchantment = ench;
-		return this;
-	}
+    @Override
+    public ItemSprite.Glowing glowing() {
+        return enchantment != null ? enchantment.glowing() : null;
+    }
 
-	public Weapon enchant() {
-		Class<? extends Enchantment> oldEnchantment = enchantment != null ? enchantment.getClass() : null;
-		Enchantment ench = Enchantment.random();
-		while (ench.getClass() == oldEnchantment) {
-			ench = Enchantment.random();
-		}
+    //FIXME: most enchantment names are pretty broken, should refactor
+    public static abstract class Enchantment implements Bundlable {
+        private static final Class<?>[] enchants = new Class<?>[]{
+                Fire.class, Poison.class, Death.class, Paralysis.class, Leech.class,
+                Slow.class, Shock.class, Instability.class, Horror.class, Luck.class};
+        private static final float[] chances = new float[]{10, 10, 1, 2, 1, 2, 6, 3, 2, 2};
 
-		return enchant( ench );
-	}
+        public abstract boolean proc(Weapon weapon, Char attacker, Char defender, int damage);
 
-	public boolean isEnchanted() {
-		return enchantment != null;
-	}
+        public String name(String weaponName) {
+            return weaponName;
+        }
 
-	@Override
-	public ItemSprite.Glowing glowing() {
-		return enchantment != null ? enchantment.glowing() : null;
-	}
+        @Override
+        public void restoreFromBundle(Bundle bundle) {
+        }
 
-	//FIXME: most enchantment names are pretty broken, should refactor
-	public static abstract class Enchantment implements Bundlable {
+        @Override
+        public void storeInBundle(Bundle bundle) {
+        }
 
-		private static final Class<?>[] enchants = new Class<?>[]{
-			Fire.class, Poison.class, Death.class, Paralysis.class, Leech.class,
-			Slow.class, Shock.class, Instability.class, Horror.class, Luck.class };
-		private static final float[] chances= new float[]{ 10, 10, 1, 2, 1, 2, 6, 3, 2, 2 };
-			
-		public abstract boolean proc( Weapon weapon, Char attacker, Char defender, int damage );
-		
-		public String name( String weaponName ) {
-			return weaponName;
-		}
-		
-		@Override
-		public void restoreFromBundle( Bundle bundle ) {
-		}
+        public ItemSprite.Glowing glowing() {
+            return ItemSprite.Glowing.WHITE;
+        }
 
-		@Override
-		public void storeInBundle( Bundle bundle ) {
-		}
-		
-		public ItemSprite.Glowing glowing() {
-			return ItemSprite.Glowing.WHITE;
-		}
-		
-		@SuppressWarnings("unchecked")
-		public static Enchantment random() {
-			try {
-				return ((Class<Enchantment>)enchants[ Random.chances( chances ) ]).newInstance();
-			} catch (Exception e) {
-				return null;
-			}
-		}
-		
-	}
+        @SuppressWarnings("unchecked")
+        public static Enchantment random() {
+            try {
+                return ((Class<Enchantment>) enchants[Random.chances(chances)]).newInstance();
+            } catch (Exception e) {
+                return null;
+            }
+        }
+
+    }
 }

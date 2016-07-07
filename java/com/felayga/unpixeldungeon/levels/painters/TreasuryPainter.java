@@ -24,8 +24,9 @@
  */
 package com.felayga.unpixeldungeon.levels.painters;
 
+import com.felayga.unpixeldungeon.items.Generator;
 import com.felayga.unpixeldungeon.items.Gold;
-import com.felayga.unpixeldungeon.items.bags.TreasureChest;
+import com.felayga.unpixeldungeon.items.bags.Bag;
 import com.felayga.unpixeldungeon.levels.Level;
 import com.felayga.unpixeldungeon.levels.Room;
 import com.felayga.unpixeldungeon.levels.Terrain;
@@ -47,9 +48,9 @@ public class TreasuryPainter extends Painter {
 				pos = room.random();
 			} while (level.map[pos] != Terrain.EMPTY || level.heaps.get( pos ) != null);
 
-			TreasureChest chest = new TreasureChest();
-			chest.collect(new Gold().random());
-			level.drop(chest, pos);
+            Bag chest = (Bag)Generator.random(Generator.Category.CONTAINER);
+            chest.collect(new Gold().random());
+            level.drop(chest, pos);
 			//level.drop( new Gold().random(), pos ).type = (Random.Int(20) == 0 && heapType == Heap.Type.CHEST ? Heap.Type.MIMIC : heapType);
 		}
 		

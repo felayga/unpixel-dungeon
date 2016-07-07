@@ -36,21 +36,21 @@ public class ItemSpriteSheet {
     private static final int ROW_WEAPONRANGED   = 4 * ROWSIZE;
 	private static final int ROW_WEAPONAMMO     = 5 * ROWSIZE;
 	private static final int ROW_WAND           = 6 * ROWSIZE;
-    private static final int ROW_ARMOR          = 7 * ROWSIZE;
-	private static final int ROW_RING           = 8 * ROWSIZE;
-	private static final int ROW_ARTIFACT       = 10 * ROWSIZE;
-	private static final int ROW_SCROLL         = 12 * ROWSIZE;
-	private static final int ROW_POTION         = 14 * ROWSIZE;
-	private static final int ROW_SEED           = 16 * ROWSIZE;
-	private static final int ROW_FOOD           = 17 * ROWSIZE;
-	private static final int ROW_QUEST          = 18 * ROWSIZE;
-	private static final int ROW_TOOLS          = 19 * ROWSIZE;
-	private static final int ROW_GEMSTONE       = 20 * ROWSIZE;
-	private static final int ROW_BOOK           = 21 * ROWSIZE;
-	private static final int ROW_SPELL          = 24 * ROWSIZE;
-	private static final int ROW_BOOTS          = 25 * ROWSIZE;
-	private static final int ROW_GLOVES         = 26 * ROWSIZE;
-	private static final int ROW_HELMET         = 27 * ROWSIZE;
+    private static final int ROW_ARMOR          = 8 * ROWSIZE;
+	private static final int ROW_RING           = 9 * ROWSIZE;
+	private static final int ROW_ARTIFACT       = 11 * ROWSIZE;
+	private static final int ROW_SCROLL         = 13 * ROWSIZE;
+	private static final int ROW_POTION         = 15 * ROWSIZE;
+	private static final int ROW_SEED           = 17 * ROWSIZE;
+	private static final int ROW_FOOD           = 18 * ROWSIZE;
+	private static final int ROW_QUEST          = 19 * ROWSIZE;
+	private static final int ROW_TOOLS          = 20 * ROWSIZE;
+	private static final int ROW_GEMSTONE       = 21 * ROWSIZE;
+	private static final int ROW_BOOK           = 22 * ROWSIZE;
+	private static final int ROW_SPELL          = 25 * ROWSIZE;
+	private static final int ROW_BOOTS          = 26 * ROWSIZE;
+	private static final int ROW_GLOVES         = 27 * ROWSIZE;
+	private static final int ROW_HELMET         = 28 * ROWSIZE;
 
 	//Row One: Items which can't be obtained
 	//null warning occupies space 0, should only show up if there's a bug.
@@ -67,6 +67,9 @@ public class ItemSpriteSheet {
 	public static final int GRAVE			= ROW_HEAPS + 8;
 	public static final int CHEST			= ROW_HEAPS + 9;
 	public static final int CHEST_LOCKED	= ROW_HEAPS + 10;
+    public static final int LARGEBOX        = ROW_HEAPS + 11;
+    public static final int LARGEBOX_LOCKED = ROW_HEAPS + 12;
+    public static final int ICEBOX          = ROW_HEAPS + 13;
 
 	// Placeholders
 	public static final int WEAPON	= ROW_PLACEHOLDERS + 0;

@@ -61,7 +61,7 @@ public class MerchantsBeacon extends Item {
 	public boolean execute(Hero hero, String action) {
 		if (action.equals(AC_USE)) {
 			hero.belongings.remove(this, 1);
-			Shopkeeper.sell();
+			//Shopkeeper.sell();
 			Sample.INSTANCE.play( Assets.SND_BEACON );
 
 			return false;

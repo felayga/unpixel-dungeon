@@ -90,7 +90,7 @@ public class UnlockingTool extends Tool implements ITool {
             if (heapItem != null && heapItem instanceof Bag) {
                 Bag bag = (Bag)heapItem;
 
-                hero.curAction = new HeroAction.UnlockBag(this, bag, cell);
+                hero.curAction = new HeroAction.UseItem.UnlockBag(this, bag, cell);
                 hero.motivate(true);
                 return;
             }

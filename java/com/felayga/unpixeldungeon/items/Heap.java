@@ -43,6 +43,7 @@ import com.felayga.unpixeldungeon.items.potions.Potion;
 import com.felayga.unpixeldungeon.items.potions.PotionOfExperience;
 import com.felayga.unpixeldungeon.items.scrolls.Scroll;
 import com.felayga.unpixeldungeon.mechanics.BUCStatus;
+import com.felayga.unpixeldungeon.mechanics.IDecayable;
 import com.felayga.unpixeldungeon.mechanics.MagicType;
 import com.felayga.unpixeldungeon.plants.Plant.Seed;
 import com.felayga.unpixeldungeon.sprites.ItemSprite;
@@ -491,7 +492,30 @@ public class Heap implements Bundlable, IBag {
 			return null;
 		}
 	}
-	
+
+    public long decay() {
+        return 0;
+    }
+
+    public boolean decay(long currentTime, boolean updateTime, boolean fixTime) {
+        boolean updated = false;
+        Iterator<Item> iterator = iterator(false);
+
+        while (iterator.hasNext()) {
+            Item item = iterator.next();
+
+            if (item instanceof IDecayable) {
+                IDecayable decayable = (IDecayable) item;
+                if (decayable.decay(currentTime, updateTime, fixTime)) {
+                    iterator.remove();
+                    updated = true;
+                }
+            }
+        }
+
+        return updated;
+    }
+
 	public static void burnFX( int pos ) {
 		CellEmitter.get( pos ).burst( ElmoParticle.FACTORY, 6 );
 		Sample.INSTANCE.play(Assets.SND_BURNING);

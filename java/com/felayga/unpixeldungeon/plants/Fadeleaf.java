@@ -34,6 +34,7 @@ import com.felayga.unpixeldungeon.effects.Speck;
 import com.felayga.unpixeldungeon.items.potions.PotionOfMindVision;
 import com.felayga.unpixeldungeon.items.scrolls.ScrollOfTeleportation;
 import com.felayga.unpixeldungeon.levels.Level;
+import com.felayga.unpixeldungeon.mechanics.Constant;
 import com.felayga.unpixeldungeon.sprites.ItemSpriteSheet;
 
 public class Fadeleaf extends Plant {
@@ -54,7 +55,7 @@ public class Fadeleaf extends Plant {
 		if (ch instanceof Hero) {
 
 			if (ScrollOfTeleportation.canTeleport(ch)) {
-				ScrollOfTeleportation.doTeleport(ch);
+				ScrollOfTeleportation.doTeleport(ch, Constant.Position.RANDOM);
 			}
 			((Hero)ch).curAction = null;
 			

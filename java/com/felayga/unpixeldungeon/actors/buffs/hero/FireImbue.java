@@ -64,7 +64,7 @@ public class FireImbue extends Buff {
 	@Override
 	public boolean act() {
 		if (Dungeon.level.map[target.pos] == Terrain.GRASS) {
-			Dungeon.level.set(target.pos, Terrain.EMBERS);
+			Dungeon.level.set(target.pos, Terrain.EMBERS, true);
 			GameScene.updateMap(target.pos);
 		}
 

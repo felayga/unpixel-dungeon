@@ -250,7 +250,7 @@ public class CavesBossLevel extends Level {
             GameScene.add(boss);
             */
 
-            set(arenaDoor, Terrain.WALL);
+            set(arenaDoor, Terrain.WALL, true);
             GameScene.updateMap(arenaDoor);
             Dungeon.observe();
 
@@ -270,7 +270,7 @@ public class CavesBossLevel extends Level {
 
             CellEmitter.get(arenaDoor).start(Speck.factory(Speck.ROCK), 0.07f, 10);
 
-            set(arenaDoor, Terrain.EMPTY_DECO);
+            set(arenaDoor, Terrain.EMPTY_DECO, true);
             GameScene.updateMap(arenaDoor);
             Dungeon.observe();
         }
