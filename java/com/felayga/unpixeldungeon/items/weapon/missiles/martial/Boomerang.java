@@ -41,7 +41,7 @@ public class Boomerang extends MissileWeapon {
 		super(WeaponSkill.Martial, GameTime.TICK, 1, 5, 1, true, AmmunitionType.None);
 
 		name = "boomerang";
-		image = ItemSpriteSheet.BOOMERANG;
+		image = ItemSpriteSheet.MISSILE_BOOMERANG;
 		
 		//STR = 10;
 		

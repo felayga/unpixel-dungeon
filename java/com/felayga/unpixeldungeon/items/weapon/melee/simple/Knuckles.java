@@ -33,7 +33,7 @@ public class Knuckles extends SimpleMeleeWeapon {
 		super(GameTime.TICK / 2, 1, 4);
 
 		name = "knuckleduster";
-		image = ItemSpriteSheet.KNUCKLEDUSTER;
+		image = ItemSpriteSheet.MELEE_KNUCKLEDUSTER;
 	}
 	
 	@Override

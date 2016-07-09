@@ -29,8 +29,9 @@ import com.felayga.unpixeldungeon.Dungeon;
 import com.felayga.unpixeldungeon.actors.Char;
 import com.felayga.unpixeldungeon.actors.buffs.hero.Encumbrance;
 import com.felayga.unpixeldungeon.actors.mobs.Mob;
-import com.felayga.unpixeldungeon.items.KindOfWeapon;
 import com.felayga.unpixeldungeon.items.scrolls.ScrollOfRage;
+import com.felayga.unpixeldungeon.items.weapon.IWeapon;
+import com.felayga.unpixeldungeon.items.weapon.Weapon;
 import com.felayga.unpixeldungeon.mechanics.CorpseEffect;
 import com.felayga.unpixeldungeon.mechanics.GameTime;
 import com.felayga.unpixeldungeon.mechanics.MagicType;
@@ -66,7 +67,7 @@ public class Shrieker extends Mob {
     }
 
     @Override
-    public boolean attack(KindOfWeapon weapon, boolean ranged, Char enemy) {
+    public boolean attack(IWeapon weapon, boolean ranged, Char enemy) {
         shriek();
         return false;
     }

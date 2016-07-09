@@ -33,20 +33,56 @@ import com.felayga.unpixeldungeon.actors.hero.Hero;
 import com.felayga.unpixeldungeon.actors.hero.HeroAction;
 import com.felayga.unpixeldungeon.actors.mobs.Mob;
 import com.felayga.unpixeldungeon.items.armor.Armor;
+import com.felayga.unpixeldungeon.items.weapon.IWeapon;
 import com.felayga.unpixeldungeon.levels.Level;
+import com.felayga.unpixeldungeon.mechanics.AttributeType;
 import com.felayga.unpixeldungeon.mechanics.Constant;
 import com.felayga.unpixeldungeon.mechanics.GameTime;
+import com.felayga.unpixeldungeon.mechanics.MagicType;
+import com.felayga.unpixeldungeon.mechanics.WeaponSkill;
 import com.felayga.unpixeldungeon.scenes.CellSelector;
 import com.felayga.unpixeldungeon.scenes.GameScene;
 import com.felayga.unpixeldungeon.sprites.hero.HeroSprite;
 import com.felayga.unpixeldungeon.utils.GLog;
+import com.watabou.utils.Random;
 
 import java.util.ArrayList;
 
 /**
  * Created by HELLO on 3/23/2016.
  */
-public class Boots extends Armor {
+public class Boots extends Armor implements IWeapon {
+    //region IWeapon
+
+    public WeaponSkill skillRequired() {
+        return WeaponSkill.None;
+    }
+
+    public AttributeType accuracyAttribute() {
+        return AttributeType.DEXCHA;
+    }
+    public AttributeType damageAttribute() {
+        return AttributeType.STRCON;
+    }
+
+    public MagicType damageType() {
+        return MagicType.Mundane;
+    }
+
+    public int accuracyModifier() {
+        return level;
+    }
+
+    public int damageRoll() {
+        return Random.IntRange(0, 2);
+    }
+
+    public int proc(Char attacker, boolean thrown, Char defender, int damage) {
+        return damage;
+    }
+
+    //endregion
+
     public Boots(int armor, int armorMagic, long speedModifier) {
         super(armor, 32767, armorMagic, speedModifier, GameTime.TICK / 2, 0);
 
@@ -131,7 +167,7 @@ public class Boots extends Armor {
     public void kick(Hero hero, int target) {
         Char ch;
         if (Level.fieldOfView[target] && (ch = Actor.findChar(target)) instanceof Mob) {
-            hero.curAction = new HeroAction.UseItem.Kick(this, ch);
+            hero.curAction = new HeroAction.Attack(ch, this);
         } else {
             hero.curAction = new HeroAction.UseItem.Kick(this, target);
         }

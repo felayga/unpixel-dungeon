@@ -45,7 +45,7 @@ public class Javelin extends MissileWeapon {
 		super(WeaponSkill.Martial, GameTime.TICK, 2, 15, number, true, AmmunitionType.None);
 
 		name = "javelin";
-		image = ItemSpriteSheet.JAVELIN;
+		image = ItemSpriteSheet.MISSILE_JAVELIN;
 
 		//STR = 15;
         price = 12;

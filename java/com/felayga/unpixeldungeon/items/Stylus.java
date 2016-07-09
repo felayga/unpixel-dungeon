@@ -69,7 +69,7 @@ public class Stylus extends Item {
 	public boolean execute( Hero hero, String action ) {
 		if (action.equals(AC_INSCRIBE)) {
 			curUser = hero;
-			GameScene.selectItem( itemSelector, WndBackpack.Mode.ARMOR, TXT_SELECT_ARMOR );
+			GameScene.selectItem( itemSelector, Armor.class, TXT_SELECT_ARMOR );
 
 			return false;
 		} else {

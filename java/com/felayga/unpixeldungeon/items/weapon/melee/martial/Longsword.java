@@ -32,7 +32,7 @@ public class Longsword extends MartialMeleeWeapon {
 		super( GameTime.TICK, 1, 8 );
 
 		name = "longsword";
-		image = ItemSpriteSheet.LONG_SWORD;
+		image = ItemSpriteSheet.MELEE_LONG_SWORD;
 	}
 	
 	@Override

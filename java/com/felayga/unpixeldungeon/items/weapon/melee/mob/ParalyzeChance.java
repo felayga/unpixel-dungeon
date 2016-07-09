@@ -39,9 +39,9 @@ public class ParalyzeChance extends MeleeMobAttack {
     }
 
     @Override
-    public int proc(Char attacker, boolean thrown, Char target, int damage)
+    public int proc(Char attacker, boolean ranged, Char target, int damage)
     {
-        damage = super.proc(attacker, thrown, target, damage);
+        damage = super.proc(attacker, ranged, target, damage);
 
         if (Random.Int( 5 ) == 0) {
             Buff.prolong( target, Paralysis.class, 1 );

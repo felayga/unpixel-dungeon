@@ -71,7 +71,6 @@ public class UnstableSpellbook extends Artifact_old {
 	private final ArrayList<String> scrolls = new ArrayList<String>();
 
 	protected String inventoryTitle = "Select a scroll";
-	protected WndBackpack.Mode mode = WndBackpack.Mode.SCROLL;
 
 	public UnstableSpellbook() {
 		super();
@@ -122,7 +121,7 @@ public class UnstableSpellbook extends Artifact_old {
 			}
 			return false;
 		} else if (action.equals( AC_ADD )) {
-			GameScene.selectItem(itemSelector, mode, inventoryTitle);
+			GameScene.selectItem(itemSelector, Scroll.class, inventoryTitle);
 			return false;
 		} else {
 			return super.execute(hero, action);

@@ -44,6 +44,7 @@ import com.felayga.unpixeldungeon.items.bags.WandHolster;
 import com.felayga.unpixeldungeon.items.food.Food;
 import com.felayga.unpixeldungeon.items.potions.Potion;
 import com.felayga.unpixeldungeon.items.scrolls.Scroll;
+import com.felayga.unpixeldungeon.items.spells.Spell;
 import com.felayga.unpixeldungeon.items.wands.Wand;
 import com.felayga.unpixeldungeon.items.weapon.melee.MeleeWeapon;
 import com.felayga.unpixeldungeon.items.weapon.missiles.martial.Boomerang;
@@ -85,6 +86,7 @@ public class WndBag extends WndTabbed {
     private Listener listener;
     private WndBackpack.Mode mode;
     private String title;
+    private Class<?> classMatch;
 
     private int nCols;
     private int nRows;
@@ -96,20 +98,23 @@ public class WndBag extends WndTabbed {
     private static WndBackpack.Mode lastMode;
     private static IBag lastBag;
     private static int lastPos;
+    private static Class<?> lastClassMatch;
 
     private int pos;
 
-    public WndBag(IBag bag, Listener listener, WndBackpack.Mode mode, String title, int pos) {
+    public WndBag(IBag bag, Listener listener, WndBackpack.Mode mode, Class<?> classMatch, String title, int pos) {
         super();
 
         this.listener = listener;
         this.mode = mode;
         this.title = title;
         this.pos = pos;
+        this.classMatch = classMatch;
 
         lastMode = mode;
         lastBag = bag;
         lastPos = pos;
+        lastClassMatch = classMatch;
 
         nCols = ShatteredPixelDungeon.landscape() ? COLS_L : COLS_P;
         nRows = (Belongings.BACKPACK_SIZE + 12) / nCols + ((Belongings.BACKPACK_SIZE + 12) % nCols > 0 ? 1 : 0);
@@ -223,7 +228,7 @@ public class WndBag extends WndTabbed {
             if (lastBag instanceof Heap && lastBag.size() < 1) {
             }
             else {
-                GameScene.show(new WndBag(lastBag, null, lastMode, null, lastPos));
+                GameScene.show(new WndBag(lastBag, null, lastMode, lastClassMatch, null, lastPos));
             }
         }
     };
@@ -235,7 +240,7 @@ public class WndBag extends WndTabbed {
                 item = item.parent().remove(item);
                 lastBag.collect(item);
             }
-            GameScene.show(new WndBag(lastBag, null, lastMode, null, lastPos));
+            GameScene.show(new WndBag(lastBag, null, lastMode, lastClassMatch, null, lastPos));
         }
     };
 
@@ -304,7 +309,7 @@ public class WndBag extends WndTabbed {
     @Override
     protected void onClick(Tab tab) {
         hide();
-        GameScene.show(new WndBag(((BagTab) tab).bag, listener, mode, title, pos));
+        GameScene.show(new WndBag(((BagTab) tab).bag, listener, mode, classMatch, title, pos));
     }
 
     @Override
@@ -423,22 +428,7 @@ public class WndBag extends WndTabbed {
                 if (item.getDisplayName() == null) {
                     enable(false);
                 } else {
-                    enable(
-                            mode == WndBackpack.Mode.FOR_SALE && (item.price() > 0) && (!item.isEquipped(Dungeon.hero) || item.bucStatus() != BUCStatus.Cursed) ||
-                                    mode == WndBackpack.Mode.UPGRADEABLE && item.isUpgradable() ||
-                                    mode == WndBackpack.Mode.UNIDENTIFED && !item.isIdentified() ||
-                                    mode == WndBackpack.Mode.QUICKSLOT && (item.defaultAction != null) ||
-                                    mode == WndBackpack.Mode.WEAPON && (item instanceof MeleeWeapon || item instanceof Boomerang) ||
-                                    mode == WndBackpack.Mode.ARMOR && (item instanceof Armor) ||
-                                    mode == WndBackpack.Mode.ENCHANTABLE && (item instanceof MeleeWeapon || item instanceof Boomerang || item instanceof Armor) ||
-                                    mode == WndBackpack.Mode.WAND && (item instanceof Wand) ||
-                                    mode == WndBackpack.Mode.SEED && (item instanceof Seed) ||
-                                    mode == WndBackpack.Mode.FOOD && (item instanceof Food) ||
-                                    mode == WndBackpack.Mode.POTION && (item instanceof Potion) ||
-                                    mode == WndBackpack.Mode.SCROLL && (item instanceof Scroll) ||
-                                    mode == WndBackpack.Mode.EQUIPMENT && (item instanceof EquippableItem) ||
-                                    mode == WndBackpack.Mode.ALL
-                    );
+                    enable(WndBackpack.Mode.Qualify(mode, item, classMatch));
                 }
             } else {
                 bg.color(NORMAL);

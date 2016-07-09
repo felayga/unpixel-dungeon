@@ -66,7 +66,6 @@ public class AlchemistsToolkit extends Artifact_old {
 	private int seedsToPotion = 0;
 
 	protected String inventoryTitle = "Select a potion";
-	protected WndBackpack.Mode mode = WndBackpack.Mode.POTION;
 
 	public AlchemistsToolkit() {
 		super();
@@ -93,7 +92,7 @@ public class AlchemistsToolkit extends Artifact_old {
 	@Override
 	public boolean execute(Hero hero, String action ) {
 		if (action.equals(AC_BREW)){
-			GameScene.selectItem(itemSelector, mode, inventoryTitle);
+			GameScene.selectItem(itemSelector, Potion.class, inventoryTitle);
 
 			return true;
 		} else {

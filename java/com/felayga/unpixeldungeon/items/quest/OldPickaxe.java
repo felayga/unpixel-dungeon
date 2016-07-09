@@ -64,7 +64,7 @@ public class OldPickaxe extends Weapon {
 		super(WeaponSkill.None, GameTime.TICK, 3, 12);
 
 		name = "pickaxe";
-		image = ItemSpriteSheet.PICKAXE;
+		image = ItemSpriteSheet.TOOL_PICKAXE;
 		
 		unique = true;
 		
@@ -149,8 +149,8 @@ public class OldPickaxe extends Weapon {
 	}
 	
 	@Override
-	public int proc( Char attacker, boolean thrown, Char defender, int damage ) {
-		damage = super.proc(attacker, thrown, defender, damage);
+	public int proc( Char attacker, boolean ranged, Char defender, int damage ) {
+		damage = super.proc(attacker, ranged, defender, damage);
 
 		/*
 		if (!bloodStained && defender instanceof Bat && (defender.HP <= damage)) {

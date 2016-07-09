@@ -39,9 +39,9 @@ public class AcidChance extends MeleeMobAttack {
     }
 
     @Override
-    public int proc(Char attacker, boolean thrown, Char target, int damage)
+    public int proc(Char attacker, boolean ranged, Char target, int damage)
     {
-        damage = super.proc(attacker, thrown, target, damage);
+        damage = super.proc(attacker, ranged, target, damage);
 
         if (Random.Int( 3 ) == 0) {
             Buff.affect( target, Ooze.class );

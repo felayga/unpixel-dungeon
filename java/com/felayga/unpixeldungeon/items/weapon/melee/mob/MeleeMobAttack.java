@@ -45,7 +45,7 @@ public class MeleeMobAttack extends MeleeWeapon {
         this.damageType = damageType;
 
         name = "meleemobattack";
-        image = ItemSpriteSheet.WEAPON;
+        image = ItemSpriteSheet.PLACEHOLDER_WEAPON;
         droppable = false;
     }
 

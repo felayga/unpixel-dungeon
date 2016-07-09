@@ -45,9 +45,9 @@ public class CrippleChance extends MeleeMobAttack {
     }
 
     @Override
-    public int proc(Char attacker, boolean thrown, Char target, int damage)
+    public int proc(Char attacker, boolean ranged, Char target, int damage)
     {
-        damage = super.proc(attacker, thrown, target, damage);
+        damage = super.proc(attacker, ranged, target, damage);
 
         if ((chance > 1 && Random.Int(chance) == 0) || chance <= 1) {
             Buff.prolong(target, Cripple.class, duration);

@@ -65,7 +65,9 @@ public enum Icons {
 	TREASURECHEST,
     FLOORHEAP,
 	BUTTON_LEFT,
-	BUTTON_RIGHT;
+	BUTTON_RIGHT,
+    LARGEBOX,
+    ICEBOX;
 
 	public Image get() {
 		return get( this );
@@ -185,6 +187,12 @@ public enum Icons {
 			case BUTTON_RIGHT:
 				icon.frame(icon.texture.uvRect(12, 64, 24, 76));
 				break;
+            case LARGEBOX:
+                icon.frame(icon.texture.uvRect(93, 53, 103, 63));
+                break;
+            case ICEBOX:
+                icon.frame(icon.texture.uvRect(103, 53, 113, 63));
+                break;
 		}
 		return icon;
 	}

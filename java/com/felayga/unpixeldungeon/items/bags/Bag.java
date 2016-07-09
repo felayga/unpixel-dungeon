@@ -150,10 +150,10 @@ public class Bag extends Item implements Iterable<Item>, IBag {
 		if (action.equals(AC_OPEN)) {
             if (parent() instanceof Heap) {
                 Heap heap = (Heap)parent();
-                GameScene.show(new WndBag(this, null, WndBackpack.Mode.ALL, null, heap.pos));
+                GameScene.show(new WndBag(this, null, WndBackpack.Mode.ALL, null, null, heap.pos));
             }
             else {
-                GameScene.show(new WndBag(this, null, WndBackpack.Mode.ALL, null, Constant.Position.NONE));
+                GameScene.show(new WndBag(this, null, WndBackpack.Mode.ALL, null, null, Constant.Position.NONE));
             }
 
 			return false;

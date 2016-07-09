@@ -39,7 +39,7 @@ public class Shuriken extends MissileWeapon {
 		super(WeaponSkill.Martial, GameTime.TICK/2, 2, 6, quantity, true, AmmunitionType.None);
 
 		name = "shuriken";
-		image = ItemSpriteSheet.SHURIKEN;
+		image = ItemSpriteSheet.MISSILE_SHURIKEN;
 
 		//STR = 13;
         price = 6;

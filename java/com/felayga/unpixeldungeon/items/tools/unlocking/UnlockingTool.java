@@ -48,7 +48,7 @@ public class UnlockingTool extends Tool implements ITool {
 
     public UnlockingTool()
     {
-        super();
+        super(true, false);
 
         defaultAction = Constant.Action.APPLY;
     }
@@ -97,6 +97,10 @@ public class UnlockingTool extends Tool implements ITool {
         }
 
         GLog.n("Your " + NAME + " can't be applied there.");
+    }
+
+    @Override
+    public void apply(Hero hero, Item item) {
     }
 
 }

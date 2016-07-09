@@ -33,7 +33,7 @@ public class Spear extends SimpleMeleeWeapon {
 		super( GameTime.TICK, 1, 8 );
 
 		name = "spear";
-		image = ItemSpriteSheet.SPEAR;
+		image = ItemSpriteSheet.MELEE_SPEAR;
         pickupSound = Assets.SND_ITEM_WOOD;
 	}
 	

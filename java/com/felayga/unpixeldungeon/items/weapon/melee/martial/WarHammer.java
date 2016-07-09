@@ -33,7 +33,7 @@ public class WarHammer extends MartialMeleeWeapon {
 		super( GameTime.TICK, 1, 8 );
 
 		name = "war hammer";
-		image = ItemSpriteSheet.WAR_HAMMER;
+		image = ItemSpriteSheet.MELEE_WAR_HAMMER;
         pickupSound = Assets.SND_ITEM_WOOD;
 	}
 	

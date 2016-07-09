@@ -33,7 +33,7 @@ public class Mace extends SimpleMeleeWeapon {
 		super( GameTime.TICK, 1, 6 );
 
 		name = "mace";
-		image = ItemSpriteSheet.MACE;
+		image = ItemSpriteSheet.MELEE_MACE;
         pickupSound = Assets.SND_ITEM_WOOD;
 	}
 	

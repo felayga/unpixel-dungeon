@@ -45,6 +45,7 @@ import com.felayga.unpixeldungeon.items.rings.RingOfWealth;
 import com.felayga.unpixeldungeon.items.scrolls.ScrollOfMagicMapping;
 import com.felayga.unpixeldungeon.items.scrolls.ScrollOfTeleportation;
 import com.felayga.unpixeldungeon.items.scrolls.ScrollOfUpgrade;
+import com.felayga.unpixeldungeon.items.tools.CanningKit;
 import com.felayga.unpixeldungeon.items.tools.digging.Pickaxe;
 import com.felayga.unpixeldungeon.items.wands.WandOfMagicMissile;
 import com.felayga.unpixeldungeon.items.weapon.ammunition.simple.Rock;
@@ -235,9 +236,8 @@ public enum HeroClass {
         //hero.belongings.collect(new Sling());
         //hero.belongings.collect(new Rock(5));
 
-        IceBox icebox = new IceBox();
-        //icebox.collect(new Corpse(new Newt()));
-        hero.belongings.collect(icebox.random());
+        hero.belongings.collect(new IceBox().random());
+        hero.belongings.collect(new CanningKit());
 	}
 
 	private static void initWarrior( Hero hero ) {

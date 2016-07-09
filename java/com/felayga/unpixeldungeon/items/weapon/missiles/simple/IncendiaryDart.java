@@ -50,7 +50,7 @@ public class IncendiaryDart extends MissileWeapon {
 		super(WeaponSkill.Simple, GameTime.TICK, 1, 2, number, true, AmmunitionType.None);
 
 		name = "incendiary dart";
-		image = ItemSpriteSheet.INCENDIARY_DART;
+		image = ItemSpriteSheet.MISSILE_INCENDIARY_DART;
 
 		//STR = 12;
         price = 5;

@@ -28,11 +28,15 @@ import com.felayga.unpixeldungeon.mechanics.GameTime;
 import com.felayga.unpixeldungeon.sprites.ItemSpriteSheet;
 
 public class Dagger extends SimpleMeleeWeapon {
-	public Dagger() {
-		super( GameTime.TICK, 1, 4 );
+    public Dagger() {
+        this(GameTime.TICK, 1, 4);
+    }
+
+	public Dagger(long delay, int damageMin, int damageMax) {
+		super(delay, damageMin, damageMax);
 
 		name = "dagger";
-		image = ItemSpriteSheet.DAGGER;
+		image = ItemSpriteSheet.MELEE_DAGGER;
 	}
 	
 	@Override

@@ -38,7 +38,7 @@ public class LargeBox extends LargeChest {
 
         name = "large box";
         image = ItemSpriteSheet.LARGEBOX;
-        tabIcon = Icons.TREASURECHEST;
+        tabIcon = Icons.LARGEBOX;
 
         size = 36;
         priority = 8;

@@ -72,19 +72,19 @@ public class ItemSpriteSheet {
     public static final int ICEBOX          = ROW_HEAPS + 13;
 
 	// Placeholders
-	public static final int WEAPON	= ROW_PLACEHOLDERS + 0;
-	public static final int ARMOR	= ROW_PLACEHOLDERS + 1;
-	public static final int RING	= ROW_PLACEHOLDERS + 2;
-	public static final int SMTH	= ROW_PLACEHOLDERS + 3;
-	public static final int SHIELD	= ROW_PLACEHOLDERS + 4;
-	public static final int TOOL	= ROW_PLACEHOLDERS + 5;
-	public static final int GLOVES	= ROW_PLACEHOLDERS + 6;
-	public static final int BOOTS	= ROW_PLACEHOLDERS + 7;
-	public static final int CLOAK	= ROW_PLACEHOLDERS + 8;
-	public static final int AMULETB	= ROW_PLACEHOLDERS + 9;
-	public static final int FACE	= ROW_PLACEHOLDERS + 10;
-	public static final int HELMET	= ROW_PLACEHOLDERS + 11;
-	public static final int PANTS	= ROW_PLACEHOLDERS + 12;
+	public static final int PLACEHOLDER_WEAPON	= ROW_PLACEHOLDERS + 0;
+	public static final int PLACEHOLDER_ARMOR	= ROW_PLACEHOLDERS + 1;
+	public static final int PLACEHOLDER_RING	= ROW_PLACEHOLDERS + 2;
+	public static final int PLACEHOLDER_SMTH	= ROW_PLACEHOLDERS + 3;
+	public static final int PLACEHOLDER_SHIELD	= ROW_PLACEHOLDERS + 4;
+	public static final int PLACEHOLDER_TOOL	= ROW_PLACEHOLDERS + 5;
+	public static final int PLACEHOLDER_GLOVES	= ROW_PLACEHOLDERS + 6;
+	public static final int PLACEHOLDER_BOOTS	= ROW_PLACEHOLDERS + 7;
+	public static final int PLACEHOLDER_CLOAK	= ROW_PLACEHOLDERS + 8;
+	public static final int PLACEHOLDER_AMULET	= ROW_PLACEHOLDERS + 9;
+	public static final int PLACEHOLDER_FACE	= ROW_PLACEHOLDERS + 10;
+	public static final int PLACEHOLDER_HELMET	= ROW_PLACEHOLDERS + 11;
+	public static final int PLACEHOLDER_PANTS	= ROW_PLACEHOLDERS + 12;
 
 	//Row Two: Miscellaneous single use items
 	public static final int GOLD	        = ROW_MISCELLANEOUS + 0;
@@ -106,33 +106,33 @@ public class ItemSpriteSheet {
 	public static final int SHATTPOT        = ROW_MISCELLANEOUS + 15;
 
 	//Row Three: Melee weapons
-	public static final int KNUCKLEDUSTER	= ROW_WEAPONMELEE + 0;
-	public static final int DAGGER			= ROW_WEAPONMELEE + 1;
-	public static final int SHORT_SWORD		= ROW_WEAPONMELEE + 2;
-	public static final int MAGES_STAFF     = ROW_WEAPONMELEE + 3;
-	public static final int QUARTERSTAFF	= ROW_WEAPONMELEE + 4;
-	public static final int SPEAR			= ROW_WEAPONMELEE + 5;
-	public static final int MACE			= ROW_WEAPONMELEE + 6;
-	public static final int SWORD			= ROW_WEAPONMELEE + 7;
-	public static final int BATTLE_AXE		= ROW_WEAPONMELEE + 8;
-	public static final int LONG_SWORD		= ROW_WEAPONMELEE + 9;
-	public static final int WAR_HAMMER		= ROW_WEAPONMELEE + 10;
-	public static final int GLAIVE			= ROW_WEAPONMELEE + 11;
-    public static final int DAGGER_CRUDE    = ROW_WEAPONMELEE + 12;
-    public static final int DAGGER_RUNED    = ROW_WEAPONMELEE + 13;
+	public static final int MELEE_KNUCKLEDUSTER	= ROW_WEAPONMELEE + 0;
+	public static final int MELEE_DAGGER		= ROW_WEAPONMELEE + 1;
+	public static final int MELEE_SHORT_SWORD	= ROW_WEAPONMELEE + 2;
+	public static final int MELEE_MAGES_STAFF   = ROW_WEAPONMELEE + 3;
+	public static final int MELEE_QUARTERSTAFF	= ROW_WEAPONMELEE + 4;
+	public static final int MELEE_SPEAR			= ROW_WEAPONMELEE + 5;
+	public static final int MELEE_MACE			= ROW_WEAPONMELEE + 6;
+	public static final int MELEE_SWORD			= ROW_WEAPONMELEE + 7;
+	public static final int MELEE_BATTLE_AXE	= ROW_WEAPONMELEE + 8;
+	public static final int MELEE_LONG_SWORD	= ROW_WEAPONMELEE + 9;
+	public static final int MELEE_WAR_HAMMER	= ROW_WEAPONMELEE + 10;
+	public static final int MELEE_GLAIVE		= ROW_WEAPONMELEE + 11;
+    public static final int MELEE_DAGGER_CRUDE  = ROW_WEAPONMELEE + 12;
+    public static final int MELEE_DAGGER_RUNED  = ROW_WEAPONMELEE + 13;
 
     //Row Derp: Ranged weapons
-    public static final int SLING           = ROW_WEAPONRANGED + 0;
+    public static final int RANGED_SLING           = ROW_WEAPONRANGED + 0;
 
 	//Row Four: Missile weapons
-	public static final int DART			= ROW_WEAPONAMMO + 0;
-	public static final int BOOMERANG		= ROW_WEAPONAMMO + 1;
-	public static final int INCENDIARY_DART	= ROW_WEAPONAMMO + 2;
-	public static final int SHURIKEN		= ROW_WEAPONAMMO + 3;
-	public static final int CURARE_DART		= ROW_WEAPONAMMO + 4;
-	public static final int JAVELIN			= ROW_WEAPONAMMO + 5;
-	public static final int TOMAHAWK		= ROW_WEAPONAMMO + 6;
-	public static final int ROCK			= ROW_WEAPONAMMO + 7;
+	public static final int MISSILE_DART			= ROW_WEAPONAMMO + 0;
+	public static final int MISSILE_BOOMERANG		= ROW_WEAPONAMMO + 1;
+	public static final int MISSILE_INCENDIARY_DART	= ROW_WEAPONAMMO + 2;
+	public static final int MISSILE_SHURIKEN		= ROW_WEAPONAMMO + 3;
+	public static final int MISSILE_CURARE_DART		= ROW_WEAPONAMMO + 4;
+	public static final int MISSILE_JAVELIN			= ROW_WEAPONAMMO + 5;
+	public static final int MISSILE_TOMAHAWK		= ROW_WEAPONAMMO + 6;
+	public static final int MISSILE_ROCK			= ROW_WEAPONAMMO + 7;
 
 	//Row Five: Armors
 	public static final int ARMOR_CLOTH				= ROW_ARMOR + 0;
@@ -306,14 +306,17 @@ public class ItemSpriteSheet {
 	public static final int SEED_BLANDFRUIT	= ROW_SEED + 11;
 
 	//Row Thirteen: Food
-	public static final int MEAT		    = ROW_FOOD + 0;
-    public static final int MEAT_ROTTEN     = ROW_FOOD + 1;
-    public static final int LETTUCE         = ROW_FOOD + 2;
-    public static final int LETTUCE_ROTTEN  = ROW_FOOD + 3;
-    public static final int OVERPRICED	    = ROW_FOOD + 4;
-    public static final int RATION		    = ROW_FOOD + 5;
-    public static final int PASTY		    = ROW_FOOD + 6;
-	public static final int BLANDFRUIT	    = ROW_FOOD + 7;
+	public static final int FOOD_MEAT		    = ROW_FOOD + 0;
+    public static final int FOOD_MEAT_ROTTEN    = ROW_FOOD + 1;
+    public static final int FOOD_LETTUCE        = ROW_FOOD + 2;
+    public static final int FOOD_LETTUCE_ROTTEN = ROW_FOOD + 3;
+    public static final int FOOD_OVERPRICED	    = ROW_FOOD + 4;
+    public static final int FOOD_RATION		    = ROW_FOOD + 5;
+    public static final int FOOD_PASTY		    = ROW_FOOD + 6;
+	public static final int FOOD_BLANDFRUIT	    = ROW_FOOD + 7;
+    public static final int FOOD_CAN_UNOPENED   = ROW_FOOD + 8;
+    public static final int FOOD_CAN_MEAT       = ROW_FOOD + 9;
+    public static final int FOOD_CAN_VEGETABLE  = ROW_FOOD + 10;
 
 	//Row Fourteen: Quest Items
 	public static final int SKULL		= ROW_QUEST + 0;
@@ -324,9 +327,10 @@ public class ItemSpriteSheet {
 	public static final int TOKEN		= ROW_QUEST + 5;
 
 	//Row Fifteen: Tools
-    public static final int PICKAXE		= ROW_TOOLS + 0;
-    public static final int IRON_KEY    = ROW_TOOLS + 1;
-    public static final int LOCKPICK	= ROW_TOOLS + 2;
+    public static final int TOOL_PICKAXE    = ROW_TOOLS + 0;
+    public static final int TOOL_IRON_KEY   = ROW_TOOLS + 1;
+    public static final int TOOL_LOCKPICK   = ROW_TOOLS + 2;
+    public static final int TOOL_CANNINGKIT = ROW_TOOLS + 3;
 
 	//Row Sixteen: Unused
 	public static final int GEMSTONE_WHITE	= ROW_GEMSTONE + 0;

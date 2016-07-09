@@ -31,12 +31,12 @@ import com.felayga.unpixeldungeon.sprites.ItemSpriteSheet;
 /**
  * Created by HELLO on 6/9/2016.
  */
-public class DaggerRuned extends SimpleMeleeWeapon {
+public class DaggerRuned extends Dagger {
     public DaggerRuned() {
         super( GameTime.TICK, 1, 5 );
 
         name = "dagger";
-        image = ItemSpriteSheet.DAGGER_RUNED;
+        image = ItemSpriteSheet.MELEE_DAGGER_RUNED;
     }
 
     @Override

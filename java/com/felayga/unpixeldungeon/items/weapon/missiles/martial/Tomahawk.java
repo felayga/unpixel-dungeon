@@ -45,7 +45,7 @@ public class Tomahawk extends MissileWeapon {
 		super(WeaponSkill.Martial, GameTime.TICK, 4, 20, number, true, AmmunitionType.None);
 
 		name = "tomahawk";
-		image = ItemSpriteSheet.TOMAHAWK;
+		image = ItemSpriteSheet.MISSILE_TOMAHAWK;
 
 		//STR = 17;
         price = 15;

@@ -58,7 +58,7 @@ public class Dart extends MissileWeapon {
 		super(WeaponSkill.Simple, GameTime.TICK, 1, 4, number, true, AmmunitionType.None);
 
 		name = "dart";
-		image = ItemSpriteSheet.DART;
+		image = ItemSpriteSheet.MISSILE_DART;
 
 		bones = false; //Finding them in bones would be semi-frequent and disappointing.
         price = 2;

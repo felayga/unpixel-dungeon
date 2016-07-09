@@ -744,29 +744,24 @@ public class GameScene extends PixelScene {
 			return false;
 		}
 	}
-	
+
+    public static WndBackpack selectItem( WndBackpack.Listener listener, Class<?> classMatch, String title, Item... excluded ) {
+        return selectItem(listener, WndBackpack.Mode.INSTANCEOF, classMatch, title, excluded);
+    }
+
 	public static WndBackpack selectItem( WndBackpack.Listener listener, WndBackpack.Mode mode, String title, Item... excluded ) {
-		cancelCellSelector();
-
-		WndBackpack wnd = WndBackpack.lastBag(listener, mode, title, excluded);
-
-		/*
-		WndBackpack wnd =
-				mode == Mode.SEED ?
-					WndBackpack.getBag(SeedPouch.class, listener, mode, title) :
-				mode == Mode.SCROLL ?
-					WndBackpack.getBag(ScrollHolder.class, listener, mode, title) :
-				mode == Mode.POTION ?
-					WndBackpack.getBag(PotionBandolier.class, listener, mode, title) :
-				mode == Mode.WAND ?
-					WndBackpack.getBag(WandHolster.class, listener, mode, title) :
-				WndBackpack.lastBag(listener, mode, title);
-		*/
-
-		scene.add(wnd);
-		
-		return wnd;
+        return selectItem(listener, mode, null, title, excluded);
 	}
+
+    public static WndBackpack selectItem(WndBackpack.Listener listener, WndBackpack.Mode mode, Class<?> classMatch, String title, Item... excluded) {
+        cancelCellSelector();
+
+        WndBackpack wnd = WndBackpack.lastBag(listener, mode, classMatch, title, excluded);
+
+        scene.add(wnd);
+
+        return wnd;
+    }
 	
 	static boolean cancel() {
 		if (Dungeon.hero.curAction != null || Dungeon.hero.resting) {

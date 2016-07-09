@@ -43,9 +43,9 @@ public class CharmChance extends MeleeMobAttack {
     }
 
     @Override
-    public int proc(Char attacker, boolean thrown, Char target, int damage)
+    public int proc(Char attacker, boolean ranged, Char target, int damage)
     {
-        damage = super.proc(attacker, thrown, target, damage);
+        damage = super.proc(attacker, ranged, target, damage);
 
         if (Random.Int( 3 ) == 0) {
             Buff.affect( target, Charm.class, Charm.durationFactor( target ) * Random.LongRange(GameTime.TICK * 3, GameTime.TICK * 7) / GameTime.TICK ).object = attacker.id();

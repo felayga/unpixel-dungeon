@@ -72,7 +72,7 @@ public class MagesStaff extends SimpleMeleeWeapon {
 		wand = null;
 
 		name = "staff";
-		image = ItemSpriteSheet.MAGES_STAFF;
+		image = ItemSpriteSheet.MELEE_MAGES_STAFF;
         pickupSound = Assets.SND_ITEM_WOOD;
 
 		defaultAction = AC_ZAP;
@@ -112,7 +112,7 @@ public class MagesStaff extends SimpleMeleeWeapon {
 	public boolean execute(Hero hero, String action) {
 		if (action.equals(AC_IMBUE)) {
 			curUser = hero;
-			GameScene.selectItem(itemSelector, WndBackpack.Mode.WAND, TXT_SELECT_WAND);
+			GameScene.selectItem(itemSelector, Wand.class, TXT_SELECT_WAND);
 
 			return false;
 		} else if (action.equals(AC_ZAP)){
@@ -127,8 +127,8 @@ public class MagesStaff extends SimpleMeleeWeapon {
 	}
 
 	@Override
-	public int proc(Char attacker, boolean thrown, Char defender, int damage) {
-		damage = super.proc(attacker, thrown, defender, damage);
+	public int proc(Char attacker, boolean ranged, Char defender, int damage) {
+		damage = super.proc(attacker, ranged, defender, damage);
 
 		if (wand != null && Dungeon.hero.subClass == HeroSubClass.BATTLEMAGE) {
 			if (wand.curCharges < wand.maxCharges) wand.partialCharge += 0.33f;

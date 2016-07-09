@@ -49,7 +49,7 @@ public class IceBox extends LargeChest {
 
         name = "ice box";
         image = ItemSpriteSheet.ICEBOX;
-        tabIcon = Icons.TREASURECHEST;
+        tabIcon = Icons.ICEBOX;
 
         size = 36;
         priority = 8;

@@ -63,8 +63,8 @@ public class MissileSprite extends ItemSprite implements Tweener.Listener {
 		PointF d = PointF.diff( dest, point() );
 		speed.set( d ).normalize().scale( SPEED );
 
-		if (image == ItemSpriteSheet.DART || image == ItemSpriteSheet.INCENDIARY_DART
-				|| image == ItemSpriteSheet.CURARE_DART  || image == ItemSpriteSheet.JAVELIN) {
+		if (image == ItemSpriteSheet.MISSILE_DART || image == ItemSpriteSheet.MISSILE_INCENDIARY_DART
+				|| image == ItemSpriteSheet.MISSILE_CURARE_DART  || image == ItemSpriteSheet.MISSILE_JAVELIN) {
 
 			angularSpeed = 0;
 			angle = 135 - (float)(Math.atan2( d.x, d.y ) / 3.1415926 * 180);

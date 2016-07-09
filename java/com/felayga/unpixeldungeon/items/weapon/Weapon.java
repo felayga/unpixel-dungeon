@@ -28,7 +28,7 @@ import com.felayga.unpixeldungeon.Assets;
 import com.felayga.unpixeldungeon.Badges;
 import com.felayga.unpixeldungeon.actors.Char;
 import com.felayga.unpixeldungeon.actors.hero.Hero;
-import com.felayga.unpixeldungeon.items.KindOfWeapon;
+import com.felayga.unpixeldungeon.items.EquippableItem;
 import com.felayga.unpixeldungeon.items.weapon.enchantments.Death;
 import com.felayga.unpixeldungeon.items.weapon.enchantments.Fire;
 import com.felayga.unpixeldungeon.items.weapon.enchantments.Horror;
@@ -39,7 +39,10 @@ import com.felayga.unpixeldungeon.items.weapon.enchantments.Paralysis;
 import com.felayga.unpixeldungeon.items.weapon.enchantments.Poison;
 import com.felayga.unpixeldungeon.items.weapon.enchantments.Shock;
 import com.felayga.unpixeldungeon.items.weapon.enchantments.Slow;
+import com.felayga.unpixeldungeon.mechanics.AttributeType;
+import com.felayga.unpixeldungeon.mechanics.Constant;
 import com.felayga.unpixeldungeon.mechanics.GameTime;
+import com.felayga.unpixeldungeon.mechanics.MagicType;
 import com.felayga.unpixeldungeon.mechanics.WeaponSkill;
 import com.felayga.unpixeldungeon.sprites.ItemSprite;
 import com.felayga.unpixeldungeon.utils.GLog;
@@ -47,7 +50,12 @@ import com.watabou.utils.Bundlable;
 import com.watabou.utils.Bundle;
 import com.watabou.utils.Random;
 
-public class Weapon extends KindOfWeapon {
+import java.util.ArrayList;
+
+public class Weapon extends EquippableItem implements IWeapon {
+    private static final String TXT_EQUIP_CURSED    = "The %s welds itself to your hand!";
+
+    protected static final long TIME_TO_EQUIP = GameTime.TICK;
 
     private static final int HITS_TO_KNOW = 20;
 
@@ -57,23 +65,90 @@ public class Weapon extends KindOfWeapon {
             "Interaction of different types of magic has negated the enchantment on this weapon!";
     private static final String TXT_TO_STRING = "%s :%d";
 
-
-    public long delay = GameTime.TICK;
-
     private int hitsToKnow = HITS_TO_KNOW;
 
     public Enchantment enchantment;
 
+    public long delay_new = GameTime.TICK;
+    public int damageMin = 1;
+    public int damageMax = 4;
+    public MagicType damageType = MagicType.Mundane;
+
+    public int accuracy = 10;
+    public int damage = 10;
+
+    public WeaponSkill skillRequired;
+    public WeaponSkill skillRequired() {
+        return skillRequired;
+    }
+
+    public int refined = 0;
+
+    public AttributeType accuracyAttribute = AttributeType.DEXCHA;
+    public AttributeType accuracyAttribute() {
+        return accuracyAttribute;
+    }
+
+    public int accuracyAttributeMaxBonus = 32767;
+
+    public AttributeType damageAttribute = AttributeType.STRCON;
+    public AttributeType damageAttribute() {
+        return damageAttribute;
+    }
+
+
     public Weapon(WeaponSkill weaponSkill, long delay, int damageMin, int damageMax) {
-        super(weaponSkill, delay, damageMin, damageMax);
+        super(TIME_TO_EQUIP);
+
+        this.skillRequired = weaponSkill;
+
+        this.delay_new = delay;
+
+        this.damageMin = damageMin;
+        this.damageMax = damageMax;
 
         pickupSound = Assets.SND_ITEM_BLADE;
     }
 
     @Override
-    public int proc(Char attacker, boolean thrown, Char defender, int damage) {
-        damage = super.proc(attacker, thrown, defender, damage);
+    public ArrayList<String> actions( Hero hero ) {
+        ArrayList<String> actions = super.actions( hero );
+        actions.add( isEquipped( hero ) ? Constant.Action.UNEQUIP : Constant.Action.EQUIP );
+        return actions;
+    }
 
+    @Override
+    public Slot[] getSlots() {
+        return new Slot[]{ Slot.Weapon };
+    }
+
+    @Override
+    public void onEquip(Char owner, boolean cursed) {
+        super.onEquip(owner, cursed);
+
+        if (cursed) {
+            if (owner instanceof Hero) {
+                GLog.n( TXT_EQUIP_CURSED, getDisplayName() );
+            }
+            else {
+                //todo: weapon cursed in enemy hands
+            }
+        }
+    }
+
+    public MagicType damageType() {
+        return damageType;
+    }
+
+    public int damageRoll() {
+        return Random.NormalIntRange( damageMin, damageMax ) + this.level;
+    }
+
+    public int accuracyModifier() {
+        return this.level + this.refined;
+    }
+
+    public int proc(Char attacker, boolean thrown, Char defender, int damage) {
         if (enchantment != null) {
             enchantment.proc(this, attacker, defender, damage);
         }

@@ -28,27 +28,29 @@ import com.felayga.unpixeldungeon.actors.Char;
 import com.felayga.unpixeldungeon.actors.mobs.npcs.Boulder;
 import com.felayga.unpixeldungeon.actors.mobs.npcs.NPC;
 import com.felayga.unpixeldungeon.items.Item;
-import com.felayga.unpixeldungeon.items.KindOfWeapon;
 import com.felayga.unpixeldungeon.items.bags.IBag;
 import com.felayga.unpixeldungeon.items.tools.digging.DiggingTool;
 import com.felayga.unpixeldungeon.items.tools.unlocking.UnlockingTool;
+import com.felayga.unpixeldungeon.items.weapon.IWeapon;
+import com.felayga.unpixeldungeon.items.weapon.Weapon;
 import com.felayga.unpixeldungeon.items.weapon.ammunition.AmmunitionWeapon;
+import com.felayga.unpixeldungeon.items.weapon.melee.MeleeWeapon;
 import com.felayga.unpixeldungeon.items.weapon.missiles.MissileWeapon;
 import com.felayga.unpixeldungeon.items.weapon.ranged.RangedWeapon;
 import com.felayga.unpixeldungeon.mechanics.Constant;
 
 
 public class HeroAction {
-	
-	public int dst;
-	
-	public static class Move extends HeroAction {
-		public Move( int dst ) {
-			this.dst = dst;
-		}
-	}
-	
-	public static class HandleHeap extends HeroAction {
+
+    public int dst;
+
+    public static class Move extends HeroAction {
+        public Move(int dst) {
+            this.dst = dst;
+        }
+    }
+
+    public static class HandleHeap extends HeroAction {
         public HandleHeap(int dst) {
             this.dst = dst;
         }
@@ -76,59 +78,68 @@ public class HeroAction {
         public static class PickUp extends InteractItem {
             public boolean forced;
 
-            public PickUp(int dst, Item item) { this(dst, item, false); }
+            public PickUp(int dst, Item item) {
+                this(dst, item, false);
+            }
+
             public PickUp(int dst, Item item, boolean forced) {
                 super(dst, item);
 
                 this.forced = forced;
             }
         }
-	}
+    }
 
-	public static class OpenChest extends HeroAction {
-		public OpenChest( int dst ) {
-			this.dst = dst;
-		}
-	}
-	
-	public static class Buy extends HeroAction {
-		public Buy( int dst ) {
-			this.dst = dst;
-		}
-	}
-	
-	public static class Interact extends HeroAction {
-		public NPC npc;
-		public Interact( NPC npc ) {
-			this.npc = npc;
-		}
-	}
-	
-	public static class HandleDoor extends HeroAction {
-		public HandleDoor( int door ) {
-			this.dst = door;
-		}
-		boolean successful = true;
+    public static class OpenChest extends HeroAction {
+        public OpenChest(int dst) {
+            this.dst = dst;
+        }
+    }
 
-		public static class OpenCloseDoor extends HandleDoor {
-			public OpenCloseDoor(int door) { super(door); }
-		}
+    public static class Buy extends HeroAction {
+        public Buy(int dst) {
+            this.dst = dst;
+        }
+    }
 
-		public static class KickDoor extends HandleDoor {
-			public KickDoor(int door) { super(door); }
-		}
+    public static class Interact extends HeroAction {
+        public NPC npc;
 
-		public static class UnlockDoor extends HandleDoor {
-			UnlockingTool tool;
-			public UnlockDoor(int door, UnlockingTool tool) {
-				super(door);
-				this.tool = tool;
-			}
-		}
-	}
+        public Interact(NPC npc) {
+            this.npc = npc;
+        }
+    }
 
-    public static class MoveLevel extends HeroAction
-    {
+    public static class HandleDoor extends HeroAction {
+        public HandleDoor(int door) {
+            this.dst = door;
+        }
+
+        boolean successful = true;
+
+        public static class OpenCloseDoor extends HandleDoor {
+            public OpenCloseDoor(int door) {
+                super(door);
+            }
+        }
+
+        public static class KickDoor extends HandleDoor {
+            public KickDoor(int door) {
+                super(door);
+            }
+        }
+
+        public static class UnlockDoor extends HandleDoor {
+            UnlockingTool tool;
+
+            public UnlockDoor(int door, UnlockingTool tool) {
+                super(door);
+                this.tool = tool;
+            }
+        }
+    }
+
+    public static class MoveLevel extends HeroAction {
         public int direction;
         public boolean alternate;
 
@@ -159,10 +170,11 @@ public class HeroAction {
             }
         }
     }
-	
-	public static class Attack extends HeroAction {
+
+    public static class Attack extends HeroAction {
         public Char target;
-        public KindOfWeapon melee;
+
+        public IWeapon melee;
         public RangedWeapon launcher;
         public AmmunitionWeapon ammo;
         public MissileWeapon missile;
@@ -170,17 +182,21 @@ public class HeroAction {
         public Attack(Char target) {
             this.target = target;
         }
+
+        public Attack(Char target, IWeapon melee) {
+            this.target = target;
+            this.melee = melee;
+        }
     }
 
-	public static class UseItem extends HeroAction {
-		public Item target;
-		public String action;
+    public static class UseItem extends HeroAction {
+        public Item target;
+        public String action;
 
-		public UseItem(Item target, String action)
-		{
-			this.target = target;
-			this.action = action;
-		}
+        public UseItem(Item target, String action) {
+            this.target = target;
+            this.action = action;
+        }
 
         public static class UnlockBag extends UseItem {
             public UnlockingTool tool;
@@ -194,7 +210,7 @@ public class HeroAction {
             }
         }
 
-        public static class EatItem extends UseItem{
+        public static class EatItem extends UseItem {
             public IBag targetOutsideInventory;
             public boolean startedEating;
             public boolean stoppedEating;
@@ -215,6 +231,16 @@ public class HeroAction {
             }
         }
 
+        public static class SlowAction extends UseItem {
+            public long time;
+
+            public SlowAction(Item target, String action, long time) {
+                super(target, action);
+
+                this.time = time;
+            }
+        }
+
         public static class Kick extends UseItem {
             public Char enemy;
 
@@ -223,20 +249,14 @@ public class HeroAction {
 
                 this.dst = target;
             }
-
-            public Kick(Item item, Char target) {
-                super(item, Constant.Action.KICK);
-
-                this.enemy = target;
-            }
         }
-	}
+    }
 
 
-	public static class Dig extends HeroAction {
-		public DiggingTool tool;
-		public int pos;
-		public int effort;
+    public static class Dig extends HeroAction {
+        public DiggingTool tool;
+        public int pos;
+        public int effort;
 
         public Boulder boulder;
         public int direction;
@@ -253,12 +273,12 @@ public class HeroAction {
             this(tool, pos, effort, direction, null);
         }
 
-		public Dig(DiggingTool tool, int pos, int effort, int direction, Boulder boulder) {
-			this.tool = tool;
-			this.pos = pos;
-			this.effort = effort;
+        public Dig(DiggingTool tool, int pos, int effort, int direction, Boulder boulder) {
+            this.tool = tool;
+            this.pos = pos;
+            this.effort = effort;
             this.direction = direction;
             this.boulder = boulder;
-		}
-	}
+        }
+    }
 }

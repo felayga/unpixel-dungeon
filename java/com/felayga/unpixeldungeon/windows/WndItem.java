@@ -80,7 +80,7 @@ public class WndItem extends Window {
                             owner.hide();
                         }
 
-                        if (action == Food.AC_EAT) {
+                        if (action == Constant.Action.EAT) {
                             Dungeon.hero.curAction = new HeroAction.UseItem.EatItem(item, action);
                             GLog.d("wnditem deposit action");
                             Dungeon.hero.motivate(true);

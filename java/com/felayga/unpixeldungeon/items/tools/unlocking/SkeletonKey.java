@@ -37,7 +37,7 @@ public class SkeletonKey extends UnlockingTool {
     public SkeletonKey()
     {
         name = "skeleton key";
-        image = ItemSpriteSheet.IRON_KEY;
+        image = ItemSpriteSheet.TOOL_IRON_KEY;
     }
 
     public boolean unlockDoor(Char user) {

@@ -29,6 +29,7 @@ import com.felayga.unpixeldungeon.Badges;
 import com.felayga.unpixeldungeon.actors.hero.Hero;
 import com.felayga.unpixeldungeon.items.Item;
 import com.felayga.unpixeldungeon.items.scrolls.ScrollOfUpgrade;
+import com.felayga.unpixeldungeon.items.weapon.Weapon;
 import com.felayga.unpixeldungeon.items.weapon.melee.MeleeWeapon;
 import com.felayga.unpixeldungeon.items.weapon.missiles.martial.Boomerang;
 import com.felayga.unpixeldungeon.mechanics.GameTime;
@@ -59,7 +60,7 @@ public class ShortSword extends MartialMeleeWeapon {
 		super( GameTime.TICK, 1, 6 );
 
 		name = "short sword";
-		image = ItemSpriteSheet.SHORT_SWORD;
+		image = ItemSpriteSheet.MELEE_SHORT_SWORD;
 
 		unique = true;
 		bones = false;
@@ -87,7 +88,7 @@ public class ShortSword extends MartialMeleeWeapon {
 			
 			curUser = hero;
 			
-			GameScene.selectItem( itemSelector, WndBackpack.Mode.WEAPON, TXT_SELECT_WEAPON );
+			GameScene.selectItem( itemSelector, Weapon.class, TXT_SELECT_WEAPON );
 
 			return false;
 		} else {

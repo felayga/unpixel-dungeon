@@ -73,7 +73,6 @@ public class HornOfPlenty extends Artifact_old {
 	public static final String AC_STORE = "STORE";
 
 	protected String inventoryTitle = "Select a piece of food";
-	protected WndBackpack.Mode mode = WndBackpack.Mode.FOOD;
 
 	@Override
 	public ArrayList<String> actions( Hero hero ) {
@@ -133,7 +132,7 @@ public class HornOfPlenty extends Artifact_old {
 				updateQuickslot();
 			}
 		} else if (action.equals(AC_STORE)){
-			GameScene.selectItem(itemSelector, mode, inventoryTitle);
+			GameScene.selectItem(itemSelector, Food.class, inventoryTitle);
 		}
 
 		return retval;

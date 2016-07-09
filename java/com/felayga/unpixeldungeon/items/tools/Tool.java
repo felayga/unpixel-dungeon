@@ -24,11 +24,17 @@
  */
 package com.felayga.unpixeldungeon.items.tools;
 
+import com.felayga.unpixeldungeon.Assets;
+import com.felayga.unpixeldungeon.actors.buffs.positive.Invisibility;
 import com.felayga.unpixeldungeon.actors.hero.Hero;
 import com.felayga.unpixeldungeon.items.Item;
+import com.felayga.unpixeldungeon.items.scrolls.Scroll;
 import com.felayga.unpixeldungeon.mechanics.Constant;
 import com.felayga.unpixeldungeon.scenes.CellSelector;
 import com.felayga.unpixeldungeon.scenes.GameScene;
+import com.felayga.unpixeldungeon.utils.GLog;
+import com.felayga.unpixeldungeon.windows.WndBackpack;
+import com.watabou.noosa.audio.Sample;
 
 /**
  * Created by hello on 12/21/15.
@@ -36,8 +42,25 @@ import com.felayga.unpixeldungeon.scenes.GameScene;
 public abstract class Tool extends Item implements ITool {
     private static Tool curTool;
 
-    public Tool() {
+    private boolean applyCell;
+    private boolean applyItem;
+    private WndBackpack.Mode applyItemMode;
+    private Class<?> applyItemClass;
 
+    public Tool(boolean applyCell, boolean applyItem) {
+        this(applyCell, applyItem, WndBackpack.Mode.ALL, null);
+
+        if (applyItem) {
+            GLog.d("bad constructor for applyItem=true");
+            GLog.d(""+1/0);
+        }
+    }
+
+    public Tool(boolean applyCell, boolean applyItem, WndBackpack.Mode applyItemMode, Class<?> applyItemClass) {
+        this.applyCell = applyCell;
+        this.applyItem = applyItem;
+        this.applyItemMode = applyItemMode;
+        this.applyItemClass = applyItemClass;
     }
 
     public abstract String getToolClass();
@@ -48,7 +71,12 @@ public abstract class Tool extends Item implements ITool {
         curTool = this;
 
         if (action.equals(Constant.Action.APPLY)) {
-            GameScene.selectCell(applier);
+            if (applyCell && applyItem) {
+            } else if (applyCell) {
+                GameScene.selectCell(cellApplier);
+            } else if (applyItem) {
+                GameScene.selectItem(itemApplier, applyItemMode, applyItemClass, "Apply " + this.getToolClass(), this);
+            }
 
             return false;
         }
@@ -59,7 +87,7 @@ public abstract class Tool extends Item implements ITool {
 
     public abstract void apply(Hero hero, int target);
 
-    public static CellSelector.Listener applier = new CellSelector.Listener() {
+    public static CellSelector.Listener cellApplier = new CellSelector.Listener() {
         @Override
         public boolean onSelect(Integer target) {
             if (target != null) {
@@ -71,6 +99,18 @@ public abstract class Tool extends Item implements ITool {
         @Override
         public String prompt() {
             return "Apply " + curTool.getToolClass();
+        }
+    };
+
+
+    public abstract void apply(Hero hero, Item target);
+
+    protected static WndBackpack.Listener itemApplier = new WndBackpack.Listener() {
+        @Override
+        public void onSelect(Item item) {
+            if (item != null) {
+                curTool.apply(curUser, item);
+            }
         }
     };
 

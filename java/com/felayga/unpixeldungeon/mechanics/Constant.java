@@ -30,17 +30,21 @@ package com.felayga.unpixeldungeon.mechanics;
  */
 public class Constant {
     public static class Action {
-        public static final String DROP     = "DROP";
-        public static final String THROW    = "THROW";
-        public static final String APPLY    = "APPLY";
-        public static final String KICK     = "KICK";
-        public static final String FORCE    = "FORCE";
-        public static final String SHOOT    = "SHOOT";
-        public static final String TAKE     = "TAKE";
-        public static final String EQUIP    = "EQUIP";
-        public static final String UNEQUIP  = "UNEQUIP";
-        public static final String DRINK    = "DRINK";
-        public static final String DIP      = "DIP ITEM";
+        public static final String DROP         = "DROP";
+        public static final String THROW        = "THROW";
+        public static final String APPLY        = "APPLY";
+        public static final String KICK         = "KICK";
+        public static final String FORCE        = "FORCE";
+        public static final String SHOOT        = "SHOOT";
+        public static final String TAKE         = "TAKE";
+        public static final String EQUIP        = "EQUIP";
+        public static final String UNEQUIP      = "UNEQUIP";
+        public static final String DRINK        = "DRINK";
+        public static final String DIP          = "DIP ITEM";
+        public static final String EAT          = "EAT";
+        public static final String EAT_START    = "EAT_START"; // necessary for proper handling of "you started eating" messages
+        public static final String OPEN         = "OPEN";
+        public static final String SLOWACTION   = "SLOWACTION"; // necessary for items that take several rounds to perform actions
 
         public static final String YES      = "YES";
         public static final String CANCEL   = "CANCEL";

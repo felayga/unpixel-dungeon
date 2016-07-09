@@ -81,7 +81,7 @@ public class Blandfruit extends Food {
 
 		name = "Blandfruit";
 		stackable = true;
-		image = ItemSpriteSheet.BLANDFRUIT;
+		image = ItemSpriteSheet.FOOD_BLANDFRUIT;
 
 		bones = true;
         price = 20;
@@ -166,7 +166,7 @@ public class Blandfruit extends Food {
 		potionAttrib = potion;
 		potionAttrib.ownedByFruit = true;
 
-		potionAttrib.image = ItemSpriteSheet.BLANDFRUIT;
+		potionAttrib.image = ItemSpriteSheet.FOOD_BLANDFRUIT;
 
 
 		info = "The fruit has plumped up from its time soaking in the pot and has even absorbed the properties "+

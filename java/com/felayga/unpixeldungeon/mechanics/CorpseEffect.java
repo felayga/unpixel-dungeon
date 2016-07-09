@@ -39,7 +39,9 @@ public enum CorpseEffect {
     Vegetable           (0x0040),
     Unstoning           (0x0080),
     Acidic              (0x0100),
-    Hallucinogenic      (0x0200);
+    Hallucinogenic      (0x0200),
+    Sickening           (0x0400),
+    Greasy              (0x0800);
 
     public final int value;
 

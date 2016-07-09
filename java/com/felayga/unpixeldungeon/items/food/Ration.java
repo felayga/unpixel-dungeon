@@ -38,7 +38,7 @@ public class Ration extends Food {
 
         stackable = true;
         name = "ration of food";
-        image = ItemSpriteSheet.RATION;
+        image = ItemSpriteSheet.FOOD_RATION;
 
         bones = true;
 

@@ -31,6 +31,7 @@ import com.felayga.unpixeldungeon.actors.buffs.hero.Hunger;
 import com.felayga.unpixeldungeon.actors.hero.Hero;
 import com.felayga.unpixeldungeon.effects.SpellSprite;
 import com.felayga.unpixeldungeon.items.Item;
+import com.felayga.unpixeldungeon.mechanics.Constant;
 import com.felayga.unpixeldungeon.mechanics.GameTime;
 import com.felayga.unpixeldungeon.mechanics.MagicType;
 import com.felayga.unpixeldungeon.sprites.ItemSpriteSheet;
@@ -42,9 +43,6 @@ import java.util.ArrayList;
 
 public class Food extends Item {
     public static final int AMOUNT_EATEN_PER_ROUND = 125;
-
-    public static final String AC_EAT = "EAT";
-    public static final String AC_EAT_START = "EAT_START"; // necessary for proper handling of "you started eating" messages
 
     private int energy;
 
@@ -89,7 +87,7 @@ public class Food extends Item {
 
     @Override
     public boolean canPerformActionExternally(Hero hero, String action) {
-        if (action.equals(AC_EAT)) {
+        if (action.equals(Constant.Action.EAT)) {
             return true;
         }
 
@@ -128,13 +126,13 @@ public class Food extends Item {
     @Override
     public ArrayList<String> actions(Hero hero) {
         ArrayList<String> actions = super.actions(hero);
-        actions.add(AC_EAT);
+        actions.add(Constant.Action.EAT);
         return actions;
     }
 
     @Override
     public boolean execute(final Hero hero, String action) {
-        if (action.equals(AC_EAT_START)) {
+        if (action.equals(Constant.Action.EAT_START)) {
             if (!partiallyEaten) {
                 GLog.i(message());
             } else {
@@ -145,10 +143,10 @@ public class Food extends Item {
             SpellSprite.show(hero, SpellSprite.FOOD);
             Sample.INSTANCE.play(Assets.SND_EAT);
 
-            action = AC_EAT;
+            action = Constant.Action.EAT;
         }
 
-        if (action.equals(AC_EAT)) {
+        if (action.equals(Constant.Action.EAT)) {
             long time;
             int subenergy;
             Hunger hunger = hero.buff(Hunger.class);
@@ -250,7 +248,7 @@ public class Food extends Item {
         if (stuffed) {
             GLog.i(TXT_OVEREATING_DONE);
         } else {
-            GLog.i(TXT_EATING_DONE, name);
+            GLog.i(TXT_EATING_DONE, getName());
         }
 
         Statistics.foodEaten++;
@@ -261,12 +259,16 @@ public class Food extends Item {
         GLog.p("You stop eating.");
     }
 
+    public String corpseName() {
+        return name;
+    }
+
     @Override
     public String getName() {
         if (partiallyEaten) {
-            return "partially eaten " + super.getName();
+            return "partially eaten " + super.getName() + " corpse";
         } else {
-            return super.getName();
+            return super.getName() + " corpse";
         }
     }
 

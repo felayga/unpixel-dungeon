@@ -45,9 +45,10 @@ import com.felayga.unpixeldungeon.effects.Wound;
 import com.felayga.unpixeldungeon.items.EquippableItem;
 import com.felayga.unpixeldungeon.items.Generator;
 import com.felayga.unpixeldungeon.items.Item;
-import com.felayga.unpixeldungeon.items.KindOfWeapon;
 import com.felayga.unpixeldungeon.items.artifacts.TimekeepersHourglass;
 import com.felayga.unpixeldungeon.items.rings.RingOfWealth;
+import com.felayga.unpixeldungeon.items.weapon.IWeapon;
+import com.felayga.unpixeldungeon.items.weapon.Weapon;
 import com.felayga.unpixeldungeon.levels.Level;
 import com.felayga.unpixeldungeon.levels.Level.Feeling;
 import com.felayga.unpixeldungeon.mechanics.GameTime;
@@ -374,9 +375,9 @@ public abstract class Mob extends Char {
         } else {
             EquippableItem item = belongings.weapon();
 
-            KindOfWeapon weapon = null;
-            if (item instanceof KindOfWeapon) {
-                weapon = (KindOfWeapon) item;
+            Weapon weapon = null;
+            if (item instanceof Weapon) {
+                weapon = (Weapon) item;
             }
 
             attack(weapon, enemy);
@@ -391,9 +392,9 @@ public abstract class Mob extends Char {
 	public void onAttackComplete() {
         EquippableItem item = belongings.weapon();
 
-        KindOfWeapon weapon = null;
-        if (item instanceof KindOfWeapon) {
-            weapon = (KindOfWeapon) item;
+        Weapon weapon = null;
+        if (item instanceof Weapon) {
+            weapon = (Weapon) item;
         }
 
         attack(weapon, enemy);
@@ -431,14 +432,13 @@ public abstract class Mob extends Char {
 	}
 
 	@Override
-	public int attackSkill( KindOfWeapon weapon, boolean thrown, Char target )
-	{
-		int retval = super.attackSkill(weapon, thrown, target);
+	public int attackSkill( IWeapon weapon, boolean thrown, Char target ) {
+        int retval = super.attackSkill(weapon, thrown, target);
 
-		retval += level;
+        retval += level;
 
-		return retval;
-	}
+        return retval;
+    }
 
 	public void aggro( Char ch ) {
 		enemy = ch;

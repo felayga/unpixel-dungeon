@@ -31,7 +31,7 @@ import com.felayga.unpixeldungeon.effects.CellEmitter;
 import com.felayga.unpixeldungeon.effects.Speck;
 import com.felayga.unpixeldungeon.items.Heap;
 import com.felayga.unpixeldungeon.items.Item;
-import com.felayga.unpixeldungeon.items.KindOfWeapon;
+import com.felayga.unpixeldungeon.items.weapon.Weapon;
 import com.felayga.unpixeldungeon.items.weapon.melee.simple.Knuckles;
 import com.felayga.unpixeldungeon.levels.Level;
 import com.felayga.unpixeldungeon.mechanics.BUCStatus;
@@ -68,7 +68,7 @@ public class DisarmingTrap extends Trap{
 
 		if (Dungeon.hero.pos == pos){
 			Hero hero = Dungeon.hero;
-			KindOfWeapon weapon = (KindOfWeapon)hero.belongings.weapon();
+            Weapon weapon = (Weapon)hero.belongings.weapon();
 
 			if (weapon != null && !(weapon instanceof Knuckles) && weapon.bucStatus() != BUCStatus.Cursed) {
 

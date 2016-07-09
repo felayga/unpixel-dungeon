@@ -37,9 +37,9 @@ public class LeechChance extends MeleeMobAttack {
     }
 
     @Override
-    public int proc(Char attacker, boolean thrown, Char target, int damage)
+    public int proc(Char attacker, boolean ranged, Char target, int damage)
     {
-        damage = super.proc(attacker, thrown, target, damage);
+        damage = super.proc(attacker, ranged, target, damage);
 
         int reg = Math.min( damage, attacker.HT - attacker.HP );
 

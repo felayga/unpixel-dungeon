@@ -35,7 +35,7 @@ public class IronOldKey extends OldKey {
 	
 	{
 		name = "iron key";
-		image = ItemSpriteSheet.IRON_KEY;
+		image = ItemSpriteSheet.TOOL_IRON_KEY;
 	}
 	
 	public IronOldKey() {

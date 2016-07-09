@@ -33,7 +33,7 @@ public class Glaive extends MartialMeleeWeapon {
 		super( GameTime.TICK, 1, 10 );
 
 		name = "glaive";
-		image = ItemSpriteSheet.GLAIVE;
+		image = ItemSpriteSheet.MELEE_GLAIVE;
         pickupSound = Assets.SND_ITEM_WOOD;
 	}
 	

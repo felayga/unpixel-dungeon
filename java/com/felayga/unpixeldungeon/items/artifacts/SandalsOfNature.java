@@ -34,6 +34,7 @@ import com.felayga.unpixeldungeon.effects.particles.EarthParticle;
 import com.felayga.unpixeldungeon.items.Item;
 import com.felayga.unpixeldungeon.mechanics.BUCStatus;
 import com.felayga.unpixeldungeon.mechanics.GameTime;
+import com.felayga.unpixeldungeon.plants.Blindweed;
 import com.felayga.unpixeldungeon.plants.Earthroot;
 import com.felayga.unpixeldungeon.plants.Plant;
 import com.felayga.unpixeldungeon.scenes.GameScene;
@@ -68,7 +69,6 @@ public class SandalsOfNature extends Artifact_old {
 	public static final String AC_ROOT = "ROOT";
 
 	protected String inventoryTitle = "Select a seed";
-	protected WndBackpack.Mode mode = WndBackpack.Mode.SEED;
 
 	public ArrayList<String> seeds = new ArrayList<String>();
 
@@ -87,7 +87,7 @@ public class SandalsOfNature extends Artifact_old {
 		boolean retval = super.execute(hero, action);
 
 		if (action.equals(AC_FEED)){
-			GameScene.selectItem(itemSelector, mode, inventoryTitle);
+			GameScene.selectItem(itemSelector, Plant.Seed.class, inventoryTitle);
 		} else if (action.equals(AC_ROOT) && level > 0){
 			if (!isEquipped( hero )) GLog.i("You need to equip them to do that.");
 			else if (charge == 0)    GLog.i("They have no energy right now.");

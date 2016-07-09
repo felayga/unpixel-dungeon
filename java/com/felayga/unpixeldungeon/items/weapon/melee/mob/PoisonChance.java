@@ -51,8 +51,8 @@ public class PoisonChance extends MeleeMobAttack {
     }
 
     @Override
-    public int proc(Char attacker, boolean thrown, Char target, int damage) {
-        damage = super.proc(attacker, thrown, target, damage);
+    public int proc(Char attacker, boolean ranged, Char target, int damage) {
+        damage = super.proc(attacker, ranged, target, damage);
 
         if (Random.Int(8) == 0) {
             Poison.affect(target, Random.IntRange(poisonMin, poisonMax));

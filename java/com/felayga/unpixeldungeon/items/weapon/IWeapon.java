@@ -22,33 +22,27 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>
  *
  */
-package com.felayga.unpixeldungeon.items.food;
 
-import com.felayga.unpixeldungeon.actors.buffs.hero.Encumbrance;
-import com.felayga.unpixeldungeon.sprites.ItemSpriteSheet;
+package com.felayga.unpixeldungeon.items.weapon;
 
-public class OverpricedRation extends Food {
+import com.felayga.unpixeldungeon.actors.Char;
+import com.felayga.unpixeldungeon.mechanics.AttributeType;
+import com.felayga.unpixeldungeon.mechanics.MagicType;
+import com.felayga.unpixeldungeon.mechanics.WeaponSkill;
 
-    public OverpricedRation()
-	{
-        super(400, Encumbrance.UNIT * 20);
+/**
+ * Created by HELLO on 7/7/2016.
+ */
+public interface IWeapon {
+    WeaponSkill skillRequired();
 
-		name = "overpriced food ration";
-		image = ItemSpriteSheet.FOOD_OVERPRICED;
+    AttributeType accuracyAttribute();
+    AttributeType damageAttribute();
 
-        bones = true;
-        price = 20;
-	}
-	
-	@Override
-	public String info() {
-		return "It looks exactly like a standard ration of food but smaller." + super.info();
-	}
+    MagicType damageType();
 
-	@Override
-	public String message()
-	{
-		return "That food tasted ok.";
-	}
+    int accuracyModifier();
+    int damageRoll();
 
+    int proc(Char attacker, boolean thrown, Char defender, int damage);
 }

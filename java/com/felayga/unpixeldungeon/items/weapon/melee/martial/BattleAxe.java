@@ -32,7 +32,7 @@ public class BattleAxe extends MartialMeleeWeapon {
 		super(GameTime.TICK, 1, 8 );
 
 		name = "battle axe";
-		image = ItemSpriteSheet.BATTLE_AXE;
+		image = ItemSpriteSheet.MELEE_BATTLE_AXE;
 	}
 	
 	@Override

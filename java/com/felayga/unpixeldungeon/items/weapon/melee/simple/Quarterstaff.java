@@ -33,7 +33,7 @@ public class Quarterstaff extends SimpleMeleeWeapon {
 		super( GameTime.TICK, 1, 8 );
 
 		name = "quarterstaff";
-		image = ItemSpriteSheet.QUARTERSTAFF;
+		image = ItemSpriteSheet.MELEE_QUARTERSTAFF;
         pickupSound = Assets.SND_ITEM_WOOD;
 	}
 	

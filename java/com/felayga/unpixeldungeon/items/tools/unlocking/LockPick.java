@@ -37,7 +37,7 @@ public class LockPick extends UnlockingTool {
     public LockPick()
     {
         name = "lockpick";
-        image = ItemSpriteSheet.LOCKPICK;
+        image = ItemSpriteSheet.TOOL_LOCKPICK;
     }
 
     public boolean unlockDoor(Char user) {

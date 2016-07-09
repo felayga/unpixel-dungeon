@@ -41,10 +41,11 @@ import com.felayga.unpixeldungeon.actors.buffs.positive.MagicalSleep;
 import com.felayga.unpixeldungeon.actors.hero.Belongings;
 import com.felayga.unpixeldungeon.actors.mobs.Bestiary;
 import com.felayga.unpixeldungeon.items.EquippableItem;
-import com.felayga.unpixeldungeon.items.KindOfWeapon;
 import com.felayga.unpixeldungeon.items.armor.Armor;
 import com.felayga.unpixeldungeon.items.armor.glyphs.Bounce;
 import com.felayga.unpixeldungeon.items.food.Corpse;
+import com.felayga.unpixeldungeon.items.weapon.IWeapon;
+import com.felayga.unpixeldungeon.items.weapon.Weapon;
 import com.felayga.unpixeldungeon.items.weapon.missiles.MissileWeapon;
 import com.felayga.unpixeldungeon.items.weapon.ranged.RangedWeapon;
 import com.felayga.unpixeldungeon.levels.Level;
@@ -250,8 +251,8 @@ public abstract class Char extends Actor {
 
         EquippableItem item = belongings.weapon();
 
-        if (item instanceof KindOfWeapon) {
-            KindOfWeapon weapon = (KindOfWeapon)item;
+        if (item instanceof Weapon) {
+            Weapon weapon = (Weapon)item;
 
             weaponDelay = weapon.delay_new;
         }
@@ -369,11 +370,11 @@ public abstract class Char extends Actor {
         return false;
     }
 
-    public boolean attack(KindOfWeapon weapon, Char enemy) {
+    public boolean attack(IWeapon weapon, Char enemy) {
         return attack(weapon, false, enemy);
     }
 
-    public boolean attack(KindOfWeapon weapon, boolean ranged, Char enemy) {
+    public boolean attack(IWeapon weapon, boolean ranged, Char enemy) {
         boolean visibleFight = Dungeon.visible[pos] || Dungeon.visible[enemy.pos];
         boolean retval = false;
 
@@ -404,7 +405,7 @@ public abstract class Char extends Actor {
             }
         } else if (tryHit(this, weapon, ranged, enemy, touch)) {
             if (!touch) {
-                hit(weapon, enemy, visibleFight);
+                hit(weapon, ranged, enemy, visibleFight);
             } else {
                 if (visibleFight) {
                     GLog.i(TXT_TOUCH, name, enemy.name);
@@ -440,7 +441,7 @@ public abstract class Char extends Actor {
         return retval;
     }
 
-    protected void hit(KindOfWeapon weapon, Char enemy, boolean visible) {
+    protected void hit(IWeapon weapon, boolean ranged, Char enemy, boolean visible) {
         if (visible) {
             GLog.i(TXT_HIT, name, enemy.name);
         }
@@ -449,7 +450,7 @@ public abstract class Char extends Actor {
 
         if (weapon != null) {
             effectiveDamage = weapon.damageRoll();
-            effectiveDamage += getAttributeModifier(weapon.damageAttribute);
+            effectiveDamage += getAttributeModifier(weapon.damageAttribute());
         } else {
             effectiveDamage = Random.IntRange(1, 4);
             effectiveDamage += getAttributeModifier(AttributeType.STRCON);
@@ -460,7 +461,7 @@ public abstract class Char extends Actor {
         }
 
         if (weapon != null) {
-            effectiveDamage = weapon.proc(this, false, enemy, effectiveDamage);
+            effectiveDamage = weapon.proc(this, ranged, enemy, effectiveDamage);
         }
         effectiveDamage = enemy.defenseProc(this, effectiveDamage);
 
@@ -523,7 +524,7 @@ public abstract class Char extends Actor {
         return false;
     }
 
-    public static boolean tryHit(Char attacker, KindOfWeapon weapon, boolean thrown, Char defender, boolean touch) {
+    public static boolean tryHit(Char attacker, IWeapon weapon, boolean thrown, Char defender, boolean touch) {
         int roll = Random.Int(1, 20);
         int skill = attacker.attackSkill(weapon, thrown, defender);
         int defense = defender.defenseMundane(attacker, touch);
@@ -541,7 +542,7 @@ public abstract class Char extends Actor {
 		*/
     }
 
-    public int attackSkill(KindOfWeapon weapon, boolean thrown, Char target) {
+    public int attackSkill(IWeapon weapon, boolean thrown, Char target) {
         if (Level.distance(pos, target.pos) <= 1) {
             if (thrown) {
                 GLog.d("thrown weapon in melee");

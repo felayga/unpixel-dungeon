@@ -46,6 +46,7 @@ import com.felayga.unpixeldungeon.items.potions.Potion;
 import com.felayga.unpixeldungeon.items.scrolls.Scroll;
 import com.felayga.unpixeldungeon.items.spells.Spell;
 import com.felayga.unpixeldungeon.items.wands.Wand;
+import com.felayga.unpixeldungeon.items.weapon.Weapon;
 import com.felayga.unpixeldungeon.items.weapon.melee.MeleeWeapon;
 import com.felayga.unpixeldungeon.items.weapon.missiles.martial.Boomerang;
 import com.felayga.unpixeldungeon.mechanics.BUCStatus;
@@ -69,23 +70,41 @@ import java.util.Iterator;
 
 public class WndBackpack extends WndTabbed {
 
-	public static enum Mode {
+	public enum Mode {
 		ALL,
+        ALL_WITH_SPELL,
 		UNIDENTIFED,
 		UPGRADEABLE,
 		QUICKSLOT,
 		FOR_SALE,
-		WEAPON,
-		ARMOR,
 		ENCHANTABLE,
-		WAND,
-		SEED,
-		FOOD,
-		POTION,
-		SCROLL,
-		EQUIPMENT,
-		SPELL,
-		ALL_WITH_SPELL
+        INSTANCEOF;
+
+        public static boolean Qualify(Mode mode, Item item, Class<?> c) {
+            switch(mode) {
+                case FOR_SALE:
+                    return (item.price() > 0) && (!item.isEquipped(Dungeon.hero) || item.bucStatus() != BUCStatus.Cursed);
+                case UPGRADEABLE:
+                    return item.isUpgradable();
+                case UNIDENTIFED:
+                    return !item.isIdentified();
+                case QUICKSLOT:
+                    return (item.defaultAction != null);
+                case ENCHANTABLE:
+                    return item instanceof MeleeWeapon || item instanceof Boomerang || item instanceof Armor;
+                case ALL:
+                    return !(item instanceof Spell);
+                case ALL_WITH_SPELL:
+                    return true;
+                case INSTANCEOF:
+                    if (c != null) {
+                        return c.isInstance(item);
+                    }
+                    break;
+            }
+
+            return false;
+        }
 	}
 
 	protected static final int COLS_P = 6; //width original=4
@@ -98,6 +117,7 @@ public class WndBackpack extends WndTabbed {
 
 	private Listener listener;
 	private WndBackpack.Mode mode;
+    private Class<?> classMatch;
 	private String title;
 
 	private int nCols;
@@ -112,9 +132,11 @@ public class WndBackpack extends WndTabbed {
 
 	private HashSet<Item> excluded;
 
-	public WndBackpack(Bag bag, Listener listener, Mode mode, String title, Item... excluded) {
-
+	public WndBackpack(Bag bag, Listener listener, Mode mode, Class<?> c, String title, Item... excluded) {
 		super();
+
+        classMatch = c;
+
 		Belongings stuff = Dungeon.hero.belongings;
 
 		this.listener = listener;
@@ -172,49 +194,46 @@ public class WndBackpack extends WndTabbed {
 		layoutTabs();
 	}
 
-	public static WndBackpack lastBag(Listener listener, Mode mode, String title, Item... excluded) {
+	public static WndBackpack lastBag(Listener listener, Mode mode, Class<?> c, String title, Item... excluded) {
 		//todo: make sure this is right
 		//commented out section is for scroll of identify multiple uses
 		if (mode == lastMode && lastBag != null/* &&
 			Dungeon.hero.belongings.contains( lastBag )*/) {
 
-			return new WndBackpack(lastBag, listener, mode, title, excluded);
-
+			return new WndBackpack(lastBag, listener, mode, c, title, excluded);
 		} else {
-
-			return new WndBackpack(Dungeon.hero.belongings.backpack1, listener, mode, title, excluded);
-
+			return new WndBackpack(Dungeon.hero.belongings.backpack1, listener, mode, c, title, excluded);
 		}
 	}
 
-	public static WndBackpack getBag(Class<? extends Bag> bagClass, Listener listener, Mode mode, String title) {
+	public static WndBackpack getBag(Class<? extends Bag> bagClass, Listener listener, Mode mode, Class<?> c, String title) {
 		Bag bag = Dungeon.hero.belongings.getItem(bagClass);
 		return bag != null ?
-				new WndBackpack(bag, listener, mode, title) :
-				lastBag(listener, mode, title);
+				new WndBackpack(bag, listener, mode, c, title) :
+				lastBag(listener, mode, c, title);
 	}
 
 	protected void placeItems(Bag container) {
 		if (container instanceof EquipmentBackpack) {
 			// Equipped items
 			Belongings stuff = Dungeon.hero.belongings;
-			placeItem(stuff.weapon() != null ? stuff.weapon() : new Placeholder(ItemSpriteSheet.WEAPON));
-			placeItem(stuff.offhand() != null ? stuff.offhand() : new Placeholder(ItemSpriteSheet.SHIELD));
+			placeItem(stuff.weapon() != null ? stuff.weapon() : new Placeholder(ItemSpriteSheet.PLACEHOLDER_WEAPON));
+			placeItem(stuff.offhand() != null ? stuff.offhand() : new Placeholder(ItemSpriteSheet.PLACEHOLDER_SHIELD));
 
-			placeItem(stuff.face() != null ? stuff.face() : new Placeholder(ItemSpriteSheet.FACE));
-			placeItem(stuff.amulet() != null ? stuff.amulet() : new Placeholder(ItemSpriteSheet.AMULETB));
+			placeItem(stuff.face() != null ? stuff.face() : new Placeholder(ItemSpriteSheet.PLACEHOLDER_FACE));
+			placeItem(stuff.amulet() != null ? stuff.amulet() : new Placeholder(ItemSpriteSheet.PLACEHOLDER_AMULET));
 
-			placeItem(stuff.ring1() != null ? stuff.ring1() : new Placeholder(ItemSpriteSheet.RING));
-			placeItem(stuff.ring2() != null ? stuff.ring2() : new Placeholder(ItemSpriteSheet.RING));
+			placeItem(stuff.ring1() != null ? stuff.ring1() : new Placeholder(ItemSpriteSheet.PLACEHOLDER_RING));
+			placeItem(stuff.ring2() != null ? stuff.ring2() : new Placeholder(ItemSpriteSheet.PLACEHOLDER_RING));
 
-			placeItem(stuff.cloak() != null ? stuff.cloak() : new Placeholder(ItemSpriteSheet.CLOAK));
-			placeItem(stuff.armor() != null ? stuff.armor() : new Placeholder(ItemSpriteSheet.ARMOR));
+			placeItem(stuff.cloak() != null ? stuff.cloak() : new Placeholder(ItemSpriteSheet.PLACEHOLDER_CLOAK));
+			placeItem(stuff.armor() != null ? stuff.armor() : new Placeholder(ItemSpriteSheet.PLACEHOLDER_ARMOR));
 
-			placeItem(stuff.helmet() != null ? stuff.helmet() : new Placeholder(ItemSpriteSheet.HELMET));
-			placeItem(stuff.gloves() != null ? stuff.gloves() : new Placeholder(ItemSpriteSheet.GLOVES));
+			placeItem(stuff.helmet() != null ? stuff.helmet() : new Placeholder(ItemSpriteSheet.PLACEHOLDER_HELMET));
+			placeItem(stuff.gloves() != null ? stuff.gloves() : new Placeholder(ItemSpriteSheet.PLACEHOLDER_GLOVES));
 
-			placeItem(stuff.pants() != null ? stuff.pants() : new Placeholder(ItemSpriteSheet.PANTS));
-			placeItem(stuff.boots() != null ? stuff.boots() : new Placeholder(ItemSpriteSheet.BOOTS));
+			placeItem(stuff.pants() != null ? stuff.pants() : new Placeholder(ItemSpriteSheet.PLACEHOLDER_PANTS));
+			placeItem(stuff.boots() != null ? stuff.boots() : new Placeholder(ItemSpriteSheet.PLACEHOLDER_BOOTS));
 		}
 
 		if (col != 0) {
@@ -295,7 +314,7 @@ public class WndBackpack extends WndTabbed {
 	@Override
 	protected void onClick(Tab tab) {
 		hide();
-		GameScene.show(new WndBackpack(((BagTab) tab).bag, listener, mode, title, excluded.toArray(new Item[]{})));
+		GameScene.show(new WndBackpack(((BagTab) tab).bag, listener, mode, classMatch, title, excluded.toArray(new Item[]{})));
 	}
 
 	@Override
@@ -444,24 +463,7 @@ public class WndBackpack extends WndTabbed {
 				if (item.getDisplayName() == null || excluded.contains(item)) {
 					enable(false);
 				} else {
-					enable(
-							mode == Mode.FOR_SALE && (item.price() > 0) && (!item.isEquipped(Dungeon.hero) || item.bucStatus() != BUCStatus.Cursed) ||
-									mode == Mode.UPGRADEABLE && item.isUpgradable() ||
-									mode == Mode.UNIDENTIFED && !item.isIdentified() ||
-									mode == Mode.QUICKSLOT && (item.defaultAction != null) ||
-									mode == Mode.WEAPON && (item instanceof MeleeWeapon || item instanceof Boomerang) ||
-									mode == Mode.ARMOR && (item instanceof Armor) ||
-									mode == Mode.ENCHANTABLE && (item instanceof MeleeWeapon || item instanceof Boomerang || item instanceof Armor) ||
-									mode == Mode.WAND && (item instanceof Wand) ||
-									mode == Mode.SEED && (item instanceof Seed) ||
-									mode == Mode.FOOD && (item instanceof Food) ||
-									mode == Mode.POTION && (item instanceof Potion) ||
-									mode == Mode.SCROLL && (item instanceof Scroll) ||
-									mode == Mode.EQUIPMENT && (item instanceof EquippableItem) ||
-									(mode == Mode.ALL && !(item instanceof Spell)) ||
-									mode == Mode.SPELL && (item instanceof Spell) ||
-									mode == Mode.ALL_WITH_SPELL
-					);
+					enable(Mode.Qualify(mode, item, classMatch));
 				}
 			} else {
 				bg.color(NORMAL);

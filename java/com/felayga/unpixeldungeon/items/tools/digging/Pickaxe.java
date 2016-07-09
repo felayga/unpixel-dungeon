@@ -36,7 +36,7 @@ public class Pickaxe extends DiggingTool {
         super( GameTime.TICK, 1, 6 );
 
         name = "pickaxe";
-        image = ItemSpriteSheet.PICKAXE;
+        image = ItemSpriteSheet.TOOL_PICKAXE;
     }
 
 }

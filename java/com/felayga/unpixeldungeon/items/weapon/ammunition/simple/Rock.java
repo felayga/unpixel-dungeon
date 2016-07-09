@@ -43,7 +43,7 @@ public class Rock extends AmmunitionWeapon {
         super(WeaponSkill.Simple, GameTime.TICK, 0, 2, quantity, true, AmmunitionType.Stone);
 
         name = "rock";
-        image = ItemSpriteSheet.ROCK;
+        image = ItemSpriteSheet.MISSILE_ROCK;
         pickupSound = Assets.SND_ITEM_ROCK;
 
         bones = false; //Finding them in bones would be semi-frequent and disappointing.
@@ -61,7 +61,7 @@ public class Rock extends AmmunitionWeapon {
     }
 
     @Override
-    public int accuracyFactor() {
+    public int accuracyModifier() {
         return 32767;
     }
 

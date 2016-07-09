@@ -59,11 +59,11 @@ public class AmmunitionWeapon extends MissileWeapon {
     }
 
     @Override
-    public int accuracyFactor() {
-        int retval = super.accuracyFactor();
+    public int accuracyModifier() {
+        int retval = super.accuracyModifier();
 
         if (launcher != null) {
-            retval += launcher.accuracyFactor();
+            retval += launcher.accuracyModifier();
         }
 
         return retval;

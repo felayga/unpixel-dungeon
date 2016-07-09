@@ -47,7 +47,7 @@ public class CurareDart extends MissileWeapon {
 		super(WeaponSkill.Simple, GameTime.TICK, 1, 3, number, true, AmmunitionType.None);
 
 		name = "curare dart";
-		image = ItemSpriteSheet.CURARE_DART;
+		image = ItemSpriteSheet.MISSILE_CURARE_DART;
 
 		//STR = 14;
         price = 8;
