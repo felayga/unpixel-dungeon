@@ -259,16 +259,12 @@ public class Food extends Item {
         GLog.p("You stop eating.");
     }
 
-    public String corpseName() {
-        return name;
-    }
-
     @Override
     public String getName() {
         if (partiallyEaten) {
-            return "partially eaten " + super.getName() + " corpse";
+            return "partially eaten " + super.getName();
         } else {
-            return super.getName() + " corpse";
+            return super.getName();
         }
     }
 

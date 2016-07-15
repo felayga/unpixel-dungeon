@@ -741,7 +741,9 @@ public class Hero extends Char {
             return true;
         } else {
             spend_new(action.time, true);
-            return action.target.execute(this, action.action);
+            action.target.execute(this, action.action);
+            curAction = null;
+            return false;
         }
     }
 

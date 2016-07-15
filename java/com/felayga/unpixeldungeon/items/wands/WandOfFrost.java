@@ -49,7 +49,6 @@ public class WandOfFrost extends Wand {
 
 	{
 		name = "Wand of Frost";
-		image = ItemSpriteSheet.WAND_FROST;
 	}
 
 	@Override

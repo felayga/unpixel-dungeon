@@ -26,6 +26,7 @@
 package com.felayga.unpixeldungeon.items.food;
 
 import com.felayga.unpixeldungeon.Assets;
+import com.felayga.unpixeldungeon.actors.Char;
 import com.felayga.unpixeldungeon.actors.buffs.Buff;
 import com.felayga.unpixeldungeon.actors.buffs.hero.DeathlySick;
 import com.felayga.unpixeldungeon.actors.buffs.hero.Encumbrance;
@@ -35,6 +36,7 @@ import com.felayga.unpixeldungeon.actors.hero.HeroAction;
 import com.felayga.unpixeldungeon.effects.SpellSprite;
 import com.felayga.unpixeldungeon.items.EquippableItem;
 import com.felayga.unpixeldungeon.items.Item;
+import com.felayga.unpixeldungeon.items.bags.IBag;
 import com.felayga.unpixeldungeon.items.weapon.melee.simple.Dagger;
 import com.felayga.unpixeldungeon.mechanics.BUCStatus;
 import com.felayga.unpixeldungeon.mechanics.Constant;
@@ -49,6 +51,7 @@ import com.watabou.utils.Bundle;
 import com.watabou.utils.Random;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 
 import javax.crypto.EncryptedPrivateKeyInfo;
 
@@ -56,59 +59,89 @@ import javax.crypto.EncryptedPrivateKeyInfo;
  * Created by HELLO on 7/8/2016.
  */
 public class CannedFood extends Food {
-    public CannedFood() { this(null); }
+    private static HashSet<String> knownCans = new HashSet<String>();
+
+    private static final String KNOWNCANS = "knownCans";
+
+    public static void save(Bundle bundle) {
+        bundle.put(KNOWNCANS, knownCans.toArray(new String[0]));
+    }
+
+    @SuppressWarnings("unchecked")
+    public static void restore(Bundle bundle) {
+        String[] known = bundle.getStringArray(KNOWNCANS);
+
+        if (known != null) {
+            for (int n = 0; n < known.length; n++) {
+                knownCans.add(known[n]);
+            }
+        }
+    }
+
+
+    @Override
+    public boolean isIdentified() {
+        return knownCans.contains(name) && bucStatusKnown;
+    }
+
+    @Override
+    public Item identify(boolean updateQuickslot) {
+        if (!isIdentified()) {
+            knownCans.add(name);
+            bucStatusKnown = true;
+
+            updateQuickslot = true;
+        }
+
+        if (parent() != null && stackable) {
+            if (parent().tryMergeExistingStack(this)) {
+                updateQuickslot = true;
+            }
+        }
+
+        if (updateQuickslot) {
+            updateQuickslot();
+        }
+
+        return this;
+    }
+
+
+    public CannedFood() {
+        this(null);
+    }
 
     public CannedFood(Corpse source) {
         super(0, Encumbrance.UNIT * 10);
 
+        hasBuc(true);
+
         if (source != null) {
             name = source.corpseName();
-            effects = source.effects & ~(CorpseEffect.Poisonous.value | CorpseEffect.Acidic.value);
+            effects = (source.effects & ~(CorpseEffect.Poisonous.value | CorpseEffect.Acidic.value)) | CorpseEffect.Canned.value;
             resistances = source.resistances;
             corpseLevel = source.corpseLevel;
-        }
-        else {
+            knownCans.add(name);
+            bucStatus(source);
+        } else {
             name = "unknown";
             effects = CorpseEffect.None.value;
             resistances = MagicType.None.value;
         }
-        opened = false;
 
         stackable = false;
+        image = ItemSpriteSheet.FOOD_CAN_UNOPENED;
 
-        hasBuc(true);
         price = 5;
 
-        determineImage();
-    }
-
-    private int nutritionType;
-
-    public CannedFood(CannedFood source, int nutritionType) {
-        super(Food.AMOUNT_EATEN_PER_ROUND, Encumbrance.UNIT * 10);
-
-        name = source.name;
-        effects = source.effects;
-        resistances = source.resistances;
-        corpseLevel = source.corpseLevel;
-        opened = true;
-        this.nutritionType = nutritionType;
-
-        stackable = false;
-
-        bucStatus(source);
-        price = 5;
-
-        determineImage();
+        image = ItemSpriteSheet.FOOD_CAN_UNOPENED;
     }
 
     @Override
     public ArrayList<String> actions(Hero hero) {
         ArrayList<String> actions = super.actions(hero);
-        if (!opened) {
-            actions.remove(Constant.Action.EAT);
-            actions.add(Constant.Action.OPEN);
-        }
+        actions.remove(Constant.Action.EAT);
+        actions.add(Constant.Action.OPEN);
         return actions;
     }
 
@@ -145,6 +178,13 @@ public class CannedFood extends Food {
             hero.motivate(true);
             return true;
         } else if (action.equals(Constant.Action.SLOWACTION)) {
+            IBag parent = parent();
+            Item removed = parent.remove(this, 1);
+            CannedFood split = (CannedFood) removed;
+            Corpse opened = new Corpse(split);
+            hero.belongings.collect(opened);
+            return false;
+            /*
             HeroAction.UseItem.EatItem subaction = new HeroAction.UseItem.EatItem(null, Constant.Action.EAT, false);
             subaction.targetOutsideInventory = parent();
 
@@ -154,26 +194,9 @@ public class CannedFood extends Food {
 
             hero.curAction = subaction;
             return true;
+            */
         } else {
             return super.execute(hero, action);
-        }
-    }
-
-    private void determineImage() {
-        int oldImage = image;
-
-        if (opened) {
-            if ((effects & CorpseEffect.Vegetable.value) != 0) {
-                image = ItemSpriteSheet.FOOD_CAN_VEGETABLE;
-            } else {
-                image = ItemSpriteSheet.FOOD_CAN_MEAT;
-            }
-        } else {
-            image = ItemSpriteSheet.FOOD_CAN_UNOPENED;
-        }
-
-        if (image != oldImage) {
-            updateQuickslot();
         }
     }
 
@@ -186,14 +209,11 @@ public class CannedFood extends Food {
     protected long effects;
     protected long resistances;
     protected int corpseLevel;
-    protected boolean opened;
 
     private static final String CORPSENAME = "corpseName";
     private static final String EFFECTS = "effects";
     private static final String RESISTANCES = "resistances";
     private static final String CORPSELEVEL = "corpseLevel";
-    private static final String OPENED = "opened";
-    private static final String NUTRITIONTYPE = "nutritionType";
 
     @Override
     public void storeInBundle(Bundle bundle) {
@@ -203,8 +223,6 @@ public class CannedFood extends Food {
         bundle.put(EFFECTS, effects);
         bundle.put(RESISTANCES, resistances);
         bundle.put(CORPSELEVEL, corpseLevel);
-        bundle.put(OPENED, opened);
-        bundle.put(NUTRITIONTYPE, nutritionType);
     }
 
     @Override
@@ -215,30 +233,22 @@ public class CannedFood extends Food {
         effects = bundle.getLong(EFFECTS);
         resistances = bundle.getLong(RESISTANCES);
         corpseLevel = bundle.getInt(CORPSELEVEL);
-        opened = bundle.getBoolean(OPENED);
-        nutritionType = bundle.getInt(NUTRITIONTYPE);
-
-        determineImage();
     }
 
-    @Override
-    public void doneEating(Hero hero, boolean stuffed) {
-        super.doneEating(hero, stuffed);
-
-        Corpse.applyEffectsResistances(hero, effects, resistances, corpseLevel);
+    public String corpseName() {
+        return name;
     }
 
     @Override
     public String getName() {
-        if ((effects & CorpseEffect.Vegetable.value) != 0) {
-            return "can of " + name;
+        if (knownCans.contains(name)) {
+            if ((effects & CorpseEffect.Vegetable.value) != 0) {
+                return "can of " + name;
+            } else {
+                return "can of " + name + " meat";
+            }
         } else {
-            return "can of " + name + " meat";
+            return "can";
         }
-    }
-
-    @Override
-    public String message() {
-        return "Yum, " + String.format(NUTRITION_NAMES[nutritionType], name) + ".";
     }
 }

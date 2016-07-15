@@ -237,7 +237,7 @@ public enum HeroClass {
         //hero.belongings.collect(new Rock(5));
 
         hero.belongings.collect(new IceBox().random());
-        hero.belongings.collect(new CanningKit());
+        hero.belongings.collect(new CanningKit().identify());
 	}
 
 	private static void initWarrior( Hero hero ) {

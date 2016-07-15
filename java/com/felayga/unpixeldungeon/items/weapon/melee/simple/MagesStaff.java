@@ -87,15 +87,15 @@ public class MagesStaff extends SimpleMeleeWeapon {
 		wand.identify();
 		wand.bucStatus(BUCStatus.Uncursed);
 		this.wand = wand;
-		wand.maxCharges = Math.min(wand.maxCharges + 1, 10);
-		wand.curCharges = wand.maxCharges;
+		//wand.maxCharges = Math.min(wand.maxCharges + 1, 10);
+		//wand.curCharges = wand.maxCharges;
 	}
 
 	@Override
 	public ArrayList<String> actions(Hero hero) {
 		ArrayList<String> actions = super.actions( hero );
 		actions.add(AC_IMBUE);
-		if (wand!= null && wand.curCharges > 0) {
+		if (wand!= null && wand.hasCharges()) {
 			actions.add( AC_ZAP );
 		}
 		return actions;
@@ -131,7 +131,7 @@ public class MagesStaff extends SimpleMeleeWeapon {
 		damage = super.proc(attacker, ranged, defender, damage);
 
 		if (wand != null && Dungeon.hero.subClass == HeroSubClass.BATTLEMAGE) {
-			if (wand.curCharges < wand.maxCharges) wand.partialCharge += 0.33f;
+			//if (wand.curCharges < wand.maxCharges) wand.partialCharge += 0.33f;
 			ScrollOfRecharging.charge((Hero)attacker);
 			wand.onHit(this, attacker, defender, damage);
 		}
@@ -187,8 +187,8 @@ public class MagesStaff extends SimpleMeleeWeapon {
 			wand.upgrade(null, -Math.abs(wandLevelDiff));
 
 		this.wand = wand;
-		wand.maxCharges = Math.min(wand.maxCharges + 1, 10);
-		wand.curCharges = wand.maxCharges;
+		//wand.maxCharges = Math.min(wand.maxCharges + 1, 10);
+		//wand.curCharges = wand.maxCharges;
 		wand.identify();
 		wand.bucStatus(BUCStatus.Uncursed);
 		//wand.charge(owner);
@@ -206,12 +206,14 @@ public class MagesStaff extends SimpleMeleeWeapon {
 		//does not lose strength requirement
 
 		if (wand != null) {
+            /*
 			int curCharges = wand.curCharges;
 			wand.upgrade(source, n);
 			//gives the wand one additional charge
 			wand.maxCharges = Math.min(wand.maxCharges + n, 10);
 			wand.curCharges = Math.min(wand.curCharges + n, 10);
 			updateQuickslot();
+			*/
 		}
 
 		return this;
@@ -260,7 +262,7 @@ public class MagesStaff extends SimpleMeleeWeapon {
 	public void restoreFromBundle(Bundle bundle) {
 		super.restoreFromBundle(bundle);
 		wand = (Wand) bundle.get(WAND);
-		if (wand != null) wand.maxCharges = Math.min(wand.maxCharges + 1, 10);
+		//if (wand != null) wand.maxCharges = Math.min(wand.maxCharges + 1, 10);
 	}
 
 	@Override

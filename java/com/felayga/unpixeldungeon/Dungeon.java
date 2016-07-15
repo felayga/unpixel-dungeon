@@ -35,9 +35,11 @@ import com.felayga.unpixeldungeon.actors.mobs.npcs.Wandmaker;
 import com.felayga.unpixeldungeon.items.Ankh;
 import com.felayga.unpixeldungeon.items.Generator;
 import com.felayga.unpixeldungeon.items.Item;
+import com.felayga.unpixeldungeon.items.food.CannedFood;
 import com.felayga.unpixeldungeon.items.potions.Potion;
 import com.felayga.unpixeldungeon.items.rings.Ring;
 import com.felayga.unpixeldungeon.items.scrolls.Scroll;
+import com.felayga.unpixeldungeon.items.wands.Wand;
 import com.felayga.unpixeldungeon.items.weapon.melee.simple.MagesStaff;
 import com.felayga.unpixeldungeon.levels.DeadEndLevel;
 import com.felayga.unpixeldungeon.levels.Level;
@@ -120,6 +122,7 @@ public class Dungeon {
         Scroll.initLabels();
         Potion.initColors();
         Ring.initGems();
+        Wand.initLabels();
 
         Statistics.reset();
         Journal.reset();
@@ -429,6 +432,8 @@ public class Dungeon {
             Scroll.save(bundle);
             Potion.save(bundle);
             Ring.save(bundle);
+            Wand.save(bundle);
+            CannedFood.save(bundle);
             DungeonBranch.save(bundle);
 
             Actor.storeNextID(bundle);
@@ -508,6 +513,8 @@ public class Dungeon {
         Scroll.restore(bundle);
         Potion.restore(bundle);
         Ring.restore(bundle);
+        Wand.restore(bundle);
+        CannedFood.restore(bundle);
         DungeonBranch.restore(bundle);
 
         quickslot.restorePlaceholders(bundle);

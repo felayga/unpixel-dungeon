@@ -1043,26 +1043,26 @@ public class Belongings implements Iterable<Item>, IDecayable, IBag {
         }
         */
 	}
-	
-	public int charge( boolean full) {
+
+    /*
+    //todo: should inventory charging be a thing?
+	public int charge(boolean full) {
 		
 		int count = 0;
 		
 		for (Item item : this) {
 			if (item instanceof Wand) {
 				Wand wand = (Wand)item;
-				if (wand.curCharges < wand.maxCharges) {
-					wand.curCharges = full ? wand.maxCharges : wand.curCharges + 1;
-					count++;
-					
-					wand.updateQuickslot();
-				}
+                wand.recharge();
 			}
 		}
 		
 		return count;
 	}
-	
+	*/
+
+    /*
+    //todo: should wand discharging be a thing?
 	public int discharge() {
 		
 		int count = 0;
@@ -1081,6 +1081,7 @@ public class Belongings implements Iterable<Item>, IDecayable, IBag {
 		
 		return count;
 	}
+	*/
 
 	public void dropAll(int pos) {
 		ArrayList<Integer> passable = new ArrayList<Integer>();

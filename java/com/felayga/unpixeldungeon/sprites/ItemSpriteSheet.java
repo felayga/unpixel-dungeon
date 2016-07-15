@@ -152,6 +152,27 @@ public class ItemSpriteSheet {
 	public static final int ARMOR_HUNTRESS			= ROW_ARMOR + 15;
 
 	//Row Six: Wands
+    public static final int WAND_01     = ROW_WAND + 0;
+    public static final int WAND_02     = ROW_WAND + 1;
+    public static final int WAND_03     = ROW_WAND + 2;
+    public static final int WAND_04     = ROW_WAND + 3;
+    public static final int WAND_05     = ROW_WAND + 4;
+    public static final int WAND_06     = ROW_WAND + 5;
+    public static final int WAND_07     = ROW_WAND + 6;
+    public static final int WAND_08     = ROW_WAND + 7;
+    public static final int WAND_09     = ROW_WAND + 8;
+    public static final int WAND_10     = ROW_WAND + 9;
+    public static final int WAND_11     = ROW_WAND + 10;
+    public static final int WAND_12     = ROW_WAND + 11;
+    public static final int WAND_13     = ROW_WAND + 12;
+    public static final int WAND_14     = ROW_WAND + 13;
+    public static final int WAND_15     = ROW_WAND + 14;
+    public static final int WAND_16     = ROW_WAND + 15;
+    public static final int WAND_17     = ROW_WAND + 16;
+    public static final int WAND_18     = ROW_WAND + 17;
+    public static final int WAND_19     = ROW_WAND + 18;
+    public static final int WAND_20     = ROW_WAND + 19;
+    /*
 	public static final int WAND_MAGIC_MISSILE	= ROW_WAND + 0;
 	public static final int WAND_FIREBOLT		= ROW_WAND + 1;
 	public static final int WAND_FROST			= ROW_WAND + 2;
@@ -165,6 +186,7 @@ public class ItemSpriteSheet {
 	public static final int WAND_WARDING      	= ROW_WAND + 10;
 	public static final int WAND_REGROWTH		= ROW_WAND + 11;
 	public static final int WAND_TRANSFUSION	= ROW_WAND + 12;
+	*/
 
 	//Row Seven: Rings
 	public static final int RING_GARNET		= ROW_RING + 0;

@@ -49,7 +49,6 @@ public class WandOfLightning extends Wand {
 
 	{
 		name = "Wand of Lightning";
-		image = ItemSpriteSheet.WAND_LIGHTNING;
 	}
 	
 	private ArrayList<Char> affected = new ArrayList<>();

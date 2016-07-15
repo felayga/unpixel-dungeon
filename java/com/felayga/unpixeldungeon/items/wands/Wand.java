@@ -25,6 +25,7 @@
 package com.felayga.unpixeldungeon.items.wands;
 
 import com.felayga.unpixeldungeon.Assets;
+import com.felayga.unpixeldungeon.Badges;
 import com.felayga.unpixeldungeon.Dungeon;
 import com.felayga.unpixeldungeon.actors.Actor;
 import com.felayga.unpixeldungeon.actors.Char;
@@ -36,12 +37,27 @@ import com.felayga.unpixeldungeon.actors.hero.HeroClass;
 import com.felayga.unpixeldungeon.actors.hero.HeroSubClass;
 import com.felayga.unpixeldungeon.effects.MagicMissile;
 import com.felayga.unpixeldungeon.items.Item;
+import com.felayga.unpixeldungeon.items.ItemStatusHandler;
+import com.felayga.unpixeldungeon.items.scrolls.BlankScroll;
+import com.felayga.unpixeldungeon.items.scrolls.ScrollOfIdentify;
+import com.felayga.unpixeldungeon.items.scrolls.ScrollOfLullaby;
+import com.felayga.unpixeldungeon.items.scrolls.ScrollOfMagicMapping;
+import com.felayga.unpixeldungeon.items.scrolls.ScrollOfMagicalInfusion;
+import com.felayga.unpixeldungeon.items.scrolls.ScrollOfMirrorImage;
+import com.felayga.unpixeldungeon.items.scrolls.ScrollOfPsionicBlast;
+import com.felayga.unpixeldungeon.items.scrolls.ScrollOfRage;
+import com.felayga.unpixeldungeon.items.scrolls.ScrollOfRecharging;
+import com.felayga.unpixeldungeon.items.scrolls.ScrollOfRemoveCurse;
+import com.felayga.unpixeldungeon.items.scrolls.ScrollOfTeleportation;
+import com.felayga.unpixeldungeon.items.scrolls.ScrollOfTerror;
+import com.felayga.unpixeldungeon.items.scrolls.ScrollOfUpgrade;
 import com.felayga.unpixeldungeon.items.weapon.melee.simple.MagesStaff;
 import com.felayga.unpixeldungeon.mechanics.BUCStatus;
 import com.felayga.unpixeldungeon.mechanics.Ballistica;
 import com.felayga.unpixeldungeon.mechanics.GameTime;
 import com.felayga.unpixeldungeon.scenes.CellSelector;
 import com.felayga.unpixeldungeon.scenes.GameScene;
+import com.felayga.unpixeldungeon.sprites.ItemSpriteSheet;
 import com.felayga.unpixeldungeon.ui.QuickSlotButton;
 import com.felayga.unpixeldungeon.utils.GLog;
 import com.watabou.noosa.audio.Sample;
@@ -68,12 +84,101 @@ public abstract class Wand extends Item {
 	private static final String TXT_IDENTIFY    = "You are now familiar with your %s.";
 
 	private static final long TIME_TO_ZAP	= GameTime.TICK;
-	
-	public int maxCharges = initialCharges();
-	public int curCharges = maxCharges;
-	public float partialCharge = 0f;
-	
-	//protected Charger charger;
+
+
+    private static final Class<?>[] wands = {
+            WandOfDisintegration.class,
+            WandOfFireblast.class,
+            WandOfFrost.class,
+            WandOfLightning.class,
+            WandOfMagicMissile.class,
+            WandOfRegrowth.class,
+            WandOfVenom.class
+    };
+    private static final String[] appearances = {
+            "glass",
+            "balsa",
+            "crystal",
+            "maple",
+            "pine",
+            "oak",
+            "ebony",
+            "marble",
+            "tin",
+            "brass",
+            "copper",
+            "silver",
+            "aluminum",
+            "uranium",
+            "iron",
+            "steel",
+            "gold",
+            "jeweled",
+            "forked",
+            "curved"
+    };
+    private static final Integer[] images = {
+            ItemSpriteSheet.WAND_01,
+            ItemSpriteSheet.WAND_02,
+            ItemSpriteSheet.WAND_03,
+            ItemSpriteSheet.WAND_04,
+            ItemSpriteSheet.WAND_05,
+            ItemSpriteSheet.WAND_06,
+            ItemSpriteSheet.WAND_07,
+            ItemSpriteSheet.WAND_08,
+            ItemSpriteSheet.WAND_09,
+            ItemSpriteSheet.WAND_10,
+            ItemSpriteSheet.WAND_11,
+            ItemSpriteSheet.WAND_12,
+            ItemSpriteSheet.WAND_13,
+            ItemSpriteSheet.WAND_14,
+            ItemSpriteSheet.WAND_15,
+            ItemSpriteSheet.WAND_16,
+            ItemSpriteSheet.WAND_17,
+            ItemSpriteSheet.WAND_18,
+            ItemSpriteSheet.WAND_19,
+            ItemSpriteSheet.WAND_20
+    };
+
+    private static ItemStatusHandler<Wand> handler;
+
+    private String rune;
+
+    @SuppressWarnings("unchecked")
+    public static void initLabels() {
+        handler = new ItemStatusHandler<Wand>( (Class<? extends Wand>[])wands, appearances, images, 0 );
+    }
+
+    public static void save( Bundle bundle ) {
+        handler.save( bundle );
+    }
+
+    @SuppressWarnings("unchecked")
+    public static void restore( Bundle bundle ) {
+        handler = new ItemStatusHandler<Wand>( (Class<? extends Wand>[])wands, appearances, images, bundle );
+    }
+
+    public boolean isKnown() {
+        return handler.isKnown( this );
+    }
+
+    public boolean setKnown() {
+        if (!isKnown()) {
+            handler.know(this);
+
+            return true;
+        }
+
+        return false;
+    }
+
+
+    private int maxCharges;
+	private int curCharges;
+
+    public boolean hasCharges() {
+        return curCharges > 0;
+    }
 	
 	private boolean curChargeKnown = false;
 
@@ -81,10 +186,13 @@ public abstract class Wand extends Item {
 
 	protected int collisionProperties = Ballistica.MAGIC_BOLT;
 
-	public Wand()
+	public Wand(int maxCharges)
 	{
 		defaultAction = AC_ZAP;
 		usesTargeting = true;
+        this.maxCharges = maxCharges;
+        this.curCharges = maxCharges;
+        hasLevels = false;
 
 		weight(Encumbrance.UNIT * 7);
         price = 75;
@@ -93,7 +201,7 @@ public abstract class Wand extends Item {
 	@Override
 	public ArrayList<String> actions( Hero hero ) {
 		ArrayList<String> actions = super.actions( hero );
-		if (curCharges > 0 || !curChargeKnown) {
+		if (hasCharges() || !curChargeKnown) {
 			actions.add( AC_ZAP );
 		}
 
@@ -180,13 +288,13 @@ public abstract class Wand extends Item {
 
 	@Override
 	public Item identify(boolean updateQuickslot) {
-		if (curChargeKnown != true) {
+		if (setKnown() || curChargeKnown != true) {
 			curChargeKnown = true;
 			updateQuickslot = true;
 		}
 		
 		return super.identify(updateQuickslot);
-	}
+    }
 	
 	@Override
 	public String toString() {
@@ -200,12 +308,23 @@ public abstract class Wand extends Item {
 		
 		return sb.toString();
 	}
-	
-	@Override
-	public String info() {
+
+    @Override
+    public String getName() {
+        return isKnown() ? super.getName() : rune + " wand";
+    }
+
+    @Override
+	public final String info() {
+        return isKnown() ?
+                desc() :
+                "This parchment is covered with indecipherable writing, and bears a title " +
+                        "of \"" + rune + "\". Who knows what it will do when read aloud?";
+        /*
 		return (bucStatusKnown && bucStatus == BUCStatus.Cursed) ?
 				desc() + "\n\nThis wand is cursed, making its magic chaotic and random." :
 				desc();
+		*/
 	}
 	
 	@Override
@@ -216,36 +335,16 @@ public abstract class Wand extends Item {
 	@Override
 	public String status() {
 		if (levelKnown) {
-			return (curChargeKnown ? curCharges : "?") + "/" + maxCharges;
+            if (curChargeKnown) {
+                return curCharges + "/" + maxCharges;
+            } else {
+                return "???";
+            }
 		} else {
 			return null;
 		}
 	}
-	
-	@Override
-	public Item upgrade(Item source, int n) {
 
-		super.upgrade(source, n);
-		
-		updateLevel();
-		curCharges = Math.min( curCharges + 1, maxCharges );
-		updateQuickslot();
-		
-		return this;
-	}
-	
-	public void updateLevel() {
-		maxCharges = Math.min( initialCharges() + level, 10 );
-		curCharges = Math.min( curCharges, maxCharges );
-	}
-	
-	protected int initialCharges() {
-		return 2;
-	}
-
-	protected int chargesPerCast() {
-		return 1;
-	}
 	
 	protected void fx( Ballistica bolt, Callback callback ) {
 		MagicMissile.whiteLight( curUser.sprite.parent, bolt.sourcePos, bolt.collisionPos, callback );
@@ -261,8 +360,8 @@ public abstract class Wand extends Item {
 	}
 
 	protected void wandUsed() {
-		usagesToKnow -= bucStatus == BUCStatus.Cursed ? 1 : chargesPerCast();
-		curCharges -= bucStatus == BUCStatus.Cursed ? 1 : chargesPerCast();
+		usagesToKnow -= 1;
+		curCharges -= 1;
 		if (!isIdentified() && usagesToKnow <= 0) {
 			identify();
 			GLog.w( TXT_IDENTIFY, getDisplayName() );
@@ -278,15 +377,13 @@ public abstract class Wand extends Item {
 	private static final String UNFAMILIRIARITY        = "unfamiliarity";
 	private static final String CUR_CHARGES			= "curCharges";
 	private static final String CUR_CHARGE_KNOWN	= "curChargeKnown";
-	private static final String PARTIALCHARGE 		= "partialCharge";
 	
 	@Override
 	public void storeInBundle( Bundle bundle ) {
-		super.storeInBundle( bundle );
-		bundle.put( UNFAMILIRIARITY, usagesToKnow );
+		super.storeInBundle( bundle);
+        bundle.put( UNFAMILIRIARITY, usagesToKnow );
 		bundle.put( CUR_CHARGES, curCharges );
 		bundle.put( CUR_CHARGE_KNOWN, curChargeKnown );
-		bundle.put( PARTIALCHARGE , partialCharge );
 	}
 	
 	@Override
@@ -295,10 +392,9 @@ public abstract class Wand extends Item {
 		if ((usagesToKnow = bundle.getInt( UNFAMILIRIARITY )) == 0) {
 			usagesToKnow = USAGES_TO_KNOW;
 		}
-		curCharges = bundle.getInt( CUR_CHARGES );
-		curChargeKnown = bundle.getBoolean( CUR_CHARGE_KNOWN );
-		partialCharge = bundle.getFloat( PARTIALCHARGE );
-	}
+		curCharges = bundle.getInt( CUR_CHARGES);
+        curChargeKnown = bundle.getBoolean( CUR_CHARGE_KNOWN);
+    }
 	
 	protected static CellSelector.Listener zapper = new  CellSelector.Listener() {
 		
@@ -324,7 +420,7 @@ public abstract class Wand extends Item {
 				else
 					QuickSlotButton.target(Actor.findChar(cell));
 				
-				if (curWand.curCharges >= (curWand.bucStatus == BUCStatus.Cursed ? 1 : curWand.chargesPerCast())) {
+				if (curWand.hasCharges()) {
 					
 					curUser.busy();
 
@@ -361,60 +457,4 @@ public abstract class Wand extends Item {
 			return "Choose a location to zap";
 		}
 	};
-
-	/*
-	protected class Charger extends Buff {
-		
-		private static final float BASE_CHARGE_DELAY = 10f;
-		private static final float SCALING_CHARGE_ADDITION = 40f;
-		private static final float NORMAL_SCALE_FACTOR = 0.875f;
-
-		private static final float CHARGE_BUFF_BONUS = 0.25f;
-
-		float scalingFactor = NORMAL_SCALE_FACTOR;
-		
-		@Override
-		public boolean attachTo( Char target ) {
-			super.attachTo( target );
-			
-			return true;
-		}
-		
-		@Override
-		public boolean act() {
-			if (curCharges < maxCharges)
-				gainCharge();
-			
-			if (partialCharge >= 1 && curCharges < maxCharges) {
-				partialCharge--;
-				curCharges++;
-				updateQuickslot();
-			}
-			
-			spend( TICK );
-			
-			return true;
-		}
-
-		private void gainCharge(){
-			int missingCharges = maxCharges - curCharges;
-
-			float turnsToCharge = (float) (BASE_CHARGE_DELAY
-					+ (SCALING_CHARGE_ADDITION * Math.pow(scalingFactor, missingCharges)));
-
-			LockedFloor lock = target.buff(LockedFloor.class);
-			if (lock == null || lock.regenOn())
-				partialCharge += 1f/turnsToCharge;
-
-			ScrollOfRecharging.Recharging bonus = target.buff(ScrollOfRecharging.Recharging.class);
-			if (bonus != null && bonus.remainder() > 0f){
-				partialCharge += CHARGE_BUFF_BONUS * bonus.remainder();
-			}
-		}
-
-		private void setScaleFactor(float value){
-			this.scalingFactor = value;
-		}
-	}
-	*/
 }

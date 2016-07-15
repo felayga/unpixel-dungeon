@@ -24,6 +24,7 @@
  */
 package com.felayga.unpixeldungeon.items.food;
 
+import com.felayga.unpixeldungeon.Dungeon;
 import com.felayga.unpixeldungeon.actors.Char;
 import com.felayga.unpixeldungeon.actors.buffs.Buff;
 import com.felayga.unpixeldungeon.actors.buffs.hero.DeathlySick;
@@ -47,7 +48,7 @@ import com.watabou.utils.Random;
 public class Corpse extends Food implements IDecayable {
 
     public Corpse() {
-        this(null);
+        this((Char) null);
     }
 
     public Corpse(Char source) {
@@ -65,7 +66,7 @@ public class Corpse extends Food implements IDecayable {
             resistances = MagicType.None.value;
         }
 
-        image = getSprite(isRotten(), isVegetable());
+        image = getSprite(isRotten(), isVegetable(), isCanned());
         stackable = false;
 
         hasBuc(false);
@@ -73,19 +74,51 @@ public class Corpse extends Food implements IDecayable {
         price = 5;
     }
 
-    private static int getSprite(boolean rotten, boolean vegetable) {
-        if (rotten) {
-            if (vegetable) {
-                return ItemSpriteSheet.FOOD_LETTUCE_ROTTEN;
-            }
+    public Corpse(CannedFood source) {
+        super(Food.AMOUNT_EATEN_PER_ROUND, Encumbrance.UNIT * 10);
 
-            return ItemSpriteSheet.FOOD_MEAT_ROTTEN;
+        hasBuc(true);
+
+        if (source != null) {
+            name = source.corpseName();
+            effects = source.effects;
+            resistances = source.resistances;
+            decayTime = Dungeon.hero.getTime();
+            corpseLevel = source.corpseLevel;
+            bucStatus(source);
         } else {
+            name = "unknown";
+            effects = CorpseEffect.None.value;
+            resistances = MagicType.None.value;
+        }
+
+        image = getSprite(isRotten(), isVegetable(), isCanned());
+        stackable = false;
+
+        price = 5;
+    }
+
+    private static int getSprite(boolean rotten, boolean vegetable, boolean canned) {
+        if (canned) {
             if (vegetable) {
-                return ItemSpriteSheet.FOOD_LETTUCE;
+                return ItemSpriteSheet.FOOD_CAN_VEGETABLE;
             }
 
-            return ItemSpriteSheet.FOOD_MEAT;
+            return ItemSpriteSheet.FOOD_CAN_MEAT;
+        } else {
+            if (rotten) {
+                if (vegetable) {
+                    return ItemSpriteSheet.FOOD_LETTUCE_ROTTEN;
+                }
+
+                return ItemSpriteSheet.FOOD_MEAT_ROTTEN;
+            } else {
+                if (vegetable) {
+                    return ItemSpriteSheet.FOOD_LETTUCE;
+                }
+
+                return ItemSpriteSheet.FOOD_MEAT;
+            }
         }
     }
 
@@ -150,7 +183,7 @@ public class Corpse extends Food implements IDecayable {
         boolean newRotten = isRotten();
 
         if (rotten != newRotten || amount == 0) {
-            image = getSprite(newRotten, isVegetable());
+            image = getSprite(newRotten, isVegetable(), isCanned());
             updateQuickslot();
         }
     }
@@ -206,6 +239,10 @@ public class Corpse extends Food implements IDecayable {
 
     public boolean isVegetable() {
         return (effects & CorpseEffect.Vegetable.value) != 0;
+    }
+
+    public boolean isCanned() {
+        return (effects & CorpseEffect.Canned.value) != 0;
     }
 
 
@@ -369,17 +406,57 @@ public class Corpse extends Food implements IDecayable {
         //endregion
     }
 
+    public String corpseName() {
+        return name;
+    }
+
+    @Override
+    public String getName() {
+        if (isCanned()) {
+            if (partiallyEaten) {
+                if (isVegetable()) {
+                    return "partially eaten can of " + name;
+                } else {
+                    return "partially eaten can of " + name + " meat";
+                }
+            } else {
+                if (isVegetable()) {
+                    return "can of " + name;
+                } else {
+                    return "can of " + name + " meat";
+                }
+            }
+        } else {
+            if (partiallyEaten) {
+                return "partially eaten " + name + " corpse";
+            } else {
+                return name;
+            }
+        }
+    }
+
+
     @Override
     public String info() {
-        String retval = "This is a " + name + "'s corpse.";
+        String retval;
+
+        if (isCanned()) {
+            if (isVegetable()) {
+                retval = "This is a can of " + name + ".";
+            } else {
+                retval = "This is a can of " + name + " meat.";
+            }
+        } else {
+            retval = "This is a " + name + "'s corpse.";
+        }
 
         if (isRotten()) {
-            retval += "\n\nIt doesn't look very fresh.";
+            retval += "\n\nIt doesn't seem very fresh.";
         } else {
             retval += "  Tasty!";
         }
 
-        return retval + super.info() + "\n" + "decay=" + decay + " decayTime=" + decayTime;
+        return retval + super.info();// + "\n" + "decay=" + decay + " decayTime=" + decayTime;
     }
 
     @Override

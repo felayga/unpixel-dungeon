@@ -32,6 +32,8 @@ import com.felayga.unpixeldungeon.actors.buffs.hero.SnipersMark;
 import com.felayga.unpixeldungeon.actors.hero.Hero;
 import com.felayga.unpixeldungeon.effects.Speck;
 import com.felayga.unpixeldungeon.items.bags.IBag;
+import com.felayga.unpixeldungeon.items.food.CannedFood;
+import com.felayga.unpixeldungeon.items.food.Corpse;
 import com.felayga.unpixeldungeon.items.weapon.missiles.MissileWeapon;
 import com.felayga.unpixeldungeon.mechanics.BUCStatus;
 import com.felayga.unpixeldungeon.mechanics.Ballistica;
@@ -64,8 +66,12 @@ public class Item implements Bundlable {
 	public boolean usesTargeting;
 
 	private IBag parent_whut = null;
-    public IBag parent() { return parent_whut; }
-    public void parent(IBag parent) { this.parent_whut = parent; }
+    public IBag parent() {
+        return parent_whut;
+    }
+    public void parent(IBag parent) {
+        this.parent_whut = parent;
+    }
 
 
 	protected String name;
@@ -424,7 +430,7 @@ public class Item implements Bundlable {
 		return false;
 	}
 
-	public Item identify()
+	public final Item identify()
 	{
 		return identify(false);
 	}

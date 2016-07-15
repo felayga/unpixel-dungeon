@@ -54,7 +54,8 @@ public class Weakness extends FlavourBuff {
 		if (super.attachTo( target )) {
 			Hero hero = (Hero)target;
 			hero.weakened = true;
-			hero.belongings.discharge();
+            //todo: should weakness be discharging wands now?
+			//hero.belongings.discharge();
 			
 			return true;
 		} else {

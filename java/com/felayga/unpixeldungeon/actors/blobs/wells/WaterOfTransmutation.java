@@ -186,7 +186,7 @@ public class WaterOfTransmutation extends WellWater {
 		} while (n.getClass() == w.getClass());
 		
 		n.level = 0;
-		n.updateLevel();
+		//n.updateLevel();
 		n.upgrade( null, w.level );
 		
 		n.levelKnown = w.levelKnown;
