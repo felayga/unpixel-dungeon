@@ -133,8 +133,6 @@ public class CannedFood extends Food {
         image = ItemSpriteSheet.FOOD_CAN_UNOPENED;
 
         price = 5;
-
-        image = ItemSpriteSheet.FOOD_CAN_UNOPENED;
     }
 
     @Override

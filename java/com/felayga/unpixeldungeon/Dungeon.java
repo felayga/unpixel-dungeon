@@ -184,7 +184,7 @@ public class Dungeon {
 
         Level level;
         if (__depth >= DungeonBranch.Normal.levelMin && __depth <= DungeonBranch.Normal.levelMax) {
-            level = new MineTownLevel();
+            level = new SewerLevel();
         } else if (__depth >= DungeonBranch.Mines.levelMin && __depth <= DungeonBranch.Mines.levelMax) {
             int offset = __depth - DungeonBranch.Mines.levelMin;
 
