@@ -25,9 +25,7 @@
 package com.felayga.unpixeldungeon.items;
 
 import com.felayga.unpixeldungeon.Assets;
-import com.felayga.unpixeldungeon.Badges;
 import com.felayga.unpixeldungeon.Dungeon;
-import com.felayga.unpixeldungeon.Statistics;
 import com.felayga.unpixeldungeon.actors.Char;
 import com.felayga.unpixeldungeon.actors.hero.Hero;
 import com.felayga.unpixeldungeon.effects.CellEmitter;
@@ -38,9 +36,9 @@ import com.felayga.unpixeldungeon.effects.particles.ShadowParticle;
 import com.felayga.unpixeldungeon.items.artifacts.AlchemistsToolkit;
 import com.felayga.unpixeldungeon.items.bags.IBag;
 import com.felayga.unpixeldungeon.items.bags.ItemIterator;
-import com.felayga.unpixeldungeon.items.food.Blandfruit;
 import com.felayga.unpixeldungeon.items.potions.Potion;
 import com.felayga.unpixeldungeon.items.potions.PotionOfExperience;
+import com.felayga.unpixeldungeon.items.potions.PotionOfWater;
 import com.felayga.unpixeldungeon.items.scrolls.Scroll;
 import com.felayga.unpixeldungeon.mechanics.BUCStatus;
 import com.felayga.unpixeldungeon.mechanics.IDecayable;
@@ -49,6 +47,7 @@ import com.felayga.unpixeldungeon.plants.Plant.Seed;
 import com.felayga.unpixeldungeon.sprites.ItemSprite;
 import com.felayga.unpixeldungeon.sprites.ItemSpriteSheet;
 import com.felayga.unpixeldungeon.ui.Icons;
+import com.felayga.unpixeldungeon.utils.GLog;
 import com.watabou.noosa.audio.Sample;
 import com.watabou.utils.Bundlable;
 import com.watabou.utils.Bundle;
@@ -67,7 +66,7 @@ public class Heap implements Bundlable, IBag {
     }
     public String action() { return null; }
     public String getDisplayName() {
-        return "ground";
+        return "on the ground nearby";
     }
     public Icons tabIcon() {
         return Icons.FLOORHEAP;
@@ -348,7 +347,7 @@ public class Heap implements Bundlable, IBag {
                 }
 			}
 
-			if (items_derp.isEmpty()) {
+			if (items_derp == null || items_derp.isEmpty()) {
                 destroy();
             }
 		}
@@ -400,6 +399,7 @@ public class Heap implements Bundlable, IBag {
 		int count = 0;
 
 
+        /*
 		if (items_derp.size() == 2 && items_derp.get(0) instanceof Seed && items_derp.get(1) instanceof Blandfruit ) {
 
 			Sample.INSTANCE.play( Assets.SND_PUFF );
@@ -411,8 +411,8 @@ public class Heap implements Bundlable, IBag {
 			destroy();
 
 			return result;
-
 		}
+		*/
 		
 		int index = 0;
 
@@ -441,6 +441,10 @@ public class Heap implements Bundlable, IBag {
 
 			Item potion;
 
+            GLog.d("potion brew");
+            potion = new PotionOfWater();
+
+            /*
 			if (Random.Int( count + bonus ) == 0) {
 
 				CellEmitter.center( pos ).burst( Speck.factory( Speck.EVOKE ), 3 );
@@ -472,6 +476,7 @@ public class Heap implements Bundlable, IBag {
 					}
 				}
 			}
+			*/
 
 			//not a buff per-se, meant to cancel out higher potion accuracy when ppl are farming for potions of exp.
 			if (bonus > 0)

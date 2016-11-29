@@ -26,6 +26,7 @@ package com.felayga.unpixeldungeon.items.potions;
 
 import com.felayga.unpixeldungeon.Assets;
 import com.felayga.unpixeldungeon.Dungeon;
+import com.felayga.unpixeldungeon.actors.Char;
 import com.felayga.unpixeldungeon.actors.blobs.Blob;
 import com.felayga.unpixeldungeon.actors.blobs.ConfusionGas;
 import com.felayga.unpixeldungeon.actors.blobs.ParalyticGas;
@@ -34,7 +35,6 @@ import com.felayga.unpixeldungeon.actors.blobs.ToxicGas;
 import com.felayga.unpixeldungeon.actors.blobs.VenomGas;
 import com.felayga.unpixeldungeon.actors.buffs.Buff;
 import com.felayga.unpixeldungeon.actors.buffs.positive.GasesImmunity;
-import com.felayga.unpixeldungeon.actors.hero.Hero;
 import com.felayga.unpixeldungeon.effects.CellEmitter;
 import com.felayga.unpixeldungeon.effects.Speck;
 import com.felayga.unpixeldungeon.levels.Level;
@@ -127,7 +127,7 @@ public class PotionOfPurity extends Potion {
 	}
 	
 	@Override
-	public void apply( Hero hero ) {
+	public void apply( Char hero ) {
 		GLog.w( TXT_NO_SMELL );
 		Buff.prolong( hero, GasesImmunity.class, GasesImmunity.DURATION );
 		setKnown();

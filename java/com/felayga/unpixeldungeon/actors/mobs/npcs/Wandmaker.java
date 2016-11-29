@@ -35,7 +35,6 @@ import com.felayga.unpixeldungeon.actors.buffs.Buff;
 import com.felayga.unpixeldungeon.actors.buffs.negative.Roots;
 import com.felayga.unpixeldungeon.items.Generator;
 import com.felayga.unpixeldungeon.items.Item;
-import com.felayga.unpixeldungeon.items.potions.PotionOfStrength;
 import com.felayga.unpixeldungeon.items.quest.CeremonialCandle;
 import com.felayga.unpixeldungeon.items.quest.CorpseDust;
 import com.felayga.unpixeldungeon.items.quest.Embers;
@@ -404,10 +403,10 @@ public class Wandmaker extends NPC {
 			"The berries of a young rotberry shrub taste like sweet, sweet death.\n" +
 			"\n" +
 			"Regularly picking the berries of a rotberry shrub is essential, otherwise it will mature";
-		
+
+        public Rotberry()
 		{
-			image = 7;
-			plantName = "Rotberry";
+            super("Rotberry", 7);
 		}
 		
 		@Override
@@ -436,7 +435,6 @@ public class Wandmaker extends NPC {
 				image = ItemSpriteSheet.SEED_ROTBERRY;
 				
 				plantClass = Rotberry.class;
-				alchemyClass = PotionOfStrength.class;
 			}
 			
 			@Override

@@ -29,7 +29,6 @@ import com.felayga.unpixeldungeon.Assets;
 import com.watabou.utils.Random;
 import com.watabou.utils.Rect;
 
-import java.util.Collection;
 import java.util.HashSet;
 
 /**

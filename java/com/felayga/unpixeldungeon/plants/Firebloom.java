@@ -29,17 +29,16 @@ import com.felayga.unpixeldungeon.actors.blobs.Blob;
 import com.felayga.unpixeldungeon.actors.blobs.Fire;
 import com.felayga.unpixeldungeon.effects.CellEmitter;
 import com.felayga.unpixeldungeon.effects.particles.FlameParticle;
-import com.felayga.unpixeldungeon.items.potions.PotionOfLiquidFlame;
 import com.felayga.unpixeldungeon.scenes.GameScene;
 import com.felayga.unpixeldungeon.sprites.ItemSpriteSheet;
 
 public class Firebloom extends Plant {
 
 	private static final String TXT_DESC = "When something touches a Firebloom, it bursts into flames.";
-	
+
+    public Firebloom()
 	{
-		image = 0;
-		plantName = "Firebloom";
+        super("Firebloom", 0);
 	}
 	
 	@Override
@@ -65,7 +64,6 @@ public class Firebloom extends Plant {
 			image = ItemSpriteSheet.SEED_FIREBLOOM;
 			
 			plantClass = Firebloom.class;
-			alchemyClass = PotionOfLiquidFlame.class;
 		}
 		
 		@Override

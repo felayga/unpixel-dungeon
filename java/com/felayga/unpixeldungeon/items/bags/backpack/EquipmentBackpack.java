@@ -29,6 +29,7 @@ import com.felayga.unpixeldungeon.actors.Char;
 import com.felayga.unpixeldungeon.items.EquippableItem;
 import com.felayga.unpixeldungeon.items.Item;
 import com.felayga.unpixeldungeon.items.tools.ITool;
+import com.felayga.unpixeldungeon.ui.Icons;
 
 /**
  * Created by hello on 3/17/16.
@@ -39,6 +40,7 @@ public class EquipmentBackpack extends Backpack {
     {
         super(owner);
 
+        tabIcon = Icons.BACKPACK_EQUIPMENT;
         priority = 15;
     }
 

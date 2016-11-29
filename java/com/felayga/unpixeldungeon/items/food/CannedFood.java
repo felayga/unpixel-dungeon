@@ -25,35 +25,24 @@
 
 package com.felayga.unpixeldungeon.items.food;
 
-import com.felayga.unpixeldungeon.Assets;
-import com.felayga.unpixeldungeon.actors.Char;
-import com.felayga.unpixeldungeon.actors.buffs.Buff;
-import com.felayga.unpixeldungeon.actors.buffs.hero.DeathlySick;
 import com.felayga.unpixeldungeon.actors.buffs.hero.Encumbrance;
-import com.felayga.unpixeldungeon.actors.buffs.hero.Hunger;
 import com.felayga.unpixeldungeon.actors.hero.Hero;
 import com.felayga.unpixeldungeon.actors.hero.HeroAction;
-import com.felayga.unpixeldungeon.effects.SpellSprite;
 import com.felayga.unpixeldungeon.items.EquippableItem;
 import com.felayga.unpixeldungeon.items.Item;
 import com.felayga.unpixeldungeon.items.bags.IBag;
 import com.felayga.unpixeldungeon.items.weapon.melee.simple.Dagger;
-import com.felayga.unpixeldungeon.mechanics.BUCStatus;
 import com.felayga.unpixeldungeon.mechanics.Constant;
 import com.felayga.unpixeldungeon.mechanics.CorpseEffect;
 import com.felayga.unpixeldungeon.mechanics.GameTime;
 import com.felayga.unpixeldungeon.mechanics.MagicType;
-import com.felayga.unpixeldungeon.sprites.ItemSprite;
 import com.felayga.unpixeldungeon.sprites.ItemSpriteSheet;
 import com.felayga.unpixeldungeon.utils.GLog;
-import com.watabou.noosa.audio.Sample;
 import com.watabou.utils.Bundle;
 import com.watabou.utils.Random;
 
 import java.util.ArrayList;
 import java.util.HashSet;
-
-import javax.crypto.EncryptedPrivateKeyInfo;
 
 /**
  * Created by HELLO on 7/8/2016.
@@ -118,7 +107,7 @@ public class CannedFood extends Food {
 
         if (source != null) {
             name = source.corpseName();
-            effects = (source.effects & ~(CorpseEffect.Poisonous.value | CorpseEffect.Acidic.value)) | CorpseEffect.Canned.value;
+            effects = (source.effects & ~(CorpseEffect.Poisonous.value | CorpseEffect.Acidic.value | CorpseEffect.Rotten.value)) | CorpseEffect.Canned.value;
             resistances = source.resistances;
             corpseLevel = source.corpseLevel;
             knownCans.add(name);
@@ -129,7 +118,7 @@ public class CannedFood extends Food {
             resistances = MagicType.None.value;
         }
 
-        stackable = false;
+        stackable = true;
         image = ItemSpriteSheet.FOOD_CAN_UNOPENED;
 
         price = 5;
@@ -200,7 +189,13 @@ public class CannedFood extends Food {
 
     @Override
     protected boolean checkSimilarity(Item item) {
+        if (item instanceof CannedFood) {
+            CannedFood can = (CannedFood)item;
 
+            if (can.effects == effects && can.resistances == resistances && can.corpseLevel == corpseLevel && can.name.equals(name)) {
+                return true;
+            }
+        }
         return false;
     }
 

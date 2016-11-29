@@ -24,8 +24,8 @@
  */
 package com.felayga.unpixeldungeon.items.potions;
 
+import com.felayga.unpixeldungeon.actors.Char;
 import com.felayga.unpixeldungeon.actors.buffs.hero.Hunger;
-import com.felayga.unpixeldungeon.actors.hero.Hero;
 import com.felayga.unpixeldungeon.utils.GLog;
 
 public class PotionOfWater extends Potion {
@@ -41,9 +41,9 @@ public class PotionOfWater extends Potion {
 	}
 	
 	@Override
-	public void apply( Hero hero ) {
+	public void apply( Char hero ) {
 		setKnown();
-		hero.buff(Hunger.class).satisfy_new(125);
+		hero.buff(Hunger.class).satisfy_new(200);
 		GLog.p("That was refreshing.");
 	}
 	

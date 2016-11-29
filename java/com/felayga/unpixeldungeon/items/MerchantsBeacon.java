@@ -26,7 +26,6 @@ package com.felayga.unpixeldungeon.items;
 
 import com.felayga.unpixeldungeon.Assets;
 import com.felayga.unpixeldungeon.actors.hero.Hero;
-import com.felayga.unpixeldungeon.actors.mobs.npcs.Shopkeeper;
 import com.felayga.unpixeldungeon.sprites.ItemSpriteSheet;
 import com.watabou.noosa.audio.Sample;
 

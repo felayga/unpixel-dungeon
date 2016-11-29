@@ -69,6 +69,10 @@ public class Buff extends Actor {
 		} else
 			return false;
 	}
+
+    public String detachedMessage(boolean isHero) {
+        return null;
+    }
 	
 	public void detach() {
 		fx( false );

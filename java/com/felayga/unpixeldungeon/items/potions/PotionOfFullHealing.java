@@ -24,7 +24,10 @@
  */
 package com.felayga.unpixeldungeon.items.potions;
 
-import com.felayga.unpixeldungeon.actors.hero.Hero;
+import com.felayga.unpixeldungeon.actors.Char;
+import com.felayga.unpixeldungeon.mechanics.BUCStatus;
+import com.felayga.unpixeldungeon.plants.Starflower;
+import com.felayga.unpixeldungeon.plants.Sungrass;
 
 public class PotionOfFullHealing extends PotionOfExtraHealing {
 
@@ -40,17 +43,32 @@ public class PotionOfFullHealing extends PotionOfExtraHealing {
 		applicationDescription = "completely";
 
         price = 30;
+
+        alchemyPrimary = Starflower.Seed.class;
+        alchemySecondary = Sungrass.Seed.class;
 	}
 
-	@Override
-	protected int healAmount(Hero hero) {
-		return hero.HT;
-	}
+    @Override
+    public void heal(Char hero)
+    {
+        super.heal(hero);
+
+        if (bucStatus == BUCStatus.Blessed) {
+            int oldOverhealAmount = overhealAmount;
+            overhealAmount /= 2;
+            super.heal(hero);
+            overhealAmount = oldOverhealAmount;
+        }
+    }
 
 	@Override
-	public String desc() {
-		return
-			"An elixir that will instantly return you to full health and cure poison.";
-	}
+	protected int healAmount(Char hero) {
+        return hero.HT;
+    }
+
+    @Override
+    protected String descAmount() {
+        return "all";
+    }
 
 }

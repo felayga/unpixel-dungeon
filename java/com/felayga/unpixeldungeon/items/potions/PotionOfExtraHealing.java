@@ -24,9 +24,7 @@
  */
 package com.felayga.unpixeldungeon.items.potions;
 
-import com.felayga.unpixeldungeon.actors.hero.Hero;
-import com.felayga.unpixeldungeon.mechanics.AttributeType;
-import com.watabou.utils.Random;
+import com.felayga.unpixeldungeon.actors.Char;
 
 public class PotionOfExtraHealing extends PotionOfHealing {
 
@@ -44,20 +42,12 @@ public class PotionOfExtraHealing extends PotionOfHealing {
 	}
 
 	@Override
-	public void heal(Hero hero)
-	{
-		hero.useAttribute(AttributeType.STRCON, 1);
-		super.heal(hero);
+	protected int healAmount(Char hero) {
+        return (int)Math.ceil((double)hero.HT * 5.0 / 8.0);
 	}
 
 	@Override
-	protected int healAmount(Hero hero) {
-		return Random.IntRange(1, 8)+Random.IntRange(1, 8)+Random.IntRange(1, 8)+Random.IntRange(1, 8)+Random.IntRange(1, 8)+Random.IntRange(1, 8);
-	}
-
-	@Override
-	public String desc() {
-		return
-			"An elixir that will instantly restore a lot of health and cure poison.";
-	}
+    protected String descAmount() {
+        return "a lot";
+    }
 }

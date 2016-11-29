@@ -92,7 +92,8 @@ public class BuffIndicator extends Component {
 	public static final int ENCUMBRANCE_OVERTAXED	= 46;
 	public static final int ENCUMBRANCE_OVERLOADED	= 47;
     public static final int HELD                    = 48;
-    public static final int SICK                    = 49;
+    public static final int SEEINVISIBLE            = 49;
+    public static final int SICK                    = 50;
 
 	public static final int SIZE	= 7;
 	

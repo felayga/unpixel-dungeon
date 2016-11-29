@@ -28,7 +28,7 @@ import com.felayga.unpixeldungeon.actors.Actor;
 import com.felayga.unpixeldungeon.actors.Char;
 import com.felayga.unpixeldungeon.actors.buffs.Buff;
 import com.felayga.unpixeldungeon.actors.buffs.negative.Vertigo;
-import com.felayga.unpixeldungeon.items.potions.PotionOfLevitation;
+import com.felayga.unpixeldungeon.mechanics.GameTime;
 import com.felayga.unpixeldungeon.sprites.ItemSpriteSheet;
 
 public class Stormvine extends Plant {
@@ -37,9 +37,9 @@ public class Stormvine extends Plant {
 			"Gravity affects the Stormvine plant strangely, allowing its whispy blue tendrils " +
 			"to 'hang' on the air. Anything caught in the vine is affected by this, and becomes disoriented.";
 
+    public Stormvine()
 	{
-		image = 9;
-		plantName = "Stormvine";
+        super("Stormvine", 9);
 	}
 
 	@Override
@@ -47,7 +47,7 @@ public class Stormvine extends Plant {
 		Char ch = Actor.findChar(pos);
 
 		if (ch != null) {
-			Buff.affect(ch, Vertigo.class, Vertigo.duration( ch ) );
+			Buff.affect(ch, Vertigo.class, 20 * GameTime.TICK );
 		}
 	}
 
@@ -64,7 +64,6 @@ public class Stormvine extends Plant {
 			image = ItemSpriteSheet.SEED_STORMVINE;
 
 			plantClass = Stormvine.class;
-			alchemyClass = PotionOfLevitation.class;
 		}
 
 		@Override

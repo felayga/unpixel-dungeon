@@ -24,55 +24,19 @@
  */
 package com.felayga.unpixeldungeon.levels.painters;
 
-import com.felayga.unpixeldungeon.Dungeon;
 import com.felayga.unpixeldungeon.actors.mobs.Mob;
 import com.felayga.unpixeldungeon.actors.mobs.npcs.ImpShopkeeper;
 import com.felayga.unpixeldungeon.actors.mobs.npcs.Shopkeeper;
-import com.felayga.unpixeldungeon.items.Ankh;
-import com.felayga.unpixeldungeon.items.Bomb;
-import com.felayga.unpixeldungeon.items.Generator;
 import com.felayga.unpixeldungeon.items.Heap;
 import com.felayga.unpixeldungeon.items.Item;
-import com.felayga.unpixeldungeon.items.MerchantsBeacon;
-import com.felayga.unpixeldungeon.items.Stylus;
-import com.felayga.unpixeldungeon.items.Torch;
-import com.felayga.unpixeldungeon.items.Weightstone;
-import com.felayga.unpixeldungeon.items.armor.heavy.HalfPlateArmor;
-import com.felayga.unpixeldungeon.items.armor.light.LeatherArmor;
-import com.felayga.unpixeldungeon.items.armor.medium.MailArmor;
-import com.felayga.unpixeldungeon.items.armor.medium.ScaleArmor;
-import com.felayga.unpixeldungeon.items.artifacts.TimekeepersHourglass;
-import com.felayga.unpixeldungeon.items.food.OverpricedRation;
-import com.felayga.unpixeldungeon.items.potions.PotionOfHealing;
-import com.felayga.unpixeldungeon.items.scrolls.ScrollOfIdentify;
 import com.felayga.unpixeldungeon.items.scrolls.ScrollOfMagicMapping;
-import com.felayga.unpixeldungeon.items.scrolls.ScrollOfRemoveCurse;
-import com.felayga.unpixeldungeon.items.weapon.melee.martial.BattleAxe;
-import com.felayga.unpixeldungeon.items.weapon.melee.martial.Glaive;
-import com.felayga.unpixeldungeon.items.weapon.melee.martial.Longsword;
-import com.felayga.unpixeldungeon.items.weapon.melee.martial.Sword;
-import com.felayga.unpixeldungeon.items.weapon.melee.martial.WarHammer;
-import com.felayga.unpixeldungeon.items.weapon.melee.simple.Mace;
-import com.felayga.unpixeldungeon.items.weapon.melee.simple.Quarterstaff;
-import com.felayga.unpixeldungeon.items.weapon.melee.simple.Spear;
-import com.felayga.unpixeldungeon.items.weapon.missiles.martial.Javelin;
-import com.felayga.unpixeldungeon.items.weapon.missiles.martial.Shuriken;
-import com.felayga.unpixeldungeon.items.weapon.missiles.martial.Tomahawk;
-import com.felayga.unpixeldungeon.items.weapon.missiles.simple.CurareDart;
-import com.felayga.unpixeldungeon.items.weapon.missiles.simple.IncendiaryDart;
 import com.felayga.unpixeldungeon.levels.LastShopLevel;
 import com.felayga.unpixeldungeon.levels.Level;
 import com.felayga.unpixeldungeon.levels.Room;
 import com.felayga.unpixeldungeon.levels.Terrain;
-import com.felayga.unpixeldungeon.mechanics.BUCStatus;
-import com.felayga.unpixeldungeon.windows.WndItemDropMultiple;
-import com.felayga.unpixeldungeon.windows.quest.WndImp;
-import com.watabou.utils.Point;
-import com.watabou.utils.Random;
 
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.HashMap;
 import java.util.HashSet;
 
 //import com.felayga.unpixeldungeon.items.Honeypot;

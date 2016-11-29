@@ -46,6 +46,12 @@ public class EmoIcon extends Image {
 		this.owner = owner;
 		GameScene.add( this );
 	}
+
+    public EmoIcon() {
+        super();
+
+        this.owner = null;
+    }
 	
 	@Override
 	public void update() {
@@ -63,9 +69,11 @@ public class EmoIcon extends Image {
 					growing = true;
 				}
 			}
-			
-			x = owner.x + owner.width - width / 2;
-			y = owner.y - height;
+
+            if (owner != null) {
+                x = owner.x + owner.width - width / 2;
+                y = owner.y - height;
+            }
 		}
 	}
 	

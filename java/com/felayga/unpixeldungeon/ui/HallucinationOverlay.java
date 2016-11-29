@@ -24,14 +24,10 @@
  */
 package com.felayga.unpixeldungeon.ui;
 
-import android.graphics.Bitmap;
 import android.opengl.GLES20;
 
 import com.felayga.unpixeldungeon.DungeonTilemap;
-import com.felayga.unpixeldungeon.scenes.GameScene;
-import com.watabou.gltextures.SmartTexture;
-import com.watabou.gltextures.TextureCache;
-import com.watabou.glwrap.Texture;
+import com.felayga.unpixeldungeon.FogOfWar;
 import com.watabou.noosa.Image;
 
 import java.util.Arrays;
@@ -47,7 +43,7 @@ public class HallucinationOverlay extends Image {
     private int width2;
     private int height2;
 
-    public HallucinationOverlay( int mapWidth, int mapHeight ) {
+    public HallucinationOverlay(int mapWidth, int mapHeight) {
         super();
 
         pWidth = mapWidth + 1;
@@ -61,7 +57,7 @@ public class HallucinationOverlay extends Image {
         width = width2 * size;
         height = height2 * size;
 
-        texture(new FogTexture());
+        texture(new FogOfWar.FogTexture(width2, height2, HallucinationOverlay.class));
 
         scale.set(
                 DungeonTilemap.SIZE * mapWidth,
@@ -70,7 +66,7 @@ public class HallucinationOverlay extends Image {
         x = y = -size / 2;
 
         pixels = new int[width2 * height2];
-        Arrays.fill( pixels, 0xFFFFFFFF );
+        Arrays.fill(pixels, 0xFFFFFFFF);
 
         texture.pixels(width2, height2, pixels);
         visible = false;
@@ -126,16 +122,14 @@ public class HallucinationOverlay extends Image {
 
     private boolean stopHallucinating = false;
 
-    public void startHallucinating()
-    {
+    public void startHallucinating() {
         stopHallucinating = false;
         visible = true;
         hue = 0.0;
         value = 0.0;
     }
 
-    public void stopHallucinating()
-    {
+    public void stopHallucinating() {
         stopHallucinating = true;
     }
 
@@ -149,8 +143,7 @@ public class HallucinationOverlay extends Image {
         if (value > 1.0) {
             value = 1.0;
             valueStep = -valueStep;
-        }
-        else if (value < 0.0) {
+        } else if (value < 0.0) {
             value = 0.0;
             valueStep = -valueStep;
             if (stopHallucinating) {
@@ -165,20 +158,5 @@ public class HallucinationOverlay extends Image {
         //GLES10.glTexEnvx(GL10.GL_TEXTURE_ENV, GL10.GL_TEXTURE_ENV_MODE, GL10.GL_MODULATE);
         super.draw();
         GLES20.glBlendFunc(GL10.GL_SRC_ALPHA, GL10.GL_ONE_MINUS_SRC_ALPHA);
-    }
-
-    private class FogTexture extends SmartTexture {
-
-        public FogTexture() {
-            super( Bitmap.createBitmap( width2, height2, Bitmap.Config.ARGB_8888 ) );
-            filter( Texture.LINEAR, Texture.LINEAR );
-            TextureCache.add( HallucinationOverlay.class, this );
-        }
-
-        @Override
-        public void reload() {
-            super.reload();
-            GameScene.afterObserve();
-        }
     }
 }

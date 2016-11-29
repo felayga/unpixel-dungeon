@@ -30,7 +30,6 @@ import com.felayga.unpixeldungeon.actors.Char;
 import com.felayga.unpixeldungeon.actors.buffs.Buff;
 import com.felayga.unpixeldungeon.effects.CellEmitter;
 import com.felayga.unpixeldungeon.effects.particles.EarthParticle;
-import com.felayga.unpixeldungeon.items.potions.PotionOfParalyticGas;
 import com.felayga.unpixeldungeon.mechanics.GameTime;
 import com.felayga.unpixeldungeon.sprites.ItemSpriteSheet;
 import com.felayga.unpixeldungeon.ui.BuffIndicator;
@@ -43,10 +42,10 @@ public class Earthroot extends Plant {
 	private static final String TXT_DESC =
 		"When a creature touches an Earthroot, its roots " +
 		"create a kind of immobile natural armor around it.";
-	
+
+    public Earthroot()
 	{
-		image = 5;
-		plantName = "Earthroot";
+        super("Earthroot", 5);
 	}
 	
 	@Override
@@ -76,7 +75,6 @@ public class Earthroot extends Plant {
 			image = ItemSpriteSheet.SEED_EARTHROOT;
 			
 			plantClass = Earthroot.class;
-			alchemyClass = PotionOfParalyticGas.class;
 
 			bones = true;
 		}

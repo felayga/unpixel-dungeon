@@ -34,10 +34,7 @@ import com.felayga.unpixeldungeon.actors.hero.Hero;
 import com.felayga.unpixeldungeon.actors.hero.HeroSubClass;
 import com.felayga.unpixeldungeon.effects.CellEmitter;
 import com.felayga.unpixeldungeon.effects.particles.LeafParticle;
-import com.felayga.unpixeldungeon.items.Dewdrop;
-import com.felayga.unpixeldungeon.items.Generator;
 import com.felayga.unpixeldungeon.items.Item;
-import com.felayga.unpixeldungeon.items.artifacts.SandalsOfNature;
 import com.felayga.unpixeldungeon.levels.Level;
 import com.felayga.unpixeldungeon.levels.Terrain;
 import com.felayga.unpixeldungeon.mechanics.Constant;
@@ -47,15 +44,19 @@ import com.felayga.unpixeldungeon.utils.Utils;
 import com.watabou.noosa.audio.Sample;
 import com.watabou.utils.Bundlable;
 import com.watabou.utils.Bundle;
-import com.watabou.utils.Random;
 
 import java.util.ArrayList;
 
 public abstract class Plant implements Bundlable {
 
-    public String plantName;
+    public final String plantName;
+    public final int image;
 
-    public int image;
+    public Plant(String name, int image) {
+        this.plantName = name;
+        this.image = image;
+    }
+
     public int pos;
 
     public PlantSprite sprite;
@@ -82,6 +83,7 @@ public abstract class Plant implements Bundlable {
             CellEmitter.get(pos).burst(LeafParticle.GENERAL, 6);
         }
 
+        /*
         if (Dungeon.hero.subClass == HeroSubClass.WARDEN) {
 
             int naturalismLevel = 0;
@@ -99,6 +101,7 @@ public abstract class Plant implements Bundlable {
                 Dungeon.level.drop(new Dewdrop(), pos).sprite.drop();
             }
         }
+        */
     }
 
     private static final String POS = "pos";
@@ -132,8 +135,6 @@ public abstract class Plant implements Bundlable {
 
         protected Class<? extends Plant> plantClass;
         protected String plantName;
-
-        public Class<? extends Item> alchemyClass;
 
         @Override
         public ArrayList<String> actions(Hero hero) {

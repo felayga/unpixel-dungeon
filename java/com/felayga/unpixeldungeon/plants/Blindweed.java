@@ -29,11 +29,10 @@ import com.felayga.unpixeldungeon.actors.Actor;
 import com.felayga.unpixeldungeon.actors.Char;
 import com.felayga.unpixeldungeon.actors.buffs.Buff;
 import com.felayga.unpixeldungeon.actors.buffs.negative.Blindness;
-import com.felayga.unpixeldungeon.actors.buffs.negative.Cripple;
 import com.felayga.unpixeldungeon.actors.mobs.Mob;
 import com.felayga.unpixeldungeon.effects.CellEmitter;
 import com.felayga.unpixeldungeon.effects.Speck;
-import com.felayga.unpixeldungeon.items.potions.PotionOfInvisibility;
+import com.felayga.unpixeldungeon.mechanics.GameTime;
 import com.felayga.unpixeldungeon.sprites.ItemSpriteSheet;
 import com.watabou.utils.Random;
 
@@ -42,10 +41,10 @@ public class Blindweed extends Plant {
 	private static final String TXT_DESC =
 		"Upon being touched a Blindweed perishes in a bright flash of light. " +
 		"The flash is strong enough to disorient for several seconds.";
-	
+
+    public Blindweed()
 	{
-		image = 3;
-		plantName = "Blindweed";
+        super("Blindweed", 3);
 	}
 	
 	@Override
@@ -53,9 +52,9 @@ public class Blindweed extends Plant {
 		Char ch = Actor.findChar(pos);
 		
 		if (ch != null) {
-			int len = Random.Int( 5, 10 );
+			long len = Random.Int( 5, 10 ) * GameTime.TICK;
 			Buff.prolong( ch, Blindness.class, len );
-			Buff.prolong( ch, Cripple.class, len );
+			//Buff.prolong( ch, Cripple.class, len );
 			if (ch instanceof Mob) {
 				if (((Mob)ch).state == ((Mob)ch).HUNTING) ((Mob)ch).state = ((Mob)ch).WANDERING;
 				((Mob)ch).beckon( Dungeon.level.randomDestination() );
@@ -80,7 +79,6 @@ public class Blindweed extends Plant {
 			image = ItemSpriteSheet.SEED_BLINDWEED;
 			
 			plantClass = Blindweed.class;
-			alchemyClass = PotionOfInvisibility.class;
 		}
 		
 		@Override

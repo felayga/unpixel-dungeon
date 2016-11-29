@@ -42,7 +42,6 @@ import com.felayga.unpixeldungeon.items.bags.backpack.Spellbook;
 import com.felayga.unpixeldungeon.items.bags.backpack.UncategorizedBackpack;
 import com.felayga.unpixeldungeon.items.keys.OldKey;
 import com.felayga.unpixeldungeon.items.tools.ITool;
-import com.felayga.unpixeldungeon.items.wands.Wand;
 import com.felayga.unpixeldungeon.items.weapon.ammunition.AmmunitionWeapon;
 import com.felayga.unpixeldungeon.items.weapon.missiles.martial.Boomerang;
 import com.felayga.unpixeldungeon.levels.Level;
@@ -218,7 +217,11 @@ public class Belongings implements Iterable<Item>, IDecayable, IBag {
                 ranOutOfAmmo(null);
                 //todo: determine if general casing here is required, seems like a waste of effort
                 if (offhand() == null) {
-                    return collectEquip((EquippableItem)test, EquippableItem.Slot.Offhand);
+                    boolean retval = collectEquip((EquippableItem)test, EquippableItem.Slot.Offhand);
+
+                    test.updateQuickslot();
+
+                    return retval;
                 }
             }
 

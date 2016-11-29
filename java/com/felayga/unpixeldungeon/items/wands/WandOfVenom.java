@@ -34,13 +34,14 @@ import com.felayga.unpixeldungeon.items.weapon.enchantments.Poison;
 import com.felayga.unpixeldungeon.items.weapon.melee.simple.MagesStaff;
 import com.felayga.unpixeldungeon.mechanics.Ballistica;
 import com.felayga.unpixeldungeon.scenes.GameScene;
-import com.felayga.unpixeldungeon.sprites.ItemSpriteSheet;
 import com.watabou.noosa.audio.Sample;
 import com.watabou.utils.Callback;
 
 public class WandOfVenom extends Wand {
 
+    public WandOfVenom()
 	{
+        super(20);
 		name = "Wand of Venom";
 
 		collisionProperties = Ballistica.STOP_TARGET | Ballistica.STOP_TERRAIN;
@@ -54,7 +55,7 @@ public class WandOfVenom extends Wand {
 
 		Char ch = Actor.findChar(bolt.collisionPos);
 		if (ch != null){
-			processSoulMark(ch, chargesPerCast());
+			processSoulMark(ch);
 		}
 	}
 

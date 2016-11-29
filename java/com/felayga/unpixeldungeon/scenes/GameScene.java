@@ -31,6 +31,7 @@ import com.felayga.unpixeldungeon.DungeonTilemap;
 import com.felayga.unpixeldungeon.FogOfWar;
 import com.felayga.unpixeldungeon.ShatteredPixelDungeon;
 import com.felayga.unpixeldungeon.Statistics;
+import com.felayga.unpixeldungeon.WarningSpriteHandler;
 import com.felayga.unpixeldungeon.actors.Actor;
 import com.felayga.unpixeldungeon.actors.blobs.Blob;
 import com.felayga.unpixeldungeon.actors.mobs.Mob;
@@ -139,7 +140,9 @@ public class GameScene extends PixelScene {
 	private Group spells;
 	private Group statuses;
 	private Group emoicons;
-	
+
+    private WarningSpriteHandler overlay;
+
 	private Toolbar toolbar;
 	private Toast prompt;
 
@@ -249,7 +252,12 @@ public class GameScene extends PixelScene {
 		fog.updateVisibility(Dungeon.visible, Dungeon.level.visited, Dungeon.level.mapped);
 		add(fog);
 
-		brightness(ShatteredPixelDungeon.brightness());
+        if (overlay == null) {
+            overlay = new WarningSpriteHandler();
+        }
+        add(overlay);
+
+        brightness(ShatteredPixelDungeon.brightness());
 
 		spells = new Group(-1);
 		add( spells );
@@ -257,7 +265,7 @@ public class GameScene extends PixelScene {
 		statuses = new Group(-1);
 		add( statuses );
 
-		add( emoicons );
+		add(emoicons);
 		
 		hero = new HeroSprite(Dungeon.hero);
 		hero.place(Dungeon.hero.pos);
@@ -265,17 +273,17 @@ public class GameScene extends PixelScene {
 
 		add( new HealthIndicator() );
 		
-		add( cellSelector = new CellSelector( tiles ) );
+		add(cellSelector = new CellSelector(tiles));
 		
 		StatusPane sb = new StatusPane();
 		sb.camera = uiCamera;
 		sb.setSize(uiCamera.width, 0);
-		add( sb );
+		add(sb);
 		
 		toolbar = new Toolbar();
 		toolbar.camera = uiCamera;
 		toolbar.setRect(0, uiCamera.height - toolbar.height(), uiCamera.width, toolbar.height());
-		add( toolbar );
+		add(toolbar);
 		
 		attack = new AttackIndicator();
 		attack.camera = uiCamera;
@@ -426,7 +434,7 @@ public class GameScene extends PixelScene {
 		//hallucination.visible = false;
 
 		super.update();
-		
+
 		if (!freezeEmitters) water.offset( 0, -5 * Game.elapsed );
 		
 		Actor.process();
@@ -449,11 +457,13 @@ public class GameScene extends PixelScene {
 				layoutTags();
 		}
 
+        overlay.synchronize(Dungeon.level.warnings);
+
 		cellSelector.enable(Dungeon.hero.ready);
 	}
 
 	private boolean tagAttack    = false;
-	private boolean tagLoot        = false;
+	private boolean tagLoot      = false;
 	private boolean tagResume    = false;
 
 	public static void layoutTags() {
@@ -754,9 +764,13 @@ public class GameScene extends PixelScene {
 	}
 
     public static WndBackpack selectItem(WndBackpack.Listener listener, WndBackpack.Mode mode, Class<?> classMatch, String title, Item... excluded) {
+        return selectItem(listener, mode, classMatch, title, false, excluded);
+    }
+
+    public static WndBackpack selectItem(WndBackpack.Listener listener, WndBackpack.Mode mode, Class<?> classMatch, String title, boolean groundNearby, Item... excluded) {
         cancelCellSelector();
 
-        WndBackpack wnd = WndBackpack.lastBag(listener, mode, classMatch, title, excluded);
+        WndBackpack wnd = WndBackpack.lastBag(listener, mode, classMatch, title, groundNearby, excluded);
 
         scene.add(wnd);
 

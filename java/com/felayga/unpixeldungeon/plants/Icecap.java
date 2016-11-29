@@ -27,7 +27,6 @@ package com.felayga.unpixeldungeon.plants;
 import com.felayga.unpixeldungeon.Dungeon;
 import com.felayga.unpixeldungeon.actors.blobs.Fire;
 import com.felayga.unpixeldungeon.actors.blobs.Freezing;
-import com.felayga.unpixeldungeon.items.potions.PotionOfFrost;
 import com.felayga.unpixeldungeon.levels.Level;
 import com.felayga.unpixeldungeon.sprites.ItemSpriteSheet;
 import com.felayga.unpixeldungeon.utils.BArray;
@@ -38,10 +37,10 @@ public class Icecap extends Plant {
 	private static final String TXT_DESC =
 		"Upon being touched, an Icecap lets out a puff of freezing pollen. " +
 		"The freezing effect is much stronger if the environment is wet.";
-	
+
+    public Icecap()
 	{
-		image = 1;
-		plantName = "Icecap";
+        super("Icecap", 1);
 	}
 	
 	@Override
@@ -71,7 +70,6 @@ public class Icecap extends Plant {
 			image = ItemSpriteSheet.SEED_ICECAP;
 			
 			plantClass = Icecap.class;
-			alchemyClass = PotionOfFrost.class;
 		}
 		
 		@Override

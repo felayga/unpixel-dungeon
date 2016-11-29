@@ -32,6 +32,8 @@ import com.felayga.unpixeldungeon.items.food.Food;
 import com.felayga.unpixeldungeon.items.potions.Potion;
 import com.felayga.unpixeldungeon.items.scrolls.Scroll;
 import com.felayga.unpixeldungeon.items.wands.Wand;
+import com.felayga.unpixeldungeon.plants.Plant;
+import com.felayga.unpixeldungeon.ui.Icons;
 
 /**
  * Created by hello on 3/17/16.
@@ -42,6 +44,7 @@ public class ConsumablesBackpack extends Backpack {
     {
         super(owner);
 
+        tabIcon = Icons.BACKPACK_CONSUMABLES;
         priority = 15;
     }
 
@@ -51,7 +54,8 @@ public class ConsumablesBackpack extends Backpack {
                 || item instanceof Scroll
                 || item instanceof Food
                 || item instanceof Bomb
-                || item instanceof Wand;
+                || item instanceof Wand
+                || item instanceof Plant.Seed;
     }
 
 }

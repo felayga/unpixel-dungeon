@@ -27,16 +27,11 @@ package com.felayga.unpixeldungeon.levels.features;
 import com.felayga.unpixeldungeon.Challenges;
 import com.felayga.unpixeldungeon.Dungeon;
 import com.felayga.unpixeldungeon.actors.Char;
-import com.felayga.unpixeldungeon.actors.buffs.Buff;
-import com.felayga.unpixeldungeon.actors.buffs.positive.Barkskin;
 import com.felayga.unpixeldungeon.actors.hero.Hero;
-import com.felayga.unpixeldungeon.actors.hero.HeroSubClass;
 import com.felayga.unpixeldungeon.effects.CellEmitter;
 import com.felayga.unpixeldungeon.effects.particles.LeafParticle;
-import com.felayga.unpixeldungeon.items.Dewdrop;
 import com.felayga.unpixeldungeon.items.Generator;
 import com.felayga.unpixeldungeon.items.Item;
-import com.felayga.unpixeldungeon.items.artifacts.SandalsOfNature;
 import com.felayga.unpixeldungeon.levels.Level;
 import com.felayga.unpixeldungeon.levels.Terrain;
 import com.felayga.unpixeldungeon.scenes.GameScene;
@@ -49,6 +44,21 @@ public class HighGrass {
         GameScene.updateMap(pos);
 
         if (!Dungeon.isChallenged(Challenges.NO_HERBALISM)) {
+            int luck = 0;
+
+            if (ch instanceof Hero) {
+                Hero hero = (Hero) ch;
+
+                luck = hero.luck();
+            }
+
+            if (Random.PassFail((int)Math.pow(luck + 10.0, 1.75))) {
+                Item seed = Generator.random(Generator.Category.SEED);
+                level.drop(seed, pos).sprite.drop();
+            }
+
+
+            /*
             int naturalismLevel = 0;
 
             if (ch != null) {
@@ -76,15 +86,18 @@ public class HighGrass {
                     level.drop(new Dewdrop(), pos).sprite.drop();
                 }
             }
+            */
         }
 
         int leaves = 4;
 
+        /*
         // Barkskin
         if (ch instanceof Hero && ((Hero) ch).subClass == HeroSubClass.WARDEN) {
             Buff.affect(ch, Barkskin.class).level(ch.HT / 3);
             leaves = 8;
         }
+        */
 
         CellEmitter.get(pos).burst(LeafParticle.LEVEL_SPECIFIC, leaves);
         Dungeon.observe();

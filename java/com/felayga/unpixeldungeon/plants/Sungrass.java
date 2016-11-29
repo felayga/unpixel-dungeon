@@ -27,33 +27,34 @@ package com.felayga.unpixeldungeon.plants;
 import com.felayga.unpixeldungeon.Dungeon;
 import com.felayga.unpixeldungeon.actors.Actor;
 import com.felayga.unpixeldungeon.actors.Char;
-import com.felayga.unpixeldungeon.actors.buffs.Buff;
-import com.felayga.unpixeldungeon.actors.hero.Hero;
 import com.felayga.unpixeldungeon.effects.CellEmitter;
 import com.felayga.unpixeldungeon.effects.Speck;
 import com.felayga.unpixeldungeon.effects.particles.ShaftParticle;
-import com.felayga.unpixeldungeon.items.potions.PotionOfHealing;
-import com.felayga.unpixeldungeon.mechanics.GameTime;
 import com.felayga.unpixeldungeon.sprites.ItemSpriteSheet;
-import com.felayga.unpixeldungeon.ui.BuffIndicator;
-import com.watabou.utils.Bundle;
 
 public class Sungrass extends Plant {
 
 	private static final String TXT_DESC = "Sungrass is renowned for its sap's slow but effective healing properties.";
-	
+
+    public Sungrass()
 	{
-		image = 4;
-		plantName = "Sungrass";
+        super("Sungrass", 4);
 	}
 	
 	@Override
 	public void activate() {
 		Char ch = Actor.findChar(pos);
-		
+
+        if (ch != null) {
+            ch.HP = Math.min(ch.HT, ch.HP + ch.HT / 8);
+            ch.sprite.emitter().start(Speck.factory(Speck.HEALING), 0.4f, 2);
+        }
+
+        /*
 		if (ch == Dungeon.hero) {
 			Buff.affect( ch, Health.class ).level = ch.HT;
 		}
+		*/
 		
 		if (Dungeon.visible[pos]) {
 			CellEmitter.get( pos ).start( ShaftParticle.FACTORY, 0.2f, 3 );
@@ -73,7 +74,6 @@ public class Sungrass extends Plant {
 			image = ItemSpriteSheet.SEED_SUNGRASS;
 			
 			plantClass = Sungrass.class;
-			alchemyClass = PotionOfHealing.class;
 
 			bones = true;
 		}
@@ -83,7 +83,8 @@ public class Sungrass extends Plant {
 			return TXT_DESC;
 		}
 	}
-	
+
+    /*
 	public static class Health extends Buff {
 		
 		private static final long STEP = GameTime.TICK;
@@ -189,4 +190,5 @@ public class Sungrass extends Plant {
 
 		}
 	}
+	*/
 }

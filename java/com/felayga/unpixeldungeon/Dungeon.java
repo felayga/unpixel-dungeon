@@ -80,6 +80,14 @@ public class Dungeon {
     public static Hero hero;
     public static Level level;
 
+    public static boolean decay(long currentTime, boolean updateTime, boolean fixTime) {
+        if (level != null) {
+            return level.decay(currentTime, updateTime, fixTime);
+        }
+
+        return false;
+    }
+
     public static QuickSlot quickslot = new QuickSlot();
 
     private static int __depth;

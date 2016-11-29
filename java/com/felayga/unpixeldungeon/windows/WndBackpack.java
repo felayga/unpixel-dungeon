@@ -31,26 +31,21 @@ import com.felayga.unpixeldungeon.Dungeon;
 import com.felayga.unpixeldungeon.ShatteredPixelDungeon;
 import com.felayga.unpixeldungeon.actors.Char;
 import com.felayga.unpixeldungeon.actors.hero.Belongings;
-import com.felayga.unpixeldungeon.items.EquippableItem;
+import com.felayga.unpixeldungeon.items.Heap;
 import com.felayga.unpixeldungeon.items.Item;
 import com.felayga.unpixeldungeon.items.armor.Armor;
 import com.felayga.unpixeldungeon.items.bags.Bag;
+import com.felayga.unpixeldungeon.items.bags.IBag;
 import com.felayga.unpixeldungeon.items.bags.PotionBandolier;
 import com.felayga.unpixeldungeon.items.bags.ScrollHolder;
 import com.felayga.unpixeldungeon.items.bags.SeedPouch;
 import com.felayga.unpixeldungeon.items.bags.WandHolster;
 import com.felayga.unpixeldungeon.items.bags.backpack.Backpack;
 import com.felayga.unpixeldungeon.items.bags.backpack.EquipmentBackpack;
-import com.felayga.unpixeldungeon.items.food.Food;
-import com.felayga.unpixeldungeon.items.potions.Potion;
-import com.felayga.unpixeldungeon.items.scrolls.Scroll;
 import com.felayga.unpixeldungeon.items.spells.Spell;
-import com.felayga.unpixeldungeon.items.wands.Wand;
-import com.felayga.unpixeldungeon.items.weapon.Weapon;
 import com.felayga.unpixeldungeon.items.weapon.melee.MeleeWeapon;
 import com.felayga.unpixeldungeon.items.weapon.missiles.martial.Boomerang;
 import com.felayga.unpixeldungeon.mechanics.BUCStatus;
-import com.felayga.unpixeldungeon.plants.Plant.Seed;
 import com.felayga.unpixeldungeon.scenes.GameScene;
 import com.felayga.unpixeldungeon.scenes.PixelScene;
 import com.felayga.unpixeldungeon.sprites.ItemSpriteSheet;
@@ -128,16 +123,19 @@ public class WndBackpack extends WndTabbed {
 	protected int row;
 
 	private static Mode lastMode;
-	private static Bag lastBag;
+	private static IBag lastBag;
 
 	private HashSet<Item> excluded;
+    private final boolean groundNearby;
 
-	public WndBackpack(Bag bag, Listener listener, Mode mode, Class<?> c, String title, Item... excluded) {
+	public WndBackpack(IBag bag, Listener listener, Mode mode, Class<?> c, String title, boolean groundNearby, Item... excluded) {
 		super();
 
         classMatch = c;
+        this.groundNearby = groundNearby;
 
 		Belongings stuff = Dungeon.hero.belongings;
+        Heap test = Dungeon.level.heaps.get(Dungeon.hero.pos, null);
 
 		this.listener = listener;
 		this.mode = mode;
@@ -171,19 +169,35 @@ public class WndBackpack extends WndTabbed {
 
 		resize(slotsWidth, slotsHeight + TITLE_HEIGHT);
 
-		Bag[] bags = {
-				stuff.backpack1,
-				stuff.backpack2,
-				stuff.backpack3,
-				stuff.backpack4
-				//stuff.getItem( SeedPouch.class ),
-				//stuff.getItem( ScrollHolder.class ),
-				//stuff.getItem( PotionBandolier.class ),
-				//stuff.getItem( WandHolster.class )
-		};
+		IBag[] bags;
+
+        if (groundNearby) {
+            IBag[] wtfjava = {
+                    test,
+                    stuff.backpack1,
+                    stuff.backpack2,
+                    stuff.backpack3,
+                    stuff.backpack4
+            };
+
+            bags = wtfjava;
+        } else {
+            IBag[] wtfjava = {
+                    stuff.backpack1,
+                    stuff.backpack2,
+                    stuff.backpack3,
+                    stuff.backpack4
+                    //stuff.getItem( SeedPouch.class ),
+                    //stuff.getItem( ScrollHolder.class ),
+                    //stuff.getItem( PotionBandolier.class ),
+                    //stuff.getItem( WandHolster.class )
+            };
+
+            bags = wtfjava;
+        }
 
 
-		for (Bag b : bags) {
+		for (IBag b : bags) {
 			if (b != null) {
 				BagTab tab = new BagTab(b);
 				add(tab);
@@ -194,26 +208,26 @@ public class WndBackpack extends WndTabbed {
 		layoutTabs();
 	}
 
-	public static WndBackpack lastBag(Listener listener, Mode mode, Class<?> c, String title, Item... excluded) {
+	public static WndBackpack lastBag(Listener listener, Mode mode, Class<?> c, String title, boolean groundNearby, Item... excluded) {
 		//todo: make sure this is right
 		//commented out section is for scroll of identify multiple uses
 		if (mode == lastMode && lastBag != null/* &&
 			Dungeon.hero.belongings.contains( lastBag )*/) {
 
-			return new WndBackpack(lastBag, listener, mode, c, title, excluded);
+			return new WndBackpack(lastBag, listener, mode, c, title, groundNearby, excluded);
 		} else {
-			return new WndBackpack(Dungeon.hero.belongings.backpack1, listener, mode, c, title, excluded);
+			return new WndBackpack(Dungeon.hero.belongings.backpack1, listener, mode, c, title, groundNearby, excluded);
 		}
 	}
 
-	public static WndBackpack getBag(Class<? extends Bag> bagClass, Listener listener, Mode mode, Class<?> c, String title) {
+	public static WndBackpack getBag(Class<? extends Bag> bagClass, Listener listener, Mode mode, Class<?> c, String title, boolean groundNearby) {
 		Bag bag = Dungeon.hero.belongings.getItem(bagClass);
 		return bag != null ?
-				new WndBackpack(bag, listener, mode, c, title) :
-				lastBag(listener, mode, c, title);
+				new WndBackpack(bag, listener, mode, c, title, groundNearby) :
+				lastBag(listener, mode, c, title, groundNearby);
 	}
 
-	protected void placeItems(Bag container) {
+	protected void placeItems(IBag container) {
 		if (container instanceof EquipmentBackpack) {
 			// Equipped items
 			Belongings stuff = Dungeon.hero.belongings;
@@ -263,7 +277,7 @@ public class WndBackpack extends WndTabbed {
 		}
 
 		// Free Space
-		while (count < container.size) {
+		while (count < container.size()) {
 			placeItem(null);
 		}
 
@@ -314,7 +328,7 @@ public class WndBackpack extends WndTabbed {
 	@Override
 	protected void onClick(Tab tab) {
 		hide();
-		GameScene.show(new WndBackpack(((BagTab) tab).bag, listener, mode, classMatch, title, excluded.toArray(new Item[]{})));
+		GameScene.show(new WndBackpack(((BagTab) tab).bag, listener, mode, classMatch, title, groundNearby, excluded.toArray(new Item[]{})));
 	}
 
 	@Override
@@ -326,9 +340,9 @@ public class WndBackpack extends WndTabbed {
 
 		private Image icon;
 
-		private Bag bag;
+		private IBag bag;
 
-		public BagTab(Bag bag) {
+		public BagTab(IBag bag) {
 			super();
 
 			this.bag = bag;
@@ -372,7 +386,7 @@ public class WndBackpack extends WndTabbed {
 			} else if (bag instanceof PotionBandolier) {
 				return Icons.get(Icons.POTION_BANDOLIER);
 			} else {
-				return Icons.get(Icons.BACKPACK);
+				return Icons.get(bag.tabIcon());
 			}
 		}
 	}

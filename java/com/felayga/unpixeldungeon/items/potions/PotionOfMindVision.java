@@ -25,9 +25,9 @@
 package com.felayga.unpixeldungeon.items.potions;
 
 import com.felayga.unpixeldungeon.Dungeon;
+import com.felayga.unpixeldungeon.actors.Char;
 import com.felayga.unpixeldungeon.actors.buffs.Buff;
 import com.felayga.unpixeldungeon.actors.buffs.positive.MindVision;
-import com.felayga.unpixeldungeon.actors.hero.Hero;
 import com.felayga.unpixeldungeon.utils.GLog;
 
 public class PotionOfMindVision extends Potion {
@@ -43,7 +43,7 @@ public class PotionOfMindVision extends Potion {
 	}
 	
 	@Override
-	public void apply( Hero hero ) {
+	public void apply( Char hero ) {
 		setKnown();
 		Buff.affect( hero, MindVision.class, MindVision.DURATION );
 		Dungeon.observe();

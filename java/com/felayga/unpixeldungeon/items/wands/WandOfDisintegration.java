@@ -38,7 +38,6 @@ import com.felayga.unpixeldungeon.levels.Terrain;
 import com.felayga.unpixeldungeon.mechanics.Ballistica;
 import com.felayga.unpixeldungeon.mechanics.MagicType;
 import com.felayga.unpixeldungeon.scenes.GameScene;
-import com.felayga.unpixeldungeon.sprites.ItemSpriteSheet;
 import com.watabou.utils.Callback;
 import com.watabou.utils.Random;
 
@@ -46,7 +45,9 @@ import java.util.ArrayList;
 
 public class WandOfDisintegration extends Wand {
 
+    public WandOfDisintegration()
 	{
+        super(20);
 		name = "Wand of Disintegration";
 
 		collisionProperties = Ballistica.WONT_STOP;
@@ -99,7 +100,7 @@ public class WandOfDisintegration extends Wand {
 		int dmgMin = lvl;
 		int dmgMax = (int) (8 + lvl * lvl / 3f);
 		for (Char ch : chars) {
-			processSoulMark(ch, chargesPerCast());
+			processSoulMark(ch);
 			ch.damage( Random.NormalIntRange( dmgMin, dmgMax ), MagicType.Disintegration, null );
 			ch.sprite.centerEmitter(-1).burst( PurpleParticle.BURST, Random.IntRange( 1, 2 ) );
 			ch.sprite.flash();

@@ -32,8 +32,6 @@ import com.felayga.unpixeldungeon.actors.buffs.hero.SnipersMark;
 import com.felayga.unpixeldungeon.actors.hero.Hero;
 import com.felayga.unpixeldungeon.effects.Speck;
 import com.felayga.unpixeldungeon.items.bags.IBag;
-import com.felayga.unpixeldungeon.items.food.CannedFood;
-import com.felayga.unpixeldungeon.items.food.Corpse;
 import com.felayga.unpixeldungeon.items.weapon.missiles.MissileWeapon;
 import com.felayga.unpixeldungeon.mechanics.BUCStatus;
 import com.felayga.unpixeldungeon.mechanics.Ballistica;
@@ -539,13 +537,18 @@ public class Item implements Bundlable {
         int luck = Dungeon.hero.luck();
         float levelBonusChance = 0.5f + (luck - 2.0f) * 0.04f;
 
-        level = randomEnchantmentMinimum;
-        while (level < randomEnchantmentMaximum && Random.Float() < levelBonusChance) {
-            level++;
-        }
+        if (hasLevels) {
+            level = randomEnchantmentMinimum;
+            while (level < randomEnchantmentMaximum && Random.Float() < levelBonusChance) {
+                level++;
+            }
 
-        if (Random.Float() <= 0.025f) {
-            level = -level;
+            if (Random.Float() <= 0.025f) {
+                level = -level;
+            }
+        }
+        else {
+            level = 0;
         }
 
         if (hasBuc) {

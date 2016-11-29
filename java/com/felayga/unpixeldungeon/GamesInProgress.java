@@ -125,6 +125,8 @@ public class GamesInProgress {
 			bundle.put(HAIR, hair);
 			bundle.put(HAIRFACE, hairFace);
 			bundle.put(HAIRCOLOR, hairColor);
+
+            bundle.put(DEAD, dead);
 		}
 
 		public void restoreFromBundle( Bundle bundle ) {

@@ -24,7 +24,6 @@
  */
 package com.felayga.unpixeldungeon.items;
 
-import com.felayga.unpixeldungeon.actors.mobs.npcs.Wandmaker.Rotberry;
 import com.felayga.unpixeldungeon.items.armor.Armor;
 import com.felayga.unpixeldungeon.items.armor.heavy.HalfPlateArmor;
 import com.felayga.unpixeldungeon.items.armor.light.ClothArmor;
@@ -121,16 +120,21 @@ import com.felayga.unpixeldungeon.items.weapon.missiles.simple.Dart;
 import com.felayga.unpixeldungeon.items.weapon.missiles.simple.IncendiaryDart;
 import com.felayga.unpixeldungeon.plants.BlandfruitBush;
 import com.felayga.unpixeldungeon.plants.Blindweed;
+import com.felayga.unpixeldungeon.plants.Bloodleaf;
+import com.felayga.unpixeldungeon.plants.Deathroot;
 import com.felayga.unpixeldungeon.plants.Dreamfoil;
 import com.felayga.unpixeldungeon.plants.Earthroot;
 import com.felayga.unpixeldungeon.plants.Fadeleaf;
 import com.felayga.unpixeldungeon.plants.Firebloom;
 import com.felayga.unpixeldungeon.plants.Icecap;
+import com.felayga.unpixeldungeon.plants.Moongrass;
 import com.felayga.unpixeldungeon.plants.Plant;
 import com.felayga.unpixeldungeon.plants.Sorrowmoss;
 import com.felayga.unpixeldungeon.plants.Starflower;
+import com.felayga.unpixeldungeon.plants.Stoneberry;
 import com.felayga.unpixeldungeon.plants.Stormvine;
 import com.felayga.unpixeldungeon.plants.Sungrass;
+import com.felayga.unpixeldungeon.plants.Swampweed;
 import com.felayga.unpixeldungeon.utils.GLog;
 import com.watabou.utils.Bundle;
 import com.watabou.utils.Random;
@@ -312,19 +316,23 @@ public class Generator {
         Category.ARTIFACT.probs = INITIAL_ARTIFACT_PROBS.clone();
 
         Category.SEED.classes = new Class<?>[]{
-                Firebloom.Seed.class,
-                Icecap.Seed.class,
-                Sorrowmoss.Seed.class,
+                BlandfruitBush.Seed.class,
                 Blindweed.Seed.class,
-                Sungrass.Seed.class,
+                Bloodleaf.Seed.class,
+                Deathroot.Seed.class,
+                Dreamfoil.Seed.class,
                 Earthroot.Seed.class,
                 Fadeleaf.Seed.class,
-                Rotberry.Seed.class,
-                BlandfruitBush.Seed.class,
-                Dreamfoil.Seed.class,
+                Firebloom.Seed.class,
+                Icecap.Seed.class,
+                Moongrass.Seed.class,
+                Sorrowmoss.Seed.class,
+                Starflower.Seed.class,
+                Stoneberry.Seed.class,
                 Stormvine.Seed.class,
-                Starflower.Seed.class};
-        Category.SEED.probs = new float[]{12, 12, 12, 12, 12, 12, 12, 0, 4, 12, 12, 1};
+                Sungrass.Seed.class,
+                Swampweed.Seed.class};
+        Category.SEED.probs = new float[]{24, 24, 12, 18, 24, 18, 24, 18, 24, 18, 24, 6, 12, 24, 24, 6};
 
         Category.GEMSTONE.classes = new Class<?>[]{
                 Gemstone.BlackOpal.class,

@@ -27,17 +27,9 @@ package com.felayga.unpixeldungeon.plants;
 import com.felayga.unpixeldungeon.actors.Actor;
 import com.felayga.unpixeldungeon.actors.Char;
 import com.felayga.unpixeldungeon.actors.buffs.Buff;
-import com.felayga.unpixeldungeon.actors.buffs.negative.Bleeding;
-import com.felayga.unpixeldungeon.actors.buffs.negative.Cripple;
-import com.felayga.unpixeldungeon.actors.buffs.negative.Drowsy;
-import com.felayga.unpixeldungeon.actors.buffs.negative.Poison;
-import com.felayga.unpixeldungeon.actors.buffs.negative.Slow;
-import com.felayga.unpixeldungeon.actors.buffs.negative.Vertigo;
-import com.felayga.unpixeldungeon.actors.buffs.negative.Weakness;
 import com.felayga.unpixeldungeon.actors.buffs.positive.MagicalSleep;
 import com.felayga.unpixeldungeon.actors.hero.Hero;
-import com.felayga.unpixeldungeon.actors.mobs.Mob;
-import com.felayga.unpixeldungeon.items.potions.PotionOfPurity;
+import com.felayga.unpixeldungeon.items.potions.PotionOfHealing;
 import com.felayga.unpixeldungeon.sprites.ItemSpriteSheet;
 import com.felayga.unpixeldungeon.utils.GLog;
 
@@ -48,30 +40,25 @@ public class Dreamfoil extends Plant {
 			"properties as a strong neutralizing agent. Most weaker creatures are overwhelmed " +
 			"and knocked unconscious, which gives the plant its namesake.";
 
+    public Dreamfoil()
 	{
-		image = 10;
-		plantName = "Dreamfoil";
+        super("Dreamfoil", 10);
 	}
 
 	@Override
 	public void activate() {
-		Char ch = Actor.findChar(pos);
+        Char ch = Actor.findChar(pos);
 
-		if (ch != null) {
-			if (ch instanceof Mob)
-				Buff.affect(ch, MagicalSleep.class);
-			else if (ch instanceof Hero){
-				GLog.i( "You feel refreshed." );
-				Buff.detach( ch, Poison.class );
-				Buff.detach( ch, Cripple.class );
-				Buff.detach( ch, Weakness.class );
-				Buff.detach( ch, Bleeding.class );
-				Buff.detach( ch, Drowsy.class );
-				Buff.detach( ch, Slow.class );
-				Buff.detach( ch, Vertigo.class);
-		   }
-		}
-	}
+        if (ch != null) {
+            PotionOfHealing.cure(ch);
+
+            if (ch instanceof Hero) {
+                GLog.i("You feel refreshed.");
+            }
+
+            Buff.affect(ch, MagicalSleep.class);
+        }
+    }
 
 	@Override
 	public String desc() {
@@ -86,7 +73,6 @@ public class Dreamfoil extends Plant {
 			image = ItemSpriteSheet.SEED_DREAMFOIL;
 
 			plantClass = Dreamfoil.class;
-			alchemyClass = PotionOfPurity.class;
 		}
 
 		@Override

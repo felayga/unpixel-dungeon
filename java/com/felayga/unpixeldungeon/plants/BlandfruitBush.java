@@ -36,9 +36,9 @@ public class BlandfruitBush extends Plant {
 			"Distant cousin of the Rotberry, the pear-shaped produce of the Blandfruit bush tastes like caked dust. " +
 			"The fruit is gross and unsubstantial but isn't poisonous. perhaps it could be cooked.";
 
+    public BlandfruitBush()
 	{
-		image = 8;
-		plantName = "Blandfruit";
+        super("Blandfruit", 8);
 	}
 
 	@Override
@@ -61,7 +61,6 @@ public class BlandfruitBush extends Plant {
 			image = ItemSpriteSheet.SEED_BLANDFRUIT;
 
 			plantClass = BlandfruitBush.class;
-			alchemyClass = null;
 		}
 
 		@Override

@@ -25,7 +25,7 @@
 package com.felayga.unpixeldungeon.items.potions;
 
 import com.felayga.unpixeldungeon.Badges;
-import com.felayga.unpixeldungeon.actors.hero.Hero;
+import com.felayga.unpixeldungeon.actors.Char;
 import com.felayga.unpixeldungeon.utils.GLog;
 
 public class PotionOfMight extends PotionOfStrength {
@@ -42,7 +42,7 @@ public class PotionOfMight extends PotionOfStrength {
 	}
 	
 	@Override
-	public void apply( Hero hero ) {
+	public void apply( Char hero ) {
 		setKnown();
 
 		/*

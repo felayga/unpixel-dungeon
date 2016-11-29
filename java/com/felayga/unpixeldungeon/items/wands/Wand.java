@@ -25,7 +25,6 @@
 package com.felayga.unpixeldungeon.items.wands;
 
 import com.felayga.unpixeldungeon.Assets;
-import com.felayga.unpixeldungeon.Badges;
 import com.felayga.unpixeldungeon.Dungeon;
 import com.felayga.unpixeldungeon.actors.Actor;
 import com.felayga.unpixeldungeon.actors.Char;
@@ -38,19 +37,6 @@ import com.felayga.unpixeldungeon.actors.hero.HeroSubClass;
 import com.felayga.unpixeldungeon.effects.MagicMissile;
 import com.felayga.unpixeldungeon.items.Item;
 import com.felayga.unpixeldungeon.items.ItemStatusHandler;
-import com.felayga.unpixeldungeon.items.scrolls.BlankScroll;
-import com.felayga.unpixeldungeon.items.scrolls.ScrollOfIdentify;
-import com.felayga.unpixeldungeon.items.scrolls.ScrollOfLullaby;
-import com.felayga.unpixeldungeon.items.scrolls.ScrollOfMagicMapping;
-import com.felayga.unpixeldungeon.items.scrolls.ScrollOfMagicalInfusion;
-import com.felayga.unpixeldungeon.items.scrolls.ScrollOfMirrorImage;
-import com.felayga.unpixeldungeon.items.scrolls.ScrollOfPsionicBlast;
-import com.felayga.unpixeldungeon.items.scrolls.ScrollOfRage;
-import com.felayga.unpixeldungeon.items.scrolls.ScrollOfRecharging;
-import com.felayga.unpixeldungeon.items.scrolls.ScrollOfRemoveCurse;
-import com.felayga.unpixeldungeon.items.scrolls.ScrollOfTeleportation;
-import com.felayga.unpixeldungeon.items.scrolls.ScrollOfTerror;
-import com.felayga.unpixeldungeon.items.scrolls.ScrollOfUpgrade;
 import com.felayga.unpixeldungeon.items.weapon.melee.simple.MagesStaff;
 import com.felayga.unpixeldungeon.mechanics.BUCStatus;
 import com.felayga.unpixeldungeon.mechanics.Ballistica;
@@ -173,6 +159,21 @@ public abstract class Wand extends Item {
     }
 
 
+    @Override
+    public Item random() {
+        super.random();
+
+        int luck = Dungeon.hero.luck();
+
+        float min = (float)Math.pow(((double) luck + 11.0) / 31.0, 1.5);
+        float max = (float)Math.pow(((double) luck + 21.0) / 31.0, 0.5);
+        double charges = Random.Float(min, max);
+
+        curCharges = (int)Math.ceil(charges * (double)maxCharges);
+
+        return this;
+    }
+
     private int maxCharges;
 	private int curCharges;
 
@@ -188,6 +189,8 @@ public abstract class Wand extends Item {
 
 	public Wand(int maxCharges)
 	{
+        syncVisuals();
+
 		defaultAction = AC_ZAP;
 		usesTargeting = true;
         this.maxCharges = maxCharges;
@@ -197,6 +200,12 @@ public abstract class Wand extends Item {
 		weight(Encumbrance.UNIT * 7);
         price = 75;
 	}
+
+    @Override
+    public void syncVisuals() {
+        image = handler.image(this);
+        rune = handler.label(this);
+    }
 	
 	@Override
 	public ArrayList<String> actions( Hero hero ) {
@@ -251,10 +260,10 @@ public abstract class Wand extends Item {
 	}
 	*/
 
-	protected void processSoulMark(Char target, int chargesUsed){
+	protected void processSoulMark(Char target){
 		if (target != Dungeon.hero &&
 				Dungeon.hero.subClass == HeroSubClass.WARLOCK &&
-				Random.Float() < .15f + (level*chargesUsed*0.03f)){
+				Random.Float() < .15f + (level*1*0.03f)){
 			SoulMark.prolong(target, SoulMark.class, SoulMark.DURATION);
 		}
 	}
@@ -318,8 +327,8 @@ public abstract class Wand extends Item {
 	public final String info() {
         return isKnown() ?
                 desc() :
-                "This parchment is covered with indecipherable writing, and bears a title " +
-                        "of \"" + rune + "\". Who knows what it will do when read aloud?";
+                "This " + rune + " wand is an expertly crafted capacitor of magical energy." +
+                        " Who knows what will happen when it's invoked?";
         /*
 		return (bucStatusKnown && bucStatus == BUCStatus.Cursed) ?
 				desc() + "\n\nThis wand is cursed, making its magic chaotic and random." :

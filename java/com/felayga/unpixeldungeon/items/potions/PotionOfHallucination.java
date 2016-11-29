@@ -25,10 +25,12 @@
 package com.felayga.unpixeldungeon.items.potions;
 
 import com.felayga.unpixeldungeon.Dungeon;
+import com.felayga.unpixeldungeon.actors.Char;
 import com.felayga.unpixeldungeon.actors.buffs.Buff;
 import com.felayga.unpixeldungeon.actors.buffs.negative.Hallucination;
-import com.felayga.unpixeldungeon.actors.hero.Hero;
 import com.felayga.unpixeldungeon.mechanics.GameTime;
+import com.felayga.unpixeldungeon.plants.Blindweed;
+import com.felayga.unpixeldungeon.plants.Swampweed;
 
 public class PotionOfHallucination extends Potion {
 
@@ -40,14 +42,14 @@ public class PotionOfHallucination extends Potion {
         bones = true;
         isHelpful = false;
 
-        applicationDescription = "somewhat";
         price = 30;
+
+        alchemyPrimary = Swampweed.Seed.class;
+        alchemySecondary = Blindweed.Seed.class;
     }
 
-    protected String applicationDescription;
-
     @Override
-    public void apply( Hero hero ) {
+    public void apply( Char hero ) {
         setKnown();
         Buff.affect(Dungeon.hero, Hallucination.class, 200 * GameTime.TICK);
     }

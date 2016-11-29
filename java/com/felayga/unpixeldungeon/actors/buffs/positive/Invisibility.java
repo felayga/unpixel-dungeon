@@ -53,8 +53,9 @@ public class Invisibility extends FlavourBuff {
 	
 	@Override
 	public void detach() {
-		if (target.invisible > 0)
-			target.invisible--;
+		if (target.invisible > 0) {
+            target.invisible--;
+        }
 		super.detach();
 	}
 	

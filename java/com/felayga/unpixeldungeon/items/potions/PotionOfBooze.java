@@ -24,7 +24,7 @@
  */
 package com.felayga.unpixeldungeon.items.potions;
 
-import com.felayga.unpixeldungeon.Dungeon;
+import com.felayga.unpixeldungeon.actors.Char;
 import com.felayga.unpixeldungeon.actors.buffs.Buff;
 import com.felayga.unpixeldungeon.actors.buffs.hero.Hunger;
 import com.felayga.unpixeldungeon.actors.buffs.negative.Bleeding;
@@ -35,6 +35,9 @@ import com.felayga.unpixeldungeon.actors.buffs.negative.Weakness;
 import com.felayga.unpixeldungeon.actors.buffs.positive.MagicalSleep;
 import com.felayga.unpixeldungeon.actors.hero.Hero;
 import com.felayga.unpixeldungeon.effects.Speck;
+import com.felayga.unpixeldungeon.items.food.Blandfruit;
+import com.felayga.unpixeldungeon.mechanics.GameTime;
+import com.felayga.unpixeldungeon.plants.Deathroot;
 import com.felayga.unpixeldungeon.utils.GLog;
 import com.watabou.utils.Random;
 
@@ -49,19 +52,42 @@ public class PotionOfBooze extends Potion {
 		isHelpful = true;
 
         price = 30;
-	}
+
+        alchemyPrimary = Blandfruit.class;
+        alchemySecondary = Deathroot.Seed.class;
+    }
 	
 	@Override
-	public void apply( Hero hero ) {
+	public void apply( Char hero ) {
 		setKnown();
 		GLog.p("Oof!  This tastes like liquid fire!");
-		hero.buff(Hunger.class).satisfy_new(125);
-		Buff.affect(Dungeon.hero, Vertigo.class, Vertigo.duration(Dungeon.hero));
-		switch (Random.Int(5)) {
-			case 0:
-				Buff.affect(Dungeon.hero, MagicalSleep.class);
-				break;
-		}
+
+        switch(bucStatus) {
+            case Cursed:
+                hero.buff(Hunger.class).satisfy_new(125);
+                break;
+            case Blessed:
+                hero.buff(Hunger.class).satisfy_new(375);
+                //no more effects
+                return;
+            default:
+                hero.buff(Hunger.class).satisfy_new(250);
+                break;
+        }
+
+        hero.HP = Math.min(hero.HT, hero.HP + 1);
+		Buff.affect(hero, Vertigo.class, Random.Int(3, 9) * GameTime.TICK);
+
+        switch(bucStatus) {
+            case Cursed:
+                Buff.affect(hero, MagicalSleep.class);
+                break;
+            default:
+                if (Random.Int(5) == 0) {
+                    Buff.affect(hero, MagicalSleep.class);
+                }
+                break;
+        }
 	}
 	
 	public static void heal( Hero hero ) {
@@ -78,7 +104,7 @@ public class PotionOfBooze extends Potion {
 	@Override
 	public String desc() {
 		return
-			"An elixir that will restore some hunger while making you confused.";
+			"A measure of embenzalmine nitrotomine, better known as whiskey.";
 	}
 
 }

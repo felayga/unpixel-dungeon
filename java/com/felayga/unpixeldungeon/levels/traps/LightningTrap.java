@@ -82,7 +82,8 @@ public class LightningTrap extends Trap {
 			Item item = heap.randomItem();
 			if (item instanceof Wand){
 				Wand wand = (Wand)item;
-				((Wand)item).curCharges += (int)Math.ceil((wand.maxCharges - wand.curCharges)/2f);
+                //((Wand)item).curCharges += (int)Math.ceil((wand.maxCharges - wand.curCharges)/2f);
+				((Wand)item).random();
 			}
 		}
 

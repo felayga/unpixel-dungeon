@@ -38,8 +38,6 @@ public class GameTime {
     {
         long timefix = Actor.fixTime_new();
 
-        if (Dungeon.level != null) {
-            Dungeon.level.decay(timefix, false, true);
-        }
+        Dungeon.decay(timefix, false, true);
     }
 }

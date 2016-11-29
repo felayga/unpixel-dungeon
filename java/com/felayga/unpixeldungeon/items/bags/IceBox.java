@@ -29,16 +29,12 @@ import com.felayga.unpixeldungeon.Dungeon;
 import com.felayga.unpixeldungeon.actors.buffs.hero.Encumbrance;
 import com.felayga.unpixeldungeon.actors.mobs.Bestiary;
 import com.felayga.unpixeldungeon.actors.mobs.Mob;
-import com.felayga.unpixeldungeon.actors.mobs.jackal.Jackal;
 import com.felayga.unpixeldungeon.items.Item;
 import com.felayga.unpixeldungeon.items.food.Corpse;
-import com.felayga.unpixeldungeon.mechanics.IDecayable;
 import com.felayga.unpixeldungeon.mechanics.Roll;
 import com.felayga.unpixeldungeon.sprites.ItemSpriteSheet;
 import com.felayga.unpixeldungeon.ui.Icons;
 import com.watabou.utils.Random;
-
-import java.util.Iterator;
 
 /**
  * Created by HELLO on 7/6/2016.

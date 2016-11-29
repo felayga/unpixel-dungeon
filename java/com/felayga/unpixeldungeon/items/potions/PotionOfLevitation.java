@@ -26,11 +26,13 @@ package com.felayga.unpixeldungeon.items.potions;
 
 import com.felayga.unpixeldungeon.Assets;
 import com.felayga.unpixeldungeon.Dungeon;
+import com.felayga.unpixeldungeon.actors.Char;
 import com.felayga.unpixeldungeon.actors.blobs.Blob;
 import com.felayga.unpixeldungeon.actors.blobs.ConfusionGas;
 import com.felayga.unpixeldungeon.actors.buffs.Buff;
 import com.felayga.unpixeldungeon.actors.buffs.positive.Levitation;
-import com.felayga.unpixeldungeon.actors.hero.Hero;
+import com.felayga.unpixeldungeon.plants.Moongrass;
+import com.felayga.unpixeldungeon.plants.Stormvine;
 import com.felayga.unpixeldungeon.scenes.GameScene;
 import com.felayga.unpixeldungeon.utils.GLog;
 import com.watabou.noosa.audio.Sample;
@@ -45,7 +47,10 @@ public class PotionOfLevitation extends Potion {
 		isHelpful = true;
 
         price = 35;
-	}
+
+        alchemyPrimary = Stormvine.Seed.class;
+        alchemySecondary = Moongrass.Seed.class;
+    }
 
 	@Override
 	public void shatter( int cell ) {
@@ -61,7 +66,7 @@ public class PotionOfLevitation extends Potion {
 	}
 	
 	@Override
-	public void apply( Hero hero ) {
+	public void apply( Char hero ) {
 		setKnown();
 		Buff.affect( hero, Levitation.class, Levitation.DURATION );
 		GLog.i( "You float into the air!" );

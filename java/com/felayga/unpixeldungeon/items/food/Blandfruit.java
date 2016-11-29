@@ -24,20 +24,8 @@
  */
 package com.felayga.unpixeldungeon.items.food;
 
-import com.felayga.unpixeldungeon.actors.buffs.Buff;
-import com.felayga.unpixeldungeon.actors.buffs.hero.EarthImbue;
 import com.felayga.unpixeldungeon.actors.buffs.hero.Encumbrance;
-import com.felayga.unpixeldungeon.actors.buffs.hero.FireImbue;
-import com.felayga.unpixeldungeon.actors.buffs.hero.ToxicImbue;
-import com.felayga.unpixeldungeon.actors.buffs.negative.Bleeding;
-import com.felayga.unpixeldungeon.actors.buffs.negative.Cripple;
-import com.felayga.unpixeldungeon.actors.buffs.negative.Poison;
-import com.felayga.unpixeldungeon.actors.buffs.negative.Weakness;
-import com.felayga.unpixeldungeon.actors.buffs.positive.Barkskin;
-import com.felayga.unpixeldungeon.actors.buffs.positive.Invisibility;
 import com.felayga.unpixeldungeon.actors.hero.Hero;
-import com.felayga.unpixeldungeon.actors.mobs.npcs.Wandmaker;
-import com.felayga.unpixeldungeon.effects.Speck;
 import com.felayga.unpixeldungeon.items.Item;
 import com.felayga.unpixeldungeon.items.potions.Potion;
 import com.felayga.unpixeldungeon.items.potions.PotionOfExperience;
@@ -51,26 +39,14 @@ import com.felayga.unpixeldungeon.items.potions.PotionOfParalyticGas;
 import com.felayga.unpixeldungeon.items.potions.PotionOfPurity;
 import com.felayga.unpixeldungeon.items.potions.PotionOfStrength;
 import com.felayga.unpixeldungeon.items.potions.PotionOfToxicGas;
-import com.felayga.unpixeldungeon.plants.Blindweed;
-import com.felayga.unpixeldungeon.plants.Dreamfoil;
-import com.felayga.unpixeldungeon.plants.Earthroot;
-import com.felayga.unpixeldungeon.plants.Fadeleaf;
-import com.felayga.unpixeldungeon.plants.Firebloom;
-import com.felayga.unpixeldungeon.plants.Icecap;
-import com.felayga.unpixeldungeon.plants.Plant.Seed;
-import com.felayga.unpixeldungeon.plants.Sorrowmoss;
-import com.felayga.unpixeldungeon.plants.Stormvine;
-import com.felayga.unpixeldungeon.plants.Sungrass;
 import com.felayga.unpixeldungeon.sprites.ItemSprite;
 import com.felayga.unpixeldungeon.sprites.ItemSpriteSheet;
-import com.felayga.unpixeldungeon.utils.GLog;
 import com.watabou.utils.Bundle;
-import com.watabou.utils.Random;
 
 public class Blandfruit extends Food {
 
 	public String message = "You eat the Blandfruit, bleugh!";
-	public String info = "So dry and insubstantial, perhaps stewing it with another ingredient would improve it.";
+	public String info = "So dry and insubstantial.  At least it's filling.";
 
 	public Potion potionAttrib = null;
 	public ItemSprite.Glowing potionGlow = null;
@@ -105,6 +81,7 @@ public class Blandfruit extends Food {
     protected void doneEating(Hero hero, boolean stuffed) {
         super.doneEating(hero, stuffed);
 
+        /*
         if (potionAttrib != null) {
             if (potionAttrib instanceof PotionOfFrost) {
                 GLog.i("the Icefruit tastes a bit like Frozen Carpaccio.");
@@ -144,6 +121,7 @@ public class Blandfruit extends Food {
             } else
                 potionAttrib.apply(hero);
         }
+        */
     }
 
 	@Override
@@ -151,6 +129,7 @@ public class Blandfruit extends Food {
 		return info + super.info();
 	}
 
+    /*
 	public Item cook(Seed seed){
 
 		try {
@@ -160,6 +139,7 @@ public class Blandfruit extends Food {
 		}
 
 	}
+	*/
 
 	public Item imbuePotion(Potion potion){
 
@@ -270,6 +250,8 @@ public class Blandfruit extends Food {
 	@Override
 	public void restoreFromBundle(Bundle bundle){
 		super.restoreFromBundle(bundle);
+
+        /*
 		if (bundle.contains( POTIONATTRIB )) {
 			imbuePotion( (Potion)bundle.get( POTIONATTRIB ) );
 
@@ -298,7 +280,7 @@ public class Blandfruit extends Food {
 			else if (name.equals("Purefruit"))
 				cook(new Dreamfoil.Seed());
 		}
-
+        */
 	}
 
 

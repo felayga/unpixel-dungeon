@@ -29,7 +29,6 @@ import com.felayga.unpixeldungeon.actors.Actor;
 import com.felayga.unpixeldungeon.actors.Char;
 import com.felayga.unpixeldungeon.actors.buffs.Buff;
 import com.felayga.unpixeldungeon.actors.buffs.positive.Bless;
-import com.felayga.unpixeldungeon.items.potions.PotionOfExperience;
 import com.felayga.unpixeldungeon.mechanics.GameTime;
 import com.felayga.unpixeldungeon.sprites.ItemSpriteSheet;
 import com.watabou.utils.Random;
@@ -40,9 +39,9 @@ public class Starflower extends Plant {
 			"An extremely rare plant, " +
 			"Starflower is said to grant holy power to whomever touches it.";
 
+    public Starflower()
 	{
-		image = 11;
-		plantName = "Starflower";
+        super("Starflower", 11);
 	}
 
 	@Override
@@ -70,7 +69,6 @@ public class Starflower extends Plant {
 			image = ItemSpriteSheet.SEED_STARFLOWER;
 
 			plantClass = Starflower.class;
-			alchemyClass = PotionOfExperience.class;
 		}
 
 		@Override

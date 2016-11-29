@@ -30,17 +30,16 @@ import com.felayga.unpixeldungeon.actors.Char;
 import com.felayga.unpixeldungeon.actors.buffs.negative.Poison;
 import com.felayga.unpixeldungeon.effects.CellEmitter;
 import com.felayga.unpixeldungeon.effects.particles.PoisonParticle;
-import com.felayga.unpixeldungeon.items.potions.PotionOfToxicGas;
 import com.felayga.unpixeldungeon.sprites.ItemSpriteSheet;
 
 public class Sorrowmoss extends Plant {
 
 	private static final String TXT_DESC =
 		"A Sorrowmoss is a flower (not a moss) with razor-sharp petals, coated with a deadly venom.";
-	
+
+    public Sorrowmoss()
 	{
-		image = 2;
-		plantName = "Sorrowmoss";
+        super("Sorrowmoss", 2);
 	}
 	
 	@Override
@@ -70,7 +69,6 @@ public class Sorrowmoss extends Plant {
 			image = ItemSpriteSheet.SEED_SORROWMOSS;
 			
 			plantClass = Sorrowmoss.class;
-			alchemyClass = PotionOfToxicGas.class;
 		}
 		
 		@Override

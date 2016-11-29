@@ -28,7 +28,8 @@ import com.felayga.unpixeldungeon.Assets;
 import com.felayga.unpixeldungeon.actors.Char;
 import com.felayga.unpixeldungeon.actors.buffs.Buff;
 import com.felayga.unpixeldungeon.actors.buffs.positive.Invisibility;
-import com.felayga.unpixeldungeon.actors.hero.Hero;
+import com.felayga.unpixeldungeon.plants.Fadeleaf;
+import com.felayga.unpixeldungeon.plants.Starflower;
 import com.felayga.unpixeldungeon.utils.GLog;
 import com.watabou.noosa.audio.Sample;
 import com.watabou.noosa.tweeners.AlphaTweener;
@@ -45,10 +46,13 @@ public class PotionOfInvisibility extends Potion {
 		isHelpful = true;
 
         price = 40;
-	}
+
+        alchemyPrimary = Fadeleaf.Seed.class;
+        alchemySecondary = Starflower.Seed.class;
+    }
 	
 	@Override
-	public void apply( Hero hero ) {
+	public void apply( Char hero ) {
 		setKnown();
 		Buff.affect( hero, Invisibility.class, Invisibility.DURATION );
 		GLog.i( "You see your hands turn invisible!" );

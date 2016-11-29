@@ -27,12 +27,14 @@ package com.felayga.unpixeldungeon.items.potions;
 import com.felayga.unpixeldungeon.Assets;
 import com.felayga.unpixeldungeon.Dungeon;
 import com.felayga.unpixeldungeon.actors.Actor;
+import com.felayga.unpixeldungeon.actors.Char;
 import com.felayga.unpixeldungeon.actors.blobs.Acid;
 import com.felayga.unpixeldungeon.actors.blobs.Blob;
-import com.felayga.unpixeldungeon.actors.hero.Hero;
 import com.felayga.unpixeldungeon.effects.CellEmitter;
 import com.felayga.unpixeldungeon.effects.particles.AcidParticle;
 import com.felayga.unpixeldungeon.levels.Level;
+import com.felayga.unpixeldungeon.plants.Deathroot;
+import com.felayga.unpixeldungeon.plants.Stormvine;
 import com.felayga.unpixeldungeon.scenes.GameScene;
 import com.felayga.unpixeldungeon.utils.GLog;
 import com.watabou.noosa.audio.Sample;
@@ -46,10 +48,13 @@ public class PotionOfAcid extends Potion {
 
 		isHarmful = true;
         price = 40;
-	}
+
+        alchemyPrimary = Deathroot.Seed.class;
+        alchemySecondary = Stormvine.Seed.class;
+    }
 
 	@Override
-	public void apply( Hero hero ) {
+	public void apply( Char hero ) {
 		setKnown();
 		GLog.p("This burns like acid!");
 		Acid.burnChar(hero, null);

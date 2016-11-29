@@ -36,7 +36,6 @@ import com.felayga.unpixeldungeon.items.weapon.melee.simple.MagesStaff;
 import com.felayga.unpixeldungeon.levels.Level;
 import com.felayga.unpixeldungeon.mechanics.Ballistica;
 import com.felayga.unpixeldungeon.mechanics.MagicType;
-import com.felayga.unpixeldungeon.sprites.ItemSpriteSheet;
 import com.felayga.unpixeldungeon.utils.GLog;
 import com.felayga.unpixeldungeon.utils.Utils;
 import com.watabou.noosa.Camera;
@@ -47,7 +46,9 @@ import java.util.ArrayList;
 
 public class WandOfLightning extends Wand {
 
+    public WandOfLightning()
 	{
+        super(20);
 		name = "Wand of Lightning";
 	}
 	
@@ -57,6 +58,7 @@ public class WandOfLightning extends Wand {
 	
 	@Override
 	protected void onZap( Ballistica bolt ) {
+        setKnown();
 
 		//lightning deals less damage per-target, the more targets that are hit.
 		float multipler = 0.4f + (0.6f/affected.size());
@@ -66,7 +68,7 @@ public class WandOfLightning extends Wand {
 		int max = Math.round(10 + (level * level / 4f));
 
 		for (Char ch : affected){
-			processSoulMark(ch, chargesPerCast());
+			processSoulMark(ch);
 			ch.damage(Math.round(Random.NormalIntRange(min, max) * multipler), MagicType.Shock, null);
 
 			if (ch == Dungeon.hero) Camera.main.shake( 2, 0.3f );

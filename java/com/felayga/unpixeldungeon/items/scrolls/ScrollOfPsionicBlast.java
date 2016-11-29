@@ -33,6 +33,7 @@ import com.felayga.unpixeldungeon.actors.buffs.negative.Paralysis;
 import com.felayga.unpixeldungeon.actors.buffs.positive.Invisibility;
 import com.felayga.unpixeldungeon.actors.mobs.Mob;
 import com.felayga.unpixeldungeon.levels.Level;
+import com.felayga.unpixeldungeon.mechanics.GameTime;
 import com.felayga.unpixeldungeon.mechanics.MagicType;
 import com.felayga.unpixeldungeon.scenes.GameScene;
 import com.felayga.unpixeldungeon.utils.GLog;
@@ -67,8 +68,8 @@ public class ScrollOfPsionicBlast extends Scroll {
 		}
 
 		curUser.damage(Math.max(curUser.HT/5, curUser.HP/2), MagicType.Magic, null);
-		Buff.prolong( curUser, Paralysis.class, Random.Int( 4, 6 ) );
-		Buff.prolong( curUser, Blindness.class, Random.Int( 6, 9 ) );
+		Buff.prolong( curUser, Paralysis.class, Random.Int( 4, 6 ) * GameTime.TICK );
+		Buff.prolong( curUser, Blindness.class, Random.Int( 6, 9 ) * GameTime.TICK );
 		Dungeon.observe();
 		
 		setKnown();

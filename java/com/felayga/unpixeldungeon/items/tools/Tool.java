@@ -24,17 +24,13 @@
  */
 package com.felayga.unpixeldungeon.items.tools;
 
-import com.felayga.unpixeldungeon.Assets;
-import com.felayga.unpixeldungeon.actors.buffs.positive.Invisibility;
 import com.felayga.unpixeldungeon.actors.hero.Hero;
 import com.felayga.unpixeldungeon.items.Item;
-import com.felayga.unpixeldungeon.items.scrolls.Scroll;
 import com.felayga.unpixeldungeon.mechanics.Constant;
 import com.felayga.unpixeldungeon.scenes.CellSelector;
 import com.felayga.unpixeldungeon.scenes.GameScene;
 import com.felayga.unpixeldungeon.utils.GLog;
 import com.felayga.unpixeldungeon.windows.WndBackpack;
-import com.watabou.noosa.audio.Sample;
 
 /**
  * Created by hello on 12/21/15.
@@ -75,7 +71,7 @@ public abstract class Tool extends Item implements ITool {
             } else if (applyCell) {
                 GameScene.selectCell(cellApplier);
             } else if (applyItem) {
-                GameScene.selectItem(itemApplier, applyItemMode, applyItemClass, "Apply " + this.getToolClass(), this);
+                GameScene.selectItem(itemApplier, applyItemMode, applyItemClass, "Apply " + this.getToolClass(), true, this);
             }
 
             return false;

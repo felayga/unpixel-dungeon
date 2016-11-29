@@ -121,7 +121,7 @@ public class Toolbar extends Component {
 
 			@Override
 			protected void onClick() {
-				GameScene.show(new WndBackpack(Dungeon.hero.belongings.backpack1, null, WndBackpack.Mode.ALL_WITH_SPELL, null, null));
+				GameScene.show(new WndBackpack(Dungeon.hero.belongings.backpack1, null, WndBackpack.Mode.ALL_WITH_SPELL, null, null, false));
 			}
 
 			protected boolean onLongClick() {

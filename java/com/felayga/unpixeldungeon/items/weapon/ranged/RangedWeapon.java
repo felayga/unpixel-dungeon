@@ -26,11 +26,13 @@
 package com.felayga.unpixeldungeon.items.weapon.ranged;
 
 import com.felayga.unpixeldungeon.Dungeon;
+import com.felayga.unpixeldungeon.actors.buffs.negative.Cripple;
 import com.felayga.unpixeldungeon.actors.hero.Hero;
 import com.felayga.unpixeldungeon.items.EquippableItem;
 import com.felayga.unpixeldungeon.items.weapon.Weapon;
 import com.felayga.unpixeldungeon.items.weapon.ammunition.AmmunitionWeapon;
 import com.felayga.unpixeldungeon.mechanics.Constant;
+import com.felayga.unpixeldungeon.mechanics.GameTime;
 import com.felayga.unpixeldungeon.mechanics.WeaponSkill;
 import com.felayga.unpixeldungeon.scenes.CellSelector;
 import com.felayga.unpixeldungeon.scenes.GameScene;
@@ -146,7 +148,18 @@ public class RangedWeapon extends Weapon {
         public boolean onSelect(Integer target) {
             GLog.d("onselectcell target="+target);
             if (target != null) {
-                curLauncher.shoot(curUser, curAmmo, target);
+                if (target == curUser.pos) {
+                    if (Dungeon.hero == curUser) {
+                        GLog.w("You shoot yourself in the foot.");
+                    } else {
+                        GLog.w("The " + curUser.name + " shoots themself in the foot.");
+                    }
+
+                    Cripple.prolong(curUser, Cripple.class, GameTime.TICK);
+                }
+                else {
+                    curLauncher.shoot(curUser, curAmmo, target);
+                }
             }
             return true;
         }

@@ -28,16 +28,13 @@ import com.felayga.unpixeldungeon.Badges;
 import com.felayga.unpixeldungeon.Challenges;
 import com.felayga.unpixeldungeon.Dungeon;
 import com.felayga.unpixeldungeon.ShatteredPixelDungeon;
-import com.felayga.unpixeldungeon.actors.mobs.newt.Newt;
 import com.felayga.unpixeldungeon.items.armor.boots.LeatherBoots;
 import com.felayga.unpixeldungeon.items.armor.gloves.LeatherGloves;
 import com.felayga.unpixeldungeon.items.armor.heavy.HalfPlateArmor;
 import com.felayga.unpixeldungeon.items.armor.medium.ScaleArmor;
 import com.felayga.unpixeldungeon.items.artifacts.CloakOfShadows;
 import com.felayga.unpixeldungeon.items.artifacts.MasterThievesArmband;
-import com.felayga.unpixeldungeon.items.bags.IceBox;
 import com.felayga.unpixeldungeon.items.bags.SeedPouch;
-import com.felayga.unpixeldungeon.items.food.Corpse;
 import com.felayga.unpixeldungeon.items.food.Ration;
 import com.felayga.unpixeldungeon.items.potions.PotionOfMindVision;
 import com.felayga.unpixeldungeon.items.potions.PotionOfStrength;
@@ -48,15 +45,15 @@ import com.felayga.unpixeldungeon.items.scrolls.ScrollOfUpgrade;
 import com.felayga.unpixeldungeon.items.tools.CanningKit;
 import com.felayga.unpixeldungeon.items.tools.digging.Pickaxe;
 import com.felayga.unpixeldungeon.items.wands.WandOfMagicMissile;
-import com.felayga.unpixeldungeon.items.weapon.ammunition.simple.Rock;
 import com.felayga.unpixeldungeon.items.weapon.melee.martial.BattleAxe;
 import com.felayga.unpixeldungeon.items.weapon.melee.martial.Longsword;
 import com.felayga.unpixeldungeon.items.weapon.melee.simple.MagesStaff;
 import com.felayga.unpixeldungeon.items.weapon.missiles.martial.Boomerang;
 import com.felayga.unpixeldungeon.items.weapon.missiles.simple.Dart;
-import com.felayga.unpixeldungeon.items.weapon.ranged.simple.Sling;
+import com.felayga.unpixeldungeon.mechanics.AttributeType;
 import com.felayga.unpixeldungeon.mechanics.BUCStatus;
 import com.felayga.unpixeldungeon.mechanics.WeaponSkill;
+import com.felayga.unpixeldungeon.plants.Blindweed;
 import com.watabou.utils.Bundle;
 import com.watabou.utils.Random;
 
@@ -236,8 +233,12 @@ public enum HeroClass {
         //hero.belongings.collect(new Sling());
         //hero.belongings.collect(new Rock(5));
 
-        hero.belongings.collect(new IceBox().random());
+        //hero.belongings.collect(new IceBox().random());
+        hero.belongings.collect(new Blindweed.Seed().quantity(10));
         hero.belongings.collect(new CanningKit().identify());
+
+        hero.useAttribute(AttributeType.INTWIS, 1.0f);
+        hero.useAttribute(AttributeType.INTWIS, 1.0f);
 	}
 
 	private static void initWarrior( Hero hero ) {

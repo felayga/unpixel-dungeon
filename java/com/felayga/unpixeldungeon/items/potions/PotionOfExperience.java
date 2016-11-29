@@ -24,26 +24,36 @@
  */
 package com.felayga.unpixeldungeon.items.potions;
 
+import com.felayga.unpixeldungeon.actors.Char;
 import com.felayga.unpixeldungeon.actors.hero.Hero;
+import com.felayga.unpixeldungeon.plants.Bloodleaf;
+import com.felayga.unpixeldungeon.plants.Swampweed;
 
 public class PotionOfExperience extends Potion {
 
     public PotionOfExperience()
 	{
-		name = "Potion of Experience";
-		initials = "Ex";
+		name = "Potion of Gain Level";
+		initials = "GL";
 
 		bones = true;
 		isHelpful = true;
 
         price = 80;
+
+        alchemyPrimary = Bloodleaf.Seed.class;
+        alchemySecondary = Swampweed.Seed.class;
 	}
 	
 	@Override
-	public void apply( Hero hero ) {
-		setKnown();
-		hero.earnExp( hero.maxExp() );
-	}
+	public void apply( Char c ) {
+        setKnown();
+
+        if (c instanceof Hero) {
+            Hero hero = (Hero) c;
+            hero.earnExp(hero.maxExp());
+        }
+    }
 	
 	@Override
 	public String desc() {

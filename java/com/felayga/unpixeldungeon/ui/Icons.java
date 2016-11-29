@@ -67,7 +67,11 @@ public enum Icons {
 	BUTTON_LEFT,
 	BUTTON_RIGHT,
     LARGEBOX,
-    ICEBOX;
+    ICEBOX,
+    BACKPACK_CONSUMABLES,
+    BACKPACK_VALUABLES,
+    BACKPACK_EQUIPMENT,
+    UNKNOWN_OBJECT;
 
 	public Image get() {
 		return get( this );
@@ -172,15 +176,9 @@ public enum Icons {
 			case RESUME:
 				icon.frame(icon.texture.uvRect(13, 53, 24, 64));
 				break;
-			case SPELLBOOK:
-				icon.frame(icon.texture.uvRect(93, 43, 103, 53));
-				break;
 			case TREASURECHEST:
 				icon.frame(icon.texture.uvRect(103, 43, 113, 53));
 				break;
-            case FLOORHEAP:
-                icon.frame(icon.texture.uvRect(113, 43, 123, 53));
-                break;
 			case BUTTON_LEFT:
 				icon.frame(icon.texture.uvRect(0, 64, 12, 76));
 				break;
@@ -192,6 +190,46 @@ public enum Icons {
                 break;
             case ICEBOX:
                 icon.frame(icon.texture.uvRect(103, 53, 113, 63));
+                break;
+            /*
+            //tiny
+            case FLOORHEAP:
+                icon.frame(icon.texture.uvRect(113, 43, 123, 53));
+                break;
+            case BACKPACK_CONSUMABLES:
+                icon.frame(icon.texture.uvRect(93, 63, 103, 73));
+                break;
+            case BACKPACK_VALUABLES:
+                icon.frame(icon.texture.uvRect(103, 63, 113, 73));
+                break;
+            case BACKPACK_EQUIPMENT:
+                icon.frame(icon.texture.uvRect(113, 63, 123, 73));
+                break;
+			case SPELLBOOK:
+				icon.frame(icon.texture.uvRect(93, 43, 103, 53));
+				break;
+            case FLOORHEAP:
+                icon.frame(icon.texture.uvRect(113, 43, 123, 53));
+                break;
+            */
+            case BACKPACK_CONSUMABLES:
+                icon.frame(icon.texture.uvRect(93, 63, 109, 79));
+                break;
+            case BACKPACK_VALUABLES:
+                icon.frame(icon.texture.uvRect(109, 63, 125, 79));
+                break;
+            case BACKPACK_EQUIPMENT:
+                icon.frame(icon.texture.uvRect(93, 79, 109, 95));
+                break;
+            case SPELLBOOK:
+                icon.frame(icon.texture.uvRect(109, 79, 125, 95));
+                break;
+            case FLOORHEAP:
+                icon.frame(icon.texture.uvRect(93, 95, 109, 111));
+                break;
+
+            case UNKNOWN_OBJECT:
+                icon.frame(icon.texture.uvRect(24, 53, 32, 61));
                 break;
 		}
 		return icon;

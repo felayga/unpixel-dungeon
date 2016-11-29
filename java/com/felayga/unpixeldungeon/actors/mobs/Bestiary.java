@@ -50,7 +50,6 @@ import com.felayga.unpixeldungeon.actors.mobs.rat.GiantRat;
 import com.felayga.unpixeldungeon.actors.mobs.rat.SewerRat;
 import com.felayga.unpixeldungeon.actors.mobs.wraith.GasSpore;
 import com.felayga.unpixeldungeon.levels.Level;
-import com.felayga.unpixeldungeon.mechanics.Constant;
 import com.felayga.unpixeldungeon.utils.GLog;
 import com.watabou.utils.Random;
 
@@ -71,7 +70,7 @@ public class Bestiary {
         }
     }
 
-    public static void spawn(int depth, int heroLevel, boolean rares, SpawnParams params) {
+    public static void spawn(int depth, int heroLevel, boolean rares, final SpawnParams params) {
         if (!Dungeon.hero.isAlive()) {
             GLog.d("refused spawn, hero dead");
             return;
@@ -114,7 +113,7 @@ public class Bestiary {
                     positions = level.randomPositionsNear(pos, quantity, new Level.RandomPositionValidator() {
                         @Override
                         public boolean isValidPosition(int pos) {
-                            return Level.passable[pos] && (!Level.avoid[pos]) && level.findMob(pos) == null;
+                            return Level.passable[pos] && (!Level.avoid[pos]) && level.findMob(pos) == null && Dungeon.hero.pos != pos;
                         }
                     });
                 }

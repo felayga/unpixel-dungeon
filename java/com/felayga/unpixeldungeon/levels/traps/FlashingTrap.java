@@ -34,6 +34,7 @@ import com.felayga.unpixeldungeon.actors.buffs.negative.Cripple;
 import com.felayga.unpixeldungeon.actors.mobs.Mob;
 import com.felayga.unpixeldungeon.effects.CellEmitter;
 import com.felayga.unpixeldungeon.effects.Speck;
+import com.felayga.unpixeldungeon.mechanics.GameTime;
 import com.felayga.unpixeldungeon.scenes.GameScene;
 import com.felayga.unpixeldungeon.sprites.TrapSprite;
 import com.watabou.noosa.audio.Sample;
@@ -52,7 +53,7 @@ public class FlashingTrap extends Trap {
 		Char ch = Actor.findChar(pos);
 
 		if (ch != null) {
-			int len = Random.Int(5, 10)+Dungeon.depthAdjusted;
+			long len = (Random.Int(5, 10)+Dungeon.depthAdjusted) * GameTime.TICK;
 			Buff.prolong( ch, Blindness.class, len );
 			Buff.prolong( ch, Cripple.class, len );
 			if (ch instanceof Mob) {

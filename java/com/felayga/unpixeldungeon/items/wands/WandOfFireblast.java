@@ -40,7 +40,6 @@ import com.felayga.unpixeldungeon.mechanics.Ballistica;
 import com.felayga.unpixeldungeon.mechanics.GameTime;
 import com.felayga.unpixeldungeon.mechanics.MagicType;
 import com.felayga.unpixeldungeon.scenes.GameScene;
-import com.felayga.unpixeldungeon.sprites.ItemSpriteSheet;
 import com.watabou.noosa.audio.Sample;
 import com.watabou.utils.Callback;
 import com.watabou.utils.Random;
@@ -49,7 +48,9 @@ import java.util.HashSet;
 
 public class WandOfFireblast extends Wand {
 
+    public WandOfFireblast()
 	{
+        super(20);
 		name = "Wand of Fireblast";
 
 		collisionProperties = Ballistica.STOP_TERRAIN;
@@ -69,13 +70,13 @@ public class WandOfFireblast extends Wand {
 		}
 
 		for( int cell : affectedCells){
-			GameScene.add( Blob.seed( cell, 1+chargesPerCast(), Fire.class ) );
+			GameScene.add( Blob.seed( cell, 2, Fire.class ) );
 			Char ch = Actor.findChar( cell );
 			if (ch != null) {
 
-				ch.damage(Random.NormalIntRange(1, (int) (8 + (level * level * (1 + chargesPerCast()) / 6f))), MagicType.Fire, null);
+				ch.damage(Random.NormalIntRange(1, (int) (8 + (level * level * (2) / 6f))), MagicType.Fire, null);
 				Buff.affect( ch, Burning.class ).reignite( ch );
-				switch(chargesPerCast()){
+				switch(1){
 					case 1:
 						Buff.affect(ch, Cripple.class, GameTime.TICK * 3); break;
 					case 2:
@@ -126,7 +127,7 @@ public class WandOfFireblast extends Wand {
 		affectedCells = new HashSet<>();
 		visualCells = new HashSet<>();
 
-		int maxDist = 1 + chargesPerCast()*2;
+		int maxDist = 3;
 		int dist = Math.min(bolt.dist, maxDist);
 
 		for (int i = 0; i < Level.NEIGHBOURS8.length; i++){
@@ -160,11 +161,13 @@ public class WandOfFireblast extends Wand {
 		Sample.INSTANCE.play( Assets.SND_ZAP );
 	}
 
+    /*
 	@Override
 	protected int chargesPerCast() {
 		//consumes 40% of current charges, rounded up, with a minimum of one.
 		return Math.max(1, (int)Math.ceil(curCharges*0.4f));
 	}
+	*/
 
 	@Override
 	public void staffFx(MagesStaff.StaffParticle particle) {

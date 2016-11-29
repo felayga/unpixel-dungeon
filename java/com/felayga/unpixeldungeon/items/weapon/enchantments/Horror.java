@@ -30,6 +30,7 @@ import com.felayga.unpixeldungeon.actors.buffs.Buff;
 import com.felayga.unpixeldungeon.actors.buffs.negative.Terror;
 import com.felayga.unpixeldungeon.actors.buffs.negative.Vertigo;
 import com.felayga.unpixeldungeon.items.weapon.Weapon;
+import com.felayga.unpixeldungeon.mechanics.GameTime;
 import com.felayga.unpixeldungeon.sprites.ItemSprite;
 import com.felayga.unpixeldungeon.sprites.ItemSprite.Glowing;
 import com.watabou.utils.Random;
@@ -50,7 +51,7 @@ public class Horror extends Weapon.Enchantment {
 		if (Random.Int( level + 5 ) >= 4) {
 
 			if (defender == Dungeon.hero) {
-				Buff.affect( defender, Vertigo.class, Vertigo.duration(defender) );
+				Buff.affect( defender, Vertigo.class, 20 * GameTime.TICK );
 			} else {
 				Buff.affect( defender, Terror.class, Terror.DURATION ).object = attacker.id();
 			}

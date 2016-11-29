@@ -38,6 +38,7 @@ import com.felayga.unpixeldungeon.ui.Archs;
 import com.felayga.unpixeldungeon.ui.ExitButton;
 import com.felayga.unpixeldungeon.ui.Icons;
 import com.felayga.unpixeldungeon.ui.RedButton;
+import com.felayga.unpixeldungeon.utils.GLog;
 import com.felayga.unpixeldungeon.windows.WndChallenges;
 import com.felayga.unpixeldungeon.windows.WndMessage;
 import com.felayga.unpixeldungeon.windows.WndOptions;
@@ -389,10 +390,26 @@ public class StartScene extends PixelScene {
 			GamesInProgress.Info info = GamesInProgress.check(index);
 
 			if (info != null) {
-				txtInfo.text("Level " + info.level + "\n" +
-								(info.gender == 0 ? "Male" : "Female") + " " + HeroClass.toHeroClass(info.heroClass).toString().toLowerCase() + "\n" +
-								"Depth " + DungeonBranch.getDepthText(info.depth)
-				);
+                String text = "";
+
+                text += "Level " + info.level;
+
+                if (info.dead) {
+                    text += " (DEAD)";
+                }
+
+                if (index == 0) {
+                    GLog.d("asdf");
+                }
+
+                text += "\n";
+
+                text += (info.gender == 0 ? "Male" : "Female") + " " + HeroClass.toHeroClass(info.heroClass).toString().toLowerCase();
+                text += "\n";
+
+                text += "Depth " + DungeonBranch.getDepthText(info.depth);
+
+				txtInfo.text(text);
 			}
 			else {
 				txtInfo.text("<no saved game found>");

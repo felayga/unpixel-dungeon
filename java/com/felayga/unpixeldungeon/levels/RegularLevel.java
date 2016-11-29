@@ -36,7 +36,6 @@ import com.felayga.unpixeldungeon.items.scrolls.Scroll;
 import com.felayga.unpixeldungeon.levels.Room.Type;
 import com.felayga.unpixeldungeon.levels.branches.DungeonBranch;
 import com.felayga.unpixeldungeon.levels.painters.Painter;
-import com.felayga.unpixeldungeon.levels.painters.ShopPainter;
 import com.felayga.unpixeldungeon.levels.traps.FireTrap;
 import com.felayga.unpixeldungeon.levels.traps.Trap;
 import com.felayga.unpixeldungeon.levels.traps.WornTrap;

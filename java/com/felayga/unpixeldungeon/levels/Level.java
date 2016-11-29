@@ -28,15 +28,16 @@ import com.felayga.unpixeldungeon.Assets;
 import com.felayga.unpixeldungeon.Challenges;
 import com.felayga.unpixeldungeon.Dungeon;
 import com.felayga.unpixeldungeon.Statistics;
+import com.felayga.unpixeldungeon.WarningHandler;
 import com.felayga.unpixeldungeon.actors.Actor;
 import com.felayga.unpixeldungeon.actors.Char;
 import com.felayga.unpixeldungeon.actors.blobs.Alchemy;
 import com.felayga.unpixeldungeon.actors.blobs.Blob;
 import com.felayga.unpixeldungeon.actors.buffs.Buff;
+import com.felayga.unpixeldungeon.actors.buffs.ITelepathyBuff;
 import com.felayga.unpixeldungeon.actors.buffs.hero.LockedFloor;
 import com.felayga.unpixeldungeon.actors.buffs.hero.Shadows;
 import com.felayga.unpixeldungeon.actors.buffs.negative.Blindness;
-import com.felayga.unpixeldungeon.actors.buffs.positive.Awareness;
 import com.felayga.unpixeldungeon.actors.buffs.positive.MindVision;
 import com.felayga.unpixeldungeon.actors.hero.Hero;
 import com.felayga.unpixeldungeon.actors.hero.HeroClass;
@@ -137,11 +138,14 @@ public abstract class Level implements Bundlable, IDecayable {
     public static boolean resizingNeeded;
     public static int loadedMapSize;
 
+
     public int version;
     public int[] map;
     public boolean[] visited;
     public boolean[] mapped;
     public long time;
+
+    public WarningHandler warnings = new WarningHandler();
 
     public int viewDistance = Dungeon.isChallenged(Challenges.DARKNESS) ? 3 : 8;
 
@@ -214,6 +218,7 @@ public abstract class Level implements Bundlable, IDecayable {
     private static final String FEELING = "feeling";
     private static final String TIME = "time";
     private static final String FLAGSLOCAL = "flagsLocal";
+    private static final String WARNINGS = "warnings";
 
     public Level(int flags) {
         flagsLocal = flags;
@@ -227,6 +232,7 @@ public abstract class Level implements Bundlable, IDecayable {
         Arrays.fill(visited, false);
         mapped = new boolean[LENGTH];
         Arrays.fill(mapped, false);
+
 
         addItemToSpawn(Generator.random(Generator.Category.FOOD));
 
@@ -335,11 +341,15 @@ public abstract class Level implements Bundlable, IDecayable {
     }
 
 
+    @Override
     public long decay() {
         return 0;
     }
 
+    @Override
     public boolean decay(long currentTime, boolean updateTime, boolean fixTime) {
+        warnings.decay(currentTime, updateTime, fixTime);
+
         if (updateTime && !fixTime) {
             if (time < currentTime) {
                 time = currentTime;
@@ -395,6 +405,7 @@ public abstract class Level implements Bundlable, IDecayable {
         customTiles = new HashSet<>();
 
         map = bundle.getIntArray(MAP);
+        warnings.restoreFromBundle(bundle);
 
         visited = bundle.getBooleanArray(VISITED);
         mapped = bundle.getBooleanArray(MAPPED);
@@ -498,6 +509,7 @@ public abstract class Level implements Bundlable, IDecayable {
     public void storeInBundle(Bundle bundle) {
         bundle.put(VERSION, Game.versionCode);
         bundle.put(MAP, map);
+        warnings.storeInBundle(bundle);
         bundle.put(VISITED, visited);
         bundle.put(MAPPED, mapped);
         bundle.put(ENTRANCE, entrance);
@@ -1560,6 +1572,7 @@ public abstract class Level implements Bundlable, IDecayable {
 
         boolean sighted = c.buff(Blindness.class) == null && c.buff(Shadows.class) == null
                 && c.buff(TimekeepersHourglass.timeStasis.class) == null && c.isAlive();
+
         if (sighted) {
             ShadowCaster.castShadow(cx, cy, fieldOfView, c.viewDistance);
         } else {
@@ -1573,7 +1586,7 @@ public abstract class Level implements Bundlable, IDecayable {
             }
         }
 
-        if ((sighted && sense > 1) || !sighted) {
+        if ((sighted && sense > 1)/* || !sighted*/) {
 
             int ax = Math.max(0, cx - sense);
             int bx = Math.min(cx + sense, WIDTH - 1);
@@ -1592,7 +1605,23 @@ public abstract class Level implements Bundlable, IDecayable {
         }
 
         if (c.isAlive()) {
-            if (c.buff(MindVision.class) != null) {
+            boolean creatureVision = false;
+            boolean itemVision = false;
+
+            for(Buff buff : c.buffs()) {
+                if (buff instanceof ITelepathyBuff) {
+                    ITelepathyBuff tBuff = (ITelepathyBuff)buff;
+
+                    if (tBuff.creatureTelepathy()) {
+                        creatureVision = true;
+                    }
+                    if (tBuff.itemTelepathy()) {
+                        itemVision = true;
+                    }
+                }
+            }
+
+            if (creatureVision) {
                 for (Mob mob : mobs) {
                     int p = mob.pos;
                     fieldOfView[p] = true;
@@ -1621,7 +1650,8 @@ public abstract class Level implements Bundlable, IDecayable {
                     }
                 }
             }
-            if (c.buff(Awareness.class) != null) {
+
+            if (itemVision) {
                 for (Heap heap : heaps.values()) {
                     int p = heap.pos;
                     fieldOfView[p] = true;

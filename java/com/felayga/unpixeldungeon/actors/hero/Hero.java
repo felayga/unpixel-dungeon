@@ -40,6 +40,7 @@ import com.felayga.unpixeldungeon.actors.buffs.hero.Encumbrance;
 import com.felayga.unpixeldungeon.actors.buffs.hero.Fury;
 import com.felayga.unpixeldungeon.actors.buffs.hero.Hunger;
 import com.felayga.unpixeldungeon.actors.buffs.hero.Sick;
+import com.felayga.unpixeldungeon.actors.buffs.negative.Blindness;
 import com.felayga.unpixeldungeon.actors.buffs.negative.Burning;
 import com.felayga.unpixeldungeon.actors.buffs.negative.Cripple;
 import com.felayga.unpixeldungeon.actors.buffs.negative.Drowsy;
@@ -99,8 +100,6 @@ import com.felayga.unpixeldungeon.mechanics.Constant;
 import com.felayga.unpixeldungeon.mechanics.GameTime;
 import com.felayga.unpixeldungeon.mechanics.MagicType;
 import com.felayga.unpixeldungeon.mechanics.WeaponSkill;
-import com.felayga.unpixeldungeon.plants.Earthroot;
-import com.felayga.unpixeldungeon.plants.Sungrass;
 import com.felayga.unpixeldungeon.scenes.GameScene;
 import com.felayga.unpixeldungeon.scenes.InterlevelScene;
 import com.felayga.unpixeldungeon.scenes.SurfaceScene;
@@ -230,7 +229,7 @@ public class Hero extends Char {
         int attribute_use = attributeUse[type.value];
 
         int attribute_use_test = _attributeUseRequirement(attribute);
-        while (attribute_use >= attribute_use_test && attribute < 23) {
+        while (attribute_use >= attribute_use_test && attribute < Constant.Attribute.MAXIMUM) {
             attribute_use -= attribute_use_test;
             attribute++;
             attribute_use_test = _attributeUseRequirement(attribute);
@@ -312,9 +311,6 @@ public class Hero extends Char {
     public float awareness;
 
     public int exp = 0;
-
-    public int MT;
-    public int MP;
 
     private ArrayList<Mob> visibleEnemies;
 
@@ -1102,7 +1098,7 @@ public class Hero extends Char {
                         default:
                             switch (Random.Int(11)) {
                                 case 0:
-                                    Buff.prolong(this, Sick.class, 2);
+                                    Buff.prolong(this, Sick.class, 0);
                                     break;
                                 case 1:
                                     GLog.w("The water is contaminated!");
@@ -1803,7 +1799,7 @@ public class Hero extends Char {
 
     @Override
     public int defenseProc(Char enemy, int damage) {
-
+        /*
         Earthroot.Armor earthroot = buff(Earthroot.Armor.class);
         if (earthroot != null) {
             damage = earthroot.absorb(damage);
@@ -1813,6 +1809,7 @@ public class Hero extends Char {
         if (health != null) {
             health.absorb(damage);
         }
+        */
 
         Armor armor = (Armor) belongings.armor();
         if (armor != null) {
@@ -1832,6 +1829,15 @@ public class Hero extends Char {
         if (source != null) {
             interrupt();
             resting = false;
+
+            if (source instanceof Char) {
+                Char c = (Char)source;
+                if (buff( Blindness.class ) != null) {
+                    Dungeon.level.warnings.add(c.pos);
+                } else if (c.invisible > 0) {
+                    Dungeon.level.warnings.add(c.pos, false);
+                }
+            }
         }
 
         if (this.buff(Drowsy.class) != null) {
@@ -1982,7 +1988,8 @@ public class Hero extends Char {
             return false;
         }
 
-        Char ch;
+        Char ch = Actor.findChar(cell);
+        boolean visible = Level.fieldOfView[cell];
         Heap heap;
         ITool[] tools;
 
@@ -1990,11 +1997,24 @@ public class Hero extends Char {
             curAction = new HeroAction.InteractPosition.Cook(cell);
         } else if (Dungeon.level.map[cell] == Terrain.WELL || Dungeon.level.map[cell] == Terrain.WELL_MAGIC) {
             curAction = new HeroAction.InteractPosition.Well(cell);
-        } else if (Level.fieldOfView[cell] && (ch = Actor.findChar(cell)) instanceof Mob) {
+        } else if (visible && ch instanceof Mob) {
             if (ch instanceof NPC) {
                 curAction = new HeroAction.Interact((NPC) ch);
             } else {
                 curAction = new HeroAction.Attack(ch);
+            }
+        } else if (Dungeon.level.warnings.findWarning(cell)) {
+            if (ch != null) {
+                curAction = new HeroAction.Attack(ch);
+            }
+            else {
+                if (visible) {
+                    GLog.w("You swing at thin air.");
+                } else {
+                    GLog.w("You attack the darkness.");
+                }
+
+                Dungeon.level.warnings.remove(cell);
             }
         } else if ((heap = Dungeon.level.heaps.get(cell)) != null && !Dungeon.level.solid[cell]) {
             switch (heap.type) {
@@ -2109,6 +2129,16 @@ public class Hero extends Char {
 
         super.add(buff);
 
+        if (buff instanceof Blindness) {
+            int count = visibleEnemies();
+            GLog.d("found blindness with " + count+" enemies");
+
+            for (int n = 0; n < count; n++) {
+                Mob mob = visibleEnemy(n);
+                Dungeon.level.warnings.add(mob.pos);
+            }
+        }
+
         if (sprite != null) {
             String message = buff.attachedMessage(true);
 
@@ -2147,6 +2177,14 @@ public class Hero extends Char {
             if (((RingOfMight.Might) buff).level > 0) {
                 HT -= ((RingOfMight.Might) buff).level * 5;
                 HP = Math.min(HT, HP);
+            }
+        }
+
+        if (sprite != null) {
+            String message = buff.detachedMessage(true);
+
+            if (message != null) {
+                GLog.p(message);
             }
         }
 
@@ -2342,9 +2380,28 @@ public class Hero extends Char {
         int positive = 0;
         int negative = 0;
 
-        int distance = 1 + positive + negative;
+        float level;
+        if (intentional) {
+            level = 2 * awareness - awareness * awareness;
 
-        float level = intentional ? (2 * awareness - awareness * awareness) : awareness;
+            int test = getAttributeModifier(AttributeType.INTWIS);
+            useAttribute(AttributeType.INTWIS, 1);
+
+            if (test > 0) {
+                positive += test;
+            }
+            else {
+                negative += test;
+            }
+        }
+        else {
+            level = awareness;
+
+            positive++;
+        }
+
+        int distance = positive + negative;
+
         if (distance <= 0) {
             level /= 2 - distance;
             distance = 1;
@@ -2380,7 +2437,6 @@ public class Hero extends Char {
             for (int x = ax, p = ax + y * Level.WIDTH; x <= bx; x++, p++) {
 
                 if (Dungeon.visible[p]) {
-
                     if (intentional) {
                         sprite.parent.addToBack(new CheckedCell(p));
                     }
@@ -2414,7 +2470,6 @@ public class Hero extends Char {
             } else {
                 spend_new(Constant.Time.HERO_SEARCH, true);
             }
-
         }
 
         if (smthFound) {

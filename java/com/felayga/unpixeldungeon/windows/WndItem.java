@@ -27,7 +27,6 @@ package com.felayga.unpixeldungeon.windows;
 import com.felayga.unpixeldungeon.Dungeon;
 import com.felayga.unpixeldungeon.actors.hero.HeroAction;
 import com.felayga.unpixeldungeon.items.Item;
-import com.felayga.unpixeldungeon.items.food.Food;
 import com.felayga.unpixeldungeon.mechanics.Constant;
 import com.felayga.unpixeldungeon.scenes.PixelScene;
 import com.felayga.unpixeldungeon.ui.ItemSlot;

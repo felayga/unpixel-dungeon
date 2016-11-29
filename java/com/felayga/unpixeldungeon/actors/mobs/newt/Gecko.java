@@ -52,7 +52,7 @@ public class Gecko extends Mob {
         weight = Encumbrance.UNIT * 10;
         nutrition = 20;
         immunityMagical = MagicType.None.value;
-        corpseEffects = CorpseEffect.ManaBoost.value;
+        corpseEffects = CorpseEffect.None.value;
 
         belongings.collectEquip(new MeleeMobAttack(GameTime.TICK, 1, 3));
     }

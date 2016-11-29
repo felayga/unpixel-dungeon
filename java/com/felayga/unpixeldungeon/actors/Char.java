@@ -31,6 +31,7 @@ import com.felayga.unpixeldungeon.actors.buffs.Buff;
 import com.felayga.unpixeldungeon.actors.buffs.ISpeedModifierBuff;
 import com.felayga.unpixeldungeon.actors.buffs.hero.EarthImbue;
 import com.felayga.unpixeldungeon.actors.buffs.hero.FireImbue;
+import com.felayga.unpixeldungeon.actors.buffs.negative.Blindness;
 import com.felayga.unpixeldungeon.actors.buffs.negative.Charm;
 import com.felayga.unpixeldungeon.actors.buffs.negative.Frost;
 import com.felayga.unpixeldungeon.actors.buffs.negative.Held;
@@ -50,6 +51,7 @@ import com.felayga.unpixeldungeon.items.weapon.missiles.MissileWeapon;
 import com.felayga.unpixeldungeon.items.weapon.ranged.RangedWeapon;
 import com.felayga.unpixeldungeon.levels.Level;
 import com.felayga.unpixeldungeon.mechanics.AttributeType;
+import com.felayga.unpixeldungeon.mechanics.Constant;
 import com.felayga.unpixeldungeon.mechanics.CorpseEffect;
 import com.felayga.unpixeldungeon.mechanics.GameTime;
 import com.felayga.unpixeldungeon.mechanics.MagicType;
@@ -89,6 +91,8 @@ public abstract class Char extends Actor {
 
     public int HT;
     public int HP;
+    public int MT;
+    public int MP;
 
     private int attribute[];
 
@@ -125,8 +129,8 @@ public abstract class Char extends Actor {
 
         attribute += amount;
 
-        if (attribute + damage > 25) {
-            int overflow = attribute + damage - 25;
+        if (attribute + damage > Constant.Attribute.MAXIMUM) {
+            int overflow = attribute + damage - Constant.Attribute.MAXIMUM;
 
             if (damage >= overflow) {
                 damage -= overflow;
@@ -178,6 +182,18 @@ public abstract class Char extends Actor {
     public int nutrition;
     public long corpseEffects;
     public long corpseResistances;
+
+    public boolean tryIncreaseAttribute(AttributeType type, int value)
+    {
+        if (attribute[type.value] + value > Constant.Attribute.MAXIMUM) {
+            attribute[type.value] = Constant.Attribute.MAXIMUM;
+            return false;
+        }
+
+        attribute[type.value] += value;
+
+        return true;
+    }
 
     public int getAttributeModifier(AttributeType type) {
         return (attribute[type.value] - 8) / 2;
@@ -486,7 +502,7 @@ public abstract class Char extends Actor {
                 Camera.main.shake(GameMath.gate(1, shake, 5), 0.3f);
             }
 
-            enemy.damage(effectiveDamage, weapon.damageType(), this);
+            enemy.damage(effectiveDamage, weapon != null ? weapon.damageType() : MagicType.Mundane, this);
 
             if (buff(FireImbue.class) != null)
                 buff(FireImbue.class).proc(enemy);
@@ -543,20 +559,27 @@ public abstract class Char extends Actor {
     }
 
     public int attackSkill(IWeapon weapon, boolean thrown, Char target) {
+        int retval = 0;
+
+        if (buff(Blindness.class) != null || target.buff(Invisibility.class) != null) {
+            GLog.d("blind attack");
+            retval -= 2;
+        }
+
         if (Level.distance(pos, target.pos) <= 1) {
             if (thrown) {
                 GLog.d("thrown weapon in melee");
-                return -4;
+                retval -= 4;
             }
             else {
                 if (weapon instanceof RangedWeapon) {
                     GLog.d("ranged weapon in melee");
-                    return -4;
+                    retval -= 4;
                 }
             }
         }
 
-        return 0;
+        return retval;
     }
 
     public int defenseMundane(Char enemy, boolean touch) {
@@ -586,6 +609,10 @@ public abstract class Char extends Actor {
         return damage;
     }
 
+    public boolean hasImmunity(MagicType type) {
+        return (immunityMagical & type.value) != 0;
+    }
+
     public int damage(int dmg, MagicType type, Actor source) {
         if (HP <= 0 || dmg < 0) {
             return 0;
@@ -597,7 +624,7 @@ public abstract class Char extends Actor {
             Buff.detach(this, MagicalSleep.class);
         }
 
-        if ((immunityMagical & type.value) != 0) {
+        if (hasImmunity(type)) {
             dmg /= 2;
         }
         //else if (resistances().contains( srcClass )) {

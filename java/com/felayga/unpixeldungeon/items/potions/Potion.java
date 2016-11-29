@@ -70,26 +70,30 @@ public class Potion extends Item {
 	protected boolean isHelpful = false;
 	protected boolean isHarmful = false;
 
+    //todo: diluted state
+
 	private static final int NONRANDOMPOTIONSATENDOFLISTS = 1;
     /*
-//todo: potions
+//finished
 booze
 fruit juice
-see invisible
-sickness
-confusion
-extra healing
-hallucination
 healing
+extra healing
+full healing
+energy
+full energy
+sickness
+//todo: potions
+see invisible
+confusion
+hallucination
 restore ability
 sleeping
 blindness
-gain energy
 invisibility
 monster detection
 object detection
 enlightenment
-full healing
 levitation
 polymorph
 speed
@@ -98,11 +102,14 @@ oil
 gain ability
 gain level
 paralysis
+ipecac
 
 frost
 purity
 toxic gas
 
+restoration
+full restoration
     */
 
 	private static final Class<?>[] potions = {
@@ -124,6 +131,15 @@ toxic gas
 			PotionOfExtraHealing.class,
 			PotionOfFullHealing.class,
 			PotionOfHallucination.class,
+            PotionOfFruitJuice.class,
+            PotionOfEnergy.class,
+            PotionOfFullEnergy.class,
+            PotionOfSickness.class,
+            PotionOfBlindness.class,
+            PotionOfConfusion.class,
+            PotionOfRestoration.class,
+            PotionOfFullRestoration.class,
+            PotionOfIpecac.class,
 			//NOT RANDOMIZED
 			PotionOfWater.class
 	};
@@ -134,7 +150,9 @@ toxic gas
 			"purple-red", "puce", "milky", "swirly", "bubbly",
 			"smoky", "cloudy", "effervescent", "black", "golden",
 			"brown", "fizzy", "dark", "white", "murky",
-            "dingy", "indigo", "creamy",
+            "dingy", "indigo", "creamy", "glowing", "silvery",
+            "putrescent", "sea green", "rainbow", "aged", "coquelicot",
+            "olive", "mauve", "chartreuse", "flesh-colored",
 			//NOT RANDOMIZED
 			"clear"
 	};
@@ -169,6 +187,17 @@ toxic gas
             ItemSpriteSheet.POTION_DINGY,
             ItemSpriteSheet.POTION_INDIGO,
             ItemSpriteSheet.POTION_CREAMY,
+            ItemSpriteSheet.POTION_GLOWING,
+            ItemSpriteSheet.POTION_SILVERY,
+            ItemSpriteSheet.POTION_PUTRESCENT,
+            ItemSpriteSheet.POTION_SEAGREEN,
+            ItemSpriteSheet.POTION_RAINBOW,
+            ItemSpriteSheet.POTION_CGA,
+            ItemSpriteSheet.POTION_ORANGERED,
+            ItemSpriteSheet.POTION_OLIVE,
+            ItemSpriteSheet.POTION_MAUVE,
+            ItemSpriteSheet.POTION_CHARTREUSE,
+            ItemSpriteSheet.POTION_FLESHCOLORED,
 
 			//NOT RANDOMIZED
 			ItemSpriteSheet.POTION_CLEAR
@@ -193,6 +222,9 @@ toxic gas
 	public static void restore(Bundle bundle) {
 		handler = new ItemStatusHandler<Potion>((Class<? extends Potion>[]) potions, colors, images, bundle);
 	}
+
+    protected Class alchemyPrimary;
+    protected Class alchemySecondary;
 
 	public Potion() {
 		super();
@@ -297,7 +329,7 @@ toxic gas
 		}
 	}
 
-	public void apply(Hero hero) {
+	public void apply(Char hero) {
 		shatter(hero.pos);
 	}
 

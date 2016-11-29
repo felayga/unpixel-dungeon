@@ -50,6 +50,10 @@ public class Constant {
         public static final String CANCEL   = "CANCEL";
     }
 
+    public static class Attribute {
+        public static final int MAXIMUM = 24;
+    }
+
     public static class Position {
         public static final int ENTRANCE            = -2;
         public static final int EXIT                = -1;

@@ -24,26 +24,86 @@
  */
 package com.felayga.unpixeldungeon.items.potions;
 
-import com.felayga.unpixeldungeon.Badges;
-import com.felayga.unpixeldungeon.actors.hero.Hero;
+import com.felayga.unpixeldungeon.actors.Char;
+import com.felayga.unpixeldungeon.mechanics.AttributeType;
+import com.felayga.unpixeldungeon.mechanics.BUCStatus;
+import com.felayga.unpixeldungeon.plants.Blindweed;
+import com.felayga.unpixeldungeon.plants.Bloodleaf;
 import com.felayga.unpixeldungeon.utils.GLog;
+import com.watabou.utils.Random;
 
 public class PotionOfStrength extends Potion {
 
     public PotionOfStrength()
 	{
-		name = "Potion of Strength";
-		initials = "St";
+		name = "Potion of Gain Ability";
+		initials = "GA";
 
 		bones = true;
 		isHelpful = true;
 
         price = 100;
+
+        alchemyPrimary = Bloodleaf.Seed.class;
+        alchemySecondary = Blindweed.Seed.class;
 	}
 	
 	@Override
-	public void apply( Hero hero ) {
-		setKnown();
+	public void apply( Char hero ) {
+        if (bucStatus == BUCStatus.Cursed) {
+            GLog.n("Ulch!  That potion tasted foul!");
+        }
+        else {
+            setKnown();
+
+            int good = 6;
+
+            while (good > 0) {
+                int test = Random.Int(6);
+                switch (test / 2) {
+                    case 0:
+                        if (hero.tryIncreaseAttribute(AttributeType.STRCON, 1)) {
+                            if (test % 2 == 0) {
+                                GLog.p("You feel strong!");
+                            } else {
+                                GLog.p("You feel tough!");
+                            }
+                            good = -1;
+                        } else {
+                            good--;
+                        }
+                        break;
+                    case 1:
+                        if (hero.tryIncreaseAttribute(AttributeType.DEXCHA, 1)) {
+                            if (test % 2 == 0) {
+                                GLog.p("You feel agile!");
+                            } else {
+                                GLog.p("You feel charismatic!");
+                            }
+                            good = -1;
+                        } else {
+                            good--;
+                        }
+                        break;
+                    default:
+                        if (hero.tryIncreaseAttribute(AttributeType.INTWIS, 1)) {
+                            if (test % 2 == 0) {
+                                GLog.p("You feel smart!");
+                            } else {
+                                GLog.p("You feel wise!");
+                            }
+                            good = -1;
+                        } else {
+                            good--;
+                        }
+                        break;
+                }
+            }
+
+            if (good == 0) {
+                GLog.p("You seem to have reached the pinnacle of your abilities.");
+            }
+        }
 
 		/*
 		hero.STR++;
@@ -51,11 +111,12 @@ public class PotionOfStrength extends Potion {
 		GLog.p( "Newfound strength surges through your body." );
 		*/
 
+        /*
 		GLog.p("Nope.");
-
 		Badges.validateStrengthAttained();
+		*/
 	}
-	
+
 	@Override
 	public String desc() {
 		return

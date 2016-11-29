@@ -42,16 +42,22 @@ public class MagicalSleep extends Buff {
 		//todo: MagicalSleep immunity/resistance
 		if (super.attachTo( target )/* && !target.immunities().contains(Sleep.class)*/) {
 
-			if (target instanceof Hero)
+			if (target instanceof Hero) {
+                /*
 				if (target.HP == target.HT) {
 					GLog.i("You are too healthy, and resist the urge to sleep.");
 					detach();
 					return true;
 				} else {
-					GLog.i("You fall into a deep magical sleep.");
+				*/
+                GLog.i("You fall into a deep magical sleep.");
+                /*
 				}
-			else if (target instanceof Mob)
-				((Mob)target).state = ((Mob)target).SLEEPING;
+				*/
+            }
+			else if (target instanceof Mob) {
+                ((Mob) target).state = ((Mob) target).SLEEPING;
+            }
 
 			target.paralysed++;
 

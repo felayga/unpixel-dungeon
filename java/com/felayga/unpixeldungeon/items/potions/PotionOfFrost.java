@@ -29,6 +29,8 @@ import com.felayga.unpixeldungeon.Dungeon;
 import com.felayga.unpixeldungeon.actors.blobs.Fire;
 import com.felayga.unpixeldungeon.actors.blobs.Freezing;
 import com.felayga.unpixeldungeon.levels.Level;
+import com.felayga.unpixeldungeon.plants.Icecap;
+import com.felayga.unpixeldungeon.plants.Stoneberry;
 import com.felayga.unpixeldungeon.utils.BArray;
 import com.watabou.noosa.audio.Sample;
 import com.watabou.utils.PathFinder;
@@ -43,6 +45,9 @@ public class PotionOfFrost extends Potion {
 		initials = "Fr";
 
         price = 50;
+
+        alchemyPrimary = Icecap.Seed.class;
+        alchemySecondary = Stoneberry.Seed.class;
 	}
 	
 	@Override

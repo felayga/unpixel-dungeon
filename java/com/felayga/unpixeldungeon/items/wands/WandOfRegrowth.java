@@ -30,7 +30,6 @@ import com.felayga.unpixeldungeon.actors.Actor;
 import com.felayga.unpixeldungeon.actors.Char;
 import com.felayga.unpixeldungeon.actors.blobs.Blob;
 import com.felayga.unpixeldungeon.actors.blobs.Regrowth;
-import com.felayga.unpixeldungeon.actors.buffs.Buff;
 import com.felayga.unpixeldungeon.effects.MagicMissile;
 import com.felayga.unpixeldungeon.items.Dewdrop;
 import com.felayga.unpixeldungeon.items.Generator;
@@ -40,9 +39,7 @@ import com.felayga.unpixeldungeon.levels.Terrain;
 import com.felayga.unpixeldungeon.mechanics.Ballistica;
 import com.felayga.unpixeldungeon.plants.Plant;
 import com.felayga.unpixeldungeon.plants.Starflower;
-import com.felayga.unpixeldungeon.plants.Sungrass;
 import com.felayga.unpixeldungeon.scenes.GameScene;
-import com.felayga.unpixeldungeon.sprites.ItemSpriteSheet;
 import com.watabou.noosa.audio.Sample;
 import com.watabou.utils.Callback;
 import com.watabou.utils.ColorMath;
@@ -54,7 +51,9 @@ import java.util.Iterator;
 
 public class WandOfRegrowth extends Wand {
 
+    public WandOfRegrowth()
 	{
+        super(20);
 		name = "Wand of Regrowth";
 
 		collisionProperties = Ballistica.STOP_TERRAIN;
@@ -83,7 +82,7 @@ public class WandOfRegrowth extends Wand {
 
         float numPlants, numDews, numPods, numStars;
 
-        int chrgUsed = chargesPerCast();
+        int chrgUsed = 1;
         //numbers greater than n*100% means n garunteed plants, e.g. 210% = 2 plants w/10% chance for 3 plants.
         numPlants = 0.2f + chrgUsed * chrgUsed * 0.020f; //scales from 22% to 220%
         numDews = 0.05f + chrgUsed * chrgUsed * 0.016f; //scales from 6.6% to 165%
@@ -101,7 +100,7 @@ public class WandOfRegrowth extends Wand {
 
             Char ch = Actor.findChar(i);
             if (ch != null) {
-                processSoulMark(ch, chargesPerCast());
+                processSoulMark(ch);
             }
 
             GameScene.add(Blob.seed(i, 10, Regrowth.class));
@@ -172,7 +171,8 @@ public class WandOfRegrowth extends Wand {
 		int maxValue = damage * (level + 2) / (level + 6);
 		int effValue = Math.min( Random.IntRange(0, maxValue), attacker.HT - attacker.HP );
 
-		Buff.affect(attacker, Sungrass.Health.class).boost( effValue );
+        //todo: wand of regrowth regen?
+		//Buff.affect(attacker, Sungrass.Health.class).boost( effValue );
 
 	}
 
@@ -181,7 +181,7 @@ public class WandOfRegrowth extends Wand {
 		affectedCells = new HashSet<>();
 		visualCells = new HashSet<>();
 
-		int maxDist = Math.round(1.2f + chargesPerCast()*.8f);
+		int maxDist = Math.round(1.2f + 0.8f);
 		int dist = Math.min(bolt.dist, maxDist);
 
 		for (int i = 0; i < Level.NEIGHBOURS8.length; i++){
@@ -216,6 +216,7 @@ public class WandOfRegrowth extends Wand {
 		Sample.INSTANCE.play( Assets.SND_ZAP );
 	}
 
+    /*
 	@Override
 	protected int initialCharges() {
 		return 1;
@@ -226,6 +227,7 @@ public class WandOfRegrowth extends Wand {
 	protected int chargesPerCast() {
 		return Math.max(1, curCharges);
 	}
+	*/
 
 	@Override
 	public void staffFx(MagesStaff.StaffParticle particle) {
@@ -254,9 +256,9 @@ public class WandOfRegrowth extends Wand {
 
 	public static class Dewcatcher extends Plant{
 
+        public Dewcatcher()
 		{
-			image = 12;
-			plantName = "Dewcatcher";
+            super("Dewcatcher", 12);
 		}
 
 		@Override
@@ -295,9 +297,9 @@ public class WandOfRegrowth extends Wand {
 
 	public static class Seedpod extends Plant{
 
+        public Seedpod()
 		{
-			image = 13;
-			plantName = "Seed Pod";
+            super("Seed Pod", 13);
 		}
 
 		@Override

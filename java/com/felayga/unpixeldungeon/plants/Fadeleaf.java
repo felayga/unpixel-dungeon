@@ -31,7 +31,6 @@ import com.felayga.unpixeldungeon.actors.hero.Hero;
 import com.felayga.unpixeldungeon.actors.mobs.Mob;
 import com.felayga.unpixeldungeon.effects.CellEmitter;
 import com.felayga.unpixeldungeon.effects.Speck;
-import com.felayga.unpixeldungeon.items.potions.PotionOfMindVision;
 import com.felayga.unpixeldungeon.items.scrolls.ScrollOfTeleportation;
 import com.felayga.unpixeldungeon.levels.Level;
 import com.felayga.unpixeldungeon.mechanics.Constant;
@@ -42,10 +41,10 @@ public class Fadeleaf extends Plant {
 	private static final String TXT_DESC =
 		"Touching a Fadeleaf will teleport any creature " +
 		"to a random place on the current level.";
-	
+
+    public Fadeleaf()
 	{
-		image = 6;
-		plantName = "Fadeleaf";
+        super("Fadeleaf", 6);
 	}
 	
 	@Override
@@ -97,7 +96,6 @@ public class Fadeleaf extends Plant {
 			image = ItemSpriteSheet.SEED_FADELEAF;
 			
 			plantClass = Fadeleaf.class;
-			alchemyClass = PotionOfMindVision.class;
 		}
 		
 		@Override

@@ -210,9 +210,7 @@ public abstract class Actor implements Bundlable {
                 doNext = false;
             }
 
-            if (Dungeon.level != null) {
-                Dungeon.level.decay(now, true, false);
-            }
+            Dungeon.decay(now, true, false);
 
         } while (doNext);
         //GLog.d("process end");

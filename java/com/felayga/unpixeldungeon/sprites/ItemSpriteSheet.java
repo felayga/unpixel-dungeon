@@ -41,16 +41,16 @@ public class ItemSpriteSheet {
 	private static final int ROW_ARTIFACT       = 11 * ROWSIZE;
 	private static final int ROW_SCROLL         = 13 * ROWSIZE;
 	private static final int ROW_POTION         = 15 * ROWSIZE;
-	private static final int ROW_SEED           = 17 * ROWSIZE;
-	private static final int ROW_FOOD           = 18 * ROWSIZE;
-	private static final int ROW_QUEST          = 19 * ROWSIZE;
-	private static final int ROW_TOOLS          = 20 * ROWSIZE;
-	private static final int ROW_GEMSTONE       = 21 * ROWSIZE;
-	private static final int ROW_BOOK           = 22 * ROWSIZE;
-	private static final int ROW_SPELL          = 25 * ROWSIZE;
-	private static final int ROW_BOOTS          = 26 * ROWSIZE;
-	private static final int ROW_GLOVES         = 27 * ROWSIZE;
-	private static final int ROW_HELMET         = 28 * ROWSIZE;
+	private static final int ROW_SEED           = 18 * ROWSIZE;
+	private static final int ROW_FOOD           = 19 * ROWSIZE;
+	private static final int ROW_QUEST          = 20 * ROWSIZE;
+	private static final int ROW_TOOLS          = 21 * ROWSIZE;
+	private static final int ROW_GEMSTONE       = 22 * ROWSIZE;
+	private static final int ROW_BOOK           = 23 * ROWSIZE;
+	private static final int ROW_SPELL          = 26 * ROWSIZE;
+	private static final int ROW_BOOTS          = 27 * ROWSIZE;
+	private static final int ROW_GLOVES         = 28 * ROWSIZE;
+	private static final int ROW_HELMET         = 29 * ROWSIZE;
 
 	//Row One: Items which can't be obtained
 	//null warning occupies space 0, should only show up if there's a bug.
@@ -311,10 +311,21 @@ public class ItemSpriteSheet {
     public static final int POTION_DINGY        = ROW_POTION + 25;
     public static final int POTION_INDIGO       = ROW_POTION + 26;
     public static final int POTION_CREAMY       = ROW_POTION + 27;
-	public static final int POTION_CLEAR		= ROW_POTION + 28;
+    public static final int POTION_GLOWING      = ROW_POTION + 28;
+    public static final int POTION_SILVERY      = ROW_POTION + 29;
+    public static final int POTION_PUTRESCENT   = ROW_POTION + 30;
+    public static final int POTION_SEAGREEN     = ROW_POTION + 31;
+    public static final int POTION_RAINBOW      = ROW_POTION + 32;
+    public static final int POTION_CGA          = ROW_POTION + 33;
+    public static final int POTION_ORANGERED    = ROW_POTION + 34;
+    public static final int POTION_OLIVE        = ROW_POTION + 35;
+    public static final int POTION_MAUVE        = ROW_POTION + 36;
+    public static final int POTION_CHARTREUSE   = ROW_POTION + 37;
+    public static final int POTION_FLESHCOLORED = ROW_POTION + 38;
+    public static final int POTION_CLEAR		= ROW_POTION + 39;
 
 	//Row Twelve: Seeds
-	public static final int SEED_ROTBERRY	= ROW_SEED + 0;
+    public static final int SEED_BLOODLEAF  = ROW_SEED + 0;
 	public static final int SEED_FIREBLOOM	= ROW_SEED + 1;
 	public static final int SEED_STARFLOWER	= ROW_SEED + 2;
 	public static final int SEED_BLINDWEED	= ROW_SEED + 3;
@@ -326,6 +337,10 @@ public class ItemSpriteSheet {
 	public static final int SEED_EARTHROOT	= ROW_SEED + 9;
 	public static final int SEED_FADELEAF	= ROW_SEED + 10;
 	public static final int SEED_BLANDFRUIT	= ROW_SEED + 11;
+    public static final int SEED_DEATHROOT  = ROW_SEED + 12;
+    public static final int SEED_MOONGRASS  = ROW_SEED + 13;
+    public static final int SEED_STONEBERRY = ROW_SEED + 14;
+    public static final int SEED_SWAMPWEED  = ROW_SEED + 15;
 
 	//Row Thirteen: Food
 	public static final int FOOD_MEAT		    = ROW_FOOD + 0;
@@ -341,12 +356,13 @@ public class ItemSpriteSheet {
     public static final int FOOD_CAN_VEGETABLE  = ROW_FOOD + 10;
 
 	//Row Fourteen: Quest Items
-	public static final int SKULL		= ROW_QUEST + 0;
-	public static final int DUST		= ROW_QUEST + 1;
-	public static final int CANDLE		= ROW_QUEST + 2;
-	public static final int EMBER		= ROW_QUEST + 3;
-	public static final int ORE			= ROW_QUEST + 4;
-	public static final int TOKEN		= ROW_QUEST + 5;
+	public static final int SKULL		    = ROW_QUEST + 0;
+	public static final int DUST		    = ROW_QUEST + 1;
+	public static final int CANDLE		    = ROW_QUEST + 2;
+	public static final int EMBER		    = ROW_QUEST + 3;
+	public static final int ORE			    = ROW_QUEST + 4;
+	public static final int TOKEN		    = ROW_QUEST + 5;
+    public static final int SEED_ROTBERRY	= ROW_QUEST + 6;
 
 	//Row Fifteen: Tools
     public static final int TOOL_PICKAXE    = ROW_TOOLS + 0;

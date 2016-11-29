@@ -26,9 +26,20 @@ package com.felayga.unpixeldungeon.actors.buffs.positive;
 
 import com.felayga.unpixeldungeon.Dungeon;
 import com.felayga.unpixeldungeon.actors.buffs.FlavourBuff;
+import com.felayga.unpixeldungeon.actors.buffs.ITelepathyBuff;
 import com.felayga.unpixeldungeon.mechanics.GameTime;
 
-public class Awareness extends FlavourBuff {
+public class Awareness extends FlavourBuff implements ITelepathyBuff {
+
+    @Override
+    public boolean creatureTelepathy() {
+        return false;
+    }
+
+    @Override
+    public boolean itemTelepathy() {
+        return true;
+    }
 
 	public static final long DURATION = GameTime.TICK * 2;
 

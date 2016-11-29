@@ -30,17 +30,18 @@ import com.felayga.unpixeldungeon.actors.buffs.Buff;
 import com.felayga.unpixeldungeon.actors.buffs.FlavourBuff;
 import com.felayga.unpixeldungeon.actors.buffs.negative.Paralysis;
 import com.felayga.unpixeldungeon.actors.buffs.negative.Vertigo;
+import com.felayga.unpixeldungeon.actors.hero.Hero;
 import com.felayga.unpixeldungeon.items.food.Food;
 import com.felayga.unpixeldungeon.mechanics.GameTime;
 import com.felayga.unpixeldungeon.ui.BuffIndicator;
 import com.felayga.unpixeldungeon.utils.GLog;
 import com.watabou.utils.Bundle;
-import com.watabou.utils.Random;
 
 /**
  * Created by HELLO on 6/15/2016.
  */
 public class Sick extends FlavourBuff {
+
     private static final long DURATION = 14;
 
     private long left;
@@ -48,6 +49,7 @@ public class Sick extends FlavourBuff {
 
     {
         type = buffType.NEGATIVE;
+        left = DURATION;
     }
 
     @Override
@@ -67,24 +69,20 @@ public class Sick extends FlavourBuff {
         left--;
 
         if (target.isAlive()) {
-            if (left >= 6 && left <= 11) {
-                Buff.prolong(target, Vertigo.class, Random.IntRange(2, 8));
+            GLog.d("sick left="+left);
+            if (left >= 4 && left <= 9) {
+                Buff.prolong(target, Vertigo.class, 2 * GameTime.TICK);
             }
-            if (left >= 6 && left <= 8) {
-                Buff.prolong(target, Paralysis.class, Random.IntRange(2, 8));
+            if (left >= 4 && left <= 6) {
+                Buff.prolong(target, Paralysis.class, 2 * GameTime.TICK);
             }
-            if (left == 5) {
+            if (left == 3) {
                 GLog.n("You feel incredibly sick.");
             }
-            if (left==2) {
-                GLog.n("You suddenly vomit!");
-                Buff.prolong(target, Paralysis.class, 2);
-                Buff.detach(target, DeathlySick.class);
+            if (left <= 0) {
+                vomit(target);
 
-                Hunger hunger = target.buff(Hunger.class);
-                if (hunger != null) {
-                    hunger.satisfy_new(-Food.AMOUNT_EATEN_PER_ROUND / 3);
-                }
+                detach();
             }
         } else {
             detach();
@@ -95,9 +93,26 @@ public class Sick extends FlavourBuff {
         return true;
     }
 
+    public static void vomit(Char target) {
+        Buff.prolong(target, Paralysis.class, 2 * GameTime.TICK);
+
+        if (target instanceof Hero) {
+            GLog.w("You suddenly vomit!");
+        } else {
+            GLog.w("The " + target.name + " suddenly vomits!");
+        }
+
+        Buff.detach(target, DeathlySick.class);
+
+        Hunger hunger = target.buff(Hunger.class);
+        if (hunger != null) {
+            hunger.satisfy_new(-Food.AMOUNT_EATEN_PER_ROUND / 3);
+        }
+    }
+
     @Override
     public int icon() {
-        return BuffIndicator.FIRE;
+        return BuffIndicator.SICK;
     }
 
     @Override
@@ -116,6 +131,15 @@ public class Sick extends FlavourBuff {
         }
 
         return super.attachedMessage(isHero);
+    }
+
+    @Override
+    public String detachedMessage(boolean isHero) {
+        if (isHero) {
+            return "You feel a lot better.";
+        }
+
+        return super.detachedMessage(isHero);
     }
 
     @Override

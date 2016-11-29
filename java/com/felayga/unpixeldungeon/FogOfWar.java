@@ -69,7 +69,7 @@ public class FogOfWar extends Image {
 		width = width2 * size;
 		height = height2 * size;
 		
-		texture( new FogTexture() );
+		texture( new FogTexture(width2, height2, FogOfWar.class) );
 		
 		scale.set(
 			DungeonTilemap.SIZE,
@@ -109,12 +109,12 @@ public class FogOfWar extends Image {
 		texture.pixels( width2, height2, pixels );
 	}
 	
-	private class FogTexture extends SmartTexture {
+	public static class FogTexture extends SmartTexture {
 		
-		public FogTexture() {
-			super( Bitmap.createBitmap( width2, height2, Bitmap.Config.ARGB_8888 ) );
+		public FogTexture(int width, int height, Class association) {
+			super( Bitmap.createBitmap( width, height, Bitmap.Config.ARGB_8888 ) );
 			filter( Texture.LINEAR, Texture.LINEAR );
-			TextureCache.add( FogOfWar.class, this );
+			TextureCache.add( association, this );
 		}
 		
 		@Override

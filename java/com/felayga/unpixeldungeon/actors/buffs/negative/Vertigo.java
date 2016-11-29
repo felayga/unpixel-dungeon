@@ -24,15 +24,10 @@
  */
 package com.felayga.unpixeldungeon.actors.buffs.negative;
 
-import com.felayga.unpixeldungeon.actors.Char;
 import com.felayga.unpixeldungeon.actors.buffs.FlavourBuff;
-import com.felayga.unpixeldungeon.items.rings.RingOfElements.Resistance;
-import com.felayga.unpixeldungeon.mechanics.GameTime;
 import com.felayga.unpixeldungeon.ui.BuffIndicator;
 
 public class Vertigo extends FlavourBuff {
-
-	public static final long DURATION	= GameTime.TICK * 10;
 
 	{
 		type = buffType.NEGATIVE;
@@ -61,14 +56,16 @@ public class Vertigo extends FlavourBuff {
 	public String desc() {
 		return "Walking in a straight line can be difficult when the whole world is spinning.\n" +
 				"\n" +
-				"While under the effects of vertigo, characters who attempt to move will go in a random direction, " +
+				"While under the effects of vertigo, characters who attempt to move may go in a random direction, " +
 				"instead of the one they intended to go in. \n" +
 				"\n" +
 				"This Vertigo effect with last for " + dispTurns() + ".";
 	}
 
+    /*
 	public static long duration( Char ch ) {
 		Resistance r = ch.buff( Resistance.class );
 		return r != null ? r.durationFactor() * DURATION / GameTime.TICK : DURATION;
 	}
+	*/
 }
