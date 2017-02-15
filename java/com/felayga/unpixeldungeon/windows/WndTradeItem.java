@@ -5,7 +5,7 @@
  * Shattered Pixel Dungeon
  * Copyright (C) 2014-2015 Evan Debenham
  *
- * Unpixel Dungeon
+ * unPixel Dungeon
  * Copyright (C) 2015-2016 Randall Foudray
  *
  * This program is free software: you can redistribute it and/or modify
@@ -21,18 +21,18 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>
  *
+ *
  */
 package com.felayga.unpixeldungeon.windows;
 
 import com.felayga.unpixeldungeon.Dungeon;
+import com.felayga.unpixeldungeon.actors.buffs.hero.Encumbrance;
 import com.felayga.unpixeldungeon.actors.hero.Hero;
-import com.felayga.unpixeldungeon.actors.mobs.Mob;
 import com.felayga.unpixeldungeon.actors.mobs.npcs.Shopkeeper;
 import com.felayga.unpixeldungeon.items.EquippableItem;
 import com.felayga.unpixeldungeon.items.Gold;
 import com.felayga.unpixeldungeon.items.Heap;
 import com.felayga.unpixeldungeon.items.Item;
-import com.felayga.unpixeldungeon.items.artifacts.MasterThievesArmband;
 import com.felayga.unpixeldungeon.scenes.PixelScene;
 import com.felayga.unpixeldungeon.sprites.ItemSprite;
 import com.felayga.unpixeldungeon.ui.ItemSlot;
@@ -41,6 +41,7 @@ import com.felayga.unpixeldungeon.ui.Window;
 import com.felayga.unpixeldungeon.utils.GLog;
 import com.felayga.unpixeldungeon.utils.Utils;
 import com.watabou.noosa.BitmapTextMultiline;
+import com.watabou.utils.Random;
 
 public class WndTradeItem extends Window {
 	
@@ -149,29 +150,64 @@ public class WndTradeItem extends Window {
 				}
 			};
 
-			final MasterThievesArmband.Thievery thievery = Dungeon.hero.buff(MasterThievesArmband.Thievery.class);
-			if (thievery != null) {
-				final float chance = thievery.stealChance(price);
-				RedButton btnSteal = new RedButton(Utils.format(TXT_STEAL, Math.min(100, (int)(chance*100)))) {
+            int effectiveDEXCHA = Dungeon.hero.DEXCHA();
+            int armorBonusMaximum = Dungeon.hero.belongings.getArmorBonusMaximum() * 2 + 5;
+
+            if (effectiveDEXCHA > armorBonusMaximum) {
+                effectiveDEXCHA = armorBonusMaximum;
+            }
+
+            effectiveDEXCHA = (int)Math.round(Math.pow(effectiveDEXCHA, 1.75));
+
+            int shopkeeperIndex = item.shopkeeperRegistryIndex();
+
+            final Shopkeeper shopkeeper = Shopkeeper.Registry.get(shopkeeperIndex);
+
+            int shopkeepLevel = shopkeeper.level();
+            shopkeepLevel *= shopkeepLevel;
+
+            final int chance = effectiveDEXCHA * 3 - shopkeepLevel - item.weight() / Encumbrance.UNIT;
+
+
+			//final MasterThievesArmband.Thievery thievery = Dungeon.hero.buff(MasterThievesArmband.Thievery.class);
+			if (chance > 0) {
+				final float fchance = (float)chance / 256.0f;
+				RedButton btnSteal = new RedButton(Utils.format(TXT_STEAL, Math.min(100, (int)(fchance*100.0f)))) {
 					@Override
 					protected void onClick() {
-						if(thievery.steal(price)){
-							Hero hero = Dungeon.hero;
-							Item item = heap.pickUp();
-							GLog.i( TXT_STOLE, item.getDisplayName());
-							hide();
+                        boolean steal;
+                        boolean notCaught = false;
+                        if (chance < 1) {
+                            steal = false;
+                        } else if (chance > 255) {
+                            steal = true;
+                        } else {
+                            int test = Random.Int(256);
 
-							if (!item.doPickUp( hero )) {
-								Dungeon.level.drop( item, heap.pos ).sprite.drop();
-							}
+                            if (test < chance) {
+                                steal = true;
+                            } else {
+                                steal = false;
+                                if (test < chance - 48) {
+                                    notCaught = true;
+                                }
+                            }
+                        }
+
+                        if(steal) {
+                            Hero hero = Dungeon.hero;
+                            Item item = heap.pickUp();
+                            GLog.i(TXT_STOLE, item.getDisplayName());
+                            hide();
+
+                            if (!item.doPickUp(hero)) {
+                                Dungeon.level.drop(item, heap.pos).sprite.drop();
+                            }
+                        } else if (notCaught) {
+                            GLog.w("Couldn't steal it, but you didn't get caught trying.  Wew.");
 						} else {
-							for (Mob mob : Dungeon.level.mobs){
-								if (mob instanceof Shopkeeper) {
-									mob.yell(((Shopkeeper) mob).TXT_THIEF);
-									((Shopkeeper) mob).flee();
-									break;
-								}
-							}
+                            shopkeeper.yell(Shopkeeper.TXT_THIEF);
+                            shopkeeper.flee();
 							hide();
 						}
 					}
@@ -179,13 +215,13 @@ public class WndTradeItem extends Window {
 				btnSteal.setRect(0, btnBuy.bottom() + GAP, WIDTH, BTN_HEIGHT);
 				add(btnSteal);
 
-				btnCancel.setRect( 0, btnSteal.bottom() + GAP, WIDTH, BTN_HEIGHT );
+				btnCancel.setRect(0, btnSteal.bottom() + GAP, WIDTH, BTN_HEIGHT);
 			} else
 				btnCancel.setRect( 0, btnBuy.bottom() + GAP, WIDTH, BTN_HEIGHT );
 
 			add( btnCancel );
 			
-			resize( WIDTH, (int)btnCancel.bottom() );
+			resize(WIDTH, (int) btnCancel.bottom());
 			
 		} else {
 			
@@ -216,9 +252,9 @@ public class WndTradeItem extends Window {
 		add( titlebar );
 		
 		// Upgraded / degraded
-		if (item.levelKnown && item.level > 0) {
+		if (item.levelKnown() && item.level() > 0) {
 			titlebar.color( ItemSlot.UPGRADED );
-		} else if (item.levelKnown && item.level < 0) {
+		} else if (item.levelKnown() && item.level() < 0) {
 			titlebar.color( ItemSlot.DEGRADED );
 		}
 		

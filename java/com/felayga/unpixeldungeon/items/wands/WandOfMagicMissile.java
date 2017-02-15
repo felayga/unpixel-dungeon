@@ -5,7 +5,7 @@
  * Shattered Pixel Dungeon
  * Copyright (C) 2014-2015 Evan Debenham
  *
- * Unpixel Dungeon
+ * unPixel Dungeon
  * Copyright (C) 2015-2016 Randall Foudray
  *
  * This program is free software: you can redistribute it and/or modify
@@ -20,6 +20,7 @@
  *
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>
+ *
  *
  */
 package com.felayga.unpixeldungeon.items.wands;
@@ -51,7 +52,7 @@ public class WandOfMagicMissile extends Wand {
 			
 			int level = 1;//level();
 
-			processSoulMark(ch);
+			processSoulMark(ch, curUser);
 			ch.damage(Random.NormalIntRange(4 , 6 + level * 2), MagicType.Magic, null);
 
 			ch.sprite.burst(0xFFFFFFFF, level / 2 + 2);
@@ -62,8 +63,8 @@ public class WandOfMagicMissile extends Wand {
 	@Override
 	public void onHit(MagesStaff staff, Char attacker, Char defender, int damage) {
 		//gain 1 turn of recharging buff per level of the wand.
-		if (level > 0) {
-			Buff.prolong( attacker, ScrollOfRecharging.Recharging.class, GameTime.TICK * staff.level);
+		if (level() > 0) {
+			Buff.prolong( attacker, attacker, ScrollOfRecharging.Recharging.class, GameTime.TICK * staff.level());
 			SpellSprite.show(attacker, SpellSprite.CHARGE);
 		}
 	}

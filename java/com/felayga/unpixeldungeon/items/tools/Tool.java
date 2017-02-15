@@ -5,7 +5,7 @@
  * Shattered Pixel Dungeon
  * Copyright (C) 2014-2015 Evan Debenham
  *
- * Unpixel Dungeon
+ * unPixel Dungeon
  * Copyright (C) 2015-2016 Randall Foudray
  *
  * This program is free software: you can redistribute it and/or modify
@@ -21,9 +21,11 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>
  *
+ *
  */
 package com.felayga.unpixeldungeon.items.tools;
 
+import com.felayga.unpixeldungeon.actors.Char;
 import com.felayga.unpixeldungeon.actors.hero.Hero;
 import com.felayga.unpixeldungeon.items.Item;
 import com.felayga.unpixeldungeon.mechanics.Constant;
@@ -41,7 +43,7 @@ public abstract class Tool extends Item implements ITool {
     private boolean applyCell;
     private boolean applyItem;
     private WndBackpack.Mode applyItemMode;
-    private Class<?> applyItemClass;
+    private Class<? extends Item> applyItemClass;
 
     public Tool(boolean applyCell, boolean applyItem) {
         this(applyCell, applyItem, WndBackpack.Mode.ALL, null);
@@ -52,7 +54,7 @@ public abstract class Tool extends Item implements ITool {
         }
     }
 
-    public Tool(boolean applyCell, boolean applyItem, WndBackpack.Mode applyItemMode, Class<?> applyItemClass) {
+    public Tool(boolean applyCell, boolean applyItem, WndBackpack.Mode applyItemMode, Class<? extends Item> applyItemClass) {
         this.applyCell = applyCell;
         this.applyItem = applyItem;
         this.applyItemMode = applyItemMode;
@@ -71,7 +73,7 @@ public abstract class Tool extends Item implements ITool {
             } else if (applyCell) {
                 GameScene.selectCell(cellApplier);
             } else if (applyItem) {
-                GameScene.selectItem(itemApplier, applyItemMode, applyItemClass, "Apply " + this.getToolClass(), true, this);
+                GameScene.selectItem(itemApplier, applyItemMode, applyItemClass, "Apply " + this.getToolClass(), true, null, this);
             }
 
             return false;
@@ -86,7 +88,7 @@ public abstract class Tool extends Item implements ITool {
     public static CellSelector.Listener cellApplier = new CellSelector.Listener() {
         @Override
         public boolean onSelect(Integer target) {
-            if (target != null) {
+            if (target != null && target != Constant.Position.NONE) {
                 curTool.apply(curUser, target);
             }
             return true;

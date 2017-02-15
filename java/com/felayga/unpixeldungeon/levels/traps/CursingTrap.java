@@ -5,7 +5,7 @@
  * Shattered Pixel Dungeon
  * Copyright (C) 2014-2015 Evan Debenham
  *
- * Unpixel Dungeon
+ * unPixel Dungeon
  * Copyright (C) 2015-2016 Randall Foudray
  *
  * This program is free software: you can redistribute it and/or modify
@@ -20,6 +20,7 @@
  *
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>
+ *
  *
  */
 package com.felayga.unpixeldungeon.levels.traps;
@@ -65,7 +66,7 @@ public class CursingTrap extends Trap {
 			}
 		}
 
-		if (Dungeon.hero.pos == pos){
+		if (Dungeon.hero.pos() == pos){
 			Hero user = Dungeon.hero;
 
 			user.belongings.bucChange(true, BUCStatus.Cursed, true, true, true, false);

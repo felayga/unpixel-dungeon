@@ -5,7 +5,7 @@
  * Shattered Pixel Dungeon
  * Copyright (C) 2014-2015 Evan Debenham
  *
- * Unpixel Dungeon
+ * unPixel Dungeon
  * Copyright (C) 2015-2016 Randall Foudray
  *
  * This program is free software: you can redistribute it and/or modify
@@ -21,12 +21,14 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>
  *
+ *
  */
 package com.felayga.unpixeldungeon.items.food;
 
 import com.felayga.unpixeldungeon.Assets;
 import com.felayga.unpixeldungeon.Badges;
 import com.felayga.unpixeldungeon.Statistics;
+import com.felayga.unpixeldungeon.actors.Char;
 import com.felayga.unpixeldungeon.actors.buffs.hero.Hunger;
 import com.felayga.unpixeldungeon.actors.hero.Hero;
 import com.felayga.unpixeldungeon.effects.SpellSprite;
@@ -77,9 +79,12 @@ public class Food extends Item {
         this.energyOriginal = energy;
         this.weightOriginal = weight;
 
+        pickupSound = Assets.SND_ITEM_FOOD;
+
         stackable = true;
         name = "food";
         image = ItemSpriteSheet.NULLWARN;
+        hasLevels(false);
 
         weight(weight);
         price = 10;
@@ -139,7 +144,7 @@ public class Food extends Item {
                 GLog.i(TXT_EATING_RESUMED, name);
             }
 
-            hero.sprite.operate(hero.pos);
+            hero.sprite.operate(hero.pos());
             SpellSprite.show(hero, SpellSprite.FOOD);
             Sample.INSTANCE.play(Assets.SND_EAT);
 
@@ -248,6 +253,7 @@ public class Food extends Item {
         if (stuffed) {
             GLog.i(TXT_OVEREATING_DONE);
         } else {
+            partiallyEaten = false;
             GLog.i(TXT_EATING_DONE, getName());
         }
 

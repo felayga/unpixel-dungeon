@@ -5,7 +5,7 @@
  * Shattered Pixel Dungeon
  * Copyright (C) 2014-2015 Evan Debenham
  *
- * Unpixel Dungeon
+ * unPixel Dungeon
  * Copyright (C) 2015-2016 Randall Foudray
  *
  * This program is free software: you can redistribute it and/or modify
@@ -21,11 +21,15 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>
  *
+ *
  */
 package com.felayga.unpixeldungeon.actors.buffs.negative;
 
 import com.felayga.unpixeldungeon.Dungeon;
+import com.felayga.unpixeldungeon.actors.Char;
+import com.felayga.unpixeldungeon.actors.buffs.Buff;
 import com.felayga.unpixeldungeon.actors.buffs.FlavourBuff;
+import com.felayga.unpixeldungeon.mechanics.GameTime;
 import com.felayga.unpixeldungeon.ui.BuffIndicator;
 
 public class Blindness extends FlavourBuff {
@@ -63,10 +67,36 @@ public class Blindness extends FlavourBuff {
 	public String desc() {
 		return "Blinding turns the surrounding world into a dark haze.\n" +
 				"\n" +
-				"While blinded, a character can't see more than one tile infront of themselves, rendering ranged " +
-				"attacks useless and making it very easy to lose track of distant enemies. Additionally, a blinded " +
+				"While blinded, a character can't see anything at all, making any " +
+				"attacks difficult and making it very easy to lose track of distant enemies. Additionally, a blinded " +
 				"hero is unable to read scrolls or books.\n" +
 				"\n" +
-				"The blindness will last for " + dispTurns() + ".";
+				descDuration();
 	}
+
+    protected String descDuration() {
+        return "The blindness will last for " + dispTurns() + ".";
+    }
+
+    public static class Indefinite extends Blindness {
+        public Indefinite() {
+
+        }
+
+        public static Indefinite prolong(Char target, Char owner, Class<? extends Indefinite> blindness) {
+            return Buff.prolong(target, owner, blindness, GameTime.TICK * 1024);
+        }
+
+        @Override
+        public boolean act() {
+            spend_new(GameTime.TICK * 1024, false);
+            return true;
+        }
+
+        @Override
+        protected String descDuration() {
+            return "The blindness will last indefinitely.";
+        }
+
+    }
 }

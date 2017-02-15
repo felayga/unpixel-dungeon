@@ -5,7 +5,7 @@
  * Shattered Pixel Dungeon
  * Copyright (C) 2014-2015 Evan Debenham
  *
- * Unpixel Dungeon
+ * unPixel Dungeon
  * Copyright (C) 2015-2016 Randall Foudray
  *
  * This program is free software: you can redistribute it and/or modify
@@ -21,159 +21,137 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>
  *
+ *
  */
 package com.felayga.unpixeldungeon.actors;
-
-import android.util.SparseArray;
 
 import com.felayga.unpixeldungeon.Dungeon;
 import com.felayga.unpixeldungeon.Statistics;
 import com.felayga.unpixeldungeon.actors.blobs.Blob;
 import com.felayga.unpixeldungeon.actors.buffs.Buff;
 import com.felayga.unpixeldungeon.actors.mobs.Mob;
+import com.felayga.unpixeldungeon.utils.GLog;
 import com.watabou.utils.Bundlable;
 import com.watabou.utils.Bundle;
+import com.watabou.utils.SparseArray;
 
 import java.util.HashSet;
 
+import javax.microedition.khronos.opengles.GL;
+
 public abstract class Actor implements Bundlable {
-	private long time;
-	public long getTime() { return time; }
+    private long time;
 
-	private int id = 0;
+    public long getTime() {
+        return time;
+    }
 
-	//used to determine what order actors act in.
-	//hero should always act on 0, therefore negative is before hero, positive is after hero
-	protected int actPriority = Integer.MAX_VALUE;
+    private int id = 0;
 
-	protected abstract boolean act();
-	
-	public void spend_new( long time, boolean andnext ) {
-		this.time += time;
-	}
-	
-	protected void postpone( long time ) {
-		if (this.time < now + time) {
-			this.time = now + time;
-		}
-	}
-	
-	protected long cooldown() {
-		return time - now;
-	}
-	
-	protected void deactivate() {
-		time = Long.MAX_VALUE;
-	}
-	
-	protected void onAdd() {}
-	
-	protected void onRemove() {}
+    //used to determine what order actors act in.
+    //hero should always act on 0, therefore negative is before hero, positive is after hero
+    protected int actPriority = Integer.MAX_VALUE;
 
-	private static final String TIME    = "time";
-	private static final String ID      = "id";
+    protected abstract boolean act();
 
-	@Override
-	public void storeInBundle( Bundle bundle ) {
-		bundle.put( TIME, time );
-		bundle.put( ID, id );
-	}
+    public void spend_new(long time, boolean andnext) {
+        this.time += time;
+    }
 
-	@Override
-	public void restoreFromBundle( Bundle bundle ) {
-		time = bundle.getLong(TIME);
-		id = bundle.getInt(ID);
-	}
+    protected void postpone(long time) {
+        if (this.time < now + time) {
+            this.time = now + time;
+        }
+    }
 
-	private static int nextID = 1;
-	public int id() {
-		if (id > 0) {
-			return id;
-		} else {
-			return (id = nextID++);
-		}
-	}
+    protected long cooldown() {
+        return time - now;
+    }
 
-	// **********************
-	// *** Static members ***
-	
-	private static HashSet<Actor> all = new HashSet<>();
-	private static HashSet<Char> chars = new HashSet<>();
-	private static Actor current;
+    protected void deactivate() {
+        time = Long.MAX_VALUE;
+    }
 
-	private static SparseArray<Actor> ids = new SparseArray<>();
+    protected void onAdd() {
+    }
 
-	private static long now = 0;
-	
-	public static void clear() {
-		
-		now = 0;
+    protected void onRemove() {
+    }
 
-		all.clear();
-		chars.clear();
+    private static final String TIME = "time";
 
-		ids.clear();
-	}
-	
-	public static final long fixTime_new() {
-		if (Dungeon.hero != null && all.contains( Dungeon.hero )) {
-			Statistics.duration += now;
-		}
+    @Override
+    public void storeInBundle(Bundle bundle) {
+        bundle.put(TIME, time);
+    }
 
-		long min = Long.MAX_VALUE;
-		for (Actor a : all) {
-			if (min > a.time) {
-				min = a.time;
-			}
-		}
-		for (Actor a : all) {
-			a.time -= min;
-			if (a instanceof Char) {
-				Char c = (Char)a;
-				c.belongings.decay(min, true, false);
-			}
-		}
-		now = 0;
+    @Override
+    public void restoreFromBundle(Bundle bundle) {
+        time = bundle.getLong(TIME);
+    }
 
-		return min;
-	}
-	
-	public static void init() {
-		
-		addDelayed( Dungeon.hero, -1 ); //originally float.minvalue
-		
-		for (Mob mob : Dungeon.level.mobs) {
-			add( mob );
-		}
-		
-		for (Blob blob : Dungeon.level.blobs.values()) {
-			add( blob );
-		}
-		
-		current = null;
-	}
+    // **********************
+    // *** Static members ***
 
-	private static final String NEXTID = "nextid";
+    private static HashSet<Actor> all = new HashSet<>();
+    private static SparseArray<Char> chars = new SparseArray<>();
+    private static Actor current;
 
-	public static void storeNextID( Bundle bundle){
-		bundle.put( NEXTID, nextID );
-	}
+    private static long now = 0;
 
-	public static void restoreNextID( Bundle bundle){
-		nextID = bundle.getInt( NEXTID );
-	}
+    public static void clear() {
+        now = 0;
 
-	public static void resetNextID(){
-		nextID = 1;
-	}
+        all.clear();
+        chars.clear();
+    }
 
-	/*protected*/public void next() {
-		if (current == this) {
-			current = null;
-		}
-	}
+    public static final long fixTime_new() {
+        if (Dungeon.hero != null && all.contains(Dungeon.hero)) {
+            Statistics.duration += now;
+        }
 
-	public static void process() {
+        long min = Long.MAX_VALUE;
+        for (Actor a : all) {
+            if (min > a.time) {
+                min = a.time;
+            }
+        }
+        for (Actor a : all) {
+            a.time -= min;
+            if (a instanceof Char) {
+                Char c = (Char) a;
+                c.belongings.decay(min, true, false);
+            }
+        }
+        now = 0;
+
+        return min;
+    }
+
+    public static void init() {
+
+        addDelayed(Dungeon.hero, -1); //originally float.minvalue
+
+        for (Mob mob : Dungeon.level.mobs) {
+            add(mob);
+        }
+
+        for (Blob blob : Dungeon.level.blobs.values()) {
+            add(blob);
+        }
+
+        current = null;
+    }
+
+    /*protected*/
+    public void next() {
+        if (current == this) {
+            current = null;
+        }
+    }
+
+    public static void process() {
         if (current != null) {
             return;
         }
@@ -215,65 +193,108 @@ public abstract class Actor implements Bundlable {
         } while (doNext);
         //GLog.d("process end");
     }
-	
-	public static void add( Actor actor ) {
-		add( actor, now );
-	}
-	
-	public static void addDelayed( Actor actor, long delay ) {
-		add( actor, now + delay );
-	}
-	
-	private static void add( Actor actor, long time ) {
-		
-		if (all.contains( actor )) {
-			return;
-		}
 
-		ids.put( actor.id(),  actor );
+    public static void add(Actor actor) {
+        add(actor, now);
+    }
 
-		all.add( actor );
-		actor.time = time;
-		actor.onAdd();
-		
-		if (actor instanceof Char) {
-			Char ch = (Char)actor;
-			chars.add( ch );
-			for (Buff buff : ch.buffs()) {
-				all.add( buff );
-				buff.onAdd();
-			}
-		}
-	}
-	
-	public static void remove( Actor actor ) {
-		
-		if (actor != null) {
-			all.remove( actor );
-			chars.remove( actor );
-			actor.onRemove();
+    public static void addDelayed(Actor actor, long delay) {
+        add(actor, now + delay);
+    }
 
-			if (actor.id > 0) {
-				ids.remove( actor.id );
-			}
-		}
-	}
-	
-	public static Char findChar( int pos ) {
+    private static void add(Actor actor, long time) {
+        if (all.contains(actor)) {
+            return;
+        }
+
+        all.add(actor);
+        actor.time = time;
+        actor.onAdd();
+
+        if (actor instanceof Char) {
+            Char ch = (Char) actor;
+            GLog.d("add char at pos=" + ch.pos() + " type=" + ch.getClass().toString());
+            chars.put(ch.pos(), ch);
+            Char.Registry.add(ch);
+            for (Buff buff : ch.buffs()) {
+                all.add(buff);
+                buff.onAdd();
+            }
+        }
+    }
+
+    public static void remove(Actor actor) {
+        if (actor != null) {
+            all.remove(actor);
+
+            if (actor instanceof Char) {
+                Char c = (Char) actor;
+                chars.remove(c.pos());
+            }
+            actor.onRemove();
+        }
+    }
+
+    public void move(int lastPos, int pos) {
+        if (lastPos == pos) {
+            return;
+        }
+
+        if (lastPos >= 0) {
+            Char c = chars.get(lastPos);
+            if (c == this) {
+                chars.remove(lastPos);
+                chars.put(pos, c);
+            } else {
+                GLog.d("UNEXPECTED WRONG CHARACTER");
+                chars.put(pos, (Char)this);
+            }
+        } else {
+            chars.put(pos, (Char) this);
+        }
+    }
+
+    public static Char findChar(int pos) {
+        return chars.get(pos);
+
+        /*
+        HashMap<Integer, Integer> test = new HashMap<>();
+
+        Char retval = null;
+
 		for (Char ch : chars){
 			if (ch.pos == pos)
-				return ch;
+            {
+                retval = ch;
+            }
+            if (test.containsKey(ch.pos)) {
+                test.put(ch.pos, test.get(ch.pos)+1);
+            } else {
+                test.put(ch.pos, 1);
+            }
 		}
-		return null;
-	}
 
-	public static Actor findById( int id ) {
-		return ids.get( id );
-	}
+        GLog.d("findchar with " + test.size()+" entries");
 
-	public static HashSet<Actor> all() {
-		return all;
-	}
+        Iterator<Map.Entry<Integer, Integer>> iterator = test.entrySet().iterator();
 
-	public static HashSet<Char> chars() { return chars; }
+        while (iterator.hasNext()) {
+            Map.Entry<Integer, Integer> entry = iterator.next();
+
+            if (entry.getValue() > 1) {
+                GLog.d("pos="+entry.getKey()+" has "+entry.getValue()+" items?");
+            }
+        }
+
+		return retval;
+		*/
+    }
+
+    public static HashSet<Actor> all() {
+        return all;
+    }
+
+    public static SparseArray<Char> chars() {
+        return chars;
+    }
 }

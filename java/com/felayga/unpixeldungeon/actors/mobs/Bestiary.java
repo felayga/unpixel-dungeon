@@ -5,7 +5,7 @@
  * Shattered Pixel Dungeon
  * Copyright (C) 2014-2015 Evan Debenham
  *
- * Unpixel Dungeon
+ * unPixel Dungeon
  * Copyright (C) 2015-2016 Randall Foudray
  *
  * This program is free software: you can redistribute it and/or modify
@@ -20,6 +20,7 @@
  *
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>
+ *
  *
  */
 package com.felayga.unpixeldungeon.actors.mobs;
@@ -52,6 +53,7 @@ import com.felayga.unpixeldungeon.actors.mobs.wraith.GasSpore;
 import com.felayga.unpixeldungeon.levels.Level;
 import com.felayga.unpixeldungeon.utils.GLog;
 import com.watabou.utils.Random;
+import com.watabou.utils.SparseArray;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -113,7 +115,7 @@ public class Bestiary {
                     positions = level.randomPositionsNear(pos, quantity, new Level.RandomPositionValidator() {
                         @Override
                         public boolean isValidPosition(int pos) {
-                            return Level.passable[pos] && (!Level.avoid[pos]) && level.findMob(pos) == null && Dungeon.hero.pos != pos;
+                            return Level.passable[pos] && (!Level.avoid[pos]) && level.findMob(pos) == null && Dungeon.hero.pos() != pos;
                         }
                     });
                 }
@@ -125,11 +127,11 @@ public class Bestiary {
                 return;
             }
 
-            GLog.d("prepare to spawn classtype=" + classType.toString() + " quantity=" + quantity + " positions=" + positions.size());
+            //GLog.d("prepare to spawn classtype=" + classType.toString() + " quantity=" + quantity + " positions=" + positions.size());
 
             for (int n = 0; n < quantity; n++) {
                 mob = (Mob) classType.newInstance();
-                mob.pos = positions.get(n);
+                mob.pos(positions.get(n));
 
                 params.initialize(mob);
             }
@@ -217,7 +219,7 @@ public class Bestiary {
         }
     }
 
-    private static HashMap<Integer, MobSpawnGroup> spawnGroups = new HashMap<>();
+    private static SparseArray<MobSpawnGroup> spawnGroups = new SparseArray<>();
 
     static {
         MobSpawnGroup group;
@@ -275,10 +277,7 @@ public class Bestiary {
 
         MobSpawnGroup group;
 
-        if (spawnGroups.containsKey(test)) {
-            group = spawnGroups.get(test);
-        }
-        else {
+        if ((group = spawnGroups.get(test)) == null) {
             group = spawnGroups.get(-1);
         }
 

@@ -5,7 +5,7 @@
  * Shattered Pixel Dungeon
  * Copyright (C) 2014-2015 Evan Debenham
  *
- * Unpixel Dungeon
+ * unPixel Dungeon
  * Copyright (C) 2015-2016 Randall Foudray
  *
  * This program is free software: you can redistribute it and/or modify
@@ -21,6 +21,7 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>
  *
+ *
  */
 
 package com.felayga.unpixeldungeon.actors.blobs.wells;
@@ -31,12 +32,14 @@ import com.felayga.unpixeldungeon.Dungeon;
 import com.felayga.unpixeldungeon.DungeonTilemap;
 import com.felayga.unpixeldungeon.Journal;
 import com.felayga.unpixeldungeon.actors.buffs.Buff;
-import com.felayga.unpixeldungeon.actors.buffs.positive.Awareness;
+import com.felayga.unpixeldungeon.actors.buffs.positive.ItemVision;
+import com.felayga.unpixeldungeon.actors.buffs.positive.MindVision;
 import com.felayga.unpixeldungeon.actors.hero.Hero;
 import com.felayga.unpixeldungeon.effects.Identification;
 import com.felayga.unpixeldungeon.items.Item;
 import com.felayga.unpixeldungeon.levels.Level;
 import com.felayga.unpixeldungeon.levels.Terrain;
+import com.felayga.unpixeldungeon.mechanics.GameTime;
 import com.felayga.unpixeldungeon.scenes.GameScene;
 import com.felayga.unpixeldungeon.utils.GLog;
 import com.watabou.noosa.audio.Sample;
@@ -72,7 +75,7 @@ public class WaterFountain extends WellWater {
             }
         }
 
-        Buff.affect(hero, Awareness.class, Awareness.DURATION);
+        Buff.affect(hero, null, ItemVision.class, GameTime.TICK * 4);
         Dungeon.observe();
 
         Dungeon.hero.interrupt();

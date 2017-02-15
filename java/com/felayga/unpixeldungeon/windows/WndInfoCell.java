@@ -5,7 +5,7 @@
  * Shattered Pixel Dungeon
  * Copyright (C) 2014-2015 Evan Debenham
  *
- * Unpixel Dungeon
+ * unPixel Dungeon
  * Copyright (C) 2015-2016 Randall Foudray
  *
  * This program is free software: you can redistribute it and/or modify
@@ -20,6 +20,7 @@
  *
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>
+ *
  *
  */
 package com.felayga.unpixeldungeon.windows;
@@ -49,8 +50,8 @@ public class WndInfoCell extends Window {
 		super();
 		
 		int tile = Dungeon.level.map[cell];
-		if (Level.water[cell]) {
-			tile = Terrain.WATER;
+		if (Level.puddle[cell]) {
+			tile = Terrain.PUDDLE;
 		} else if (Level.pit[cell]) {
 			tile = Terrain.CHASM;
 		}
@@ -77,7 +78,7 @@ public class WndInfoCell extends Window {
 			titlebar.label(vis.name);
 			desc += vis.desc();
 		} else {
-			if (tile == Terrain.WATER) {
+			if (tile == Terrain.PUDDLE) {
 				Image water = new Image(Dungeon.level.waterTex());
 				water.frame(0, 0, DungeonTilemap.SIZE, DungeonTilemap.SIZE);
 				titlebar.icon(water);
@@ -105,7 +106,7 @@ public class WndInfoCell extends Window {
 			}
 		}
 		
-		info.text( desc.length() > 0 ? desc.toString() : TXT_NOTHING );
+		info.text( desc.length() > 0 ? desc : TXT_NOTHING );
 		info.maxWidth = WIDTH;
 		info.measure();
 		info.x = titlebar.left();

@@ -5,7 +5,7 @@
  * Shattered Pixel Dungeon
  * Copyright (C) 2014-2015 Evan Debenham
  *
- * Unpixel Dungeon
+ * unPixel Dungeon
  * Copyright (C) 2015-2016 Randall Foudray
  *
  * This program is free software: you can redistribute it and/or modify
@@ -20,6 +20,7 @@
  *
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>
+ *
  *
  */
 package com.felayga.unpixeldungeon.items.armor.glyphs;
@@ -42,17 +43,17 @@ public class Bounce extends Glyph {
 	{
 		int level = Math.max( 0, armorlevel );
 
-		if (Level.canReach( attacker.pos, defender.pos ) && Random.Int( level + 5) >= 4) {
+		if (Level.canReach( attacker.pos(), defender.pos() ) && Random.Int( level + 5) >= 4) {
 
 			for (int i=0; i < Level.NEIGHBOURS8.length; i++) {
 				int ofs = Level.NEIGHBOURS8[i];
-				if (attacker.pos - defender.pos == ofs) {
-					int newPos = attacker.pos + ofs;
+				if (attacker.pos() - defender.pos() == ofs) {
+					int newPos = attacker.pos() + ofs;
 					if ((Level.passable[newPos] || Level.avoid[newPos]) && Actor.findChar( newPos ) == null) {
 
-						Actor.addDelayed( new Pushing( attacker, attacker.pos, newPos ), -1 );
+						Actor.addDelayed( new Pushing( attacker, attacker.pos(), newPos ), -1 );
 
-						attacker.pos = newPos;
+						attacker.pos(newPos);
 						// FIXME
 						if (attacker instanceof Mob) {
 							Dungeon.level.mobPress( (Mob)attacker );
@@ -71,7 +72,7 @@ public class Bounce extends Glyph {
 
 	@Override
 	public int proc( Armor armor, Char attacker, Char defender, int damage) {
-		proc(armor.level, attacker, defender);
+		proc(armor.level(), attacker, defender);
 		return damage;
 	}
 	

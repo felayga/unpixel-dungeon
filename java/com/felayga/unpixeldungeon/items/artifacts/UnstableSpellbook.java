@@ -5,7 +5,7 @@
  * Shattered Pixel Dungeon
  * Copyright (C) 2014-2015 Evan Debenham
  *
- * Unpixel Dungeon
+ * unPixel Dungeon
  * Copyright (C) 2015-2016 Randall Foudray
  *
  * This program is free software: you can redistribute it and/or modify
@@ -20,6 +20,7 @@
  *
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>
+ *
  *
  */
 package com.felayga.unpixeldungeon.items.artifacts;
@@ -55,12 +56,12 @@ public class UnstableSpellbook extends Artifact_old {
 		name = "Unstable Spellbook";
 		image = ItemSpriteSheet.ARTIFACT_SPELLBOOK;
 
-		level = 0;
+		level(0);
 		levelCap = 10;
 
-		charge = ((level/2)+3);
+		charge = ((level()/2)+3);
 		partialCharge = 0;
-		chargeCap = ((level/2)+3);
+		chargeCap = ((level()/2)+3);
 
 		defaultAction = AC_READ;
 	}
@@ -92,7 +93,7 @@ public class UnstableSpellbook extends Artifact_old {
 		ArrayList<String> actions = super.actions( hero );
 		if (isEquipped( hero ) && charge > 0 && bucStatus != BUCStatus.Cursed)
 			actions.add(AC_READ);
-		if (isEquipped( hero ) && level < levelCap && bucStatus != BUCStatus.Cursed)
+		if (isEquipped( hero ) && level() < levelCap && bucStatus != BUCStatus.Cursed)
 			actions.add(AC_ADD);
 		return actions;
 	}
@@ -121,7 +122,7 @@ public class UnstableSpellbook extends Artifact_old {
 			}
 			return false;
 		} else if (action.equals( AC_ADD )) {
-			GameScene.selectItem(itemSelector, Scroll.class, inventoryTitle);
+			GameScene.selectItem(itemSelector, Scroll.class, inventoryTitle, null);
 			return false;
 		} else {
 			return super.execute(hero, action);
@@ -135,10 +136,10 @@ public class UnstableSpellbook extends Artifact_old {
 
 	@Override
 	public Item upgrade(Item source, int n) {
-		chargeCap = (((level+1)/2)+3);
+		chargeCap = (((level()+1)/2)+3);
 
 		//for artifact transmutation.
-		while (scrolls.size() > (levelCap-1-level))
+		while (scrolls.size() > (levelCap-1-level()))
 			scrolls.remove(0);
 
 		return super.upgrade(source, n);
@@ -148,9 +149,9 @@ public class UnstableSpellbook extends Artifact_old {
 	public String desc() {
 		String desc = "This Tome is in surprising good condition given its age. ";
 
-		if (level < 3)
+		if (level() < 3)
 			desc += "It emanates a strange chaotic energy. ";
-		else if (level < 7)
+		else if (level() < 7)
 			desc += "It glows with a strange chaotic energy. ";
 		else
 			desc += "It fizzes and crackles as you move the pages, surging with unstable energy. ";
@@ -171,7 +172,7 @@ public class UnstableSpellbook extends Artifact_old {
 
 		}
 
-			if (level < levelCap)
+			if (level() < levelCap)
 				if (scrolls.size() > 1)
 					desc += "The book's index points to some pages which are blank. " +
 							"Those pages are listed as: " + scrolls.get(0) + " and "
@@ -233,7 +234,7 @@ public class UnstableSpellbook extends Artifact_old {
 				Hero hero = Dungeon.hero;
 				for (int i = 0; ( i <= 1 && i < scrolls.size() ); i++){
 					if (scrolls.get(i).equals(scroll)){
-						hero.sprite.operate(hero.pos);
+						hero.sprite.operate(hero.pos());
 						hero.busy();
 						hero.spend_new(GameTime.TICK * 2, false);
 						Sample.INSTANCE.play(Assets.SND_BURNING);

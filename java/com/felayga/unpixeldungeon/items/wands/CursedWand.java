@@ -5,7 +5,7 @@
  * Shattered Pixel Dungeon
  * Copyright (C) 2014-2015 Evan Debenham
  *
- * Unpixel Dungeon
+ * unPixel Dungeon
  * Copyright (C) 2015-2016 Randall Foudray
  *
  * This program is free software: you can redistribute it and/or modify
@@ -20,6 +20,7 @@
  *
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>
+ *
  *
  */
 package com.felayga.unpixeldungeon.items.wands;
@@ -84,7 +85,7 @@ public class CursedWand {
 	private static float RARE_CHANCE = 0.09f;
 	private static float VERY_RARE_CHANCE = 0.01f;
 
-	public static void cursedZap(final Wand wand, final Hero user, final Ballistica bolt){
+	public static void cursedZap(final Wand wand, final Char user, final Ballistica bolt){
 		switch (Random.chances(new float[]{COMMON_CHANCE, UNCOMMON_CHANCE, RARE_CHANCE, VERY_RARE_CHANCE})){
 			case 0:
 			default:
@@ -102,7 +103,7 @@ public class CursedWand {
 		}
 	}
 
-	private static void commonEffect(final Wand wand, final Hero user, final Ballistica bolt){
+	private static void commonEffect(final Wand wand, final Char user, final Ballistica bolt){
 		switch(Random.Int(4)){
 
 			//anti-entropy
@@ -113,13 +114,13 @@ public class CursedWand {
 							switch (Random.Int(2)){
 								case 0:
 									if (target != null)
-										Buff.affect(target, Burning.class).reignite(target);
-									Buff.affect(user, Frost.class, Frost.duration(user) * Random.Long(GameTime.TICK * 3, GameTime.TICK * 5) / GameTime.TICK);
+										Buff.affect(target, user, Burning.class).reignite(target);
+									Buff.affect(user, user, Frost.class, Frost.duration(user) * Random.Long(GameTime.TICK * 3, GameTime.TICK * 5) / GameTime.TICK);
 									break;
 								case 1:
-									Buff.affect(user, Burning.class).reignite(user);
+									Buff.affect(user, user, Burning.class).reignite(user);
 									if (target != null)
-										Buff.affect(target, Frost.class, Frost.duration(target) * Random.Long(GameTime.TICK * 3, GameTime.TICK * 5) / GameTime.TICK);
+										Buff.affect(target, user, Frost.class, Frost.duration(target) * Random.Long(GameTime.TICK * 3, GameTime.TICK * 5) / GameTime.TICK);
 									break;
 							}
 							wand.wandUsed();
@@ -137,7 +138,7 @@ public class CursedWand {
 								c == Terrain.EMPTY_DECO ||
 								c == Terrain.GRASS ||
 								c == Terrain.HIGH_GRASS) {
-							GameScene.add( Blob.seed(bolt.collisionPos, 30, Regrowth.class));
+							GameScene.add( Blob.seed(user, bolt.collisionPos, 30, Regrowth.class));
 						}
 						wand.wandUsed();
 					}
@@ -169,8 +170,8 @@ public class CursedWand {
 									if (pos == -1 || !ScrollOfTeleportation.canTeleport(user)) {
 										//empty, canTeleport produces failure message
 									} else {
-										ch.pos = pos;
-										ch.sprite.place(ch.pos);
+										ch.pos(pos);
+										ch.sprite.place(ch.pos());
 										ch.sprite.visible = Dungeon.visible[pos];
 									}
 								}
@@ -187,13 +188,13 @@ public class CursedWand {
                     public void call() {
                         switch (Random.Int(3)) {
                             case 0:
-                                GameScene.add(Blob.seed(bolt.collisionPos, 800, ConfusionGas.class));
+                                GameScene.add(Blob.seed(user, bolt.collisionPos, 800, ConfusionGas.class));
                                 break;
                             case 1:
-                                GameScene.add(Blob.seed(bolt.collisionPos, 500, ToxicGas.class));
+                                GameScene.add(Blob.seed(user, bolt.collisionPos, 500, ToxicGas.class));
                                 break;
                             case 2:
-                                GameScene.add(Blob.seed(bolt.collisionPos, 200, ParalyticGas.class));
+                                GameScene.add(Blob.seed(user, bolt.collisionPos, 200, ParalyticGas.class));
                                 break;
                         }
                         wand.wandUsed();
@@ -204,7 +205,7 @@ public class CursedWand {
 
 	}
 
-	private static void uncommonEffect(final Wand wand, final Hero user, final Ballistica bolt){
+	private static void uncommonEffect(final Wand wand, final Char user, final Ballistica bolt){
 		switch(Random.Int(4)){
 
 			//Random plant
@@ -216,7 +217,7 @@ public class CursedWand {
 						if (Actor.findChar(pos) != null && bolt.dist > 1) {
 							pos = bolt.path.get(bolt.dist - 1);
 						}
-						Dungeon.level.plant((Plant.Seed) Generator.random(Generator.Category.SEED), pos);
+						Dungeon.level.plant(user, (Plant.Seed) Generator.random(Generator.Category.SEED), pos);
 						wand.wandUsed();
 					}
 				});
@@ -269,8 +270,8 @@ public class CursedWand {
 
 			//shock and recharge
 			case 3:
-				new LightningTrap().set( user.pos ).activate();
-				Buff.prolong(user, ScrollOfRecharging.Recharging.class, GameTime.TICK * 20);
+				new LightningTrap().set( user, user.pos() ).activate();
+				Buff.prolong(user, user, ScrollOfRecharging.Recharging.class, GameTime.TICK * 20);
 				ScrollOfRecharging.charge(user);
 				SpellSprite.show(user, SpellSprite.CHARGE);
 				wand.wandUsed();
@@ -279,7 +280,7 @@ public class CursedWand {
 
 	}
 
-	private static void rareEffect(final Wand wand, final Hero user, final Ballistica bolt){
+	private static void rareEffect(final Wand wand, final Char user, final Ballistica bolt){
 		switch(Random.Int(4)){
 
 			//sheep transformation
@@ -291,13 +292,13 @@ public class CursedWand {
 						if (ch != null && ch != user){
 							Sheep sheep = new Sheep();
 							sheep.lifespan = GameTime.TICK * 10;
-							sheep.pos = ch.pos;
-							ch.destroy();
+							sheep.pos(ch.pos());
+							ch.destroy(user);
 							ch.sprite.killAndErase();
 							Dungeon.level.mobs.remove(ch);
 							HealthIndicator.instance.target(null);
 							GameScene.add(sheep);
-							CellEmitter.get(sheep.pos).burst(Speck.factory(Speck.WOOL), 4);
+							CellEmitter.get(sheep.pos()).burst(Speck.factory(Speck.WOOL), 4);
 						} else {
 							GLog.i("nothing happens");
 						}
@@ -351,13 +352,13 @@ public class CursedWand {
 
 			//summon monsters
 			case 3:
-				new SummoningTrap().set( user.pos ).activate();
+				new SummoningTrap().set( user, user.pos() ).activate();
 				wand.wandUsed();
 				break;
 		}
 	}
 
-	private static void veryRareEffect(final Wand wand, final Hero user, final Ballistica bolt){
+	private static void veryRareEffect(final Wand wand, final Char user, final Ballistica bolt){
 		switch(Random.Int(4)){
 
 			//great forest fire!
@@ -369,11 +370,11 @@ public class CursedWand {
 							c == Terrain.EMPTY_DECO ||
 							c == Terrain.GRASS ||
 							c == Terrain.HIGH_GRASS) {
-						GameScene.add( Blob.seed(i, 15, Regrowth.class));
+						GameScene.add( Blob.seed(user, i, 15, Regrowth.class));
 					}
 				}
 				do {
-					GameScene.add(Blob.seed(Dungeon.level.randomDestination(), 10, Fire.class));
+					GameScene.add(Blob.seed(user, Dungeon.level.randomDestination(), 10, Fire.class));
 				} while (Random.Int(5) != 0);
 				new Flare(8, 32).color(0xFFFF66, true).show(user.sprite, 2f);
 				Sample.INSTANCE.play(Assets.SND_TELEPORT);
@@ -431,17 +432,17 @@ public class CursedWand {
 				do {
 					result = Generator.random(Random.oneOf(Generator.Category.WEAPON, Generator.Category.ARMOR,
 							Generator.Category.RING, Generator.Category.ARTIFACT));
-				} while (result.level < 0 && !(result instanceof MissileWeapon));
+				} while (result.level() < 0 && !(result instanceof MissileWeapon));
 				if (result.isUpgradable()) result.upgrade(null, 1);
 				result.bucStatus(BUCStatus.Cursed, true);
 				GLog.w("your wand transmogrifies into a different item!");
-				Dungeon.level.drop(result, user.pos).sprite.drop();
+				Dungeon.level.drop(result, user.pos()).sprite.drop();
 				wand.wandUsed();
 				break;
 		}
 	}
 
-	private static void cursedFX(final Hero user, final Ballistica bolt, final Callback callback){
+	private static void cursedFX(final Char user, final Ballistica bolt, final Callback callback){
 		MagicMissile.rainbow(user.sprite.parent, bolt.sourcePos, bolt.collisionPos, callback);
 		Sample.INSTANCE.play( Assets.SND_ZAP );
 	}

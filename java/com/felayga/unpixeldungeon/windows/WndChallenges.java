@@ -5,7 +5,7 @@
  * Shattered Pixel Dungeon
  * Copyright (C) 2014-2015 Evan Debenham
  *
- * Unpixel Dungeon
+ * unPixel Dungeon
  * Copyright (C) 2015-2016 Randall Foudray
  *
  * This program is free software: you can redistribute it and/or modify
@@ -21,14 +21,15 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>
  *
+ *
  */
 package com.felayga.unpixeldungeon.windows;
 
 import com.felayga.unpixeldungeon.Challenges;
-import com.felayga.unpixeldungeon.ShatteredPixelDungeon;
 import com.felayga.unpixeldungeon.scenes.PixelScene;
 import com.felayga.unpixeldungeon.ui.CheckBox;
 import com.felayga.unpixeldungeon.ui.Window;
+import com.felayga.unpixeldungeon.unPixelDungeon;
 import com.watabou.noosa.BitmapText;
 
 import java.util.ArrayList;
@@ -90,7 +91,7 @@ public class WndChallenges extends Window {
 					value |= Challenges.MASKS[i];
 				}
 			}
-			ShatteredPixelDungeon.challenges( value );
+			unPixelDungeon.challenges(value);
 		}
 
 		super.onBackPressed();

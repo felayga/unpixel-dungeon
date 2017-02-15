@@ -5,7 +5,7 @@
  * Shattered Pixel Dungeon
  * Copyright (C) 2014-2015 Evan Debenham
  *
- * Unpixel Dungeon
+ * unPixel Dungeon
  * Copyright (C) 2015-2016 Randall Foudray
  *
  * This program is free software: you can redistribute it and/or modify
@@ -21,12 +21,14 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>
  *
+ *
  */
 package com.felayga.unpixeldungeon.items;
 
 import com.felayga.unpixeldungeon.Badges;
 import com.felayga.unpixeldungeon.Dungeon;
 import com.felayga.unpixeldungeon.Statistics;
+import com.felayga.unpixeldungeon.actors.Char;
 import com.felayga.unpixeldungeon.actors.hero.Hero;
 import com.felayga.unpixeldungeon.scenes.AmuletScene;
 import com.felayga.unpixeldungeon.sprites.ItemSpriteSheet;
@@ -54,7 +56,7 @@ public class Amulet extends Item {
 	}
 	
 	@Override
-	public boolean execute( Hero hero, String action ) {
+	public boolean execute(Hero hero, String action ) {
 		if (action.equals(AC_END)) {
 			showAmuletScene( false );
 			return false;

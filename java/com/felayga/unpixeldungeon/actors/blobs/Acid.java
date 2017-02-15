@@ -5,7 +5,7 @@
  * Shattered Pixel Dungeon
  * Copyright (C) 2014-2015 Evan Debenham
  *
- * Unpixel Dungeon
+ * unPixel Dungeon
  * Copyright (C) 2015-2016 Randall Foudray
  *
  * This program is free software: you can redistribute it and/or modify
@@ -21,6 +21,7 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>
  *
+ *
  */
 package com.felayga.unpixeldungeon.actors.blobs;
 
@@ -28,7 +29,7 @@ import com.felayga.unpixeldungeon.Dungeon;
 import com.felayga.unpixeldungeon.actors.Actor;
 import com.felayga.unpixeldungeon.actors.Char;
 import com.felayga.unpixeldungeon.actors.buffs.Buff;
-import com.felayga.unpixeldungeon.actors.buffs.negative.Ooze;
+import com.felayga.unpixeldungeon.actors.buffs.negative.AcidBurning;
 import com.felayga.unpixeldungeon.effects.BlobEmitter;
 import com.felayga.unpixeldungeon.effects.particles.AcidParticle;
 import com.felayga.unpixeldungeon.items.Heap;
@@ -40,40 +41,40 @@ import com.felayga.unpixeldungeon.scenes.GameScene;
 import com.watabou.utils.Random;
 
 public class Acid extends Blob {
-	
-	@Override
-	protected void evolve() {
 
-		boolean[] flamable = Level.wood;
-		
-		int from = WIDTH + 1;
-		int to = Level.LENGTH - WIDTH - 1;
-		
-		boolean observe = false;
-		
-		for (int pos=from; pos < to; pos++) {
-			
-			int fire;
-			
-			if (cur[pos] > 0) {
-				
-				burn( pos );
-				
-				fire = cur[pos] - 1;
-				if (fire <= 0 && flamable[pos]) {
-					
-					int oldTile = Dungeon.level.map[pos];
+    @Override
+    protected void evolve() {
+
+        boolean[] flamable = Level.burnable;
+
+        int from = WIDTH + 1;
+        int to = Level.LENGTH - WIDTH - 1;
+
+        boolean observe = false;
+
+        for (int pos = from; pos < to; pos++) {
+
+            int fire;
+
+            if (cur[pos] > 0) {
+
+                burn(pos);
+
+                fire = cur[pos] - 1;
+                if (fire <= 0 && flamable[pos]) {
+
+                    int oldTile = Dungeon.level.map[pos];
                     Dungeon.level.set(pos, Terrain.DENATURED_DEBRIS, true);
-					
-					observe = true;
-					GameScene.updateMap( pos );
-					if (Dungeon.visible[pos]) {
-						GameScene.discoverTile( pos, oldTile );
-					}
-				}
-				
-			} else {
-				fire=0;
+
+                    observe = true;
+                    GameScene.updateMap(pos);
+                    if (Dungeon.visible[pos]) {
+                        GameScene.discoverTile(pos, oldTile);
+                    }
+                }
+
+            } else {
+                fire = 0;
 				/*
 				if (flamable[pos] && (cur[pos-1] > 0 || cur[pos+1] > 0 || cur[pos-WIDTH] > 0 || cur[pos+WIDTH] > 0)) {
 					fire = 4;
@@ -82,61 +83,60 @@ public class Acid extends Blob {
 					fire = 0;
 				}
 				*/
-			}
-			
-			volume += (off[pos] = fire);
-		}
-		
-		if (observe) {
-			Dungeon.observe();
-		}
-	}
+            }
 
-	public static void burnChar(Char ch, Char source)
-	{
-		Buff.affect(ch, Ooze.class);
+            volume += (off[pos] = fire);
+        }
 
-		int levelDamage = 5 + Dungeon.depthAdjusted * 5;
-		int damage = (ch.HT + levelDamage) / 5;
-		if (Random.Int(5) < (ch.HT + levelDamage) % 5) {
-			damage++;
-		}
+        if (observe) {
+            Dungeon.observe();
+        }
+    }
 
-		ch.damage(damage, MagicType.Acid, source);
-	}
+    public static void burnChar(Char ch, Char source) {
+        Buff.affect(ch, source, AcidBurning.class).resplash(ch);
 
-	private void burn( int pos ) {
-		Char ch = Actor.findChar( pos );
-		if (ch != null) {
-			burnChar(ch, null);
-		}
-		
-		Heap heap = Dungeon.level.heaps.get( pos );
-		if (heap != null) {
-			heap.burn();
-		}
+        int levelDamage = 5 + Dungeon.depthAdjusted * 5;
+        int damage = (ch.HT + levelDamage) / 5;
+        if (Random.Int(5) < (ch.HT + levelDamage) % 5) {
+            damage++;
+        }
 
-		Plant plant = Dungeon.level.plants.get( pos );
-		if (plant != null){
-			plant.wither();
-		}
-	}
-	
-	public void seed( int cell, int amount ) {
-		if (cur[cell] == 0) {
-			volume += amount;
-			cur[cell] = amount;
-		}
-	}
-	
-	@Override
-	public void use( BlobEmitter emitter ) {
-		super.use( emitter );
-		emitter.start( AcidParticle.FACTORY, 0.03f, 0 );
-	}
-	
-	@Override
-	public String tileDesc() {
-		return "Acid coats the area.";
-	}
+        ch.damage(damage, MagicType.Acid, source);
+    }
+
+    private void burn(int pos) {
+        Char ch = Actor.findChar(pos);
+        if (ch != null) {
+            burnChar(ch, null);
+        }
+
+        Heap heap = Dungeon.level.heaps.get(pos);
+        if (heap != null) {
+            heap.burn();
+        }
+
+        Plant plant = Dungeon.level.plants.get(pos);
+        if (plant != null) {
+            plant.wither();
+        }
+    }
+
+    public void seed(int cell, int amount) {
+        if (cur[cell] == 0) {
+            volume += amount;
+            cur[cell] = amount;
+        }
+    }
+
+    @Override
+    public void use(BlobEmitter emitter) {
+        super.use(emitter);
+        emitter.start(AcidParticle.FACTORY, 0.03f, 0);
+    }
+
+    @Override
+    public String tileDesc() {
+        return "Acid coats the area.";
+    }
 }

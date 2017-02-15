@@ -5,7 +5,7 @@
  * Shattered Pixel Dungeon
  * Copyright (C) 2014-2015 Evan Debenham
  *
- * Unpixel Dungeon
+ * unPixel Dungeon
  * Copyright (C) 2015-2016 Randall Foudray
  *
  * This program is free software: you can redistribute it and/or modify
@@ -21,14 +21,13 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>
  *
+ *
  */
 
 package com.felayga.unpixeldungeon.items.potions;
 
 import com.felayga.unpixeldungeon.actors.Char;
 import com.felayga.unpixeldungeon.mechanics.BUCStatus;
-import com.felayga.unpixeldungeon.plants.Starflower;
-import com.felayga.unpixeldungeon.plants.Stoneberry;
 
 /**
  * Created by HELLO on 11/29/2016.
@@ -46,9 +45,6 @@ public class PotionOfFullRestoration extends PotionOfRestoration {
         applicationDescription = "completely";
 
         price = 30;
-
-        alchemyPrimary = Starflower.Seed.class;
-        alchemySecondary = Stoneberry.Seed.class;
     }
 
     @Override

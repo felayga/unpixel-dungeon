@@ -5,7 +5,7 @@
  * Shattered Pixel Dungeon
  * Copyright (C) 2014-2015 Evan Debenham
  *
- * Unpixel Dungeon
+ * unPixel Dungeon
  * Copyright (C) 2015-2016 Randall Foudray
  *
  * This program is free software: you can redistribute it and/or modify
@@ -20,6 +20,7 @@
  *
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>
+ *
  *
  */
 package com.felayga.unpixeldungeon.items.weapon.missiles;
@@ -55,7 +56,7 @@ public class MissileWeapon extends Weapon {
         super(weaponSkill, delay, damageMin, damageMax);
 
         stackable = true;
-        levelKnown = true;
+        levelKnown(true, false);
         quantity(quantity);
 
         this.throwable = throwable;
@@ -83,11 +84,11 @@ public class MissileWeapon extends Weapon {
 	}
 
 	@Override
-	protected void onThrow( int cell, Char thrower ) {
+	protected void onThrow( Char thrower, int cell ) {
 		Char enemy = Actor.findChar(cell);
 		if (enemy == null || enemy == thrower) {
 			if (this instanceof Boomerang)
-				super.onThrow( cell, thrower );
+				super.onThrow( thrower, cell );
 			else
 				miss( cell, thrower );
 		} else {
@@ -107,7 +108,7 @@ public class MissileWeapon extends Weapon {
                 */
 
 				if (Random.Float() > Math.pow(0.7, bonus)) {
-                    Buff.affect(enemy, PinCushion.class).stick(this);
+                    Buff.affect(enemy, thrower, PinCushion.class).stick(this);
                 }
 			}
 		}
@@ -115,7 +116,7 @@ public class MissileWeapon extends Weapon {
 	
 	protected void miss( int cell, Char thrower ) {
         //todo: determine if any of this is cared about
-        super.onThrow(cell, thrower);
+        super.onThrow(thrower, cell);
         /*
         int bonus = 0;
 		for (Buff buff : curUser.buffs(RingOfSharpshooting.Aim.class)) {

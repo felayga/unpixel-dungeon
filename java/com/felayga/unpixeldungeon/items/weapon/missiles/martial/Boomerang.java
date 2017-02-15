@@ -5,7 +5,7 @@
  * Shattered Pixel Dungeon
  * Copyright (C) 2014-2015 Evan Debenham
  *
- * Unpixel Dungeon
+ * unPixel Dungeon
  * Copyright (C) 2015-2016 Randall Foudray
  *
  * This program is free software: you can redistribute it and/or modify
@@ -20,6 +20,7 @@
  *
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>
+ *
  *
  */
 package com.felayga.unpixeldungeon.items.weapon.missiles.martial;
@@ -61,7 +62,7 @@ public class Boomerang extends MissileWeapon {
 		damage = super.proc( attacker, thrown, defender, damage );
 
 		if (attacker instanceof Hero && thrown) {
-			circleBack( defender.pos, attacker );
+			circleBack( defender.pos(), attacker );
 		}
 
 		return damage;
@@ -75,7 +76,7 @@ public class Boomerang extends MissileWeapon {
 	private void circleBack( int from, Char owner ) {
 
 		((MissileSprite)curUser.sprite.parent.recycle( MissileSprite.class )).
-				reset( from, curUser.pos, curItem, null );
+				reset( from, curUser.pos(), curItem, null );
 
         if (throwEquiped) {
             owner.belongings.collectEquip(this);
@@ -83,7 +84,7 @@ public class Boomerang extends MissileWeapon {
             Dungeon.quickslot.replaceSimilar(this);
             updateQuickslot();
         } else if (!curUser.belongings.collect(this)) {
-            Dungeon.level.drop(this, owner.pos).sprite.drop();
+            Dungeon.level.drop(this, owner.pos()).sprite.drop();
         }
 	}
 

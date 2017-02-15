@@ -5,7 +5,7 @@
  * Shattered Pixel Dungeon
  * Copyright (C) 2014-2015 Evan Debenham
  *
- * Unpixel Dungeon
+ * unPixel Dungeon
  * Copyright (C) 2015-2016 Randall Foudray
  *
  * This program is free software: you can redistribute it and/or modify
@@ -21,11 +21,11 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>
  *
+ *
  */
 package com.felayga.unpixeldungeon.windows;
 
 import com.felayga.unpixeldungeon.Dungeon;
-import com.felayga.unpixeldungeon.ShatteredPixelDungeon;
 import com.felayga.unpixeldungeon.scenes.GameScene;
 import com.felayga.unpixeldungeon.scenes.InterlevelScene;
 import com.felayga.unpixeldungeon.scenes.RankingsScene;
@@ -33,6 +33,7 @@ import com.felayga.unpixeldungeon.scenes.TitleScene;
 import com.felayga.unpixeldungeon.ui.Icons;
 import com.felayga.unpixeldungeon.ui.RedButton;
 import com.felayga.unpixeldungeon.ui.Window;
+import com.felayga.unpixeldungeon.unPixelDungeon;
 import com.watabou.noosa.Game;
 
 import java.io.IOException;
@@ -84,7 +85,7 @@ public class WndGame extends Window {
 				@Override
 				protected void onClick() {
 					Dungeon.hero = null;
-					ShatteredPixelDungeon.challenges( Dungeon.challenges );
+					unPixelDungeon.challenges(Dungeon.challenges);
 					InterlevelScene.mode = InterlevelScene.Mode.DESCEND;
 					InterlevelScene.noStory = true;
 					Game.switchScene( InterlevelScene.class );

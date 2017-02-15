@@ -5,7 +5,7 @@
  * Shattered Pixel Dungeon
  * Copyright (C) 2014-2015 Evan Debenham
  *
- * Unpixel Dungeon
+ * unPixel Dungeon
  * Copyright (C) 2015-2016 Randall Foudray
  *
  * This program is free software: you can redistribute it and/or modify
@@ -21,10 +21,12 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>
  *
+ *
  */
 package com.felayga.unpixeldungeon.items.scrolls;
 
 import com.felayga.unpixeldungeon.Badges;
+import com.felayga.unpixeldungeon.actors.Char;
 import com.felayga.unpixeldungeon.actors.hero.Hero;
 import com.felayga.unpixeldungeon.effects.Speck;
 import com.felayga.unpixeldungeon.items.Item;
@@ -56,7 +58,7 @@ public class ScrollOfUpgrade extends InventoryScroll {
 		Badges.validateItemLevelAquired( item );
 	}
 	
-	public static void upgrade( Hero hero ) {
+	public static void upgrade( Char hero ) {
 		hero.sprite.emitter().start( Speck.factory( Speck.UP ), 0.2f, 3 );
 	}
 	

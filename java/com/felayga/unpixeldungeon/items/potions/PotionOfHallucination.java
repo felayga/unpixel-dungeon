@@ -5,7 +5,7 @@
  * Shattered Pixel Dungeon
  * Copyright (C) 2014-2015 Evan Debenham
  *
- * Unpixel Dungeon
+ * unPixel Dungeon
  * Copyright (C) 2015-2016 Randall Foudray
  *
  * This program is free software: you can redistribute it and/or modify
@@ -21,6 +21,7 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>
  *
+ *
  */
 package com.felayga.unpixeldungeon.items.potions;
 
@@ -29,8 +30,6 @@ import com.felayga.unpixeldungeon.actors.Char;
 import com.felayga.unpixeldungeon.actors.buffs.Buff;
 import com.felayga.unpixeldungeon.actors.buffs.negative.Hallucination;
 import com.felayga.unpixeldungeon.mechanics.GameTime;
-import com.felayga.unpixeldungeon.plants.Blindweed;
-import com.felayga.unpixeldungeon.plants.Swampweed;
 
 public class PotionOfHallucination extends Potion {
 
@@ -43,15 +42,12 @@ public class PotionOfHallucination extends Potion {
         isHelpful = false;
 
         price = 30;
-
-        alchemyPrimary = Swampweed.Seed.class;
-        alchemySecondary = Blindweed.Seed.class;
     }
 
     @Override
     public void apply( Char hero ) {
         setKnown();
-        Buff.affect(Dungeon.hero, Hallucination.class, 200 * GameTime.TICK);
+        Buff.affect(hero, hero, Hallucination.class, 200 * GameTime.TICK);
     }
 
     @Override

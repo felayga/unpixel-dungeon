@@ -5,7 +5,7 @@
  * Shattered Pixel Dungeon
  * Copyright (C) 2014-2015 Evan Debenham
  *
- * Unpixel Dungeon
+ * unPixel Dungeon
  * Copyright (C) 2015-2016 Randall Foudray
  *
  * This program is free software: you can redistribute it and/or modify
@@ -20,6 +20,7 @@
  *
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>
+ *
  *
  */
 package com.felayga.unpixeldungeon.items.armor.glyphs;
@@ -44,11 +45,11 @@ public class Stench extends Glyph {
 	@Override
 	public int proc( Armor armor, Char attacker, Char defender, int damage) {
 
-		int level = Math.max( 0, armor.level );
+		int level = Math.max( 0, armor.level() );
 		
-		if (Level.canReach( attacker.pos, defender.pos ) && Random.Int( level + 5 ) >= 4) {
+		if (Level.canReach( attacker.pos(), defender.pos() ) && Random.Int( level + 5 ) >= 4) {
 			
-			GameScene.add( Blob.seed( attacker.pos, 20, ToxicGas.class ) );
+			GameScene.add( Blob.seed( defender, attacker.pos(), 20, ToxicGas.class ) );
 			
 		}
 		

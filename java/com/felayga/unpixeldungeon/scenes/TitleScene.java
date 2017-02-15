@@ -5,7 +5,7 @@
  * Shattered Pixel Dungeon
  * Copyright (C) 2014-2015 Evan Debenham
  *
- * Unpixel Dungeon
+ * unPixel Dungeon
  * Copyright (C) 2015-2016 Randall Foudray
  *
  * This program is free software: you can redistribute it and/or modify
@@ -21,6 +21,7 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>
  *
+ *
  */
 package com.felayga.unpixeldungeon.scenes;
 
@@ -28,7 +29,6 @@ import android.opengl.GLES20;
 
 import com.felayga.unpixeldungeon.Assets;
 import com.felayga.unpixeldungeon.Badges;
-import com.felayga.unpixeldungeon.ShatteredPixelDungeon;
 import com.felayga.unpixeldungeon.effects.BannerSprites;
 import com.felayga.unpixeldungeon.effects.Fireball;
 import com.felayga.unpixeldungeon.sprites.ItemSprite;
@@ -37,6 +37,7 @@ import com.felayga.unpixeldungeon.ui.Archs;
 import com.felayga.unpixeldungeon.ui.ChangesButton;
 import com.felayga.unpixeldungeon.ui.ExitButton;
 import com.felayga.unpixeldungeon.ui.PrefsButton;
+import com.felayga.unpixeldungeon.unPixelDungeon;
 import com.felayga.unpixeldungeon.windows.WndHardNotification;
 import com.watabou.noosa.BitmapText;
 import com.watabou.noosa.Camera;
@@ -62,7 +63,7 @@ public class TitleScene extends PixelScene {
 
 
 		Music.INSTANCE.play( Assets.THEME, true );
-		Music.INSTANCE.volume( ShatteredPixelDungeon.musicVol() / 10f );
+		Music.INSTANCE.volume( unPixelDungeon.musicVol() / 10f );
 
 		uiCamera.visible = false;
 		
@@ -77,13 +78,13 @@ public class TitleScene extends PixelScene {
 		add( title );
 
 		float height = title.height +
-				(ShatteredPixelDungeon.landscape() ? DashboardItem.SIZE : DashboardItem.SIZE * 2);
+				(unPixelDungeon.landscape() ? DashboardItem.SIZE : DashboardItem.SIZE * 2);
 
 		title.x = (w - title.width()) / 2;
 		title.y = (h - height) / 2;
 		
-		placeTorch(title.x + 18, title.y + 20);
-		placeTorch(title.x + title.width - 18, title.y + 20);
+		placeTorch(title.x + 7, title.y + 20);
+		placeTorch(title.x + title.width - 7, title.y + 20);
 
 		Image signs = new Image( BannerSprites.get( BannerSprites.Type.PIXEL_DUNGEON_SIGNS ) ) {
 			private float time = 0;
@@ -106,7 +107,7 @@ public class TitleScene extends PixelScene {
 		DashboardItem btnBadges = new DashboardItem( TXT_BADGES, 3 ) {
 			@Override
 			protected void onClick() {
-				ShatteredPixelDungeon.switchNoFade( BadgesScene.class );
+				unPixelDungeon.switchNoFade(BadgesScene.class);
 			}
 		};
 		add(btnBadges);
@@ -114,7 +115,7 @@ public class TitleScene extends PixelScene {
 		DashboardItem btnAbout = new DashboardItem( TXT_ABOUT, 1 ) {
 			@Override
 			protected void onClick() {
-				ShatteredPixelDungeon.switchNoFade( AboutScene.class );
+				unPixelDungeon.switchNoFade(AboutScene.class);
 			}
 		};
 		add( btnAbout );
@@ -122,7 +123,7 @@ public class TitleScene extends PixelScene {
 		DashboardItem btnPlay = new DashboardItem( TXT_PLAY, 0 ) {
 			@Override
 			protected void onClick() {
-				ShatteredPixelDungeon.switchNoFade( StartScene.class );
+				unPixelDungeon.switchNoFade(StartScene.class);
 			}
 		};
 		add( btnPlay );
@@ -130,12 +131,12 @@ public class TitleScene extends PixelScene {
 		DashboardItem btnHighscores = new DashboardItem( TXT_HIGHSCORES, 2 ) {
 			@Override
 			protected void onClick() {
-				ShatteredPixelDungeon.switchNoFade( RankingsScene.class );
+				unPixelDungeon.switchNoFade(RankingsScene.class);
 			}
 		};
 		add( btnHighscores );
 
-		if (ShatteredPixelDungeon.landscape()) {
+		if (unPixelDungeon.landscape()) {
 			float y = (h + height) / 2 - DashboardItem.SIZE;
 			btnHighscores    .setPos( w / 2 - btnHighscores.width(), y );
 			btnBadges        .setPos( w / 2, y );
@@ -167,7 +168,7 @@ public class TitleScene extends PixelScene {
 		btnExit.setPos( w - btnExit.width(), 0 );
 		add( btnExit );
 
-		int gameversion = ShatteredPixelDungeon.version();
+		int gameversion = unPixelDungeon.version();
 
 		if (gameversion != Game.versionCode) {
 			if (gameversion < 65){

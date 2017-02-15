@@ -5,7 +5,7 @@
  * Shattered Pixel Dungeon
  * Copyright (C) 2014-2015 Evan Debenham
  *
- * Unpixel Dungeon
+ * unPixel Dungeon
  * Copyright (C) 2015-2016 Randall Foudray
  *
  * This program is free software: you can redistribute it and/or modify
@@ -20,6 +20,7 @@
  *
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>
+ *
  *
  */
 package com.felayga.unpixeldungeon.items;
@@ -73,7 +74,7 @@ public class Weightstone extends Item {
 	public boolean execute( Hero hero, String action ) {
 		if (action == AC_APPLY) {
 			curUser = hero;
-			GameScene.selectItem( itemSelector, Weapon.class, TXT_SELECT_WEAPON );
+			GameScene.selectItem( itemSelector, Weapon.class, TXT_SELECT_WEAPON, null );
 
 			return false;
 		} else {
@@ -105,7 +106,7 @@ public class Weightstone extends Item {
 		}
 		*/
 
-		curUser.sprite.operate( curUser.pos );
+		curUser.sprite.operate( curUser.pos() );
 		Sample.INSTANCE.play( Assets.SND_MISS );
 
 		curUser.spend_new( TIME_TO_APPLY, false );

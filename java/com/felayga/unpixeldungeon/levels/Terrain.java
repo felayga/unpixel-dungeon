@@ -5,7 +5,7 @@
  * Shattered Pixel Dungeon
  * Copyright (C) 2014-2015 Evan Debenham
  *
- * Unpixel Dungeon
+ * unPixel Dungeon
  * Copyright (C) 2015-2016 Randall Foudray
  *
  * This program is free software: you can redistribute it and/or modify
@@ -20,6 +20,7 @@
  *
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>
+ *
  *
  */
 package com.felayga.unpixeldungeon.levels;
@@ -81,13 +82,15 @@ public class Terrain {
     public static final int STAIRS_UP_ALTERNATE     = 37;
     public static final int STAIRS_DOWN_ALTERNATE   = 38;
 
+    public static final int ALCHEMY_EMPTY           = 39;
+
 
     public static final int FACED_TILE_MIN          = 64; //needs to be aligned to blocksize
     public static final int FACED_TILE_MAX          = 127;
     public static final int FACED_TILE_BLOCKSIZE    = 16;
 
-	public static final int WATER_TILES	    	    = 64;
-	public static final int WATER		    	    = WATER_TILES + FACED_TILE_BLOCKSIZE - 1;
+	public static final int PUDDLE_TILES	    	= 64;
+	public static final int PUDDLE		    	    = PUDDLE_TILES + FACED_TILE_BLOCKSIZE - 1;
 
     public static final int WATER_DEEP_TILES	    = 80;
     public static final int WATER_DEEP			    = WATER_DEEP_TILES + FACED_TILE_BLOCKSIZE - 1;
@@ -102,7 +105,7 @@ public class Terrain {
 
 	public static final int FLAG_PASSABLE		    = 0x0001;
 	public static final int FLAG_LOSBLOCKING	    = 0x0002;
-	public static final int FLAG_WOOD			    = 0x0004;
+	public static final int FLAG_BURNABLE           = 0x0004;
 	public static final int FLAG_SECRET			    = 0x0008;
 	public static final int FLAG_SOLID			    = 0x0010;
 	public static final int FLAG_AVOID			    = 0x0020;
@@ -113,6 +116,7 @@ public class Terrain {
 	public static final int FLAG_PATHABLE		    = 0x0200;
 	public static final int FLAG_UNDISCOVERABLE	    = 0x0400;
 	public static final int FLAG_STONE			    = 0x0800;
+    public static final int FLAG_UNDIGGABLE         = 0x1000;
 
     public static final int FLAG_DIAGONALPASSAGE    = 0x8000;
 
@@ -121,23 +125,23 @@ public class Terrain {
 	static {
 		flags[CHASM] = FLAG_AVOID | FLAG_PIT | FLAG_UNSTITCHABLE | FLAG_DIAGONALPASSAGE;
 		flags[EMPTY] = FLAG_PASSABLE | FLAG_DIAGONALPASSAGE;
-		flags[GRASS] = FLAG_PASSABLE | FLAG_WOOD | FLAG_DIAGONALPASSAGE;
+		flags[GRASS] = FLAG_PASSABLE | FLAG_BURNABLE | FLAG_DIAGONALPASSAGE;
 		flags[EMPTY_WELL] = FLAG_STONE | FLAG_DIAGONALPASSAGE;
-		flags[WATER] = FLAG_PASSABLE | FLAG_LIQUID | FLAG_UNSTITCHABLE | FLAG_DIAGONALPASSAGE;
+		flags[PUDDLE] = FLAG_PASSABLE | FLAG_LIQUID | FLAG_UNSTITCHABLE | FLAG_DIAGONALPASSAGE;
 		flags[WALL] = FLAG_LOSBLOCKING | FLAG_SOLID | FLAG_STONE | FLAG_UNSTITCHABLE | FLAG_UNDISCOVERABLE;
-		flags[DOOR] = FLAG_PATHABLE | FLAG_LOSBLOCKING | FLAG_WOOD | FLAG_SOLID | FLAG_UNSTITCHABLE;
-		flags[OPEN_DOOR] = FLAG_PASSABLE | FLAG_WOOD | FLAG_UNSTITCHABLE;
-		flags[STAIRS_UP] = FLAG_PASSABLE | FLAG_DIAGONALPASSAGE;
-		flags[STAIRS_DOWN] = FLAG_PASSABLE | FLAG_DIAGONALPASSAGE;
+		flags[DOOR] = FLAG_PATHABLE | FLAG_LOSBLOCKING | FLAG_BURNABLE | FLAG_SOLID | FLAG_UNSTITCHABLE;
+		flags[OPEN_DOOR] = FLAG_PASSABLE | FLAG_BURNABLE | FLAG_UNSTITCHABLE;
+		flags[STAIRS_UP] = FLAG_PASSABLE | FLAG_DIAGONALPASSAGE | FLAG_UNDIGGABLE;
+		flags[STAIRS_DOWN] = FLAG_PASSABLE | FLAG_DIAGONALPASSAGE | FLAG_UNDIGGABLE;
 		flags[EMBERS] = FLAG_PASSABLE | FLAG_DIAGONALPASSAGE;
-		flags[LOCKED_DOOR] = FLAG_LOSBLOCKING | FLAG_SOLID | FLAG_WOOD | FLAG_UNSTITCHABLE;
+		flags[LOCKED_DOOR] = FLAG_PATHABLE | FLAG_LOSBLOCKING | FLAG_SOLID | FLAG_BURNABLE | FLAG_UNSTITCHABLE;
 		flags[PEDESTAL] = FLAG_PASSABLE | FLAG_UNSTITCHABLE | FLAG_DIAGONALPASSAGE;
 		flags[WALL_DECO] = FLAG_LOSBLOCKING | FLAG_SOLID | FLAG_STONE | FLAG_UNSTITCHABLE | FLAG_UNDISCOVERABLE;
-		flags[BARRICADE] = FLAG_WOOD | FLAG_SOLID | FLAG_LOSBLOCKING;
+		flags[BARRICADE] = FLAG_BURNABLE | FLAG_SOLID | FLAG_LOSBLOCKING;
 		flags[EMPTY_SP] = FLAG_PASSABLE | FLAG_UNSTITCHABLE | FLAG_DIAGONALPASSAGE;
-		flags[HIGH_GRASS] = FLAG_PASSABLE | FLAG_LOSBLOCKING | FLAG_WOOD | FLAG_DIAGONALPASSAGE;
+		flags[HIGH_GRASS] = FLAG_PASSABLE | FLAG_LOSBLOCKING | FLAG_BURNABLE | FLAG_DIAGONALPASSAGE;
 
-		flags[SECRET_DOOR] = FLAG_LOSBLOCKING | FLAG_SOLID | FLAG_SECRET | FLAG_WOOD | FLAG_UNSTITCHABLE;
+		flags[SECRET_DOOR] = FLAG_LOSBLOCKING | FLAG_SOLID | FLAG_SECRET | FLAG_BURNABLE | FLAG_UNSTITCHABLE;
         flags[SECRET_LOCKED_DOOR] = flags[SECRET_DOOR];
 		flags[SECRET_TRAP] = FLAG_PASSABLE | FLAG_SECRET;
 		flags[TRAP] = FLAG_PASSABLE | FLAG_AVOID | FLAG_DIAGONALPASSAGE;
@@ -146,7 +150,7 @@ public class Terrain {
 		flags[EMPTY_DECO] = FLAG_PASSABLE | FLAG_DIAGONALPASSAGE;
 		flags[LOCKED_EXIT] = FLAG_SOLID;
 		flags[UNLOCKED_EXIT] = FLAG_PASSABLE;
-		flags[SIGN] = FLAG_PASSABLE | FLAG_WOOD | FLAG_DIAGONALPASSAGE;
+		flags[SIGN] = FLAG_PASSABLE | FLAG_BURNABLE | FLAG_DIAGONALPASSAGE;
 		flags[WELL] = flags[EMPTY_WELL];
 		flags[STATUE] = FLAG_SOLID | FLAG_STONE;
 		flags[STATUE_SP] = FLAG_SOLID | FLAG_STONE | FLAG_UNSTITCHABLE;
@@ -162,9 +166,10 @@ public class Terrain {
         flags[WELL_MAGIC] = flags[EMPTY_WELL];
         flags[STAIRS_UP_ALTERNATE] = flags[STAIRS_UP];
         flags[STAIRS_DOWN_ALTERNATE] = flags[STAIRS_DOWN];
+        flags[ALCHEMY_EMPTY] = flags[ALCHEMY];
 
-		for (int n = WATER_TILES; n <= WATER; n++) {
-			flags[n] = flags[WATER];
+		for (int n = PUDDLE_TILES; n <= PUDDLE; n++) {
+			flags[n] = flags[PUDDLE];
 		}
 
 		for (int n = DIRT_TILES; n <= DIRT; n++) {
@@ -246,7 +251,7 @@ public class Terrain {
 					case 40: trap = new SummoningTrap().hide(); break;
 				}
 				if (trap != null){
-					trap.set( i );
+					trap.set( null, i );
 					traps.put( trap.pos, trap );
 					if (trap.visible)
 						c = TRAP;

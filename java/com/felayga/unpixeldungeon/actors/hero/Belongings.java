@@ -5,7 +5,7 @@
  * Shattered Pixel Dungeon
  * Copyright (C) 2014-2015 Evan Debenham
  *
- * Unpixel Dungeon
+ * unPixel Dungeon
  * Copyright (C) 2015-2016 Randall Foudray
  *
  * This program is free software: you can redistribute it and/or modify
@@ -21,13 +21,13 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>
  *
+ *
  */
 package com.felayga.unpixeldungeon.actors.hero;
 
 import com.felayga.unpixeldungeon.Assets;
 import com.felayga.unpixeldungeon.Badges;
 import com.felayga.unpixeldungeon.Dungeon;
-import com.felayga.unpixeldungeon.ShatteredPixelDungeon;
 import com.felayga.unpixeldungeon.actors.Char;
 import com.felayga.unpixeldungeon.effects.particles.ShadowParticle;
 import com.felayga.unpixeldungeon.items.EquippableItem;
@@ -41,7 +41,9 @@ import com.felayga.unpixeldungeon.items.bags.backpack.EquipmentBackpack;
 import com.felayga.unpixeldungeon.items.bags.backpack.Spellbook;
 import com.felayga.unpixeldungeon.items.bags.backpack.UncategorizedBackpack;
 import com.felayga.unpixeldungeon.items.keys.OldKey;
+import com.felayga.unpixeldungeon.items.potions.Potion;
 import com.felayga.unpixeldungeon.items.tools.ITool;
+import com.felayga.unpixeldungeon.items.wands.Wand;
 import com.felayga.unpixeldungeon.items.weapon.ammunition.AmmunitionWeapon;
 import com.felayga.unpixeldungeon.items.weapon.missiles.martial.Boomerang;
 import com.felayga.unpixeldungeon.levels.Level;
@@ -49,6 +51,7 @@ import com.felayga.unpixeldungeon.mechanics.BUCStatus;
 import com.felayga.unpixeldungeon.mechanics.Constant;
 import com.felayga.unpixeldungeon.mechanics.IDecayable;
 import com.felayga.unpixeldungeon.ui.Icons;
+import com.felayga.unpixeldungeon.unPixelDungeon;
 import com.felayga.unpixeldungeon.utils.GLog;
 import com.felayga.unpixeldungeon.windows.WndOptions;
 import com.watabou.noosa.audio.Sample;
@@ -91,6 +94,72 @@ public class Belongings implements Iterable<Item>, IDecayable, IBag {
     }
     public boolean locked() { return false; }
     public Char owner() { return owner; }
+    public IBag parent () { return null; }
+
+    public void contentsImpact(boolean verbose) {
+        Iterator<Item> iterator = iterator(false, true, false);
+
+        List<Item> pendingremoval = new ArrayList<>();
+
+        int shatter = 0;
+        int crack = 0;
+
+        while (iterator.hasNext()) {
+            Item item = iterator.next();
+
+            if (item instanceof IBag) {
+                IBag bag = (IBag) item;
+                bag.contentsImpact(verbose);
+            } else if (item instanceof Potion) {
+                int count = item.quantity();
+
+                while (count > 0) {
+                    if (Random.Int(3) != 0) {
+                        pendingremoval.add(item);
+                        shatter++;
+                    }
+                    count--;
+                }
+            } else if (item instanceof Wand) {
+                if (Random.Int(3) != 0) {
+                    pendingremoval.add(item);
+                    crack++;
+                }
+            }
+        }
+
+        if (pendingremoval.size() > 0) {
+            if (verbose) {
+                if (owner == Dungeon.hero && Dungeon.audible[owner.pos()]) {
+                    if (shatter > 0 && crack > 0) {
+                        Sample.INSTANCE.play(Assets.SND_SHATTER);
+                        Sample.INSTANCE.play(Assets.SND_DOOR_SMASH);
+                    } else if (shatter > 0) {
+                        Sample.INSTANCE.play(Assets.SND_SHATTER);
+                        //todo: broken potion effects in backpack
+                    } else if (crack > 0) {
+                        Sample.INSTANCE.play(Assets.SND_DOOR_SMASH);
+                    }
+                } else {
+                    if (shatter > 0 && crack > 0) {
+                        GLog.n("You hear muffled breaking noises.");
+                    } else if (shatter > 1) {
+                        GLog.n("You hear muffled shattering noises.");
+                    } else if (shatter > 0) {
+                        GLog.n("You hear a muffled shatter.");
+                    } else if (crack > 1) {
+                        GLog.n("You hear muffled cracking noises.");
+                    } else if (crack > 0) {
+                        GLog.n("You hear a muffled crack.");
+                    }
+                }
+            }
+
+            for (Item item : pendingremoval) {
+                this.remove(item, 1);
+            }
+        }
+    }
 
     //endregion
 
@@ -252,16 +321,18 @@ public class Belongings implements Iterable<Item>, IDecayable, IBag {
         if (!items.containsKey(slot) || unequip(items.get(slot), true)) {
             items.put(slot, item);
 
+            /*
             //GLog.d("itemcount="+items.size());
 
-            Iterator iterator = items.entrySet().iterator();
+            Iterator<Map.Entry<EquippableItem.Slot, EquippableItem>> iterator = items.entrySet().iterator();
             while (iterator.hasNext()) {
-                Map.Entry<EquippableItem.Slot, EquippableItem> pair = (Map.Entry<EquippableItem.Slot, EquippableItem>)iterator.next();
+                Map.Entry<EquippableItem.Slot, EquippableItem> pair = iterator.next();
                 //GLog.d("slot="+pair.getKey()+" item="+pair.getValue().getDisplayName());
             }
             //GLog.d("end iterator");
 
             //GLog.d("put item="+item.getDisplayName()+" in slot="+slot);
+            */
             return true;
         }
 
@@ -312,12 +383,12 @@ public class Belongings implements Iterable<Item>, IDecayable, IBag {
                     return false;
                 }
             }
-			options.add(items[n].getDisplayName());
+			options.add(items[n].getName());
 		}
 
 		options.add(Constant.Action.CANCEL);
 
-		ShatteredPixelDungeon.scene().add(
+		unPixelDungeon.scene().add(
 				new WndOptions("Unequip One Item", "No empty equipment slots for this item. Choose an item to swap out.", options) {
 
 					@Override
@@ -444,7 +515,7 @@ public class Belongings implements Iterable<Item>, IDecayable, IBag {
 		if (item.bucStatus() == BUCStatus.Cursed) {
 			cursed = true;
 
-            if (Level.fieldOfView[owner.pos]) {
+            if (owner.pos() >= 0 && Level.fieldOfView[owner.pos()]) {
                 item.bucStatus(true);
 
                 if (owner.sprite != null) {
@@ -500,7 +571,7 @@ public class Belongings implements Iterable<Item>, IDecayable, IBag {
 				Dungeon.quickslot.clearItem(item);
 			}
 			item.updateQuickslot();
-			Dungeon.level.drop( item, owner.pos );
+			Dungeon.level.drop( item, owner.pos() );
 		}
 
 		return true;
@@ -741,6 +812,29 @@ public class Belongings implements Iterable<Item>, IDecayable, IBag {
             return armorAmount + currentBonus;
         }
 	}
+
+    public int getArmorBonusMaximum() {
+        int currentBonus = 32767;
+
+        Iterator<Item> iterator = iterator(true, false);
+        int armorAmount = 0;
+
+        while (iterator.hasNext()) {
+            Item item = iterator.next();
+
+            if (item instanceof Armor) {
+                Armor armor = (Armor)item;
+
+                armorAmount += armor.armor;
+
+                if (currentBonus > armor.armorBonusMaximum) {
+                    currentBonus = armor.armorBonusMaximum;
+                }
+            }
+        }
+
+        return currentBonus;
+    }
 
 	public int getResistance() {
 		Iterator<Item> iterator = iterator(true, false);
@@ -1087,12 +1181,8 @@ public class Belongings implements Iterable<Item>, IDecayable, IBag {
 	*/
 
 	public void dropAll(int pos) {
-		ArrayList<Integer> passable = new ArrayList<Integer>();
+		ArrayList<Integer> passable = new ArrayList<>();
 		for (Integer ofs : Level.NEIGHBOURS8) {
-			if (ofs==0) {
-				continue;
-			}
-
 			int cell = pos + ofs;
 
 			if ((Level.passable[cell] || Level.avoid[cell]) && Dungeon.level.heaps.get( cell ) == null) {
@@ -1102,7 +1192,7 @@ public class Belongings implements Iterable<Item>, IDecayable, IBag {
 
 		boolean passableOrigin = Level.passable[pos];
 
-		Iterator<Item> items = iterator();
+		Iterator<Item> items = iterator(true, true, false);
 
 		while (items.hasNext()) {
 			Collections.shuffle(passable);
@@ -1110,6 +1200,8 @@ public class Belongings implements Iterable<Item>, IDecayable, IBag {
 			if (passableOrigin && items.hasNext())
 			{
 				Item item = items.next();
+                items.remove();
+
 				if (item.droppable) {
                     GLog.d("drop "+item.getDisplayName());
 					Dungeon.level.drop(item, pos).sprite.drop(pos);
@@ -1122,6 +1214,8 @@ public class Belongings implements Iterable<Item>, IDecayable, IBag {
 				}
 
 				Item item = items.next();
+                items.remove();
+
 				if (item.droppable) {
                     GLog.d("drop "+item.getDisplayName());
 					Dungeon.level.drop(item, cell).sprite.drop(pos);
@@ -1184,8 +1278,12 @@ public class Belongings implements Iterable<Item>, IDecayable, IBag {
 		return new ItemIterator();
 	}
 
-	public Iterator<Item> iterator(boolean equippedItems, boolean backpackItems) {
-		return new ItemIterator(equippedItems, backpackItems);
+    public Iterator<Item> iterator(boolean equippedItems, boolean backpackItems) {
+        return iterator(equippedItems, backpackItems, true);
+    }
+
+	public Iterator<Item> iterator(boolean equippedItems, boolean backpackItems, boolean allowNested) {
+		return new ItemIterator(equippedItems, backpackItems, allowNested);
 	}
 
 	private class ItemIterator implements Iterator<Item> {
@@ -1200,10 +1298,10 @@ public class Belongings implements Iterable<Item>, IDecayable, IBag {
 
 		public ItemIterator()
 		{
-			this(true, true);
+			this(true, true, true);
 		}
 
-		public ItemIterator(boolean equippedItems, boolean backpackItems)
+		public ItemIterator(boolean equippedItems, boolean backpackItems, boolean allowNested)
 		{
 			super();
 
@@ -1212,10 +1310,10 @@ public class Belongings implements Iterable<Item>, IDecayable, IBag {
                 equippedIterator = items.entrySet().iterator();
 			}
             if (backpackItems) {
-                backpack1Iterator = backpack1.iterator();
-                backpack2Iterator = backpack2.iterator();
-                backpack3Iterator = backpack3.iterator();
-                backpack4Iterator = backpack4.iterator();
+                backpack1Iterator = backpack1.iterator(allowNested);
+                backpack2Iterator = backpack2.iterator(allowNested);
+                backpack3Iterator = backpack3.iterator(allowNested);
+                backpack4Iterator = backpack4.iterator(allowNested);
             }
 		}
 

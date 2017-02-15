@@ -5,7 +5,7 @@
  * Shattered Pixel Dungeon
  * Copyright (C) 2014-2015 Evan Debenham
  *
- * Unpixel Dungeon
+ * unPixel Dungeon
  * Copyright (C) 2015-2016 Randall Foudray
  *
  * This program is free software: you can redistribute it and/or modify
@@ -21,6 +21,7 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>
  *
+ *
  */
 package com.felayga.unpixeldungeon;
 
@@ -31,10 +32,12 @@ import com.felayga.unpixeldungeon.actors.buffs.positive.Light;
 import com.felayga.unpixeldungeon.actors.hero.Hero;
 import com.felayga.unpixeldungeon.actors.hero.HeroClass;
 import com.felayga.unpixeldungeon.actors.mobs.npcs.Blacksmith;
+import com.felayga.unpixeldungeon.actors.mobs.npcs.Shopkeeper;
 import com.felayga.unpixeldungeon.actors.mobs.npcs.Wandmaker;
 import com.felayga.unpixeldungeon.items.Ankh;
 import com.felayga.unpixeldungeon.items.Generator;
 import com.felayga.unpixeldungeon.items.Item;
+import com.felayga.unpixeldungeon.items.armor.cloak.randomized.RandomizedCloak;
 import com.felayga.unpixeldungeon.items.food.CannedFood;
 import com.felayga.unpixeldungeon.items.potions.Potion;
 import com.felayga.unpixeldungeon.items.rings.Ring;
@@ -54,6 +57,7 @@ import com.felayga.unpixeldungeon.mechanics.GameTime;
 import com.felayga.unpixeldungeon.scenes.GameScene;
 import com.felayga.unpixeldungeon.ui.QuickSlotButton;
 import com.felayga.unpixeldungeon.utils.BArray;
+import com.felayga.unpixeldungeon.utils.GLog;
 import com.felayga.unpixeldungeon.utils.Utils;
 import com.felayga.unpixeldungeon.windows.hero.WndInitHero;
 import com.felayga.unpixeldungeon.windows.hero.WndResurrect;
@@ -70,6 +74,8 @@ import java.io.OutputStream;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashSet;
+
+import javax.microedition.khronos.opengles.GL;
 
 //import com.felayga.unpixeldungeon.actors.mobs.npcs.Ghost;
 //import com.felayga.unpixeldungeon.actors.mobs.npcs.Imp;
@@ -113,6 +119,8 @@ public class Dungeon {
 
     // Hero's field of view
     public static boolean[] visible = new boolean[Level.LENGTH];
+    public static boolean[] touchable = new boolean[Level.LENGTH];
+    public static boolean[] audible = new boolean[Level.LENGTH];
 
     public static SparseArray<ArrayList<Item>> droppedItems;
 
@@ -120,10 +128,9 @@ public class Dungeon {
 
     public static void init() {
         version = Game.versionCode;
-        challenges = ShatteredPixelDungeon.challenges();
+        challenges = unPixelDungeon.challenges();
 
         Actor.clear();
-        Actor.resetNextID();
 
         PathFinder.setMapSize(Level.WIDTH, Level.HEIGHT);
 
@@ -131,6 +138,7 @@ public class Dungeon {
         Potion.initColors();
         Ring.initGems();
         Wand.initLabels();
+        RandomizedCloak.initNames();
 
         Statistics.reset();
         Journal.reset();
@@ -140,6 +148,7 @@ public class Dungeon {
 
         __depth = 0;
         depthAdjusted = 0;
+        GLog.d("***** __depth set to 0 (init)");
         //gold = 0;
 
         droppedItems = new SparseArray<ArrayList<Item>>();
@@ -274,6 +283,7 @@ public class Dungeon {
         Actor.clear();
 
         Arrays.fill(visible, false);
+        Arrays.fill(touchable, false);
 
         level.reset();
         switchLevel(level, level.entrance);
@@ -305,22 +315,20 @@ public class Dungeon {
         }
 
         if (pos == Constant.Position.EXIT) {
-            hero.pos = level.exit;
+            pos = level.exit;
         } else if (pos == Constant.Position.ENTRANCE) {
-            hero.pos = level.entrance;
+            pos = level.entrance;
         } else if (pos == Constant.Position.RANDOM) {
             while (pos < 0 || (Terrain.flags[level.map[pos]] & Terrain.FLAG_PASSABLE) == 0) {
                 pos = Random.Int(level.WIDTH - 1) + 1 + (Random.Int(level.HEIGHT - 1) + 1) * level.WIDTH;
             }
-
-            hero.pos = pos;
         } else if (pos == Constant.Position.EXIT) {
-            hero.pos = level.exitAlternate;
+            pos = level.exitAlternate;
         } else if (pos == Constant.Position.ENTRANCE) {
-            hero.pos = level.entranceAlternate;
-        } else {
-            hero.pos = pos;
+            pos = level.entranceAlternate;
         }
+
+        hero.pos(pos);
 
         Light light = hero.buff(Light.class);
         hero.viewDistance = light == null ? level.viewDistance : Math.max(Light.DISTANCE, level.viewDistance);
@@ -330,7 +338,7 @@ public class Dungeon {
             MagesStaff staff = new MagesStaff();
             staff.identify();
             if (!Dungeon.hero.belongings.collect(staff)) {
-                Dungeon.level.drop(staff, Dungeon.hero.pos);
+                Dungeon.level.drop(staff, Dungeon.hero.pos());
             }
         }
 
@@ -345,7 +353,7 @@ public class Dungeon {
 
     public static void dropToChasm(Item item) {
         int depth = Dungeon.__depth + 1;
-        ArrayList<Item> dropped = (ArrayList<Item>) Dungeon.droppedItems.get(depth);
+        ArrayList<Item> dropped = Dungeon.droppedItems.get(depth);
         if (dropped == null) {
             Dungeon.droppedItems.put(depth, dropped = new ArrayList<Item>());
         }
@@ -441,10 +449,12 @@ public class Dungeon {
             Potion.save(bundle);
             Ring.save(bundle);
             Wand.save(bundle);
+            RandomizedCloak.save(bundle);
             CannedFood.save(bundle);
             DungeonBranch.save(bundle);
 
-            Actor.storeNextID(bundle);
+            Char.Registry.save(bundle);
+            Shopkeeper.Registry.save(bundle);
 
             Bundle badges = new Bundle();
             Badges.saveLocal(badges);
@@ -503,7 +513,8 @@ public class Dungeon {
 
         Generator.reset();
 
-        Actor.restoreNextID(bundle);
+        Char.Registry.restore(bundle);
+        Shopkeeper.Registry.restore(bundle);
 
         quickslot.reset();
         QuickSlotButton.reset();
@@ -522,6 +533,7 @@ public class Dungeon {
         Potion.restore(bundle);
         Ring.restore(bundle);
         Wand.restore(bundle);
+        RandomizedCloak.restore(bundle);
         CannedFood.restore(bundle);
         DungeonBranch.restore(bundle);
 
@@ -637,7 +649,6 @@ public class Dungeon {
     }
 
     public static void win(String desc) {
-
         hero.belongings.identify();
 
         if (challenges != 0) {
@@ -649,15 +660,17 @@ public class Dungeon {
     }
 
     public static void observe() {
-
         if (level == null) {
             return;
         }
 
-        level.updateFieldOfView(hero);
+        level.updateFieldOfSenses(hero);
         System.arraycopy(Level.fieldOfView, 0, visible, 0, visible.length);
+        System.arraycopy(Level.fieldOfTouch, 0, touchable, 0, touchable.length);
+        System.arraycopy(Level.fieldOfSound, 0, audible, 0, audible.length);
 
         BArray.or(level.visited, visible, level.visited);
+        BArray.or(level.visited, touchable, level.visited);
 
         GameScene.afterObserve();
     }
@@ -666,36 +679,41 @@ public class Dungeon {
 
     public static int findPath(Char ch, int from, int to, boolean pass[], boolean[] diagonal, boolean[] visible) {
         if (Level.canStep(from, to, diagonal)) {
-            return Actor.findChar(to) == null && (pass[to] || Level.avoid[to]) ? to : -1;
+            return Actor.findChar(to) == null && (pass[to] || Level.avoid[to]) ? to : Constant.Position.NONE;
         }
 
-        if (ch.flying || ch.buff(Amok.class) != null) {
+        if (ch.flying() || ch.buff(Amok.class) != null) {
             BArray.or(pass, Level.avoid, passable);
         } else {
             System.arraycopy(pass, 0, passable, 0, Level.LENGTH);
         }
 
-        for (Char c : Actor.chars()) {
-            if (visible[c.pos]) {
-                passable[c.pos] = false;
+        SparseArray<Char> chars = Actor.chars();
+        for (int n = 0; n < chars.size(); n++) {
+            Char c = chars.valueAt(n);
+
+            if (visible[c.pos()]) {
+                passable[c.pos()] = false;
             }
         }
 
         return PathFinder.getStep(from, to, passable, diagonal);
-
     }
 
     public static int flee(Char ch, int cur, int from, boolean pass[], boolean[] diagonal, boolean[] visible) {
 
-        if (ch.flying) {
+        if (ch.flying()) {
             BArray.or(pass, Level.avoid, passable);
         } else {
             System.arraycopy(pass, 0, passable, 0, Level.LENGTH);
         }
 
-        for (Char c : Actor.chars()) {
-            if (visible[c.pos]) {
-                passable[c.pos] = false;
+        android.util.SparseArray<Char> chars = Actor.chars();
+        for (int n = 0; n < chars.size(); n++) {
+            Char c = chars.valueAt(n);
+
+            if (visible[c.pos()]) {
+                passable[c.pos()] = false;
             }
         }
 

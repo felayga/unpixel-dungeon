@@ -5,7 +5,7 @@
  * Shattered Pixel Dungeon
  * Copyright (C) 2014-2015 Evan Debenham
  *
- * Unpixel Dungeon
+ * unPixel Dungeon
  * Copyright (C) 2015-2016 Randall Foudray
  *
  * This program is free software: you can redistribute it and/or modify
@@ -20,6 +20,7 @@
  *
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>
+ *
  *
  */
 package com.felayga.unpixeldungeon.sprites.mobs.humanoid;
@@ -40,22 +41,31 @@ public class HumanoidSprite extends MobSprite {
         int offset = index * framesPerRow;
 
         initAnimationIdle(frames, offset);
-
-        run = new Animation( HeroSprite.RUN_FRAMERATE, true );
-        run.frames( frames, offset + 2, offset + 3, offset + 4, offset + 5, offset + 6, offset + 7 );
-
-        die = new Animation( 20, false );
-        die.frames( frames, offset + 0, offset + 11, offset + 12, offset + 13, offset + 14 );
-
-        attack = new Animation( 15, false );
-        attack.frames( frames, offset + 8, offset + 9, offset + 10, offset + 0 );
+        initAnimationRun(frames, offset);
+        initAnimationDie(frames, offset);
+        initAnimationAttack(frames, offset);
 
         play(idle);
     }
 
     protected void initAnimationIdle(TextureFilm frames, int offset) {
         idle = new Animation( 1, true );
-        idle.frames( frames, offset + 0, offset + 0, offset + 0, offset + 1, offset + 0, offset + 0, offset + 1, offset + 1 );
+        idle.frames(frames, offset + 0, offset + 0, offset + 0, offset + 1, offset + 0, offset + 0, offset + 1, offset + 1);
+    }
+
+    protected void initAnimationRun(TextureFilm frames, int offset) {
+        run = new Animation( HeroSprite.RUN_FRAMERATE, true );
+        run.frames( frames, offset + 2, offset + 3, offset + 4, offset + 5, offset + 6, offset + 7 );
+    }
+
+    protected void initAnimationDie(TextureFilm frames, int offset) {
+        die = new Animation( 20, false );
+        die.frames( frames, offset + 0, offset + 11, offset + 12, offset + 13, offset + 14 );
+    }
+
+    protected void initAnimationAttack(TextureFilm frames, int offset) {
+        attack = new Animation( 15, false );
+        attack.frames( frames, offset + 8, offset + 9, offset + 10, offset + 0 );
     }
 
 }

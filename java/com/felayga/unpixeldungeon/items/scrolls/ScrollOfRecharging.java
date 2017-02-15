@@ -5,7 +5,7 @@
  * Shattered Pixel Dungeon
  * Copyright (C) 2014-2015 Evan Debenham
  *
- * Unpixel Dungeon
+ * unPixel Dungeon
  * Copyright (C) 2015-2016 Randall Foudray
  *
  * This program is free software: you can redistribute it and/or modify
@@ -21,10 +21,12 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>
  *
+ *
  */
 package com.felayga.unpixeldungeon.items.scrolls;
 
 import com.felayga.unpixeldungeon.Assets;
+import com.felayga.unpixeldungeon.actors.Char;
 import com.felayga.unpixeldungeon.actors.buffs.Buff;
 import com.felayga.unpixeldungeon.actors.buffs.FlavourBuff;
 import com.felayga.unpixeldungeon.actors.buffs.positive.Invisibility;
@@ -51,11 +53,10 @@ public class ScrollOfRecharging extends Scroll {
 	@Override
 	protected void doRead() {
 
-		Buff.affect(curUser, Recharging.class, BUFF_DURATION);
+		Buff.affect(curUser, curUser, Recharging.class, BUFF_DURATION);
 		charge(curUser);
 		
 		Sample.INSTANCE.play( Assets.SND_READ );
-		Invisibility.dispel();
 
 		GLog.i( "a surge of energy courses through your body, invigorating your wands.");
 		SpellSprite.show( curUser, SpellSprite.CHARGE );
@@ -71,7 +72,7 @@ public class ScrollOfRecharging extends Scroll {
 			"charge up all the users wands over time.";
 	}
 	
-	public static void charge( Hero hero ) {
+	public static void charge( Char hero ) {
 		hero.sprite.centerEmitter(-1).burst( EnergyParticle.FACTORY, 15 );
 	}
 

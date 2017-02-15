@@ -5,7 +5,7 @@
  * Shattered Pixel Dungeon
  * Copyright (C) 2014-2015 Evan Debenham
  *
- * Unpixel Dungeon
+ * unPixel Dungeon
  * Copyright (C) 2015-2016 Randall Foudray
  *
  * This program is free software: you can redistribute it and/or modify
@@ -20,6 +20,7 @@
  *
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>
+ *
  *
  */
 package com.felayga.unpixeldungeon.items.armor;
@@ -60,13 +61,6 @@ public class Armor extends EquippableItem {
 
 	private static final String TXT_EQUIP_CURSED_HERO	= "your %s constricts around you painfully";
 	private static final String TXT_EQUIP_CURSED_OTHER	= "the %s winces as their armor tightens";
-		
-	private static final String TXT_IDENTIFY	= "you are now familiar enough with your %s to identify it.";
-	
-	private static final String TXT_TO_STRING	= "%s :%d";
-	
-	private static final String TXT_INCOMPATIBLE =
-		"Interaction of different types of magic has erased the glyph on this armor!";
 	
 	private int hitsToKnow = HITS_TO_KNOW;
 	
@@ -122,7 +116,7 @@ public class Armor extends EquippableItem {
 	}
 
 	public int defense() {
-		return armor + level;
+		return armor + level();
 	}
 
 	public Slot[] getSlots() {
@@ -179,11 +173,9 @@ public class Armor extends EquippableItem {
 			damage = glyph.proc( this, attacker, defender, damage );
 		}
 		
-		if (!levelKnown) {
+		if (!levelKnown()) {
 			if (--hitsToKnow <= 0) {
-				levelKnown = true;
-				GLog.w( TXT_IDENTIFY, getDisplayName() );
-				Badges.validateItemLevelAquired( this );
+				levelKnown(true, true);
 			}
 		}
 		
@@ -207,11 +199,11 @@ public class Armor extends EquippableItem {
 	public String getDisplayName() {
 		String name = super.getDisplayName();
 
-		if (levelKnown) {
-			if (level >= 0) {
-				name = "+" + level + " " + name;
+		if (hasLevels() && levelKnown()) {
+			if (level() >= 0) {
+				name = "+" + level() + " " + name;
 			} else {
-				name = level + " " + name;
+				name = level() + " " + name;
 			}
 		}
 
@@ -223,7 +215,7 @@ public class Armor extends EquippableItem {
 		String name = getDisplayName();
 		StringBuilder info = new StringBuilder( desc() );
 		
-		if (levelKnown) {
+		if (levelKnown()) {
 			/*
 			info.append(
 				"\n\nThis " + name + " provides damage absorption up to " +

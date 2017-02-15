@@ -5,7 +5,7 @@
  * Shattered Pixel Dungeon
  * Copyright (C) 2014-2015 Evan Debenham
  *
- * Unpixel Dungeon
+ * unPixel Dungeon
  * Copyright (C) 2015-2016 Randall Foudray
  *
  * This program is free software: you can redistribute it and/or modify
@@ -20,6 +20,7 @@
  *
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>
+ *
  *
  */
 
@@ -57,6 +58,12 @@ public class LargeBox extends LargeChest {
 
     @Override
     public String info() {
-        return "This heavy chest is used to store items for safe keeping.";
+        String retval = "This heavy box is used to store items for safe keeping.";
+
+        if (locked()) {
+            retval += "\nIt appears to be locked.";
+        }
+
+        return retval;
     }
 }

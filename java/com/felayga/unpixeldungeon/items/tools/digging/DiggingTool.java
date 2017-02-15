@@ -5,7 +5,7 @@
  * Shattered Pixel Dungeon
  * Copyright (C) 2014-2015 Evan Debenham
  *
- * Unpixel Dungeon
+ * unPixel Dungeon
  * Copyright (C) 2015-2016 Randall Foudray
  *
  * This program is free software: you can redistribute it and/or modify
@@ -20,6 +20,7 @@
  *
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>
+ *
  *
  */
 
@@ -101,36 +102,39 @@ public abstract class DiggingTool extends SimpleMeleeWeapon implements ITool {
             retval = 3;
         }
 
-        return 9 + retval + level + user.getAttributeModifier(AttributeType.STRCON) + user.getAttributeModifier(AttributeType.DEXCHA);
+        return 9 + retval + level() + user.getAttributeModifier(AttributeType.STRCON) + user.getAttributeModifier(AttributeType.DEXCHA);
     }
 
-    public void apply(Hero hero, int target) {
-        if (equipIfNecessary(hero) == EquippableItem.EquipIfNecessaryState.NotEquipped) {
+    public void apply(Char ch, int target) {
+        if (equipIfNecessary(ch) == EquippableItem.EquipIfNecessaryState.NotEquipped) {
             return;
         }
 
-        Mob mob = Dungeon.level.findMob(target);
+        if (ch instanceof Hero) {
+            Hero hero = (Hero)ch;
 
-        if (Dungeon.level.solid[target] || target == hero.pos) {
-            hero.curAction = new HeroAction.Dig(this, target, 101);
-            hero.motivate(true);
-        } else if (mob != null) {
-            if (mob instanceof Boulder) {
-                hero.curAction = new HeroAction.Dig(this, (Boulder)mob, 101);
+            Mob mob = Dungeon.level.findMob(target);
+
+            if (Dungeon.level.solid[target] || target == hero.pos()) {
+                hero.curAction = new HeroAction.Dig(this, target, 101);
+                hero.motivate(true);
+            } else if (mob != null) {
+                if (mob instanceof Boulder) {
+                    hero.curAction = new HeroAction.Dig(this, (Boulder) mob, 101);
+                } else {
+                    hero.curAction = new HeroAction.Attack(mob);
+                }
+                hero.motivate(true);
+            } else {
+                GLog.n("Your " + getToolClass() + " can't be applied there.");
             }
-            else {
-                hero.curAction = new HeroAction.Attack(mob);
-            }
-            hero.motivate(true);
-        } else {
-            GLog.n("Your " + getToolClass() + " can't be applied there.");
         }
     }
 
     public static CellSelector.Listener applier = new CellSelector.Listener() {
         @Override
         public boolean onSelect(Integer target) {
-            if (target != null) {
+            if (target != null && target != Constant.Position.NONE) {
                 curTool.apply(curUser, target);
             }
             return true;

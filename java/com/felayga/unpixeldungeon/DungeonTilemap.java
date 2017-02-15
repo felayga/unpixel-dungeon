@@ -5,7 +5,7 @@
  * Shattered Pixel Dungeon
  * Copyright (C) 2014-2015 Evan Debenham
  *
- * Unpixel Dungeon
+ * unPixel Dungeon
  * Copyright (C) 2015-2016 Randall Foudray
  *
  * This program is free software: you can redistribute it and/or modify
@@ -21,10 +21,12 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>
  *
+ *
  */
 package com.felayga.unpixeldungeon;
 
 import com.felayga.unpixeldungeon.levels.Level;
+import com.felayga.unpixeldungeon.mechanics.Constant;
 import com.watabou.noosa.Image;
 import com.watabou.noosa.TextureFilm;
 import com.watabou.noosa.Tilemap;
@@ -52,7 +54,7 @@ public class DungeonTilemap extends Tilemap {
 			offset( this.point().negate() ).
 			invScale( SIZE ).
 			floor();
-		return p.x >= 0 && p.x < Level.WIDTH && p.y >= 0 && p.y < Level.HEIGHT ? p.x + p.y * Level.WIDTH : -1;
+		return p.x >= 0 && p.x < Level.WIDTH && p.y >= 0 && p.y < Level.HEIGHT ? p.x + p.y * Level.WIDTH : Constant.Position.NONE;
 	}
 	
 	@Override

@@ -5,7 +5,7 @@
  * Shattered Pixel Dungeon
  * Copyright (C) 2014-2015 Evan Debenham
  *
- * Unpixel Dungeon
+ * unPixel Dungeon
  * Copyright (C) 2015-2016 Randall Foudray
  *
  * This program is free software: you can redistribute it and/or modify
@@ -21,6 +21,7 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>
  *
+ *
  */
 
 package com.felayga.unpixeldungeon.actors.mobs.lichen;
@@ -31,10 +32,17 @@ import com.felayga.unpixeldungeon.actors.buffs.Buff;
 import com.felayga.unpixeldungeon.actors.buffs.hero.Encumbrance;
 import com.felayga.unpixeldungeon.actors.buffs.negative.Held;
 import com.felayga.unpixeldungeon.actors.mobs.Mob;
+import com.felayga.unpixeldungeon.mechanics.Characteristic;
 import com.felayga.unpixeldungeon.mechanics.CorpseEffect;
 import com.felayga.unpixeldungeon.mechanics.GameTime;
 import com.felayga.unpixeldungeon.mechanics.MagicType;
 import com.felayga.unpixeldungeon.sprites.mobs.fungus.LichenSprite;
+import com.watabou.utils.Bundlable;
+import com.watabou.utils.Bundle;
+
+import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.List;
 
 /**
  * Created by HELLO on 5/22/2016.
@@ -47,8 +55,7 @@ public class Lichen extends Mob {
         name = "lichen";
         spriteClass = LichenSprite.class;
 
-        experience = 4;
-        movementSpeed(GameTime.TICK * 12);
+        movementSpeed(GameTime.TICK * 12 / 1);
         attackSpeed(GameTime.TICK);
         defenseMundane = 11;
         defenseMagical = 0;
@@ -56,6 +63,35 @@ public class Lichen extends Mob {
         nutrition = 200;
         immunityMagical = MagicType.None.value;
         corpseEffects = CorpseEffect.Unrottable.value | CorpseEffect.Undecayable.value | CorpseEffect.Vegetable.value;
+        viewDistance = 0;
+        characteristics = Characteristic.value(Characteristic.NonBreather, Characteristic.CannotUseItems, Characteristic.Brainless);
+    }
+
+    private static final String TOUCHEDVICTIMS = "touchedVictims";
+
+    @Override
+    public void storeInBundle(Bundle bundle) {
+        super.storeInBundle(bundle);
+
+        int[] _touchedVictims = new int[touchedVictims.size()];
+        int n = 0;
+        for (Integer victim : touchedVictims) {
+            _touchedVictims[n] = victim;
+            n++;
+        }
+
+        bundle.put(TOUCHEDVICTIMS, _touchedVictims);
+    }
+
+    @Override
+    public void restoreFromBundle(Bundle bundle) {
+        super.restoreFromBundle(bundle);
+
+        int[] _touchedVictims = bundle.getIntArray(TOUCHEDVICTIMS);
+
+        for (int n=0;n<_touchedVictims.length;n++) {
+            touchedVictims.add(_touchedVictims[n]);
+        }
     }
 
     @Override
@@ -63,22 +99,36 @@ public class Lichen extends Mob {
         return true;
     }
 
-    Held buff;
+    private HashSet<Integer> touchedVictims = new HashSet<>();
 
     @Override
-    protected void touch(Char enemy, boolean visible) {
-        Buff.prolong(enemy, Held.class, movementSpeed());
-        buff = enemy.buff(Held.class);
-        if (buff != null) {
-            buff.host = this;
-        }
+    protected void touch(Char enemy, boolean visible, boolean touchable) {
+        Buff.prolong(enemy, this, Held.class, movementSpeed());
+        touchedVictims.add(enemy.charRegistryIndex());
     }
 
     @Override
     public void die(Actor cause) {
-        if (buff != null && buff.host == this) {
-            Buff.detach(buff);
-            buff = null;
+        List<Held> pendingRemoval = new ArrayList<Held>();
+
+        for (Integer victim : touchedVictims) {
+            Char c = Char.Registry.get(victim);
+
+            if (c != null) {
+                for (Buff buff : c.buffs()) {
+                    if (buff instanceof Held) {
+                        Held held = (Held)buff;
+
+                        if (held.ownerRegistryIndex() == charRegistryIndex()) {
+                            pendingRemoval.add(held);
+                        }
+                    }
+                }
+            }
+        }
+
+        for (Held held : pendingRemoval) {
+            Buff.detach(held);
         }
 
         super.die(cause);

@@ -5,7 +5,7 @@
  * Shattered Pixel Dungeon
  * Copyright (C) 2014-2015 Evan Debenham
  *
- * Unpixel Dungeon
+ * unPixel Dungeon
  * Copyright (C) 2015-2016 Randall Foudray
  *
  * This program is free software: you can redistribute it and/or modify
@@ -21,6 +21,7 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>
  *
+ *
  */
 package com.felayga.unpixeldungeon.plants;
 
@@ -30,6 +31,8 @@ import com.felayga.unpixeldungeon.actors.Char;
 import com.felayga.unpixeldungeon.actors.buffs.Buff;
 import com.felayga.unpixeldungeon.effects.CellEmitter;
 import com.felayga.unpixeldungeon.effects.particles.EarthParticle;
+import com.felayga.unpixeldungeon.items.potions.IAlchemyComponent;
+import com.felayga.unpixeldungeon.items.potions.PotionOfBrewing;
 import com.felayga.unpixeldungeon.mechanics.GameTime;
 import com.felayga.unpixeldungeon.sprites.ItemSpriteSheet;
 import com.felayga.unpixeldungeon.ui.BuffIndicator;
@@ -38,6 +41,7 @@ import com.watabou.noosa.Camera;
 import com.watabou.utils.Bundle;
 
 public class Earthroot extends Plant {
+    private static final String TXT_NAME = "Earthroot";
 
 	private static final String TXT_DESC =
 		"When a creature touches an Earthroot, its roots " +
@@ -45,7 +49,7 @@ public class Earthroot extends Plant {
 
     public Earthroot()
 	{
-        super("Earthroot", 5);
+        super(TXT_NAME, 5);
 	}
 	
 	@Override
@@ -53,7 +57,7 @@ public class Earthroot extends Plant {
 		Char ch = Actor.findChar(pos);
 		
 		if (ch == Dungeon.hero) {
-			Buff.affect( ch, Armor.class ).level = ch.HT;
+			Buff.affect( ch, Char.Registry.get(ownerRegistryIndex()), Armor.class ).level = ch.HT;
 		}
 		
 		if (Dungeon.visible[pos]) {
@@ -67,9 +71,9 @@ public class Earthroot extends Plant {
 		return TXT_DESC;
 	}
 	
-	public static class Seed extends Plant.Seed {
+	public static class Seed extends Plant.Seed implements IAlchemyComponent {
 		{
-			plantName = "Earthroot";
+			plantName = TXT_NAME;
 			
 			name = "seed of " + plantName;
 			image = ItemSpriteSheet.SEED_EARTHROOT;
@@ -97,14 +101,14 @@ public class Earthroot extends Plant {
 		}
 		
 		@Override
-		public boolean attachTo( Char target ) {
-			pos = target.pos;
-			return super.attachTo( target );
+		public boolean attachTo( Char target, Char source ) {
+			pos = target.pos();
+			return super.attachTo( target, source );
 		}
 		
 		@Override
 		public boolean act() {
-			if (target.pos != pos) {
+			if (target.pos() != pos) {
 				detach();
 			}
             spend_new(STEP, false);
@@ -166,4 +170,12 @@ public class Earthroot extends Plant {
 			level = bundle.getInt( LEVEL );
 		}
 	}
+
+    public static class Brew extends PotionOfBrewing {
+        {
+            plantName = "seed of " + TXT_NAME;
+
+            image = ItemSpriteSheet.ALCHEMY_EARTHROOT;
+        }
+    }
 }

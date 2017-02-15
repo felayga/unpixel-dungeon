@@ -5,7 +5,7 @@
  * Shattered Pixel Dungeon
  * Copyright (C) 2014-2015 Evan Debenham
  *
- * Unpixel Dungeon
+ * unPixel Dungeon
  * Copyright (C) 2015-2016 Randall Foudray
  *
  * This program is free software: you can redistribute it and/or modify
@@ -20,6 +20,7 @@
  *
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>
+ *
  *
  */
 package com.felayga.unpixeldungeon.items.artifacts;
@@ -55,7 +56,7 @@ public class HornOfPlenty extends Artifact_old {
 		name = "Horn of Plenty";
 		image = ItemSpriteSheet.ARTIFACT_HORN1;
 
-		level = 0;
+		level(0);
 		levelCap = 30;
 
 		charge = 0;
@@ -79,7 +80,7 @@ public class HornOfPlenty extends Artifact_old {
 		ArrayList<String> actions = super.actions( hero );
 		if (isEquipped( hero ) && charge > 0)
 			actions.add(AC_EAT);
-		if (isEquipped( hero ) && level < 30 && bucStatus != BUCStatus.Cursed)
+		if (isEquipped( hero ) && level() < 30 && bucStatus != BUCStatus.Cursed)
 			actions.add(AC_STORE);
 		return actions;
 	}
@@ -92,7 +93,7 @@ public class HornOfPlenty extends Artifact_old {
 			if (!isEquipped(hero)) GLog.i("You need to equip your horn to do that.");
 			else if (charge == 0)  GLog.i("Your horn has no food in it to eat!");
 			else {
-				((Hunger) hero.buff(Hunger.class)).satisfy_new((int)(energy * charge));
+				hero.buff(Hunger.class).satisfy_new((int)(energy * charge));
 
 				//if you get at least 100 food energy from the horn
 				if (charge >= 3) {
@@ -105,7 +106,7 @@ public class HornOfPlenty extends Artifact_old {
 							break;
 						case MAGE:
 							//1 charge
-							Buff.affect( hero, ScrollOfRecharging.Recharging.class, GameTime.TICK * 4 );
+							Buff.affect( hero, hero, ScrollOfRecharging.Recharging.class, GameTime.TICK * 4 );
 							ScrollOfRecharging.charge(hero);
 							break;
 						case ROGUE:
@@ -117,7 +118,7 @@ public class HornOfPlenty extends Artifact_old {
 				}
 				charge = 0;
 
-				hero.sprite.operate(hero.pos);
+				hero.sprite.operate(hero.pos());
 				hero.busy();
 				SpellSprite.show(hero, SpellSprite.FOOD);
 				Sample.INSTANCE.play(Assets.SND_EAT);
@@ -132,7 +133,7 @@ public class HornOfPlenty extends Artifact_old {
 				updateQuickslot();
 			}
 		} else if (action.equals(AC_STORE)){
-			GameScene.selectItem(itemSelector, Food.class, inventoryTitle);
+			GameScene.selectItem(itemSelector, Food.class, inventoryTitle, null);
 		}
 
 		return retval;
@@ -162,7 +163,7 @@ public class HornOfPlenty extends Artifact_old {
 			if (bucStatus != BUCStatus.Cursed) {
 				desc += "\n\nThe horn rests at your side and is surprisingly lightweight, even with food in it.";
 
-				if (level < 15)
+				if (level() < 15)
 					desc += " Perhaps there is a way to increase the horn's power by giving it food energy.";
 			} else {
 				desc += "\n\nThe cursed horn has bound itself to your side, " +
@@ -182,7 +183,7 @@ public class HornOfPlenty extends Artifact_old {
 
 				//generates 0.25 food value every round, +0.015 value per level
 				//to a max of 0.70 food value per round (0.25+0.5, at level 30)
-				partialCharge += 0.25f + (0.015f*level);
+				partialCharge += 0.25f + (0.015f*level());
 
 				//charge is in increments of 36 food value.
 				if (partialCharge >= 36) {
@@ -223,14 +224,14 @@ public class HornOfPlenty extends Artifact_old {
 					GLog.w("your horn rejects the unprepared blandfruit.");
 				} else {
 					Hero hero = Dungeon.hero;
-					hero.sprite.operate(hero.pos);
+					hero.sprite.operate(hero.pos());
 					hero.busy();
 					hero.spend_new(TIME_TO_EAT, false);
 
                     //todo: horn of plenty upgrading if keeping it at all
 					//curItem.upgrade(item, ((Food) item).hornValue);
-					if (curItem.level >= 30){
-						curItem.level = 30;
+					if (curItem.level() >= 30){
+						curItem.level(30);
 						GLog.p("your horn has consumed all the food it can!");
 					} else {
 						GLog.p("the horn consumes your food offering and grows in strength!");

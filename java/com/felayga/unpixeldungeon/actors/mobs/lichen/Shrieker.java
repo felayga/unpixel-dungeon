@@ -5,7 +5,7 @@
  * Shattered Pixel Dungeon
  * Copyright (C) 2014-2015 Evan Debenham
  *
- * Unpixel Dungeon
+ * unPixel Dungeon
  * Copyright (C) 2015-2016 Randall Foudray
  *
  * This program is free software: you can redistribute it and/or modify
@@ -21,6 +21,7 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>
  *
+ *
  */
 
 package com.felayga.unpixeldungeon.actors.mobs.lichen;
@@ -31,6 +32,7 @@ import com.felayga.unpixeldungeon.actors.buffs.hero.Encumbrance;
 import com.felayga.unpixeldungeon.actors.mobs.Mob;
 import com.felayga.unpixeldungeon.items.scrolls.ScrollOfRage;
 import com.felayga.unpixeldungeon.items.weapon.IWeapon;
+import com.felayga.unpixeldungeon.mechanics.Characteristic;
 import com.felayga.unpixeldungeon.mechanics.CorpseEffect;
 import com.felayga.unpixeldungeon.mechanics.GameTime;
 import com.felayga.unpixeldungeon.mechanics.MagicType;
@@ -48,8 +50,7 @@ public class Shrieker extends Mob {
         name = "shrieker";
         spriteClass = ShriekerSprite.class;
 
-        experience = 28;
-        movementSpeed(1);
+        movementSpeed(GameTime.TICK * 12);
         attackSpeed(GameTime.TICK);
         defenseMundane = 13;
         defenseMagical = 0;
@@ -58,6 +59,8 @@ public class Shrieker extends Mob {
         immunityMagical = MagicType.Poison.value;
         corpseEffects = CorpseEffect.Vegetable.value;
         corpseResistances = MagicType.Poison.value;
+        viewDistance = 0;
+        characteristics = Characteristic.value(Characteristic.NonBreather, Characteristic.CannotUseItems, Characteristic.Brainless);
     }
 
     @Override
@@ -77,7 +80,7 @@ public class Shrieker extends Mob {
         return super.defenseProc(enemy, damage);
     }
 
-    protected  void shriek() {
+    protected void shriek() {
         int distance = Math.max(Dungeon.level.WIDTH, Dungeon.level.HEIGHT) / 8;
         int enrageDistance = 0;
 
@@ -86,7 +89,7 @@ public class Shrieker extends Mob {
         }
 
 
-        ScrollOfRage.enrage(pos, enrageDistance);
+        ScrollOfRage.enrage(this, pos(), enrageDistance);
 
         if (Random.Int(10) == 0) {
             GLog.n("The shrieker shrieks!");

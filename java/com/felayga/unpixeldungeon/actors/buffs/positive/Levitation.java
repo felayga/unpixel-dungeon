@@ -5,7 +5,7 @@
  * Shattered Pixel Dungeon
  * Copyright (C) 2014-2015 Evan Debenham
  *
- * Unpixel Dungeon
+ * unPixel Dungeon
  * Copyright (C) 2015-2016 Randall Foudray
  *
  * This program is free software: you can redistribute it and/or modify
@@ -21,6 +21,7 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>
  *
+ *
  */
 package com.felayga.unpixeldungeon.actors.buffs.positive;
 
@@ -34,50 +35,50 @@ import com.felayga.unpixeldungeon.ui.BuffIndicator;
 
 public class Levitation extends FlavourBuff {
 
-	public static final long DURATION	= GameTime.TICK * 20;
-	
-	@Override
-	public boolean attachTo( Char target ) {
-		if (super.attachTo( target )) {
-			target.flying = true;
-			Roots.detach(target, Roots.class);
-			return true;
-		} else {
-			return false;
-		}
-	}
-	
-	@Override
-	public void detach() {
-		target.flying = false;
-		Dungeon.level.press( target.pos, target );
-		super.detach();
-	}
-	
-	@Override
-	public int icon() {
-		return BuffIndicator.LEVITATION;
-	}
+    public static final long DURATION = GameTime.TICK * 20;
 
-	@Override
-	public void fx(boolean on) {
-		if (on) target.sprite.add(CharSprite.State.LEVITATING);
-		else target.sprite.remove(CharSprite.State.LEVITATING);
-	}
+    @Override
+    public boolean attachTo(Char target, Char source) {
+        if (super.attachTo(target, source)) {
+            target.flying++;
+            Roots.detach(target, Roots.class);
+            return true;
+        } else {
+            return false;
+        }
+    }
 
-	@Override
-	public String toString() {
-		return "Levitating";
-	}
+    @Override
+    public void detach() {
+        target.flying--;
+        Dungeon.level.press(target.pos(), target);
+        super.detach();
+    }
 
-	@Override
-	public String desc() {
-		return "A magical force is levitating you over the ground, making you feel weightless.\n" +
-				"\n " +
-				"While levitating you ignore all ground-based effects. Traps won't trigger, water won't put out fire, " +
-				"plants won't be trampled, roots will miss you, and you will hover right over pits. " +
-				"Be careful, as all these things can come into effect the second the levitation ends!\n" +
-				"\n" +
-				"You are levitating for " + dispTurns() + ".";
-	}
+    @Override
+    public int icon() {
+        return BuffIndicator.LEVITATION;
+    }
+
+    @Override
+    public void fx(boolean on) {
+        if (on) target.sprite.add(CharSprite.State.LEVITATING);
+        else target.sprite.remove(CharSprite.State.LEVITATING);
+    }
+
+    @Override
+    public String toString() {
+        return "Levitating";
+    }
+
+    @Override
+    public String desc() {
+        return "A magical force is levitating you over the ground, making you feel weightless.\n" +
+                "\n " +
+                "While levitating you ignore all ground-based effects. Traps won't trigger, water won't put out fire, " +
+                "plants won't be trampled, roots will miss you, and you will hover right over pits. " +
+                "Be careful, as all these things can come into effect the second the levitation ends!\n" +
+                "\n" +
+                "You are levitating for " + dispTurns() + ".";
+    }
 }

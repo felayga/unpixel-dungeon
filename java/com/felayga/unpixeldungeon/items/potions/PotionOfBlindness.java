@@ -5,7 +5,7 @@
  * Shattered Pixel Dungeon
  * Copyright (C) 2014-2015 Evan Debenham
  *
- * Unpixel Dungeon
+ * unPixel Dungeon
  * Copyright (C) 2015-2016 Randall Foudray
  *
  * This program is free software: you can redistribute it and/or modify
@@ -21,6 +21,7 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>
  *
+ *
  */
 
 package com.felayga.unpixeldungeon.items.potions;
@@ -32,8 +33,6 @@ import com.felayga.unpixeldungeon.actors.Char;
 import com.felayga.unpixeldungeon.actors.buffs.Buff;
 import com.felayga.unpixeldungeon.actors.buffs.negative.Blindness;
 import com.felayga.unpixeldungeon.mechanics.GameTime;
-import com.felayga.unpixeldungeon.plants.Blindweed;
-import com.felayga.unpixeldungeon.plants.Sorrowmoss;
 import com.watabou.noosa.audio.Sample;
 import com.watabou.utils.Random;
 
@@ -49,17 +48,14 @@ public class PotionOfBlindness extends Potion {
 
         isHarmful = true;
         price = 40;
-
-        alchemyPrimary = Blindweed.Seed.class;
-        alchemySecondary = Sorrowmoss.Seed.class;
     }
 
     @Override
     public void apply( Char hero ) {
-        apply(hero, true);
+        apply(hero, hero, true);
     }
 
-    private void apply(Char hero, boolean quaffed) {
+    private void apply(Char hero, Char owner, boolean quaffed) {
         if (quaffed) {
             setKnown();
         }
@@ -76,21 +72,23 @@ public class PotionOfBlindness extends Potion {
                 duration += 250;
                 break;
         }
-        Buff.prolong(hero, Blindness.class, duration * GameTime.TICK);
+        Buff.prolong(hero, owner, Blindness.class, duration * GameTime.TICK);
     }
 
     @Override
-    public void shatter( int cell ) {
+    public void shatter( Char owner, int cell ) {
 
         if (Dungeon.visible[cell]) {
-            splash( cell );
+            splash(cell);
+        }
+        if (Dungeon.audible[cell]) {
             Sample.INSTANCE.play( Assets.SND_SHATTER );
         }
 
         Char test = Actor.findChar(cell);
 
         if (test != null) {
-            apply(test, false);
+            apply(test, owner, false);
         }
     }
 

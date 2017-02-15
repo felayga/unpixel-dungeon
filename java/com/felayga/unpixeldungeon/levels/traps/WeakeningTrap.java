@@ -5,7 +5,7 @@
  * Shattered Pixel Dungeon
  * Copyright (C) 2014-2015 Evan Debenham
  *
- * Unpixel Dungeon
+ * unPixel Dungeon
  * Copyright (C) 2015-2016 Randall Foudray
  *
  * This program is free software: you can redistribute it and/or modify
@@ -20,6 +20,7 @@
  *
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>
+ *
  *
  */
 package com.felayga.unpixeldungeon.levels.traps;
@@ -49,10 +50,12 @@ public class WeakeningTrap extends Trap{
 		}
 
 		Char ch = Actor.findChar( pos );
-		if (ch == Dungeon.hero){
-			Buff.prolong( ch, Weakness.class, Weakness.duration(ch) * 2);
+        Char owner = Char.Registry.get(ownerRegistryIndex());
+
+        if (ch == Dungeon.hero){
+			Buff.prolong( ch, owner, Weakness.class, Weakness.duration(ch) * 2);
 		} else if (ch != null) {
-			Buff.prolong( ch, Slow.class, Slow.duration(ch));
+			Buff.prolong( ch, owner, Slow.class, Slow.duration(ch));
 		}
 	}
 

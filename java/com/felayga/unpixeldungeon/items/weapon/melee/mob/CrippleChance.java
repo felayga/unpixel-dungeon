@@ -5,7 +5,7 @@
  * Shattered Pixel Dungeon
  * Copyright (C) 2014-2015 Evan Debenham
  *
- * Unpixel Dungeon
+ * unPixel Dungeon
  * Copyright (C) 2015-2016 Randall Foudray
  *
  * This program is free software: you can redistribute it and/or modify
@@ -20,6 +20,7 @@
  *
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>
+ *
  *
  */
 
@@ -50,7 +51,7 @@ public class CrippleChance extends MeleeMobAttack {
         damage = super.proc(attacker, ranged, target, damage);
 
         if ((chance > 1 && Random.Int(chance) == 0) || chance <= 1) {
-            Buff.prolong(target, Cripple.class, duration);
+            Buff.prolong(target, attacker, Cripple.class, duration);
         }
 
         return damage;

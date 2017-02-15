@@ -5,7 +5,7 @@
  * Shattered Pixel Dungeon
  * Copyright (C) 2014-2015 Evan Debenham
  *
- * Unpixel Dungeon
+ * unPixel Dungeon
  * Copyright (C) 2015-2016 Randall Foudray
  *
  * This program is free software: you can redistribute it and/or modify
@@ -21,6 +21,7 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>
  *
+ *
  */
 package com.felayga.unpixeldungeon.actors.mobs.npcs;
 
@@ -35,20 +36,19 @@ public abstract class NPC extends Mob {
 	public NPC(int level)
 	{
 		super(level);
-		experience = 0;
 
 		hostile = false;
 		state = PASSIVE;
 	}
 
 	protected void throwItem() {
-		Heap heap = Dungeon.level.heaps.get( pos );
+		Heap heap = Dungeon.level.heaps.get( pos() );
 		if (heap != null) {
 			int n;
 			do {
-				n = pos + Level.NEIGHBOURS8[Random.Int( 8 )];
+				n = pos() + Level.NEIGHBOURS8[Random.Int( 8 )];
 			} while (!Level.passable[n] && !Level.avoid[n]);
-			Dungeon.level.drop( heap.pickUp(), n ).sprite.drop( pos );
+			Dungeon.level.drop( heap.pickUp(), n ).sprite.drop( pos() );
 		}
 	}
 

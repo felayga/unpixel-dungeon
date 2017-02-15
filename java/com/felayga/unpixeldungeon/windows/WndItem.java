@@ -5,7 +5,7 @@
  * Shattered Pixel Dungeon
  * Copyright (C) 2014-2015 Evan Debenham
  *
- * Unpixel Dungeon
+ * unPixel Dungeon
  * Copyright (C) 2015-2016 Randall Foudray
  *
  * This program is free software: you can redistribute it and/or modify
@@ -21,11 +21,13 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>
  *
+ *
  */
 package com.felayga.unpixeldungeon.windows;
 
 import com.felayga.unpixeldungeon.Dungeon;
 import com.felayga.unpixeldungeon.actors.hero.HeroAction;
+import com.felayga.unpixeldungeon.actors.mobs.npcs.Shopkeeper;
 import com.felayga.unpixeldungeon.items.Item;
 import com.felayga.unpixeldungeon.mechanics.Constant;
 import com.felayga.unpixeldungeon.scenes.PixelScene;
@@ -51,13 +53,19 @@ public class WndItem extends Window {
 		titlebar.setRect( 0, 0, WIDTH, 0 );
 		add( titlebar );
 
-		if (item.levelKnown && item.level > 0) {
+		if (item.levelKnown() && item.level() > 0) {
 			titlebar.color( ItemSlot.UPGRADED );
-		} else if (item.levelKnown && item.level < 0) {
+		} else if (item.levelKnown() && item.level() < 0) {
 			titlebar.color( ItemSlot.DEGRADED );
 		}
 
-		BitmapTextMultiline info = PixelScene.createMultiline( item.info(), 6 );
+        String itemInfo = item.info();
+
+        if (item.shopkeeperRegistryIndex() >= 0) {
+            itemInfo += "\n\nThe price tag reads " + Shopkeeper.appraise(item, true) + " gold pieces.";
+        }
+
+		BitmapTextMultiline info = PixelScene.createMultiline( itemInfo, 6 );
 		info.maxWidth = WIDTH;
 		info.measure();
 		info.x = titlebar.left();

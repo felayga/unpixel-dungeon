@@ -5,7 +5,7 @@
  * Shattered Pixel Dungeon
  * Copyright (C) 2014-2015 Evan Debenham
  *
- * Unpixel Dungeon
+ * unPixel Dungeon
  * Copyright (C) 2015-2016 Randall Foudray
  *
  * This program is free software: you can redistribute it and/or modify
@@ -21,6 +21,7 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>
  *
+ *
  */
 package com.felayga.unpixeldungeon.items;
 
@@ -33,17 +34,18 @@ import com.felayga.unpixeldungeon.effects.Speck;
 import com.felayga.unpixeldungeon.effects.Splash;
 import com.felayga.unpixeldungeon.effects.particles.ElmoParticle;
 import com.felayga.unpixeldungeon.effects.particles.ShadowParticle;
-import com.felayga.unpixeldungeon.items.artifacts.AlchemistsToolkit;
 import com.felayga.unpixeldungeon.items.bags.IBag;
 import com.felayga.unpixeldungeon.items.bags.ItemIterator;
+import com.felayga.unpixeldungeon.items.potions.IAlchemyComponent;
 import com.felayga.unpixeldungeon.items.potions.Potion;
-import com.felayga.unpixeldungeon.items.potions.PotionOfExperience;
-import com.felayga.unpixeldungeon.items.potions.PotionOfWater;
+import com.felayga.unpixeldungeon.items.potions.PotionOfBrewing;
 import com.felayga.unpixeldungeon.items.scrolls.Scroll;
+import com.felayga.unpixeldungeon.items.wands.Wand;
+import com.felayga.unpixeldungeon.levels.Level;
+import com.felayga.unpixeldungeon.levels.Terrain;
 import com.felayga.unpixeldungeon.mechanics.BUCStatus;
 import com.felayga.unpixeldungeon.mechanics.IDecayable;
 import com.felayga.unpixeldungeon.mechanics.MagicType;
-import com.felayga.unpixeldungeon.plants.Plant.Seed;
 import com.felayga.unpixeldungeon.sprites.ItemSprite;
 import com.felayga.unpixeldungeon.sprites.ItemSpriteSheet;
 import com.felayga.unpixeldungeon.ui.Icons;
@@ -53,10 +55,12 @@ import com.watabou.utils.Bundlable;
 import com.watabou.utils.Bundle;
 import com.watabou.utils.Random;
 
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Iterator;
 import java.util.LinkedList;
+import java.util.List;
 
 public class Heap implements Bundlable, IBag {
     //region IBag
@@ -72,6 +76,7 @@ public class Heap implements Bundlable, IBag {
         return Icons.FLOORHEAP;
     }
     public Char owner() { return null; }
+    public IBag parent() { return null; }
 
     public void onWeightChanged(int change) {
 
@@ -121,7 +126,9 @@ public class Heap implements Bundlable, IBag {
 
     public Item remove(Item item) {
         if (items_derp.contains(item)) {
-            item.parent(null);
+            if (item.parent() == this) {
+                item.parent(null);
+            }
             items_derp.remove(item);
 
             updateImage();
@@ -155,6 +162,74 @@ public class Heap implements Bundlable, IBag {
         return new ItemIterator(this, items_derp, allowNested);
     }
 
+    public void contentsScatter() {
+        List<Integer> newPos = new ArrayList<Integer>();
+
+        for (int offset : Level.NEIGHBOURS8) {
+            int subPos = pos + offset;
+
+            if (Dungeon.level.passable[subPos]) {
+                newPos.add(subPos);
+            }
+        }
+
+        while (items_derp != null && items_derp.size() > 0) {
+            Item item = remove(items_derp.getLast());
+            Dungeon.level.drop(item, newPos.get(Random.Int(newPos.size())));
+        }
+    }
+
+    public void contentsImpact(boolean verbose) {
+        Iterator<Item> iterator = iterator(false);
+
+        List<Item> pendingremoval = new ArrayList<>();
+
+        int shatter = 0;
+        int crack = 0;
+
+        while (iterator.hasNext()) {
+            Item item = iterator.next();
+
+            if (item instanceof IBag) {
+                IBag bag = (IBag)item;
+                bag.contentsImpact(verbose);
+            } else if (item instanceof Potion) {
+                int count = item.quantity();
+
+                while (count > 0) {
+                    if (Random.Int(3)!=0) {
+                        pendingremoval.add(item);
+                        shatter++;
+                    }
+                    count--;
+                }
+            } else if (item instanceof Wand) {
+                if (Random.Int(3)!=0) {
+                    pendingremoval.add(item);
+                    crack++;
+                }
+            }
+        }
+
+        if (pendingremoval.size() > 0) {
+            if (verbose && Dungeon.audible[pos]) {
+                if (shatter > 0 && crack > 0) {
+                    Sample.INSTANCE.play(Assets.SND_SHATTER);
+                    Sample.INSTANCE.play(Assets.SND_DOOR_SMASH);
+                } else if (shatter > 0) {
+                    Sample.INSTANCE.play(Assets.SND_SHATTER);
+                    //todo: broken potion effects in heap
+                } else if (crack > 0) {
+                    Sample.INSTANCE.play(Assets.SND_DOOR_SMASH);
+                }
+            }
+
+            for (Item item : pendingremoval) {
+                this.remove(item, 1);
+            }
+        }
+    }
+
     //endregion
 
 	private static final String TXT_MIMIC = "This is a mimic!";
@@ -169,7 +244,7 @@ public class Heap implements Bundlable, IBag {
 		REMAINS
 	}
 	public Type type = Type.HEAP;
-	
+
 	public int pos = 0;
     public int pos() {
         return pos;
@@ -184,7 +259,7 @@ public class Heap implements Bundlable, IBag {
 		switch (type) {
 		case HEAP:
 		case FOR_SALE:
-			return size() > 0 ? items_derp.peek().image() : 0;
+			return size() > 0 ? items_derp.peekLast().image() : 0;
 		case TOMB:
 			return ItemSpriteSheet.TOMB;
 		case SKELETON:
@@ -197,7 +272,7 @@ public class Heap implements Bundlable, IBag {
 	}
 	
 	public ItemSprite.Glowing glowing() {
-		return (type == Type.HEAP || type == Type.FOR_SALE) && items_derp.size() > 0 ? items_derp.peek().glowing() : null;
+		return (type == Type.HEAP || type == Type.FOR_SALE) && items_derp.size() > 0 ? items_derp.peekLast().glowing() : null;
 	}
 	
 	public void open( Hero hero ) {
@@ -255,7 +330,7 @@ public class Heap implements Bundlable, IBag {
 	}
 	
 	public Item peek() {
-		return items_derp.peek();
+		return items_derp.peekLast();
 	}
 
 	public void replace( Item a, Item b ) {
@@ -298,14 +373,12 @@ public class Heap implements Bundlable, IBag {
 		
 		if (burnt || evaporated) {
 			
-			if (Dungeon.visible[pos]) {
-				if (burnt) {
-					burnFX( pos );
-				} else {
-					evaporateFX( pos );
-				}
-			}
-			
+            if (burnt) {
+                burnFX( pos, Dungeon.visible[pos], Dungeon.audible[pos] );
+            } else {
+                evaporateFX( pos, Dungeon.visible[pos], Dungeon.audible[pos] );
+            }
+
 			if (size() <= 0) {
 				destroy();
 			} else if (sprite != null) {
@@ -335,14 +408,14 @@ public class Heap implements Bundlable, IBag {
 
 				if (item instanceof Potion) {
 					iterator.remove();
-					((Potion) item).shatter(pos);
+					((Potion) item).shatter(null, pos);
 				} else if (item instanceof Bomb) {
 					iterator.remove();
 					((Bomb) item).explode(pos);
 					//stop processing current explosion, it will be replaced by the new one.
 					return;
 				//unique and upgraded items can endure the blast
-				} else if (!(item.level > 0 || item.unique)) {
+				} else if (!(item.level() > 0 || item.unique)) {
                     iterator.remove();
                 }
 			}
@@ -353,7 +426,7 @@ public class Heap implements Bundlable, IBag {
 		}
 	}
 	
-	public void freeze() {
+	public void freeze(Char source) {
 		if (type != Type.HEAP) {
 			return;
 		}
@@ -374,7 +447,7 @@ public class Heap implements Bundlable, IBag {
 
             if (item instanceof Potion) {
 				iterator.remove();
-				((Potion) item).shatter(pos);
+				((Potion) item).shatter(source, pos);
 				frozen = true;
 			} else if (item instanceof Bomb){
 				((Bomb) item).fuse = null;
@@ -392,12 +465,41 @@ public class Heap implements Bundlable, IBag {
 	}
 	
 	public Item transmute() {
+        Item retval = null;
+
 		CellEmitter.get( pos ).burst( Speck.factory( Speck.BUBBLE ), 3 );
 		Splash.at(pos, 0xFFFFFF, 3);
 		
 		float chances[] = new float[items_derp.size()];
 		int count = 0;
 
+        if (items_derp.size() >= 2) {
+            List<IAlchemyComponent> components = new ArrayList<>();
+
+            Iterator<Item> iterator = iterator(false);
+            while (iterator.hasNext()){
+                Item item = iterator.next();
+
+                if (item instanceof IAlchemyComponent) {
+                    components.add((IAlchemyComponent)item);
+                }
+            }
+
+            if (components.size() >= 2) {
+                Collections.shuffle(components);
+
+                retval = PotionOfBrewing.Handler.handle(pos, this, components.get(0), components.get(1), false);
+                CellEmitter.center( pos ).burst( Speck.factory( Speck.EVOKE ), 3 );
+
+                if (!Random.PassFail(230 + Dungeon.hero.luck() * 2)) {
+                    Dungeon.level.set(pos, Terrain.ALCHEMY_EMPTY, true);
+                    Dungeon.level.removeVisuals(pos);
+                    GLog.w("This brewing station is used up.");
+                }
+            }
+        }
+
+        return retval;
 
         /*
 		if (items_derp.size() == 2 && items_derp.get(0) instanceof Seed && items_derp.get(1) instanceof Blandfruit ) {
@@ -413,7 +515,8 @@ public class Heap implements Bundlable, IBag {
 			return result;
 		}
 		*/
-		
+
+        /*
 		int index = 0;
 
         Iterator<Item> iterator = iterator(false);
@@ -443,7 +546,7 @@ public class Heap implements Bundlable, IBag {
 
             GLog.d("potion brew");
             potion = new PotionOfWater();
-
+*/
             /*
 			if (Random.Int( count + bonus ) == 0) {
 
@@ -477,12 +580,12 @@ public class Heap implements Bundlable, IBag {
 				}
 			}
 			*/
-
+/*
 			//not a buff per-se, meant to cancel out higher potion accuracy when ppl are farming for potions of exp.
 			if (bonus > 0)
 				if (Random.Int(1000/bonus) == 0)
-					return new PotionOfExperience();
-
+					return new PotionOfGainLevel();
+*/
 			/*
 			while (potion instanceof PotionOfHealing && Random.Int(10) < Dungeon.limitedDrops.cookingHP.count)
 				potion = Generator.random( Generator.Category.POTION );
@@ -490,12 +593,13 @@ public class Heap implements Bundlable, IBag {
 			if (potion instanceof PotionOfHealing)
 				Dungeon.limitedDrops.cookingHP.count++;
 			*/
-
+/*
 			return potion;
 
 		} else {
 			return null;
 		}
+*/
 	}
 
     public long decay() {
@@ -521,15 +625,21 @@ public class Heap implements Bundlable, IBag {
         return updated;
     }
 
-	public static void burnFX( int pos ) {
-		CellEmitter.get( pos ).burst( ElmoParticle.FACTORY, 6 );
-		Sample.INSTANCE.play(Assets.SND_BURNING);
+	public static void burnFX( int pos, boolean visible, boolean audible ) {
+        if (visible) {
+            CellEmitter.get(pos).burst(ElmoParticle.FACTORY, 6);
+        }
+        if (audible) {
+            Sample.INSTANCE.play(Assets.SND_BURNING);
+        }
 	}
 	
-	public static void evaporateFX( int pos ) {
-		CellEmitter.get( pos ).burst( Speck.factory( Speck.STEAM ), 5 );
+	public static void evaporateFX( int pos, boolean visible, boolean audible ) {
+        if (visible) {
+            CellEmitter.get(pos).burst(Speck.factory(Speck.STEAM), 5);
+        }
 	}
-	
+
 	public void destroy() {
 		Dungeon.level.heaps.remove( this.pos );
 		if (sprite != null) {

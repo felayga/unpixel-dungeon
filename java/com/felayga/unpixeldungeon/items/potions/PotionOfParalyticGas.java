@@ -5,7 +5,7 @@
  * Shattered Pixel Dungeon
  * Copyright (C) 2014-2015 Evan Debenham
  *
- * Unpixel Dungeon
+ * unPixel Dungeon
  * Copyright (C) 2015-2016 Randall Foudray
  *
  * This program is free software: you can redistribute it and/or modify
@@ -21,11 +21,13 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>
  *
+ *
  */
 package com.felayga.unpixeldungeon.items.potions;
 
 import com.felayga.unpixeldungeon.Assets;
 import com.felayga.unpixeldungeon.Dungeon;
+import com.felayga.unpixeldungeon.actors.Char;
 import com.felayga.unpixeldungeon.actors.blobs.Blob;
 import com.felayga.unpixeldungeon.actors.blobs.ParalyticGas;
 import com.felayga.unpixeldungeon.scenes.GameScene;
@@ -33,35 +35,36 @@ import com.watabou.noosa.audio.Sample;
 
 public class PotionOfParalyticGas extends Potion {
 
-    public PotionOfParalyticGas()
-	{
-		name = "Potion of Paralytic Gas";
-		initials = "PG";
+    public PotionOfParalyticGas() {
+        name = "Potion of Paralytic Gas";
+        initials = "PG";
 
-		isHarmful = true;
+        isHarmful = true;
 
         price = 40;
-	}
-	
-	@Override
-	public void shatter( int cell ) {
+    }
 
-		if (Dungeon.visible[cell]) {
-			setKnown();
+    @Override
+    public void shatter(Char source, int cell) {
 
-			splash( cell );
-			Sample.INSTANCE.play( Assets.SND_SHATTER );
-		}
+        if (Dungeon.visible[cell]) {
+            setKnown();
 
-		GameScene.add( Blob.seed( cell, 1000, ParalyticGas.class ) );
-	}
-	
-	@Override
-	public String desc() {
-		return
-			"Upon exposure to open air, the liquid in this flask will vaporize " +
-			"into a numbing yellow haze. Anyone who inhales the cloud will be paralyzed " +
-			"instantly, unable to move for some time after the cloud dissipates. This " +
-			"item can be thrown at distant enemies to catch them within the effect of the gas.";
-	}
+            splash(cell);
+        }
+        if (Dungeon.audible[cell]) {
+            Sample.INSTANCE.play(Assets.SND_SHATTER);
+        }
+
+        GameScene.add(Blob.seed(source, cell, 1000, ParalyticGas.class));
+    }
+
+    @Override
+    public String desc() {
+        return
+                "Upon exposure to open air, the liquid in this flask will vaporize " +
+                        "into a numbing yellow haze. Anyone who inhales the cloud will be paralyzed " +
+                        "instantly, unable to move for some time after the cloud dissipates. This " +
+                        "item can be thrown at distant enemies to catch them within the effect of the gas.";
+    }
 }

@@ -5,7 +5,7 @@
  * Shattered Pixel Dungeon
  * Copyright (C) 2014-2015 Evan Debenham
  *
- * Unpixel Dungeon
+ * unPixel Dungeon
  * Copyright (C) 2015-2016 Randall Foudray
  *
  * This program is free software: you can redistribute it and/or modify
@@ -20,6 +20,7 @@
  *
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>
+ *
  *
  */
 package com.felayga.unpixeldungeon;
@@ -106,7 +107,7 @@ public class Assets {
 	public static final String PET		= "pet.png";
 	
 	public static final String SURFACE	= "surface.png";
-	
+
 	public static final String FIREBALL		= "fireball.png";
 	public static final String SPECKS		= "specks.png";
 	public static final String EFFECTS		= "effects.png";
@@ -144,8 +145,10 @@ public class Assets {
 	public static final String WEAK_FLOOR   = "custom_tiles/weak_floor.png";
 	public static final String PRISON_QUEST = "custom_tiles/prison_quests.png";
 	public static final String PRISON_EXIT  = "custom_tiles/prison_exit.png";
-	
-	public static final String BUFFS_SMALL	= "buffs.png";
+
+    public static final String ACTIONS  = "actions.png";
+
+    public static final String BUFFS_SMALL	= "buffs.png";
 	public static final String BUFFS_LARGE	= "buffs_large.png";
 	public static final String SPELL_ICONS	= "spell_icons.png";
 	
@@ -175,6 +178,7 @@ public class Assets {
 	public static final String SND_LULLABY	= "snd_lullaby.mp3";
 	public static final String SND_DRINK	= "snd_drink.mp3";
 	public static final String SND_SHATTER	= "snd_shatter.mp3";
+    public static final String SND_POTION_BREW = "snd_potion_brew.mp3";
 	public static final String SND_ZAP		= "snd_zap.mp3";
 	public static final String SND_LIGHTNING= "snd_lightning.mp3";
 	public static final String SND_LEVELUP	= "snd_levelup.mp3";
@@ -217,6 +221,10 @@ public class Assets {
 	public static final String SND_ITEM_CLOTH = "snd_item_cloth.mp3";
 	public static final String SND_WALL_SMASH = "snd_wall_smash.mp3";
 	public static final String SND_ITEM_ROCK  = "snd_item_rock.mp3";
+    public static final String SND_ITEM_PLANT = "snd_item_plant.mp3";
+    public static final String SND_ITEM_FOOD = "snd_item_food.mp3";
+    public static final String SND_ITEM_BAG = "snd_item_bag.mp3";
+    public static final String SND_ITEM_BOX = "snd_item_box.mp3";
 	public static final String SND_BOULDER_SMASH = "snd_boulder_smash.mp3";
 	public static final String SND_BOULDER_SCRAPE = "snd_boulder_scrape.mp3";
     public static final String SND_BOULDER_PLUG = "snd_boulder.plug.mp3";

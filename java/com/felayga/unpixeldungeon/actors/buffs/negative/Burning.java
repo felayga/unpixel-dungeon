@@ -5,7 +5,7 @@
  * Shattered Pixel Dungeon
  * Copyright (C) 2014-2015 Evan Debenham
  *
- * Unpixel Dungeon
+ * unPixel Dungeon
  * Copyright (C) 2015-2016 Randall Foudray
  *
  * This program is free software: you can redistribute it and/or modify
@@ -21,6 +21,7 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>
  *
+ *
  */
 package com.felayga.unpixeldungeon.actors.buffs.negative;
 
@@ -34,7 +35,6 @@ import com.felayga.unpixeldungeon.actors.buffs.Buff;
 import com.felayga.unpixeldungeon.actors.hero.Hero;
 import com.felayga.unpixeldungeon.items.Heap;
 import com.felayga.unpixeldungeon.items.Item;
-import com.felayga.unpixeldungeon.items.rings.RingOfElements.Resistance;
 import com.felayga.unpixeldungeon.items.scrolls.Scroll;
 import com.felayga.unpixeldungeon.levels.Level;
 import com.felayga.unpixeldungeon.mechanics.GameTime;
@@ -50,11 +50,9 @@ public class Burning extends Buff implements Hero.Doom {
 	private static final String TXT_BURNS_UP		= "%s burns up!";
 	private static final String TXT_BURNED_TO_DEATH	= "You burned to death...";
 	
-	private static final float DURATION = 8f;
+	private static final long DURATION = 4 * GameTime.TICK;
 	
-	private float left;
-	
-	private static final String LEFT	= "left";
+	private long left;
 
 	{
 		type = buffType.NEGATIVE;
@@ -63,35 +61,33 @@ public class Burning extends Buff implements Hero.Doom {
 	@Override
 	public void storeInBundle( Bundle bundle ) {
 		super.storeInBundle( bundle );
-		bundle.put( LEFT, left );
+		bundle.put( TIMELEFT, left );
 	}
 	
 	@Override
 	public void restoreFromBundle( Bundle bundle ) {
 		super.restoreFromBundle(bundle);
-		left = bundle.getFloat( LEFT );
+		left = bundle.getLong( TIMELEFT );
 	}
 
 	@Override
 	public boolean act() {
-		
-		if (target.isAlive()) {
-			
-			target.damage( Random.Int( 1, 5 ), MagicType.Fire, null );
-			Buff.detach( target, Chill.class);
+        if (target.isAlive()) {
 
-			if (target instanceof Char) {
+            target.damage(Random.Int(1, 4), MagicType.Fire, null);
+            Buff.detach(target, Chill.class);
+            Buff.detach(target, AcidBurning.class);
 
-				Char hero = (Char)target;
-				Item item = hero.belongings.randomUnequipped();
-				if (item instanceof Scroll) {
-					
-					item = hero.belongings.remove(item, 1);
-					GLog.w( TXT_BURNS_UP, item.getDisplayName() );
-					
-					Heap.burnFX( hero.pos );
-					
-				} /*else if (item instanceof MysteryMeat) {
+            if (target instanceof Char) {
+                Item item = target.belongings.randomUnequipped();
+                if (item instanceof Scroll) {
+
+                    item = target.belongings.remove(item, 1);
+                    GLog.w(TXT_BURNS_UP, item.getDisplayName());
+
+                    Heap.burnFX(target.pos(), Dungeon.visible[target.pos()], Dungeon.audible[target.pos()]);
+
+                } /*else if (item instanceof MysteryMeat) {
 					
 					item = hero.belongings.remove(item, 1);
 					Item steak = new ChargrilledMeat().bucStatus(item);
@@ -103,29 +99,29 @@ public class Burning extends Buff implements Hero.Doom {
 					Heap.burnFX( hero.pos );
 					
 				}*/
-				
-			}
 
-		} else {
-			detach();
-		}
-		
-		if (Level.wood[target.pos]) {
-			GameScene.add( Blob.seed( target.pos, 4, Fire.class ) );
-		}
+            }
 
-        spend_new(GameTime.TICK, false );
-		left -= GameTime.TICK;
-		
-		if (left <= 0 ||
-			Random.Float() > (2 + (float)target.HP / target.HT) / 3 ||
-			(Level.water[target.pos] && !target.flying)) {
-			
-			detach();
-		}
-		
-		return true;
-	}
+        } else {
+            detach();
+        }
+
+        if (Level.burnable[target.pos()]) {
+            GameScene.add(Blob.seed(Char.Registry.get(ownerRegistryIndex()), target.pos(), 4, Fire.class));
+        }
+
+        spend_new(GameTime.TICK, false);
+        left -= GameTime.TICK;
+
+        if (left <= 0 ||
+                Random.Float() > (2 + (float) target.HP / target.HT) / 3 ||
+                (Level.puddle[target.pos()] && !target.flying())) {
+
+            detach();
+        }
+
+        return true;
+    }
 	
 	public void reignite( Char ch ) {
 		left = duration( ch );
@@ -147,9 +143,12 @@ public class Burning extends Buff implements Hero.Doom {
 		return "Burning";
 	}
 
-	public static float duration( Char ch ) {
-		Resistance r = ch.buff( Resistance.class );
-		return r != null ? r.durationFactor() * DURATION : DURATION;
+	public static long duration( Char ch ) {
+        if (ch.hasImmunity(MagicType.Fire)) {
+            return GameTime.TICK;
+        }
+
+        return DURATION;
 	}
 
     @Override

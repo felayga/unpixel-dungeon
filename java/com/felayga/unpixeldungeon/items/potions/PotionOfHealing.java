@@ -5,7 +5,7 @@
  * Shattered Pixel Dungeon
  * Copyright (C) 2014-2015 Evan Debenham
  *
- * Unpixel Dungeon
+ * unPixel Dungeon
  * Copyright (C) 2015-2016 Randall Foudray
  *
  * This program is free software: you can redistribute it and/or modify
@@ -21,6 +21,7 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>
  *
+ *
  */
 package com.felayga.unpixeldungeon.items.potions;
 
@@ -34,8 +35,6 @@ import com.felayga.unpixeldungeon.actors.buffs.negative.Slow;
 import com.felayga.unpixeldungeon.actors.buffs.negative.Vertigo;
 import com.felayga.unpixeldungeon.actors.buffs.negative.Weakness;
 import com.felayga.unpixeldungeon.effects.Speck;
-import com.felayga.unpixeldungeon.plants.Fadeleaf;
-import com.felayga.unpixeldungeon.plants.Sungrass;
 import com.felayga.unpixeldungeon.sprites.CharSprite;
 import com.felayga.unpixeldungeon.utils.GLog;
 
@@ -51,9 +50,6 @@ public class PotionOfHealing extends Potion {
         overhealAmount = 1;
         applicationDescription = "somewhat";
         price = 30;
-
-        alchemyPrimary = Sungrass.Seed.class;
-        alchemySecondary = Fadeleaf.Seed.class;
     }
 
     protected int overhealAmount;

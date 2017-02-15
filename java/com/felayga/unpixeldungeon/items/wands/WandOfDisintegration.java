@@ -5,7 +5,7 @@
  * Shattered Pixel Dungeon
  * Copyright (C) 2014-2015 Evan Debenham
  *
- * Unpixel Dungeon
+ * unPixel Dungeon
  * Copyright (C) 2015-2016 Randall Foudray
  *
  * This program is free software: you can redistribute it and/or modify
@@ -20,6 +20,7 @@
  *
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>
+ *
  *
  */
 package com.felayga.unpixeldungeon.items.wands;
@@ -78,7 +79,7 @@ public class WandOfDisintegration extends Wand {
                 chars.add(ch);
             }
 
-            if (Level.wood[c]) {
+            if (Level.burnable[c]) {
 
                 Dungeon.level.set(c, Terrain.EMBERS, true);
                 GameScene.updateMap(c);
@@ -100,7 +101,7 @@ public class WandOfDisintegration extends Wand {
 		int dmgMin = lvl;
 		int dmgMax = (int) (8 + lvl * lvl / 3f);
 		for (Char ch : chars) {
-			processSoulMark(ch);
+			processSoulMark(ch, curUser);
 			ch.damage( Random.NormalIntRange( dmgMin, dmgMax ), MagicType.Disintegration, null );
 			ch.sprite.centerEmitter(-1).burst( PurpleParticle.BURST, Random.IntRange( 1, 2 ) );
 			ch.sprite.flash();

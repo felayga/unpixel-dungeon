@@ -5,7 +5,7 @@
  * Shattered Pixel Dungeon
  * Copyright (C) 2014-2015 Evan Debenham
  *
- * Unpixel Dungeon
+ * unPixel Dungeon
  * Copyright (C) 2015-2016 Randall Foudray
  *
  * This program is free software: you can redistribute it and/or modify
@@ -21,6 +21,7 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>
  *
+ *
  */
 package com.felayga.unpixeldungeon;
 
@@ -29,31 +30,30 @@ import com.felayga.unpixeldungeon.actors.hero.HeroClass;
 import com.felayga.unpixeldungeon.windows.hero.WndInitHero;
 import com.watabou.utils.Bundlable;
 import com.watabou.utils.Bundle;
+import com.watabou.utils.SparseArray;
 
 import java.util.HashMap;
 
 public class GamesInProgress {
 	public static final int MAXIMUM = 4;
 
-	private static HashMap<Integer, Info> state = new HashMap<Integer, Info>();
+	private static SparseArray<Info> state = new SparseArray<>();
 	
 	public static Info check( int index ) {
-		if (state.containsKey( index )) {
-			return state.get( index );
+        Info retval;
+		if ((retval = state.get( index )) != null) {
+			return retval;
 		} else {
-			
-			Info info;
 			try {
 				Bundle bundle = Dungeon.gameBundle( Dungeon.gameFile( index ) );
-				info = new Info();
-				info.restoreFromBundle(bundle);
+                retval = new Info();
+                retval.restoreFromBundle(bundle);
 			} catch (Exception e) {
-				info = null;
+                retval = null;
 			}
 			
-			state.put( index, info );
-			return info;
-			
+			state.put( index, retval );
+			return retval;
 		}
 	}
 

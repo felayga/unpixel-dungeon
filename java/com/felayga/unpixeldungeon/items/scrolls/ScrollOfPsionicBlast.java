@@ -5,7 +5,7 @@
  * Shattered Pixel Dungeon
  * Copyright (C) 2014-2015 Evan Debenham
  *
- * Unpixel Dungeon
+ * unPixel Dungeon
  * Copyright (C) 2015-2016 Randall Foudray
  *
  * This program is free software: you can redistribute it and/or modify
@@ -20,6 +20,7 @@
  *
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>
+ *
  *
  */
 package com.felayga.unpixeldungeon.items.scrolls;
@@ -59,17 +60,17 @@ public class ScrollOfPsionicBlast extends Scroll {
 		GameScene.flash( 0xFFFFFF );
 		
 		Sample.INSTANCE.play( Assets.SND_BLAST );
-		Invisibility.dispel();
+		Invisibility.dispelAttack(curUser);
 		
 		for (Mob mob : Dungeon.level.mobs.toArray( new Mob[Dungeon.level.mobs.size()] )) {
-			if (Level.fieldOfView[mob.pos]) {
+			if (Level.fieldOfView[mob.pos()]) {
 				mob.damage(mob.HT, MagicType.Magic, null );
 			}
 		}
 
 		curUser.damage(Math.max(curUser.HT/5, curUser.HP/2), MagicType.Magic, null);
-		Buff.prolong( curUser, Paralysis.class, Random.Int( 4, 6 ) * GameTime.TICK );
-		Buff.prolong( curUser, Blindness.class, Random.Int( 6, 9 ) * GameTime.TICK );
+		Buff.prolong( curUser, curUser, Paralysis.class, Random.Int( 4, 6 ) * GameTime.TICK );
+		Buff.prolong( curUser, curUser, Blindness.class, Random.Int( 6, 9 ) * GameTime.TICK );
 		Dungeon.observe();
 		
 		setKnown();

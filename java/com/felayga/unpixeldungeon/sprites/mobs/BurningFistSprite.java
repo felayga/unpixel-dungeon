@@ -5,7 +5,7 @@
  * Shattered Pixel Dungeon
  * Copyright (C) 2014-2015 Evan Debenham
  *
- * Unpixel Dungeon
+ * unPixel Dungeon
  * Copyright (C) 2015-2016 Randall Foudray
  *
  * This program is free software: you can redistribute it and/or modify
@@ -21,6 +21,7 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>
  *
+ *
  */
 package com.felayga.unpixeldungeon.sprites.mobs;
 
@@ -32,54 +33,54 @@ import com.watabou.noosa.audio.Sample;
 import com.watabou.utils.Callback;
 
 public class BurningFistSprite extends MobSprite {
-	
-	public BurningFistSprite() {
-		super();
-		
-		texture( Assets.Mobs.BURNING );
-		
-		TextureFilm frames = new TextureFilm( texture, 24, 17 );
-		
-		idle = new Animation( 2, true );
-		idle.frames( frames, 0, 0, 1 );
-		
-		run = new Animation( 3, true );
-		run.frames( frames, 0, 1 );
-		
-		attack = new Animation( 8, false );
-		attack.frames( frames, 0, 5, 6 );
-		
-		die = new Animation( 10, false );
-		die.frames( frames, 0, 2, 3, 4 );
-		
-		play( idle );
-	}
-	
-	private int posToShoot;
-	
-	@Override
-	public void attack( int cell ) {
-		posToShoot = cell;
-		super.attack( cell );
-	}
-	
-	@Override
-	public void onComplete( Animation anim ) {
-		if (anim == attack) {
 
-			Sample.INSTANCE.play( Assets.SND_ZAP );
-			MagicMissile.shadow( parent, ch.pos, posToShoot,
-				new Callback() {
-					@Override
-					public void call() {
-						ch.onAttackComplete();
-					}
-				} );
-			
-			idle();
-			
-		} else {
-			super.onComplete( anim );
-		}
-	}
+    public BurningFistSprite() {
+        super();
+
+        texture(Assets.Mobs.BURNING);
+
+        TextureFilm frames = new TextureFilm(texture, 24, 17);
+
+        idle = new Animation(2, true);
+        idle.frames(frames, 0, 0, 1);
+
+        run = new Animation(3, true);
+        run.frames(frames, 0, 1);
+
+        attack = new Animation(8, false);
+        attack.frames(frames, 0, 5, 6);
+
+        die = new Animation(10, false);
+        die.frames(frames, 0, 2, 3, 4);
+
+        play(idle);
+    }
+
+    private int posToShoot;
+
+    @Override
+    public void attack(int cell) {
+        posToShoot = cell;
+        super.attack(cell);
+    }
+
+    @Override
+    public void onComplete(Animation anim) {
+        if (anim == attack) {
+
+            Sample.INSTANCE.play(Assets.SND_ZAP);
+            MagicMissile.shadow(parent, ch.pos(), posToShoot,
+                    new Callback() {
+                        @Override
+                        public void call() {
+                            ch.onAttackComplete();
+                        }
+                    });
+
+            idle();
+
+        } else {
+            super.onComplete(anim);
+        }
+    }
 }

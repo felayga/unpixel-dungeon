@@ -5,7 +5,7 @@
  * Shattered Pixel Dungeon
  * Copyright (C) 2014-2015 Evan Debenham
  *
- * Unpixel Dungeon
+ * unPixel Dungeon
  * Copyright (C) 2015-2016 Randall Foudray
  *
  * This program is free software: you can redistribute it and/or modify
@@ -20,6 +20,7 @@
  *
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>
+ *
  *
  */
 package com.felayga.unpixeldungeon.levels.painters;
@@ -107,17 +108,17 @@ public class StandardPainter extends Painter {
 					break;
 				case 1:
 					t = Terrain.TRAP;
-					level.setTrap(new FireTrap().reveal(), cell);
+					level.setTrap(null, new FireTrap().reveal(), cell);
 					break;
 				case 2:
 					t = Terrain.SECRET_TRAP;
-					level.setTrap(new FireTrap().hide(), cell);
+					level.setTrap(null, new FireTrap().hide(), cell);
 					break;
 				case 3:
 					t = Terrain.INACTIVE_TRAP;
 					FireTrap trap = new FireTrap();
 					trap.reveal().active = false;
-					level.setTrap(trap, cell);
+					level.setTrap(null, trap, cell);
 					break;
 				}
 				level.map[cell] = t;
@@ -193,7 +194,7 @@ public class StandardPainter extends Painter {
 		fill( level, room.left + 1, room.top + 1, room.width() - 1, room.height() - 1 ,
             (level.flags & Level.FLAG_UNDIGGABLEFLOOR) == 0 && Random.Int( 3 ) == 0 ?
 				Terrain.CHASM :
-				Terrain.WATER );
+				Terrain.PUDDLE );
 		
 		Point door1 = null;
 		Point door2 = null;

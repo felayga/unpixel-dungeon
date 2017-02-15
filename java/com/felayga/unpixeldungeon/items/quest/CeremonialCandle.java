@@ -5,7 +5,7 @@
  * Shattered Pixel Dungeon
  * Copyright (C) 2014-2015 Evan Debenham
  *
- * Unpixel Dungeon
+ * unPixel Dungeon
  * Copyright (C) 2015-2016 Randall Foudray
  *
  * This program is free software: you can redistribute it and/or modify
@@ -20,6 +20,7 @@
  *
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>
+ *
  *
  */
 package com.felayga.unpixeldungeon.items.quest;
@@ -41,59 +42,59 @@ import com.watabou.noosa.audio.Sample;
 
 public class CeremonialCandle extends Item {
 
-	//generated with the wandmaker quest
-	public static int ritualPos;
+    //generated with the wandmaker quest
+    public static int ritualPos;
 
-	{
-		name = "ceremonial candle";
-		image = ItemSpriteSheet.CANDLE;
+    {
+        name = "ceremonial candle";
+        image = ItemSpriteSheet.CANDLE;
 
-		unique = true;
-		stackable = true;
-	}
+        unique = true;
+        stackable = true;
+    }
 
-	@Override
-	public boolean isUpgradable() {
-		return false;
-	}
+    @Override
+    public boolean isUpgradable() {
+        return false;
+    }
 
-	@Override
-	public boolean isIdentified() {
-		return true;
-	}
+    @Override
+    public boolean isIdentified() {
+        return true;
+    }
 
-	@Override
-	public void doDrop(Hero hero) {
-		super.doDrop(hero);
-		checkCandles();
-	}
+    @Override
+    public void doDrop(Hero hero) {
+        super.doDrop(hero);
+        checkCandles();
+    }
 
-	@Override
-	protected void onThrow(int cell, Char thrower) {
-		super.onThrow(cell, thrower);
-		checkCandles();
-	}
+    @Override
+    protected void onThrow(Char thrower, int cell) {
+        super.onThrow(thrower, cell);
+        checkCandles();
+    }
 
-	private static void checkCandles(){
-		Heap heapTop = Dungeon.level.heaps.get(ritualPos - Level.WIDTH);
-		Heap heapRight = Dungeon.level.heaps.get(ritualPos + 1);
-		Heap heapBottom = Dungeon.level.heaps.get(ritualPos + Level.WIDTH);
-		Heap heapLeft = Dungeon.level.heaps.get(ritualPos - 1);
+    private static void checkCandles() {
+        Heap heapTop = Dungeon.level.heaps.get(ritualPos - Level.WIDTH);
+        Heap heapRight = Dungeon.level.heaps.get(ritualPos + 1);
+        Heap heapBottom = Dungeon.level.heaps.get(ritualPos + Level.WIDTH);
+        Heap heapLeft = Dungeon.level.heaps.get(ritualPos - 1);
 
-		if (heapTop != null &&
-				heapRight != null &&
-				heapBottom != null &&
-				heapLeft != null){
+        if (heapTop != null &&
+                heapRight != null &&
+                heapBottom != null &&
+                heapLeft != null) {
 
-			if (heapTop.peek() instanceof CeremonialCandle &&
-					heapRight.peek() instanceof CeremonialCandle &&
-					heapBottom.peek() instanceof CeremonialCandle &&
-					heapLeft.peek() instanceof CeremonialCandle){
+            if (heapTop.peek() instanceof CeremonialCandle &&
+                    heapRight.peek() instanceof CeremonialCandle &&
+                    heapBottom.peek() instanceof CeremonialCandle &&
+                    heapLeft.peek() instanceof CeremonialCandle) {
 
-				heapTop.pickUp();
-				heapRight.pickUp();
-				heapBottom.pickUp();
-				heapLeft.pickUp();
+                heapTop.pickUp();
+                heapRight.pickUp();
+                heapBottom.pickUp();
+                heapLeft.pickUp();
 
 				/*
 				NewbornElemental elemental = new NewbornElemental();
@@ -102,20 +103,20 @@ public class CeremonialCandle extends Item {
 				GameScene.add(elemental, 1);
 				*/
 
-				for (int i : Level.NEIGHBOURS9){
-					CellEmitter.get(ritualPos+i).burst(ElmoParticle.FACTORY, 10);
-				}
-				Sample.INSTANCE.play(Assets.SND_BURNING);
-			}
-		}
+                for (int i : Level.NEIGHBOURS9) {
+                    CellEmitter.get(ritualPos + i).burst(ElmoParticle.FACTORY, 10);
+                }
+                Sample.INSTANCE.play(Assets.SND_BURNING);
+            }
+        }
 
-	}
+    }
 
-	@Override
-	public String info() {
-		return
-				"A set of candles, melted down and fused together through use.\n\n" +
-				"Alone they are worthless, but used with other candles in a pattern, " +
-				"they can focus the energy for a summoning ritual.";
-	}
+    @Override
+    public String info() {
+        return
+                "A set of candles, melted down and fused together through use.\n\n" +
+                        "Alone they are worthless, but used with other candles in a pattern, " +
+                        "they can focus the energy for a summoning ritual.";
+    }
 }

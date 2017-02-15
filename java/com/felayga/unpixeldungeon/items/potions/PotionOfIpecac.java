@@ -5,7 +5,7 @@
  * Shattered Pixel Dungeon
  * Copyright (C) 2014-2015 Evan Debenham
  *
- * Unpixel Dungeon
+ * unPixel Dungeon
  * Copyright (C) 2015-2016 Randall Foudray
  *
  * This program is free software: you can redistribute it and/or modify
@@ -21,14 +21,16 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>
  *
+ *
  */
 
 package com.felayga.unpixeldungeon.items.potions;
 
 import com.felayga.unpixeldungeon.actors.Char;
+import com.felayga.unpixeldungeon.actors.buffs.Buff;
 import com.felayga.unpixeldungeon.actors.buffs.hero.Sick;
-import com.felayga.unpixeldungeon.plants.Bloodleaf;
-import com.felayga.unpixeldungeon.plants.Deathroot;
+import com.felayga.unpixeldungeon.mechanics.BUCStatus;
+import com.watabou.utils.Random;
 
 /**
  * Created by HELLO on 11/29/2016.
@@ -43,15 +45,17 @@ public class PotionOfIpecac extends Potion {
         isHelpful = true;
 
         price = 40;
-
-        alchemyPrimary = Deathroot.Seed.class;
-        alchemySecondary = Bloodleaf.Seed.class;
     }
 
     @Override
     public void apply( Char hero ) {
         setKnown();
-        Sick.vomit(hero);
+
+        Sick.vomit(hero, hero);
+        
+        if (bucStatus == BUCStatus.Cursed || (bucStatus == BUCStatus.Uncursed && Random.Int(2)==0)) {
+            Buff.prolong(hero, hero, Sick.class, 0);
+        }
     }
 
     @Override

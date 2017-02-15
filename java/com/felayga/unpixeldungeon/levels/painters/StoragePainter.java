@@ -5,7 +5,7 @@
  * Shattered Pixel Dungeon
  * Copyright (C) 2014-2015 Evan Debenham
  *
- * Unpixel Dungeon
+ * unPixel Dungeon
  * Copyright (C) 2015-2016 Randall Foudray
  *
  * This program is free software: you can redistribute it and/or modify
@@ -21,13 +21,14 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>
  *
+ *
  */
 package com.felayga.unpixeldungeon.levels.painters;
 
 import com.felayga.unpixeldungeon.items.Generator;
 import com.felayga.unpixeldungeon.items.Item;
 import com.felayga.unpixeldungeon.items.potions.PotionOfAcid;
-import com.felayga.unpixeldungeon.items.potions.PotionOfLiquidFlame;
+import com.felayga.unpixeldungeon.items.potions.PotionOfOil;
 import com.felayga.unpixeldungeon.levels.Level;
 import com.felayga.unpixeldungeon.levels.Room;
 import com.felayga.unpixeldungeon.levels.Terrain;
@@ -69,7 +70,7 @@ public class StoragePainter extends Painter {
 				level.addItemToSpawn(new PotionOfAcid());
 				break;
 			default:
-				level.addItemToSpawn(new PotionOfLiquidFlame());
+				level.addItemToSpawn(new PotionOfOil());
 				break;
 		}
 	}

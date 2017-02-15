@@ -5,7 +5,7 @@
  * Shattered Pixel Dungeon
  * Copyright (C) 2014-2015 Evan Debenham
  *
- * Unpixel Dungeon
+ * unPixel Dungeon
  * Copyright (C) 2015-2016 Randall Foudray
  *
  * This program is free software: you can redistribute it and/or modify
@@ -21,6 +21,7 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>
  *
+ *
  */
 
 package com.felayga.unpixeldungeon.plants;
@@ -32,6 +33,8 @@ import com.felayga.unpixeldungeon.actors.hero.Hero;
 import com.felayga.unpixeldungeon.actors.mobs.Mob;
 import com.felayga.unpixeldungeon.effects.CellEmitter;
 import com.felayga.unpixeldungeon.effects.Speck;
+import com.felayga.unpixeldungeon.items.potions.IAlchemyComponent;
+import com.felayga.unpixeldungeon.items.potions.PotionOfBrewing;
 import com.felayga.unpixeldungeon.items.scrolls.ScrollOfTeleportation;
 import com.felayga.unpixeldungeon.levels.Level;
 import com.felayga.unpixeldungeon.mechanics.Constant;
@@ -41,12 +44,11 @@ import com.felayga.unpixeldungeon.sprites.ItemSpriteSheet;
  * Created by HELLO on 11/22/2016.
  */
 public class Deathroot extends Plant {
+    private static final String TXT_NAME = "Deathroot";
 
     private static final String TXT_DESC =
             "Touching a Fadeleaf will teleport any creature " +
                     "to a random place on the current level.";
-
-    private static final String TXT_NAME = "Deathroot";
 
     public Deathroot()
     {
@@ -73,11 +75,11 @@ public class Deathroot extends Plant {
                 if (count-- <= 0) {
                     break;
                 }
-            } while (newPos == -1);
+            } while (newPos < 0);
 
             if (newPos != -1 && (Dungeon.level.flags & Level.FLAG_NOTELEPORTATION) == 0) {
-                ch.pos = newPos;
-                ch.sprite.place( ch.pos );
+                ch.pos(newPos);
+                ch.sprite.place( ch.pos() );
                 ch.sprite.visible = Dungeon.visible[pos];
 
             }
@@ -94,7 +96,7 @@ public class Deathroot extends Plant {
         return TXT_DESC;
     }
 
-    public static class Seed extends Plant.Seed {
+    public static class Seed extends Plant.Seed implements IAlchemyComponent {
         {
             plantName = TXT_NAME;
 
@@ -107,6 +109,14 @@ public class Deathroot extends Plant {
         @Override
         public String desc() {
             return TXT_DESC;
+        }
+    }
+
+    public static class Brew extends PotionOfBrewing {
+        {
+            plantName = "seed of " + TXT_NAME;
+
+            image = ItemSpriteSheet.ALCHEMY_DEATHROOT;
         }
     }
 }

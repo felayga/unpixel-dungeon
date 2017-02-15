@@ -5,7 +5,7 @@
  * Shattered Pixel Dungeon
  * Copyright (C) 2014-2015 Evan Debenham
  *
- * Unpixel Dungeon
+ * unPixel Dungeon
  * Copyright (C) 2015-2016 Randall Foudray
  *
  * This program is free software: you can redistribute it and/or modify
@@ -21,6 +21,7 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>
  *
+ *
  */
 package com.felayga.unpixeldungeon.actors.buffs.negative;
 
@@ -31,10 +32,9 @@ import com.felayga.unpixeldungeon.mechanics.GameTime;
 import com.felayga.unpixeldungeon.ui.BuffIndicator;
 
 public class Roots extends FlavourBuff implements ISpeedModifierBuff {
-    public Roots()
-	{
-		type = buffType.NEGATIVE;
-	}
+    public Roots() {
+        type = buffType.NEGATIVE;
+    }
 
     public long movementModifier() {
         return 0L;
@@ -43,25 +43,25 @@ public class Roots extends FlavourBuff implements ISpeedModifierBuff {
     public long attackModifier() {
         return GameTime.TICK;
     }
-	
-	@Override
-	public int icon() {
-		return BuffIndicator.ROOTS;
-	}
 
     @Override
-    public boolean attachTo(Char target) {
-        if (!target.flying) {
-            return super.attachTo(target);
+    public int icon() {
+        return BuffIndicator.ROOTS;
+    }
+
+    @Override
+    public boolean attachTo(Char target, Char source) {
+        if (!target.flying()) {
+            return super.attachTo(target, source);
         }
 
         return false;
     }
 
     @Override
-	public String toString() {
-		return "Rooted";
-	}
+    public String toString() {
+        return "Rooted";
+    }
 
     @Override
     public String attachedMessage(boolean isHero) {
@@ -73,11 +73,11 @@ public class Roots extends FlavourBuff implements ISpeedModifierBuff {
     }
 
     @Override
-	public String desc() {
-		return "Roots(magical or natural) grab at the feet, forcing them down to the ground.\n" +
-				"\n" +
-				"Roots lock a target in place, making it impossible for them to move, but other actions are not affected.\n" +
-				"\n" +
-				"The roots will last for " + dispTurns() + ".";
-	}
+    public String desc() {
+        return "Roots(magical or natural) grab at the feet, forcing them down to the ground.\n" +
+                "\n" +
+                "Roots lock a target in place, making it impossible for them to move, but other actions are not affected.\n" +
+                "\n" +
+                "The roots will last for " + dispTurns() + ".";
+    }
 }

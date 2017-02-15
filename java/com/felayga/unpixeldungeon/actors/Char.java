@@ -5,7 +5,7 @@
  * Shattered Pixel Dungeon
  * Copyright (C) 2014-2015 Evan Debenham
  *
- * Unpixel Dungeon
+ * unPixel Dungeon
  * Copyright (C) 2015-2016 Randall Foudray
  *
  * This program is free software: you can redistribute it and/or modify
@@ -20,6 +20,7 @@
  *
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>
+ *
  *
  */
 package com.felayga.unpixeldungeon.actors;
@@ -37,10 +38,15 @@ import com.felayga.unpixeldungeon.actors.buffs.negative.Frost;
 import com.felayga.unpixeldungeon.actors.buffs.negative.Held;
 import com.felayga.unpixeldungeon.actors.buffs.negative.Paralysis;
 import com.felayga.unpixeldungeon.actors.buffs.negative.Vertigo;
+import com.felayga.unpixeldungeon.actors.buffs.positive.GasesImmunity;
 import com.felayga.unpixeldungeon.actors.buffs.positive.Invisibility;
 import com.felayga.unpixeldungeon.actors.buffs.positive.MagicalSleep;
+import com.felayga.unpixeldungeon.actors.buffs.positive.MindVision;
+import com.felayga.unpixeldungeon.actors.buffs.positive.SeeInvisible;
 import com.felayga.unpixeldungeon.actors.hero.Belongings;
+import com.felayga.unpixeldungeon.actors.hero.Hero;
 import com.felayga.unpixeldungeon.actors.mobs.Bestiary;
+import com.felayga.unpixeldungeon.actors.mobs.Mob;
 import com.felayga.unpixeldungeon.items.EquippableItem;
 import com.felayga.unpixeldungeon.items.armor.Armor;
 import com.felayga.unpixeldungeon.items.armor.glyphs.Bounce;
@@ -51,6 +57,7 @@ import com.felayga.unpixeldungeon.items.weapon.missiles.MissileWeapon;
 import com.felayga.unpixeldungeon.items.weapon.ranged.RangedWeapon;
 import com.felayga.unpixeldungeon.levels.Level;
 import com.felayga.unpixeldungeon.mechanics.AttributeType;
+import com.felayga.unpixeldungeon.mechanics.Characteristic;
 import com.felayga.unpixeldungeon.mechanics.Constant;
 import com.felayga.unpixeldungeon.mechanics.CorpseEffect;
 import com.felayga.unpixeldungeon.mechanics.GameTime;
@@ -64,22 +71,97 @@ import com.watabou.utils.Bundlable;
 import com.watabou.utils.Bundle;
 import com.watabou.utils.GameMath;
 import com.watabou.utils.Random;
+import com.watabou.utils.SparseArray;
 
+import java.util.HashMap;
 import java.util.HashSet;
+import java.util.Map;
+
+import javax.microedition.khronos.opengles.GL;
 
 public abstract class Char extends Actor {
+    public static class Registry {
+        private static final SparseArray<Char> fromIndex = new SparseArray<>();
 
-    protected static final String TXT_HIT               = "%s hit %s";
-    protected static final String TXT_TOUCH             = "%s touches %s";
-    protected static final String TXT_KILL              = "%s killed you...";
-    protected static final String TXT_DEFEAT            = "%s defeated %s";
-    protected static final String TXT_HELD              = "being stuck to the %s, %s attack fails";
+        private static final String CHARREGISTRYINDEX = "charRegistryIndex";
 
-    private static final String TXT_MISSED              = "%s %s %s attack";
+        private static int index = 0;
 
-    private static final String TXT_OUT_OF_PARALYSIS    = "The pain snapped %s out of paralysis";
+        public static void save(Bundle bundle) {
+            bundle.put(CHARREGISTRYINDEX, index);
+        }
 
-    public int pos = 0;
+        public static void restore(Bundle bundle) {
+            index = bundle.getInt(CHARREGISTRYINDEX);
+        }
+
+        public static void add(Char c) {
+            if (c.charRegistryIndex >= 0) {
+                GLog.d("tried to register char, already has index=" + c.charRegistryIndex);
+
+                if (c instanceof Hero) {
+                    GLog.d("it's fine, I guess");
+                    return;
+                } else {
+                    GLog.d("" + 1 / 0);
+                }
+            }
+
+            c.charRegistryIndex = index;
+            index++;
+
+            fromIndex.put(c.charRegistryIndex, c);
+        }
+
+        public static Char get(int registryIndex) {
+            return fromIndex.get(registryIndex);
+        }
+
+        public static void register(Level level) {
+            for (Mob mob : level.mobs) {
+                Char c = mob;
+                if (c.charRegistryIndex != -1) {
+                    fromIndex.put(c.charRegistryIndex, c);
+                } else {
+                    GLog.d("TRIED TO REGISTER UNKNOWN CHAR FOUND AT POS=" + c.pos());
+                }
+            }
+        }
+
+        public static void unregister(Level level) {
+            for (Mob mob : level.mobs) {
+                Char c = mob;
+                if (c.charRegistryIndex != -1) {
+                    fromIndex.remove(c.charRegistryIndex);
+                } else {
+                    GLog.d("TRIED TO UNREGISTER UNKNOWN CHAR FOUND AT POS=" + c.pos());
+                }
+            }
+        }
+    }
+
+    protected static final String TXT_HIT = "%s hit %s";
+    protected static final String TXT_TOUCH = "%s touches %s";
+    protected static final String TXT_KILL = "%s killed you...";
+    protected static final String TXT_DEFEAT = "%s defeated %s";
+    protected static final String TXT_HELD = "being stuck to the %s, %s attack fails";
+
+    private static final String TXT_MISSED = "%s %s %s attack";
+
+    private static final String TXT_OUT_OF_PARALYSIS = "The pain snapped %s out of paralysis";
+
+    private int _pos = Constant.Position.NONE;
+    public int pos() {
+        return _pos;
+    }
+    public void pos(int newPos) {
+        if (_pos != newPos) {
+            int lastPos = _pos;
+
+            _pos = newPos;
+            move(lastPos, _pos);
+        }
+    }
 
     public int defenseMundane = 10;
     public int defenseMagical = 0;
@@ -94,7 +176,19 @@ public abstract class Char extends Actor {
     public int MT;
     public int MP;
 
+    private int charRegistryIndex = -1;
+
+    public int charRegistryIndex() {
+        return charRegistryIndex;
+    }
+
     private int attribute[];
+
+    public void initAttributes(int[] attributes) {
+        attribute[AttributeType.STRCON.value] = attributes[AttributeType.STRCON.value];
+        attribute[AttributeType.DEXCHA.value] = attributes[AttributeType.DEXCHA.value];
+        attribute[AttributeType.INTWIS.value] = attributes[AttributeType.INTWIS.value];
+    }
 
     public int STRCON() {
         return attribute[AttributeType.STRCON.value];
@@ -180,11 +274,11 @@ public abstract class Char extends Actor {
 
     public int weight;
     public int nutrition;
+    public long characteristics;
     public long corpseEffects;
     public long corpseResistances;
 
-    public boolean tryIncreaseAttribute(AttributeType type, int value)
-    {
+    public boolean tryIncreaseAttribute(AttributeType type, int value) {
         if (attribute[type.value] + value > Constant.Attribute.MAXIMUM) {
             attribute[type.value] = Constant.Attribute.MAXIMUM;
             return false;
@@ -207,17 +301,14 @@ public abstract class Char extends Actor {
         long bestSlow = GameTime.TICK;
         long bestFast = GameTime.TICK;
 
-        HashSet<Buff> buffs = buffs();
-
-        for(Buff buff : buffs) {
+        for (Buff buff : buffs()) {
             if (buff instanceof ISpeedModifierBuff) {
-                ISpeedModifierBuff speedBuff = (ISpeedModifierBuff)buff;
+                ISpeedModifierBuff speedBuff = (ISpeedModifierBuff) buff;
                 long modifier = speedBuff.movementModifier();
 
                 if (modifier < GameTime.TICK && modifier < bestFast) {
                     bestFast = modifier;
-                }
-                else if (modifier > GameTime.TICK && modifier > bestSlow) {
+                } else if (modifier > GameTime.TICK && modifier > bestSlow) {
                     bestSlow = modifier;
                 }
             }
@@ -228,7 +319,7 @@ public abstract class Char extends Actor {
         EquippableItem item = belongings.armor();
 
         if (item instanceof Armor) {
-            Armor armor = (Armor)item;
+            Armor armor = (Armor) item;
 
             armorDelay = armor.speedModifier;
         }
@@ -247,17 +338,14 @@ public abstract class Char extends Actor {
         long bestSlow = GameTime.TICK;
         long bestFast = GameTime.TICK;
 
-        HashSet<Buff> buffs = buffs();
-
-        for(Buff buff : buffs) {
+        for (Buff buff : buffs()) {
             if (buff instanceof ISpeedModifierBuff) {
-                ISpeedModifierBuff speedBuff = (ISpeedModifierBuff)buff;
+                ISpeedModifierBuff speedBuff = (ISpeedModifierBuff) buff;
                 long modifier = speedBuff.attackModifier();
 
                 if (modifier < GameTime.TICK && modifier < bestFast) {
                     bestFast = modifier;
-                }
-                else if (modifier > GameTime.TICK && modifier > bestSlow) {
+                } else if (modifier > GameTime.TICK && modifier > bestSlow) {
                     bestSlow = modifier;
                 }
             }
@@ -268,7 +356,7 @@ public abstract class Char extends Actor {
         EquippableItem item = belongings.weapon();
 
         if (item instanceof Weapon) {
-            Weapon weapon = (Weapon)item;
+            Weapon weapon = (Weapon) item;
 
             weaponDelay = weapon.delay_new;
         }
@@ -281,13 +369,59 @@ public abstract class Char extends Actor {
     }
 
     public int paralysed = 0;
-    public boolean flying = false;
     public int invisible = 0;
+    public int stealthy = 0;
 
     public int viewDistance = 8;
+    public int hearDistance = 8;
+    public int touchDistance = 1;
 
-    public boolean canOpenDoors = false;
-    public boolean isEthereal = false;
+    private boolean canBreathe = true;
+
+    public boolean canBreate() {
+        if (!canBreathe) {
+            return false;
+        }
+
+        if (buff(GasesImmunity.class) != null) {
+            return false;
+        }
+
+        return true;
+    }
+
+    public int flying = 0;
+
+    public boolean flying() {
+        return flying > 0;
+    }
+
+    protected void flying(boolean state) {
+        if (state) {
+            flying++;
+        } else {
+            flying--;
+        }
+    }
+
+    public boolean canPassDoors() {
+        if (isEthereal()) {
+            return true;
+        }
+        if (isAmorphous()) {
+            return true;
+        }
+
+        return (characteristics & Characteristic.Humanoid.value) != 0;
+    }
+
+    public boolean isEthereal() {
+        return (characteristics & Characteristic.Ethereal.value) != 0;
+    }
+
+    public boolean isAmorphous() {
+        return (characteristics & Characteristic.Amorphous.value) != 0;
+    }
 
     private HashSet<Buff> buffs = new HashSet<Buff>();
 
@@ -311,7 +445,7 @@ public abstract class Char extends Actor {
     @Override
     protected boolean act() {
         belongings.decay(getTime(), true, false);
-        Dungeon.level.updateFieldOfView(this);
+        Dungeon.level.updateFieldOfSenses(this);
         return false;
     }
 
@@ -339,7 +473,7 @@ public abstract class Char extends Actor {
         bundle.put(ATTRIBUTE1DAMAGE, attributeDamage[1]);
         bundle.put(ATTRIBUTE2DAMAGE, attributeDamage[2]);
 
-        bundle.put(POS, pos);
+        bundle.put(POS, _pos);
         bundle.put(TAG_HP, HP);
         bundle.put(TAG_HT, HT);
         bundle.put(BUFFS, buffs);
@@ -351,39 +485,51 @@ public abstract class Char extends Actor {
         super.restoreFromBundle(bundle);
 
         attribute = new int[]{
-            bundle.getInt(ATTRIBUTE0),
-            bundle.getInt(ATTRIBUTE1),
-            bundle.getInt(ATTRIBUTE2)
+                bundle.getInt(ATTRIBUTE0),
+                bundle.getInt(ATTRIBUTE1),
+                bundle.getInt(ATTRIBUTE2)
         };
 
         attributeDamage = new int[]{
-            bundle.getInt(ATTRIBUTE0DAMAGE),
-            bundle.getInt(ATTRIBUTE1DAMAGE),
-            bundle.getInt(ATTRIBUTE2DAMAGE)
+                bundle.getInt(ATTRIBUTE0DAMAGE),
+                bundle.getInt(ATTRIBUTE1DAMAGE),
+                bundle.getInt(ATTRIBUTE2DAMAGE)
         };
 
-        pos = bundle.getInt(POS);
+        _pos = bundle.getInt(POS);
         HP = bundle.getInt(TAG_HP);
         HT = bundle.getInt(TAG_HT);
         corpseEffects = bundle.getLong(CORPSEEFFECTS);
 
         for (Bundlable b : bundle.getCollection(BUFFS)) {
             if (b != null) {
-                ((Buff) b).attachTo(this);
+                ((Buff) b).restore(this);
             }
         }
     }
 
-    protected boolean shouldAttack(Char enemy) {
-        return true;
-    }
-
     protected boolean canAttack(Char enemy) {
-        return Level.canReach(pos, enemy.pos);
+        return Level.canReach(pos(), enemy.pos());
     }
 
     protected boolean shouldTouch(Char enemy) {
         return false;
+    }
+
+    protected boolean canSee(Char enemy) {
+        if (buff(MindVision.class) != null) {
+            if ((enemy.characteristics & Characteristic.Brainless.value) == 0) {
+                return true;
+            }
+        }
+        if (buff(Blindness.class) != null) {
+            return false;
+        }
+        if (enemy.buff(Invisibility.class) != null) {
+            return buff(SeeInvisible.class) != null;
+        }
+
+        return true;
     }
 
     public boolean attack(IWeapon weapon, Char enemy) {
@@ -391,43 +537,69 @@ public abstract class Char extends Actor {
     }
 
     public boolean attack(IWeapon weapon, boolean ranged, Char enemy) {
-        boolean visibleFight = Dungeon.visible[pos] || Dungeon.visible[enemy.pos];
+        boolean visibleFight = Dungeon.visible[enemy.pos()];
+        boolean touchableFight = Dungeon.touchable[enemy.pos()];
+        boolean audibleFight = Dungeon.audible[enemy.pos()];
         boolean retval = false;
 
         boolean touch = shouldTouch(enemy);
         Held heldBuff = buff(Held.class);
 
-        if (heldBuff != null && heldBuff.host == enemy) {
+        if (heldBuff != null && heldBuff.ownerRegistryIndex() == enemy.charRegistryIndex()) {
             heldBuff = null;
         }
 
         if (heldBuff != null) {
+            Char host = Char.Registry.get(heldBuff.ownerRegistryIndex());
             String hostname;
-            if (heldBuff.host != null) {
-                hostname = heldBuff.host.name;
-            }
-            else {
+            if (host != null && visibleFight) {
+                hostname = host.name;
+            } else {
                 hostname = "something";
             }
 
-            if (visibleFight) {
-                if (this == Dungeon.hero) {
-                    GLog.n(TXT_HELD, hostname, "your");
-                } else if (heldBuff.host == Dungeon.hero) {
-                    GLog.n(TXT_HELD, "you", name + "'s");
-                } else {
-                    GLog.n(TXT_HELD, hostname, name + "'s");
-                }
+            if (this == Dungeon.hero) {
+                GLog.n(TXT_HELD, hostname, "your");
+            } else if (host == Dungeon.hero) {
+                GLog.n(TXT_HELD, "you", name + "'s");
+            } else {
+                GLog.n(TXT_HELD, hostname, name + "'s");
             }
         } else if (tryHit(this, weapon, ranged, enemy, touch)) {
             if (!touch) {
-                hit(weapon, ranged, enemy, visibleFight);
+                retval = false;
+                if (!canSee(enemy)) {
+                    if (Random.Int(5) == 0) {
+                        if (this == Dungeon.hero) {
+                            GLog.n("You swing wildly and miss!");
+                        } else {
+                            switch (Random.Int(3)) {
+                                case 0:
+                                    GLog.w("The " + enemy.name + " swings wildly and misses!");
+                                    break;
+                                case 1:
+                                    GLog.w("The " + enemy.name + " strikes at thin air!");
+                                    break;
+                                default:
+                                    GLog.w("The " + enemy.name + " attacks a spot near you!");
+                                    break;
+                            }
+                        }
+                        retval = true;
+                    }
+                }
+
+                if (!retval) {
+                    hit(weapon, ranged, enemy, visibleFight, touchableFight, audibleFight);
+                }
             } else {
                 if (visibleFight) {
                     GLog.i(TXT_TOUCH, name, enemy.name);
+                } else if (touchableFight) {
+                    GLog.i(TXT_TOUCH, "something", enemy.name);
                 }
 
-                touch(enemy, visibleFight);
+                touch(enemy, visibleFight, touchableFight);
             }
 
             retval = true;
@@ -440,26 +612,34 @@ public abstract class Char extends Actor {
                 } else {
                     GLog.i(TXT_MISSED, enemy.name, defense, name + "'s");
                 }
+            }
 
+            if (audibleFight) {
                 Sample.INSTANCE.play(Assets.SND_MISS);
             }
 
             retval = false;
         }
 
-        if (this.flying) {
+        if (this.flying > 0) {
             Bounce.proc(32767, this, enemy);
         }
-        if (enemy.flying) {
+        if (enemy.flying > 0) {
             Bounce.proc(32767, enemy, this);
         }
 
         return retval;
     }
 
-    protected void hit(IWeapon weapon, boolean ranged, Char enemy, boolean visible) {
+    protected void hit(IWeapon weapon, boolean ranged, Char enemy, boolean visible, boolean touchable, boolean audible) {
         if (visible) {
             GLog.i(TXT_HIT, name, enemy.name);
+        } else if (touchable) {
+            if (enemy == Dungeon.hero) {
+                GLog.i(TXT_HIT, "something", enemy.name);
+            } else if (this == Dungeon.hero) {
+                GLog.i(TXT_HIT, name, "something");
+            }
         }
 
         int effectiveDamage;
@@ -481,7 +661,7 @@ public abstract class Char extends Actor {
         }
         effectiveDamage = enemy.defenseProc(this, effectiveDamage);
 
-        if (visible) {
+        if (audible) {
             Sample.INSTANCE.play(Assets.SND_HIT, 1, 1, Random.Float(0.8f, 1.25f));
         }
 
@@ -529,10 +709,19 @@ public abstract class Char extends Actor {
         }
     }
 
-    protected void touch(Char enemy, boolean visible) {
+    protected void touch(Char enemy, boolean visible, boolean touchable) {
         if (visible) {
             GLog.i(TXT_TOUCH, name, enemy.name);
+        } else if (touchable) {
+            if (enemy == Dungeon.hero) {
+                GLog.i(TXT_TOUCH, "something", enemy.name);
+            } else if (this == Dungeon.hero) {
+                GLog.i(TXT_TOUCH, name, "something");
+            }
         }
+    }
+
+    public void busy() {
     }
 
     public boolean zap() {
@@ -546,6 +735,14 @@ public abstract class Char extends Actor {
         int defense = defender.defenseMundane(attacker, touch);
 
         GLog.d("roll=" + roll + " + " + skill + " >= " + defense + "?");
+
+        if (defender instanceof Hero) {
+            if (defender.buff(Blindness.class) != null) {
+                Dungeon.level.warnings.add(attacker.pos());
+            } else if (attacker.invisible > 0) {
+                Dungeon.level.warnings.add(attacker.pos(), false);
+            }
+        }
 
         return roll + skill >= defense;
 
@@ -566,12 +763,11 @@ public abstract class Char extends Actor {
             retval -= 2;
         }
 
-        if (Level.distance(pos, target.pos) <= 1) {
+        if (Level.distance(pos(), target.pos()) <= 1) {
             if (thrown) {
                 GLog.d("thrown weapon in melee");
                 retval -= 4;
-            }
-            else {
+            } else {
                 if (weapon instanceof RangedWeapon) {
                     GLog.d("ranged weapon in melee");
                     retval -= 4;
@@ -634,7 +830,7 @@ public abstract class Char extends Actor {
         if (buff(Paralysis.class) != null) {
             if (Random.Int(dmg) >= Random.Int(HP)) {
                 Buff.detach(this, Paralysis.class);
-                if (Dungeon.visible[pos]) {
+                if (Dungeon.visible[pos()]) {
                     GLog.i(TXT_OUT_OF_PARALYSIS, name);
                 }
             }
@@ -656,32 +852,32 @@ public abstract class Char extends Actor {
 
     public boolean shoot(Char enemy, MissileWeapon wep) {
         boolean result = attack(wep, true, enemy);
-        Invisibility.dispel();
+        Invisibility.dispelAttack(this);
 
         //todo: strange bug here needs to be traced: ready state failing in the chain somewhere occasionally if: enemy dies (every occurrence of bug), player had one ammo item left (most occurrences) or player had more than one ammo item left (rare occurrences)
 
         return result;
     }
 
-    public void destroy() {
+    public void destroy(Actor cause) {
         HP = 0;
         Actor.remove(this);
     }
 
     protected boolean shouldDropCorpse() {
-        return Random.Int(2) == 0;
+        return ((Characteristic.Corpseless.value & characteristics) == 0) && Random.Int(2) == 0;
     }
 
     public void die(Actor src) {
         if (nutrition > 0 && shouldDropCorpse()) {
-            Dungeon.level.drop(new Corpse(this), pos);
+            Dungeon.level.drop(new Corpse(this), pos());
         } else {
             GLog.d("no corpse because nutrition=" + nutrition);
         }
 
-        belongings.dropAll(pos);
+        belongings.dropAll(pos());
 
-        destroy();
+        destroy(src);
         sprite.die();
     }
 
@@ -715,10 +911,12 @@ public abstract class Char extends Actor {
     }
 
     public boolean isCharmedBy(Char ch) {
-        int chID = ch.id();
         for (Buff b : buffs) {
-            if (b instanceof Charm && ((Charm) b).object == chID) {
-                return true;
+            if (b instanceof Charm) {
+                Charm charm = (Charm)b;
+                if (charm.ownerRegistryIndex() == ch.charRegistryIndex()) {
+                    return true;
+                }
             }
         }
         return false;
@@ -751,11 +949,13 @@ public abstract class Char extends Actor {
         Actor.remove(buff);
     }
 
+    /*
     public void remove(Class<? extends Buff> buffClass) {
         for (Buff buff : buffs(buffClass)) {
             remove(buff);
         }
     }
+    */
 
     @Override
     protected void onRemove() {
@@ -770,18 +970,14 @@ public abstract class Char extends Actor {
         }
     }
 
-    public int stealth() {
-        return 0;
-    }
-
     public void move(int step) {
-        if (Level.canStep(step, pos, Level.diagonal) && buff(Vertigo.class) != null) {
+        if (Level.canStep(step, pos(), Level.diagonal) && buff(Vertigo.class) != null) {
             sprite.interruptMotion();
-            int newPos = pos + Level.NEIGHBOURS8[Random.Int(8)];
+            int newPos = pos() + Level.NEIGHBOURS8[Random.Int(8)];
             if (!(Level.passable[newPos] || Level.pathable[newPos] || Level.avoid[newPos]) || Actor.findChar(newPos) != null)
                 return;
             else {
-                sprite.move(pos, newPos);
+                sprite.move(pos(), newPos);
                 step = newPos;
             }
         }
@@ -791,19 +987,20 @@ public abstract class Char extends Actor {
 			Door.leave( pos );
 		}
 		*/
-        pos = step;
+        super.move(_pos, step);
+        _pos = step;
 		/*
 		if (flying && Dungeon.level.map[pos] == Terrain.DOOR) {
 			Door.enter( pos );
 		}
 		*/
         if (this != Dungeon.hero) {
-            sprite.visible = visibilityOverride(Dungeon.visible[pos]);
+            sprite.visible = visibilityOverride(Dungeon.visible[pos()]);
         }
     }
 
     public int distance(Char other) {
-        return Level.distance(pos, other.pos);
+        return Level.distance(pos(), other.pos());
     }
 
     public void onMotionComplete() {

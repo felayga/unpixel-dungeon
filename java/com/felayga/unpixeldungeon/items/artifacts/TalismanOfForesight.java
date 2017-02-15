@@ -5,7 +5,7 @@
  * Shattered Pixel Dungeon
  * Copyright (C) 2014-2015 Evan Debenham
  *
- * Unpixel Dungeon
+ * unPixel Dungeon
  * Copyright (C) 2015-2016 Randall Foudray
  *
  * This program is free software: you can redistribute it and/or modify
@@ -21,6 +21,7 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>
  *
+ *
  */
 package com.felayga.unpixeldungeon.items.artifacts;
 
@@ -28,7 +29,7 @@ import com.felayga.unpixeldungeon.Assets;
 import com.felayga.unpixeldungeon.Dungeon;
 import com.felayga.unpixeldungeon.actors.buffs.Buff;
 import com.felayga.unpixeldungeon.actors.buffs.hero.LockedFloor;
-import com.felayga.unpixeldungeon.actors.buffs.positive.Awareness;
+import com.felayga.unpixeldungeon.actors.buffs.positive.ItemVision;
 import com.felayga.unpixeldungeon.actors.hero.Hero;
 import com.felayga.unpixeldungeon.levels.Level;
 import com.felayga.unpixeldungeon.levels.Terrain;
@@ -48,7 +49,7 @@ public class TalismanOfForesight extends Artifact_old {
 		name = "Talisman of Foresight";
 		image = ItemSpriteSheet.ARTIFACT_TALISMAN;
 
-		level = 0;
+		level(0);
 		exp = 0;
 		levelCap = 10;
 
@@ -77,7 +78,7 @@ public class TalismanOfForesight extends Artifact_old {
 			if (!isEquipped(hero))        GLog.i("You need to equip your talisman to do that.");
 			else if (charge != chargeCap) GLog.i("Your talisman isn't full charged yet.");
 			else {
-				hero.sprite.operate(hero.pos);
+				hero.sprite.operate(hero.pos());
 				hero.busy();
 				Sample.INSTANCE.play(Assets.SND_BEACON);
 				charge = 0;
@@ -96,7 +97,7 @@ public class TalismanOfForesight extends Artifact_old {
 
 				GLog.p("The Talisman floods your mind with knowledge about the current floor.");
 
-				Buff.affect(hero, Awareness.class, Awareness.DURATION);
+				Buff.affect(hero, hero, ItemVision.class, GameTime.TICK * 4);
 				Dungeon.observe();
 			}
 		}
@@ -138,8 +139,8 @@ public class TalismanOfForesight extends Artifact_old {
 
 			int distance = 3;
 
-			int cx = target.pos % Level.WIDTH;
-			int cy = target.pos / Level.WIDTH;
+			int cx = target.pos() % Level.WIDTH;
+			int cy = target.pos() / Level.WIDTH;
 			int ax = cx - distance;
 			if (ax < 0) {
 				ax = 0;
@@ -183,7 +184,7 @@ public class TalismanOfForesight extends Artifact_old {
 			//fully charges in 2500 turns at lvl=0, scaling to 1000 turns at lvl = 10.
 			LockedFloor lock = target.buff(LockedFloor.class);
 			if (charge < chargeCap && bucStatus != BUCStatus.Cursed && (lock == null || lock.regenOn())) {
-				partialCharge += 0.04+(level*0.006);
+				partialCharge += 0.04+(level()*0.006);
 
 				if (partialCharge > 1 && charge < chargeCap) {
 					partialCharge--;
@@ -198,9 +199,9 @@ public class TalismanOfForesight extends Artifact_old {
 		}
 
 		public void charge(){
-			charge = Math.min(charge+(2+(level/3)), chargeCap);
+			charge = Math.min(charge+(2+(level()/3)), chargeCap);
 			exp++;
-			if (exp >= 4 && level < levelCap) {
+			if (exp >= 4 && level() < levelCap) {
 				upgrade(null, 1);
 				GLog.p("Your Talisman grows stronger!");
 				exp -= 4;

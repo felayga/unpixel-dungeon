@@ -5,7 +5,7 @@
  * Shattered Pixel Dungeon
  * Copyright (C) 2014-2015 Evan Debenham
  *
- * Unpixel Dungeon
+ * unPixel Dungeon
  * Copyright (C) 2015-2016 Randall Foudray
  *
  * This program is free software: you can redistribute it and/or modify
@@ -20,6 +20,7 @@
  *
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>
+ *
  *
  */
 package com.felayga.unpixeldungeon.levels.features;
@@ -105,7 +106,7 @@ public class Chasm {
 		hero.sprite.burst(hero.sprite.blood(), 10);
 		Camera.main.shake(4, 0.2f);
 		
-		Buff.prolong(hero, Cripple.class, Cripple.DURATION);
+		Buff.prolong(hero, null, Cripple.class, Cripple.DURATION);
 		hero.damage( Random.IntRange( hero.HP / 2, hero.HT / 2 ), MagicType.Mundane, null);
 		//todo: fix message from falling to death
 		/*

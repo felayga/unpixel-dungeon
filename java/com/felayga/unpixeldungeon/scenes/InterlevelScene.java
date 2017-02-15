@@ -5,7 +5,7 @@
  * Shattered Pixel Dungeon
  * Copyright (C) 2014-2015 Evan Debenham
  *
- * Unpixel Dungeon
+ * unPixel Dungeon
  * Copyright (C) 2015-2016 Randall Foudray
  *
  * This program is free software: you can redistribute it and/or modify
@@ -21,16 +21,17 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>
  *
+ *
  */
 package com.felayga.unpixeldungeon.scenes;
 
 import com.felayga.unpixeldungeon.Dungeon;
-import com.felayga.unpixeldungeon.ShatteredPixelDungeon;
 import com.felayga.unpixeldungeon.Statistics;
 import com.felayga.unpixeldungeon.items.Generator;
 import com.felayga.unpixeldungeon.levels.Level;
 import com.felayga.unpixeldungeon.mechanics.Constant;
 import com.felayga.unpixeldungeon.mechanics.GameTime;
+import com.felayga.unpixeldungeon.unPixelDungeon;
 import com.felayga.unpixeldungeon.utils.GLog;
 import com.felayga.unpixeldungeon.windows.WndError;
 import com.felayga.unpixeldungeon.windows.WndStory;
@@ -211,7 +212,7 @@ public class InterlevelScene extends PixelScene {
                 message.alpha(p);
 
                 if (mode == Mode.CONTINUE || (mode == Mode.DESCEND && Dungeon.depth() == 1)) {
-                    Music.INSTANCE.volume(p * (ShatteredPixelDungeon.musicVol() / 10f));
+                    Music.INSTANCE.volume(p * (unPixelDungeon.musicVol() / 10f));
                 }
                 if ((timeLeft -= Game.elapsed) <= 0) {
                     Game.switchScene(GameScene.class);
@@ -372,7 +373,7 @@ public class InterlevelScene extends PixelScene {
             Dungeon.switchLevel(Dungeon.loadLevel(WndInitHero.savedGameIndex), Constant.Position.EXIT);
         } else {
             Level level = Dungeon.loadLevel(WndInitHero.savedGameIndex);
-            Dungeon.switchLevel(level, Level.resizingNeeded ? level.adjustPos(Dungeon.hero.pos) : Dungeon.hero.pos);
+            Dungeon.switchLevel(level, Level.resizingNeeded ? level.adjustPos(Dungeon.hero.pos()) : Dungeon.hero.pos());
         }
     }
 
@@ -407,7 +408,7 @@ public class InterlevelScene extends PixelScene {
     private void teleport() throws IOException {
         GameTime.fix();
 
-        Level level = null;
+        Level level;
 
         if (Statistics.floorsVisited[teleportDepth]) {
             Dungeon.depth(teleportDepth);

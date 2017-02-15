@@ -5,7 +5,7 @@
  * Shattered Pixel Dungeon
  * Copyright (C) 2014-2015 Evan Debenham
  *
- * Unpixel Dungeon
+ * unPixel Dungeon
  * Copyright (C) 2015-2016 Randall Foudray
  *
  * This program is free software: you can redistribute it and/or modify
@@ -20,6 +20,7 @@
  *
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>
+ *
  *
  */
 package com.felayga.unpixeldungeon.utils;
@@ -38,12 +39,12 @@ public class GLog {
 	public static final String NEGATIVE		= "-- ";
 	public static final String WARNING		= "** ";
 	public static final String HIGHLIGHT	= "@@ ";
+    public static final String DEBUG        = "!! ";
 	
 	public static Signal<String> update = new Signal<>();
 	
 	public static void i( String text, Object... args ) {
-		
-		if (args.length > 0) {
+        if (args.length > 0) {
 			text = Utils.format( text, args );
 		}
 		
@@ -52,7 +53,7 @@ public class GLog {
 	}
 
 	public static void d( String text, Object... args ) {
-        i(NEGATIVE + text, args);
+        i(DEBUG + text, args);
     }
     public static void d( Throwable throwable) { d(Log.getStackTraceString(throwable)); }
     public static void d( int pos, int relativePos ) {

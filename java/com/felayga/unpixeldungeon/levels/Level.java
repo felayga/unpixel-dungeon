@@ -5,7 +5,7 @@
  * Shattered Pixel Dungeon
  * Copyright (C) 2014-2015 Evan Debenham
  *
- * Unpixel Dungeon
+ * unPixel Dungeon
  * Copyright (C) 2015-2016 Randall Foudray
  *
  * This program is free software: you can redistribute it and/or modify
@@ -21,6 +21,7 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>
  *
+ *
  */
 package com.felayga.unpixeldungeon.levels;
 
@@ -34,15 +35,14 @@ import com.felayga.unpixeldungeon.actors.Char;
 import com.felayga.unpixeldungeon.actors.blobs.Alchemy;
 import com.felayga.unpixeldungeon.actors.blobs.Blob;
 import com.felayga.unpixeldungeon.actors.buffs.Buff;
-import com.felayga.unpixeldungeon.actors.buffs.ITelepathyBuff;
 import com.felayga.unpixeldungeon.actors.buffs.hero.LockedFloor;
 import com.felayga.unpixeldungeon.actors.buffs.hero.Shadows;
 import com.felayga.unpixeldungeon.actors.buffs.negative.Blindness;
+import com.felayga.unpixeldungeon.actors.buffs.positive.ItemVision;
 import com.felayga.unpixeldungeon.actors.buffs.positive.MindVision;
-import com.felayga.unpixeldungeon.actors.hero.Hero;
-import com.felayga.unpixeldungeon.actors.hero.HeroClass;
 import com.felayga.unpixeldungeon.actors.mobs.Bestiary;
 import com.felayga.unpixeldungeon.actors.mobs.Mob;
+import com.felayga.unpixeldungeon.actors.mobs.npcs.Shopkeeper;
 import com.felayga.unpixeldungeon.effects.particles.FlowParticle;
 import com.felayga.unpixeldungeon.effects.particles.WindParticle;
 import com.felayga.unpixeldungeon.items.Dewdrop;
@@ -59,17 +59,15 @@ import com.felayga.unpixeldungeon.items.bags.SeedPouch;
 import com.felayga.unpixeldungeon.items.food.Blandfruit;
 import com.felayga.unpixeldungeon.items.food.Food;
 import com.felayga.unpixeldungeon.items.potions.PotionOfHealing;
-import com.felayga.unpixeldungeon.items.potions.PotionOfMight;
 import com.felayga.unpixeldungeon.items.rings.RingOfWealth;
 import com.felayga.unpixeldungeon.items.scrolls.Scroll;
-import com.felayga.unpixeldungeon.items.scrolls.ScrollOfMagicalInfusion;
 import com.felayga.unpixeldungeon.items.scrolls.ScrollOfUpgrade;
 import com.felayga.unpixeldungeon.levels.features.Chasm;
-import com.felayga.unpixeldungeon.levels.features.Door;
 import com.felayga.unpixeldungeon.levels.features.HighGrass;
 import com.felayga.unpixeldungeon.levels.painters.Painter;
 import com.felayga.unpixeldungeon.levels.traps.Trap;
 import com.felayga.unpixeldungeon.levels.traps.WornTrap;
+import com.felayga.unpixeldungeon.mechanics.Characteristic;
 import com.felayga.unpixeldungeon.mechanics.GameTime;
 import com.felayga.unpixeldungeon.mechanics.IDecayable;
 import com.felayga.unpixeldungeon.mechanics.ShadowCaster;
@@ -115,6 +113,8 @@ public abstract class Level implements Bundlable, IDecayable {
     public static final int ROOMBUFFER  = 2;
 
     public static final int[] NEIGHBOURS4 = {-WIDTH, +1, +WIDTH, -1};
+    public static final int[] NEIGHBOURS4DIAGONAL = {+1 - WIDTH, +1 + WIDTH, -1 + WIDTH, -1 - WIDTH};
+    public static final int[] NEIGHBOURS5 = {0, -WIDTH, +1, +WIDTH, -1};
     public static final int[] NEIGHBOURS8 = {-WIDTH, +1 - WIDTH, +1, +1 + WIDTH, +WIDTH, -1 + WIDTH, -1, -1 - WIDTH};
     public static final int[] NEIGHBOURS9 = {0, -WIDTH, +1 - WIDTH, +1, +1 + WIDTH, +WIDTH, -1 + WIDTH, -1, -1 - WIDTH};
 
@@ -150,6 +150,8 @@ public abstract class Level implements Bundlable, IDecayable {
     public int viewDistance = Dungeon.isChallenged(Challenges.DARKNESS) ? 3 : 8;
 
     public static boolean[] fieldOfView = new boolean[LENGTH];
+    public static boolean[] fieldOfTouch = new boolean[LENGTH];
+    public static boolean[] fieldOfSound = new boolean[LENGTH];
 
     public static boolean[] passable = new boolean[LENGTH];
     public static boolean[] pathable = new boolean[LENGTH];
@@ -158,9 +160,9 @@ public abstract class Level implements Bundlable, IDecayable {
     public static boolean[] secret = new boolean[LENGTH];
     public static boolean[] solid = new boolean[LENGTH];
     public static boolean[] avoid = new boolean[LENGTH];
-    public static boolean[] water = new boolean[LENGTH];
+    public static boolean[] puddle = new boolean[LENGTH];
     public static boolean[] pit = new boolean[LENGTH];
-    public static boolean[] wood = new boolean[LENGTH];
+    public static boolean[] burnable = new boolean[LENGTH];
     public static boolean[] stone = new boolean[LENGTH];
 
     public static boolean[] discoverable = new boolean[LENGTH];
@@ -218,7 +220,6 @@ public abstract class Level implements Bundlable, IDecayable {
     private static final String FEELING = "feeling";
     private static final String TIME = "time";
     private static final String FLAGSLOCAL = "flagsLocal";
-    private static final String WARNINGS = "warnings";
 
     public Level(int flags) {
         flagsLocal = flags;
@@ -240,12 +241,16 @@ public abstract class Level implements Bundlable, IDecayable {
         for (Buff buff : Dungeon.hero.buffs(RingOfWealth.Wealth.class)) {
             bonus += ((RingOfWealth.Wealth) buff).level;
         }
+
+        //todo: bonus item generation
+        /*
         if (Random.Float() > Math.pow(0.95, bonus)) {
             if (Random.Int(2) == 0)
                 addItemToSpawn(new ScrollOfMagicalInfusion());
             else
                 addItemToSpawn(new PotionOfMight());
         }
+        */
 
         /*
         DriedRose rose = Dungeon.hero.belongings.getItem(DriedRose.class);
@@ -361,8 +366,7 @@ public abstract class Level implements Bundlable, IDecayable {
         boolean updated = false;
 
         for (int n = 0; n < heaps.size(); n++) {
-            int key = heaps.keyAt(n);
-            Heap heap = heaps.get(key);
+            Heap heap = heaps.valueAt(n);
 
             Iterator<Item> iterator = heap.iterator(false);
             boolean subupdated = false;
@@ -484,11 +488,14 @@ public abstract class Level implements Bundlable, IDecayable {
             Mob mob = (Mob) m;
             if (mob != null) {
                 if (resizingNeeded) {
-                    mob.pos = adjustPos(mob.pos);
+                    mob.pos(adjustPos(mob.pos()));
                 }
                 mobs.add(mob);
             }
         }
+
+        Char.Registry.register(this);
+        Shopkeeper.Registry.register(this);
 
         collection = bundle.getCollection(BLOBS);
         for (Bundlable b : collection) {
@@ -526,6 +533,9 @@ public abstract class Level implements Bundlable, IDecayable {
         bundle.put(FEELING, feeling);
         bundle.put(FLAGSLOCAL, flagsLocal);
         bundle.put(TIME, time);
+
+        Char.Registry.unregister(this);
+        Shopkeeper.Registry.unregister(this);
     }
 
     public int tunnelTile() {
@@ -593,7 +603,7 @@ public abstract class Level implements Bundlable, IDecayable {
     public void seal() {
         if (!locked) {
             locked = true;
-            Buff.affect(Dungeon.hero, LockedFloor.class);
+            Buff.affect(Dungeon.hero, null, LockedFloor.class);
         }
     }
 
@@ -612,7 +622,7 @@ public abstract class Level implements Bundlable, IDecayable {
         for (int i = 0; i < LENGTH; i++) {
             if (pit[i]) {
                 visuals.add(new WindParticle.Wind(i));
-                if (i >= WIDTH && water[i - WIDTH]) {
+                if (i >= WIDTH && puddle[i - WIDTH]) {
                     visuals.add(new FlowParticle.Flow(i - WIDTH));
                 }
             }
@@ -633,7 +643,7 @@ public abstract class Level implements Bundlable, IDecayable {
 
     public Mob findMob(int pos) {
         for (Mob mob : mobs) {
-            if (mob.pos == pos) {
+            if (mob.pos() == pos) {
                 return mob;
             }
         }
@@ -667,7 +677,7 @@ public abstract class Level implements Bundlable, IDecayable {
                 mob.state = mob.WANDERING;
                 GameScene.add(mob);
                 if (Statistics.amuletObtained) {
-                    mob.beckon(Dungeon.hero.pos);
+                    mob.beckon(Dungeon.hero.pos());
                 }
             }
         });
@@ -700,7 +710,7 @@ public abstract class Level implements Bundlable, IDecayable {
                 mob.state = mob.WANDERING;
                 GameScene.add(mob);
                 if (Statistics.amuletObtained) {
-                    mob.beckon(Dungeon.hero.pos);
+                    mob.beckon(Dungeon.hero.pos());
                 }
             }
         });
@@ -740,6 +750,14 @@ public abstract class Level implements Bundlable, IDecayable {
         return cell;
     }
 
+    public int randomStep(int pos) {
+        int cell;
+        do {
+            cell = pos + NEIGHBOURS9[Random.Int(NEIGHBOURS9.length)];
+        } while (!passable[cell]);
+        return cell;
+    }
+
     public ArrayList<Integer> randomPositionsNear(int pos, int quantity, RandomPositionValidator validator) {
         ArrayList<Integer> positionOffsets = new ArrayList<>();
 
@@ -747,8 +765,8 @@ public abstract class Level implements Bundlable, IDecayable {
             positionOffsets.add(ofs);
         }
 
-        HashSet<Integer> retval = new HashSet<>();
-        int heroPos = Dungeon.hero.pos;
+        SparseArray<Object> retval = new SparseArray<>();
+        Object alreadyTestedFlag = new Object();
 
         int repeatoffset = -1;
         int iterationlimit = 16;
@@ -759,15 +777,22 @@ public abstract class Level implements Bundlable, IDecayable {
                     return null;
                 }
 
-                int n = Random.Int(retval.size());
+                int failsafe = retval.size() * retval.size();
 
-                Iterator<Integer> iterator = retval.iterator();
-                while (n > 0) {
-                    iterator.next();
-                    n--;
+                Object test = alreadyTestedFlag;
+                while (test == alreadyTestedFlag) {
+                    int index = Random.Int(retval.size());
+
+                    pos = retval.keyAt(index);
+                    test = retval.valueAt(index);
+
+                    failsafe--;
+                    if (failsafe <= 0) {
+                        return null;
+                    }
                 }
 
-                pos = iterator.next();
+                retval.put(pos, alreadyTestedFlag);
             }
 
             Collections.shuffle(positionOffsets);
@@ -782,7 +807,7 @@ public abstract class Level implements Bundlable, IDecayable {
                 boolean passable = validator.isValidPosition(cell);
 
                 if (passable) {
-                    retval.add(cell);
+                    retval.put(cell, null);
 
                     if (retval.size() >= quantity) {
                         iterationlimit = 0;
@@ -795,13 +820,16 @@ public abstract class Level implements Bundlable, IDecayable {
             iterationlimit--;
         }
 
-        ArrayList<Integer> list = new ArrayList<Integer>(retval);
+        ArrayList<Integer> list = new ArrayList<>();
+        for (int n = 0; n < retval.size(); n++) {
+            list.add(retval.keyAt(n));
+        }
         Collections.shuffle(list);
         return list;
     }
 
     public interface RandomPositionValidator {
-        public boolean isValidPosition(int pos);
+        boolean isValidPosition(int pos);
     }
 
 
@@ -841,11 +869,11 @@ public abstract class Level implements Bundlable, IDecayable {
         pathable[pos] = (flags & (Terrain.FLAG_PASSABLE | Terrain.FLAG_PATHABLE)) != 0;
         diagonal[pos] = (flags & Terrain.FLAG_DIAGONALPASSAGE) != 0;
         losBlocking[pos] = (flags & Terrain.FLAG_LOSBLOCKING) != 0;
-        wood[pos] = (flags & Terrain.FLAG_WOOD) != 0;
+        burnable[pos] = (flags & Terrain.FLAG_BURNABLE) != 0;
         secret[pos] = (flags & Terrain.FLAG_SECRET) != 0;
         solid[pos] = (flags & Terrain.FLAG_SOLID) != 0;
         avoid[pos] = (flags & Terrain.FLAG_AVOID) != 0;
-        water[pos] = (flags & Terrain.FLAG_LIQUID) != 0;
+        puddle[pos] = (flags & Terrain.FLAG_LIQUID) != 0;
         pit[pos] = (flags & Terrain.FLAG_PIT) != 0;
         stone[pos] = (flags & Terrain.FLAG_STONE) != 0;
     }
@@ -888,7 +916,7 @@ public abstract class Level implements Bundlable, IDecayable {
                     int c = map[i - WIDTH];
                     if (c == Terrain.EMPTY_SP || c == Terrain.STATUE_SP) {
                         map[i] = Terrain.CHASM_FLOOR_SP;
-                    } else if (water[i - WIDTH]) {
+                    } else if (puddle[i - WIDTH]) {
                         map[i] = Terrain.CHASM_WATER;
                     } else if ((Terrain.flags[c] & Terrain.FLAG_UNSTITCHABLE) != 0) {
                         map[i] = Terrain.CHASM_WALL;
@@ -1069,7 +1097,7 @@ public abstract class Level implements Bundlable, IDecayable {
         {
             return Terrain.WALL_STONE;
         }
-        else if (cellType >= Terrain.WATER_TILES && cellType <= Terrain.WATER)
+        else if (cellType >= Terrain.PUDDLE_TILES && cellType <= Terrain.PUDDLE)
         {
             return Terrain.WALL;
         }
@@ -1401,7 +1429,7 @@ public abstract class Level implements Bundlable, IDecayable {
         return heap;
     }
 
-    public Plant plant(Plant.Seed seed, int pos) {
+    public Plant plant(Char thrower, Plant.Seed seed, int pos) {
 
         Plant plant = plants.get(pos);
         if (plant != null) {
@@ -1413,7 +1441,7 @@ public abstract class Level implements Bundlable, IDecayable {
                 map[pos] == Terrain.EMBERS ||
                 map[pos] == Terrain.EMPTY_DECO) {
             map[pos] = Terrain.GRASS;
-            wood[pos] = true;
+            burnable[pos] = true;
             GameScene.updateMap(pos);
         }
 
@@ -1429,13 +1457,13 @@ public abstract class Level implements Bundlable, IDecayable {
         plants.remove(pos);
     }
 
-    public Trap setTrap(Trap trap, int pos) {
+    public Trap setTrap(Char setter, Trap trap, int pos) {
         Trap existingTrap = traps.get(pos);
         if (existingTrap != null) {
             traps.remove(pos);
             if (existingTrap.sprite != null) existingTrap.sprite.kill();
         }
-        trap.set(pos);
+        trap.set(setter, pos);
         traps.put(pos, trap);
         GameScene.add(trap);
         return trap;
@@ -1460,7 +1488,7 @@ public abstract class Level implements Bundlable, IDecayable {
     }
 
     public void press(int cell, Char ch) {
-        if (ch != null && pit[cell] && !ch.flying) {
+        if (ch != null && pit[cell] && !ch.flying()) {
             if (ch == Dungeon.hero) {
                 Chasm.heroFall(cell);
             } else if (ch instanceof Mob) {
@@ -1531,9 +1559,9 @@ public abstract class Level implements Bundlable, IDecayable {
 
     public void mobPress(Mob mob) {
 
-        int cell = mob.pos;
+        int cell = mob.pos();
 
-        if (pit[cell] && !mob.flying) {
+        if (pit[cell] && !mob.flying()) {
             Chasm.mobFall(mob);
             return;
         }
@@ -1544,6 +1572,8 @@ public abstract class Level implements Bundlable, IDecayable {
             case Terrain.TRAP:
                 trap = traps.get(cell);
                 break;
+            /*
+            //needs to be in AI
             case Terrain.DOOR:
                 if (mob.canOpenDoors) {
                     Door.open(cell);
@@ -1553,32 +1583,77 @@ public abstract class Level implements Bundlable, IDecayable {
                     }
                 }
                 break;
+            */
         }
 
-        if (trap != null) {
-            trap.trigger();
-        }
+        if (!mob.flying()) {
+            if (trap != null) {
+                trap.trigger();
+            }
 
-        Plant plant = plants.get(cell);
-        if (plant != null) {
-            plant.trigger();
+            Plant plant = plants.get(cell);
+            if (plant != null) {
+                plant.trigger();
+            }
         }
     }
 
-    public boolean[] updateFieldOfView(Char c) {
+    public void updateFieldOfSenses(Char c) {
+        int cx = c.pos() % WIDTH;
+        int cy = c.pos() / WIDTH;
 
-        int cx = c.pos % WIDTH;
-        int cy = c.pos / WIDTH;
-
-        boolean sighted = c.buff(Blindness.class) == null && c.buff(Shadows.class) == null
+        boolean hasVision = c.viewDistance > 0 && c.buff(Blindness.class) == null && c.buff(Shadows.class) == null
                 && c.buff(TimekeepersHourglass.timeStasis.class) == null && c.isAlive();
+        boolean hasHearing = c.hearDistance > 0;
+        boolean hasFeeling = c.touchDistance > 0;
 
-        if (sighted) {
-            ShadowCaster.castShadow(cx, cy, fieldOfView, c.viewDistance);
+        if (c.viewDistance == c.hearDistance) {
+            if (hasVision) {
+                ShadowCaster.castShadow(cx, cy, fieldOfView, c.viewDistance);
+
+                if (hasHearing) {
+                    System.arraycopy(fieldOfView, 0, fieldOfSound, 0, fieldOfView.length);
+                } else {
+                    Arrays.fill(fieldOfSound, false);
+                }
+            } else if (hasHearing) {
+                Arrays.fill(fieldOfView, false);
+                ShadowCaster.castShadow(cx, cy, fieldOfSound, c.viewDistance);
+            }
         } else {
-            Arrays.fill(fieldOfView, false);
+            if (hasVision) {
+                ShadowCaster.castShadow(cx, cy, fieldOfView, c.viewDistance);
+            } else {
+                Arrays.fill(fieldOfView, false);
+            }
+            if (hasHearing) {
+                ShadowCaster.castShadow(cx, cy, fieldOfSound, c.hearDistance);
+            } else {
+                Arrays.fill(fieldOfSound, false);
+            }
         }
 
+        if (hasFeeling) {
+            switch(c.touchDistance) {
+                case 1:
+                    Arrays.fill(fieldOfTouch, false);
+                    for (int offset : NEIGHBOURS9) {
+                        fieldOfTouch[c.pos() + offset] = true;
+                    }
+                    break;
+                case 0:
+                    Arrays.fill(fieldOfTouch, false);
+                    fieldOfTouch[c.pos()] = true;
+                    break;
+                default:
+                    ShadowCaster.castShadow(cx, cy, fieldOfTouch, c.touchDistance);
+                    break;
+            }
+        } else {
+            Arrays.fill(fieldOfTouch, false);
+        }
+
+        /*
         int sense = 1;
         if (c.isAlive()) {
             for (Buff b : c.buffs(MindVision.class)) {
@@ -1586,8 +1661,8 @@ public abstract class Level implements Bundlable, IDecayable {
             }
         }
 
-        if ((sighted && sense > 1)/* || !sighted*/) {
-
+        //todo: keep through-wall sensing?
+        if ((hasVision && sense > 1)) {
             int ax = Math.max(0, cx - sense);
             int bx = Math.min(cx + sense, WIDTH - 1);
             int ay = Math.max(0, cy - sense);
@@ -1596,45 +1671,49 @@ public abstract class Level implements Bundlable, IDecayable {
             int len = bx - ax + 1;
             int pos = ax + ay * WIDTH;
             for (int y = ay; y <= by; y++, pos += WIDTH) {
-                Arrays.fill(fieldOfView, pos, pos + len, true);
+                Arrays.fill(fieldOfTouch, pos, pos + len, true);
             }
 
             for (int i = 0; i < LENGTH; i++) {
-                fieldOfView[i] &= discoverable[i];
+                fieldOfTouch[i] &= discoverable[i];
             }
         }
+        */
 
         if (c.isAlive()) {
-            boolean creatureVision = false;
-            boolean itemVision = false;
-
-            for(Buff buff : c.buffs()) {
-                if (buff instanceof ITelepathyBuff) {
-                    ITelepathyBuff tBuff = (ITelepathyBuff)buff;
-
-                    if (tBuff.creatureTelepathy()) {
-                        creatureVision = true;
-                    }
-                    if (tBuff.itemTelepathy()) {
-                        itemVision = true;
-                    }
-                }
-            }
+            boolean creatureVision = c.buff(MindVision.class) != null;
+            boolean itemVision = c.buff(ItemVision.class) != null;
 
             if (creatureVision) {
                 for (Mob mob : mobs) {
-                    int p = mob.pos;
-                    fieldOfView[p] = true;
-                    fieldOfView[p + 1] = true;
-                    fieldOfView[p - 1] = true;
-                    fieldOfView[p + WIDTH + 1] = true;
-                    fieldOfView[p + WIDTH - 1] = true;
-                    fieldOfView[p - WIDTH + 1] = true;
-                    fieldOfView[p - WIDTH - 1] = true;
-                    fieldOfView[p + WIDTH] = true;
-                    fieldOfView[p - WIDTH] = true;
+                    if ((mob.characteristics & Characteristic.Brainless.value) == 0) {
+                        int p = mob.pos();
+                        fieldOfView[p] = true;
+                        fieldOfTouch[p] = true;
+                        fieldOfTouch[p + 1] = true;
+                        fieldOfTouch[p - 1] = true;
+                        fieldOfTouch[p + WIDTH + 1] = true;
+                        fieldOfTouch[p + WIDTH - 1] = true;
+                        fieldOfTouch[p - WIDTH + 1] = true;
+                        fieldOfTouch[p - WIDTH - 1] = true;
+                        fieldOfTouch[p + WIDTH] = true;
+                        fieldOfTouch[p - WIDTH] = true;
+                        /*
+                        fieldOfView[p] = true;
+                        fieldOfView[p + 1] = true;
+                        fieldOfView[p - 1] = true;
+                        fieldOfView[p + WIDTH + 1] = true;
+                        fieldOfView[p + WIDTH - 1] = true;
+                        fieldOfView[p - WIDTH + 1] = true;
+                        fieldOfView[p - WIDTH - 1] = true;
+                        fieldOfView[p + WIDTH] = true;
+                        fieldOfView[p - WIDTH] = true;
+                        */
+                    }
                 }
-            } else if (c == Dungeon.hero && ((Hero) c).heroClass == HeroClass.HUNTRESS) {
+            }
+            /*
+            else if (c == Dungeon.hero && ((Hero) c).heroClass == HeroClass.HUNTRESS) {
                 for (Mob mob : mobs) {
                     int p = mob.pos;
                     if (distance(c.pos, p) == 2) {
@@ -1650,10 +1729,22 @@ public abstract class Level implements Bundlable, IDecayable {
                     }
                 }
             }
+            */
 
             if (itemVision) {
                 for (Heap heap : heaps.values()) {
                     int p = heap.pos;
+                    fieldOfView[p] = true;
+                    fieldOfTouch[p] = true;
+                    fieldOfTouch[p + 1] = true;
+                    fieldOfTouch[p - 1] = true;
+                    fieldOfTouch[p + WIDTH + 1] = true;
+                    fieldOfTouch[p + WIDTH - 1] = true;
+                    fieldOfTouch[p - WIDTH + 1] = true;
+                    fieldOfTouch[p - WIDTH - 1] = true;
+                    fieldOfTouch[p + WIDTH] = true;
+                    fieldOfTouch[p - WIDTH] = true;
+                    /*
                     fieldOfView[p] = true;
                     fieldOfView[p + 1] = true;
                     fieldOfView[p - 1] = true;
@@ -1663,15 +1754,28 @@ public abstract class Level implements Bundlable, IDecayable {
                     fieldOfView[p - WIDTH - 1] = true;
                     fieldOfView[p + WIDTH] = true;
                     fieldOfView[p - WIDTH] = true;
+                    */
                 }
             }
         }
 
-        for (Heap heap : heaps.values())
-            if (!heap.seen && fieldOfView[heap.pos] && c == Dungeon.hero)
-                heap.seen = true;
+        if (c == Dungeon.hero) {
+            for (Heap heap : heaps.values()) {
+                if (!heap.seen) {
+                    if (fieldOfView[heap.pos]) {
+                        heap.seen = true;
+                    }
+                }
+            }
 
-        return fieldOfView;
+            Heap test = heaps.get(c.pos());
+            if (test != null) {
+                if (!test.seen) {
+                    test.seen = true;
+                    GLog.i("You feel something on the ground here.");
+                }
+            }
+        }
     }
 
     public static int distance(int a, int b) {
@@ -1708,8 +1812,8 @@ public abstract class Level implements Bundlable, IDecayable {
 
     public String tileName(int tile) {
 
-        if (tile >= Terrain.WATER_TILES && tile <= Terrain.WATER) {
-            return tileName(Terrain.WATER);
+        if (tile >= Terrain.PUDDLE_TILES && tile <= Terrain.PUDDLE) {
+            return tileName(Terrain.PUDDLE);
         }
 
         if (tile >= Terrain.DIRT_TILES && tile <= Terrain.DIRT) {
@@ -1730,8 +1834,8 @@ public abstract class Level implements Bundlable, IDecayable {
                 return "Floor";
             case Terrain.GRASS:
                 return "Grass";
-            case Terrain.WATER:
-                return "Water";
+            case Terrain.PUDDLE:
+                return "Water Puddle";
             case Terrain.WALL:
             case Terrain.WALL_DECO:
             case Terrain.SECRET_DOOR:
@@ -1773,13 +1877,15 @@ public abstract class Level implements Bundlable, IDecayable {
             case Terrain.INACTIVE_TRAP:
                 return "Triggered trap";
             case Terrain.ALCHEMY:
-                return "Alchemy pot";
+                return "Brewing Station";
             case Terrain.DENATURED_DEBRIS:
                 return "Denatured Debris";
             case Terrain.WOOD_DEBRIS:
                 return "Wooden Debris";
             case Terrain.WALL_STONE:
                 return "Stone Wall";
+            case Terrain.ALCHEMY_EMPTY:
+                return "Empty Brewing Station";
             default:
                 return "???";
         }
@@ -1790,8 +1896,8 @@ public abstract class Level implements Bundlable, IDecayable {
         switch (tile) {
             case Terrain.CHASM:
                 return "You can't see the bottom.";
-            case Terrain.WATER:
-                return "In case of burning step into the water to extinguish the fire.";
+            case Terrain.PUDDLE:
+                return "In case of being on fire, you can bring yourself to a non-on-fire state instantly here.";
             case Terrain.STAIRS_UP:
             case Terrain.STAIRS_UP_ALTERNATE:
                 return "Stairs lead up to the upper depth.";
@@ -1817,7 +1923,9 @@ public abstract class Level implements Bundlable, IDecayable {
             case Terrain.STATUE_SP:
                 return "Someone wanted to adorn this place, but failed, obviously.";
             case Terrain.ALCHEMY:
-                return "Drop some seeds here to cook a potion.";
+                return "Drop some seeds here to brew a potion.";
+            case Terrain.ALCHEMY_EMPTY:
+                return "The brewing equipment here has been used up.";
             case Terrain.EMPTY_WELL:
                 return "The well has run dry.";
             case Terrain.DENATURED_DEBRIS:
@@ -1825,8 +1933,8 @@ public abstract class Level implements Bundlable, IDecayable {
             case Terrain.WOOD_DEBRIS:
                 return "Wooden debris covers the floor.";
             default:
-                if (tile >= Terrain.WATER_TILES && tile <= Terrain.WATER) {
-                    return tileDesc(Terrain.WATER);
+                if (tile >= Terrain.PUDDLE_TILES && tile <= Terrain.PUDDLE) {
+                    return tileDesc(Terrain.PUDDLE);
                 }
                 if ((Terrain.flags[tile] & Terrain.FLAG_PIT) != 0) {
                     return tileDesc(Terrain.CHASM);

@@ -5,7 +5,7 @@
  * Shattered Pixel Dungeon
  * Copyright (C) 2014-2015 Evan Debenham
  *
- * Unpixel Dungeon
+ * unPixel Dungeon
  * Copyright (C) 2015-2016 Randall Foudray
  *
  * This program is free software: you can redistribute it and/or modify
@@ -20,6 +20,7 @@
  *
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>
+ *
  *
  */
 package com.felayga.unpixeldungeon.levels.traps;
@@ -75,8 +76,8 @@ public class TeleportationTrap extends Trap {
 
 			} else {
 
-				ch.pos = pos;
-				ch.sprite.place(ch.pos);
+				ch.pos(pos);
+				ch.sprite.place(ch.pos());
 				ch.sprite.visible = Dungeon.visible[pos];
 
 			}
@@ -89,9 +90,7 @@ public class TeleportationTrap extends Trap {
 
 			Item item = heap.pickUp();
 
-			if (cell != -1) {
-				Dungeon.level.drop( item, cell );
-			}
+            Dungeon.level.drop( item, cell );
 		}
 	}
 

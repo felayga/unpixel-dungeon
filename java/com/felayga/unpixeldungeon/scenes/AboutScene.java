@@ -5,7 +5,7 @@
  * Shattered Pixel Dungeon
  * Copyright (C) 2014-2015 Evan Debenham
  *
- * Unpixel Dungeon
+ * unPixel Dungeon
  * Copyright (C) 2015-2016 Randall Foudray
  *
  * This program is free software: you can redistribute it and/or modify
@@ -21,18 +21,19 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>
  *
+ *
  */
 package com.felayga.unpixeldungeon.scenes;
 
 import android.content.Intent;
 import android.net.Uri;
 
-import com.felayga.unpixeldungeon.ShatteredPixelDungeon;
 import com.felayga.unpixeldungeon.effects.Flare;
 import com.felayga.unpixeldungeon.ui.Archs;
 import com.felayga.unpixeldungeon.ui.ExitButton;
 import com.felayga.unpixeldungeon.ui.Icons;
 import com.felayga.unpixeldungeon.ui.Window;
+import com.felayga.unpixeldungeon.unPixelDungeon;
 import com.watabou.input.Touchscreen.Touch;
 import com.watabou.noosa.BitmapTextMultiline;
 import com.watabou.noosa.Camera;
@@ -41,6 +42,8 @@ import com.watabou.noosa.Image;
 import com.watabou.noosa.TouchArea;
 
 public class AboutScene extends PixelScene {
+
+    private static final String TTL_UNPX = "unPixel Dungeon";
 
 	private static final String TTL_SHPX = "Shattered Pixel Dungeon";
 
@@ -64,9 +67,9 @@ public class AboutScene extends PixelScene {
 	public void create() {
 		super.create();
 
-		final float colWidth = Camera.main.width / (ShatteredPixelDungeon.landscape() ? 2 : 1);
-		final float colTop = (Camera.main.height / 2) - (ShatteredPixelDungeon.landscape() ? 30 : 90);
-		final float wataOffset = ShatteredPixelDungeon.landscape() ? colWidth : 0;
+		final float colWidth = Camera.main.width / (unPixelDungeon.landscape() ? 2 : 1);
+		final float colTop = (Camera.main.height / 2) - (unPixelDungeon.landscape() ? 30 : 90);
+		final float wataOffset = unPixelDungeon.landscape() ? colWidth : 0;
 
 		Image shpx = Icons.SHPX.get();
 		shpx.x = (colWidth - shpx.width()) / 2;
@@ -112,7 +115,7 @@ public class AboutScene extends PixelScene {
 
 		Image wata = Icons.WATA.get();
 		wata.x = wataOffset + (colWidth - wata.width()) / 2;
-		wata.y = ShatteredPixelDungeon.landscape() ?
+		wata.y = unPixelDungeon.landscape() ?
 						colTop:
 						shpxlink.y + wata.height + 20;
 		add( wata );
@@ -168,6 +171,6 @@ public class AboutScene extends PixelScene {
 	
 	@Override
 	protected void onBackPressed() {
-		ShatteredPixelDungeon.switchNoFade(TitleScene.class);
+		unPixelDungeon.switchNoFade(TitleScene.class);
 	}
 }

@@ -5,7 +5,7 @@
  * Shattered Pixel Dungeon
  * Copyright (C) 2014-2015 Evan Debenham
  *
- * Unpixel Dungeon
+ * unPixel Dungeon
  * Copyright (C) 2015-2016 Randall Foudray
  *
  * This program is free software: you can redistribute it and/or modify
@@ -20,6 +20,7 @@
  *
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>
+ *
  *
  */
 package com.felayga.unpixeldungeon.actors.buffs.positive;
@@ -44,9 +45,10 @@ public class GasesImmunity extends FlavourBuff {
 	
 	@Override
 	public String toString() {
-		return "Immune to gases";
+		return "Breathless";
 	}
 
+    /*
 	{
 		immunities.add( ParalyticGas.class );
 		immunities.add( ToxicGas.class );
@@ -54,11 +56,12 @@ public class GasesImmunity extends FlavourBuff {
 		immunities.add( StenchGas.class );
 		immunities.add( VenomGas.class );
 	}
+	*/
 
 	@Override
 	public String desc() {
-		return "some strange force is filtering out the air around you, it's not causing you any harm, but it blocks " +
-				"out everything but air so effectively you can't even smell anything!\n" +
+		return "some strange force is sustaining your lungs, making it so you don't" +
+                "feel the need to breathe!\n" +
 				"\n" +
 				"You are immune to the effects of all gasses while this buff lasts.\n" +
 				"\n" +

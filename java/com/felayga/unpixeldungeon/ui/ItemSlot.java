@@ -5,7 +5,7 @@
  * Shattered Pixel Dungeon
  * Copyright (C) 2014-2015 Evan Debenham
  *
- * Unpixel Dungeon
+ * unPixel Dungeon
  * Copyright (C) 2015-2016 Randall Foudray
  *
  * This program is free software: you can redistribute it and/or modify
@@ -21,13 +21,13 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>
  *
+ *
  */
 package com.felayga.unpixeldungeon.ui;
 
 import com.felayga.unpixeldungeon.items.Item;
 import com.felayga.unpixeldungeon.items.potions.Potion;
-import com.felayga.unpixeldungeon.items.potions.PotionOfMight;
-import com.felayga.unpixeldungeon.items.potions.PotionOfStrength;
+import com.felayga.unpixeldungeon.items.potions.PotionOfOilLit;
 import com.felayga.unpixeldungeon.items.scrolls.Scroll;
 import com.felayga.unpixeldungeon.items.scrolls.ScrollOfMagicalInfusion;
 import com.felayga.unpixeldungeon.items.scrolls.ScrollOfUpgrade;
@@ -43,16 +43,26 @@ public class ItemSlot extends Button {
 
 	public static final int DEGRADED	= 0xFF4444;
 	public static final int UPGRADED	= 0x44FF44;
+    public static final int NEUTRAL     = 0xFFFFFF;
+    public static final int UNKNOWN     = 0xFFFF44;
+
 	public static final int FADED       = 0x999999;
 	public static final int WARNING		= 0xFF8800;
+    public static final int UNPAID      = 0xFFC61A;
 	
 	private static final float ENABLED	= 1.0f;
 	private static final float DISABLED	= 0.3f;
 
 	protected ItemSprite icon;
+    protected ItemSprite fg;
 	protected BitmapText topLeft;
 	protected BitmapText topRight;
+    protected BitmapText bottomLeft;
 	protected BitmapText bottomRight;
+
+    public BitmapText topRight() {
+        return topRight;
+    }
 	
 	private static final String TXT_STRENGTH	= ":%d";
 	private static final String TXT_TYPICAL_STR	= "%d?";
@@ -91,33 +101,43 @@ public class ItemSlot extends Button {
 		
 	@Override
 	protected void createChildren() {
-		
 		super.createChildren();
 		
 		icon = new ItemSprite();
 		icon.scale = getIconScale();
 		add(icon);
+
+        fg = new ItemSprite();
+        fg.scale = getIconScale();
+        add(fg);
 		
 		topLeft = new BitmapText(PixelScene.pixelFont);
 		topLeft.scale = getFontScale();
 		add(topLeft);
-		
+
 		topRight = new BitmapText(PixelScene.pixelFont);
 		topRight.scale = getFontScale();
 		add(topRight);
+
+        bottomLeft = new BitmapText(PixelScene.pixelFont);
+        bottomLeft.scale = getFontScale();
+        add(bottomLeft);
 		
 		bottomRight = new BitmapText(PixelScene.pixelFont);
 		bottomRight.scale = getFontScale();
 		add(bottomRight);
 	}
-	
+
 	@Override
 	protected void layout() {
 		super.layout();
 		
 		icon.x = x + (width - icon.width * icon.scale.x) / 2;
 		icon.y = y + (height - icon.height * icon.scale.y) / 2;
-		
+
+        fg.x = icon.x;
+        fg.y = icon.y;
+
 		if (topLeft != null) {
 			topLeft.x = x;
 			topLeft.y = y;
@@ -127,6 +147,11 @@ public class ItemSlot extends Button {
 			topRight.x = x + (width - topRight.width());
 			topRight.y = y;
 		}
+
+        if (bottomLeft != null) {
+            bottomLeft.x = x;
+            bottomLeft.y = y + (height - bottomRight.height()) + 1;
+        }
 		
 		if (bottomRight != null) {
 			bottomRight.x = x + (width - bottomRight.width());
@@ -134,20 +159,39 @@ public class ItemSlot extends Button {
 		}
 	}
 
+    public void performLayout() {
+        layout();
+    }
+
 	
 	public void item( Item item ) {
 		if (item == null) {
 			active = false;
-			topLeft.visible = topRight.visible = bottomRight.visible = false;
+			topLeft.visible = topRight.visible = bottomRight.visible = bottomLeft.visible = false;
 			icon.visible(false);
+            fg.view(ItemSpriteSheet.ITEM_EMPTY, null);
 		} else {
 			active = true;
-			topLeft.visible = topRight.visible = bottomRight.visible = true;
+			topLeft.visible = topRight.visible = bottomLeft.visible = bottomRight.visible = true;
 			icon.visible(true);
+
+            if (item instanceof PotionOfOilLit) {
+                fg.view(ItemSpriteSheet.POTION_BURNING, null);
+            } else {
+                fg.view(ItemSpriteSheet.ITEM_EMPTY, null);
+            }
 			
 			icon.view( item );
 			
 			topLeft.text( item.status()  );
+
+            if (item.shopkeeperRegistryIndex() >= 0) {
+                bottomLeft.text("$");
+                bottomLeft.measure();
+                bottomLeft.hardlight(UNPAID);
+            } else {
+                bottomLeft.text(null);
+            }
 
             /*
 			boolean isArmor = item instanceof Armor;
@@ -181,20 +225,33 @@ public class ItemSlot extends Button {
 			}
 	        */
 
-			int level = item.visiblyUpgraded();
+            if (item.hasLevels()) {
+                if (item.levelKnown()) {
+                    int level = item.level();
 
-			if (level != 0) {
-				bottomRight.text( item.levelKnown ? Utils.format( TXT_LEVEL, level ) : TXT_CURSED );
-				bottomRight.measure();
-				bottomRight.hardlight( level > 0 ? UPGRADED : DEGRADED );
+                    bottomRight.text(item.levelKnown() ? Utils.format(TXT_LEVEL, level) : TXT_CURSED);
+                    bottomRight.measure();
+
+                    if (level > 0) {
+                        bottomRight.hardlight(UPGRADED);
+                    } else if (level < 0) {
+                        bottomRight.hardlight(DEGRADED);
+                    } else {
+                        bottomRight.hardlight(NEUTRAL);
+                    }
+                } else {
+                    bottomRight.text("?");
+                    bottomRight.measure();
+                    bottomRight.hardlight(UNKNOWN);
+                }
 			} else if (item instanceof Scroll || item instanceof Potion) {
 				if (item instanceof Scroll) bottomRight.text(((Scroll) item).initials());
 				else bottomRight.text(((Potion) item).initials());
 
 				bottomRight.measure();
 
-				if (item instanceof ScrollOfUpgrade || item instanceof ScrollOfMagicalInfusion
-						|| item instanceof PotionOfStrength || item instanceof PotionOfMight)
+				if (item instanceof ScrollOfUpgrade || item instanceof ScrollOfMagicalInfusion)
+                    //todo: highlighting short text for particularly valuable items
 					bottomRight.hardlight( UPGRADED );
 				else
 					bottomRight.hardlight( FADED );
@@ -213,6 +270,7 @@ public class ItemSlot extends Button {
 		
 		float alpha = value ? ENABLED : DISABLED;
 		icon.alpha( alpha );
+        fg.alpha(alpha);
 		topLeft.alpha( alpha );
 		topRight.alpha( alpha );
 		bottomRight.alpha( alpha );

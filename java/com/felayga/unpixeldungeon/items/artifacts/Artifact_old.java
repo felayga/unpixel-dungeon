@@ -5,7 +5,7 @@
  * Shattered Pixel Dungeon
  * Copyright (C) 2014-2015 Evan Debenham
  *
- * Unpixel Dungeon
+ * unPixel Dungeon
  * Copyright (C) 2015-2016 Randall Foudray
  *
  * This program is free software: you can redistribute it and/or modify
@@ -20,6 +20,7 @@
  *
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>
+ *
  *
  */
 package com.felayga.unpixeldungeon.items.artifacts;
@@ -46,10 +47,6 @@ public class Artifact_old extends EquippableItem {
 	private static final String TXT_TO_STRING_CHARGE		= "%s (%d/%d)";
 	private static final String TXT_TO_STRING_LVL	        = "%s%+d";
 	private static final String TXT_TO_STRING_LVL_CHARGE	= "%s%+d (%d/%d)";
-
-	private static final String TXT_UNEQUIP_TITLE = "Unequip one item";
-	private static final String TXT_UNEQUIP_MESSAGE =
-			"You can only wear two misc items at a time.";
 
 	protected Buff passiveBuff;
 	protected Buff activeBuff;
@@ -95,7 +92,7 @@ public class Artifact_old extends EquippableItem {
 		super.onEquip(owner, cursed);
 
         passiveBuff = passiveBuff();
-        passiveBuff.attachTo(owner);
+        passiveBuff.attachTo(owner, null);
 
 		if (cursed) {
 			if (owner instanceof Hero) {
@@ -124,7 +121,7 @@ public class Artifact_old extends EquippableItem {
 
 	@Override
 	public int visiblyUpgraded() {
-		return ((level*10)/levelCap);
+		return ((level()*10)/levelCap);
 	}
 
 	//transfers upgrades from another artifact, transfer level will equal the displayed level
@@ -148,7 +145,7 @@ public class Artifact_old extends EquippableItem {
 	@Override
 	public String toString() {
 
-		if (levelKnown && level/levelCap != 0) {
+		if (levelKnown() && level()/levelCap != 0) {
 			if (chargeCap > 0) {
 				return Utils.format( TXT_TO_STRING_LVL_CHARGE, getDisplayName(), visiblyUpgraded(), charge, chargeCap );
 			} else {
@@ -207,10 +204,6 @@ public class Artifact_old extends EquippableItem {
 	protected ArtifactBuff activeBuff() {return null; }
 
 	public class ArtifactBuff extends Buff {
-
-		public int level() {
-			return level;
-		}
 
 		public boolean isCursed() {
 			return bucStatus == BUCStatus.Cursed;

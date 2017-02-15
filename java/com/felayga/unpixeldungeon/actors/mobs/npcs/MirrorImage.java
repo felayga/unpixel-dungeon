@@ -5,7 +5,7 @@
  * Shattered Pixel Dungeon
  * Copyright (C) 2014-2015 Evan Debenham
  *
- * Unpixel Dungeon
+ * unPixel Dungeon
  * Copyright (C) 2015-2016 Randall Foudray
  *
  * This program is free software: you can redistribute it and/or modify
@@ -20,6 +20,7 @@
  *
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>
+ *
  *
  */
 package com.felayga.unpixeldungeon.actors.mobs.npcs;
@@ -66,7 +67,7 @@ public class MirrorImage extends NPC {
 		if (enemy == null || !enemy.isAlive()) {
 			HashSet<Mob> enemies = new HashSet<Mob>();
 			for (Mob mob:Dungeon.level.mobs) {
-				if (mob.hostile && Level.fieldOfView[mob.pos]) {
+				if (mob.hostile && Level.fieldOfView[mob.pos()]) {
 					enemies.add( mob );
 				}
 			}
@@ -93,12 +94,12 @@ public class MirrorImage extends NPC {
 
 	@Override
 	public void interact() {
-		int curPos = pos;
+		int curPos = pos();
 		
-		moveSprite( pos, Dungeon.hero.pos );
-		move( Dungeon.hero.pos );
+		moveSprite( pos(), Dungeon.hero.pos() );
+		move( Dungeon.hero.pos() );
 		
-		Dungeon.hero.sprite.move( Dungeon.hero.pos, curPos );
+		Dungeon.hero.sprite.move( Dungeon.hero.pos(), curPos );
 		Dungeon.hero.move( curPos );
 		
 		Dungeon.hero.spend_new(Dungeon.hero.movementSpeed(), false);

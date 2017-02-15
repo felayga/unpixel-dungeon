@@ -5,7 +5,7 @@
  * Shattered Pixel Dungeon
  * Copyright (C) 2014-2015 Evan Debenham
  *
- * Unpixel Dungeon
+ * unPixel Dungeon
  * Copyright (C) 2015-2016 Randall Foudray
  *
  * This program is free software: you can redistribute it and/or modify
@@ -21,6 +21,7 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>
  *
+ *
  */
 
 package com.felayga.unpixeldungeon;
@@ -30,6 +31,7 @@ import com.felayga.unpixeldungeon.ui.Icons;
 import com.watabou.noosa.Group;
 import com.watabou.utils.PointF;
 import com.watabou.utils.Random;
+import com.watabou.utils.SparseArray;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -42,13 +44,13 @@ import java.util.Map;
  */
 public class WarningSpriteHandler extends Group {
 
-    private HashMap<Integer, WarningIcon> positions;
+    private SparseArray<WarningIcon> positions;
     private List<WarningIcon> unused;
 
     public WarningSpriteHandler() {
         super(-1);
 
-        positions = new HashMap<>();
+        positions = new SparseArray<>();
         unused = new ArrayList<>();
     }
 
@@ -74,17 +76,14 @@ public class WarningSpriteHandler extends Group {
 
             clearWarnings();
 
-            Iterator<Map.Entry<Integer,WarningHandler.WarningInfo>> iterator = handler.warnings.entrySet().iterator();
-            while (iterator.hasNext()) {
-                Map.Entry<Integer,WarningHandler.WarningInfo> pair = iterator.next();
-
-                addWarning(pair.getKey());
+            for (int n=0;n<handler.warnings.size();n++) {
+                addWarning(handler.warnings.keyAt(n));
             }
         }
     }
 
     private boolean addWarning(int pos) {
-        if (positions.containsKey(pos)) {
+        if (positions.get(pos) != null) {
             return false;
         }
 
@@ -105,7 +104,8 @@ public class WarningSpriteHandler extends Group {
     }
 
     private boolean removeWarning(int pos) {
-        WarningIcon warning = positions.remove(pos);
+        WarningIcon warning = positions.get(pos);
+        positions.remove(pos);
 
         if (warning != null) {
             remove(warning);
@@ -118,11 +118,8 @@ public class WarningSpriteHandler extends Group {
     }
 
     private void clearWarnings() {
-        Iterator<Map.Entry<Integer,WarningIcon>> iterator = positions.entrySet().iterator();
-        while (iterator.hasNext()) {
-            Map.Entry<Integer,WarningIcon> pair = iterator.next();
-
-            unused.add(pair.getValue());
+        for (int n=0;n<positions.size();n++) {
+            unused.add(positions.valueAt(n));
         }
 
         positions.clear();

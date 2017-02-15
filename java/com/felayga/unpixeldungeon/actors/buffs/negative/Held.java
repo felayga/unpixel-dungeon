@@ -5,7 +5,7 @@
  * Shattered Pixel Dungeon
  * Copyright (C) 2014-2015 Evan Debenham
  *
- * Unpixel Dungeon
+ * unPixel Dungeon
  * Copyright (C) 2015-2016 Randall Foudray
  *
  * This program is free software: you can redistribute it and/or modify
@@ -20,6 +20,7 @@
  *
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>
+ *
  *
  */
 
@@ -42,7 +43,6 @@ import com.watabou.utils.Bundle;
 public class Held extends FlavourBuff implements ISpeedModifierBuff {
     public Held() {
         type = buffType.NEGATIVE;
-        hostPos = Constant.Position.NONE;
         actPriority = Integer.MIN_VALUE + 1; //has to go before everything else, in case of load -> pending linkage to host
     }
 
@@ -54,58 +54,6 @@ public class Held extends FlavourBuff implements ISpeedModifierBuff {
         return GameTime.TICK;
     }
 
-    public int hostPos;
-    public Char host;
-
-    private static String HOST = "heldHost";
-
-    @Override
-    public void storeInBundle( Bundle bundle ) {
-        super.storeInBundle(bundle);
-
-        if (host != null) {
-            bundle.put(HOST, host.pos);
-        }
-        else {
-            bundle.put(HOST, hostPos);
-        }
-    }
-
-    @Override
-    public void restoreFromBundle( Bundle bundle ) {
-        super.restoreFromBundle(bundle);
-
-        hostPos = bundle.getInt(HOST);
-    }
-
-    @Override
-    public boolean act() {
-        boolean retval = super.act();
-
-        if (hostPos != Constant.Position.NONE && host == null) {
-            host = Dungeon.level.findMob(hostPos);
-
-            if (host == null) {
-                if (hostPos == Dungeon.hero.pos) {
-                    host = Dungeon.hero;
-                }
-            }
-
-            if (host == null) {
-                int x = hostPos % Level.WIDTH;
-                int y = hostPos / Level.WIDTH;
-
-                int tx = target.pos % Level.WIDTH;
-                int ty = target.pos / Level.WIDTH;
-
-                GLog.d("couldn't find host at pos=" + x+","+y+" with target pos="+tx+","+ty);
-            }
-
-            hostPos = Constant.Position.NONE;
-        }
-
-        return retval;
-    }
 
     @Override
     public int icon() {
@@ -119,7 +67,9 @@ public class Held extends FlavourBuff implements ISpeedModifierBuff {
 
     @Override
     public String desc() {
-        if (host != null) {
+        Char host = Char.Registry.get(ownerRegistryIndex());
+
+        if (host != null && Dungeon.visible[host.pos()]) {
             return "The " + host.name + " is holding you in place.";
         }
         return "Something is holding you in place.";

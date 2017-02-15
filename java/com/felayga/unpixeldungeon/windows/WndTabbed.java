@@ -5,7 +5,7 @@
  * Shattered Pixel Dungeon
  * Copyright (C) 2014-2015 Evan Debenham
  *
- * Unpixel Dungeon
+ * unPixel Dungeon
  * Copyright (C) 2015-2016 Randall Foudray
  *
  * This program is free software: you can redistribute it and/or modify
@@ -20,6 +20,7 @@
  *
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>
+ *
  *
  */
 package com.felayga.unpixeldungeon.windows;
@@ -86,7 +87,7 @@ public class WndTabbed extends Window {
 			width + chrome.marginHor(),
 			height + chrome.marginVer() );
 		
-		camera.resize( (int)chrome.width, (int)(chrome.marginTop() + height + tabHeight()) );
+		camera.resize( (int)chrome.width, chrome.marginTop() + height + tabHeight());
 		camera.x = (int)(Game.width - camera.screenWidth()) / 2;
 		camera.y = (int)(Game.height - camera.screenHeight()) / 2;
 

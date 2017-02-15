@@ -5,7 +5,7 @@
  * Shattered Pixel Dungeon
  * Copyright (C) 2014-2015 Evan Debenham
  *
- * Unpixel Dungeon
+ * unPixel Dungeon
  * Copyright (C) 2015-2016 Randall Foudray
  *
  * This program is free software: you can redistribute it and/or modify
@@ -20,6 +20,7 @@
  *
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>
+ *
  *
  */
 package com.felayga.unpixeldungeon.items;
@@ -136,7 +137,7 @@ public class TomeOfMastery extends Item {
 		
 		curUser.subClass = way;
 		
-		curUser.sprite.operate( curUser.pos );
+		curUser.sprite.operate( curUser.pos() );
 		Sample.INSTANCE.play( Assets.SND_MASTERY );
 		
 		SpellSprite.show( curUser, SpellSprite.MASTERY );
@@ -144,7 +145,7 @@ public class TomeOfMastery extends Item {
 		GLog.w( "You have chosen the way of the %s!", Utils.capitalize( way.title() ) );
 		
 		if (way == HeroSubClass.BERSERKER && curUser.HP <= curUser.HT * Fury.LEVEL) {
-			Buff.affect( curUser, Fury.class );
+			Buff.affect( curUser, null, Fury.class );
 		}
 	}
 }

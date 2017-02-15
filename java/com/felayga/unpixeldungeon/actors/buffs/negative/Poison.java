@@ -5,7 +5,7 @@
  * Shattered Pixel Dungeon
  * Copyright (C) 2014-2015 Evan Debenham
  *
- * Unpixel Dungeon
+ * unPixel Dungeon
  * Copyright (C) 2015-2016 Randall Foudray
  *
  * This program is free software: you can redistribute it and/or modify
@@ -20,6 +20,7 @@
  *
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>
+ *
  *
  */
 package com.felayga.unpixeldungeon.actors.buffs.negative;
@@ -41,56 +42,55 @@ import com.watabou.utils.Bundle;
 import com.watabou.utils.Random;
 
 public class Poison extends Buff implements Hero.Doom {
-	protected int damageLeft;
-	
-	private static final String DAMAGELEFT	= "damageLeft";
+    protected int damageLeft;
 
-    public Poison(int damage)
-	{
+    private static final String DAMAGELEFT = "damageLeft";
+
+    public Poison(int damage) {
         damageLeft = damage;
-		type = buffType.NEGATIVE;
-	}
+        type = buffType.NEGATIVE;
+    }
 
     //creates a fresh instance of the buff and attaches that, this allows duplication.
-    public static Poison append( Char target, int damage ) {
+    public static Poison append(Char target, Char source, int damage) {
         Poison buff = new Poison(damage);
-        buff.attachTo(target);
+        buff.attachTo(target, source);
         return buff;
     }
 
     //same as append, but prevents duplication.
-    public static Poison affect( Char target, int damage ) {
-        Poison buff = target.buff( Poison.class );
+    public static Poison affect(Char target, Char source, int damage) {
+        Poison buff = target.buff(Poison.class);
         if (buff != null) {
             buff.damageLeft += damage;
             return buff;
         } else {
-            return append( target, damage );
+            return append(target, source, damage);
         }
     }
 
-	@Override
-	public void storeInBundle( Bundle bundle ) {
-		super.storeInBundle(bundle);
-		bundle.put( DAMAGELEFT, damageLeft );
-		
-	}
-	
-	@Override
-	public void restoreFromBundle( Bundle bundle ) {
-		super.restoreFromBundle(bundle);
-		damageLeft = bundle.getInt( DAMAGELEFT );
-	}
+    @Override
+    public void storeInBundle(Bundle bundle) {
+        super.storeInBundle(bundle);
+        bundle.put(DAMAGELEFT, damageLeft);
 
-	@Override
-	public int icon() {
-		return BuffIndicator.POISON;
-	}
-	
-	@Override
-	public String toString() {
-		return "Poisoned";
-	}
+    }
+
+    @Override
+    public void restoreFromBundle(Bundle bundle) {
+        super.restoreFromBundle(bundle);
+        damageLeft = bundle.getInt(DAMAGELEFT);
+    }
+
+    @Override
+    public int icon() {
+        return BuffIndicator.POISON;
+    }
+
+    @Override
+    public String toString() {
+        return "Poisoned";
+    }
 
     @Override
     public String attachedMessage(boolean isHero) {
@@ -102,59 +102,59 @@ public class Poison extends Buff implements Hero.Doom {
     }
 
     @Override
-	public String desc() {
-		return "Poison works its way through the body, slowly impairing its internal functioning.\n" +
-				"\n" +
-				"Poison deals damage each turn proportional to how long until it expires."/* +
+    public String desc() {
+        return "Poison works its way through the body, slowly impairing its internal functioning.\n" +
+                "\n" +
+                "Poison deals damage each turn proportional to how long until it expires."/* +
 				"\n\n" +
 				"This poison will last for " + dispTurns(left)  + "."*/;
-	}
+    }
 
-	@Override
-	public boolean attachTo(Char target) {
-		if (super.attachTo(target) && target.sprite != null){
-			CellEmitter.center(target.pos).burst( PoisonParticle.SPLASH, 5 );
-			return true;
-		} else
-			return false;
-	}
+    @Override
+    public boolean attachTo(Char target, Char source) {
+        if (super.attachTo(target, source) && target.sprite != null) {
+            CellEmitter.center(target.pos()).burst(PoisonParticle.SPLASH, 5);
+            return true;
+        } else
+            return false;
+    }
 
-	@Override
-	public boolean act() {
-		if (target.isAlive()) {
+    @Override
+    public boolean act() {
+        if (target.isAlive()) {
             int curDamage = Random.IntRange(1, damageLeft / 2);
             if (curDamage < 1) {
                 curDamage = 1;
             }
 
-            target.damage(curDamage, MagicType.Poison, null );
-            spend_new(GameTime.TICK, false );
+            target.damage(curDamage, MagicType.Poison, null);
+            spend_new(GameTime.TICK, false);
 
             damageLeft -= curDamage;
-			
-			if (damageLeft <= 0) {
-				detach();
-			}
-			
-		} else {
-			
-			detach();
-			
-		}
-		
-		return true;
-	}
 
-	public static float durationFactor( Char ch ) {
-		Resistance r = ch.buff( Resistance.class );
-		return r != null ? r.durationFactor() : 1;
-	}
+            if (damageLeft <= 0) {
+                detach();
+            }
 
-	@Override
-	public void onDeath() {
-		Badges.validateDeathFromPoison();
-		
-		Dungeon.fail( ResultDescriptions.POISON );
-		GLog.n( "You died from poison..." );
-	}
+        } else {
+
+            detach();
+
+        }
+
+        return true;
+    }
+
+    public static float durationFactor(Char ch) {
+        Resistance r = ch.buff(Resistance.class);
+        return r != null ? r.durationFactor() : 1;
+    }
+
+    @Override
+    public void onDeath() {
+        Badges.validateDeathFromPoison();
+
+        Dungeon.fail(ResultDescriptions.POISON);
+        GLog.n("You died from poison...");
+    }
 }

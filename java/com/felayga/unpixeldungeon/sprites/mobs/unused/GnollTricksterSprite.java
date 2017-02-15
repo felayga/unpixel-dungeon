@@ -5,7 +5,7 @@
  * Shattered Pixel Dungeon
  * Copyright (C) 2014-2015 Evan Debenham
  *
- * Unpixel Dungeon
+ * unPixel Dungeon
  * Copyright (C) 2015-2016 Randall Foudray
  *
  * This program is free software: you can redistribute it and/or modify
@@ -21,6 +21,7 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>
  *
+ *
  */
 package com.felayga.unpixeldungeon.sprites.mobs.unused;
 
@@ -31,33 +32,33 @@ import com.watabou.utils.Callback;
 
 public class GnollTricksterSprite extends GnollSprite {
 
-	private Animation cast;
+    private Animation cast;
 
-	public GnollTricksterSprite() {
-		super(1);
+    public GnollTricksterSprite() {
+        super(1);
 
-		cast = attack.clone();
-	}
+        cast = attack.clone();
+    }
 
-	@Override
-	public void attack( int cell ) {
-		if (!Level.canReach(cell, ch.pos)) {
+    @Override
+    public void attack(int cell) {
+        if (!Level.canReach(cell, ch.pos())) {
 
-			((MissileSprite)parent.recycle( MissileSprite.class )).
-					reset( ch.pos, cell, new CurareDart(), new Callback() {
-						@Override
-						public void call() {
-							ch.onAttackComplete();
-						}
-					} );
+            ((MissileSprite) parent.recycle(MissileSprite.class)).
+                    reset(ch.pos(), cell, new CurareDart(), new Callback() {
+                        @Override
+                        public void call() {
+                            ch.onAttackComplete();
+                        }
+                    });
 
-			play( cast );
-			turnTo( ch.pos , cell );
+            play(cast);
+            turnTo(ch.pos(), cell);
 
-		} else {
+        } else {
 
-			super.attack( cell );
+            super.attack(cell);
 
-		}
-	}
+        }
+    }
 }

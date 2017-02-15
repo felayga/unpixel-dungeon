@@ -5,7 +5,7 @@
  * Shattered Pixel Dungeon
  * Copyright (C) 2014-2015 Evan Debenham
  *
- * Unpixel Dungeon
+ * unPixel Dungeon
  * Copyright (C) 2015-2016 Randall Foudray
  *
  * This program is free software: you can redistribute it and/or modify
@@ -20,6 +20,7 @@
  *
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>
+ *
  *
  */
 package com.felayga.unpixeldungeon.windows;
@@ -68,9 +69,9 @@ public class WndInfoItem extends Window {
 			Item item = heap.peek();
 			
 			int color = TITLE_COLOR;
-			if (item.levelKnown && item.level > 0) {
+			if (item.levelKnown() && item.level() > 0) {
 				color = ItemSlot.UPGRADED;
-			} else if (item.levelKnown && item.level < 0) {
+			} else if (item.levelKnown() && item.level() < 0) {
 				color = ItemSlot.DEGRADED;
 			}
 			fillFields( item.image(), item.glowing(), color, item.getDisplayName(), item.info() );
@@ -104,9 +105,9 @@ public class WndInfoItem extends Window {
 		super();
 		
 		int color = TITLE_COLOR;
-		if (item.levelKnown && item.level > 0) {
+		if (item.levelKnown() && item.level() > 0) {
 			color = ItemSlot.UPGRADED;
-		} else if (item.levelKnown && item.level < 0) {
+		} else if (item.levelKnown() && item.level() < 0) {
 			color = ItemSlot.DEGRADED;
 		}
 		

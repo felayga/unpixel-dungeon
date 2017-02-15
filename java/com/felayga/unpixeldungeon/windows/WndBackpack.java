@@ -5,7 +5,7 @@
  * Shattered Pixel Dungeon
  * Copyright (C) 2014-2015 Evan Debenham
  *
- * Unpixel Dungeon
+ * unPixel Dungeon
  * Copyright (C) 2015-2016 Randall Foudray
  *
  * This program is free software: you can redistribute it and/or modify
@@ -21,6 +21,7 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>
  *
+ *
  */
 package com.felayga.unpixeldungeon.windows;
 
@@ -28,7 +29,6 @@ import android.graphics.RectF;
 
 import com.felayga.unpixeldungeon.Assets;
 import com.felayga.unpixeldungeon.Dungeon;
-import com.felayga.unpixeldungeon.ShatteredPixelDungeon;
 import com.felayga.unpixeldungeon.actors.Char;
 import com.felayga.unpixeldungeon.actors.hero.Belongings;
 import com.felayga.unpixeldungeon.items.Heap;
@@ -52,6 +52,7 @@ import com.felayga.unpixeldungeon.sprites.ItemSpriteSheet;
 import com.felayga.unpixeldungeon.ui.Icons;
 import com.felayga.unpixeldungeon.ui.ItemSlot;
 import com.felayga.unpixeldungeon.ui.QuickSlotButton;
+import com.felayga.unpixeldungeon.unPixelDungeon;
 import com.felayga.unpixeldungeon.utils.Utils;
 import com.watabou.gltextures.TextureCache;
 import com.watabou.noosa.BitmapText;
@@ -75,7 +76,11 @@ public class WndBackpack extends WndTabbed {
 		ENCHANTABLE,
         INSTANCEOF;
 
-        public static boolean Qualify(Mode mode, Item item, Class<?> c) {
+        public static boolean Qualify(Mode mode, Item item, Class<?> match, Class<?> unmatch) {
+            if (unmatch != null && unmatch.isInstance(item)) {
+                return false;
+            }
+
             switch(mode) {
                 case FOR_SALE:
                     return (item.price() > 0) && (!item.isEquipped(Dungeon.hero) || item.bucStatus() != BUCStatus.Cursed);
@@ -92,8 +97,8 @@ public class WndBackpack extends WndTabbed {
                 case ALL_WITH_SPELL:
                     return true;
                 case INSTANCEOF:
-                    if (c != null) {
-                        return c.isInstance(item);
+                    if (match != null) {
+                        return match.isInstance(item);
                     }
                     break;
             }
@@ -113,6 +118,7 @@ public class WndBackpack extends WndTabbed {
 	private Listener listener;
 	private WndBackpack.Mode mode;
     private Class<?> classMatch;
+    private Class<?> classUnmatch;
 	private String title;
 
 	private int nCols;
@@ -128,14 +134,15 @@ public class WndBackpack extends WndTabbed {
 	private HashSet<Item> excluded;
     private final boolean groundNearby;
 
-	public WndBackpack(IBag bag, Listener listener, Mode mode, Class<?> c, String title, boolean groundNearby, Item... excluded) {
+	public WndBackpack(IBag bag, Listener listener, Mode mode, Class<?> classMatch, String title, boolean groundNearby, Class<?> classUnmatch, Item... excluded) {
 		super();
 
-        classMatch = c;
+        this.classMatch = classMatch;
+        this.classUnmatch = classUnmatch;
         this.groundNearby = groundNearby;
 
 		Belongings stuff = Dungeon.hero.belongings;
-        Heap test = Dungeon.level.heaps.get(Dungeon.hero.pos, null);
+        Heap test = Dungeon.level.heaps.get(Dungeon.hero.pos(), null);
 
 		this.listener = listener;
 		this.mode = mode;
@@ -152,7 +159,7 @@ public class WndBackpack extends WndTabbed {
 		lastMode = mode;
 		lastBag = bag;
 
-		nCols = ShatteredPixelDungeon.landscape() ? COLS_L : COLS_P;
+		nCols = unPixelDungeon.landscape() ? COLS_L : COLS_P;
 		nRows = (Belongings.BACKPACK_SIZE + 12) / nCols + ((Belongings.BACKPACK_SIZE + 12) % nCols > 0 ? 1 : 0);
 
 		int slotsWidth = SLOT_SIZE * nCols + SLOT_MARGIN * (nCols - 1);
@@ -208,23 +215,23 @@ public class WndBackpack extends WndTabbed {
 		layoutTabs();
 	}
 
-	public static WndBackpack lastBag(Listener listener, Mode mode, Class<?> c, String title, boolean groundNearby, Item... excluded) {
+	public static WndBackpack lastBag(Listener listener, Mode mode, Class<?> classMatch, String title, boolean groundNearby, Class<?> classUnmatch, Item... excluded) {
 		//todo: make sure this is right
 		//commented out section is for scroll of identify multiple uses
 		if (mode == lastMode && lastBag != null/* &&
 			Dungeon.hero.belongings.contains( lastBag )*/) {
 
-			return new WndBackpack(lastBag, listener, mode, c, title, groundNearby, excluded);
+			return new WndBackpack(lastBag, listener, mode, classMatch, title, groundNearby, classUnmatch, excluded);
 		} else {
-			return new WndBackpack(Dungeon.hero.belongings.backpack1, listener, mode, c, title, groundNearby, excluded);
+			return new WndBackpack(Dungeon.hero.belongings.backpack1, listener, mode, classMatch, title, groundNearby, classUnmatch, excluded);
 		}
 	}
 
-	public static WndBackpack getBag(Class<? extends Bag> bagClass, Listener listener, Mode mode, Class<?> c, String title, boolean groundNearby) {
+	public static WndBackpack getBag(Class<? extends Bag> bagClass, Listener listener, Mode mode, Class<?> classMatch, String title, boolean groundNearby, Class<?> classUnmatch) {
 		Bag bag = Dungeon.hero.belongings.getItem(bagClass);
 		return bag != null ?
-				new WndBackpack(bag, listener, mode, c, title, groundNearby) :
-				lastBag(listener, mode, c, title, groundNearby);
+				new WndBackpack(bag, listener, mode, classMatch, title, groundNearby, classUnmatch) :
+				lastBag(listener, mode, classMatch, title, groundNearby, classUnmatch);
 	}
 
 	protected void placeItems(IBag container) {
@@ -328,7 +335,7 @@ public class WndBackpack extends WndTabbed {
 	@Override
 	protected void onClick(Tab tab) {
 		hide();
-		GameScene.show(new WndBackpack(((BagTab) tab).bag, listener, mode, classMatch, title, groundNearby, excluded.toArray(new Item[]{})));
+		GameScene.show(new WndBackpack(((BagTab) tab).bag, listener, mode, classMatch, title, groundNearby, classUnmatch, excluded.toArray(new Item[]{})));
 	}
 
 	@Override
@@ -395,8 +402,8 @@ public class WndBackpack extends WndTabbed {
 		{
 			name = null;
 
-			bucStatus = BUCStatus.Uncursed;
-			bucStatusKnown = true;
+            hasBuc(false);
+            hasLevels(false);
 		}
 
 		public Placeholder(int image) {
@@ -467,17 +474,16 @@ public class WndBackpack extends WndTabbed {
 
 		@Override
 		public void item(Item item) {
-
 			super.item(item);
-			if (item != null) {
 
+			if (item != null) {
 				bg.texture(TextureCache.createSolid(item.isEquipped(Dungeon.hero) ? EQUIPPED : NORMAL));
 				BUCStatus.colorizeBackground(bg, item.visibleBucStatus());
 
 				if (item.getDisplayName() == null || excluded.contains(item)) {
 					enable(false);
 				} else {
-					enable(Mode.Qualify(mode, item, classMatch));
+					enable(Mode.Qualify(mode, item, classMatch, classUnmatch));
 				}
 			} else {
 				bg.color(NORMAL);

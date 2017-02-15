@@ -5,7 +5,7 @@
  * Shattered Pixel Dungeon
  * Copyright (C) 2014-2015 Evan Debenham
  *
- * Unpixel Dungeon
+ * unPixel Dungeon
  * Copyright (C) 2015-2016 Randall Foudray
  *
  * This program is free software: you can redistribute it and/or modify
@@ -21,12 +21,13 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>
  *
+ *
  */
 package com.felayga.unpixeldungeon.ui;
 
 import com.felayga.unpixeldungeon.Assets;
-import com.felayga.unpixeldungeon.ShatteredPixelDungeon;
 import com.felayga.unpixeldungeon.scenes.TitleScene;
+import com.felayga.unpixeldungeon.unPixelDungeon;
 import com.watabou.noosa.Game;
 import com.watabou.noosa.Image;
 import com.watabou.noosa.audio.Sample;
@@ -75,7 +76,7 @@ public class ExitButton extends Button {
 		if (Game.scene() instanceof TitleScene) {
 			Game.instance.finish();
 		} else {
-			ShatteredPixelDungeon.switchNoFade( TitleScene.class );
+			unPixelDungeon.switchNoFade(TitleScene.class);
 		}
 	}
 }

@@ -5,7 +5,7 @@
  * Shattered Pixel Dungeon
  * Copyright (C) 2014-2015 Evan Debenham
  *
- * Unpixel Dungeon
+ * unPixel Dungeon
  * Copyright (C) 2015-2016 Randall Foudray
  *
  * This program is free software: you can redistribute it and/or modify
@@ -21,9 +21,11 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>
  *
+ *
  */
 package com.felayga.unpixeldungeon.levels.painters;
 
+import com.felayga.unpixeldungeon.Dungeon;
 import com.felayga.unpixeldungeon.actors.blobs.Alchemy;
 import com.felayga.unpixeldungeon.items.Generator;
 import com.felayga.unpixeldungeon.items.Item;
@@ -59,15 +61,14 @@ public class LaboratoryPainter extends Painter {
 		alchemy.seed( pot.x + Level.WIDTH * pot.y, 1 );
 		level.blobs.put( Alchemy.class, alchemy );
 		
-		int n = Random.IntRange( 2, 3 );
-		for (int i=0; i < n; i++) {
+		int n = Random.IntRange( 3 + Dungeon.hero.luck() / 5, 6 + Dungeon.hero.luck() / 4 );
+		while (n > 0) {
 			int pos;
 			do {
 				pos = room.random();
-			} while (
-				level.map[pos] != Terrain.EMPTY_SP ||
-				level.heaps.get( pos ) != null);
+			} while (level.map[pos] != Terrain.EMPTY_SP);
 			level.drop( prize( level ), pos );
+            n--;
 		}
 
         for (Room.Door door : room.connected.values()) {

@@ -5,7 +5,7 @@
  * Shattered Pixel Dungeon
  * Copyright (C) 2014-2015 Evan Debenham
  *
- * Unpixel Dungeon
+ * unPixel Dungeon
  * Copyright (C) 2015-2016 Randall Foudray
  *
  * This program is free software: you can redistribute it and/or modify
@@ -21,6 +21,7 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>
  *
+ *
  */
 
 package com.felayga.unpixeldungeon.items.potions;
@@ -31,8 +32,6 @@ package com.felayga.unpixeldungeon.items.potions;
 
 import com.felayga.unpixeldungeon.actors.Char;
 import com.felayga.unpixeldungeon.effects.Speck;
-import com.felayga.unpixeldungeon.plants.Fadeleaf;
-import com.felayga.unpixeldungeon.plants.Moongrass;
 import com.felayga.unpixeldungeon.utils.GLog;
 import com.watabou.utils.Random;
 
@@ -48,9 +47,6 @@ public class PotionOfEnergy extends Potion {
 
         applicationDescription = "somewhat";
         price = 150;
-
-        alchemyPrimary = Moongrass.Seed.class;
-        alchemySecondary = Fadeleaf.Seed.class;
     }
 
     protected String applicationDescription;

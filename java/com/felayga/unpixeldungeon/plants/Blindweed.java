@@ -5,7 +5,7 @@
  * Shattered Pixel Dungeon
  * Copyright (C) 2014-2015 Evan Debenham
  *
- * Unpixel Dungeon
+ * unPixel Dungeon
  * Copyright (C) 2015-2016 Randall Foudray
  *
  * This program is free software: you can redistribute it and/or modify
@@ -21,6 +21,7 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>
  *
+ *
  */
 package com.felayga.unpixeldungeon.plants;
 
@@ -32,11 +33,14 @@ import com.felayga.unpixeldungeon.actors.buffs.negative.Blindness;
 import com.felayga.unpixeldungeon.actors.mobs.Mob;
 import com.felayga.unpixeldungeon.effects.CellEmitter;
 import com.felayga.unpixeldungeon.effects.Speck;
+import com.felayga.unpixeldungeon.items.potions.IAlchemyComponent;
+import com.felayga.unpixeldungeon.items.potions.PotionOfBrewing;
 import com.felayga.unpixeldungeon.mechanics.GameTime;
 import com.felayga.unpixeldungeon.sprites.ItemSpriteSheet;
 import com.watabou.utils.Random;
 
 public class Blindweed extends Plant {
+    private static final String TXT_NAME = "Blindweed";
 
 	private static final String TXT_DESC =
 		"Upon being touched a Blindweed perishes in a bright flash of light. " +
@@ -44,7 +48,7 @@ public class Blindweed extends Plant {
 
     public Blindweed()
 	{
-        super("Blindweed", 3);
+        super(TXT_NAME, 3);
 	}
 	
 	@Override
@@ -53,7 +57,7 @@ public class Blindweed extends Plant {
 		
 		if (ch != null) {
 			long len = Random.Int( 5, 10 ) * GameTime.TICK;
-			Buff.prolong( ch, Blindness.class, len );
+			Buff.prolong( ch, Char.Registry.get(ownerRegistryIndex()), Blindness.class, len );
 			//Buff.prolong( ch, Cripple.class, len );
 			if (ch instanceof Mob) {
 				if (((Mob)ch).state == ((Mob)ch).HUNTING) ((Mob)ch).state = ((Mob)ch).WANDERING;
@@ -71,19 +75,27 @@ public class Blindweed extends Plant {
 		return TXT_DESC;
 	}
 	
-	public static class Seed extends Plant.Seed {
+	public static class Seed extends Plant.Seed implements IAlchemyComponent {
 		{
-			plantName = "Blindweed";
+			plantName = TXT_NAME;
 			
 			name = "seed of " + plantName;
 			image = ItemSpriteSheet.SEED_BLINDWEED;
 			
 			plantClass = Blindweed.class;
 		}
-		
+
 		@Override
 		public String desc() {
 			return TXT_DESC;
 		}
 	}
+
+    public static class Brew extends PotionOfBrewing {
+        {
+            plantName = "seed of " + TXT_NAME;
+
+            image = ItemSpriteSheet.ALCHEMY_BLINDWEED;
+        }
+    }
 }

@@ -5,7 +5,7 @@
  * Shattered Pixel Dungeon
  * Copyright (C) 2014-2015 Evan Debenham
  *
- * Unpixel Dungeon
+ * unPixel Dungeon
  * Copyright (C) 2015-2016 Randall Foudray
  *
  * This program is free software: you can redistribute it and/or modify
@@ -20,6 +20,7 @@
  *
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>
+ *
  *
  */
 package com.felayga.unpixeldungeon.levels.traps;
@@ -60,19 +61,22 @@ public class GrimTrap extends Trap {
 		Char target = Actor.findChar(pos);
 
 		//find the closest char that can be aimed at
-		if (target == null){
-			for (Char ch : Actor.chars()){
-				Ballistica bolt = new Ballistica(pos, ch.pos, Ballistica.PROJECTILE);
-				if (bolt.collisionPos == ch.pos &&
-						(target == null || Level.distance(pos, ch.pos) < Level.distance(pos, target.pos))){
-					target = ch;
-				}
-			}
-		}
+		if (target == null) {
+            android.util.SparseArray<Char> chars = Actor.chars();
+            for (int n = 0; n < chars.size(); n++) {
+                Char c = chars.valueAt(n);
+
+                Ballistica bolt = new Ballistica(pos, c.pos(), Ballistica.PROJECTILE);
+                if (bolt.collisionPos == c.pos() &&
+                        (target == null || Level.distance(pos, c.pos()) < Level.distance(pos, target.pos()))) {
+                    target = c;
+                }
+            }
+        }
 
 		if (target != null){
 			final Char finalTarget = target;
-			MagicMissile.shadow(target.sprite.parent, pos, target.pos, new Callback() {
+			MagicMissile.shadow(target.sprite.parent, pos, target.pos(), new Callback() {
 				@Override
 				public void call() {
 

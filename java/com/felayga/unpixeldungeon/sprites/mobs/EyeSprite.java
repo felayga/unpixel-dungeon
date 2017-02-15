@@ -5,7 +5,7 @@
  * Shattered Pixel Dungeon
  * Copyright (C) 2014-2015 Evan Debenham
  *
- * Unpixel Dungeon
+ * unPixel Dungeon
  * Copyright (C) 2015-2016 Randall Foudray
  *
  * This program is free software: you can redistribute it and/or modify
@@ -21,6 +21,7 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>
  *
+ *
  */
 package com.felayga.unpixeldungeon.sprites.mobs;
 
@@ -32,45 +33,45 @@ import com.felayga.unpixeldungeon.sprites.MobSprite;
 import com.watabou.noosa.TextureFilm;
 
 public class EyeSprite extends MobSprite {
-	
-	private int attackPos;
-	
-	public EyeSprite() {
-		super();
-		
-		texture( Assets.Mobs.EYE );
-		
-		TextureFilm frames = new TextureFilm( texture, 16, 18 );
-		
-		idle = new Animation( 8, true );
-		idle.frames( frames, 0, 1, 2 );
-		
-		run = new Animation( 12, true );
-		run.frames( frames, 5, 6 );
-		
-		attack = new Animation( 8, false );
-		attack.frames( frames, 4, 3 );
-		
-		die = new Animation( 8, false );
-		die.frames( frames, 7, 8, 9 );
-		
-		play( idle );
-	}
-	
-	@Override
-	public void attack( int pos ) {
-		attackPos = pos;
-		super.attack( pos );
-	}
-	
-	@Override
-	public void onComplete( Animation anim ) {
-		super.onComplete( anim );
-		
-		if (anim == attack) {
-			if (Dungeon.visible[ch.pos] || Dungeon.visible[attackPos]) {
-				parent.add( new Beam.DeathRay( center(), DungeonTilemap.tileCenterToWorld( attackPos ) ) );
-			}
-		}
-	}
+
+    private int attackPos;
+
+    public EyeSprite() {
+        super();
+
+        texture(Assets.Mobs.EYE);
+
+        TextureFilm frames = new TextureFilm(texture, 16, 18);
+
+        idle = new Animation(8, true);
+        idle.frames(frames, 0, 1, 2);
+
+        run = new Animation(12, true);
+        run.frames(frames, 5, 6);
+
+        attack = new Animation(8, false);
+        attack.frames(frames, 4, 3);
+
+        die = new Animation(8, false);
+        die.frames(frames, 7, 8, 9);
+
+        play(idle);
+    }
+
+    @Override
+    public void attack(int pos) {
+        attackPos = pos;
+        super.attack(pos);
+    }
+
+    @Override
+    public void onComplete(Animation anim) {
+        super.onComplete(anim);
+
+        if (anim == attack) {
+            if (Dungeon.visible[ch.pos()] || Dungeon.visible[attackPos]) {
+                parent.add(new Beam.DeathRay(center(), DungeonTilemap.tileCenterToWorld(attackPos)));
+            }
+        }
+    }
 }

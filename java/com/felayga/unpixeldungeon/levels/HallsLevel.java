@@ -5,7 +5,7 @@
  * Shattered Pixel Dungeon
  * Copyright (C) 2014-2015 Evan Debenham
  *
- * Unpixel Dungeon
+ * unPixel Dungeon
  * Copyright (C) 2015-2016 Randall Foudray
  *
  * This program is free software: you can redistribute it and/or modify
@@ -20,6 +20,7 @@
  *
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>
+ *
  *
  */
 package com.felayga.unpixeldungeon.levels;
@@ -141,7 +142,7 @@ public class HallsLevel extends RegularLevel {
 	@Override
 	public String tileName( int tile ) {
 		switch (tile) {
-		case Terrain.WATER:
+		case Terrain.PUDDLE:
 			return "Cold lava";
 		case Terrain.GRASS:
 			return "Embermoss";
@@ -158,7 +159,7 @@ public class HallsLevel extends RegularLevel {
 	@Override
 	public String tileDesc(int tile) {
 		switch (tile) {
-		case Terrain.WATER:
+		case Terrain.PUDDLE:
 			return "It looks like lava, but it's cold and probably safe to touch.";
 		case Terrain.STATUE:
 		case Terrain.STATUE_SP:
@@ -177,7 +178,7 @@ public class HallsLevel extends RegularLevel {
 	
 	public static void addHallsVisuals( Level level, Group group ) {
 		for (int i=0; i < LENGTH; i++) {
-			if (level.map[i] == Terrain.WATER) {
+			if (level.map[i] == Terrain.PUDDLE) {
 				group.add( new Stream( i ) );
 			}
 		}

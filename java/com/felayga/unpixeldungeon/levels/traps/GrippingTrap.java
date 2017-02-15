@@ -5,7 +5,7 @@
  * Shattered Pixel Dungeon
  * Copyright (C) 2014-2015 Evan Debenham
  *
- * Unpixel Dungeon
+ * unPixel Dungeon
  * Copyright (C) 2015-2016 Randall Foudray
  *
  * This program is free software: you can redistribute it and/or modify
@@ -20,6 +20,7 @@
  *
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>
+ *
  *
  */
 package com.felayga.unpixeldungeon.levels.traps;
@@ -46,19 +47,20 @@ public class GrippingTrap extends Trap {
 	@Override
 	public void activate() {
 
-		Char c = Actor.findChar( pos );
+        Char c = Actor.findChar(pos);
+        Char owner = Char.Registry.get(ownerRegistryIndex());
 
-		if (c != null) {
-			int damage = Math.max( 0,  (Dungeon.depthAdjusted) );
-			Buff.affect( c, Bleeding.class ).set( damage );
-			Buff.prolong( c, Cripple.class, GameTime.TICK * 15);
-			Buff.prolong( c, Roots.class, GameTime.TICK * 5);
-			Wound.hit( c );
-		} else {
-			Wound.hit( pos );
-		}
+        if (c != null) {
+            int damage = Math.max(0, (Dungeon.depthAdjusted));
+            Buff.affect(c, owner, Bleeding.class).set(damage);
+            Buff.prolong(c, owner, Cripple.class, GameTime.TICK * 15);
+            Buff.prolong(c, owner, Roots.class, GameTime.TICK * 5);
+            Wound.hit(c);
+        } else {
+            Wound.hit(pos);
+        }
 
-	}
+    }
 
 	@Override
 	public String desc() {

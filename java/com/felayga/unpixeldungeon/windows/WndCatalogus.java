@@ -5,7 +5,7 @@
  * Shattered Pixel Dungeon
  * Copyright (C) 2014-2015 Evan Debenham
  *
- * Unpixel Dungeon
+ * unPixel Dungeon
  * Copyright (C) 2015-2016 Randall Foudray
  *
  * This program is free software: you can redistribute it and/or modify
@@ -21,10 +21,10 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>
  *
+ *
  */
 package com.felayga.unpixeldungeon.windows;
 
-import com.felayga.unpixeldungeon.ShatteredPixelDungeon;
 import com.felayga.unpixeldungeon.items.Item;
 import com.felayga.unpixeldungeon.items.potions.Potion;
 import com.felayga.unpixeldungeon.items.scrolls.Scroll;
@@ -33,6 +33,7 @@ import com.felayga.unpixeldungeon.scenes.PixelScene;
 import com.felayga.unpixeldungeon.sprites.ItemSprite;
 import com.felayga.unpixeldungeon.ui.ScrollPane;
 import com.felayga.unpixeldungeon.ui.Window;
+import com.felayga.unpixeldungeon.unPixelDungeon;
 import com.felayga.unpixeldungeon.utils.Utils;
 import com.watabou.noosa.BitmapText;
 import com.watabou.noosa.ui.Component;
@@ -66,7 +67,7 @@ public class WndCatalogus extends WndTabbed {
 		
 		super();
 
-		if (ShatteredPixelDungeon.landscape()) {
+		if (unPixelDungeon.landscape()) {
 			resize( WIDTH_L, HEIGHT_L );
 		} else {
 			resize( WIDTH_P, HEIGHT_P );

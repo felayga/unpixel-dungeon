@@ -5,7 +5,7 @@
  * Shattered Pixel Dungeon
  * Copyright (C) 2014-2015 Evan Debenham
  *
- * Unpixel Dungeon
+ * unPixel Dungeon
  * Copyright (C) 2015-2016 Randall Foudray
  *
  * This program is free software: you can redistribute it and/or modify
@@ -21,12 +21,14 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>
  *
+ *
  */
 package com.felayga.unpixeldungeon.actors.hero;
 
 import com.felayga.unpixeldungeon.actors.Char;
 import com.felayga.unpixeldungeon.actors.mobs.npcs.Boulder;
 import com.felayga.unpixeldungeon.actors.mobs.npcs.NPC;
+import com.felayga.unpixeldungeon.items.EquippableItem;
 import com.felayga.unpixeldungeon.items.Item;
 import com.felayga.unpixeldungeon.items.bags.IBag;
 import com.felayga.unpixeldungeon.items.tools.digging.DiggingTool;
@@ -44,6 +46,12 @@ public class HeroAction {
 
     public static class Move extends HeroAction {
         public Move(int dst) {
+            this.dst = dst;
+        }
+    }
+
+    public static class ReadSign extends HeroAction {
+        public ReadSign(int dst) {
             this.dst = dst;
         }
     }
@@ -122,8 +130,12 @@ public class HeroAction {
         }
 
         public static class KickDoor extends HandleDoor {
-            public KickDoor(int door) {
+            public EquippableItem boots;
+
+            public KickDoor(int door, EquippableItem boots) {
                 super(door);
+
+                this.boots = boots;
             }
         }
 
@@ -171,6 +183,7 @@ public class HeroAction {
 
     public static class Attack extends HeroAction {
         public Char target;
+        public int targetPos;
 
         public IWeapon melee;
         public RangedWeapon launcher;
@@ -179,6 +192,10 @@ public class HeroAction {
 
         public Attack(Char target) {
             this.target = target;
+        }
+
+        public Attack(int targetPos) {
+            this.targetPos = targetPos;
         }
 
         public Attack(Char target, IWeapon melee) {
@@ -264,7 +281,7 @@ public class HeroAction {
         }
 
         public Dig(DiggingTool tool, Boulder boulder, int effort) {
-            this(tool, boulder.pos, effort, 0, boulder);
+            this(tool, boulder.pos(), effort, 0, boulder);
         }
 
         public Dig(DiggingTool tool, int pos, int effort, int direction) {

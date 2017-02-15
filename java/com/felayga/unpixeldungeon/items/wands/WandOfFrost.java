@@ -5,7 +5,7 @@
  * Shattered Pixel Dungeon
  * Copyright (C) 2014-2015 Evan Debenham
  *
- * Unpixel Dungeon
+ * unPixel Dungeon
  * Copyright (C) 2015-2016 Randall Foudray
  *
  * This program is free software: you can redistribute it and/or modify
@@ -20,6 +20,7 @@
  *
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>
+ *
  *
  */
 package com.felayga.unpixeldungeon.items.wands;
@@ -57,13 +58,13 @@ public class WandOfFrost extends Wand {
 
 		Heap heap = Dungeon.level.heaps.get(bolt.collisionPos);
 		if (heap != null) {
-			heap.freeze();
+			heap.freeze(curUser);
 		}
 
 		Char ch = Actor.findChar(bolt.collisionPos);
 		if (ch != null){
 
-			int damage = Random.NormalIntRange(5+level, 10+(level*level/3));
+			int damage = Random.NormalIntRange(5+level(), 10+(level()*level()/3));
 
 			if (ch.buff(Frost.class) != null){
 				return; //do nothing, can't affect a frozen target
@@ -71,21 +72,21 @@ public class WandOfFrost extends Wand {
 			if (ch.buff(Chill.class) != null){
 				damage = (int)(damage * ch.buff(Chill.class).movementModifier() / GameTime.TICK);
 			} else {
-				ch.sprite.burst( 0xFF99CCFF, level / 2 + 2 );
+				ch.sprite.burst( 0xFF99CCFF, level() / 2 + 2 );
 			}
 
-			processSoulMark(ch);
+			processSoulMark(ch, curUser);
 			ch.damage(damage, MagicType.Cold, null);
 
 			if (ch.isAlive()){
-				if (Level.water[ch.pos]){
+				if (Level.puddle[ch.pos()]){
 					//20+(10*level)% chance
-					if (Random.Int(10) >= 8-level )
-						Buff.affect(ch, Frost.class, Frost.duration(ch)*Random.LongRange(2, 4) * GameTime.TICK / GameTime.TICK);
+					if (Random.Int(10) >= 8-level() )
+						Buff.affect(ch, curUser, Frost.class, Frost.duration(ch)*Random.LongRange(2, 4) * GameTime.TICK / GameTime.TICK);
 					else
-						Buff.prolong(ch, Chill.class, 6+level);
+						Buff.prolong(ch, curUser, Chill.class, 6+level());
 				} else {
-					Buff.prolong(ch, Chill.class, 4+level);
+					Buff.prolong(ch, curUser, Chill.class, 4+level());
 				}
 			}
 		}
@@ -102,14 +103,15 @@ public class WandOfFrost extends Wand {
 	public void onHit(MagesStaff staff, Char attacker, Char defender, int damage) {
 		Chill chill = defender.buff(Chill.class);
 		if (chill != null && Random.PassFail((int)chill.movementModifier())){
+            final Char _attacker = attacker;
 			//need to delay this through an actor so that the freezing isn't broken by taking damage from the staff hit.
 			new FlavourBuff(){
 				{actPriority = Integer.MIN_VALUE;}
 				public boolean act() {
-					Buff.affect(target, Frost.class, Frost.duration(target) * Random.Long(GameTime.TICK, GameTime.TICK * 2) / GameTime.TICK);
+					Buff.affect(target, _attacker, Frost.class, Frost.duration(target) * Random.Long(GameTime.TICK, GameTime.TICK * 2) / GameTime.TICK);
 					return super.act();
 				}
-			}.attachTo(defender);
+			}.attachTo(defender, attacker);
 		}
 	}
 

@@ -5,7 +5,7 @@
  * Shattered Pixel Dungeon
  * Copyright (C) 2014-2015 Evan Debenham
  *
- * Unpixel Dungeon
+ * unPixel Dungeon
  * Copyright (C) 2015-2016 Randall Foudray
  *
  * This program is free software: you can redistribute it and/or modify
@@ -21,6 +21,7 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>
  *
+ *
  */
 package com.felayga.unpixeldungeon.actors.buffs.negative;
 
@@ -33,46 +34,46 @@ import com.felayga.unpixeldungeon.ui.BuffIndicator;
 
 public class Weakness extends FlavourBuff {
 
-	private static final long DURATION = GameTime.TICK * 40;
+    private static final long DURATION = GameTime.TICK * 40;
 
-	{
-		type = buffType.NEGATIVE;
-	}
+    {
+        type = buffType.NEGATIVE;
+    }
 
-	@Override
-	public int icon() {
-		return BuffIndicator.WEAKNESS;
-	}
-	
-	@Override
-	public String toString() {
-		return "Weakened";
-	}
-	
-	@Override
-	public boolean attachTo( Char target ) {
-		if (super.attachTo( target )) {
-			Hero hero = (Hero)target;
-			hero.weakened = true;
+    @Override
+    public int icon() {
+        return BuffIndicator.WEAKNESS;
+    }
+
+    @Override
+    public String toString() {
+        return "Weakened";
+    }
+
+    @Override
+    public boolean attachTo(Char target, Char source) {
+        if (super.attachTo(target, source)) {
+            Hero hero = (Hero) target;
+            hero.weakened = true;
             //todo: should weakness be discharging wands now?
-			//hero.belongings.discharge();
-			
-			return true;
-		} else {
-			return false;
-		}
-	}
-	
-	@Override
-	public void detach() {
-		super.detach();
-		((Hero)target).weakened = false;
-	}
-	
-	public static long duration( Char ch ) {
-		Resistance r = ch.buff( Resistance.class );
-		return r != null ? r.durationFactor() * DURATION : DURATION;
-	}
+            //hero.belongings.discharge();
+
+            return true;
+        } else {
+            return false;
+        }
+    }
+
+    @Override
+    public void detach() {
+        super.detach();
+        ((Hero) target).weakened = false;
+    }
+
+    public static long duration(Char ch) {
+        Resistance r = ch.buff(Resistance.class);
+        return r != null ? r.durationFactor() * DURATION : DURATION;
+    }
 
     @Override
     public String attachedMessage(boolean isHero) {
@@ -84,11 +85,11 @@ public class Weakness extends FlavourBuff {
     }
 
     @Override
-	public String desc() {
-		return "Your gear suddenly feels a lot heavier.\n" +
-				"\n" +
-				"Weakening magic is affecting you, reducing your effective strength by 2 points.\n" +
-				"\n" +
-				"This weakness will last for " + dispTurns() + ".";
-	}
+    public String desc() {
+        return "Your gear suddenly feels a lot heavier.\n" +
+                "\n" +
+                "Weakening magic is affecting you, reducing your effective strength by 2 points.\n" +
+                "\n" +
+                "This weakness will last for " + dispTurns() + ".";
+    }
 }

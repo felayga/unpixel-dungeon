@@ -5,7 +5,7 @@
  * Shattered Pixel Dungeon
  * Copyright (C) 2014-2015 Evan Debenham
  *
- * Unpixel Dungeon
+ * unPixel Dungeon
  * Copyright (C) 2015-2016 Randall Foudray
  *
  * This program is free software: you can redistribute it and/or modify
@@ -21,6 +21,7 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>
  *
+ *
  */
 package com.felayga.unpixeldungeon.actors.buffs.negative;
 
@@ -34,24 +35,9 @@ public class Terror extends FlavourBuff {
 
 	public static final long DURATION = GameTime.TICK * 10;
 
-	public int object = 0;
-
-	private static final String OBJECT    = "object";
 
 	{
 		type = buffType.NEGATIVE;
-	}
-
-	@Override
-	public void storeInBundle( Bundle bundle ) {
-		super.storeInBundle(bundle);
-		bundle.put(OBJECT, object);
-	}
-
-	@Override
-	public void restoreFromBundle( Bundle bundle ) {
-		super.restoreFromBundle( bundle );
-		object = bundle.getInt( OBJECT );
 	}
 
 	@Override

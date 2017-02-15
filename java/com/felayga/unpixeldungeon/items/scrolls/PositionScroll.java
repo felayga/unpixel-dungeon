@@ -5,7 +5,7 @@
  * Shattered Pixel Dungeon
  * Copyright (C) 2014-2015 Evan Debenham
  *
- * Unpixel Dungeon
+ * unPixel Dungeon
  * Copyright (C) 2015-2016 Randall Foudray
  *
  * This program is free software: you can redistribute it and/or modify
@@ -21,18 +21,19 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>
  *
+ *
  */
 
 package com.felayga.unpixeldungeon.items.scrolls;
 
 import com.felayga.unpixeldungeon.Assets;
 import com.felayga.unpixeldungeon.Dungeon;
-import com.felayga.unpixeldungeon.ShatteredPixelDungeon;
 import com.felayga.unpixeldungeon.actors.buffs.positive.Invisibility;
 import com.felayga.unpixeldungeon.actors.hero.Hero;
 import com.felayga.unpixeldungeon.actors.hero.HeroAction;
 import com.felayga.unpixeldungeon.scenes.CellSelector;
 import com.felayga.unpixeldungeon.scenes.GameScene;
+import com.felayga.unpixeldungeon.unPixelDungeon;
 import com.felayga.unpixeldungeon.windows.WndOptions;
 import com.watabou.noosa.audio.Sample;
 
@@ -87,11 +88,10 @@ public abstract class PositionScroll extends Scroll {
         curUser.spend_new(TIME_TO_READ, true);
 
         Sample.INSTANCE.play(Assets.SND_READ);
-        Invisibility.dispel();
     }
 
     private void confirmCancelation() {
-        ShatteredPixelDungeon.scene().add(new WndOptions(getDisplayName(), TXT_WARNING, TXT_YES, TXT_NO) {
+        unPixelDungeon.scene().add(new WndOptions(getDisplayName(), TXT_WARNING, TXT_YES, TXT_NO) {
             @Override
             protected void onSelect(int index) {
                 switch (index) {

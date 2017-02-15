@@ -5,7 +5,7 @@
  * Shattered Pixel Dungeon
  * Copyright (C) 2014-2015 Evan Debenham
  *
- * Unpixel Dungeon
+ * unPixel Dungeon
  * Copyright (C) 2015-2016 Randall Foudray
  *
  * This program is free software: you can redistribute it and/or modify
@@ -20,6 +20,7 @@
  *
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>
+ *
  *
  */
 package com.felayga.unpixeldungeon.actors.buffs.negative;
@@ -46,11 +47,11 @@ public class Chill extends FlavourBuff implements ISpeedModifierBuff {
 	}
 
 	@Override
-	public boolean attachTo(Char target) {
+	public boolean attachTo(Char target, Char source) {
 		//can't chill what's frozen!
 		if (target.buff(Frost.class) != null) return false;
 
-		if (super.attachTo(target)){
+		if (super.attachTo(target, source)){
 			Burning.detach(target, Burning.class);
 
 			//chance of potion breaking is the same as speed factor.
@@ -59,7 +60,7 @@ public class Chill extends FlavourBuff implements ISpeedModifierBuff {
 				if (item instanceof Potion) {
 					item = target.belongings.remove(item, 1);
 					GLog.w(TXT_FREEZES, item.toString());
-					((Potion) item).shatter(target.pos);
+					((Potion) item).shatter(source, target.pos());
 				} /*else if (item instanceof MysteryMeat) {
 					item = target.belongings.remove(item, 1);
 					FrozenCarpaccio carpaccio = new FrozenCarpaccio();

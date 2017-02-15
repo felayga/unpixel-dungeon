@@ -5,7 +5,7 @@
  * Shattered Pixel Dungeon
  * Copyright (C) 2014-2015 Evan Debenham
  *
- * Unpixel Dungeon
+ * unPixel Dungeon
  * Copyright (C) 2015-2016 Randall Foudray
  *
  * This program is free software: you can redistribute it and/or modify
@@ -21,29 +21,32 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>
  *
+ *
  */
 package com.felayga.unpixeldungeon.items.food;
 
 import com.felayga.unpixeldungeon.actors.buffs.hero.Encumbrance;
 import com.felayga.unpixeldungeon.actors.hero.Hero;
 import com.felayga.unpixeldungeon.items.Item;
+import com.felayga.unpixeldungeon.items.potions.IAlchemyComponent;
 import com.felayga.unpixeldungeon.items.potions.Potion;
-import com.felayga.unpixeldungeon.items.potions.PotionOfExperience;
+import com.felayga.unpixeldungeon.items.potions.PotionOfBrewing;
 import com.felayga.unpixeldungeon.items.potions.PotionOfFrost;
 import com.felayga.unpixeldungeon.items.potions.PotionOfHealing;
 import com.felayga.unpixeldungeon.items.potions.PotionOfInvisibility;
 import com.felayga.unpixeldungeon.items.potions.PotionOfLevitation;
-import com.felayga.unpixeldungeon.items.potions.PotionOfLiquidFlame;
-import com.felayga.unpixeldungeon.items.potions.PotionOfMindVision;
+import com.felayga.unpixeldungeon.items.potions.PotionOfOil;
 import com.felayga.unpixeldungeon.items.potions.PotionOfParalyticGas;
 import com.felayga.unpixeldungeon.items.potions.PotionOfPurity;
-import com.felayga.unpixeldungeon.items.potions.PotionOfStrength;
 import com.felayga.unpixeldungeon.items.potions.PotionOfToxicGas;
+import com.felayga.unpixeldungeon.mechanics.Constant;
 import com.felayga.unpixeldungeon.sprites.ItemSprite;
 import com.felayga.unpixeldungeon.sprites.ItemSpriteSheet;
 import com.watabou.utils.Bundle;
 
-public class Blandfruit extends Food {
+import java.util.ArrayList;
+
+public class Blandfruit extends Food implements IAlchemyComponent {
 
 	public String message = "You eat the Blandfruit, bleugh!";
 	public String info = "So dry and insubstantial.  At least it's filling.";
@@ -63,7 +66,28 @@ public class Blandfruit extends Food {
         price = 20;
 	}
 
-	@Override
+    public Item getSelf() {
+        return this;
+    }
+
+    @Override
+    public ArrayList<String> actions(Hero hero) {
+        ArrayList<String> actions = super.actions(hero);
+        actions.add(Constant.Action.BREW);
+        return actions;
+    }
+
+    @Override
+    public boolean execute(Hero hero, String action) {
+        if (action.equals(Constant.Action.BREW)) {
+            PotionOfBrewing.Handler.brew(hero, this);
+            return false;
+        } else {
+            return super.execute(hero, action);
+        }
+    }
+
+    @Override
     protected boolean checkSimilarity(Item item) {
 		if (item instanceof Blandfruit){
 			if (potionAttrib == null){
@@ -157,13 +181,13 @@ public class Blandfruit extends Food {
 			name = "Sunfruit";
 			potionGlow = new ItemSprite.Glowing( 0x2EE62E );
 			info += "It looks delicious and hearty, ready to be eaten!";
-
+        /*
 		} else if (potionAttrib instanceof PotionOfStrength){
 
 			name = "Rotfruit";
 			potionGlow = new ItemSprite.Glowing( 0xCC0022 );
 			info += "It looks delicious and powerful, ready to be eaten!";
-
+        */
 		} else if (potionAttrib instanceof PotionOfParalyticGas){
 
 			name = "Earthfruit";
@@ -176,7 +200,7 @@ public class Blandfruit extends Food {
 			potionGlow = new ItemSprite.Glowing( 0xE5D273 );
 			info += "It looks delicious and shiny, ready to be eaten!";
 
-		} else if (potionAttrib instanceof PotionOfLiquidFlame){
+		} else if (potionAttrib instanceof PotionOfOil){
 
 			name = "Firefruit";
 			potionGlow = new ItemSprite.Glowing( 0xFF7F00 );
@@ -187,13 +211,13 @@ public class Blandfruit extends Food {
 			name = "Icefruit";
 			potionGlow = new ItemSprite.Glowing( 0x66B3FF );
 			info += "It looks delicious and refreshing, ready to be eaten!";
-
+        /*
 		} else if (potionAttrib instanceof PotionOfMindVision){
 
 			name = "Fadefruit";
 			potionGlow = new ItemSprite.Glowing( 0xB8E6CF );
 			info += "It looks delicious and shadowy, ready to be eaten!";
-
+        */
 		} else if (potionAttrib instanceof PotionOfToxicGas){
 
 			name = "Sorrowfruit";
@@ -211,13 +235,13 @@ public class Blandfruit extends Food {
 			name = "Dreamfruit";
 			potionGlow = new ItemSprite.Glowing( 0x8E2975 );
 			info += "It looks delicious and clean, ready to be eaten!";
-
+        /*
 		} else if (potionAttrib instanceof PotionOfExperience) {
 
 			name = "Starfruit";
 			potionGlow = new ItemSprite.Glowing( 0xA79400 );
 			info += "It looks delicious and glorious, ready to be eaten!";
-
+        */
 		}
 
 		return this;
@@ -227,7 +251,7 @@ public class Blandfruit extends Food {
 
 	@Override
 	public void cast( final Hero user, int dst ) {
-		if (potionAttrib instanceof PotionOfLiquidFlame ||
+		if (potionAttrib instanceof PotionOfOil ||
 				potionAttrib instanceof PotionOfToxicGas ||
 				potionAttrib instanceof PotionOfParalyticGas ||
 				potionAttrib instanceof PotionOfFrost ||

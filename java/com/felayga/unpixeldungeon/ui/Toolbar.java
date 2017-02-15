@@ -5,7 +5,7 @@
  * Shattered Pixel Dungeon
  * Copyright (C) 2014-2015 Evan Debenham
  *
- * Unpixel Dungeon
+ * unPixel Dungeon
  * Copyright (C) 2015-2016 Randall Foudray
  *
  * This program is free software: you can redistribute it and/or modify
@@ -21,17 +21,18 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>
  *
+ *
  */
 package com.felayga.unpixeldungeon.ui;
 
 import com.felayga.unpixeldungeon.Assets;
 import com.felayga.unpixeldungeon.Dungeon;
 import com.felayga.unpixeldungeon.DungeonTilemap;
-import com.felayga.unpixeldungeon.ShatteredPixelDungeon;
 import com.felayga.unpixeldungeon.items.Item;
 import com.felayga.unpixeldungeon.scenes.CellSelector;
 import com.felayga.unpixeldungeon.scenes.GameScene;
 import com.felayga.unpixeldungeon.sprites.ItemSprite;
+import com.felayga.unpixeldungeon.unPixelDungeon;
 import com.felayga.unpixeldungeon.windows.WndBackpack;
 import com.felayga.unpixeldungeon.windows.WndCatalogus;
 import com.watabou.noosa.Game;
@@ -121,7 +122,7 @@ public class Toolbar extends Component {
 
 			@Override
 			protected void onClick() {
-				GameScene.show(new WndBackpack(Dungeon.hero.belongings.backpack1, null, WndBackpack.Mode.ALL_WITH_SPELL, null, null, false));
+				GameScene.show(new WndBackpack(Dungeon.hero.belongings.backpack1, null, WndBackpack.Mode.ALL_WITH_SPELL, null, null, false, null));
 			}
 
 			protected boolean onLongClick() {
@@ -156,7 +157,7 @@ public class Toolbar extends Component {
 	protected void layout() {
 
 		int[] visible = new int[4];
-		int slots = ShatteredPixelDungeon.quickSlots();
+		int slots = unPixelDungeon.quickSlots();
 
 		for(int i = 0; i <= 3; i++)
 			visible[i] = (int)((slots > i) ? y+2 : y+25);
@@ -166,8 +167,8 @@ public class Toolbar extends Component {
 			//decides on quickslot layout, depending on available screen size.
 			if (slots == 4 && width < 150){
 				if (width < 139){
-					if ((ShatteredPixelDungeon.flipToolbar() && i == 3) ||
-							(!ShatteredPixelDungeon.flipToolbar() && i == 0)) {
+					if ((unPixelDungeon.flipToolbar() && i == 3) ||
+							(!unPixelDungeon.flipToolbar() && i == 0)) {
 						btnQuick[i].border(0, 0);
 						btnQuick[i].frame(88, 0, 17, 24);
 					} else {
@@ -175,12 +176,12 @@ public class Toolbar extends Component {
 						btnQuick[i].frame(88, 0, 18, 24);
 					}
 				} else {
-					if (i == 0 && !ShatteredPixelDungeon.flipToolbar() ||
-						i == 3 && ShatteredPixelDungeon.flipToolbar()){
+					if (i == 0 && !unPixelDungeon.flipToolbar() ||
+						i == 3 && unPixelDungeon.flipToolbar()){
 						btnQuick[i].border(0, 2);
 						btnQuick[i].frame(106, 0, 19, 24);
-					} else if (i == 0 && ShatteredPixelDungeon.flipToolbar() ||
-							i == 3 && !ShatteredPixelDungeon.flipToolbar()){
+					} else if (i == 0 && unPixelDungeon.flipToolbar() ||
+							i == 3 && !unPixelDungeon.flipToolbar()){
 						btnQuick[i].border(2, 1);
 						btnQuick[i].frame(86, 0, 20, 24);
 					} else {
@@ -196,7 +197,7 @@ public class Toolbar extends Component {
 		}
 
 		float right = width;
-		switch(Mode.valueOf(ShatteredPixelDungeon.toolbarMode())){
+		switch(Mode.valueOf(unPixelDungeon.toolbarMode())){
 			case SPLIT:
 				btnWait.setPos(x, y);
 				btnSearch.setPos(btnWait.right(), y);
@@ -230,7 +231,7 @@ public class Toolbar extends Component {
 		}
 		right = width;
 
-		if (ShatteredPixelDungeon.flipToolbar()) {
+		if (unPixelDungeon.flipToolbar()) {
 
 			btnWait.setPos( (right - btnWait.right()), y);
 			btnSearch.setPos( (right - btnSearch.right()), y);

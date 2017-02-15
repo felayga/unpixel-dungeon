@@ -5,7 +5,7 @@
  * Shattered Pixel Dungeon
  * Copyright (C) 2014-2015 Evan Debenham
  *
- * Unpixel Dungeon
+ * unPixel Dungeon
  * Copyright (C) 2015-2016 Randall Foudray
  *
  * This program is free software: you can redistribute it and/or modify
@@ -21,6 +21,7 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>
  *
+ *
  */
 
 package com.felayga.unpixeldungeon.items.armor.boots;
@@ -31,7 +32,6 @@ import com.felayga.unpixeldungeon.actors.Char;
 import com.felayga.unpixeldungeon.actors.buffs.hero.Encumbrance;
 import com.felayga.unpixeldungeon.actors.hero.Hero;
 import com.felayga.unpixeldungeon.actors.hero.HeroAction;
-import com.felayga.unpixeldungeon.actors.mobs.Mob;
 import com.felayga.unpixeldungeon.items.armor.Armor;
 import com.felayga.unpixeldungeon.items.weapon.IWeapon;
 import com.felayga.unpixeldungeon.levels.Level;
@@ -55,7 +55,7 @@ public class Boots extends Armor implements IWeapon {
     //region IWeapon
 
     public WeaponSkill skillRequired() {
-        return WeaponSkill.None;
+        return WeaponSkill.Martial;
     }
 
     public AttributeType accuracyAttribute() {
@@ -70,7 +70,7 @@ public class Boots extends Armor implements IWeapon {
     }
 
     public int accuracyModifier() {
-        return level;
+        return level() + 2;
     }
 
     public int damageRoll() {
@@ -164,15 +164,19 @@ public class Boots extends Armor implements IWeapon {
         }
     }
 
-    public void kick(Hero hero, int target) {
-        Char ch;
-        if (Level.fieldOfView[target] && (ch = Actor.findChar(target)) instanceof Mob) {
-            hero.curAction = new HeroAction.Attack(ch, this);
-        } else {
-            hero.curAction = new HeroAction.UseItem.Kick(this, target);
-        }
+    public void kick(Char maybeHero, int target) {
+        if (maybeHero instanceof Hero) {
+            Hero hero = (Hero) maybeHero;
 
-        hero.motivate(true);
+            Char ch;
+            if (Level.fieldOfView[target] && (ch = Actor.findChar(target)) != null) {
+                hero.curAction = new HeroAction.Attack(ch, this);
+            } else {
+                hero.curAction = new HeroAction.UseItem.Kick(this, target);
+            }
+
+            hero.motivate(true);
+        }
     }
 
     protected static CellSelector.Listener kicker = new CellSelector.Listener() {

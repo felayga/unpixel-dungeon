@@ -5,7 +5,7 @@
  * Shattered Pixel Dungeon
  * Copyright (C) 2014-2015 Evan Debenham
  *
- * Unpixel Dungeon
+ * unPixel Dungeon
  * Copyright (C) 2015-2016 Randall Foudray
  *
  * This program is free software: you can redistribute it and/or modify
@@ -21,6 +21,7 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>
  *
+ *
  */
 package com.felayga.unpixeldungeon.levels.traps;
 
@@ -35,6 +36,7 @@ import com.felayga.unpixeldungeon.items.weapon.Weapon;
 import com.felayga.unpixeldungeon.items.weapon.melee.simple.Knuckles;
 import com.felayga.unpixeldungeon.levels.Level;
 import com.felayga.unpixeldungeon.mechanics.BUCStatus;
+import com.felayga.unpixeldungeon.mechanics.Constant;
 import com.felayga.unpixeldungeon.sprites.TrapSprite;
 import com.felayga.unpixeldungeon.utils.GLog;
 import com.watabou.noosa.audio.Sample;
@@ -51,22 +53,20 @@ public class DisarmingTrap extends Trap{
 	public void activate() {
 		Heap heap = Dungeon.level.heaps.get( pos );
 
-		if (heap != null){
-			int cell = Dungeon.level.randomRespawnCell();
+		if (heap != null) {
+            int cell = Dungeon.level.randomRespawnCell();
 
-			if (cell != -1) {
-				Item item = heap.pickUp();
-				Dungeon.level.drop( item, cell ).seen = true;
-				for (int i : Level.NEIGHBOURS9)
-					Dungeon.level.visited[cell+i] = true;
-				Dungeon.observe();
+            Item item = heap.pickUp();
+            Dungeon.level.drop(item, cell).seen = true;
+            for (int i : Level.NEIGHBOURS9)
+                Dungeon.level.visited[cell + i] = true;
+            Dungeon.observe();
 
-				Sample.INSTANCE.play(Assets.SND_TELEPORT);
-				CellEmitter.get(pos).burst(Speck.factory(Speck.LIGHT), 4);
-			}
-		}
+            Sample.INSTANCE.play(Assets.SND_TELEPORT);
+            CellEmitter.get(pos).burst(Speck.factory(Speck.LIGHT), 4);
+        }
 
-		if (Dungeon.hero.pos == pos){
+		if (Dungeon.hero.pos() == pos){
 			Hero hero = Dungeon.hero;
             Weapon weapon = (Weapon)hero.belongings.weapon();
 

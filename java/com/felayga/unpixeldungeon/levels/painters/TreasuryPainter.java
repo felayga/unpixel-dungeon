@@ -5,7 +5,7 @@
  * Shattered Pixel Dungeon
  * Copyright (C) 2014-2015 Evan Debenham
  *
- * Unpixel Dungeon
+ * unPixel Dungeon
  * Copyright (C) 2015-2016 Randall Foudray
  *
  * This program is free software: you can redistribute it and/or modify
@@ -21,12 +21,14 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>
  *
+ *
  */
 package com.felayga.unpixeldungeon.levels.painters;
 
-import com.felayga.unpixeldungeon.items.Generator;
 import com.felayga.unpixeldungeon.items.Gold;
 import com.felayga.unpixeldungeon.items.bags.Bag;
+import com.felayga.unpixeldungeon.items.bags.LargeBox;
+import com.felayga.unpixeldungeon.items.bags.LargeChest;
 import com.felayga.unpixeldungeon.levels.Level;
 import com.felayga.unpixeldungeon.levels.Room;
 import com.felayga.unpixeldungeon.levels.Terrain;
@@ -42,24 +44,38 @@ public class TreasuryPainter extends Painter {
 		set( level, room.center(), Terrain.STATUE );
 		
 		int n = Random.IntRange( 2, 3 );
-		for (int i=0; i < n; i++) {
-			int pos;
-			do {
-				pos = room.random();
-			} while (level.map[pos] != Terrain.EMPTY || level.heaps.get( pos ) != null);
 
-            Bag chest = (Bag)Generator.random(Generator.Category.CONTAINER);
+        int chestPos;
+        do {
+            chestPos = room.random();
+        } while (level.map[chestPos] != Terrain.EMPTY || level.heaps.get( chestPos ) != null);
+
+        Bag chest;
+        if (Random.Int(15) > 7) {
+            chest = new LargeChest();
+        } else {
+            chest = new LargeBox();
+        }
+
+        chest.random();
+
+		while (n > 0) {
             chest.collect(new Gold().random());
-            level.drop(chest, pos);
 			//level.drop( new Gold().random(), pos ).type = (Random.Int(20) == 0 && heapType == Heap.Type.CHEST ? Heap.Type.MIMIC : heapType);
+            n--;
 		}
-		
-        for (int i=0; i < 6; i++) {
+
+        level.drop(chest, chestPos);
+
+        n = Random.IntRange(6, 12);
+
+        while (n > 0) {
             int pos;
             do {
                 pos = room.random();
-            } while (level.map[pos] != Terrain.EMPTY);
+            } while (level.map[pos] != Terrain.EMPTY || pos == chestPos);
             level.drop( new Gold( Random.IntRange( 5, 12 ) ), pos );
+            n--;
 		}
 
         for (Room.Door door : room.connected.values()) {

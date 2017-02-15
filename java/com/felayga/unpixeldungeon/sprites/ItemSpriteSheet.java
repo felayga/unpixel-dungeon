@@ -5,7 +5,7 @@
  * Shattered Pixel Dungeon
  * Copyright (C) 2014-2015 Evan Debenham
  *
- * Unpixel Dungeon
+ * unPixel Dungeon
  * Copyright (C) 2015-2016 Randall Foudray
  *
  * This program is free software: you can redistribute it and/or modify
@@ -20,6 +20,7 @@
  *
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>
+ *
  *
  */
 package com.felayga.unpixeldungeon.sprites;
@@ -42,15 +43,17 @@ public class ItemSpriteSheet {
 	private static final int ROW_SCROLL         = 13 * ROWSIZE;
 	private static final int ROW_POTION         = 15 * ROWSIZE;
 	private static final int ROW_SEED           = 18 * ROWSIZE;
-	private static final int ROW_FOOD           = 19 * ROWSIZE;
-	private static final int ROW_QUEST          = 20 * ROWSIZE;
-	private static final int ROW_TOOLS          = 21 * ROWSIZE;
-	private static final int ROW_GEMSTONE       = 22 * ROWSIZE;
-	private static final int ROW_BOOK           = 23 * ROWSIZE;
-	private static final int ROW_SPELL          = 26 * ROWSIZE;
-	private static final int ROW_BOOTS          = 27 * ROWSIZE;
-	private static final int ROW_GLOVES         = 28 * ROWSIZE;
-	private static final int ROW_HELMET         = 29 * ROWSIZE;
+    private static final int ROW_ALCHEMY        = 19 * ROWSIZE;
+	private static final int ROW_FOOD           = 20 * ROWSIZE;
+	private static final int ROW_QUEST          = 21 * ROWSIZE;
+	private static final int ROW_TOOLS          = 22 * ROWSIZE;
+	private static final int ROW_GEMSTONE       = 23 * ROWSIZE;
+	private static final int ROW_BOOK           = 24 * ROWSIZE;
+	private static final int ROW_SPELL          = 27 * ROWSIZE;
+	private static final int ROW_BOOTS          = 28 * ROWSIZE;
+	private static final int ROW_GLOVES         = 29 * ROWSIZE;
+	private static final int ROW_HELMET         = 30 * ROWSIZE;
+    private static final int ROW_CLOAK          = 31 * ROWSIZE;
 
 	//Row One: Items which can't be obtained
 	//null warning occupies space 0, should only show up if there's a bug.
@@ -70,6 +73,8 @@ public class ItemSpriteSheet {
     public static final int LARGEBOX        = ROW_HEAPS + 11;
     public static final int LARGEBOX_LOCKED = ROW_HEAPS + 12;
     public static final int ICEBOX          = ROW_HEAPS + 13;
+    public static final int SACK_BURLAP     = ROW_HEAPS + 14;
+    public static final int SACK_OILSKIN    = ROW_HEAPS + 15;
 
 	// Placeholders
 	public static final int PLACEHOLDER_WEAPON	= ROW_PLACEHOLDERS + 0;
@@ -120,6 +125,7 @@ public class ItemSpriteSheet {
 	public static final int MELEE_GLAIVE		= ROW_WEAPONMELEE + 11;
     public static final int MELEE_DAGGER_CRUDE  = ROW_WEAPONMELEE + 12;
     public static final int MELEE_DAGGER_RUNED  = ROW_WEAPONMELEE + 13;
+    public static final int MELEE_CRICKETBAT    = ROW_WEAPONMELEE + 14;
 
     //Row Derp: Ranged weapons
     public static final int RANGED_SLING           = ROW_WEAPONRANGED + 0;
@@ -280,7 +286,8 @@ public class ItemSpriteSheet {
 	public static final int SCROLL_23			= ROW_SCROLL + 22;
 	public static final int SCROLL_24			= ROW_SCROLL + 23;
 	public static final int SCROLL_25			= ROW_SCROLL + 24;
-	public static final int SCROLL_BLANK		= ROW_SCROLL + 25;
+    public static final int SCROLL_26			= ROW_SCROLL + 25;
+	public static final int SCROLL_BLANK		= ROW_SCROLL + 26;
 
 	//Row Eleven: Potions
 	public static final int POTION_RUBY			= ROW_POTION + 0;
@@ -323,6 +330,7 @@ public class ItemSpriteSheet {
     public static final int POTION_CHARTREUSE   = ROW_POTION + 37;
     public static final int POTION_FLESHCOLORED = ROW_POTION + 38;
     public static final int POTION_CLEAR		= ROW_POTION + 39;
+    public static final int POTION_BURNING      = ROW_POTION + 40;
 
 	//Row Twelve: Seeds
     public static final int SEED_BLOODLEAF  = ROW_SEED + 0;
@@ -342,6 +350,24 @@ public class ItemSpriteSheet {
     public static final int SEED_STONEBERRY = ROW_SEED + 14;
     public static final int SEED_SWAMPWEED  = ROW_SEED + 15;
 
+    //Row Twelve: Seeds
+    public static final int ALCHEMY_BLOODLEAF   = ROW_ALCHEMY + 0;
+    public static final int ALCHEMY_FIREBLOOM   = ROW_ALCHEMY + 1;
+    public static final int ALCHEMY_STARFLOWER  = ROW_ALCHEMY + 2;
+    public static final int ALCHEMY_BLINDWEED   = ROW_ALCHEMY + 3;
+    public static final int ALCHEMY_SUNGRASS    = ROW_ALCHEMY + 4;
+    public static final int ALCHEMY_ICECAP	    = ROW_ALCHEMY + 5;
+    public static final int ALCHEMY_STORMVINE   = ROW_ALCHEMY + 6;
+    public static final int ALCHEMY_SORROWMOSS  = ROW_ALCHEMY + 7;
+    public static final int ALCHEMY_DREAMFOIL   = ROW_ALCHEMY + 8;
+    public static final int ALCHEMY_EARTHROOT   = ROW_ALCHEMY + 9;
+    public static final int ALCHEMY_FADELEAF    = ROW_ALCHEMY + 10;
+    public static final int ALCHEMY_BLANDFRUIT  = ROW_ALCHEMY + 11;
+    public static final int ALCHEMY_DEATHROOT   = ROW_ALCHEMY + 12;
+    public static final int ALCHEMY_MOONGRASS   = ROW_ALCHEMY + 13;
+    public static final int ALCHEMY_STONEBERRY  = ROW_ALCHEMY + 14;
+    public static final int ALCHEMY_SWAMPWEED   = ROW_ALCHEMY + 15;
+
 	//Row Thirteen: Food
 	public static final int FOOD_MEAT		    = ROW_FOOD + 0;
     public static final int FOOD_MEAT_ROTTEN    = ROW_FOOD + 1;
@@ -354,6 +380,9 @@ public class ItemSpriteSheet {
     public static final int FOOD_CAN_UNOPENED   = ROW_FOOD + 8;
     public static final int FOOD_CAN_MEAT       = ROW_FOOD + 9;
     public static final int FOOD_CAN_VEGETABLE  = ROW_FOOD + 10;
+    public static final int FOOD_MRE            = ROW_FOOD + 11;
+    public static final int FOOD_CRATION        = ROW_FOOD + 12;
+    public static final int FOOD_LEMBAS         = ROW_FOOD + 13;
 
 	//Row Fourteen: Quest Items
 	public static final int SKULL		    = ROW_QUEST + 0;
@@ -369,6 +398,8 @@ public class ItemSpriteSheet {
     public static final int TOOL_IRON_KEY   = ROW_TOOLS + 1;
     public static final int TOOL_LOCKPICK   = ROW_TOOLS + 2;
     public static final int TOOL_CANNINGKIT = ROW_TOOLS + 3;
+    public static final int TOOL_BLINDFOLD  = ROW_TOOLS + 4;
+    public static final int TOOL_TOWEL      = ROW_TOOLS + 5;
 
 	//Row Sixteen: Unused
 	public static final int GEMSTONE_WHITE	= ROW_GEMSTONE + 0;
@@ -436,4 +467,20 @@ public class ItemSpriteSheet {
     //blah blah
     public static final int HELMET_LEATHER  = ROW_HELMET + 0;
     public static final int HELMET_CRUDE    = ROW_HELMET + 1;
+
+    //et cetera
+    public static final int CLOAK_LEATHER   = ROW_CLOAK + 0;
+    public static final int CLOAK_DWARVEN   = ROW_CLOAK + 1;
+    public static final int CLOAK_ORCISH    = ROW_CLOAK + 2;
+    public static final int CLOAK_ELVISH    = ROW_CLOAK + 3;
+    public static final int CLOAK_APRON     = ROW_CLOAK + 4;
+    public static final int CLOAK_OILSKIN   = ROW_CLOAK + 5;
+    public static final int CLOAK_MUMMY     = ROW_CLOAK + 6;
+    public static final int CLOAK_ROBE      = ROW_CLOAK + 7;
+    public static final int CLOAK_PLAIN     = ROW_CLOAK + 8;
+    public static final int CLOAK_OPERA     = ROW_CLOAK + 9;
+    public static final int CLOAK_FANCY     = ROW_CLOAK + 10;
+    public static final int CLOAK_TATTERED  = ROW_CLOAK + 11;
+
+    public static final int ITEM_EMPTY      = 63 * ROWSIZE + ROWSIZE - 1;
 }

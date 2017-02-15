@@ -5,7 +5,7 @@
  * Shattered Pixel Dungeon
  * Copyright (C) 2014-2015 Evan Debenham
  *
- * Unpixel Dungeon
+ * unPixel Dungeon
  * Copyright (C) 2015-2016 Randall Foudray
  *
  * This program is free software: you can redistribute it and/or modify
@@ -20,6 +20,7 @@
  *
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>
+ *
  *
  */
 package com.felayga.unpixeldungeon.items.wands;
@@ -65,26 +66,26 @@ public class WandOfFireblast extends Wand {
 	@Override
 	protected void onZap( Ballistica bolt ) {
 
-		if (Level.wood[bolt.sourcePos]){
-			GameScene.add( Blob.seed( bolt.sourcePos, 2, Fire.class ) );
+		if (Level.burnable[bolt.sourcePos]){
+			GameScene.add( Blob.seed( curUser, bolt.sourcePos, 2, Fire.class ) );
 		}
 
 		for( int cell : affectedCells){
-			GameScene.add( Blob.seed( cell, 2, Fire.class ) );
+			GameScene.add( Blob.seed( curUser, cell, 2, Fire.class ) );
 			Char ch = Actor.findChar( cell );
 			if (ch != null) {
 
-				ch.damage(Random.NormalIntRange(1, (int) (8 + (level * level * (2) / 6f))), MagicType.Fire, null);
-				Buff.affect( ch, Burning.class ).reignite( ch );
+				ch.damage(Random.NormalIntRange(1, (int) (8 + (level() * level() * (2) / 6f))), MagicType.Fire, null);
+				Buff.affect( ch, curUser, Burning.class ).reignite( ch );
 				switch(1){
 					case 1:
-						Buff.affect(ch, Cripple.class, GameTime.TICK * 3); break;
+						Buff.affect(ch, curUser, Cripple.class, GameTime.TICK * 3); break;
 					case 2:
-						Buff.affect(ch, Cripple.class, GameTime.TICK * 6); break;
+						Buff.affect(ch, curUser, Cripple.class, GameTime.TICK * 6); break;
 					case 3:
-						Buff.affect(ch, Paralysis.class, GameTime.TICK * 3); break;
+						Buff.affect(ch, curUser, Paralysis.class, GameTime.TICK * 3); break;
 					case 4:
-						Buff.affect(ch, Paralysis.class, GameTime.TICK * 6); break;
+						Buff.affect(ch, curUser, Paralysis.class, GameTime.TICK * 6); break;
 				}
 			}
 		}

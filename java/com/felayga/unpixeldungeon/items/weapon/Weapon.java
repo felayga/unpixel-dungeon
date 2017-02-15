@@ -5,7 +5,7 @@
  * Shattered Pixel Dungeon
  * Copyright (C) 2014-2015 Evan Debenham
  *
- * Unpixel Dungeon
+ * unPixel Dungeon
  * Copyright (C) 2015-2016 Randall Foudray
  *
  * This program is free software: you can redistribute it and/or modify
@@ -21,11 +21,11 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>
  *
+ *
  */
 package com.felayga.unpixeldungeon.items.weapon;
 
 import com.felayga.unpixeldungeon.Assets;
-import com.felayga.unpixeldungeon.Badges;
 import com.felayga.unpixeldungeon.actors.Char;
 import com.felayga.unpixeldungeon.actors.hero.Hero;
 import com.felayga.unpixeldungeon.items.EquippableItem;
@@ -59,8 +59,6 @@ public class Weapon extends EquippableItem implements IWeapon {
 
     private static final int HITS_TO_KNOW = 20;
 
-    private static final String TXT_IDENTIFY =
-            "You are now familiar enough with your %s to identify it.";
     private static final String TXT_INCOMPATIBLE =
             "Interaction of different types of magic has negated the enchantment on this weapon!";
     private static final String TXT_TO_STRING = "%s :%d";
@@ -141,11 +139,11 @@ public class Weapon extends EquippableItem implements IWeapon {
     }
 
     public int damageRoll() {
-        return Random.NormalIntRange( damageMin, damageMax ) + this.level;
+        return Random.NormalIntRange( damageMin, damageMax ) + this.level();
     }
 
     public int accuracyModifier() {
-        return this.level + this.refined;
+        return this.level() + this.refined;
     }
 
     public int proc(Char attacker, boolean thrown, Char defender, int damage) {
@@ -153,11 +151,9 @@ public class Weapon extends EquippableItem implements IWeapon {
             enchantment.proc(this, attacker, defender, damage);
         }
 
-        if (attacker instanceof Hero && !levelKnown) {
+        if (attacker instanceof Hero && !levelKnown()) {
             if (--hitsToKnow <= 0) {
-                levelKnown = true;
-                GLog.i(TXT_IDENTIFY, getDisplayName());
-                Badges.validateItemLevelAquired(this);
+                levelKnown(true, true);
             }
         }
 
@@ -205,11 +201,11 @@ public class Weapon extends EquippableItem implements IWeapon {
     public String getDisplayName() {
         String name = super.getDisplayName();
 
-        if (hasLevels && levelKnown) {
-            if (level >= 0) {
-                name = "+" + level + " " + name;
+        if (hasLevels() && levelKnown()) {
+            if (level() >= 0) {
+                name = "+" + level() + " " + name;
             } else {
-                name = level + " " + name;
+                name = level() + " " + name;
             }
         }
 

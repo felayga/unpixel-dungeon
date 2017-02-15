@@ -5,7 +5,7 @@
  * Shattered Pixel Dungeon
  * Copyright (C) 2014-2015 Evan Debenham
  *
- * Unpixel Dungeon
+ * unPixel Dungeon
  * Copyright (C) 2015-2016 Randall Foudray
  *
  * This program is free software: you can redistribute it and/or modify
@@ -21,6 +21,7 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>
  *
+ *
  */
 
 package com.felayga.unpixeldungeon.actors.mobs.goo;
@@ -30,6 +31,7 @@ import com.felayga.unpixeldungeon.actors.buffs.hero.Encumbrance;
 import com.felayga.unpixeldungeon.actors.mobs.Mob;
 import com.felayga.unpixeldungeon.items.weapon.melee.mob.MeleeMobAttack;
 import com.felayga.unpixeldungeon.levels.Level;
+import com.felayga.unpixeldungeon.mechanics.Characteristic;
 import com.felayga.unpixeldungeon.mechanics.CorpseEffect;
 import com.felayga.unpixeldungeon.mechanics.GameTime;
 import com.felayga.unpixeldungeon.mechanics.MagicType;
@@ -46,7 +48,6 @@ public class AcidBlob extends Mob {
         name = "acid blob";
         spriteClass = AcidBlobSprite.class;
 
-        experience = 9;
         movementSpeed(GameTime.TICK * 4);
         attackSpeed(GameTime.TICK);
         defenseMundane = 12;
@@ -56,10 +57,10 @@ public class AcidBlob extends Mob {
         immunityMagical = MagicType.Sleep.value | MagicType.Poison.value | MagicType.Acid.value | MagicType.Stoning.value;
         corpseEffects = CorpseEffect.Unstoning.value | CorpseEffect.Acidic.value | CorpseEffect.Vegetable.value | CorpseEffect.Unrottable.value;
         corpseResistances = MagicType.None.value;
+        viewDistance = 0;
+        characteristics = Characteristic.value(Characteristic.CannotUseItems, Characteristic.NonBreather, Characteristic.Brainless, Characteristic.Amorphous);
 
         belongings.collectEquip(new MeleeMobAttack(GameTime.TICK, 0, 0));
-
-        isEthereal = true; //todo: make sure isEthereal works right
     }
 
     @Override
@@ -71,7 +72,7 @@ public class AcidBlob extends Mob {
     public int defenseProc(Char enemy, int damage) {
         int retval = super.defenseProc(enemy, damage);
 
-        if (Level.canReach(pos, enemy.pos) && Random.Int(4) == 0) {
+        if (Level.canReach(pos(), enemy.pos()) && Random.Int(4) == 0) {
             int dmg = Random.IntRange(1, 8);
             //todo: erosion attacks (corrosion)
             enemy.damage(dmg, MagicType.Acid, null);

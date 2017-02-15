@@ -5,7 +5,7 @@
  * Shattered Pixel Dungeon
  * Copyright (C) 2014-2015 Evan Debenham
  *
- * Unpixel Dungeon
+ * unPixel Dungeon
  * Copyright (C) 2015-2016 Randall Foudray
  *
  * This program is free software: you can redistribute it and/or modify
@@ -20,6 +20,7 @@
  *
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>
+ *
  *
  */
 package com.felayga.unpixeldungeon.sprites.mobs.rat;
@@ -38,29 +39,25 @@ public class RatSprite extends MobSprite {
     public RatSprite(int index) {
         super();
 
-        texture( Assets.Mobs.RAT );
+        texture(Assets.Mobs.RAT);
 
-        TextureFilm frames = new TextureFilm( texture, 16, 15 );
+        TextureFilm frames = new TextureFilm(texture, 16, 15);
 
         int offset = index * FRAMES_PER_ROW;
 
         initIdleFrames(frames, offset);
+        initRunFrames(frames, offset);
+        initAttackFrames(frames, offset);
 
-        run = new Animation( 10, true );
-        run.frames( frames, offset + 6, offset + 7, offset + 8, offset + 9, offset + 10 );
+        die = new Animation(10, false);
+        die.frames(frames, offset + 11, offset + 12, offset + 13, offset + 14);
 
-        attack = new Animation( 15, false );
-        attack.frames( frames, offset + 2, offset + 3, offset + 4, offset + 5, offset + 0 );
-
-        die = new Animation( 10, false );
-        die.frames( frames, offset + 11, offset + 12, offset + 13, offset + 14 );
-
-        play( idle );
+        play(idle);
     }
 
     protected void initIdleFrames(TextureFilm frames, int offset) {
-        idle = new Animation( 5, true );
-        idle.frames( frames,
+        idle = new Animation(10, true);
+        idle.frames(frames,
                 offset + 0, offset + 0, offset + 0, offset + 0, offset + 0,
                 offset + 0, offset + 0, offset + 0, offset + 0, offset + 0,
                 offset + 0, offset + 0, offset + 0, offset + 0, offset + 0,
@@ -75,6 +72,17 @@ public class RatSprite extends MobSprite {
                 offset + 5, offset + 5,
                 offset + 0, offset + 0, offset + 0, offset + 0, offset + 0,
                 offset + 0, offset + 0, offset + 0, offset + 0, offset + 0
-                );
+        );
     }
+
+    protected void initRunFrames(TextureFilm frames, int offset) {
+        run = new Animation(10, true);
+        run.frames(frames, offset + 6, offset + 7, offset + 8, offset + 9, offset + 10);
+    }
+
+    protected void initAttackFrames(TextureFilm frames, int offset) {
+        attack = new Animation(15, false);
+        attack.frames(frames, offset + 2, offset + 3, offset + 4, offset + 5, offset + 0);
+    }
+
 }

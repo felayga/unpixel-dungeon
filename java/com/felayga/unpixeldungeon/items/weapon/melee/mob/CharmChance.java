@@ -5,7 +5,7 @@
  * Shattered Pixel Dungeon
  * Copyright (C) 2014-2015 Evan Debenham
  *
- * Unpixel Dungeon
+ * unPixel Dungeon
  * Copyright (C) 2015-2016 Randall Foudray
  *
  * This program is free software: you can redistribute it and/or modify
@@ -20,6 +20,7 @@
  *
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>
+ *
  *
  */
 
@@ -48,7 +49,7 @@ public class CharmChance extends MeleeMobAttack {
         damage = super.proc(attacker, ranged, target, damage);
 
         if (Random.Int( 3 ) == 0) {
-            Buff.affect( target, Charm.class, Charm.durationFactor( target ) * Random.LongRange(GameTime.TICK * 3, GameTime.TICK * 7) / GameTime.TICK ).object = attacker.id();
+            Buff.affect( target, attacker, Charm.class, Charm.durationFactor( target ) * Random.LongRange(GameTime.TICK * 3, GameTime.TICK * 7) / GameTime.TICK );
             target.sprite.centerEmitter(-1).start( Speck.factory(Speck.HEART), 0.2f, 5 );
             Sample.INSTANCE.play(Assets.SND_CHARMS);
         }

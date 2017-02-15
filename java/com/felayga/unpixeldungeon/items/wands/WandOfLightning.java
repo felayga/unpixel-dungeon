@@ -5,7 +5,7 @@
  * Shattered Pixel Dungeon
  * Copyright (C) 2014-2015 Evan Debenham
  *
- * Unpixel Dungeon
+ * unPixel Dungeon
  * Copyright (C) 2015-2016 Randall Foudray
  *
  * This program is free software: you can redistribute it and/or modify
@@ -20,6 +20,7 @@
  *
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>
+ *
  *
  */
 package com.felayga.unpixeldungeon.items.wands;
@@ -62,13 +63,13 @@ public class WandOfLightning extends Wand {
 
 		//lightning deals less damage per-target, the more targets that are hit.
 		float multipler = 0.4f + (0.6f/affected.size());
-		if (Level.water[bolt.collisionPos]) multipler *= 1.5f;
+		if (Level.puddle[bolt.collisionPos]) multipler *= 1.5f;
 
-		int min = 5+level;
-		int max = Math.round(10 + (level * level / 4f));
+		int min = 5+level();
+		int max = Math.round(10 + (level() * level() / 4f));
 
 		for (Char ch : affected){
-			processSoulMark(ch);
+			processSoulMark(ch, curUser);
 			ch.damage(Math.round(Random.NormalIntRange(min, max) * multipler), MagicType.Shock, null);
 
 			if (ch == Dungeon.hero) Camera.main.shake( 2, 0.3f );
@@ -93,24 +94,24 @@ public class WandOfLightning extends Wand {
 		affected.add( ch );
 
 		for (int i : Level.NEIGHBOURS8) {
-			int cell = ch.pos + i;
+			int cell = ch.pos() + i;
 
 			Char n = Actor.findChar( cell );
 			if (n != null && !affected.contains( n )) {
-				arcs.add(new Lightning.Arc(ch.pos, n.pos));
+				arcs.add(new Lightning.Arc(ch.pos(), n.pos()));
 				arc(n);
 			}
 		}
 
-		if (Level.water[ch.pos] && !ch.flying){
+		if (Level.puddle[ch.pos()] && !ch.flying()){
 			for (int i : Level.NEIGHBOURS8DIST2) {
-				int cell = ch.pos + i;
+				int cell = ch.pos() + i;
 				//player can only be hit by lightning from an adjacent enemy.
 				if (!Level.insideMap(cell) || Actor.findChar(cell) == Dungeon.hero) continue;
 
-				Char n = Actor.findChar( ch.pos + i );
+				Char n = Actor.findChar( ch.pos() + i );
 				if (n != null && !affected.contains( n )) {
-					arcs.add(new Lightning.Arc(ch.pos, n.pos));
+					arcs.add(new Lightning.Arc(ch.pos(), n.pos()));
 					arc(n);
 				}
 			}

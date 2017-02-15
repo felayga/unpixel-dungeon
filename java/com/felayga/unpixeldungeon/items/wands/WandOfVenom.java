@@ -5,7 +5,7 @@
  * Shattered Pixel Dungeon
  * Copyright (C) 2014-2015 Evan Debenham
  *
- * Unpixel Dungeon
+ * unPixel Dungeon
  * Copyright (C) 2015-2016 Randall Foudray
  *
  * This program is free software: you can redistribute it and/or modify
@@ -20,6 +20,7 @@
  *
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>
+ *
  *
  */
 package com.felayga.unpixeldungeon.items.wands;
@@ -49,13 +50,13 @@ public class WandOfVenom extends Wand {
 
 	@Override
 	protected void onZap(Ballistica bolt) {
-		Blob venomGas = Blob.seed(bolt.collisionPos, 50 + 10 * level, VenomGas.class);
-		((VenomGas)venomGas).setStrength(level+1);
+		Blob venomGas = Blob.seed(curUser, bolt.collisionPos, 50 + 10 * level(), VenomGas.class);
+		((VenomGas)venomGas).setStrength(level()+1);
 		GameScene.add(venomGas);
 
 		Char ch = Actor.findChar(bolt.collisionPos);
 		if (ch != null){
-			processSoulMark(ch);
+			processSoulMark(ch, curUser);
 		}
 	}
 

@@ -5,7 +5,7 @@
  * Shattered Pixel Dungeon
  * Copyright (C) 2014-2015 Evan Debenham
  *
- * Unpixel Dungeon
+ * unPixel Dungeon
  * Copyright (C) 2015-2016 Randall Foudray
  *
  * This program is free software: you can redistribute it and/or modify
@@ -21,10 +21,12 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>
  *
+ *
  */
 package com.felayga.unpixeldungeon.actors.mobs.npcs;
 
 import com.felayga.unpixeldungeon.actors.Actor;
+import com.felayga.unpixeldungeon.mechanics.Characteristic;
 import com.felayga.unpixeldungeon.mechanics.GameTime;
 import com.felayga.unpixeldungeon.mechanics.MagicType;
 import com.felayga.unpixeldungeon.sprites.SheepSprite;
@@ -37,6 +39,9 @@ public class Sheep extends NPC {
 	public Sheep()
 	{
 		super(0);
+
+        defenseMundane = 32767;
+        defenseMagical = 32767;
 
 		name = "sheep";
 		spriteClass = SheepSprite.class;
@@ -51,7 +56,7 @@ public class Sheep extends NPC {
 		if (initialized) {
 			HP = 0;
 
-			destroy();
+			destroy(null);
 			sprite.die();
 
 		} else {

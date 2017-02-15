@@ -5,7 +5,7 @@
  * Shattered Pixel Dungeon
  * Copyright (C) 2014-2015 Evan Debenham
  *
- * Unpixel Dungeon
+ * unPixel Dungeon
  * Copyright (C) 2015-2016 Randall Foudray
  *
  * This program is free software: you can redistribute it and/or modify
@@ -20,6 +20,7 @@
  *
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>
+ *
  *
  */
 package com.felayga.unpixeldungeon.items.weapon.melee;
@@ -62,7 +63,7 @@ public class MeleeWeapon extends Weapon {
 		
 		StringBuilder info = new StringBuilder( desc() );
 		
-		String quality = levelKnown && level != 0 ? (level > 0 ? "upgraded" : "degraded") : "";
+		String quality = levelKnown() && level() != 0 ? (level() > 0 ? "upgraded" : "degraded") : "";
 		info.append( p );
 		/*
 		info.append( "This " + name + " is " + Utils.indefinite( quality ) );
@@ -144,7 +145,7 @@ public class MeleeWeapon extends Weapon {
 	public Item random() {
 		super.random();
 		
-		if (Random.Int( 10 + level ) == 0) {
+		if (Random.Int( 10 + level() ) == 0) {
 			enchant();
 		}
 		

@@ -5,7 +5,7 @@
  * Shattered Pixel Dungeon
  * Copyright (C) 2014-2015 Evan Debenham
  *
- * Unpixel Dungeon
+ * unPixel Dungeon
  * Copyright (C) 2015-2016 Randall Foudray
  *
  * This program is free software: you can redistribute it and/or modify
@@ -20,6 +20,7 @@
  *
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>
+ *
  *
  */
 package com.felayga.unpixeldungeon.sprites;
@@ -43,8 +44,8 @@ public class SheepSprite extends MobSprite {
 		run = idle.clone();
 		attack = idle.clone();
 		
-		die = new Animation( 20, false );
-		die.frames( frames, 0 );
+		die = new Animation( 26, false );
+		die.frames( frames, 0, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15 );
 		
 		play( idle );
 		curFrame = Random.Int( curAnim.frames.length );

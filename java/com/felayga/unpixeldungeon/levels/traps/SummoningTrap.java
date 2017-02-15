@@ -5,7 +5,7 @@
  * Shattered Pixel Dungeon
  * Copyright (C) 2014-2015 Evan Debenham
  *
- * Unpixel Dungeon
+ * unPixel Dungeon
  * Copyright (C) 2015-2016 Randall Foudray
  *
  * This program is free software: you can redistribute it and/or modify
@@ -20,6 +20,7 @@
  *
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>
+ *
  *
  */
 package com.felayga.unpixeldungeon.levels.traps;
@@ -52,18 +53,15 @@ public class SummoningTrap extends Trap {
         //todo: no summons if boss present?
 
         int nMobs = 1;
-        if (Random.Int(2) == 0) {
+        while (Random.Int(2) == 0 && nMobs < 5) {
             nMobs++;
-            if (Random.Int(2) == 0) {
-                nMobs++;
-            }
         }
 
         ArrayList<Integer> candidates = new ArrayList<>();
 
         for (int i = 0; i < Level.NEIGHBOURS8.length; i++) {
             int p = pos + Level.NEIGHBOURS8[i];
-            if (Actor.findChar(p) == null && (Level.passable[p] || Level.avoid[p])) {
+            if (Actor.findChar(p) == null && Level.passable[p]) {
                 candidates.add(p);
             }
         }
@@ -112,7 +110,7 @@ public class SummoningTrap extends Trap {
 
         //important to process the visuals and pressing of cells last, so spawned mobs have a chance to occupy cells first
         for (Mob mob : mobs) {
-            ScrollOfTeleportation.appear(mob, mob.pos);
+            ScrollOfTeleportation.appear(mob, mob.pos());
         }
 
     }

@@ -5,7 +5,7 @@
  * Shattered Pixel Dungeon
  * Copyright (C) 2014-2015 Evan Debenham
  *
- * Unpixel Dungeon
+ * unPixel Dungeon
  * Copyright (C) 2015-2016 Randall Foudray
  *
  * This program is free software: you can redistribute it and/or modify
@@ -21,26 +21,35 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>
  *
+ *
  */
 
 package com.felayga.unpixeldungeon.items.bags;
 
 import com.felayga.unpixeldungeon.actors.Char;
 import com.felayga.unpixeldungeon.items.Item;
+import com.felayga.unpixeldungeon.items.potions.Potion;
+import com.felayga.unpixeldungeon.items.wands.Wand;
 import com.felayga.unpixeldungeon.mechanics.IDecayable;
 import com.felayga.unpixeldungeon.ui.Icons;
+import com.felayga.unpixeldungeon.utils.GLog;
+import com.watabou.utils.Random;
 
+import java.util.ArrayList;
 import java.util.Iterator;
+import java.util.List;
 
 /**
  * Created by HELLO on 3/29/2016.
  */
 public interface IBag extends IDecayable {
     Item self();
-    String action();
+    IBag parent();
     String getDisplayName();
     Icons tabIcon();
     Char owner();
+
+    void contentsImpact(boolean verbose);
 
     int size();
     int pos();

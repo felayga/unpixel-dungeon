@@ -5,7 +5,7 @@
  * Shattered Pixel Dungeon
  * Copyright (C) 2014-2015 Evan Debenham
  *
- * Unpixel Dungeon
+ * unPixel Dungeon
  * Copyright (C) 2015-2016 Randall Foudray
  *
  * This program is free software: you can redistribute it and/or modify
@@ -21,12 +21,13 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>
  *
+ *
  */
 package com.felayga.unpixeldungeon.windows;
 
-import com.felayga.unpixeldungeon.ShatteredPixelDungeon;
 import com.felayga.unpixeldungeon.scenes.PixelScene;
 import com.felayga.unpixeldungeon.ui.Window;
+import com.felayga.unpixeldungeon.unPixelDungeon;
 import com.watabou.noosa.BitmapTextMultiline;
 import com.watabou.noosa.Image;
 import com.watabou.noosa.ui.Component;
@@ -47,7 +48,7 @@ public class WndTitledMessage extends Window {
 		
 		super();
 
-		int width = ShatteredPixelDungeon.landscape() ? WIDTH_L : WIDTH_P;
+		int width = unPixelDungeon.landscape() ? WIDTH_L : WIDTH_P;
 
 		titlebar.setRect( 0, 0, width, 0 );
 		add( titlebar );

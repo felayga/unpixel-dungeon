@@ -5,7 +5,7 @@
  * Shattered Pixel Dungeon
  * Copyright (C) 2014-2015 Evan Debenham
  *
- * Unpixel Dungeon
+ * unPixel Dungeon
  * Copyright (C) 2015-2016 Randall Foudray
  *
  * This program is free software: you can redistribute it and/or modify
@@ -20,6 +20,7 @@
  *
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>
+ *
  *
  */
 
@@ -47,7 +48,7 @@ public class DisarmParalyzeChance extends DisarmChance {
         damage = super.proc(attacker, thrown, target, damage);
 
         if (Random.Int(10) == 0) {
-            Buff.prolong(target, Paralysis.class, GameTime.TICK * 11 / 10);
+            Buff.prolong(target, attacker, Paralysis.class, GameTime.TICK * 11 / 10);
         }
 
         return damage;

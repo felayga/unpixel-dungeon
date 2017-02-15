@@ -5,7 +5,7 @@
  * Shattered Pixel Dungeon
  * Copyright (C) 2014-2015 Evan Debenham
  *
- * Unpixel Dungeon
+ * unPixel Dungeon
  * Copyright (C) 2015-2016 Randall Foudray
  *
  * This program is free software: you can redistribute it and/or modify
@@ -21,34 +21,21 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>
  *
+ *
  */
 package com.felayga.unpixeldungeon.levels.features;
 
-import com.felayga.unpixeldungeon.Dungeon;
 import com.felayga.unpixeldungeon.actors.hero.Hero;
-import com.felayga.unpixeldungeon.items.Heap;
 import com.felayga.unpixeldungeon.items.Item;
-import com.felayga.unpixeldungeon.items.food.Blandfruit;
-import com.felayga.unpixeldungeon.plants.Plant;
+import com.felayga.unpixeldungeon.items.potions.IAlchemyComponent;
 import com.felayga.unpixeldungeon.scenes.GameScene;
+import com.felayga.unpixeldungeon.utils.GLog;
 import com.felayga.unpixeldungeon.windows.WndBackpack;
-import com.felayga.unpixeldungeon.windows.WndOptions;
-
-import java.util.Iterator;
 
 public class AlchemyPot {
-
-	private static final String TXT_SELECT_SEED	= "Select a seed to throw";
-	private static final String TXT_POT	        = "Alchemy Pot";
-	private static final String TXT_FRUIT	    = "Cook a Blandfruit";
-	private static final String TXT_POTION	    = "Brew a Potion";
-	private static final String TXT_OPTIONS	    =
-			"Do you want to cook a Blandfruit with a seed, or brew a Potion from seeds?";
-	
 	public static Hero hero;
 	public static int pos;
 
-	public static boolean foundFruit;
 	public static Item curItem = null;
 	
 	public static void operate( Hero hero, int pos ) {
@@ -56,6 +43,9 @@ public class AlchemyPot {
 		AlchemyPot.hero = hero;
 		AlchemyPot.pos = pos;
 
+        GLog.d("AlchemyPot.operate");
+        GameScene.selectItem(itemSelector, IAlchemyComponent.class, "Select a brewing component", null);
+        /*
 		Iterator<Item> items = hero.belongings.iterator();
 		foundFruit = false;
 		Heap heap = Dungeon.level.heaps.get( pos );
@@ -81,6 +71,7 @@ public class AlchemyPot {
 
 		if (!foundFruit)
 			GameScene.selectItem(itemSelector, Plant.Seed.class, TXT_SELECT_SEED);
+	    */
 	}
 	
 	private static final WndBackpack.Listener itemSelector = new WndBackpack.Listener() {

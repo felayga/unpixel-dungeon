@@ -5,7 +5,7 @@
  * Shattered Pixel Dungeon
  * Copyright (C) 2014-2015 Evan Debenham
  *
- * Unpixel Dungeon
+ * unPixel Dungeon
  * Copyright (C) 2015-2016 Randall Foudray
  *
  * This program is free software: you can redistribute it and/or modify
@@ -20,6 +20,7 @@
  *
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>
+ *
  *
  */
 package com.felayga.unpixeldungeon.items.scrolls;
@@ -55,7 +56,6 @@ public class ScrollOfRemoveCurse extends Scroll {
 		
 		new Flare( 6, 32 ).show( curUser.sprite, 2f ) ;
 		Sample.INSTANCE.play( Assets.SND_READ );
-		Invisibility.dispel();
 
 		boolean procced = false;
 		String passProc = null;

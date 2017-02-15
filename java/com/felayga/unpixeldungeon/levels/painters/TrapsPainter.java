@@ -5,7 +5,7 @@
  * Shattered Pixel Dungeon
  * Copyright (C) 2014-2015 Evan Debenham
  *
- * Unpixel Dungeon
+ * unPixel Dungeon
  * Copyright (C) 2015-2016 Randall Foudray
  *
  * This program is free software: you can redistribute it and/or modify
@@ -20,6 +20,7 @@
  *
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>
+ *
  *
  */
 package com.felayga.unpixeldungeon.levels.painters;
@@ -72,12 +73,11 @@ public class TrapsPainter extends Painter {
         //todo: secondary door ended up in a stupid place (one block inside the room)
 
         if (trapClass == null) {
-            fill(level, room, 0, Terrain.CHASM);
+            fill(level, room, 1, Terrain.CHASM);
         } else {
-            fill(level, room, 0, Terrain.TRAP);
+            fill(level, room, 1, Terrain.TRAP);
         }
 
-        Room.Door entrance = room.entrance();
         for (Room.Door door : room.connected.values()) {
             door.set(Room.Door.Type.REGULAR);
         }
@@ -109,7 +109,7 @@ public class TrapsPainter extends Painter {
         for (int cell : room.getCells()) {
             if (level.map[cell] == Terrain.TRAP) {
                 try {
-                    level.setTrap(((Trap) trapClass.newInstance()).reveal(), cell);
+                    level.setTrap(null, trapClass.newInstance().reveal(), cell);
                 } catch (Exception e) {
                     e.printStackTrace();
                 }
@@ -157,7 +157,7 @@ public class TrapsPainter extends Painter {
                     Generator.Category.WEAPON,
                     Generator.Category.ARMOR
             ));
-            if (another.level > prize.level) {
+            if (another.level() > prize.level()) {
                 prize = another;
             }
         }

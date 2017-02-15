@@ -5,7 +5,7 @@
  * Shattered Pixel Dungeon
  * Copyright (C) 2014-2015 Evan Debenham
  *
- * Unpixel Dungeon
+ * unPixel Dungeon
  * Copyright (C) 2015-2016 Randall Foudray
  *
  * This program is free software: you can redistribute it and/or modify
@@ -21,6 +21,7 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>
  *
+ *
  */
 package com.felayga.unpixeldungeon.actors.blobs.wells;
 
@@ -33,8 +34,6 @@ import com.felayga.unpixeldungeon.items.Generator.Category;
 import com.felayga.unpixeldungeon.items.Item;
 import com.felayga.unpixeldungeon.items.artifacts.Artifact_old;
 import com.felayga.unpixeldungeon.items.potions.Potion;
-import com.felayga.unpixeldungeon.items.potions.PotionOfMight;
-import com.felayga.unpixeldungeon.items.potions.PotionOfStrength;
 import com.felayga.unpixeldungeon.items.rings.Ring;
 import com.felayga.unpixeldungeon.items.scrolls.Scroll;
 import com.felayga.unpixeldungeon.items.scrolls.ScrollOfMagicalInfusion;
@@ -126,7 +125,7 @@ public class WaterOfTransmutation extends WellWater {
 		
 		if (n != null) {
 			
-			int level = w.level;
+			int level = w.level();
 			if (level > 0) {
 				n.upgrade( null, level );
 			} else if (level < 0) {
@@ -134,7 +133,7 @@ public class WaterOfTransmutation extends WellWater {
 			}
 
 			n.enchantment = w.enchantment;
-			n.levelKnown = w.levelKnown;
+			n.levelKnown(w.levelKnown(), false);
 			n.bucStatus(w);
 			n.refined = w.refined;
 			//n.imbue = w.imbue;
@@ -151,16 +150,16 @@ public class WaterOfTransmutation extends WellWater {
 			n = (Ring)Generator.random( Category.RING );
 		} while (n.getClass() == r.getClass());
 		
-		n.level = 0;
+		n.level(0);
 		
-		int level = r.level;
+		int level = r.level();
 		if (level > 0) {
 			n.upgrade( null, level );
 		} else if (level < 0) {
 			n.upgrade( null, level );
 		}
 		
-		n.levelKnown = r.levelKnown;
+		n.levelKnown(r.levelKnown(), false);
 		n.bucStatus(r);
 
 		return n;
@@ -171,7 +170,7 @@ public class WaterOfTransmutation extends WellWater {
 
 		if (n != null){
 			n.bucStatus(a);
-			n.levelKnown = a.levelKnown;
+			n.levelKnown(a.levelKnown(), false);
 			n.transferUpgrade(a.visiblyUpgraded());
 		}
 
@@ -185,11 +184,11 @@ public class WaterOfTransmutation extends WellWater {
 			n = (Wand)Generator.random( Category.WAND );
 		} while (n.getClass() == w.getClass());
 		
-		n.level = 0;
+		n.level(0);
 		//n.updateLevel();
-		n.upgrade( null, w.level );
+		n.upgrade( null, w.level() );
 		
-		n.levelKnown = w.levelKnown;
+		n.levelKnown(w.levelKnown(), false);
 		n.bucStatus(w);
 		
 		return n;
@@ -226,6 +225,7 @@ public class WaterOfTransmutation extends WellWater {
 	}
 	
 	private Potion changePotion( Potion p ) {
+        /*
 		if (p instanceof PotionOfStrength) {
 			
 			return new PotionOfMight();
@@ -235,13 +235,12 @@ public class WaterOfTransmutation extends WellWater {
 			return new PotionOfStrength();
 			
 		} else {
-			
-			Potion n;
-			do {
-				n = (Potion)Generator.random( Category.POTION );
-			} while (n.getClass() == p.getClass());
-			return n;
-		}
+			*/
+        Potion n;
+        do {
+            n = (Potion)Generator.random( Category.POTION );
+        } while (n.getClass() == p.getClass());
+        return n;
 	}
 	
 	@Override

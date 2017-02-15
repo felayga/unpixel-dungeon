@@ -5,7 +5,7 @@
  * Shattered Pixel Dungeon
  * Copyright (C) 2014-2015 Evan Debenham
  *
- * Unpixel Dungeon
+ * unPixel Dungeon
  * Copyright (C) 2015-2016 Randall Foudray
  *
  * This program is free software: you can redistribute it and/or modify
@@ -21,6 +21,7 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>
  *
+ *
  */
 package com.felayga.unpixeldungeon.items.potions;
 
@@ -31,8 +32,6 @@ import com.felayga.unpixeldungeon.actors.blobs.Blob;
 import com.felayga.unpixeldungeon.actors.blobs.ConfusionGas;
 import com.felayga.unpixeldungeon.actors.buffs.Buff;
 import com.felayga.unpixeldungeon.actors.buffs.positive.Levitation;
-import com.felayga.unpixeldungeon.plants.Moongrass;
-import com.felayga.unpixeldungeon.plants.Stormvine;
 import com.felayga.unpixeldungeon.scenes.GameScene;
 import com.felayga.unpixeldungeon.utils.GLog;
 import com.watabou.noosa.audio.Sample;
@@ -47,28 +46,27 @@ public class PotionOfLevitation extends Potion {
 		isHelpful = true;
 
         price = 35;
-
-        alchemyPrimary = Stormvine.Seed.class;
-        alchemySecondary = Moongrass.Seed.class;
     }
 
 	@Override
-	public void shatter( int cell ) {
+	public void shatter( Char owner, int cell ) {
 
 		if (Dungeon.visible[cell]) {
 			setKnown();
 
-			splash( cell );
-			Sample.INSTANCE.play( Assets.SND_SHATTER );
+			splash(cell);
 		}
+        if (Dungeon.audible[cell]) {
+            Sample.INSTANCE.play( Assets.SND_SHATTER );
+        }
 
-		GameScene.add(Blob.seed(cell, 1000, ConfusionGas.class));
+		GameScene.add(Blob.seed(owner, cell, 1000, ConfusionGas.class));
 	}
 	
 	@Override
 	public void apply( Char hero ) {
 		setKnown();
-		Buff.affect( hero, Levitation.class, Levitation.DURATION );
+		Buff.affect( hero, hero, Levitation.class, Levitation.DURATION );
 		GLog.i( "You float into the air!" );
 	}
 	

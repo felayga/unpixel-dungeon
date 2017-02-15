@@ -5,7 +5,7 @@
  * Shattered Pixel Dungeon
  * Copyright (C) 2014-2015 Evan Debenham
  *
- * Unpixel Dungeon
+ * unPixel Dungeon
  * Copyright (C) 2015-2016 Randall Foudray
  *
  * This program is free software: you can redistribute it and/or modify
@@ -20,6 +20,7 @@
  *
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>
+ *
  *
  */
 package com.felayga.unpixeldungeon.items.scrolls;
@@ -50,16 +51,15 @@ public class ScrollOfLullaby extends Scroll {
 		
 		curUser.sprite.centerEmitter(-1).start( Speck.factory( Speck.NOTE ), 0.3f, 5 );
 		Sample.INSTANCE.play( Assets.SND_LULLABY );
-		Invisibility.dispel();
 
 		for (Mob mob : Dungeon.level.mobs.toArray( new Mob[Dungeon.level.mobs.size()] )) {
-			if (Level.fieldOfView[mob.pos]) {
-				Buff.affect( mob, Drowsy.class );
+			if (Level.fieldOfView[mob.pos()]) {
+				Buff.affect( mob, curUser, Drowsy.class );
 				mob.sprite.centerEmitter(-1).start( Speck.factory( Speck.NOTE ), 0.3f, 5 );
 			}
 		}
 
-		Buff.affect( curUser, Drowsy.class );
+		Buff.affect( curUser, curUser, Drowsy.class );
 
 		GLog.i( "The scroll utters a soothing melody. You feel very sleepy." );
 

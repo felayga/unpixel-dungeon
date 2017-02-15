@@ -5,7 +5,7 @@
  * Shattered Pixel Dungeon
  * Copyright (C) 2014-2015 Evan Debenham
  *
- * Unpixel Dungeon
+ * unPixel Dungeon
  * Copyright (C) 2015-2016 Randall Foudray
  *
  * This program is free software: you can redistribute it and/or modify
@@ -21,6 +21,7 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>
  *
+ *
  */
 package com.felayga.unpixeldungeon.items.rings;
 
@@ -30,59 +31,59 @@ import com.felayga.unpixeldungeon.actors.mobs.Mob;
 
 public class RingOfEvasion extends Ring {
 
-	{
-		name = "Ring of Evasion";
-	}
-	
-	@Override
-	protected RingBuff buff( ) {
-		return new Evasion();
-	}
-	
-	@Override
-	public String desc() {
-		return isKnown() ?
-			"This ring obfuscates the true position of the wearer, making them harder to detect and attack. " +
-			"This ring is much stronger while the user remains undetected, and if the user is targeted the power of " +
-			"evasion will slowly fade away, remaining undetected will restore the ring's effectiveness. " +
-			"A degraded ring will instead make the user easier to detect and strike.":
-			super.desc();
-	}
+    {
+        name = "Ring of Evasion";
+    }
 
-	//yup, the only ring in the game with logic inside of its class
-	public class Evasion extends RingBuff {
-		public int effectiveLevel;
-		private int pos;
+    @Override
+    protected RingBuff buff() {
+        return new Evasion();
+    }
 
-		@Override
-		public boolean attachTo( Char target ) {
+    @Override
+    public String desc() {
+        return isKnown() ?
+                "This ring obfuscates the true position of the wearer, making them harder to detect and attack. " +
+                        "This ring is much stronger while the user remains undetected, and if the user is targeted the power of " +
+                        "evasion will slowly fade away, remaining undetected will restore the ring's effectiveness. " +
+                        "A degraded ring will instead make the user easier to detect and strike." :
+                super.desc();
+    }
 
-			pos = target.pos;
-			effectiveLevel = Math.min(0, level);
-			return super.attachTo(target);
-		}
+    //yup, the only ring in the game with logic inside of its class
+    public class Evasion extends RingBuff {
+        public int effectiveLevel;
+        private int pos;
 
-		@Override
-		public boolean act() {
+        @Override
+        public boolean attachTo(Char target, Char source) {
 
-			boolean seen = false;
+            pos = target.pos();
+            effectiveLevel = Math.min(0, level);
+            return super.attachTo(target, source);
+        }
 
-			for (Mob enemy : Dungeon.level.mobs.toArray(new Mob[0])){
-				if (enemy.focusingHero()) {
-					seen = true;
-					break;
-				}
-			}
+        @Override
+        public boolean act() {
 
-			if (level < 1){
-				effectiveLevel = level;
-			} else if (seen) {
-				effectiveLevel = Math.max(effectiveLevel - 1, 0);
-			} else {
-				effectiveLevel = Math.min(effectiveLevel + 1, level);
-			}
+            boolean seen = false;
 
-			return super.act();
-		}
-	}
+            for (Mob enemy : Dungeon.level.mobs.toArray(new Mob[0])) {
+                if (enemy.focusingHero()) {
+                    seen = true;
+                    break;
+                }
+            }
+
+            if (level < 1) {
+                effectiveLevel = level;
+            } else if (seen) {
+                effectiveLevel = Math.max(effectiveLevel - 1, 0);
+            } else {
+                effectiveLevel = Math.min(effectiveLevel + 1, level);
+            }
+
+            return super.act();
+        }
+    }
 }

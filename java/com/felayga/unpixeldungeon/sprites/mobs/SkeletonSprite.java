@@ -5,7 +5,7 @@
  * Shattered Pixel Dungeon
  * Copyright (C) 2014-2015 Evan Debenham
  *
- * Unpixel Dungeon
+ * unPixel Dungeon
  * Copyright (C) 2015-2016 Randall Foudray
  *
  * This program is free software: you can redistribute it and/or modify
@@ -21,6 +21,7 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>
  *
+ *
  */
 package com.felayga.unpixeldungeon.sprites.mobs;
 
@@ -31,39 +32,39 @@ import com.felayga.unpixeldungeon.sprites.MobSprite;
 import com.watabou.noosa.TextureFilm;
 
 public class SkeletonSprite extends MobSprite {
-	
-	public SkeletonSprite() {
-		super();
-		
-		texture( Assets.Mobs.SKELETON );
-		
-		TextureFilm frames = new TextureFilm( texture, 12, 15 );
-		
-		idle = new Animation( 12, true );
-		idle.frames( frames, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 2, 3 );
-		
-		run = new Animation( 15, true );
-		run.frames( frames, 4, 5, 6, 7, 8, 9 );
-		
-		attack = new Animation( 15, false );
-		attack.frames( frames, 14, 15, 16 );
-		
-		die = new Animation( 12, false );
-		die.frames( frames, 10, 11, 12, 13 );
-		
-		play( idle );
-	}
-	
-	@Override
-	public void die() {
-		super.die();
-		if (Dungeon.visible[ch.pos]) {
-			emitter().burst( Speck.factory( Speck.BONE ), 6 );
-		}
-	}
-	
-	@Override
-	public int blood() {
-		return 0xFFcccccc;
-	}
+
+    public SkeletonSprite() {
+        super();
+
+        texture(Assets.Mobs.SKELETON);
+
+        TextureFilm frames = new TextureFilm(texture, 12, 15);
+
+        idle = new Animation(12, true);
+        idle.frames(frames, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 2, 3);
+
+        run = new Animation(15, true);
+        run.frames(frames, 4, 5, 6, 7, 8, 9);
+
+        attack = new Animation(15, false);
+        attack.frames(frames, 14, 15, 16);
+
+        die = new Animation(12, false);
+        die.frames(frames, 10, 11, 12, 13);
+
+        play(idle);
+    }
+
+    @Override
+    public void die() {
+        super.die();
+        if (Dungeon.visible[ch.pos()]) {
+            emitter().burst(Speck.factory(Speck.BONE), 6);
+        }
+    }
+
+    @Override
+    public int blood() {
+        return 0xFFcccccc;
+    }
 }

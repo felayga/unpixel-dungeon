@@ -5,7 +5,7 @@
  * Shattered Pixel Dungeon
  * Copyright (C) 2014-2015 Evan Debenham
  *
- * Unpixel Dungeon
+ * unPixel Dungeon
  * Copyright (C) 2015-2016 Randall Foudray
  *
  * This program is free software: you can redistribute it and/or modify
@@ -21,6 +21,7 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>
  *
+ *
  */
 
 package com.felayga.unpixeldungeon;
@@ -30,10 +31,13 @@ import com.felayga.unpixeldungeon.actors.buffs.positive.SeeInvisible;
 import com.felayga.unpixeldungeon.mechanics.IDecayable;
 import com.watabou.utils.Bundlable;
 import com.watabou.utils.Bundle;
+import com.watabou.utils.SparseArray;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -75,8 +79,6 @@ public class WarningHandler implements IDecayable, Bundlable {
             currentTime = 0;
         }
 
-        boolean changes = false;
-
         boolean blind = true;
         boolean seeinvis = true;
 
@@ -85,11 +87,11 @@ public class WarningHandler implements IDecayable, Bundlable {
             seeinvis = Dungeon.hero.buff(SeeInvisible.class) != null;
         }
 
-        Iterator<Map.Entry<Integer, WarningInfo>> iterator = warnings.entrySet().iterator();
-        while (iterator.hasNext()) {
-            Map.Entry<Integer, WarningInfo> pair = iterator.next();
-            Integer key = pair.getKey();
-            WarningInfo value = pair.getValue();
+        List<Integer> pendingremoval = new ArrayList<>();
+
+        for (int n=0;n<warnings.size();n++) {
+            Integer key = warnings.keyAt(n);
+            WarningInfo value = warnings.valueAt(n);
 
             if ((value.flags & Flags.FirstRun.value) != 0) {
                 value.flags ^= Flags.FirstRun.value;
@@ -110,12 +112,15 @@ public class WarningHandler implements IDecayable, Bundlable {
             }
 
             if (clear) {
-                remove(key);
-                changes = true;
+                pendingremoval.add(key);
             }
         }
 
-        return changes;
+        for (Integer remove : pendingremoval) {
+            remove(remove);
+        }
+
+        return pendingremoval.size() > 0;
     }
 
 
@@ -143,16 +148,13 @@ public class WarningHandler implements IDecayable, Bundlable {
         long[] ttl = new long[size];
         int[] flags = new int[size];
 
-        int index = 0;
-        Iterator<Map.Entry<Integer,WarningInfo>> iterator = warnings.entrySet().iterator();
-        while (iterator.hasNext()) {
-            Map.Entry<Integer,WarningInfo> pair = iterator.next();
+        for (int n=0;n<warnings.size();n++) {
+            int key = warnings.keyAt(n);
+            WarningInfo value = warnings.valueAt(n);
 
-            pos[index] = pair.getKey();
-            ttl[index] = pair.getValue().timeToLive;
-            flags[index] = pair.getValue().flags;
-
-            index++;
+            pos[n] = key;
+            ttl[n] = value.timeToLive;
+            flags[n] = value.flags;
         }
 
         bundle.put(KEY_POSITION, pos);
@@ -206,7 +208,7 @@ public class WarningHandler implements IDecayable, Bundlable {
     }
 
     public boolean findWarning(int pos) {
-        return warnings.containsKey(pos);
+        return warnings.get(pos) != null;
     }
 
     public static class WarningInfo {
@@ -223,7 +225,7 @@ public class WarningHandler implements IDecayable, Bundlable {
     }
 
 
-    public final HashMap<Integer, WarningInfo> warnings;
+    public final SparseArray<WarningInfo> warnings;
 
     public final HashSet<Integer> pendingAddition;
     public final HashSet<Integer> pendingRemoval;
@@ -232,6 +234,6 @@ public class WarningHandler implements IDecayable, Bundlable {
         pendingAddition = new HashSet<>();
         pendingRemoval = new HashSet<>();
 
-        warnings = new HashMap<>();
+        warnings = new SparseArray<>();
     }
 }

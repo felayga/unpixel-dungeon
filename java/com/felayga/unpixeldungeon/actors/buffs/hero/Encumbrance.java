@@ -5,7 +5,7 @@
  * Shattered Pixel Dungeon
  * Copyright (C) 2014-2015 Evan Debenham
  *
- * Unpixel Dungeon
+ * unPixel Dungeon
  * Copyright (C) 2015-2016 Randall Foudray
  *
  * This program is free software: you can redistribute it and/or modify
@@ -20,6 +20,7 @@
  *
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>
+ *
  *
  */
 package com.felayga.unpixeldungeon.actors.buffs.hero;
@@ -41,35 +42,34 @@ import com.watabou.utils.Bundle;
 public class Encumbrance extends Buff implements Hero.Doom, ISpeedModifierBuff {
     public static final int UNIT = 128;
 
-    private static final String TXT_INCREASETO_OVERLOADED	= "You collapse under your load.";
-    private static final String TXT_INCREASETO_OVERTAXED	= "You can barely move a handspan with this load!";
-    private static final String TXT_INCREASETO_STRAINED	    = "You stagger under your heavy load.  Movement is very hard.";
-    private static final String TXT_INCREASETO_STRESSED		= "You rebalance your load.  Movement is difficult.";
-    private static final String TXT_INCREASETO_BURDENED		= "Your movements are slowed slightly due to your load.";
+    private static final String TXT_INCREASETO_OVERLOADED = "You collapse under your load.";
+    private static final String TXT_INCREASETO_OVERTAXED = "You can barely move a handspan with this load!";
+    private static final String TXT_INCREASETO_STRAINED = "You stagger under your heavy load.  Movement is very hard.";
+    private static final String TXT_INCREASETO_STRESSED = "You rebalance your load.  Movement is difficult.";
+    private static final String TXT_INCREASETO_BURDENED = "Your movements are slowed slightly due to your load.";
 
-    private static final String TXT_DECREASETO_STRAINED		= "You stagger under your load.  Movement is still very hard.";
-    private static final String TXT_DECREASETO_STRESSED		= "You rebalance your load.  Movement is still difficult.";
-    private static final String TXT_DECREASETO_BURDENED		= "Your movements are only slowed slightly by your load.";
-    private static final String TXT_DECREASETO_UNENCUMBERED	= "Your movements are now unencumbered.";
+    private static final String TXT_DECREASETO_STRAINED = "You stagger under your load.  Movement is still very hard.";
+    private static final String TXT_DECREASETO_STRESSED = "You rebalance your load.  Movement is still difficult.";
+    private static final String TXT_DECREASETO_BURDENED = "Your movements are only slowed slightly by your load.";
+    private static final String TXT_DECREASETO_UNENCUMBERED = "Your movements are now unencumbered.";
 
-    private static final String TXT_TRYLIFT_UNENCUMBERED    = "%s.";
-    private static final String TXT_TRYLIFT_BURDENED        = "You have a little trouble lifting %s.";
-    private static final String TXT_TRYLIFT_STRESSED        = "You have some trouble lifting %s.";
-    private static final String TXT_TRYLIFT_STRAINED        = "You have much trouble lifting %s.";
-    private static final String TXT_TRYLIFT_OVERTAXED       = "You have extreme difficulty lifting %s.";
-    private static final String TXT_TRYLIFT_OVERLOADED      = "There is %s here, but you cannot lift any more.";
+    private static final String TXT_TRYLIFT_UNENCUMBERED = "%s.";
+    private static final String TXT_TRYLIFT_BURDENED = "You have a little trouble lifting %s.";
+    private static final String TXT_TRYLIFT_STRESSED = "You have some trouble lifting %s.";
+    private static final String TXT_TRYLIFT_STRAINED = "You have much trouble lifting %s.";
+    private static final String TXT_TRYLIFT_OVERTAXED = "You have extreme difficulty lifting %s.";
+    private static final String TXT_TRYLIFT_OVERLOADED = "There is %s here, but you cannot lift any more.";
 
     private int level;
     private int strcon;
     private int hpDecreaseTick;
     private int consumptionTick;
 
-    private static final String HPDECREASETICK  = "hpDecreaseTick";
+    private static final String HPDECREASETICK = "hpDecreaseTick";
     private static final String CONSUMPTIONTICK = "consumptionTick";
     private static final String MOVEMENTMODIFIER = "movementModifier";
 
-    public Encumbrance()
-    {
+    public Encumbrance() {
         super();
 
         level = 0;
@@ -81,7 +81,7 @@ public class Encumbrance extends Buff implements Hero.Doom, ISpeedModifierBuff {
     }
 
     @Override
-    public void storeInBundle( Bundle bundle ) {
+    public void storeInBundle(Bundle bundle) {
         super.storeInBundle(bundle);
 
         bundle.put(HPDECREASETICK, hpDecreaseTick);
@@ -90,7 +90,7 @@ public class Encumbrance extends Buff implements Hero.Doom, ISpeedModifierBuff {
     }
 
     @Override
-    public void restoreFromBundle( Bundle bundle ) {
+    public void restoreFromBundle(Bundle bundle) {
         super.restoreFromBundle(bundle);
 
         hpDecreaseTick = bundle.getInt(HPDECREASETICK);
@@ -99,8 +99,8 @@ public class Encumbrance extends Buff implements Hero.Doom, ISpeedModifierBuff {
     }
 
     @Override
-    public boolean attachTo(Char target) {
-        if (super.attachTo(target)) {
+    public boolean attachTo(Char target, Char source) {
+        if (super.attachTo(target, source)) {
             this.level = 0;
             this.strcon = 24;
             current = EncumbranceLevel.UNENCUMBERED;
@@ -196,7 +196,7 @@ public class Encumbrance extends Buff implements Hero.Doom, ISpeedModifierBuff {
     }
 
     public void isAttacking() {
-        switch(current) {
+        switch (current) {
             case STRAINED:
                 hpDecreaseTick += 20;
                 break;
@@ -221,6 +221,9 @@ public class Encumbrance extends Buff implements Hero.Doom, ISpeedModifierBuff {
                 return TXT_TRYLIFT_OVERTAXED;
             case OVERLOADED:
                 return TXT_TRYLIFT_OVERLOADED;
+            default:
+                GLog.d("no pickupmessage for level="+level.toString());
+                break;
         }
         return null;
     }
@@ -243,7 +246,7 @@ public class Encumbrance extends Buff implements Hero.Doom, ISpeedModifierBuff {
         return GameTime.TICK;
     }
 
-    private boolean weightChanged( int weight, int strcon ) {
+    private boolean weightChanged(int weight, int strcon) {
         int oldValue = getCapacity(this.strcon);
         EncumbranceLevel oldEncumbrance = EncumbranceLevel.fromInt(this.level, oldValue);
         oldValue -= this.level;
@@ -340,8 +343,7 @@ public class Encumbrance extends Buff implements Hero.Doom, ISpeedModifierBuff {
     public int icon() {
         EncumbranceLevel encumbrance = EncumbranceLevel.fromInt(level, getCapacity(strcon));
 
-        switch(encumbrance)
-        {
+        switch (encumbrance) {
             case OVERLOADED:
                 return BuffIndicator.ENCUMBRANCE_OVERLOADED;
             case OVERTAXED:
@@ -361,8 +363,7 @@ public class Encumbrance extends Buff implements Hero.Doom, ISpeedModifierBuff {
     public String toString() {
         EncumbranceLevel encumbrance = EncumbranceLevel.fromInt(level, getCapacity(strcon));
 
-        switch(encumbrance)
-        {
+        switch (encumbrance) {
             case OVERLOADED:
                 return "Overloaded";
             case OVERTAXED:
@@ -380,7 +381,7 @@ public class Encumbrance extends Buff implements Hero.Doom, ISpeedModifierBuff {
 
     @Override
     public String desc() {
-        switch(current) {
+        switch (current) {
             case BURDENED:
                 return "You're carrying too much weight, and it's slowing you down a bit.\n";
             case STRESSED:
@@ -401,7 +402,7 @@ public class Encumbrance extends Buff implements Hero.Doom, ISpeedModifierBuff {
 
         Badges.validateDeathFromHunger();
 
-        Dungeon.fail( ResultDescriptions.HUNGER );
+        Dungeon.fail(ResultDescriptions.HUNGER);
         //GLog.n( TXT_DECREASETO_DEAD );
     }
 }

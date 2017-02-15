@@ -5,7 +5,7 @@
  * Shattered Pixel Dungeon
  * Copyright (C) 2014-2015 Evan Debenham
  *
- * Unpixel Dungeon
+ * unPixel Dungeon
  * Copyright (C) 2015-2016 Randall Foudray
  *
  * This program is free software: you can redistribute it and/or modify
@@ -20,6 +20,7 @@
  *
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>
+ *
  *
  */
 package com.felayga.unpixeldungeon.ui;
@@ -94,6 +95,10 @@ public class BuffIndicator extends Component {
     public static final int HELD                    = 48;
     public static final int SEEINVISIBLE            = 49;
     public static final int SICK                    = 50;
+    public static final int INTRINSIC               = 51;
+    public static final int INVISIBLE_IMPROVED      = 52;
+    public static final int DEAFENED                = 53;
+    public static final int ITEM_VISION             = 54;
 
 	public static final int SIZE	= 7;
 	

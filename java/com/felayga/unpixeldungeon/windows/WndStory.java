@@ -5,7 +5,7 @@
  * Shattered Pixel Dungeon
  * Copyright (C) 2014-2015 Evan Debenham
  *
- * Unpixel Dungeon
+ * unPixel Dungeon
  * Copyright (C) 2015-2016 Randall Foudray
  *
  * This program is free software: you can redistribute it and/or modify
@@ -21,14 +21,15 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>
  *
+ *
  */
 package com.felayga.unpixeldungeon.windows;
 
 import com.felayga.unpixeldungeon.Chrome;
 import com.felayga.unpixeldungeon.Dungeon;
-import com.felayga.unpixeldungeon.ShatteredPixelDungeon;
 import com.felayga.unpixeldungeon.scenes.PixelScene;
 import com.felayga.unpixeldungeon.ui.Window;
+import com.felayga.unpixeldungeon.unPixelDungeon;
 import com.watabou.input.Touchscreen.Touch;
 import com.watabou.noosa.BitmapTextMultiline;
 import com.watabou.noosa.Game;
@@ -93,7 +94,7 @@ public class WndStory extends Window {
 		super( 0, 0, Chrome.get( Chrome.Type.SCROLL ) );
 		
 		tf = PixelScene.createMultiline( text, 7 );
-		tf.maxWidth = ShatteredPixelDungeon.landscape() ?
+		tf.maxWidth = unPixelDungeon.landscape() ?
 					WIDTH_L - MARGIN * 2:
 					WIDTH_P - MARGIN *2;
 		tf.measure();

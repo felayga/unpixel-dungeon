@@ -5,7 +5,7 @@
  * Shattered Pixel Dungeon
  * Copyright (C) 2014-2015 Evan Debenham
  *
- * Unpixel Dungeon
+ * unPixel Dungeon
  * Copyright (C) 2015-2016 Randall Foudray
  *
  * This program is free software: you can redistribute it and/or modify
@@ -20,6 +20,7 @@
  *
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>
+ *
  *
  */
 package com.felayga.unpixeldungeon.actors.buffs.hero;
@@ -40,8 +41,8 @@ public class EarthImbue extends FlavourBuff {
 	public static final long DURATION	= GameTime.TICK * 30;
 
 	public void proc(Char enemy){
-		Buff.affect(enemy, Roots.class, GameTime.TICK * 2);
-		CellEmitter.bottom(enemy.pos).start(EarthParticle.FACTORY, 0.05f, 8);
+		Buff.affect(enemy, Char.Registry.get(ownerRegistryIndex()), Roots.class, GameTime.TICK * 2);
+		CellEmitter.bottom(enemy.pos()).start(EarthParticle.FACTORY, 0.05f, 8);
 	}
 
 	@Override
@@ -63,9 +64,11 @@ public class EarthImbue extends FlavourBuff {
 				"You are imbued for " + dispTurns() + ".";
 	}
 
+    /*
 	{
 		immunities.add( Paralysis.class );
 		immunities.add( Roots.class );
 		immunities.add( Slow.class );
 	}
+    */
 }

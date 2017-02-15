@@ -5,7 +5,7 @@
  * Shattered Pixel Dungeon
  * Copyright (C) 2014-2015 Evan Debenham
  *
- * Unpixel Dungeon
+ * unPixel Dungeon
  * Copyright (C) 2015-2016 Randall Foudray
  *
  * This program is free software: you can redistribute it and/or modify
@@ -21,6 +21,7 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>
  *
+ *
  */
 package com.felayga.unpixeldungeon.actors.buffs.hero;
 
@@ -32,36 +33,36 @@ import com.felayga.unpixeldungeon.ui.BuffIndicator;
 
 public class SoulMark extends FlavourBuff {
 
-	public static final long DURATION	= GameTime.TICK * 50;
+    public static final long DURATION = GameTime.TICK * 50;
 
-	{
-		type = buffType.NEGATIVE;
-	}
+    {
+        type = buffType.NEGATIVE;
+    }
 
-	@Override
-	public int icon() {
-		return BuffIndicator.CORRUPT;
-	}
+    @Override
+    public int icon() {
+        return BuffIndicator.CORRUPT;
+    }
 
-	@Override
-	public String toString() {
-		return "Soul Marked";
-	}
+    @Override
+    public String toString() {
+        return "Soul Marked";
+    }
 
-	@Override
-	public boolean attachTo(Char target) {
-		if (super.attachTo(target) && target.sprite != null){
-			target.sprite.emitter().burst(ShadowParticle.UP, 10);
-			return true;
-		} else
-			return false;
-	}
+    @Override
+    public boolean attachTo(Char target, Char source) {
+        if (super.attachTo(target, source) && target.sprite != null) {
+            target.sprite.emitter().burst(ShadowParticle.UP, 10);
+            return true;
+        } else
+            return false;
+    }
 
-	@Override
-	public String desc() {
-		return "The warlock has tapped into the soul of this creature. " +
-				"He will heal and satisfy his hunger as it takes physical damage.\n" +
-				"\n" +
-				"This mark will last for " + dispTurns()  + ".";
-	}
+    @Override
+    public String desc() {
+        return "The warlock has tapped into the soul of this creature. " +
+                "He will heal and satisfy his hunger as it takes physical damage.\n" +
+                "\n" +
+                "This mark will last for " + dispTurns() + ".";
+    }
 }

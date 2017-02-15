@@ -5,7 +5,7 @@
  * Shattered Pixel Dungeon
  * Copyright (C) 2014-2015 Evan Debenham
  *
- * Unpixel Dungeon
+ * unPixel Dungeon
  * Copyright (C) 2015-2016 Randall Foudray
  *
  * This program is free software: you can redistribute it and/or modify
@@ -20,6 +20,7 @@
  *
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>
+ *
  *
  */
 package com.felayga.unpixeldungeon.items.artifacts;
@@ -61,12 +62,12 @@ public class TimekeepersHourglass extends Artifact_old {
 		name = "Timekeeper's Hourglass";
 		image = ItemSpriteSheet.ARTIFACT_HOURGLASS;
 
-		level = 0;
+		level(0);
 		levelCap = 5;
 
-		charge = 10+level*2;
+		charge = 10+level()*2;
 		partialCharge = 0;
-		chargeCap = 10+level*2;
+		chargeCap = 10+level()*2;
 
 		defaultAction = AC_ACTIVATE;
         price = 20;
@@ -102,14 +103,14 @@ public class TimekeepersHourglass extends Artifact_old {
 									Sample.INSTANCE.play(Assets.SND_TELEPORT);
 
 									activeBuff = new timeStasis();
-									activeBuff.attachTo(Dungeon.hero);
+									activeBuff.attachTo(Dungeon.hero, null);
 								} else if (index == 1) {
 									GLog.i("everything around you suddenly freezes.");
 									GameScene.flash(0xFFFFFF);
 									Sample.INSTANCE.play(Assets.SND_TELEPORT);
 
 									activeBuff = new timeFreeze();
-									activeBuff.attachTo(Dungeon.hero);
+									activeBuff.attachTo(Dungeon.hero, null);
 								}
 							};
 						}
@@ -126,7 +127,7 @@ public class TimekeepersHourglass extends Artifact_old {
         super.onEquip(owner, cursed);
 
         if (activeBuff != null) {
-            activeBuff.attachTo(owner);
+            activeBuff.attachTo(owner, null);
         }
     }
 
@@ -148,7 +149,7 @@ public class TimekeepersHourglass extends Artifact_old {
 		chargeCap += 2 * n;
 
 		//for artifact transmutation.
-		while (level+1 > sandBags)
+		while (level()+1 > sandBags)
 			sandBags ++;
 
 		return super.upgrade(source, n);
@@ -165,7 +166,7 @@ public class TimekeepersHourglass extends Artifact_old {
 			if (bucStatus != BUCStatus.Cursed) {
 				desc += "\n\nThe hourglass rests at your side, the whisper of steadily pouring sand is reassuring.";
 
-				if (level < levelCap )
+				if (level() < levelCap )
 					desc +=
 						"\n\nThe hourglass seems to have lost some sand with age. While there are no cracks, " +
 						"there is a port on the top of the hourglass to pour sand in, if only you could find some...";
@@ -224,7 +225,7 @@ public class TimekeepersHourglass extends Artifact_old {
 					}
 				}
 			} else if (bucStatus == BUCStatus.Cursed && Random.Int(10) == 0)
-				((Hero) target).spend_new(GameTime.TICK, false);
+				target.spend_new(GameTime.TICK, false);
 
 			updateQuickslot();
 
@@ -237,10 +238,10 @@ public class TimekeepersHourglass extends Artifact_old {
 	public class timeStasis extends ArtifactBuff {
 
 		@Override
-		public boolean attachTo(Char target) {
+		public boolean attachTo(Char target, Char source) {
 			//buffs always act last, so the stasis buff should end a turn early.
             spend_new(GameTime.TICK * (charge - 1), false);
-			((Hero)target).spend_new(GameTime.TICK * charge, true);
+			target.spend_new(GameTime.TICK * charge, true);
 
 			//shouldn't punish the player for going into stasis frequently
 			Hunger hunger = target.buff(Hunger.class);
@@ -255,7 +256,7 @@ public class TimekeepersHourglass extends Artifact_old {
 
 			Dungeon.observe();
 
-			return super.attachTo(target);
+			return super.attachTo(target, source);
 		}
 
 		@Override
@@ -311,12 +312,12 @@ public class TimekeepersHourglass extends Artifact_old {
 		}
 
 		@Override
-		public boolean attachTo(Char target) {
+		public boolean attachTo(Char target, Char source) {
 			if (Dungeon.level != null)
 				for (Mob mob : Dungeon.level.mobs.toArray(new Mob[0]))
 					mob.sprite.add(CharSprite.State.PARALYSED);
 			GameScene.freezeEmitters = true;
-			return super.attachTo(target);
+			return super.attachTo(target, source);
 		}
 
 		@Override
@@ -372,7 +373,7 @@ public class TimekeepersHourglass extends Artifact_old {
 			if (hourglass != null && hourglass.bucStatus != BUCStatus.Cursed) {
 				hourglass.upgrade(this, 1);
 				Sample.INSTANCE.play( Assets.SND_DEWDROP );
-				if (hourglass.level == hourglass.levelCap)
+				if (hourglass.level() == hourglass.levelCap)
 					GLog.p("Your hourglass is filled with magical sand!");
 				else
 					GLog.i("you add the sand to your hourglass.");

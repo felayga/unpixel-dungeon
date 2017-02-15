@@ -5,7 +5,7 @@
  * Shattered Pixel Dungeon
  * Copyright (C) 2014-2015 Evan Debenham
  *
- * Unpixel Dungeon
+ * unPixel Dungeon
  * Copyright (C) 2015-2016 Randall Foudray
  *
  * This program is free software: you can redistribute it and/or modify
@@ -20,6 +20,7 @@
  *
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>
+ *
  *
  */
 package com.felayga.unpixeldungeon.levels.traps;
@@ -55,9 +56,11 @@ public class RockfallTrap extends Trap {
 
 		if (Dungeon.visible[ pos ]){
 			CellEmitter.get( pos - Level.WIDTH ).start(Speck.factory(Speck.ROCK), 0.07f, 10);
-			Camera.main.shake( 3, 0.7f );
-			Sample.INSTANCE.play( Assets.SND_ROCKS );
 		}
+        if (Dungeon.audible[pos]) {
+            Camera.main.shake(3, 0.7f);
+            Sample.INSTANCE.play( Assets.SND_ROCKS );
+        }
 
 		Char ch = Actor.findChar( pos );
 
@@ -65,7 +68,7 @@ public class RockfallTrap extends Trap {
 			int damage = Random.NormalIntRange(5+Dungeon.depthAdjusted, 10+Dungeon.depthAdjusted*3);
 			ch.damage( Math.max(damage, 0) , MagicType.Mundane, null);
 
-			Buff.prolong( ch, Paralysis.class, Paralysis.duration(ch)*2);
+			Buff.prolong( ch, Char.Registry.get(ownerRegistryIndex()), Paralysis.class, Paralysis.duration(ch)*2);
 
 			if (!ch.isAlive() && ch == Dungeon.hero){
 				Dungeon.fail(Utils.format(ResultDescriptions.TRAP, name));

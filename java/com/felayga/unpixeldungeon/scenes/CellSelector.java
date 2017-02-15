@@ -5,7 +5,7 @@
  * Shattered Pixel Dungeon
  * Copyright (C) 2014-2015 Evan Debenham
  *
- * Unpixel Dungeon
+ * unPixel Dungeon
  * Copyright (C) 2015-2016 Randall Foudray
  *
  * This program is free software: you can redistribute it and/or modify
@@ -21,11 +21,13 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>
  *
+ *
  */
 package com.felayga.unpixeldungeon.scenes;
 
 import com.felayga.unpixeldungeon.DungeonTilemap;
-import com.felayga.unpixeldungeon.ShatteredPixelDungeon;
+import com.felayga.unpixeldungeon.mechanics.Constant;
+import com.felayga.unpixeldungeon.unPixelDungeon;
 import com.watabou.input.Touchscreen.Touch;
 import com.watabou.noosa.TouchArea;
 import com.watabou.utils.GameMath;
@@ -61,7 +63,7 @@ public class CellSelector extends TouchArea {
 	}
 	
 	public void select( int cell ) {
-		if (enabled && listener != null && cell != -1) {
+		if (enabled && listener != null && cell != Constant.Position.NONE) {
 			if (listener.onSelect(cell)) {
                 GameScene.ready();
             }
@@ -106,7 +108,7 @@ public class CellSelector extends TouchArea {
 			
 			int zoom = Math.round( camera.zoom );
 			camera.zoom( zoom );
-			ShatteredPixelDungeon.zoom((int) (zoom - PixelScene.defaultZoom));
+			unPixelDungeon.zoom(zoom - PixelScene.defaultZoom);
 			
 			dragging = true;
 			if (t == touch) {
@@ -165,7 +167,7 @@ public class CellSelector extends TouchArea {
 
 			int zoom = Math.round( camera.zoom );
 			camera.zoom( zoom );
-			ShatteredPixelDungeon.zoom((int) (zoom - PixelScene.defaultZoom));
+			unPixelDungeon.zoom(zoom - PixelScene.defaultZoom);
 		}
 	}
 

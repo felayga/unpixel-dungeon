@@ -5,7 +5,7 @@
  * Shattered Pixel Dungeon
  * Copyright (C) 2014-2015 Evan Debenham
  *
- * Unpixel Dungeon
+ * unPixel Dungeon
  * Copyright (C) 2015-2016 Randall Foudray
  *
  * This program is free software: you can redistribute it and/or modify
@@ -20,6 +20,7 @@
  *
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>
+ *
  *
  */
 package com.felayga.unpixeldungeon.items.weapon.melee.simple;
@@ -112,7 +113,7 @@ public class MagesStaff extends SimpleMeleeWeapon {
 	public boolean execute(Hero hero, String action) {
 		if (action.equals(AC_IMBUE)) {
 			curUser = hero;
-			GameScene.selectItem(itemSelector, Wand.class, TXT_SELECT_WAND);
+			GameScene.selectItem(itemSelector, Wand.class, TXT_SELECT_WAND, null);
 
 			return false;
 		} else if (action.equals(AC_ZAP)){
@@ -132,7 +133,7 @@ public class MagesStaff extends SimpleMeleeWeapon {
 
 		if (wand != null && Dungeon.hero.subClass == HeroSubClass.BATTLEMAGE) {
 			//if (wand.curCharges < wand.maxCharges) wand.partialCharge += 0.33f;
-			ScrollOfRecharging.charge((Hero)attacker);
+			ScrollOfRecharging.charge(attacker);
 			wand.onHit(this, attacker, defender, damage);
 		}
 
@@ -172,15 +173,15 @@ public class MagesStaff extends SimpleMeleeWeapon {
 		}
 
 		//syncs the level of the two items.
-		int targetLevel = Math.max(this.level, wand.level);
+		int targetLevel = Math.max(this.level(), wand.level());
 
-		int staffLevelDiff = targetLevel - this.level;
+		int staffLevelDiff = targetLevel - this.level();
 		if (staffLevelDiff > 0)
 			this.upgrade(null, staffLevelDiff);
 		else if (staffLevelDiff < 0)
 			this.upgrade(null, -Math.abs(staffLevelDiff));
 
-		int wandLevelDiff = targetLevel - wand.level;
+		int wandLevelDiff = targetLevel - wand.level();
 		if (wandLevelDiff > 0)
 			wand.upgrade(null, wandLevelDiff);
 		else if (wandLevelDiff < 0)

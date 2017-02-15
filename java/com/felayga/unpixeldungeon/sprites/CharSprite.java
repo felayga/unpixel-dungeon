@@ -5,7 +5,7 @@
  * Shattered Pixel Dungeon
  * Copyright (C) 2014-2015 Evan Debenham
  *
- * Unpixel Dungeon
+ * unPixel Dungeon
  * Copyright (C) 2015-2016 Randall Foudray
  *
  * This program is free software: you can redistribute it and/or modify
@@ -21,6 +21,7 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>
  *
+ *
  */
 package com.felayga.unpixeldungeon.sprites;
 
@@ -34,6 +35,7 @@ import com.felayga.unpixeldungeon.effects.IceBlock;
 import com.felayga.unpixeldungeon.effects.Speck;
 import com.felayga.unpixeldungeon.effects.Splash;
 import com.felayga.unpixeldungeon.effects.TorchHalo;
+import com.felayga.unpixeldungeon.effects.particles.AcidParticle;
 import com.felayga.unpixeldungeon.effects.particles.FlameParticle;
 import com.felayga.unpixeldungeon.effects.particles.SnowParticle;
 import com.felayga.unpixeldungeon.items.potions.PotionOfInvisibility;
@@ -59,12 +61,13 @@ public class CharSprite extends MovieClip implements Tweener.Listener, MovieClip
 	public static final int NEGATIVE	= 0xFF0000;
 	public static final int WARNING		= 0xFF8800;
 	public static final int NEUTRAL		= 0xFFFF00;
+    public static final int DEBUG       = 0x0077FF;
 	
 	private static final float MOVE_INTERVAL	= 0.1f;
 	private static final float FLASH_INTERVAL	= 0.05f;
 	
 	public enum State {
-		BURNING, LEVITATING, INVISIBLE, PARALYSED, FROZEN, ILLUMINATED, CHILLED, DARKENED
+		BURNING, ACIDBURNING, LEVITATING, INVISIBLE, PARALYSED, FROZEN, ILLUMINATED, CHILLED, DARKENED
 	}
 	
 	protected Animation idle;
@@ -81,6 +84,7 @@ public class CharSprite extends MovieClip implements Tweener.Listener, MovieClip
 	protected Emitter burning;
 	protected Emitter chilled;
 	protected Emitter levitation;
+    protected Emitter acidBurning;
 	
 	protected IceBlock iceBlock;
 	protected DarkBlock darkBlock;
@@ -108,8 +112,8 @@ public class CharSprite extends MovieClip implements Tweener.Listener, MovieClip
 		this.ch = ch;
 		ch.sprite = this;
 		
-		place( ch.pos );
-		turnTo( ch.pos, Random.Int( Level.LENGTH ) );
+		place( ch.pos() );
+		turnTo( ch.pos(), Random.Int( Level.LENGTH ) );
 
 		ch.updateSpriteState();
 	}
@@ -134,8 +138,8 @@ public class CharSprite extends MovieClip implements Tweener.Listener, MovieClip
 				text = Utils.format( text, args );
 			}
 			if (ch != null) {
-				PointF tile = DungeonTilemap.tileCenterToWorld(ch.pos);
-				FloatingText.show( tile.x, tile.y-(width*0.5f), ch.pos, text, color );
+				PointF tile = DungeonTilemap.tileCenterToWorld(ch.pos());
+				FloatingText.show( tile.x, tile.y-(width*0.5f), ch.pos(), text, color );
 			} else {
 				FloatingText.show( x + width * 0.5f, y, text, color );
 			}
@@ -157,7 +161,7 @@ public class CharSprite extends MovieClip implements Tweener.Listener, MovieClip
 
 		isMoving = true;
 		
-		if (visible && Level.water[from] && !ch.flying) {
+		if (visible && Level.puddle[from] && !ch.flying()) {
 			GameScene.ripple( from );
 		}
 
@@ -170,23 +174,23 @@ public class CharSprite extends MovieClip implements Tweener.Listener, MovieClip
 	}
 	
 	public void attack( int cell ) {
-		turnTo( ch.pos, cell );
+		turnTo( ch.pos(), cell );
 		play( attack );
 	}
 	
 	public void attack( int cell, Callback callback ) {
 		animCallback = callback;
-		turnTo( ch.pos, cell );
+		turnTo( ch.pos(), cell );
 		play( attack );
 	}
 	
 	public void operate( int cell ) {
-		turnTo( ch.pos, cell );
+		turnTo( ch.pos(), cell );
 		play( operate );
 	}
 	
 	public void zap( int cell ) {
-		turnTo( ch.pos, cell );
+		turnTo( ch.pos(), cell );
 		play( zap );
 	}
 	
@@ -262,87 +266,96 @@ public class CharSprite extends MovieClip implements Tweener.Listener, MovieClip
 	}
 	
 	public void add( State state ) {
-		switch (state) {
-		case BURNING:
-			burning = emitter();
-			burning.pour( FlameParticle.FACTORY, 0.06f );
-			if (visible) {
-				Sample.INSTANCE.play( Assets.SND_BURNING );
-			}
-			break;
-		case LEVITATING:
-			levitation = emitter();
-			levitation.pour( Speck.factory( Speck.JET ), 0.02f );
-			break;
-		case INVISIBLE:
-			PotionOfInvisibility.melt( ch );
-			break;
-		case PARALYSED:
-			paused = true;
-			break;
-		case FROZEN:
-			iceBlock = IceBlock.freeze( this );
-			paused = true;
-			break;
-		case ILLUMINATED:
-			GameScene.effect( halo = new TorchHalo( this ) );
-			break;
-		case CHILLED:
-			chilled = emitter();
-			chilled.pour(SnowParticle.FACTORY, 0.1f);
-			break;
-		case DARKENED:
-			darkBlock = DarkBlock.darken( this );
-			break;
-		}
-	}
+        switch (state) {
+            case BURNING:
+                burning = emitter();
+                burning.pour(FlameParticle.FACTORY, 0.06f);
+                if (visible) {
+                    Sample.INSTANCE.play(Assets.SND_BURNING);
+                }
+                break;
+            case ACIDBURNING:
+                acidBurning = emitter();
+                acidBurning.pour(AcidParticle.FACTORY, 0.06f);
+                break;
+            case LEVITATING:
+                levitation = emitter();
+                levitation.pour(Speck.factory(Speck.JET), 0.02f);
+                break;
+            case INVISIBLE:
+                PotionOfInvisibility.melt(ch);
+                break;
+            case PARALYSED:
+                paused = true;
+                break;
+            case FROZEN:
+                iceBlock = IceBlock.freeze(this);
+                paused = true;
+                break;
+            case ILLUMINATED:
+                GameScene.effect(halo = new TorchHalo(this));
+                break;
+            case CHILLED:
+                chilled = emitter();
+                chilled.pour(SnowParticle.FACTORY, 0.1f);
+                break;
+            case DARKENED:
+                darkBlock = DarkBlock.darken(this);
+                break;
+        }
+    }
 	
 	public void remove( State state ) {
-		switch (state) {
-		case BURNING:
-			if (burning != null) {
-				burning.on = false;
-				burning = null;
-			}
-			break;
-		case LEVITATING:
-			if (levitation != null) {
-				levitation.on = false;
-				levitation = null;
-			}
-			break;
-		case INVISIBLE:
-			alpha( 1f );
-			break;
-		case PARALYSED:
-			paused = false;
-			break;
-		case FROZEN:
-			if (iceBlock != null) {
-				iceBlock.melt();
-				iceBlock = null;
-			}
-			paused = false;
-			break;
-		case ILLUMINATED:
-			if (halo != null) {
-				halo.putOut();
-			}
-			break;
-		case CHILLED:
-			if (chilled != null){
-				chilled.on = false;
-				chilled = null;
-			}
-			break;
-		case DARKENED:
-			if (darkBlock != null) {
-				darkBlock.lighten();
-				darkBlock = null;
-			}
-			break;
-		}
-	}
+        switch (state) {
+            case BURNING:
+                if (burning != null) {
+                    burning.on = false;
+                    burning = null;
+                }
+                break;
+            case ACIDBURNING:
+                if (acidBurning != null) {
+                    acidBurning.on = false;
+                    acidBurning = null;
+                }
+            case LEVITATING:
+                if (levitation != null) {
+                    levitation.on = false;
+                    levitation = null;
+                }
+                break;
+            case INVISIBLE:
+                alpha(1f);
+                break;
+            case PARALYSED:
+                paused = false;
+                break;
+            case FROZEN:
+                if (iceBlock != null) {
+                    iceBlock.melt();
+                    iceBlock = null;
+                }
+                paused = false;
+                break;
+            case ILLUMINATED:
+                if (halo != null) {
+                    halo.putOut();
+                }
+                break;
+            case CHILLED:
+                if (chilled != null) {
+                    chilled.on = false;
+                    chilled = null;
+                }
+                break;
+            case DARKENED:
+                if (darkBlock != null) {
+                    darkBlock.lighten();
+                    darkBlock = null;
+                }
+                break;
+        }
+    }
 	
 	@Override
 	public void update() {
@@ -360,6 +373,9 @@ public class CharSprite extends MovieClip implements Tweener.Listener, MovieClip
 		if (burning != null) {
 			burning.visible = visible;
 		}
+        if (acidBurning != null) {
+            acidBurning.visible = visible;
+        }
 		if (levitation != null) {
 			levitation.visible = visible;
 		}
@@ -430,8 +446,8 @@ public class CharSprite extends MovieClip implements Tweener.Listener, MovieClip
 	public void onComplete( Tweener tweener ) {
 		if (tweener == jumpTweener) {
 
-			if (visible && Level.water[ch.pos] && !ch.flying) {
-				GameScene.ripple( ch.pos );
+			if (visible && Level.puddle[ch.pos()] && !ch.flying()) {
+				GameScene.ripple( ch.pos() );
 			}
 			if (jumpCallback != null) {
 				jumpCallback.call();

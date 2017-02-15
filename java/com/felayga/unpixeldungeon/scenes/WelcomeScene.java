@@ -5,7 +5,7 @@
  * Shattered Pixel Dungeon
  * Copyright (C) 2014-2015 Evan Debenham
  *
- * Unpixel Dungeon
+ * unPixel Dungeon
  * Copyright (C) 2015-2016 Randall Foudray
  *
  * This program is free software: you can redistribute it and/or modify
@@ -21,17 +21,18 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>
  *
+ *
  */
 package com.felayga.unpixeldungeon.scenes;
 
 import com.felayga.unpixeldungeon.Badges;
 import com.felayga.unpixeldungeon.Chrome;
 import com.felayga.unpixeldungeon.Rankings;
-import com.felayga.unpixeldungeon.ShatteredPixelDungeon;
 import com.felayga.unpixeldungeon.ui.Archs;
 import com.felayga.unpixeldungeon.ui.RedButton;
 import com.felayga.unpixeldungeon.ui.ScrollPane;
 import com.felayga.unpixeldungeon.ui.Window;
+import com.felayga.unpixeldungeon.unPixelDungeon;
 import com.watabou.noosa.BitmapTextMultiline;
 import com.watabou.noosa.Camera;
 import com.watabou.noosa.Game;
@@ -116,7 +117,7 @@ public class WelcomeScene extends PixelScene {
 	public void create() {
 		super.create();
 
-		final int gameversion = ShatteredPixelDungeon.version();
+		final int gameversion = unPixelDungeon.version();
 
 		BitmapTextMultiline title;
 		BitmapTextMultiline text;
@@ -194,11 +195,11 @@ public class WelcomeScene extends PixelScene {
 					}
 				}
 
-				if (ShatteredPixelDungeon.version() != Game.versionCode){
-					ShatteredPixelDungeon.version(Game.versionCode);
+				if (unPixelDungeon.version() != Game.versionCode){
+					unPixelDungeon.version(Game.versionCode);
 					Game.switchScene(TitleScene.class);
 				} else
-					ShatteredPixelDungeon.switchNoFade(TitleScene.class);
+					unPixelDungeon.switchNoFade(TitleScene.class);
 
 			}
 		};
@@ -229,10 +230,10 @@ public class WelcomeScene extends PixelScene {
 
 	@Override
 	protected void onBackPressed() {
-		if (ShatteredPixelDungeon.version() != Game.versionCode){
+		if (unPixelDungeon.version() != Game.versionCode){
 			super.onBackPressed();
 		} else
-			ShatteredPixelDungeon.switchNoFade(TitleScene.class);
+			unPixelDungeon.switchNoFade(TitleScene.class);
 	}
 }
 

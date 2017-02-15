@@ -5,7 +5,7 @@
  * Shattered Pixel Dungeon
  * Copyright (C) 2014-2015 Evan Debenham
  *
- * Unpixel Dungeon
+ * unPixel Dungeon
  * Copyright (C) 2015-2016 Randall Foudray
  *
  * This program is free software: you can redistribute it and/or modify
@@ -21,9 +21,11 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>
  *
+ *
  */
 package com.felayga.unpixeldungeon.actors.buffs.hero;
 
+import com.felayga.unpixeldungeon.actors.Char;
 import com.felayga.unpixeldungeon.actors.blobs.Blob;
 import com.felayga.unpixeldungeon.actors.blobs.ToxicGas;
 import com.felayga.unpixeldungeon.actors.buffs.Buff;
@@ -35,33 +37,31 @@ import com.watabou.utils.Bundle;
 
 public class ToxicImbue extends Buff {
 
-	public static final float DURATION	= 30f;
+	public static final long DURATION	= 30 * GameTime.TICK;
 
-	protected float left;
-
-	private static final String LEFT	= "left";
+	protected long left;
 
 	@Override
 	public void storeInBundle( Bundle bundle ) {
 		super.storeInBundle( bundle );
-		bundle.put( LEFT, left );
+		bundle.put( TIMELEFT, left );
 
 	}
 
 	@Override
 	public void restoreFromBundle( Bundle bundle ) {
 		super.restoreFromBundle( bundle );
-		left = bundle.getFloat( LEFT );
+		left = bundle.getLong(TIMELEFT );
 	}
 
-	public void set( float duration ) {
+	public void set( long duration ) {
 		this.left = duration;
 	}
 
 
 	@Override
 	public boolean act() {
-		GameScene.add(Blob.seed(target.pos, 50, ToxicGas.class));
+		GameScene.add(Blob.seed(Char.Registry.get(ownerRegistryIndex()), target.pos(), 50, ToxicGas.class));
 
         spend_new(GameTime.TICK, false);
 		left -= GameTime.TICK;
@@ -91,8 +91,10 @@ public class ToxicImbue extends Buff {
 				"You are imbued for " + dispTurns(left) + ".";
 	}
 
+    /*
 	{
 		immunities.add( ToxicGas.class );
 		immunities.add( Poison.class );
 	}
+    */
 }

@@ -5,7 +5,7 @@
  * Shattered Pixel Dungeon
  * Copyright (C) 2014-2015 Evan Debenham
  *
- * Unpixel Dungeon
+ * unPixel Dungeon
  * Copyright (C) 2015-2016 Randall Foudray
  *
  * This program is free software: you can redistribute it and/or modify
@@ -20,6 +20,7 @@
  *
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>
+ *
  *
  */
 package com.felayga.unpixeldungeon.actors.buffs.hero;
@@ -61,8 +62,8 @@ public class SnipersMark extends FlavourBuff {
 
 	@Override
 	public String desc() {
-		Char ch = (Char)Actor.findById(object);
-		return "The sniper is honed in " + ((ch == null) ? "on a lost target" : "on the nearby " + ch.name ) + ", " +
+        Char owner = Char.Registry.get(ownerRegistryIndex());
+		return "The sniper is honed in " + ((owner == null) ? "on a lost target" : "on the nearby " + owner.name ) + ", " +
 				"gaining increased attack speed and armor penetration while attacking it.\n" +
 				"\n" +
 				"The sniper will remain honed in until she switches targets, stops attacking, or the target dies.";

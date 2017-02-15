@@ -5,7 +5,7 @@
  * Shattered Pixel Dungeon
  * Copyright (C) 2014-2015 Evan Debenham
  *
- * Unpixel Dungeon
+ * unPixel Dungeon
  * Copyright (C) 2015-2016 Randall Foudray
  *
  * This program is free software: you can redistribute it and/or modify
@@ -21,6 +21,7 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>
  *
+ *
  */
 package com.felayga.unpixeldungeon.windows;
 
@@ -28,17 +29,18 @@ import android.graphics.RectF;
 
 import com.felayga.unpixeldungeon.Assets;
 import com.felayga.unpixeldungeon.Dungeon;
-import com.felayga.unpixeldungeon.ShatteredPixelDungeon;
 import com.felayga.unpixeldungeon.actors.hero.Belongings;
 import com.felayga.unpixeldungeon.actors.hero.Hero;
 import com.felayga.unpixeldungeon.actors.hero.HeroAction;
 import com.felayga.unpixeldungeon.items.Heap;
 import com.felayga.unpixeldungeon.items.Item;
 import com.felayga.unpixeldungeon.items.bags.IBag;
+import com.felayga.unpixeldungeon.items.bags.LargeChest;
 import com.felayga.unpixeldungeon.items.bags.PotionBandolier;
 import com.felayga.unpixeldungeon.items.bags.ScrollHolder;
 import com.felayga.unpixeldungeon.items.bags.SeedPouch;
 import com.felayga.unpixeldungeon.items.bags.WandHolster;
+import com.felayga.unpixeldungeon.items.bags.backpack.Backpack;
 import com.felayga.unpixeldungeon.mechanics.BUCStatus;
 import com.felayga.unpixeldungeon.mechanics.Constant;
 import com.felayga.unpixeldungeon.scenes.GameScene;
@@ -46,6 +48,8 @@ import com.felayga.unpixeldungeon.scenes.PixelScene;
 import com.felayga.unpixeldungeon.ui.Icons;
 import com.felayga.unpixeldungeon.ui.ItemSlot;
 import com.felayga.unpixeldungeon.ui.RedButton;
+import com.felayga.unpixeldungeon.ui.Window;
+import com.felayga.unpixeldungeon.unPixelDungeon;
 import com.felayga.unpixeldungeon.utils.GLog;
 import com.felayga.unpixeldungeon.utils.Utils;
 import com.watabou.gltextures.TextureCache;
@@ -55,15 +59,18 @@ import com.watabou.noosa.Image;
 import com.watabou.noosa.audio.Sample;
 import com.watabou.utils.PointF;
 
+import java.util.ArrayList;
 import java.util.Iterator;
+import java.util.List;
 
 public class WndBag extends WndTabbed {
     private static final int SLOTS_DISPLAY_MAX = 36;
 
-    private static final String BTN_DEPOSIT     = "DEPOSIT";
-    private static final String BTN_TAKEALL     = "TAKE ALL";
-    private static final String BTN_PICKUP      = "PICK UP";
-    private static final String BTN_NOACTION    = "NO ACTION";
+    private static final String BTN_DEPOSIT = "DEPOSIT";
+    private static final String BTN_TAKEALL = "TAKE ALL";
+    private static final String BTN_PICKUP = "PICK UP";
+    private static final String BTN_NOACTION = "NO ACTION";
+    private static final String BTN_CLOSE = "CLOSE";
 
     protected static final int COLS_P = 6; //width original=4
     protected static final int COLS_L = 12; //height original=6
@@ -76,7 +83,8 @@ public class WndBag extends WndTabbed {
     private Listener listener;
     private WndBackpack.Mode mode;
     private String title;
-    private Class<?> classMatch;
+    private Class<? extends Item> classMatch;
+    private Class<? extends Item> classUnmatch;
 
     private int nCols;
     private int nRows;
@@ -88,11 +96,18 @@ public class WndBag extends WndTabbed {
     private static WndBackpack.Mode lastMode;
     private static IBag lastBag;
     private static int lastPos;
-    private static Class<?> lastClassMatch;
+    private static Class<? extends Item> lastClassMatch;
+    private static Class<? extends Item> lastClassUnmatch;
+
+    private static IBag nestBag;
 
     private int pos;
 
-    public WndBag(IBag bag, Listener listener, WndBackpack.Mode mode, Class<?> classMatch, String title, int pos) {
+    public WndBag(IBag bag, Listener listener, WndBackpack.Mode mode, Class<? extends Item> classMatch, String title, int pos) {
+        this(bag, listener, mode, classMatch, title, pos, null, null);
+    }
+
+    public WndBag(IBag bag, Listener listener, WndBackpack.Mode mode, Class<? extends Item> classMatch, String title, int pos, IBag nestBag, Class<? extends Item> classUnmatch) {
         super();
 
         this.listener = listener;
@@ -100,13 +115,15 @@ public class WndBag extends WndTabbed {
         this.title = title;
         this.pos = pos;
         this.classMatch = classMatch;
+        this.classUnmatch = classUnmatch;
 
         lastMode = mode;
         lastBag = bag;
         lastPos = pos;
         lastClassMatch = classMatch;
+        lastClassUnmatch = classUnmatch;
 
-        nCols = ShatteredPixelDungeon.landscape() ? COLS_L : COLS_P;
+        nCols = unPixelDungeon.landscape() ? COLS_L : COLS_P;
         nRows = (Belongings.BACKPACK_SIZE + 12) / nCols + ((Belongings.BACKPACK_SIZE + 12) % nCols > 0 ? 1 : 0);
 
         int slotsWidth = SLOT_SIZE * nCols + SLOT_MARGIN * (nCols - 1);
@@ -123,15 +140,29 @@ public class WndBag extends WndTabbed {
 
         resize(slotsWidth, slotsHeight + TITLE_HEIGHT);
 
-        IBag[] bags = {
-                bag
-        };
+        List<IBag> bags = new ArrayList<>();
+
+        IBag cur = nestBag;
+
+        if (cur == null) {
+            cur = bag;
+        }
+
+        this.nestBag = cur;
+
+        while (cur != null && !(cur instanceof Backpack)) {
+            bags.add(0, cur);
+
+            cur = cur.parent();
+        }
 
         for (IBag b : bags) {
             if (b != null) {
                 BagTab tab = new BagTab(b);
                 add(tab);
-                tab.select(b == bag);
+                if (b == bag) {
+                    tab.select(true);
+                }
             }
         }
 
@@ -144,6 +175,8 @@ public class WndBag extends WndTabbed {
         // Items in the bag
         Iterator<Item> iterator;
         int itemCount = 0;
+
+        GLog.d("container size=" + container.size());
 
         if (container.size() > 0) {
             iterator = container.iterator(false);
@@ -164,17 +197,16 @@ public class WndBag extends WndTabbed {
             row++;
         }
 
-        String action = lastBag.action();
+        IBag parent = lastBag.parent();
 
-        placeButton(BTN_DEPOSIT, itemCount < lastBag.size());
-        placeButton(BTN_TAKEALL, itemCount > 0);
-        if (action != null) {
-            placeButton(action, true);
+        placeButton(BTN_DEPOSIT, itemCount < lastBag.size(), false);
+        placeButton(BTN_TAKEALL, itemCount > 0, false);
+        placeButton(BTN_PICKUP, pos >= 0 && lastBag.self() != null, false);
+        if (parent != null) {
+            placeButton(BTN_CLOSE, true, true);
+        } else {
+            placeButton(BTN_NOACTION, false, false);
         }
-        else {
-            placeButton(BTN_NOACTION, false);
-        }
-        placeButton(BTN_PICKUP, pos >= 0 && lastBag.self() != null);
     }
 
     protected void placeItem(final Item item) {
@@ -197,28 +229,25 @@ public class WndBag extends WndTabbed {
             if (item != null) {
                 int pos = lastBag.pos();
                 if (pos == Constant.Position.NONE) {
-                    pos = Dungeon.hero.pos;
+                    pos = Dungeon.hero.pos();
                 }
 
                 Item test = lastBag.remove(item);
                 if (test == item) {
                     if (Dungeon.hero.belongings.collect(item)) {
                         Dungeon.hero.spend_new(Constant.Time.ITEM_PICKUP, true);
-                    }
-                    else {
+                    } else {
                         Dungeon.level.drop(item, pos);
                     }
-                }
-                else {
+                } else {
                     GLog.d("failure withdrawing item from bag");
-                    GLog.d(""+1/0);
+                    GLog.d("" + 1 / 0);
                 }
             }
 
             if (lastBag instanceof Heap && lastBag.size() < 1) {
-            }
-            else {
-                GameScene.show(new WndBag(lastBag, null, lastMode, lastClassMatch, null, lastPos));
+            } else {
+                GameScene.show(new WndBag(lastBag, null, lastMode, lastClassMatch, null, lastPos, nestBag, null));
             }
         }
     };
@@ -230,11 +259,11 @@ public class WndBag extends WndTabbed {
                 item = item.parent().remove(item);
                 lastBag.collect(item);
             }
-            GameScene.show(new WndBag(lastBag, null, lastMode, lastClassMatch, null, lastPos));
+            GameScene.show(new WndBag(lastBag, null, lastMode, lastClassMatch, null, lastPos, nestBag, LargeChest.class));
         }
     };
 
-    protected void placeButton(final String buttonText, boolean enabled) {
+    protected void placeButton(final String buttonText, boolean enabled, boolean isDefault) {
         int x = col * (SLOT_SIZE + SLOT_MARGIN);
         int y = TITLE_HEIGHT + row * (SLOT_SIZE + SLOT_MARGIN);
 
@@ -248,7 +277,7 @@ public class WndBag extends WndTabbed {
                 switch (buttonText) {
                     case BTN_DEPOSIT:
                         hide();
-                        GameScene.selectItem(depositItemSelector, WndBackpack.Mode.ALL, "Deposit an item", self.self());
+                        GameScene.selectItem(depositItemSelector, WndBackpack.Mode.ALL, "Deposit an item", LargeChest.class, self.self());
                         break;
                     case BTN_PICKUP:
                         hide();
@@ -265,11 +294,25 @@ public class WndBag extends WndTabbed {
                             }
                         }
                         break;
+                    case BTN_CLOSE:
+                        hide();
+                        IBag parent = lastBag.parent();
+
+                        if (parent instanceof Backpack) {
+                            GameScene.show(new WndBackpack(parent, null, WndBackpack.Mode.ALL_WITH_SPELL, null, null, false, null));
+                        } else {
+                            GameScene.show(new WndBag(parent, null, WndBackpack.Mode.ALL, null, null, Constant.Position.NONE));
+                        }
+                        break;
                 }
             }
         };
         button.setRect(x, y, SLOT_SIZE * 3 + SLOT_MARGIN * 2, SLOT_SIZE);
         button.enable(enabled);
+
+        if (isDefault) {
+            button.textColor(Window.TITLE_COLOR);
+        }
 
 
         add(button);
@@ -299,7 +342,7 @@ public class WndBag extends WndTabbed {
     @Override
     protected void onClick(Tab tab) {
         hide();
-        GameScene.show(new WndBag(((BagTab) tab).bag, listener, mode, classMatch, title, pos));
+        GameScene.show(new WndBag(((BagTab) tab).bag, listener, mode, classMatch, title, pos, nestBag, classUnmatch));
     }
 
     @Override
@@ -381,11 +424,6 @@ public class WndBag extends WndTabbed {
             super(item);
 
             this.item = item;
-			/*
-			if (item instanceof Gold) {
-				bg.visible = false;
-			}
-			*/
 
             width = height = SLOT_SIZE;
         }
@@ -418,7 +456,7 @@ public class WndBag extends WndTabbed {
                 if (item.getDisplayName() == null) {
                     enable(false);
                 } else {
-                    enable(WndBackpack.Mode.Qualify(mode, item, classMatch));
+                    enable(WndBackpack.Mode.Qualify(mode, item, classMatch, classUnmatch));
                 }
             } else {
                 bg.color(NORMAL);

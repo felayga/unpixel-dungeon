@@ -5,7 +5,7 @@
  * Shattered Pixel Dungeon
  * Copyright (C) 2014-2015 Evan Debenham
  *
- * Unpixel Dungeon
+ * unPixel Dungeon
  * Copyright (C) 2015-2016 Randall Foudray
  *
  * This program is free software: you can redistribute it and/or modify
@@ -20,6 +20,7 @@
  *
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>
+ *
  *
  */
 package com.felayga.unpixeldungeon.items;
@@ -69,7 +70,7 @@ public class Stylus extends Item {
 	public boolean execute( Hero hero, String action ) {
 		if (action.equals(AC_INSCRIBE)) {
 			curUser = hero;
-			GameScene.selectItem( itemSelector, Armor.class, TXT_SELECT_ARMOR );
+			GameScene.selectItem( itemSelector, Armor.class, TXT_SELECT_ARMOR, null );
 
 			return false;
 		} else {
@@ -94,7 +95,7 @@ public class Stylus extends Item {
 		
 		armor.enchant();
 		
-		curUser.sprite.operate( curUser.pos );
+		curUser.sprite.operate( curUser.pos() );
 		curUser.sprite.centerEmitter(-1).start( PurpleParticle.BURST, 0.05f, 10 );
 		Sample.INSTANCE.play( Assets.SND_BURNING );
 		

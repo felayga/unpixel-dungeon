@@ -5,7 +5,7 @@
  * Shattered Pixel Dungeon
  * Copyright (C) 2014-2015 Evan Debenham
  *
- * Unpixel Dungeon
+ * unPixel Dungeon
  * Copyright (C) 2015-2016 Randall Foudray
  *
  * This program is free software: you can redistribute it and/or modify
@@ -21,6 +21,7 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>
  *
+ *
  */
 package com.felayga.unpixeldungeon.items.scrolls;
 
@@ -28,6 +29,7 @@ package com.felayga.unpixeldungeon.items.scrolls;
 
 import com.felayga.unpixeldungeon.Assets;
 import com.felayga.unpixeldungeon.Dungeon;
+import com.felayga.unpixeldungeon.actors.Char;
 import com.felayga.unpixeldungeon.actors.buffs.Buff;
 import com.felayga.unpixeldungeon.actors.buffs.negative.Amok;
 import com.felayga.unpixeldungeon.actors.buffs.positive.Invisibility;
@@ -45,14 +47,14 @@ public class ScrollOfRage extends Scroll {
 		initials = "Ra";
 	}
 
-    public static int enrage(int pos, int range) {
+    public static int enrage(Char source, int pos, int range) {
         int retval = 0;
 
         for (Mob mob : Dungeon.level.mobs.toArray( new Mob[Dungeon.level.mobs.size()] )) {
-            if (Level.distance(mob.pos, pos) <= range) {
+            if (Level.distance(mob.pos(), pos) <= range) {
                 mob.beckon(pos);
-                if (Level.fieldOfView[mob.pos]) {
-                    Buff.prolong(mob, Amok.class, GameTime.TICK * 5);
+                if (Level.fieldOfView[mob.pos()]) {
+                    Buff.prolong(mob, source, Amok.class, GameTime.TICK * 5);
                 }
             }
             retval++;
@@ -63,14 +65,13 @@ public class ScrollOfRage extends Scroll {
 	
 	@Override
 	protected void doRead() {
-        enrage(curUser.pos, Math.max(Dungeon.level.WIDTH, Dungeon.level.HEIGHT));
+        enrage(curUser, curUser.pos(), Math.max(Dungeon.level.WIDTH, Dungeon.level.HEIGHT));
 
 		GLog.w( "The scroll emits an enraging roar that echoes throughout the dungeon!" );
 		setKnown();
 		
 		curUser.sprite.centerEmitter(-1).start( Speck.factory( Speck.SCREAM ), 0.3f, 3 );
 		Sample.INSTANCE.play( Assets.SND_CHALLENGE );
-		Invisibility.dispel();
 		
 		curUser.spend_new( TIME_TO_READ, true );
 	}

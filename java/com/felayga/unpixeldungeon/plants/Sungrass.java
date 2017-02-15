@@ -5,7 +5,7 @@
  * Shattered Pixel Dungeon
  * Copyright (C) 2014-2015 Evan Debenham
  *
- * Unpixel Dungeon
+ * unPixel Dungeon
  * Copyright (C) 2015-2016 Randall Foudray
  *
  * This program is free software: you can redistribute it and/or modify
@@ -21,6 +21,7 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>
  *
+ *
  */
 package com.felayga.unpixeldungeon.plants;
 
@@ -30,15 +31,18 @@ import com.felayga.unpixeldungeon.actors.Char;
 import com.felayga.unpixeldungeon.effects.CellEmitter;
 import com.felayga.unpixeldungeon.effects.Speck;
 import com.felayga.unpixeldungeon.effects.particles.ShaftParticle;
+import com.felayga.unpixeldungeon.items.potions.IAlchemyComponent;
+import com.felayga.unpixeldungeon.items.potions.PotionOfBrewing;
 import com.felayga.unpixeldungeon.sprites.ItemSpriteSheet;
 
 public class Sungrass extends Plant {
+    private static final String TXT_NAME = "Sungrass";
 
 	private static final String TXT_DESC = "Sungrass is renowned for its sap's slow but effective healing properties.";
 
     public Sungrass()
 	{
-        super("Sungrass", 4);
+        super(TXT_NAME, 4);
 	}
 	
 	@Override
@@ -66,9 +70,9 @@ public class Sungrass extends Plant {
 		return TXT_DESC;
 	}
 	
-	public static class Seed extends Plant.Seed {
+	public static class Seed extends Plant.Seed implements IAlchemyComponent {
 		{
-			plantName = "Sungrass";
+			plantName = TXT_NAME;
 			
 			name = "seed of " + plantName;
 			image = ItemSpriteSheet.SEED_SUNGRASS;
@@ -83,6 +87,14 @@ public class Sungrass extends Plant {
 			return TXT_DESC;
 		}
 	}
+
+    public static class Brew extends PotionOfBrewing {
+        {
+            plantName = "seed of " + TXT_NAME;
+
+            image = ItemSpriteSheet.ALCHEMY_SUNGRASS;
+        }
+    }
 
     /*
 	public static class Health extends Buff {

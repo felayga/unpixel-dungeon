@@ -5,7 +5,7 @@
  * Shattered Pixel Dungeon
  * Copyright (C) 2014-2015 Evan Debenham
  *
- * Unpixel Dungeon
+ * unPixel Dungeon
  * Copyright (C) 2015-2016 Randall Foudray
  *
  * This program is free software: you can redistribute it and/or modify
@@ -21,6 +21,7 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>
  *
+ *
  */
 package com.felayga.unpixeldungeon.items.potions;
 
@@ -35,9 +36,7 @@ import com.felayga.unpixeldungeon.actors.buffs.negative.Weakness;
 import com.felayga.unpixeldungeon.actors.buffs.positive.MagicalSleep;
 import com.felayga.unpixeldungeon.actors.hero.Hero;
 import com.felayga.unpixeldungeon.effects.Speck;
-import com.felayga.unpixeldungeon.items.food.Blandfruit;
 import com.felayga.unpixeldungeon.mechanics.GameTime;
-import com.felayga.unpixeldungeon.plants.Deathroot;
 import com.felayga.unpixeldungeon.utils.GLog;
 import com.watabou.utils.Random;
 
@@ -52,9 +51,6 @@ public class PotionOfBooze extends Potion {
 		isHelpful = true;
 
         price = 30;
-
-        alchemyPrimary = Blandfruit.class;
-        alchemySecondary = Deathroot.Seed.class;
     }
 	
 	@Override
@@ -76,15 +72,15 @@ public class PotionOfBooze extends Potion {
         }
 
         hero.HP = Math.min(hero.HT, hero.HP + 1);
-		Buff.affect(hero, Vertigo.class, Random.Int(3, 9) * GameTime.TICK);
+		Buff.affect(hero, hero, Vertigo.class, Random.Int(3, 9) * GameTime.TICK);
 
         switch(bucStatus) {
             case Cursed:
-                Buff.affect(hero, MagicalSleep.class);
+                Buff.affect(hero, hero, MagicalSleep.class);
                 break;
             default:
                 if (Random.Int(5) == 0) {
-                    Buff.affect(hero, MagicalSleep.class);
+                    Buff.affect(hero, hero, MagicalSleep.class);
                 }
                 break;
         }

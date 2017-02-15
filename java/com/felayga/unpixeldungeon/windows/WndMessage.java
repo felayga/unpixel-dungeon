@@ -5,7 +5,7 @@
  * Shattered Pixel Dungeon
  * Copyright (C) 2014-2015 Evan Debenham
  *
- * Unpixel Dungeon
+ * unPixel Dungeon
  * Copyright (C) 2015-2016 Randall Foudray
  *
  * This program is free software: you can redistribute it and/or modify
@@ -21,12 +21,13 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>
  *
+ *
  */
 package com.felayga.unpixeldungeon.windows;
 
-import com.felayga.unpixeldungeon.ShatteredPixelDungeon;
 import com.felayga.unpixeldungeon.scenes.PixelScene;
 import com.felayga.unpixeldungeon.ui.Window;
+import com.felayga.unpixeldungeon.unPixelDungeon;
 import com.watabou.noosa.BitmapTextMultiline;
 
 public class WndMessage extends Window {
@@ -40,7 +41,7 @@ public class WndMessage extends Window {
 		super();
 		
 		BitmapTextMultiline info = PixelScene.createMultiline( text, 6 );
-		info.maxWidth = (ShatteredPixelDungeon.landscape() ? WIDTH_L : WIDTH_P) - MARGIN * 2;
+		info.maxWidth = (unPixelDungeon.landscape() ? WIDTH_L : WIDTH_P) - MARGIN * 2;
 		info.measure();
 		info.x = info.y = MARGIN;
 		add( info );

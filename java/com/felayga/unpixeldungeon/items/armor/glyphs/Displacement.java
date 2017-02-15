@@ -5,7 +5,7 @@
  * Shattered Pixel Dungeon
  * Copyright (C) 2014-2015 Evan Debenham
  *
- * Unpixel Dungeon
+ * unPixel Dungeon
  * Copyright (C) 2015-2016 Randall Foudray
  *
  * This program is free software: you can redistribute it and/or modify
@@ -20,6 +20,7 @@
  *
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>
+ *
  *
  */
 package com.felayga.unpixeldungeon.items.armor.glyphs;
@@ -48,7 +49,7 @@ public class Displacement extends Glyph {
 			return damage;
 		}
 		
-		int nTries = (armor.level < 0 ? 1 : armor.level + 1) * 5;
+		int nTries = (armor.level() < 0 ? 1 : armor.level() + 1) * 5;
 		for (int i=0; i < nTries; i++) {
 			int pos = Random.Int( Level.LENGTH );
 			if (Dungeon.visible[pos] && Level.passable[pos] && Actor.findChar( pos ) == null) {

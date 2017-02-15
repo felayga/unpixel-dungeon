@@ -5,7 +5,7 @@
  * Shattered Pixel Dungeon
  * Copyright (C) 2014-2015 Evan Debenham
  *
- * Unpixel Dungeon
+ * unPixel Dungeon
  * Copyright (C) 2015-2016 Randall Foudray
  *
  * This program is free software: you can redistribute it and/or modify
@@ -21,6 +21,7 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>
  *
+ *
  */
 package com.felayga.unpixeldungeon.items.food;
 
@@ -31,13 +32,13 @@ public class OverpricedRation extends Food {
 
     public OverpricedRation()
 	{
-        super(400, Encumbrance.UNIT * 20);
+        super(600, Encumbrance.UNIT * 15);
 
-		name = "overpriced food ration";
+		name = "cram ration";
 		image = ItemSpriteSheet.FOOD_OVERPRICED;
 
         bones = true;
-        price = 20;
+        price = 35;
 	}
 	
 	@Override
@@ -48,7 +49,7 @@ public class OverpricedRation extends Food {
 	@Override
 	public String message()
 	{
-		return "That food tasted ok.";
+		return "That food tasted bland.";
 	}
 
 }

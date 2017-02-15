@@ -5,7 +5,7 @@
  * Shattered Pixel Dungeon
  * Copyright (C) 2014-2015 Evan Debenham
  *
- * Unpixel Dungeon
+ * unPixel Dungeon
  * Copyright (C) 2015-2016 Randall Foudray
  *
  * This program is free software: you can redistribute it and/or modify
@@ -20,6 +20,7 @@
  *
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>
+ *
  *
  */
 package com.felayga.unpixeldungeon.items.artifacts;
@@ -41,7 +42,7 @@ public class CapeOfThorns extends Artifact_old {
 		name = "Cape of Thorns";
 		image = ItemSpriteSheet.ARTIFACT_CAPE;
 
-		level = 0;
+		level(0);
 		levelCap = 10;
 
 		charge = 0;
@@ -92,10 +93,10 @@ public class CapeOfThorns extends Artifact_old {
 
 		public int proc(int damage, Actor attacker, Char defender){
 			if (cooldown == 0){
-				charge += damage*(0.5+level*0.05);
+				charge += damage*(0.5+level()*0.05);
 				if (charge >= chargeCap){
 					charge = 0;
-					cooldown = 10+level;
+					cooldown = 10+level();
 					GLog.p("Your Cape begins radiating energy, you feel protected!");
 					BuffIndicator.refreshHero();
 				}
@@ -107,15 +108,15 @@ public class CapeOfThorns extends Artifact_old {
 
 				if (attacker instanceof Char) {
 					Char c = (Char)attacker;
-					if (Level.canReach(c.pos, defender.pos)) {
+					if (Level.canReach(c.pos(), defender.pos())) {
 						c.damage(deflected, MagicType.Mundane, null);
 					}
 				}
 
 				exp+= deflected;
 
-				if (exp >= (level+1)*5 && level < levelCap){
-					exp -= (level+1)*5;
+				if (exp >= (level()+1)*5 && level() < levelCap){
+					exp -= (level()+1)*5;
 					upgrade(null, 1);
 					GLog.p("Your Cape grows stronger!");
 				}

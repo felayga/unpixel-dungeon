@@ -5,7 +5,7 @@
  * Shattered Pixel Dungeon
  * Copyright (C) 2014-2015 Evan Debenham
  *
- * Unpixel Dungeon
+ * unPixel Dungeon
  * Copyright (C) 2015-2016 Randall Foudray
  *
  * This program is free software: you can redistribute it and/or modify
@@ -21,11 +21,13 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>
  *
+ *
  */
 package com.felayga.unpixeldungeon.items.potions;
 
 import com.felayga.unpixeldungeon.Assets;
 import com.felayga.unpixeldungeon.Dungeon;
+import com.felayga.unpixeldungeon.actors.Char;
 import com.felayga.unpixeldungeon.actors.blobs.Blob;
 import com.felayga.unpixeldungeon.actors.blobs.ToxicGas;
 import com.felayga.unpixeldungeon.scenes.GameScene;
@@ -33,35 +35,36 @@ import com.watabou.noosa.audio.Sample;
 
 public class PotionOfToxicGas extends Potion {
 
-    public PotionOfToxicGas()
-	{
-		name = "Potion of Toxic Gas";
-		initials = "TG";
+    public PotionOfToxicGas() {
+        name = "Potion of Toxic Gas";
+        initials = "TG";
 
-		isHarmful = true;
+        isHarmful = true;
 
         price = 40;
-	}
-	
-	@Override
-	public void shatter( int cell ) {
+    }
 
-		if (Dungeon.visible[cell]) {
-			setKnown();
+    @Override
+    public void shatter(Char source, int cell) {
 
-			splash( cell );
-			Sample.INSTANCE.play( Assets.SND_SHATTER );
-		}
+        if (Dungeon.visible[cell]) {
+            setKnown();
 
-		GameScene.add( Blob.seed( cell, 1000, ToxicGas.class ) );
-	}
-	
-	@Override
-	public String desc() {
-		return
-			"Uncorking or shattering this pressurized glass will cause " +
-			"its contents to explode into a deadly cloud of toxic green gas. " +
-			"You might choose to fling this potion at distant enemies " +
-			"instead of uncorking it by hand.";
-	}
+            splash(cell);
+        }
+        if (Dungeon.audible[cell]) {
+            Sample.INSTANCE.play(Assets.SND_SHATTER);
+        }
+
+        GameScene.add(Blob.seed(source, cell, 1000, ToxicGas.class));
+    }
+
+    @Override
+    public String desc() {
+        return
+                "Uncorking or shattering this pressurized glass will cause " +
+                        "its contents to explode into a deadly cloud of toxic green gas. " +
+                        "You might choose to fling this potion at distant enemies " +
+                        "instead of uncorking it by hand.";
+    }
 }

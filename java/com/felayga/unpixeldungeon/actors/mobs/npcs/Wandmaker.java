@@ -5,7 +5,7 @@
  * Shattered Pixel Dungeon
  * Copyright (C) 2014-2015 Evan Debenham
  *
- * Unpixel Dungeon
+ * unPixel Dungeon
  * Copyright (C) 2015-2016 Randall Foudray
  *
  * This program is free software: you can redistribute it and/or modify
@@ -20,6 +20,7 @@
  *
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>
+ *
  *
  */
 package com.felayga.unpixeldungeon.actors.mobs.npcs;
@@ -145,7 +146,7 @@ public class Wandmaker extends NPC {
 	@Override
 	public void interact() {
 		
-		sprite.turnTo( pos, Dungeon.hero.pos );
+		sprite.turnTo( pos(), Dungeon.hero.pos() );
 		if (Quest.given) {
 			
 			Item item;
@@ -331,8 +332,8 @@ public class Wandmaker extends NPC {
 				if (setRoom( rooms )){
 					Wandmaker npc = new Wandmaker();
 					do {
-						npc.pos = room.random();
-					} while (level.map[npc.pos] == Terrain.STAIRS_UP || level.map[npc.pos] == Terrain.SIGN);
+						npc.pos(room.random());
+					} while (level.map[npc.pos()] == Terrain.STAIRS_UP || level.map[npc.pos()] == Terrain.SIGN);
 					level.mobs.add( npc );
 
 					spawned = true;
@@ -412,13 +413,14 @@ public class Wandmaker extends NPC {
 		@Override
 		public void activate() {
 			Char ch = Actor.findChar(pos);
+            Char owner = Char.Registry.get(ownerRegistryIndex());
 			
-			GameScene.add( Blob.seed( pos, 100, ToxicGas.class ) );
+			GameScene.add( Blob.seed( owner, pos, 100, ToxicGas.class ) );
 			
 			Dungeon.level.drop( new Seed(), pos ).sprite.drop();
 			
 			if (ch != null) {
-				Buff.prolong( ch, Roots.class, GameTime.TICK * 3 );
+				Buff.prolong( ch, owner, Roots.class, GameTime.TICK * 3 );
 			}
 		}
 		

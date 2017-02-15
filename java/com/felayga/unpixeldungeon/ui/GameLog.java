@@ -5,7 +5,7 @@
  * Shattered Pixel Dungeon
  * Copyright (C) 2014-2015 Evan Debenham
  *
- * Unpixel Dungeon
+ * unPixel Dungeon
  * Copyright (C) 2015-2016 Randall Foudray
  *
  * This program is free software: you can redistribute it and/or modify
@@ -20,6 +20,7 @@
  *
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>
+ *
  *
  */
 package com.felayga.unpixeldungeon.ui;
@@ -57,50 +58,51 @@ public class GameLog extends Component implements Signal.Listener<String> {
 	@Override
 	public void onSignal( String text ) {
 
-		int color = CharSprite.DEFAULT;
-		if (text.startsWith( GLog.POSITIVE )) {
-			text = text.substring( GLog.POSITIVE.length() );
-			color = CharSprite.POSITIVE;
-		} else
-		if (text.startsWith( GLog.NEGATIVE )) {
-			text = text.substring( GLog.NEGATIVE.length() );
-			color = CharSprite.NEGATIVE;
-		} else
-		if (text.startsWith( GLog.WARNING )) {
-			text = text.substring( GLog.WARNING.length() );
-			color = CharSprite.WARNING;
-		} else
-		if (text.startsWith( GLog.HIGHLIGHT )) {
-			text = text.substring( GLog.HIGHLIGHT.length() );
-			color = CharSprite.NEUTRAL;
-		}
-		
-		text = Utils.capitalize( text ) +
-			(PUNCTUATION.matcher( text ).matches() ? "" : ".");
-		
-		if (lastEntry != null && color == lastColor) {
-			
-			String lastMessage = lastEntry.text();
-			lastEntry.text( lastMessage.length() == 0 ? text : lastMessage + " " + text );
-			lastEntry.measure();
-			
-		} else {
-			
-			lastEntry = PixelScene.createMultiline( text, 6 );
-			lastEntry.maxWidth = (int)width;
-			lastEntry.measure();
-			lastEntry.hardlight( color );
-			lastColor = color;
-			add( lastEntry );
-			
-		}
-		
-		if (length > MAX_MESSAGES) {
-			remove( members.get( 0 ) );
-		}
-		
-		layout();
-	}
+        int color = CharSprite.DEFAULT;
+        if (text.startsWith(GLog.POSITIVE)) {
+            text = text.substring(GLog.POSITIVE.length());
+            color = CharSprite.POSITIVE;
+        } else if (text.startsWith(GLog.NEGATIVE)) {
+            text = text.substring(GLog.NEGATIVE.length());
+            color = CharSprite.NEGATIVE;
+        } else if (text.startsWith(GLog.WARNING)) {
+            text = text.substring(GLog.WARNING.length());
+            color = CharSprite.WARNING;
+        } else if (text.startsWith(GLog.HIGHLIGHT)) {
+            text = text.substring(GLog.HIGHLIGHT.length());
+            color = CharSprite.NEUTRAL;
+        } else if (text.startsWith(GLog.DEBUG)) {
+            text = text.substring(GLog.DEBUG.length());
+            color = CharSprite.DEBUG;
+        }
+
+
+        text = Utils.capitalize(text) +
+                (PUNCTUATION.matcher(text).matches() ? "" : ".");
+
+        if (lastEntry != null && color == lastColor) {
+
+            String lastMessage = lastEntry.text();
+            lastEntry.text(lastMessage.length() == 0 ? text : lastMessage + " " + text);
+            lastEntry.measure();
+
+        } else {
+
+            lastEntry = PixelScene.createMultiline(text, 6);
+            lastEntry.maxWidth = (int) width;
+            lastEntry.measure();
+            lastEntry.hardlight(color);
+            lastColor = color;
+            add(lastEntry);
+
+        }
+
+        if (length > MAX_MESSAGES) {
+            remove(members.get(0));
+        }
+
+        layout();
+    }
 	
 	@Override
 	protected void layout() {

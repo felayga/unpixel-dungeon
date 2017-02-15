@@ -5,7 +5,7 @@
  * Shattered Pixel Dungeon
  * Copyright (C) 2014-2015 Evan Debenham
  *
- * Unpixel Dungeon
+ * unPixel Dungeon
  * Copyright (C) 2015-2016 Randall Foudray
  *
  * This program is free software: you can redistribute it and/or modify
@@ -20,6 +20,7 @@
  *
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>
+ *
  *
  */
 package com.felayga.unpixeldungeon.levels.painters;
@@ -59,13 +60,13 @@ public class BlacksmithPainter extends Painter {
 		
 		Blacksmith npc = new Blacksmith();
 		do {
-			npc.pos = room.random( 1 );
-		} while (level.heaps.get( npc.pos ) != null);
+			npc.pos(room.random( 1 ));
+		} while (level.heaps.get( npc.pos() ) != null);
 		level.mobs.add( npc );
 
 		for(int cell : room.getCells()) {
 			if (level.map[cell] == Terrain.TRAP){
-				level.setTrap(new FireTrap().reveal(), cell);
+				level.setTrap(npc, new FireTrap().reveal(), cell);
 			}
 		}
 	}

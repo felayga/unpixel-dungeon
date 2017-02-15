@@ -5,7 +5,7 @@
  * Shattered Pixel Dungeon
  * Copyright (C) 2014-2015 Evan Debenham
  *
- * Unpixel Dungeon
+ * unPixel Dungeon
  * Copyright (C) 2015-2016 Randall Foudray
  *
  * This program is free software: you can redistribute it and/or modify
@@ -20,6 +20,7 @@
  *
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>
+ *
  *
  */
 package com.felayga.unpixeldungeon.levels.traps;
@@ -47,7 +48,7 @@ public class SpearTrap extends Trap {
 
 	@Override
 	public void trigger() {
-		if (Dungeon.visible[pos]){
+		if (Dungeon.audible[pos]){
 			Sample.INSTANCE.play(Assets.SND_TRAP);
 		}
 		//this trap is not disarmed by being triggered
@@ -58,9 +59,11 @@ public class SpearTrap extends Trap {
 	@Override
 	public void activate() {
 		if (Dungeon.visible[pos]){
-			Sample.INSTANCE.play(Assets.SND_HIT);
 			Wound.hit(pos);
 		}
+        if (Dungeon.audible[pos]) {
+            Sample.INSTANCE.play(Assets.SND_HIT);
+        }
 
 		Char ch = Actor.findChar( pos);
 		if (ch != null){

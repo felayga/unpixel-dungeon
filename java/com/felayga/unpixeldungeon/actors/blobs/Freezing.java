@@ -5,7 +5,7 @@
  * Shattered Pixel Dungeon
  * Copyright (C) 2014-2015 Evan Debenham
  *
- * Unpixel Dungeon
+ * unPixel Dungeon
  * Copyright (C) 2015-2016 Randall Foudray
  *
  * This program is free software: you can redistribute it and/or modify
@@ -20,6 +20,7 @@
  *
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>
+ *
  *
  */
 package com.felayga.unpixeldungeon.actors.blobs;
@@ -39,14 +40,14 @@ import com.watabou.utils.Random;
 public class Freezing {
 
 	// Returns true, if this cell is visible
-	public static boolean affect( int cell, Fire fire ) {
+	public static boolean affect(Char source, int cell, Fire fire) {
 		
 		Char ch = Actor.findChar( cell );
 		if (ch != null) {
-			if (Level.water[ch.pos]){
-				Buff.prolong(ch, Frost.class, Frost.duration(ch) * Random.Long(GameTime.TICK * 5, GameTime.TICK * 15 / 2) / GameTime.TICK);
+			if (Level.puddle[ch.pos()]){
+				Buff.prolong(ch, source, Frost.class, Frost.duration(ch) * Random.Long(GameTime.TICK * 5, GameTime.TICK * 15 / 2) / GameTime.TICK);
 			} else {
-				Buff.prolong(ch, Frost.class, Frost.duration(ch) * Random.Long(GameTime.TICK, GameTime.TICK * 3 / 2) / GameTime.TICK);
+				Buff.prolong(ch, source, Frost.class, Frost.duration(ch) * Random.Long(GameTime.TICK, GameTime.TICK * 3 / 2) / GameTime.TICK);
 			}
 		}
 		
@@ -56,7 +57,7 @@ public class Freezing {
 		
 		Heap heap = Dungeon.level.heaps.get( cell );
 		if (heap != null) {
-			heap.freeze();
+			heap.freeze(source);
 		}
 
 		if (Dungeon.visible[cell]) {

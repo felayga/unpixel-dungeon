@@ -5,7 +5,7 @@
  * Shattered Pixel Dungeon
  * Copyright (C) 2014-2015 Evan Debenham
  *
- * Unpixel Dungeon
+ * unPixel Dungeon
  * Copyright (C) 2015-2016 Randall Foudray
  *
  * This program is free software: you can redistribute it and/or modify
@@ -20,6 +20,7 @@
  *
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>
+ *
  *
  */
 package com.felayga.unpixeldungeon.actors.buffs.hero;
@@ -38,34 +39,32 @@ import com.watabou.utils.Random;
 
 public class FireImbue extends Buff {
 
-	public static final float DURATION	= 30f;
+	public static final long DURATION	= 30 * GameTime.TICK;
 
-	protected float left;
-
-	private static final String LEFT	= "left";
+	protected long left;
 
 	@Override
 	public void storeInBundle( Bundle bundle ) {
 		super.storeInBundle( bundle );
-		bundle.put( LEFT, left );
+		bundle.put( TIMELEFT, left );
 
 	}
 
 	@Override
 	public void restoreFromBundle( Bundle bundle ) {
 		super.restoreFromBundle( bundle );
-		left = bundle.getFloat( LEFT );
+		left = bundle.getLong(TIMELEFT);
 	}
 
-	public void set( float duration ) {
+	public void set( long duration ) {
 		this.left = duration;
 	}
 
 	@Override
 	public boolean act() {
-		if (Dungeon.level.map[target.pos] == Terrain.GRASS) {
-			Dungeon.level.set(target.pos, Terrain.EMBERS, true);
-			GameScene.updateMap(target.pos);
+		if (Dungeon.level.map[target.pos()] == Terrain.GRASS) {
+			Dungeon.level.set(target.pos(), Terrain.EMBERS, true);
+			GameScene.updateMap(target.pos());
 		}
 
         spend_new(GameTime.TICK, false);
@@ -78,7 +77,7 @@ public class FireImbue extends Buff {
 
 	public void proc(Char enemy){
 		if (Random.Int(2) == 0)
-			Buff.affect( enemy, Burning.class ).reignite( enemy );
+			Buff.affect( enemy, Char.Registry.get(ownerRegistryIndex()), Burning.class ).reignite( enemy );
 
 		enemy.sprite.emitter().burst( FlameParticle.FACTORY, 2 );
 	}
@@ -103,7 +102,9 @@ public class FireImbue extends Buff {
 				"You are imbued for " + dispTurns(left) + ".";
 	}
 
+    /*
 	{
 		immunities.add( Burning.class );
 	}
+    */
 }

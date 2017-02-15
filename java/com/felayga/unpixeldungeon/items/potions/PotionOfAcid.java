@@ -5,7 +5,7 @@
  * Shattered Pixel Dungeon
  * Copyright (C) 2014-2015 Evan Debenham
  *
- * Unpixel Dungeon
+ * unPixel Dungeon
  * Copyright (C) 2015-2016 Randall Foudray
  *
  * This program is free software: you can redistribute it and/or modify
@@ -21,6 +21,7 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>
  *
+ *
  */
 package com.felayga.unpixeldungeon.items.potions;
 
@@ -33,8 +34,6 @@ import com.felayga.unpixeldungeon.actors.blobs.Blob;
 import com.felayga.unpixeldungeon.effects.CellEmitter;
 import com.felayga.unpixeldungeon.effects.particles.AcidParticle;
 import com.felayga.unpixeldungeon.levels.Level;
-import com.felayga.unpixeldungeon.plants.Deathroot;
-import com.felayga.unpixeldungeon.plants.Stormvine;
 import com.felayga.unpixeldungeon.scenes.GameScene;
 import com.felayga.unpixeldungeon.utils.GLog;
 import com.watabou.noosa.audio.Sample;
@@ -48,9 +47,6 @@ public class PotionOfAcid extends Potion {
 
 		isHarmful = true;
         price = 40;
-
-        alchemyPrimary = Deathroot.Seed.class;
-        alchemySecondary = Stormvine.Seed.class;
     }
 
 	@Override
@@ -61,21 +57,23 @@ public class PotionOfAcid extends Potion {
 	}
 
 	@Override
-	public void shatter( int cell ) {
+	public void shatter( Char owner, int cell ) {
 
 		if (Dungeon.visible[cell]) {
 			setKnown();
 
-			splash( cell );
-			Sample.INSTANCE.play( Assets.SND_SHATTER );
+			splash(cell);
 		}
+        if (Dungeon.audible[cell]) {
+            Sample.INSTANCE.play( Assets.SND_SHATTER );
+        }
 
 		for (int offset : Level.NEIGHBOURS9){
-			if (Level.wood[cell+offset]
+			if (Level.burnable[cell+offset]
 					|| Actor.findChar(cell+offset) != null
 					|| Dungeon.level.heaps.get(cell+offset) != null) {
 
-				GameScene.add(Blob.seed(cell + offset, 2, Acid.class));
+				GameScene.add(Blob.seed(owner, cell + offset, 2, Acid.class));
 
 			} else {
 

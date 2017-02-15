@@ -5,7 +5,7 @@
  * Shattered Pixel Dungeon
  * Copyright (C) 2014-2015 Evan Debenham
  *
- * Unpixel Dungeon
+ * unPixel Dungeon
  * Copyright (C) 2015-2016 Randall Foudray
  *
  * This program is free software: you can redistribute it and/or modify
@@ -20,6 +20,7 @@
  *
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>
+ *
  *
  */
 package com.felayga.unpixeldungeon.items.scrolls;
@@ -47,16 +48,15 @@ public class ScrollOfTerror extends Scroll {
 	
 	@Override
 	protected void doRead() {
-		
 		new Flare( 5, 32 ).color( 0xFF0000, true ).show( curUser.sprite, 2f );
 		Sample.INSTANCE.play( Assets.SND_READ );
-		Invisibility.dispel();
+		Invisibility.dispelAttack(curUser);
 		
 		int count = 0;
 		Mob affected = null;
 		for (Mob mob : Dungeon.level.mobs.toArray( new Mob[Dungeon.level.mobs.size()] )) {
-			if (Level.fieldOfView[mob.pos]) {
-				Buff.affect( mob, Terror.class, Terror.DURATION ).object = curUser.id();
+			if (Level.fieldOfView[mob.pos()]) {
+				Buff.affect( mob, curUser, Terror.class, Terror.DURATION );
 
 				if (mob.buff(Terror.class) != null){
 					count++;

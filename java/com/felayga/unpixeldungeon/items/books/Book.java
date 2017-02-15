@@ -5,7 +5,7 @@
  * Shattered Pixel Dungeon
  * Copyright (C) 2014-2015 Evan Debenham
  *
- * Unpixel Dungeon
+ * unPixel Dungeon
  * Copyright (C) 2015-2016 Randall Foudray
  *
  * This program is free software: you can redistribute it and/or modify
@@ -21,16 +21,18 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>
  *
+ *
  */
 package com.felayga.unpixeldungeon.items.books;
 
 import com.felayga.unpixeldungeon.Assets;
 import com.felayga.unpixeldungeon.Badges;
+import com.felayga.unpixeldungeon.actors.Char;
 import com.felayga.unpixeldungeon.actors.buffs.hero.Encumbrance;
 import com.felayga.unpixeldungeon.actors.buffs.negative.Blindness;
 import com.felayga.unpixeldungeon.actors.hero.Hero;
 import com.felayga.unpixeldungeon.items.Item;
-import com.felayga.unpixeldungeon.items.ItemStatusHandler;
+import com.felayga.unpixeldungeon.items.ItemRandomizationHandler;
 import com.felayga.unpixeldungeon.items.scrolls.Scroll;
 import com.felayga.unpixeldungeon.sprites.ItemSpriteSheet;
 import com.felayga.unpixeldungeon.utils.GLog;
@@ -132,7 +134,7 @@ public abstract class Book extends Item {
             ItemSpriteSheet.SPELLBOOK_40
     };
 
-    private static ItemStatusHandler<Book> handler;
+    private static ItemRandomizationHandler<Book> handler;
 
     private String rune;
 
@@ -140,7 +142,7 @@ public abstract class Book extends Item {
 
     @SuppressWarnings("unchecked")
     public static void initLabels() {
-        handler = new ItemStatusHandler<Book>( (Class<? extends Book>[])books, runes, images, 2 );
+        handler = new ItemRandomizationHandler<Book>( (Class<? extends Book>[])books, runes, images, 2 );
     }
 
     public static void save( Bundle bundle ) {
@@ -149,7 +151,7 @@ public abstract class Book extends Item {
 
     @SuppressWarnings("unchecked")
     public static void restore( Bundle bundle ) {
-        handler = new ItemStatusHandler<Book>( (Class<? extends Book>[])books, runes, images, bundle );
+        handler = new ItemRandomizationHandler<Book>( (Class<? extends Book>[])books, runes, images, bundle );
     }
 
     public Book() {
@@ -181,7 +183,7 @@ public abstract class Book extends Item {
     }
 
     @Override
-    public boolean execute( Hero hero, String action ) {
+    public boolean execute(Hero hero, String action ) {
         if (action.equals( Scroll.AC_READ )) {
             if (hero.buff( Blindness.class ) != null) {
                 GLog.w( "Being blind, you're unable to read the runes in the book." );

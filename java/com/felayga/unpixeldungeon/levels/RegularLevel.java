@@ -5,7 +5,7 @@
  * Shattered Pixel Dungeon
  * Copyright (C) 2014-2015 Evan Debenham
  *
- * Unpixel Dungeon
+ * unPixel Dungeon
  * Copyright (C) 2015-2016 Randall Foudray
  *
  * This program is free software: you can redistribute it and/or modify
@@ -20,6 +20,7 @@
  *
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>
+ *
  *
  */
 package com.felayga.unpixeldungeon.levels;
@@ -36,6 +37,7 @@ import com.felayga.unpixeldungeon.items.scrolls.Scroll;
 import com.felayga.unpixeldungeon.levels.Room.Type;
 import com.felayga.unpixeldungeon.levels.branches.DungeonBranch;
 import com.felayga.unpixeldungeon.levels.painters.Painter;
+import com.felayga.unpixeldungeon.levels.painters.ShopPainter;
 import com.felayga.unpixeldungeon.levels.traps.FireTrap;
 import com.felayga.unpixeldungeon.levels.traps.Trap;
 import com.felayga.unpixeldungeon.levels.traps.WornTrap;
@@ -232,14 +234,13 @@ public abstract class RegularLevel extends Level {
             Room.Type type = specialsExtra.get(0);
 
             Room r = null;
-            for (Room subr: rooms) {
-                if (subr.type == Type.NULL && subr.width() > 3 && subr.height() > 3 && subr.connected.size() > 0) {
+            for (Room subr : rooms) {
+                if (subr.type == Type.NULL && subr.width() >= 3 && subr.height() >= 3 && subr.connected.size() > 0) {
                     if (type == Type.SHOP) {
-                        if (subr.connected.size() == 1/* && ((subr.width() - 1) * (subr.height() - 1) >= ShopPainter.spaceNeeded())*/) {
+                        if (ShopPainter.canUse(subr)) {
                             r = subr;
                         }
-                    }
-                    else {
+                    } else {
                         r = subr;
                     }
                     break;
@@ -249,9 +250,9 @@ public abstract class RegularLevel extends Level {
             if (r != null) {
                 r.type = type;
                 Room.useType(r.type);
-                GLog.d("placed specialextra room="+r.type.name()+" at r="+r.center());
+                GLog.d("placed specialextra room=" + r.type.name() + " at r=" + r.center());
             } else {
-                GLog.d("failed to place specialextra room="+type.name());
+                GLog.d("failed to place specialextra room=" + type.name());
             }
             specialsExtra.remove(0);
         }
@@ -343,7 +344,7 @@ public abstract class RegularLevel extends Level {
         boolean[] lake = water();
         for (int i = 0; i < LENGTH; i++) {
             if (map[i] == Terrain.EMPTY && lake[i]) {
-                map[i] = Terrain.WATER;
+                map[i] = Terrain.PUDDLE;
             }
         }
     }
@@ -412,7 +413,7 @@ public abstract class RegularLevel extends Level {
 
             try {
                 Trap trap = ((Trap) trapClasses[Random.chances(trapChances)].newInstance()).hide();
-                setTrap(trap, trapPos);
+                setTrap(null, trap, trapPos);
                 //some traps will not be hidden
                 map[trapPos] = trap.visible ? Terrain.TRAP : Terrain.SECRET_TRAP;
             } catch (Exception e) {
@@ -527,6 +528,9 @@ public abstract class RegularLevel extends Level {
                 break;
             case REGULAR:
                 assignDoor(pos, Terrain.DOOR, Terrain.SECRET_DOOR, Terrain.WOOD_DEBRIS, Terrain.LOCKED_DOOR, Terrain.SECRET_LOCKED_DOOR);
+                break;
+            case REGULAR_UNBROKEN:
+                assignDoor(pos, Terrain.DOOR, Terrain.SECRET_DOOR, Terrain.DOOR, Terrain.LOCKED_DOOR, Terrain.SECRET_LOCKED_DOOR);
                 break;
             case UNLOCKED:
                 map[pos] = Terrain.DOOR;

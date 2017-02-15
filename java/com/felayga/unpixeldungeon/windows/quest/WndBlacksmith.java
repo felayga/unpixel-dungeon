@@ -5,7 +5,7 @@
  * Shattered Pixel Dungeon
  * Copyright (C) 2014-2015 Evan Debenham
  *
- * Unpixel Dungeon
+ * unPixel Dungeon
  * Copyright (C) 2015-2016 Randall Foudray
  *
  * This program is free software: you can redistribute it and/or modify
@@ -20,6 +20,7 @@
  *
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>
+ *
  *
  */
 package com.felayga.unpixeldungeon.windows.quest;
@@ -84,7 +85,7 @@ public class WndBlacksmith extends Window {
 			@Override
 			protected void onClick() {
 				btnPressed = btnItem1;
-				GameScene.selectItem( itemSelector, WndBackpack.Mode.UPGRADEABLE, TXT_SELECT );
+				GameScene.selectItem( itemSelector, WndBackpack.Mode.UPGRADEABLE, TXT_SELECT, null );
 			}
 		};
 		btnItem1.setRect( (WIDTH - BTN_GAP) / 2 - BTN_SIZE, message.y + message.height() + BTN_GAP, BTN_SIZE, BTN_SIZE );
@@ -94,7 +95,7 @@ public class WndBlacksmith extends Window {
 			@Override
 			protected void onClick() {
 				btnPressed = btnItem2;
-				GameScene.selectItem( itemSelector, WndBackpack.Mode.UPGRADEABLE, TXT_SELECT );
+				GameScene.selectItem( itemSelector, WndBackpack.Mode.UPGRADEABLE, TXT_SELECT, null );
 			}
 		};
 		btnItem2.setRect( btnItem1.right() + BTN_GAP, btnItem1.top(), BTN_SIZE, BTN_SIZE );

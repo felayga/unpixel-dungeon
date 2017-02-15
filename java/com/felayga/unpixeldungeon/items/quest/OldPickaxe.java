@@ -5,7 +5,7 @@
  * Shattered Pixel Dungeon
  * Copyright (C) 2014-2015 Evan Debenham
  *
- * Unpixel Dungeon
+ * unPixel Dungeon
  * Copyright (C) 2015-2016 Randall Foudray
  *
  * This program is free software: you can redistribute it and/or modify
@@ -20,6 +20,7 @@
  *
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>
+ *
  *
  */
 package com.felayga.unpixeldungeon.items.quest;
@@ -93,7 +94,7 @@ public class OldPickaxe extends Weapon {
 			*/
 			
 			for (int i=0; i < Level.NEIGHBOURS8.length; i++) {
-				final int pos = hero.pos + Level.NEIGHBOURS8[i];
+				final int pos = hero.pos() + Level.NEIGHBOURS8[i];
 				if (Dungeon.level.map[pos] == Terrain.WALL_DECO) {
 
                     hero.spend_new(TIME_TO_MINE, false);
@@ -113,7 +114,7 @@ public class OldPickaxe extends Weapon {
                             if (gold.doPickUp(Dungeon.hero)) {
                                 GLog.i(Hero.TXT_YOU_NOW_HAVE, gold.getDisplayName());
                             } else {
-                                Dungeon.level.drop(gold, hero.pos).sprite.drop();
+                                Dungeon.level.drop(gold, hero.pos()).sprite.drop();
                             }
 
                             Hunger hunger = hero.buff(Hunger.class);

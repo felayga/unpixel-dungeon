@@ -5,7 +5,7 @@
  * Shattered Pixel Dungeon
  * Copyright (C) 2014-2015 Evan Debenham
  *
- * Unpixel Dungeon
+ * unPixel Dungeon
  * Copyright (C) 2015-2016 Randall Foudray
  *
  * This program is free software: you can redistribute it and/or modify
@@ -21,16 +21,16 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>
  *
+ *
  */
 package com.felayga.unpixeldungeon.items.potions;
 
 import com.felayga.unpixeldungeon.Assets;
 import com.felayga.unpixeldungeon.Dungeon;
+import com.felayga.unpixeldungeon.actors.Char;
 import com.felayga.unpixeldungeon.actors.blobs.Fire;
 import com.felayga.unpixeldungeon.actors.blobs.Freezing;
 import com.felayga.unpixeldungeon.levels.Level;
-import com.felayga.unpixeldungeon.plants.Icecap;
-import com.felayga.unpixeldungeon.plants.Stoneberry;
 import com.felayga.unpixeldungeon.utils.BArray;
 import com.watabou.noosa.audio.Sample;
 import com.watabou.utils.PathFinder;
@@ -45,13 +45,10 @@ public class PotionOfFrost extends Potion {
 		initials = "Fr";
 
         price = 50;
-
-        alchemyPrimary = Icecap.Seed.class;
-        alchemySecondary = Stoneberry.Seed.class;
 	}
 	
 	@Override
-	public void shatter( int cell ) {
+	public void shatter(Char source, int cell ) {
 		
 		PathFinder.buildDistanceMap( cell, BArray.not( Level.losBlocking, null ), DISTANCE );
 		
@@ -60,7 +57,7 @@ public class PotionOfFrost extends Potion {
 		boolean visible = false;
 		for (int i=0; i < Level.LENGTH; i++) {
 			if (PathFinder.distance[i] < Integer.MAX_VALUE) {
-				visible = Freezing.affect( i, fire ) || visible;
+				visible = Freezing.affect( source, i, fire ) || visible;
 			}
 		}
 

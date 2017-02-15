@@ -5,7 +5,7 @@
  * Shattered Pixel Dungeon
  * Copyright (C) 2014-2015 Evan Debenham
  *
- * Unpixel Dungeon
+ * unPixel Dungeon
  * Copyright (C) 2015-2016 Randall Foudray
  *
  * This program is free software: you can redistribute it and/or modify
@@ -20,6 +20,7 @@
  *
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>
+ *
  *
  */
 package com.felayga.unpixeldungeon;
@@ -39,13 +40,14 @@ public class ResultDescriptions {
 	public static final String TRAP		= "Killed by a %s";
 	
 	// Debuffs & blobs
-	public static final String BURNING	= "Burned to Ash";
-	public static final String HUNGER	= "Starved to Death";
-	public static final String POISON	= "Succumbed to Poison";
-	public static final String GAS		= "Suffocated";
-	public static final String BLEEDING	= "Bled to Death";
-	public static final String OOZE		= "Melted Away";
-	public static final String FALL		= "Died on Impact";
+	public static final String BURNING	    = "Burned to Ash";
+    public static final String ACIDBURNING	= "Dissolved in Acid";
+	public static final String HUNGER	    = "Starved to Death";
+	public static final String POISON	    = "Succumbed to Poison";
+	public static final String GAS		    = "Suffocated";
+	public static final String BLEEDING	    = "Bled to Death";
+	public static final String OOZE		    = "Melted Away";
+	public static final String FALL		    = "Died on Impact";
 	
 	public static final String WIN	= "Obtained the Amulet of Yendor";
 }

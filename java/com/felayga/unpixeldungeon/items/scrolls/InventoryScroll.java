@@ -5,7 +5,7 @@
  * Shattered Pixel Dungeon
  * Copyright (C) 2014-2015 Evan Debenham
  *
- * Unpixel Dungeon
+ * unPixel Dungeon
  * Copyright (C) 2015-2016 Randall Foudray
  *
  * This program is free software: you can redistribute it and/or modify
@@ -20,6 +20,7 @@
  *
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>
+ *
  *
  */
 package com.felayga.unpixeldungeon.items.scrolls;
@@ -51,11 +52,11 @@ public abstract class InventoryScroll extends Scroll {
 			identifiedByUse = false;
 		}
 
-		GameScene.selectItem(itemSelector, mode, inventoryTitle);
+		GameScene.selectItem(itemSelector, mode, inventoryTitle, null);
 	}
 
 	private void confirmCancelation() {
-		GameScene.show(new WndOptions(getDisplayName(), TXT_WARNING, TXT_YES, TXT_NO) {
+		GameScene.show(new WndOptions(getName(), TXT_WARNING, TXT_YES, TXT_NO) {
 			@Override
 			protected void onSelect(int index) {
 				switch (index) {
@@ -64,7 +65,7 @@ public abstract class InventoryScroll extends Scroll {
 						identifiedByUse = false;
 						break;
 					case 1:
-						GameScene.selectItem(itemSelector, mode, inventoryTitle);
+						GameScene.selectItem(itemSelector, mode, inventoryTitle, null);
 						break;
 				}
 			}
@@ -80,7 +81,6 @@ public abstract class InventoryScroll extends Scroll {
 		curUser.spend_new(TIME_TO_READ, true);
 
 		Sample.INSTANCE.play(Assets.SND_READ);
-		Invisibility.dispel();
 	}
 
 	protected static boolean identifiedByUse = false;
@@ -89,10 +89,8 @@ public abstract class InventoryScroll extends Scroll {
 		public void onSelect(Item item) {
 			if (item != null) {
 				((InventoryScroll)curItem).onItemSelected(item);
-			} else if (identifiedByUse && !((Scroll) curItem).ownedByBook) {
+			} else {
 				((InventoryScroll) curItem).confirmCancelation();
-			} else if (!((Scroll) curItem).ownedByBook) {
-				curUser.belongings.collect(curItem);
 			}
 		}
 	};

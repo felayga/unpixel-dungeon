@@ -5,7 +5,7 @@
  * Shattered Pixel Dungeon
  * Copyright (C) 2014-2015 Evan Debenham
  *
- * Unpixel Dungeon
+ * unPixel Dungeon
  * Copyright (C) 2015-2016 Randall Foudray
  *
  * This program is free software: you can redistribute it and/or modify
@@ -21,6 +21,7 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>
  *
+ *
  */
 package com.felayga.unpixeldungeon.plants;
 
@@ -35,6 +36,8 @@ import com.felayga.unpixeldungeon.actors.hero.HeroSubClass;
 import com.felayga.unpixeldungeon.effects.CellEmitter;
 import com.felayga.unpixeldungeon.effects.particles.LeafParticle;
 import com.felayga.unpixeldungeon.items.Item;
+import com.felayga.unpixeldungeon.items.potions.IAlchemyComponent;
+import com.felayga.unpixeldungeon.items.potions.PotionOfBrewing;
 import com.felayga.unpixeldungeon.levels.Level;
 import com.felayga.unpixeldungeon.levels.Terrain;
 import com.felayga.unpixeldungeon.mechanics.Constant;
@@ -52,6 +55,11 @@ public abstract class Plant implements Bundlable {
     public final String plantName;
     public final int image;
 
+    private int ownerRegistryIndex;
+    public int ownerRegistryIndex() {
+        return ownerRegistryIndex;
+    }
+
     public Plant(String name, int image) {
         this.plantName = name;
         this.image = image;
@@ -66,7 +74,7 @@ public abstract class Plant implements Bundlable {
         Char ch = Actor.findChar(pos);
 
         if (ch instanceof Hero && ((Hero) ch).subClass == HeroSubClass.WARDEN) {
-            Buff.affect(ch, Barkskin.class).level(ch.HT / 3);
+            Buff.affect(ch, null, Barkskin.class).level(ch.HT / 3);
         }
 
         wither();
@@ -105,15 +113,18 @@ public abstract class Plant implements Bundlable {
     }
 
     private static final String POS = "pos";
+    private static final String OWNERREGISTRYINDEX = "ownerRegistryIndex";
 
     @Override
     public void restoreFromBundle(Bundle bundle) {
         pos = bundle.getInt(POS);
+        ownerRegistryIndex = bundle.getInt(OWNERREGISTRYINDEX);
     }
 
     @Override
     public void storeInBundle(Bundle bundle) {
         bundle.put(POS, pos);
+        bundle.put(OWNERREGISTRYINDEX, ownerRegistryIndex);
     }
 
     public String desc() {
@@ -122,8 +133,6 @@ public abstract class Plant implements Bundlable {
 
     public static class Seed extends Item {
 
-        public static final String AC_PLANT = "PLANT";
-
         private static final String TXT_INFO = "Throw this seed to the place where you want to grow %s.\n\n%s";
 
         private static final long TIME_TO_PLANT = GameTime.TICK;
@@ -131,6 +140,13 @@ public abstract class Plant implements Bundlable {
         {
             stackable = true;
             defaultAction = Constant.Action.THROW;
+            pickupSound = Assets.SND_ITEM_PLANT;
+            hasBuc(false);
+            hasLevels(false);
+        }
+
+        public Item getSelf() {
+            return this;
         }
 
         protected Class<? extends Plant> plantClass;
@@ -139,28 +155,32 @@ public abstract class Plant implements Bundlable {
         @Override
         public ArrayList<String> actions(Hero hero) {
             ArrayList<String> actions = super.actions(hero);
-            actions.add(AC_PLANT);
+            actions.add(Constant.Action.PLANT);
+            actions.add(Constant.Action.BREW);
             return actions;
         }
 
         @Override
-        protected void onThrow(int cell, Char thrower) {
+        protected void onThrow(Char thrower, int cell) {
             if (Dungeon.level.map[cell] == Terrain.ALCHEMY || Level.pit[cell]) {
-                super.onThrow(cell, thrower);
+                super.onThrow(thrower, cell);
             } else {
-                Dungeon.level.plant(this, cell);
+                Dungeon.level.plant(thrower, this, cell);
             }
         }
 
         @Override
         public boolean execute(Hero hero, String action) {
-            if (action.equals(AC_PLANT)) {
+            if (action.equals(Constant.Action.PLANT)) {
                 hero.spend_new(TIME_TO_PLANT, false);
                 hero.busy();
-                ((Seed) hero.belongings.remove(this, 1)).onThrow(hero.pos, hero);
+                ((Seed) hero.belongings.remove(this, 1)).onThrow(hero, hero.pos());
 
-                hero.sprite.operate(hero.pos);
+                hero.sprite.operate(hero.pos());
 
+                return false;
+            } else if (action.equals(Constant.Action.BREW)) {
+                PotionOfBrewing.Handler.brew(hero, (IAlchemyComponent) this);
                 return false;
             } else {
                 return super.execute(hero, action);
@@ -169,7 +189,7 @@ public abstract class Plant implements Bundlable {
 
         public Plant couch(int pos) {
             try {
-                if (Dungeon.visible[pos]) {
+                if (Dungeon.audible[pos]) {
                     Sample.INSTANCE.play(Assets.SND_PLANT);
                 }
                 Plant plant = plantClass.newInstance();

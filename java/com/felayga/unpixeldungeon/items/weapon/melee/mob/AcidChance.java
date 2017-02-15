@@ -5,7 +5,7 @@
  * Shattered Pixel Dungeon
  * Copyright (C) 2014-2015 Evan Debenham
  *
- * Unpixel Dungeon
+ * unPixel Dungeon
  * Copyright (C) 2015-2016 Randall Foudray
  *
  * This program is free software: you can redistribute it and/or modify
@@ -21,13 +21,14 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>
  *
+ *
  */
 
 package com.felayga.unpixeldungeon.items.weapon.melee.mob;
 
 import com.felayga.unpixeldungeon.actors.Char;
 import com.felayga.unpixeldungeon.actors.buffs.Buff;
-import com.felayga.unpixeldungeon.actors.buffs.negative.Ooze;
+import com.felayga.unpixeldungeon.actors.buffs.negative.AcidBurning;
 import com.watabou.utils.Random;
 
 /**
@@ -39,13 +40,12 @@ public class AcidChance extends MeleeMobAttack {
     }
 
     @Override
-    public int proc(Char attacker, boolean ranged, Char target, int damage)
-    {
+    public int proc(Char attacker, boolean ranged, Char target, int damage) {
         damage = super.proc(attacker, ranged, target, damage);
 
-        if (Random.Int( 3 ) == 0) {
-            Buff.affect( target, Ooze.class );
-            target.sprite.burst( 0x000000, 5 );
+        if (Random.Int(3) == 0) {
+            Buff.affect(target, attacker, AcidBurning.class).resplash(target);
+            target.sprite.burst(0x000000, 5);
         }
 
         /*

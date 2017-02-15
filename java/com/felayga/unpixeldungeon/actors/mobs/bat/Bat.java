@@ -5,7 +5,7 @@
  * Shattered Pixel Dungeon
  * Copyright (C) 2014-2015 Evan Debenham
  *
- * Unpixel Dungeon
+ * unPixel Dungeon
  * Copyright (C) 2015-2016 Randall Foudray
  *
  * This program is free software: you can redistribute it and/or modify
@@ -21,6 +21,7 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>
  *
+ *
  */
 
 package com.felayga.unpixeldungeon.actors.mobs.bat;
@@ -28,6 +29,7 @@ package com.felayga.unpixeldungeon.actors.mobs.bat;
 import com.felayga.unpixeldungeon.actors.buffs.hero.Encumbrance;
 import com.felayga.unpixeldungeon.actors.mobs.Mob;
 import com.felayga.unpixeldungeon.items.weapon.melee.mob.MeleeMobAttack;
+import com.felayga.unpixeldungeon.mechanics.Characteristic;
 import com.felayga.unpixeldungeon.mechanics.CorpseEffect;
 import com.felayga.unpixeldungeon.mechanics.GameTime;
 import com.felayga.unpixeldungeon.mechanics.MagicType;
@@ -45,15 +47,16 @@ public class Bat extends Mob {
         name = "bat";
         spriteClass = BatSprite.class;
 
-        experience = 6;
-        movementSpeed(GameTime.TICK * 12 / 22);
+        movementSpeed(GameTime.TICK * 6 / 11);
         attackSpeed(GameTime.TICK);
+        flying(true);
         defenseMundane = 12;
         defenseMagical = 0;
         weight = Encumbrance.UNIT * 20;
         nutrition = 20;
         immunityMagical = MagicType.None.value;
         corpseEffects = CorpseEffect.Stunning.value;
+        characteristics = Characteristic.value(Characteristic.Animal, Characteristic.CannotUseItems, Characteristic.Carnivore);
 
         belongings.collectEquip(new MeleeMobAttack(GameTime.TICK, 1, 4));
     }

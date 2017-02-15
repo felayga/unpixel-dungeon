@@ -5,7 +5,7 @@
  * Shattered Pixel Dungeon
  * Copyright (C) 2014-2015 Evan Debenham
  *
- * Unpixel Dungeon
+ * unPixel Dungeon
  * Copyright (C) 2015-2016 Randall Foudray
  *
  * This program is free software: you can redistribute it and/or modify
@@ -21,10 +21,12 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>
  *
+ *
  */
 package com.felayga.unpixeldungeon.items;
 
 import com.felayga.unpixeldungeon.Assets;
+import com.felayga.unpixeldungeon.actors.Char;
 import com.felayga.unpixeldungeon.actors.hero.Hero;
 import com.felayga.unpixeldungeon.effects.CellEmitter;
 import com.felayga.unpixeldungeon.effects.Speck;
@@ -83,7 +85,7 @@ public class Ankh extends Item {
 	}
 
 	@Override
-	public boolean execute( final Hero hero, String action ) {
+	public boolean execute(final Hero hero, String action ) {
 		if (action.equals( AC_BLESS )) {
 			DewVial vial = hero.belongings.getItem(DewVial.class);
 			if (vial != null){
@@ -95,8 +97,8 @@ public class Ankh extends Item {
 
 
 				Sample.INSTANCE.play( Assets.SND_DRINK );
-				CellEmitter.get(hero.pos).start(Speck.factory(Speck.LIGHT), 0.2f, 3);
-				hero.sprite.operate( hero.pos );
+				CellEmitter.get(hero.pos()).start(Speck.factory(Speck.LIGHT), 0.2f, 3);
+				hero.sprite.operate( hero.pos() );
 			}
 
 			return false;

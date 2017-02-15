@@ -5,7 +5,7 @@
  * Shattered Pixel Dungeon
  * Copyright (C) 2014-2015 Evan Debenham
  *
- * Unpixel Dungeon
+ * unPixel Dungeon
  * Copyright (C) 2015-2016 Randall Foudray
  *
  * This program is free software: you can redistribute it and/or modify
@@ -21,6 +21,7 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>
  *
+ *
  */
 package com.felayga.unpixeldungeon.items;
 
@@ -30,9 +31,12 @@ import com.felayga.unpixeldungeon.actors.Actor;
 import com.felayga.unpixeldungeon.actors.Char;
 import com.felayga.unpixeldungeon.actors.buffs.hero.SnipersMark;
 import com.felayga.unpixeldungeon.actors.hero.Hero;
+import com.felayga.unpixeldungeon.actors.mobs.Mob;
+import com.felayga.unpixeldungeon.actors.mobs.npcs.Shopkeeper;
 import com.felayga.unpixeldungeon.effects.Speck;
 import com.felayga.unpixeldungeon.items.bags.IBag;
 import com.felayga.unpixeldungeon.items.weapon.missiles.MissileWeapon;
+import com.felayga.unpixeldungeon.levels.Level;
 import com.felayga.unpixeldungeon.mechanics.BUCStatus;
 import com.felayga.unpixeldungeon.mechanics.Ballistica;
 import com.felayga.unpixeldungeon.mechanics.Constant;
@@ -59,6 +63,7 @@ public class Item implements Bundlable {
 	private static final String TXT_TO_STRING_X = "%s x%d";
 	private static final String TXT_TO_STRING_LVL = "%s%+d";
 	private static final String TXT_TO_STRING_LVL_X = "%s%+d x%d";
+    private static final String TXT_IDENTIFY = "You are now familiar enough with your %s to identify it.";
 
 	public String defaultAction;
 	public boolean usesTargeting;
@@ -80,6 +85,7 @@ public class Item implements Bundlable {
 
 	public boolean droppable = true;
 	public boolean fragile = false;
+    public boolean shopkeeperPriceJacked = false;
 
     protected int price;
 
@@ -147,11 +153,54 @@ public class Item implements Bundlable {
         quantity = 1;
         weight = 0;
         price = 0;
+        shopkeeperPriceJacked = Random.Int(4) == 0;
     }
 
-	public int level = 0;
-	public boolean levelKnown = false;
-	public boolean hasLevels = true;
+	private int level = 0;
+	private boolean levelKnown = false;
+	private boolean hasLevels = true;
+
+    public int level() {
+        return level;
+    }
+    public Item level(int level) {
+        return level(level, levelKnown);
+    }
+    public Item level(int level, boolean levelKnown) {
+        if (hasLevels) {
+            this.level = level;
+            this.levelKnown = levelKnown;
+        } else {
+            this.level = 0;
+            this.levelKnown = true;
+        }
+
+        updateQuickslot();
+
+        return this;
+    }
+
+    public boolean levelKnown() {
+        return levelKnown;
+    }
+    public void levelKnown(boolean state, boolean verbose) {
+        if (levelKnown != state) {
+            levelKnown = state;
+
+            if (state && verbose) {
+                GLog.i(TXT_IDENTIFY, getDisplayName());
+            }
+        }
+    }
+
+    public boolean hasLevels() { return hasLevels; }
+    public void hasLevels(boolean state) {
+        if (hasLevels != state) {
+            hasLevels = state;
+
+            level(level, levelKnown);
+        }
+    }
 
 	protected BUCStatus bucStatus = BUCStatus.Uncursed;
 	protected boolean bucStatusKnown = false;
@@ -190,13 +239,22 @@ public class Item implements Bundlable {
 	}
 
 	public void hasBuc(boolean state){
-		if (hasBuc != state)
-		{
+		if (hasBuc != state) {
 			hasBuc = state;
 
 			bucStatus(bucStatus, bucStatusKnown);
 		}
 	}
+
+    private int shopkeeperRegistryIndex = -1;
+
+    public int shopkeeperRegistryIndex() {
+        return shopkeeperRegistryIndex;
+    }
+
+    public void shopkeeper(Shopkeeper shopkeeper) {
+        shopkeeperRegistryIndex = shopkeeper.shopkeeperRegistryIndex();
+    }
 
 	// Unique items persist through revival
 	public boolean unique = false;
@@ -245,7 +303,7 @@ public class Item implements Bundlable {
     }
 
 	public boolean doPickUp(Hero hero) {
-		if (hero.flying) {
+		if (hero.flying()) {
 			GLog.w("You can't reach the floor.");
 			return false;
 		}
@@ -279,9 +337,9 @@ public class Item implements Bundlable {
 				@Override
 				public void doDrop(int quantity) {
                     if (quantity == Item.this.quantity) {
-                        Dungeon.level.drop(hero.belongings.remove(Item.this), hero.pos).sprite.drop(hero.pos);
+                        Dungeon.level.drop(hero.belongings.remove(Item.this), hero.pos()).sprite.drop(hero.pos());
                     } else if (quantity > 0) {
-                        Dungeon.level.drop(hero.belongings.remove(Item.this, quantity), hero.pos).sprite.drop(hero.pos);
+                        Dungeon.level.drop(hero.belongings.remove(Item.this, quantity), hero.pos()).sprite.drop(hero.pos());
                     } else {
                         GLog.w("You drop nothing.  The nothing clatters noisily as it impacts the ground.");
                     }
@@ -290,7 +348,7 @@ public class Item implements Bundlable {
 			});
 		}
 		else {
-			Dungeon.level.drop(hero.belongings.remove(this), hero.pos).sprite.drop(hero.pos);
+			Dungeon.level.drop(hero.belongings.remove(this), hero.pos()).sprite.drop(hero.pos());
 			hero.spend_new(Constant.Time.ITEM_DROP, true);
 		}
 	}
@@ -321,7 +379,7 @@ public class Item implements Bundlable {
 		return execute(hero, defaultAction);
 	}
 
-	protected void onThrow(int cell, Char thrower) {
+	protected void onThrow(Char thrower, int cell) {
 		GLog.d("onthrow cell="+cell);
 		Heap heap = Dungeon.level.drop(this, cell);
 		if (heap.size() > 0) {
@@ -335,7 +393,7 @@ public class Item implements Bundlable {
 	}
 
     public final boolean isStackableWith(Item item) {
-        return stackable && item.stackable && checkSimilarity(item);
+        return stackable && item.stackable && checkSimilarity(item) && this.shopkeeperRegistryIndex == item.shopkeeperRegistryIndex;
     }
 
     protected boolean checkSimilarity(Item item) {
@@ -455,7 +513,7 @@ public class Item implements Bundlable {
 		return this;
 	}
 
-	public static void evoke(Hero hero) {
+	public static void evoke(Char hero) {
 		hero.sprite.emitter().burst(Speck.factory(Speck.EVOKE), 5);
 	}
 
@@ -521,7 +579,7 @@ public class Item implements Bundlable {
 
 	public static Item virtual(Class<? extends Item> cl) {
 		try {
-			Item item = (Item) cl.newInstance();
+			Item item = cl.newInstance();
 			item.quantity = 0;
 			return item;
 
@@ -559,7 +617,9 @@ public class Item implements Bundlable {
 
             if (bucDetermination <= cursed) {
                 bucStatus(BUCStatus.Cursed);
-                level = -level;
+                if (hasLevels) {
+                    level = -level;
+                }
             }
             else if (bucDetermination <= uncursed) {
                 bucStatus(BUCStatus.Uncursed);
@@ -585,7 +645,7 @@ public class Item implements Bundlable {
             Heap heap = (Heap)parent_whut;
             heap.updateImage();
 
-            if (heap.pos == Dungeon.hero.pos) {
+            if (heap.pos == Dungeon.hero.pos()) {
                 GameScene.updateLootIndicator();
             }
         }
@@ -599,6 +659,8 @@ public class Item implements Bundlable {
 	private static final String QUICKSLOT = "quickslotpos";
 	private static final String DEFAULTACTION = "defaultAction";
     private static final String WEIGHT = "weight";
+    private static final String SHOPKEEPERREGISTRYINDEX = "shopkeeperRegistryIndex";
+    private static final String SHOPKEEPERPRICEJACKED = "shopkeeperPriceJacked";
 
 	@Override
 	public void storeInBundle(Bundle bundle) {
@@ -612,6 +674,9 @@ public class Item implements Bundlable {
 		}
 		bundle.put(DEFAULTACTION, defaultAction);
         bundle.put(WEIGHT, weight);
+
+        bundle.put(SHOPKEEPERREGISTRYINDEX, shopkeeperRegistryIndex);
+        bundle.put(SHOPKEEPERPRICEJACKED, shopkeeperPriceJacked);
 	}
 
 	@Override
@@ -639,22 +704,31 @@ public class Item implements Bundlable {
 			}
 		}
         weight = bundle.getInt(WEIGHT);
+
+        shopkeeperRegistryIndex = bundle.getInt(SHOPKEEPERREGISTRYINDEX);
+        shopkeeperPriceJacked = bundle.getBoolean(SHOPKEEPERPRICEJACKED);
 	}
 
-	public void cast(final Hero user, int dst) {
-		final int cell = new Ballistica(user.pos, dst, Ballistica.PROJECTILE).collisionPos;
-		user.sprite.zap(cell);
-		user.busy();
+    public void cast(final Hero user, int dst) {
+        cast(user, user.pos(), dst);
+    }
 
+	public void cast(final Char user, int pos, int dst) {
         //todo: make sure throwing item weights are right, etc.
+
+        final int endPos = new Ballistica(pos, dst, Ballistica.PROJECTILE).collisionPos;
+
+        user.sprite.zap(endPos);
+        user.busy();
 
 		Sample.INSTANCE.play(Assets.SND_MISS, 0.6f, 0.6f, 1.5f);
 
-		Char enemy = Actor.findChar(cell);
+		Char enemy = Actor.findChar(endPos);
 		QuickSlotButton.target(enemy);
 
 		// FIXME!!!
-		long delay = Constant.Time.ITEM_THROW;
+		final long delay = Constant.Time.ITEM_THROW;
+        /*
 		if (this instanceof MissileWeapon) {
 			//delay *= ((MissileWeapon)this).speedFactor( user );
 			if (enemy != null) {
@@ -668,19 +742,20 @@ public class Item implements Bundlable {
 			}
 		}
 		final long finalDelay = delay;
+		*/
 
-        final Item item = user.belongings.remove(Item.this, 1);
+        final Item item = this.parent().remove(Item.this, 1);
 
         if (enemy != null && Random.Int(2)==0) {
             enemy.belongings.collect(item);
         }
 
 		((MissileSprite) user.sprite.parent.recycle(MissileSprite.class)).
-				reset(user.pos, cell, this, new Callback() {
+				reset(pos, endPos, this, new Callback() {
 					@Override
 					public void call() {
-                        item.onThrow(cell, user);
-						user.spend_new(finalDelay, true);
+                        item.onThrow(user, endPos);
+                        user.spend_new(delay, true);
 					}
 				});
 	}

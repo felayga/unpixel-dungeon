@@ -5,7 +5,7 @@
  * Shattered Pixel Dungeon
  * Copyright (C) 2014-2015 Evan Debenham
  *
- * Unpixel Dungeon
+ * unPixel Dungeon
  * Copyright (C) 2015-2016 Randall Foudray
  *
  * This program is free software: you can redistribute it and/or modify
@@ -21,29 +21,34 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>
  *
+ *
  */
 package com.felayga.unpixeldungeon.levels.painters;
 
-import com.felayga.unpixeldungeon.actors.mobs.Mob;
 import com.felayga.unpixeldungeon.actors.mobs.npcs.ImpShopkeeper;
 import com.felayga.unpixeldungeon.actors.mobs.npcs.Shopkeeper;
-import com.felayga.unpixeldungeon.items.Heap;
 import com.felayga.unpixeldungeon.items.Item;
 import com.felayga.unpixeldungeon.items.scrolls.ScrollOfMagicMapping;
 import com.felayga.unpixeldungeon.levels.LastShopLevel;
 import com.felayga.unpixeldungeon.levels.Level;
 import com.felayga.unpixeldungeon.levels.Room;
 import com.felayga.unpixeldungeon.levels.Terrain;
+import com.felayga.unpixeldungeon.mechanics.Constant;
 
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashSet;
+import java.util.List;
 
 //import com.felayga.unpixeldungeon.items.Honeypot;
 
 public class ShopPainter extends Painter {
 	//private static int pasWidth;
 	//private static int pasHeight;
+
+    public static boolean canUse(Room room) {
+        return room.width() >= 2 && room.height() >= 2 && room.connected != null && room.connected.size() == 1;
+    }
 
 	private static ArrayList<Item> itemsToSpawn;
 	
@@ -52,7 +57,7 @@ public class ShopPainter extends Painter {
         fill(level, room, 1, Terrain.EMPTY_SP);
 
         HashSet<Integer> itempositions = new HashSet<Integer>();
-        int shopkeeperpos = -1;
+        int shopkeeperPos = Constant.Position.NONE;
 
         for (int y = room.top + 1; y <= room.bottom - 1; y++) {
             for (int x = room.left + 1; x <= room.right - 1; x++) {
@@ -61,43 +66,65 @@ public class ShopPainter extends Painter {
         }
 
         Room.Door entrance = room.entrance();
-        int doorpos = entrance.x + entrance.y * Level.WIDTH;
-        int doorwaypos = doorpos;
+        int doorPos = entrance.x + entrance.y * Level.WIDTH;
+        int doorwayPos = doorPos;
 
         if (entrance.y == room.top) {
-            doorwaypos = doorpos + Level.WIDTH;
+            doorwayPos = doorPos + Level.WIDTH;
         } else if (entrance.y == room.bottom) {
-            doorwaypos = doorpos - Level.WIDTH;
+            doorwayPos = doorPos - Level.WIDTH;
         } else if (entrance.x == room.left) {
-            doorwaypos = doorpos + 1;
+            doorwayPos = doorPos + 1;
         } else if (entrance.x == room.right) {
-            doorwaypos = doorpos - 1;
+            doorwayPos = doorPos - 1;
         }
 
-        if (itempositions.contains(doorwaypos)) {
-            itempositions.remove(doorwaypos);
+        if (itempositions.contains(doorwayPos)) {
+            itempositions.remove(doorwayPos);
         }
+
+        List<Integer> fidgetPos = new ArrayList<>();
 
         for (int pos : Level.NEIGHBOURS8) {
-            int subpos = pos + doorpos;
+            int subpos = pos + doorwayPos;
 
             if (itempositions.contains(subpos)) {
                 itempositions.remove(subpos);
-                shopkeeperpos = subpos;
-                break;
+                shopkeeperPos = subpos;
+                fidgetPos.add(subpos);
             }
         }
 
+        List<Integer> wallPos = new ArrayList<>();
+
+        for (int y=room.top;y<=room.bottom;y++) {
+            wallPos.add(room.left + y * Level.WIDTH);
+            wallPos.add(room.right + y * Level.WIDTH);
+        }
+
+        for (int x=room.left;x<=room.right;x++) {
+            wallPos.add(x + room.top * Level.WIDTH);
+            wallPos.add(x + room.bottom * Level.WIDTH);
+        }
+
+        //jesus christ java, be more bad.. how about naming the other method "removeAt"?
+        wallPos.remove(Integer.valueOf(doorPos));
+
         itemSpawnCheck(itempositions.size());
+
+        Shopkeeper shopkeeper = level instanceof LastShopLevel ? new ImpShopkeeper() : new Shopkeeper();
+        shopkeeper.pos(shopkeeperPos);
+
+        shopkeeper.setRoom(doorwayPos, doorPos, wallPos, fidgetPos);
+
+        level.mobs.add(shopkeeper);
+        Shopkeeper.Registry.add(shopkeeper);
 
         for (int pos : itempositions) {
             Item item = itemsToSpawn.remove(itemsToSpawn.size() - 1);
-            level.drop(item, pos).type = Heap.Type.FOR_SALE;
+            item.shopkeeper(shopkeeper);
+            level.drop(item, pos);
         }
-
-        Mob shopkeeper = level instanceof LastShopLevel ? new ImpShopkeeper() : new Shopkeeper();
-        shopkeeper.pos = shopkeeperpos;
-        level.mobs.add(shopkeeper);
 
         /*
 		pasWidth = room.width() - 2;
@@ -126,7 +153,7 @@ public class ShopPainter extends Painter {
 
         if (room.connected != null) {
             for (Room.Door door : room.connected.values()) {
-                door.set(Room.Door.Type.REGULAR);
+                door.set(Room.Door.Type.REGULAR_UNBROKEN);
             }
         }
 

@@ -5,7 +5,7 @@
  * Shattered Pixel Dungeon
  * Copyright (C) 2014-2015 Evan Debenham
  *
- * Unpixel Dungeon
+ * unPixel Dungeon
  * Copyright (C) 2015-2016 Randall Foudray
  *
  * This program is free software: you can redistribute it and/or modify
@@ -21,12 +21,12 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>
  *
+ *
  */
 package com.felayga.unpixeldungeon;
 
 import com.felayga.unpixeldungeon.actors.mobs.Mob;
 import com.felayga.unpixeldungeon.items.Item;
-import com.felayga.unpixeldungeon.items.artifacts.Artifact_old;
 import com.felayga.unpixeldungeon.items.bags.PotionBandolier;
 import com.felayga.unpixeldungeon.items.bags.ScrollHolder;
 import com.felayga.unpixeldungeon.items.bags.SeedPouch;
@@ -408,24 +408,26 @@ public class Badges {
 		// 3) When an item is identified
 
 		// Note that artifacts should never trigger this badge as they are alternatively upgraded
+        /*
 		if (!item.levelKnown || item instanceof Artifact_old) {
 			return;
 		}
+		*/
 		
 		Badge badge = null;
-		if (!local.contains( Badge.ITEM_LEVEL_1 ) && item.level >= 3) {
+		if (!local.contains( Badge.ITEM_LEVEL_1 ) && item.level() >= 3) {
 			badge = Badge.ITEM_LEVEL_1;
 			local.add( badge );
 		}
-		if (!local.contains( Badge.ITEM_LEVEL_2 ) && item.level >= 6) {
+		if (!local.contains( Badge.ITEM_LEVEL_2 ) && item.level() >= 6) {
 			badge = Badge.ITEM_LEVEL_2;
 			local.add( badge );
 		}
-		if (!local.contains( Badge.ITEM_LEVEL_3 ) && item.level >= 9) {
+		if (!local.contains( Badge.ITEM_LEVEL_3 ) && item.level() >= 9) {
 			badge = Badge.ITEM_LEVEL_3;
 			local.add( badge );
 		}
-		if (!local.contains( Badge.ITEM_LEVEL_4 ) && item.level >= 12) {
+		if (!local.contains( Badge.ITEM_LEVEL_4 ) && item.level() >= 12) {
 			badge = Badge.ITEM_LEVEL_4;
 			local.add( badge );
 		}

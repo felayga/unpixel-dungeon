@@ -5,7 +5,7 @@
  * Shattered Pixel Dungeon
  * Copyright (C) 2014-2015 Evan Debenham
  *
- * Unpixel Dungeon
+ * unPixel Dungeon
  * Copyright (C) 2015-2016 Randall Foudray
  *
  * This program is free software: you can redistribute it and/or modify
@@ -20,6 +20,7 @@
  *
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>
+ *
  *
  */
 package com.felayga.unpixeldungeon.levels.traps;
@@ -53,17 +54,21 @@ public class FrostTrap extends Trap {
 	public void activate() {
 
 		if (Dungeon.visible[ pos ]){
-			Splash.at( sprite.center(), 0xFFB2D6FF, 10);
-			Sample.INSTANCE.play( Assets.SND_SHATTER );
+			Splash.at(sprite.center(), 0xFFB2D6FF, 10);
 		}
+        if (Dungeon.audible[pos]) {
+            Sample.INSTANCE.play( Assets.SND_SHATTER );
+        }
 
-		Heap heap = Dungeon.level.heaps.get( pos );
-		if (heap != null) heap.freeze();
+        Char owner = Char.Registry.get(ownerRegistryIndex());
+
+        Heap heap = Dungeon.level.heaps.get( pos );
+		if (heap != null) heap.freeze(owner);
 
 		Char ch = Actor.findChar(pos);
 		if (ch != null){
 			ch.damage(Random.NormalIntRange(1 , Dungeon.depthAdjusted), MagicType.Cold, null);
-			Chill.prolong(ch, Frost.class, GameTime.TICK * (10 + Random.Long(Dungeon.depthAdjusted)));
+			Chill.prolong(ch, owner, Frost.class, GameTime.TICK * (10 + Random.Long(Dungeon.depthAdjusted)));
 			if (!ch.isAlive() && ch == Dungeon.hero){
 				Dungeon.fail( Utils.format(ResultDescriptions.TRAP, name) );
 				GLog.n("You succumb to the freezing trap...");

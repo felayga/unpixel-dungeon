@@ -5,7 +5,7 @@
  * Shattered Pixel Dungeon
  * Copyright (C) 2014-2015 Evan Debenham
  *
- * Unpixel Dungeon
+ * unPixel Dungeon
  * Copyright (C) 2015-2016 Randall Foudray
  *
  * This program is free software: you can redistribute it and/or modify
@@ -20,6 +20,7 @@
  *
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>
+ *
  *
  */
 package com.felayga.unpixeldungeon.levels.painters;
@@ -48,17 +49,17 @@ public class GardenPainter extends Painter {
 
 		if (Dungeon.isChallenged(Challenges.NO_FOOD)) {
 			if (Random.Int(2) == 0){
-				level.plant(new Sungrass.Seed(), room.random());
+				level.plant(null, new Sungrass.Seed(), room.random());
 			}
 		} else {
 			int bushes = Random.Int(3);
 			if (bushes == 0) {
-				level.plant(new Sungrass.Seed(), room.random());
+				level.plant(null, new Sungrass.Seed(), room.random());
 			} else if (bushes == 1) {
-				level.plant(new BlandfruitBush.Seed(), room.random());
+				level.plant(null, new BlandfruitBush.Seed(), room.random());
 			} else if (Random.Int(5) == 0) {
-				level.plant(new Sungrass.Seed(), room.random());
-				level.plant(new BlandfruitBush.Seed(), room.random());
+				level.plant(null, new Sungrass.Seed(), room.random());
+				level.plant(null, new BlandfruitBush.Seed(), room.random());
 			}
 		}
 		

@@ -5,7 +5,7 @@
  * Shattered Pixel Dungeon
  * Copyright (C) 2014-2015 Evan Debenham
  *
- * Unpixel Dungeon
+ * unPixel Dungeon
  * Copyright (C) 2015-2016 Randall Foudray
  *
  * This program is free software: you can redistribute it and/or modify
@@ -20,6 +20,7 @@
  *
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>
+ *
  *
  */
 package com.felayga.unpixeldungeon.items;
@@ -93,7 +94,7 @@ public class Bomb extends Item {
 	}
 
 	@Override
-	protected void onThrow( int cell, Char thrower ) {
+	protected void onThrow( Char thrower, int cell ) {
 		if (!Level.pit[ cell ] && lightingFuse) {
 			Actor.addDelayed(fuse = new Fuse().ignite(this), 2);
 		}
@@ -105,7 +106,7 @@ public class Bomb extends Item {
 			int newCell = candidates.isEmpty() ? cell : Random.element(candidates);
 			Dungeon.level.drop( this, newCell ).sprite.drop( cell );
 		} else
-			super.onThrow( cell, thrower );
+			super.onThrow( thrower, cell );
 	}
 
 	@Override
@@ -132,7 +133,7 @@ public class Bomb extends Item {
                     CellEmitter.get( c ).burst( SmokeParticle.FACTORY, 4 );
                 }
 
-                if (Level.wood[c]) {
+                if (Level.burnable[c]) {
                     Dungeon.level.set(c, Terrain.EMBERS, true);
                     GameScene.updateMap(c);
                     terrainAffected = true;

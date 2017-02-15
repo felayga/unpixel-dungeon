@@ -5,7 +5,7 @@
  * Shattered Pixel Dungeon
  * Copyright (C) 2014-2015 Evan Debenham
  *
- * Unpixel Dungeon
+ * unPixel Dungeon
  * Copyright (C) 2015-2016 Randall Foudray
  *
  * This program is free software: you can redistribute it and/or modify
@@ -20,6 +20,7 @@
  *
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>
+ *
  *
  */
 package com.felayga.unpixeldungeon.items.wands;
@@ -88,7 +89,7 @@ public class WandOfRegrowth extends Wand {
         numDews = 0.05f + chrgUsed * chrgUsed * 0.016f; //scales from 6.6% to 165%
         numPods = 0.02f + chrgUsed * chrgUsed * 0.013f; //scales from 3.3% to 135%
         numStars = (chrgUsed * chrgUsed * chrgUsed / 5f) * 0.005f; //scales from 0.1% to 100%
-        placePlants(numPlants, numDews, numPods, numStars);
+        placePlants(curUser, numPlants, numDews, numPods, numStars);
 
         for (int i : affectedCells) {
             int c = Dungeon.level.map[i];
@@ -100,10 +101,10 @@ public class WandOfRegrowth extends Wand {
 
             Char ch = Actor.findChar(i);
             if (ch != null) {
-                processSoulMark(ch);
+                processSoulMark(ch, curUser);
             }
 
-            GameScene.add(Blob.seed(i, 10, Regrowth.class));
+            GameScene.add(Blob.seed(curUser, i, 10, Regrowth.class));
 
         }
     }
@@ -122,30 +123,30 @@ public class WandOfRegrowth extends Wand {
 			visualCells.add(cell);
 	}
 
-	private void placePlants(float numPlants, float numDews, float numPods, float numStars){
+	private void placePlants(Char source, float numPlants, float numDews, float numPods, float numStars){
 		Iterator<Integer> cells = affectedCells.iterator();
 		Level floor = Dungeon.level;
 
 		while(cells.hasNext() && Random.Float() <= numPlants){
 			Plant.Seed seed = (Plant.Seed) Generator.random(Generator.Category.SEED);
 
-            floor.plant(seed, cells.next());
+            floor.plant(source, seed, cells.next());
 
 			numPlants --;
 		}
 
 		while (cells.hasNext() && Random.Float() <= numDews){
-			floor.plant(new Dewcatcher.Seed(), cells.next());
+			floor.plant(source, new Dewcatcher.Seed(), cells.next());
 			numDews --;
 		}
 
 		while (cells.hasNext() && Random.Float() <= numPods){
-			floor.plant(new Seedpod.Seed(), cells.next());
+			floor.plant(source, new Seedpod.Seed(), cells.next());
 			numPods --;
 		}
 
 		while (cells.hasNext() && Random.Float() <= numStars){
-			floor.plant(new Starflower.Seed(), cells.next());
+			floor.plant(source, new Starflower.Seed(), cells.next());
 			numStars --;
 		}
 
@@ -163,7 +164,7 @@ public class WandOfRegrowth extends Wand {
 	public void onHit(MagesStaff staff, Char attacker, Char defender, int damage) {
 		//like vampiric enchantment, except with herbal healing buff
 
-		int level = Math.max( 0, staff.level );
+		int level = Math.max( 0, staff.level() );
 
 		// lvl 0 - 33%
 		// lvl 1 - 43%

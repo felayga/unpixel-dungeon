@@ -5,7 +5,7 @@
  * Shattered Pixel Dungeon
  * Copyright (C) 2014-2015 Evan Debenham
  *
- * Unpixel Dungeon
+ * unPixel Dungeon
  * Copyright (C) 2015-2016 Randall Foudray
  *
  * This program is free software: you can redistribute it and/or modify
@@ -21,6 +21,7 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>
  *
+ *
  */
 
 package com.felayga.unpixeldungeon.items.potions;
@@ -32,8 +33,6 @@ import com.felayga.unpixeldungeon.actors.Char;
 import com.felayga.unpixeldungeon.actors.buffs.Buff;
 import com.felayga.unpixeldungeon.actors.buffs.negative.Vertigo;
 import com.felayga.unpixeldungeon.mechanics.GameTime;
-import com.felayga.unpixeldungeon.plants.Sorrowmoss;
-import com.felayga.unpixeldungeon.plants.Stormvine;
 import com.watabou.noosa.audio.Sample;
 import com.watabou.utils.Random;
 
@@ -42,24 +41,20 @@ import com.watabou.utils.Random;
  */
 public class PotionOfConfusion extends Potion {
 
-    public PotionOfConfusion()
-    {
+    public PotionOfConfusion() {
         name = "Potion of Confusion";
         initials = "Co";
 
         isHarmful = true;
         price = 40;
-
-        alchemyPrimary = Stormvine.Seed.class;
-        alchemySecondary = Sorrowmoss.Seed.class;
     }
 
     @Override
-    public void apply( Char hero ) {
-        apply(hero, true);
+    public void apply(Char hero) {
+        apply(hero, hero, true);
     }
 
-    private void apply(Char hero, boolean quaffed) {
+    private void apply(Char hero, Char source, boolean quaffed) {
         setKnown();
 
         int duration = Random.Int(1, 9);
@@ -79,21 +74,22 @@ public class PotionOfConfusion extends Potion {
         } else {
             duration++;
         }
-        Buff.prolong(hero, Vertigo.class, duration * GameTime.TICK);
+        Buff.prolong(hero, source, Vertigo.class, duration * GameTime.TICK);
     }
 
     @Override
-    public void shatter( int cell ) {
-
+    public void shatter(Char owner, int cell) {
         if (Dungeon.visible[cell]) {
-            splash( cell );
-            Sample.INSTANCE.play( Assets.SND_SHATTER );
+            splash(cell);
+        }
+        if (Dungeon.audible[cell]) {
+            Sample.INSTANCE.play(Assets.SND_SHATTER);
         }
 
         Char test = Actor.findChar(cell);
 
         if (test != null) {
-            apply(test, false);
+            apply(test, owner, false);
         }
     }
 

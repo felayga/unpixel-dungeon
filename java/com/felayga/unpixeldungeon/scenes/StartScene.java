@@ -5,7 +5,7 @@
  * Shattered Pixel Dungeon
  * Copyright (C) 2014-2015 Evan Debenham
  *
- * Unpixel Dungeon
+ * unPixel Dungeon
  * Copyright (C) 2015-2016 Randall Foudray
  *
  * This program is free software: you can redistribute it and/or modify
@@ -21,6 +21,7 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>
  *
+ *
  */
 package com.felayga.unpixeldungeon.scenes;
 
@@ -28,16 +29,17 @@ import com.felayga.unpixeldungeon.Assets;
 import com.felayga.unpixeldungeon.Badges;
 import com.felayga.unpixeldungeon.Dungeon;
 import com.felayga.unpixeldungeon.GamesInProgress;
-import com.felayga.unpixeldungeon.ShatteredPixelDungeon;
 import com.felayga.unpixeldungeon.actors.hero.HeroClass;
 import com.felayga.unpixeldungeon.effects.BannerSprites;
 import com.felayga.unpixeldungeon.effects.BannerSprites.Type;
 import com.felayga.unpixeldungeon.effects.Speck;
 import com.felayga.unpixeldungeon.levels.branches.DungeonBranch;
+import com.felayga.unpixeldungeon.mechanics.Constant;
 import com.felayga.unpixeldungeon.ui.Archs;
 import com.felayga.unpixeldungeon.ui.ExitButton;
 import com.felayga.unpixeldungeon.ui.Icons;
 import com.felayga.unpixeldungeon.ui.RedButton;
+import com.felayga.unpixeldungeon.unPixelDungeon;
 import com.felayga.unpixeldungeon.utils.GLog;
 import com.felayga.unpixeldungeon.windows.WndChallenges;
 import com.felayga.unpixeldungeon.windows.WndMessage;
@@ -53,6 +55,7 @@ import com.watabou.noosa.particles.Emitter;
 import com.watabou.noosa.ui.Button;
 import com.watabou.utils.Callback;
 import com.watabou.utils.PointF;
+import com.watabou.utils.SparseArray;
 
 import java.util.HashMap;
 
@@ -83,7 +86,7 @@ public class StartScene extends PixelScene {
 	private static final float WIDTH_L    = 224;
 	private static final float HEIGHT_L    = 124;
 
-	private static HashMap<Integer, ClassShield> shields = new HashMap<Integer, ClassShield>();
+	private static SparseArray<ClassShield> shields = new SparseArray<>();
 
 	private float buttonX;
 	private float buttonY;
@@ -105,7 +108,7 @@ public class StartScene extends PixelScene {
 		int h = Camera.main.height;
 
 		float width, height;
-		if (ShatteredPixelDungeon.landscape()) {
+		if (unPixelDungeon.landscape()) {
 			width = WIDTH_L;
 			height = HEIGHT_L;
 		} else {
@@ -177,7 +180,7 @@ public class StartScene extends PixelScene {
 			shields.put( n, shield );
 			add( shield );
 		}
-		if (ShatteredPixelDungeon.landscape()) {
+		if (unPixelDungeon.landscape()) {
 			float shieldW = width / 4;
 			float shieldH = Math.min( centralHeight, shieldW );
 			top = title.y + title.height + (centralHeight - shieldH) / 2;
@@ -221,7 +224,7 @@ public class StartScene extends PixelScene {
 		curIndex = -1;
 		updateClass(0);
 		//todo: fart
-		//updateClass( HeroClass.values()[ShatteredPixelDungeon.lastClass()] );
+		//updateClass( HeroClass.values()[unPixelDungeon.lastClass()] );
 
 		fadeIn();
 
@@ -229,7 +232,7 @@ public class StartScene extends PixelScene {
 			@Override
 			public void call() {
 				if (Game.scene() == StartScene.this) {
-					ShatteredPixelDungeon.switchNoFade( StartScene.class );
+					unPixelDungeon.switchNoFade(StartScene.class);
 				}
 			}
 		};
@@ -299,13 +302,16 @@ public class StartScene extends PixelScene {
 			WndInitHero.setDefault();
 		}
 
-		ShatteredPixelDungeon.scene().add(new WndInitHero(new WndInitHero.Listener() {
+		unPixelDungeon.scene().add(new WndInitHero(new WndInitHero.Listener() {
 			@Override
 			public void onReady() {
 				InterlevelScene.mode = InterlevelScene.Mode.DESCEND;
+                //woops
+                InterlevelScene.teleportDepth = 1;
+                InterlevelScene.teleportPos = Constant.Position.ENTRANCE;
 
-				if (ShatteredPixelDungeon.intro()) {
-					ShatteredPixelDungeon.intro( false );
+				if (unPixelDungeon.intro()) {
+					unPixelDungeon.intro(false);
 					Game.switchScene( IntroScene.class );
 				} else {
 					Game.switchScene( InterlevelScene.class );
@@ -316,7 +322,7 @@ public class StartScene extends PixelScene {
 
 	@Override
 	protected void onBackPressed() {
-		ShatteredPixelDungeon.switchNoFade( TitleScene.class );
+		unPixelDungeon.switchNoFade(TitleScene.class);
 	}
 
 	private static class GameButton extends RedButton {
@@ -494,7 +500,7 @@ public class StartScene extends PixelScene {
 
 			super.createChildren();
 
-			image = Icons.get( ShatteredPixelDungeon.challenges() > 0 ? Icons.CHALLENGE_ON :Icons.CHALLENGE_OFF );
+			image = Icons.get( unPixelDungeon.challenges() > 0 ? Icons.CHALLENGE_ON :Icons.CHALLENGE_OFF );
 			add( image );
 		}
 
@@ -510,10 +516,10 @@ public class StartScene extends PixelScene {
 		@Override
 		protected void onClick() {
 			if (Badges.isUnlocked( Badges.Badge.VICTORY )) {
-				StartScene.this.add(new WndChallenges(ShatteredPixelDungeon.challenges(), true) {
+				StartScene.this.add(new WndChallenges(unPixelDungeon.challenges(), true) {
 					public void onBackPressed() {
 						super.onBackPressed();
-						image.copy( Icons.get( ShatteredPixelDungeon.challenges() > 0 ?
+						image.copy( Icons.get( unPixelDungeon.challenges() > 0 ?
 								Icons.CHALLENGE_ON :Icons.CHALLENGE_OFF ) );
 					};
 				} );

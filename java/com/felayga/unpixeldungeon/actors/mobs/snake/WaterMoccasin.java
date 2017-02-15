@@ -5,7 +5,7 @@
  * Shattered Pixel Dungeon
  * Copyright (C) 2014-2015 Evan Debenham
  *
- * Unpixel Dungeon
+ * unPixel Dungeon
  * Copyright (C) 2015-2016 Randall Foudray
  *
  * This program is free software: you can redistribute it and/or modify
@@ -21,6 +21,7 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>
  *
+ *
  */
 
 package com.felayga.unpixeldungeon.actors.mobs.snake;
@@ -28,6 +29,7 @@ package com.felayga.unpixeldungeon.actors.mobs.snake;
 import com.felayga.unpixeldungeon.actors.buffs.hero.Encumbrance;
 import com.felayga.unpixeldungeon.actors.mobs.Mob;
 import com.felayga.unpixeldungeon.items.weapon.melee.mob.PoisonChance;
+import com.felayga.unpixeldungeon.mechanics.Characteristic;
 import com.felayga.unpixeldungeon.mechanics.CorpseEffect;
 import com.felayga.unpixeldungeon.mechanics.GameTime;
 import com.felayga.unpixeldungeon.mechanics.MagicType;
@@ -45,8 +47,7 @@ public class WaterMoccasin extends Mob {
         name = "water moccasin";
         spriteClass = WaterMoccasinSprite.class;
 
-        experience = 48;
-        movementSpeed(GameTime.TICK * 5 / 4);
+        movementSpeed(GameTime.TICK * 4 / 5);
         attackSpeed(GameTime.TICK);
         defenseMundane = 17;
         defenseMagical = 0;
@@ -55,6 +56,7 @@ public class WaterMoccasin extends Mob {
         immunityMagical = MagicType.Poison.value;
         corpseEffects = CorpseEffect.Poisonous.value;
         corpseResistances = CorpseEffect.Poisonous.value;
+        characteristics = Characteristic.value(Characteristic.Animal, Characteristic.Carnivore, Characteristic.CannotUseItems, Characteristic.Swimmer, Characteristic.Concealer);
 
         belongings.collectEquip(new PoisonChance(GameTime.TICK, 1, 6, 1, 6));
     }

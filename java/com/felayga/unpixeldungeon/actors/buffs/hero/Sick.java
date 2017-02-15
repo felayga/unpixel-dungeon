@@ -5,7 +5,7 @@
  * Shattered Pixel Dungeon
  * Copyright (C) 2014-2015 Evan Debenham
  *
- * Unpixel Dungeon
+ * unPixel Dungeon
  * Copyright (C) 2015-2016 Randall Foudray
  *
  * This program is free software: you can redistribute it and/or modify
@@ -20,6 +20,7 @@
  *
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>
+ *
  *
  */
 
@@ -41,7 +42,7 @@ import com.watabou.utils.Bundle;
  * Created by HELLO on 6/15/2016.
  */
 public class Sick extends FlavourBuff {
-
+    private static final long DURATIONMODIFIER = 2;
     private static final long DURATION = 14;
 
     private long left;
@@ -49,7 +50,7 @@ public class Sick extends FlavourBuff {
 
     {
         type = buffType.NEGATIVE;
-        left = DURATION;
+        left = DURATION * DURATIONMODIFIER;
     }
 
     @Override
@@ -69,20 +70,19 @@ public class Sick extends FlavourBuff {
         left--;
 
         if (target.isAlive()) {
-            GLog.d("sick left="+left);
-            if (left >= 4 && left <= 9) {
-                Buff.prolong(target, Vertigo.class, 2 * GameTime.TICK);
+            Char source = Char.Registry.get(ownerRegistryIndex());
+
+            if (left >= 4 * DURATIONMODIFIER && left <= 9 * DURATIONMODIFIER) {
+                Buff.prolong(target, source, Vertigo.class, 2 * DURATIONMODIFIER * GameTime.TICK);
             }
-            if (left >= 4 && left <= 6) {
-                Buff.prolong(target, Paralysis.class, 2 * GameTime.TICK);
+            if (left >= 4 * DURATIONMODIFIER && left <= 6 * DURATIONMODIFIER) {
+                Buff.prolong(target, source, Paralysis.class, 2 * DURATIONMODIFIER * GameTime.TICK);
             }
-            if (left == 3) {
+            if (left == 3 * DURATIONMODIFIER) {
                 GLog.n("You feel incredibly sick.");
             }
             if (left <= 0) {
-                vomit(target);
-
-                detach();
+                vomit(target, source);
             }
         } else {
             detach();
@@ -93,8 +93,8 @@ public class Sick extends FlavourBuff {
         return true;
     }
 
-    public static void vomit(Char target) {
-        Buff.prolong(target, Paralysis.class, 2 * GameTime.TICK);
+    public static void vomit(Char target, Char source) {
+        Buff.prolong(target, source, Paralysis.class, 2 * GameTime.TICK);
 
         if (target instanceof Hero) {
             GLog.w("You suddenly vomit!");
@@ -103,6 +103,7 @@ public class Sick extends FlavourBuff {
         }
 
         Buff.detach(target, DeathlySick.class);
+        Buff.detach(target, Sick.class);
 
         Hunger hunger = target.buff(Hunger.class);
         if (hunger != null) {

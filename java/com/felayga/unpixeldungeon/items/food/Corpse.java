@@ -5,7 +5,7 @@
  * Shattered Pixel Dungeon
  * Copyright (C) 2014-2015 Evan Debenham
  *
- * Unpixel Dungeon
+ * unPixel Dungeon
  * Copyright (C) 2015-2016 Randall Foudray
  *
  * This program is free software: you can redistribute it and/or modify
@@ -20,6 +20,7 @@
  *
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>
+ *
  *
  */
 package com.felayga.unpixeldungeon.items.food;
@@ -304,10 +305,10 @@ public class Corpse extends Food implements IDecayable {
     private void qualityCheck(Hero hero) {
         if (isTainted()) {
             GLog.n("Ulch - that food was tainted!");
-            Buff.affect(hero, DeathlySick.class);
+            Buff.affect(hero, null, DeathlySick.class);
         } else if (isRotten()) {
             hero.damage(Random.Int(0, 8) + 1, MagicType.Mundane, null);
-            Buff.prolong(hero, Sick.class, 14);
+            Buff.prolong(hero, null, Sick.class, 14);
         }
     }
 
@@ -359,7 +360,7 @@ public class Corpse extends Food implements IDecayable {
                 rounds += Random.Long(0, 6) * GameTime.TICK;
             }
 
-            Buff.prolong(hero, Paralysis.class, rounds);
+            Buff.prolong(hero, null, Paralysis.class, rounds);
         }
 
         if ((effects & CorpseEffect.Hallucinogenic.value) != 0) {
@@ -368,7 +369,7 @@ public class Corpse extends Food implements IDecayable {
                 rounds += Random.Long(0, 6) * GameTime.TICK;
             }
 
-            Buff.prolong(hero, Hallucination.class, rounds);
+            Buff.prolong(hero, null, Hallucination.class, rounds);
         }
 
         if ((effects & CorpseEffect.Unstoning.value) != 0) {
@@ -384,7 +385,7 @@ public class Corpse extends Food implements IDecayable {
         }
 
         if ((effects & CorpseEffect.Sickening.value) != 0) {
-            Buff.prolong(hero, Sick.class, 14);
+            Buff.prolong(hero, null, Sick.class, 14);
         }
 
         //endregion

@@ -5,7 +5,7 @@
  * Shattered Pixel Dungeon
  * Copyright (C) 2014-2015 Evan Debenham
  *
- * Unpixel Dungeon
+ * unPixel Dungeon
  * Copyright (C) 2015-2016 Randall Foudray
  *
  * This program is free software: you can redistribute it and/or modify
@@ -21,17 +21,21 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>
  *
+ *
  */
 package com.felayga.unpixeldungeon.items.bags;
 
+import com.felayga.unpixeldungeon.Assets;
 import com.felayga.unpixeldungeon.Badges;
 import com.felayga.unpixeldungeon.Dungeon;
 import com.felayga.unpixeldungeon.actors.Char;
-import com.felayga.unpixeldungeon.actors.buffs.hero.Encumbrance;
 import com.felayga.unpixeldungeon.actors.hero.Hero;
 import com.felayga.unpixeldungeon.items.Heap;
 import com.felayga.unpixeldungeon.items.Item;
+import com.felayga.unpixeldungeon.items.potions.Potion;
+import com.felayga.unpixeldungeon.items.wands.Wand;
 import com.felayga.unpixeldungeon.items.weapon.missiles.martial.Boomerang;
+import com.felayga.unpixeldungeon.levels.Level;
 import com.felayga.unpixeldungeon.mechanics.Constant;
 import com.felayga.unpixeldungeon.mechanics.IDecayable;
 import com.felayga.unpixeldungeon.scenes.GameScene;
@@ -46,26 +50,88 @@ import com.watabou.utils.Random;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Iterator;
+import java.util.List;
 
 public class Bag extends Item implements Iterable<Item>, IBag {
 	private static final String TXT_PACK_FULL = "Your pack is too full for the %s.";
 
 	public static final String AC_OPEN = "OPEN";
 
-	public Bag(Char owner, boolean lockable) {
+    protected int baseWeight;
+
+	public Bag(Char owner, boolean lockable, int weight) {
 		this.owner = owner;
 
-		image = 11;
+        pickupSound = Assets.SND_ITEM_BAG;
+
+        image = 11;
 
 		defaultAction = AC_OPEN;
 
 		this.locked = false;
         this.lockable = lockable;
+        hasLevels(false);
 
 		priority = 16;
 
-		weight(Encumbrance.UNIT * 15);
+        this.baseWeight = weight;
+		weight(weight);
 	}
+
+    public void contentsImpact(boolean verbose) {
+        Iterator<Item> iterator = iterator(false);
+
+        List<Item> pendingremoval = new ArrayList<>();
+
+        int shatter = 0;
+        int crack = 0;
+
+        while (iterator.hasNext()) {
+            Item item = iterator.next();
+
+            if (item instanceof IBag) {
+                IBag bag = (IBag)item;
+                bag.contentsImpact(verbose);
+            } else if (item instanceof Potion) {
+                int count = item.quantity();
+
+                while (count > 0) {
+                    if (Random.Int(3)!=0) {
+                        pendingremoval.add(item);
+                        shatter++;
+                    }
+                    count--;
+                }
+            } else if (item instanceof Wand) {
+                if (Random.Int(3)!=0) {
+                    pendingremoval.add(item);
+                    crack++;
+                }
+            }
+        }
+
+        if (pendingremoval.size() > 0) {
+            if (verbose) {
+                if (shatter > 0 && crack > 0) {
+                    GLog.n("You hear muffled breaking noises.");
+                }
+                else if (shatter > 1) {
+                    GLog.n("You hear muffled shattering noises.");
+                } else if (shatter > 0) {
+                    GLog.n("You hear a muffled shatter.");
+                } else if (crack > 1) {
+                    GLog.n("You hear muffled cracking noises.");
+                }
+                else if (crack > 0){
+                    GLog.n("You hear a muffled crack.");
+                }
+            }
+
+            for (Item item : pendingremoval) {
+                this.remove(item, 1);
+            }
+        }
+    }
 
     public Item self() {
         return this;
@@ -148,12 +214,15 @@ public class Bag extends Item implements Iterable<Item>, IBag {
 	@Override
 	public boolean execute(Hero hero, String action) {
 		if (action.equals(AC_OPEN)) {
-            if (parent() instanceof Heap) {
-                Heap heap = (Heap)parent();
-                GameScene.show(new WndBag(this, null, WndBackpack.Mode.ALL, null, null, heap.pos));
-            }
-            else {
-                GameScene.show(new WndBag(this, null, WndBackpack.Mode.ALL, null, null, Constant.Position.NONE));
+            if (locked) {
+
+            } else {
+                if (parent() instanceof Heap) {
+                    Heap heap = (Heap) parent();
+                    GameScene.show(new WndBag(this, null, WndBackpack.Mode.ALL, null, null, heap.pos));
+                } else {
+                    GameScene.show(new WndBag(this, null, WndBackpack.Mode.ALL, null, null, Constant.Position.NONE));
+                }
             }
 
 			return false;
@@ -301,12 +370,14 @@ public class Bag extends Item implements Iterable<Item>, IBag {
 
 	private static final String ITEMS = "inventory";
 	private static final String LOCKED = "locked";
+    private static final String BASEWEIGHT = "baseWeight";
 
 	@Override
 	public void storeInBundle(Bundle bundle) {
 		super.storeInBundle(bundle);
 		bundle.put(ITEMS, items);
 		bundle.put(LOCKED, locked);
+        bundle.put(BASEWEIGHT, baseWeight);
 	}
 
 	public void storeInBundle(Bundle bundle, String name) {
@@ -318,6 +389,10 @@ public class Bag extends Item implements Iterable<Item>, IBag {
 		super.restoreFromBundle(bundle);
 
 		locked = bundle.getBoolean(LOCKED);
+        onLockedChanged();
+        baseWeight = bundle.getInt(BASEWEIGHT);
+
+        weight(baseWeight);
 
 		for (Bundlable item : bundle.getCollection(ITEMS)) {
 			if (item != null) this.collect((Item) item);

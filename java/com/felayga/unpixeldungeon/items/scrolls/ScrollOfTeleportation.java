@@ -5,7 +5,7 @@
  * Shattered Pixel Dungeon
  * Copyright (C) 2014-2015 Evan Debenham
  *
- * Unpixel Dungeon
+ * unPixel Dungeon
  * Copyright (C) 2015-2016 Randall Foudray
  *
  * This program is free software: you can redistribute it and/or modify
@@ -20,6 +20,7 @@
  *
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>
+ *
  *
  */
 package com.felayga.unpixeldungeon.items.scrolls;
@@ -61,7 +62,6 @@ public class ScrollOfTeleportation extends PositionScroll {
 	protected void doRead() {
         super.doRead();
 		Sample.INSTANCE.play(Assets.SND_READ);
-		Invisibility.dispel();
 
 		curUser.spend_new(TIME_TO_READ, true);
 
@@ -124,7 +124,7 @@ public class ScrollOfTeleportation extends PositionScroll {
         } else {
             GLog.d("levelport for non-hero");
             //todo: implement non-hero levelport
-            user.destroy();
+            user.destroy(null);
             user.sprite.killAndErase();
             Dungeon.level.mobs.remove(user);
             return -1;
@@ -135,7 +135,7 @@ public class ScrollOfTeleportation extends PositionScroll {
     protected void onPositionSelected(Hero user, int position) {
         super.onPositionSelected(user, position);
 
-        if (position == user.pos) {
+        if (position == user.pos()) {
             position = Constant.Position.RANDOM;
         }
 

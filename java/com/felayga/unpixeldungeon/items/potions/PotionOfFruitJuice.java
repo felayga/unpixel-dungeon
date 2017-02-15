@@ -5,7 +5,7 @@
  * Shattered Pixel Dungeon
  * Copyright (C) 2014-2015 Evan Debenham
  *
- * Unpixel Dungeon
+ * unPixel Dungeon
  * Copyright (C) 2015-2016 Randall Foudray
  *
  * This program is free software: you can redistribute it and/or modify
@@ -21,6 +21,7 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>
  *
+ *
  */
 
 package com.felayga.unpixeldungeon.items.potions;
@@ -31,8 +32,6 @@ package com.felayga.unpixeldungeon.items.potions;
 
 import com.felayga.unpixeldungeon.actors.Char;
 import com.felayga.unpixeldungeon.actors.buffs.hero.Hunger;
-import com.felayga.unpixeldungeon.items.food.Blandfruit;
-import com.felayga.unpixeldungeon.plants.Stormvine;
 import com.felayga.unpixeldungeon.utils.GLog;
 
 public class PotionOfFruitJuice extends Potion {
@@ -45,14 +44,13 @@ public class PotionOfFruitJuice extends Potion {
         bones = true;
 
         price = 30;
-
-        alchemyPrimary = Blandfruit.class;
-        alchemySecondary = Stormvine.Seed.class;
     }
 
     @Override
     public void apply( Char hero ) {
         setKnown();
+
+        GLog.p("This tastes like fruit juice.");
 
         switch(bucStatus) {
             case Cursed:
@@ -66,8 +64,6 @@ public class PotionOfFruitJuice extends Potion {
                 hero.buff(Hunger.class).satisfy_new(500);
                 break;
         }
-
-        GLog.p("This tastes like fruit juice.");
     }
 
     @Override

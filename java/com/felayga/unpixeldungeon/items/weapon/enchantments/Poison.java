@@ -5,7 +5,7 @@
  * Shattered Pixel Dungeon
  * Copyright (C) 2014-2015 Evan Debenham
  *
- * Unpixel Dungeon
+ * unPixel Dungeon
  * Copyright (C) 2015-2016 Randall Foudray
  *
  * This program is free software: you can redistribute it and/or modify
@@ -20,6 +20,7 @@
  *
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>
+ *
  *
  */
 package com.felayga.unpixeldungeon.items.weapon.enchantments;
@@ -41,11 +42,11 @@ public class Poison extends Weapon.Enchantment {
 		// lvl 0 - 33%
 		// lvl 1 - 50%
 		// lvl 2 - 60%
-		int level = Math.max( 0, weapon.level );
+		int level = Math.max( 0, weapon.level() );
 		
 		if (Random.Int( level + 3 ) >= 2) {
             //todo: poison rebalance with buff update
-            com.felayga.unpixeldungeon.actors.buffs.negative.Poison.affect(defender, weapon.damageRoll());
+            com.felayga.unpixeldungeon.actors.buffs.negative.Poison.affect(defender, attacker, weapon.damageRoll());
 
 			return true;
 		} else {

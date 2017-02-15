@@ -5,7 +5,7 @@
  * Shattered Pixel Dungeon
  * Copyright (C) 2014-2015 Evan Debenham
  *
- * Unpixel Dungeon
+ * unPixel Dungeon
  * Copyright (C) 2015-2016 Randall Foudray
  *
  * This program is free software: you can redistribute it and/or modify
@@ -20,6 +20,7 @@
  *
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>
+ *
  *
  */
 package com.felayga.unpixeldungeon.actors.buffs.negative;
@@ -38,30 +39,30 @@ import com.felayga.unpixeldungeon.utils.GLog;
 
 public class Frost extends FlavourBuff {
 
-	private static final String TXT_FREEZES = "%s freezes!";
+    private static final String TXT_FREEZES = "%s freezes!";
 
-	private static final long DURATION	= GameTime.TICK * 5;
+    private static final long DURATION = GameTime.TICK * 5;
 
-	{
-		type = buffType.NEGATIVE;
-	}
-	
-	@Override
-	public boolean attachTo( Char target ) {
-		if (super.attachTo( target )) {
-			
-			target.paralysed++;
-			Buff.detach(target, Burning.class);
-			Buff.detach( target, Chill.class );
+    {
+        type = buffType.NEGATIVE;
+    }
 
-			Item item = target.belongings.randomUnequipped();
-			if (item instanceof Potion) {
+    @Override
+    public boolean attachTo(Char target, Char source) {
+        if (super.attachTo(target, source)) {
 
-				item = target.belongings.remove(item, 1);
-				GLog.w(TXT_FREEZES, item.toString());
-				((Potion) item).shatter(target.pos);
+            target.paralysed++;
+            Buff.detach(target, Burning.class);
+            Buff.detach(target, Chill.class);
 
-			} /*else if (item instanceof MysteryMeat) {
+            Item item = target.belongings.randomUnequipped();
+            if (item instanceof Potion) {
+
+                item = target.belongings.remove(item, 1);
+                GLog.w(TXT_FREEZES, item.toString());
+                ((Potion) item).shatter(source, target.pos());
+
+            } /*else if (item instanceof MysteryMeat) {
 
 				item = target.belongings.remove(item, 1);
 				FrozenCarpaccio carpaccio = new FrozenCarpaccio();
@@ -73,49 +74,51 @@ public class Frost extends FlavourBuff {
 			}*/
 
 
-			return true;
-		} else {
-			return false;
-		}
-	}
-	
-	@Override
-	public void detach() {
-		super.detach();
-		if (target.paralysed > 0)
-			target.paralysed--;
-		if (Level.water[target.pos])
-			Buff.prolong(target, Chill.class, GameTime.TICK * 4);
-	}
-	
-	@Override
-	public int icon() {
-		return BuffIndicator.FROST;
-	}
+            return true;
+        } else {
+            return false;
+        }
+    }
 
-	@Override
-	public void fx(boolean on) {
-		if (on) target.sprite.add(CharSprite.State.FROZEN);
-		else target.sprite.remove(CharSprite.State.FROZEN);
-	}
+    @Override
+    public void detach() {
+        super.detach();
+        if (target.paralysed > 0) {
+            target.paralysed--;
+        }
+        if (Level.puddle[target.pos()]) {
+            Buff.prolong(target, Char.Registry.get(ownerRegistryIndex()), Chill.class, GameTime.TICK * 4);
+        }
+    }
 
-	@Override
-	public String toString() {
-		return "Frozen";
-	}
+    @Override
+    public int icon() {
+        return BuffIndicator.FROST;
+    }
 
-	@Override
-	public String desc() {
-		return "Not to be confused with freezing solid, this more benign freezing simply encases the target in ice.\n" +
-				"\n" +
-				"Freezing acts similarly to paralysis, making it impossible for the target to act. " +
-				"Unlike paralysis, freezing is immediately cancelled if the target takes damage, as the ice will shatter.\n" +
-				"\n" +
-				"The freeze will last for " + dispTurns() + ", or until the target takes damage.\n";
-	}
+    @Override
+    public void fx(boolean on) {
+        if (on) target.sprite.add(CharSprite.State.FROZEN);
+        else target.sprite.remove(CharSprite.State.FROZEN);
+    }
 
-	public static long duration( Char ch ) {
-		Resistance r = ch.buff( Resistance.class );
-		return r != null ? r.durationFactor() * DURATION / GameTime.TICK : DURATION;
-	}
+    @Override
+    public String toString() {
+        return "Frozen";
+    }
+
+    @Override
+    public String desc() {
+        return "Not to be confused with freezing solid, this more benign freezing simply encases the target in ice.\n" +
+                "\n" +
+                "Freezing acts similarly to paralysis, making it impossible for the target to act. " +
+                "Unlike paralysis, freezing is immediately cancelled if the target takes damage, as the ice will shatter.\n" +
+                "\n" +
+                "The freeze will last for " + dispTurns() + ", or until the target takes damage.\n";
+    }
+
+    public static long duration(Char ch) {
+        Resistance r = ch.buff(Resistance.class);
+        return r != null ? r.durationFactor() * DURATION / GameTime.TICK : DURATION;
+    }
 }

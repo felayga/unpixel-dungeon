@@ -5,7 +5,7 @@
  * Shattered Pixel Dungeon
  * Copyright (C) 2014-2015 Evan Debenham
  *
- * Unpixel Dungeon
+ * unPixel Dungeon
  * Copyright (C) 2015-2016 Randall Foudray
  *
  * This program is free software: you can redistribute it and/or modify
@@ -21,12 +21,13 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>
  *
+ *
  */
 package com.felayga.unpixeldungeon.levels.unused;
 /*
 import com.felayga.unpixeldungeon.Assets;
 import com.felayga.unpixeldungeon.Dungeon;
-import com.felayga.unpixeldungeon.ShatteredPixelDungeon;
+import com.felayga.unpixeldungeon.unPixelDungeon;
 import com.felayga.unpixeldungeon.actors.Actor;
 import com.felayga.unpixeldungeon.actors.Char;
 import com.felayga.unpixeldungeon.actors.mobs.Mob;
@@ -319,7 +320,7 @@ public class PrisonBossLevel extends Level {
 				CustomTileVisual vis = new exitVisual(-1);
 				vis.pos(7, 7);
 				customTiles.add(vis);
-				((GameScene)ShatteredPixelDungeon.scene()).addCustomTile(vis);
+				((GameScene)unPixelDungeon.scene()).addCustomTile(vis);
 
 				Dungeon.hero.interrupt();
 				Dungeon.hero.pos = 5+27*32;

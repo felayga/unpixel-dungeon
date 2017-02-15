@@ -5,7 +5,7 @@
  * Shattered Pixel Dungeon
  * Copyright (C) 2014-2015 Evan Debenham
  *
- * Unpixel Dungeon
+ * unPixel Dungeon
  * Copyright (C) 2015-2016 Randall Foudray
  *
  * This program is free software: you can redistribute it and/or modify
@@ -20,6 +20,7 @@
  *
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>
+ *
  *
  */
 package com.felayga.unpixeldungeon.actors.blobs;
@@ -47,13 +48,14 @@ public class ToxicGas extends Blob implements Hero.Doom {
 		Char ch;
 		for (int i=0; i < LENGTH; i++) {
 			if (cur[i] > 0 && (ch = Actor.findChar( i )) != null) {
+                if (ch.canBreate()) {
+                    int damage = (ch.HT + levelDamage) / 40;
+                    if (Random.Int(40) < (ch.HT + levelDamage) % 40) {
+                        damage++;
+                    }
 
-				int damage = (ch.HT + levelDamage) / 40;
-				if (Random.Int( 40 ) < (ch.HT + levelDamage) % 40) {
-					damage++;
-				}
-				
-				ch.damage( damage, MagicType.Poison, null );
+                    ch.damage(damage, MagicType.Poison, Char.Registry.get(ownerRegistryIndex()));
+                }
 			}
 		}
 	}

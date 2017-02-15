@@ -5,7 +5,7 @@
  * Shattered Pixel Dungeon
  * Copyright (C) 2014-2015 Evan Debenham
  *
- * Unpixel Dungeon
+ * unPixel Dungeon
  * Copyright (C) 2015-2016 Randall Foudray
  *
  * This program is free software: you can redistribute it and/or modify
@@ -20,6 +20,7 @@
  *
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>
+ *
  *
  */
 package com.felayga.unpixeldungeon.items;
@@ -65,10 +66,10 @@ public class Torch extends Item {
 			hero.spend_new(TIME_TO_LIGHT, false);
 			hero.busy();
 			
-			hero.sprite.operate(hero.pos);
+			hero.sprite.operate(hero.pos());
 
 			hero.belongings.remove(this, 1);
-			Buff.affect(hero, Light.class, Light.DURATION);
+			Buff.affect(hero, hero, Light.class, Light.DURATION);
 			
 			Emitter emitter = hero.sprite.centerEmitter(-1);
 			emitter.start( FlameParticle.FACTORY, 0.2f, 3 );

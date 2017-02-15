@@ -5,7 +5,7 @@
  * Shattered Pixel Dungeon
  * Copyright (C) 2014-2015 Evan Debenham
  *
- * Unpixel Dungeon
+ * unPixel Dungeon
  * Copyright (C) 2015-2016 Randall Foudray
  *
  * This program is free software: you can redistribute it and/or modify
@@ -21,6 +21,7 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>
  *
+ *
  */
 package com.felayga.unpixeldungeon.mechanics;
 
@@ -30,7 +31,7 @@ import java.util.Arrays;
 
 public final class ShadowCaster {
 
-	private static final int MAX_DISTANCE = 8;
+	private static final int MAX_DISTANCE = 12;
 	
 	private static final int WIDTH	= Level.WIDTH;
 	private static final int HEIGHT	= Level.HEIGHT;
@@ -55,7 +56,6 @@ public final class ShadowCaster {
 	private static Obstacles obs = new Obstacles();
 	
 	public static void castShadow( int x, int y, boolean[] fieldOfView, int distance ) {
-
 		losBlocking = Level.losBlocking;
 		
 		ShadowCaster.distance = distance;

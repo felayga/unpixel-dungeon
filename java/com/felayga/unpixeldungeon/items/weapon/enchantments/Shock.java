@@ -5,7 +5,7 @@
  * Shattered Pixel Dungeon
  * Copyright (C) 2014-2015 Evan Debenham
  *
- * Unpixel Dungeon
+ * unPixel Dungeon
  * Copyright (C) 2015-2016 Randall Foudray
  *
  * This program is free software: you can redistribute it and/or modify
@@ -20,6 +20,7 @@
  *
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>
+ *
  *
  */
 package com.felayga.unpixeldungeon.items.weapon.enchantments;
@@ -45,7 +46,7 @@ public class Shock extends Weapon.Enchantment {
 		// lvl 0 - 25%
 		// lvl 1 - 40%
 		// lvl 2 - 50%
-		int level = Math.max( 0, weapon.level );
+		int level = Math.max( 0, weapon.level() );
 		
 		if (Random.Int( level + 4 ) >= 3) {
 			
@@ -53,7 +54,7 @@ public class Shock extends Weapon.Enchantment {
 			affected.add(attacker);
 
 			arcs.clear();
-			arcs.add(new Lightning.Arc(attacker.pos, defender.pos));
+			arcs.add(new Lightning.Arc(attacker.pos(), defender.pos()));
 			hit(defender, Random.Int(1, damage / 2));
 
 			attacker.sprite.parent.add( new Lightning( arcs, null ) );
@@ -83,16 +84,16 @@ public class Shock extends Weapon.Enchantment {
 		}
 		
 		affected.add(ch);
-		ch.damage(Level.water[ch.pos] && !ch.flying ? (int) (damage * 2) : damage, MagicType.Shock, null);
+		ch.damage(Level.puddle[ch.pos()] && !ch.flying() ? damage * 2 : damage, MagicType.Shock, null);
 		
 		ch.sprite.centerEmitter(-1).burst(SparkParticle.FACTORY, 3);
 		ch.sprite.flash();
 		
 		HashSet<Char> ns = new HashSet<Char>();
 		for (int i=0; i < Level.NEIGHBOURS8.length; i++) {
-			Char n = Actor.findChar( ch.pos + Level.NEIGHBOURS8[i] );
+			Char n = Actor.findChar( ch.pos() + Level.NEIGHBOURS8[i] );
 			if (n != null && !affected.contains( n )) {
-				arcs.add(new Lightning.Arc(ch.pos, n.pos));
+				arcs.add(new Lightning.Arc(ch.pos(), n.pos()));
 				hit(n, Random.Int(damage / 2, damage));
 			}
 		}

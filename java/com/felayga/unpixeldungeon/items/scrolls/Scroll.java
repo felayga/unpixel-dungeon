@@ -5,7 +5,7 @@
  * Shattered Pixel Dungeon
  * Copyright (C) 2014-2015 Evan Debenham
  *
- * Unpixel Dungeon
+ * unPixel Dungeon
  * Copyright (C) 2015-2016 Randall Foudray
  *
  * This program is free software: you can redistribute it and/or modify
@@ -21,16 +21,18 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>
  *
+ *
  */
 package com.felayga.unpixeldungeon.items.scrolls;
 
 import com.felayga.unpixeldungeon.Assets;
 import com.felayga.unpixeldungeon.Badges;
+import com.felayga.unpixeldungeon.actors.Char;
 import com.felayga.unpixeldungeon.actors.buffs.hero.Encumbrance;
 import com.felayga.unpixeldungeon.actors.buffs.negative.Blindness;
 import com.felayga.unpixeldungeon.actors.hero.Hero;
 import com.felayga.unpixeldungeon.items.Item;
-import com.felayga.unpixeldungeon.items.ItemStatusHandler;
+import com.felayga.unpixeldungeon.items.ItemRandomizationHandler;
 import com.felayga.unpixeldungeon.items.artifacts.UnstableSpellbook;
 import com.felayga.unpixeldungeon.mechanics.GameTime;
 import com.felayga.unpixeldungeon.sprites.ItemSpriteSheet;
@@ -96,6 +98,7 @@ public abstract class Scroll extends Item {
 				"TEMOV",
 				"GARVEN DEH",
 				"READ ME",
+                "BUTT HOL",
 				"blank"
 		};
 	private static final Integer[] images = {
@@ -124,10 +127,11 @@ public abstract class Scroll extends Item {
 			ItemSpriteSheet.SCROLL_23,
 			ItemSpriteSheet.SCROLL_24,
 			ItemSpriteSheet.SCROLL_25,
+            ItemSpriteSheet.SCROLL_26,
 			ItemSpriteSheet.SCROLL_BLANK
 	};
 	
-	private static ItemStatusHandler<Scroll> handler;
+	private static ItemRandomizationHandler<Scroll> handler;
 	
 	private String rune;
 
@@ -135,7 +139,7 @@ public abstract class Scroll extends Item {
 
 	@SuppressWarnings("unchecked")
 	public static void initLabels() {
-		handler = new ItemStatusHandler<Scroll>( (Class<? extends Scroll>[])scrolls, runes, images, 1 );
+		handler = new ItemRandomizationHandler<Scroll>( (Class<? extends Scroll>[])scrolls, runes, images, 1 );
 	}
 	
 	public static void save( Bundle bundle ) {
@@ -144,7 +148,7 @@ public abstract class Scroll extends Item {
 	
 	@SuppressWarnings("unchecked")
 	public static void restore( Bundle bundle ) {
-		handler = new ItemStatusHandler<Scroll>( (Class<? extends Scroll>[])scrolls, runes, images, bundle );
+		handler = new ItemRandomizationHandler<Scroll>( (Class<? extends Scroll>[])scrolls, runes, images, bundle );
 	}
 	
 	public Scroll() {
@@ -155,6 +159,7 @@ public abstract class Scroll extends Item {
 
 		stackable = true;
 		defaultAction = AC_READ;
+        hasLevels(false);
 
 		weight(Encumbrance.UNIT * 5);
         price = 15;
@@ -174,7 +179,7 @@ public abstract class Scroll extends Item {
 	}
 	
 	@Override
-	public boolean execute( Hero hero, String action ) {
+	public boolean execute(Hero hero, String action ) {
 		if (action.equals( AC_READ )) {
 			if (hero.buff( Blindness.class ) != null) {
 				GLog.w( TXT_BLINDED );

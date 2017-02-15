@@ -5,7 +5,7 @@
  * Shattered Pixel Dungeon
  * Copyright (C) 2014-2015 Evan Debenham
  *
- * Unpixel Dungeon
+ * unPixel Dungeon
  * Copyright (C) 2015-2016 Randall Foudray
  *
  * This program is free software: you can redistribute it and/or modify
@@ -21,6 +21,7 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>
  *
+ *
  */
 
 package com.felayga.unpixeldungeon.items.bags;
@@ -31,6 +32,7 @@ import com.felayga.unpixeldungeon.actors.mobs.Bestiary;
 import com.felayga.unpixeldungeon.actors.mobs.Mob;
 import com.felayga.unpixeldungeon.items.Item;
 import com.felayga.unpixeldungeon.items.food.Corpse;
+import com.felayga.unpixeldungeon.mechanics.Characteristic;
 import com.felayga.unpixeldungeon.mechanics.Roll;
 import com.felayga.unpixeldungeon.sprites.ItemSpriteSheet;
 import com.felayga.unpixeldungeon.ui.Icons;
@@ -66,7 +68,7 @@ public class IceBox extends LargeChest {
         while (count > 0 && tries > 0) {
             Mob mob = Bestiary.spawn(Dungeon.depthAdjusted, Dungeon.hero.level + 10);
 
-            if (mob.nutrition > 0) {
+            if (mob.nutrition > 0 && ((mob.characteristics & Characteristic.Corpseless.value) == 0)) {
                 collect(new Corpse(mob));
                 count--;
             }

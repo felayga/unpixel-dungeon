@@ -5,7 +5,7 @@
  * Shattered Pixel Dungeon
  * Copyright (C) 2014-2015 Evan Debenham
  *
- * Unpixel Dungeon
+ * unPixel Dungeon
  * Copyright (C) 2015-2016 Randall Foudray
  *
  * This program is free software: you can redistribute it and/or modify
@@ -21,11 +21,13 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>
  *
+ *
  */
 package com.felayga.unpixeldungeon.actors.blobs;
 
 import com.felayga.unpixeldungeon.actors.Actor;
 import com.felayga.unpixeldungeon.actors.Char;
+import com.felayga.unpixeldungeon.actors.buffs.Buff;
 import com.felayga.unpixeldungeon.effects.BlobEmitter;
 import com.felayga.unpixeldungeon.effects.Speck;
 import com.watabou.utils.Bundle;
@@ -44,8 +46,10 @@ public class VenomGas extends Blob {
 			Char ch;
 			for (int i = 0; i < LENGTH; i++) {
 				if (cur[i] > 0 && (ch = Actor.findChar(i)) != null) {
-					//todo: VenomGas resistance/immunity
-					//if (!ch.immunities().contains(this.getClass())) Buff.affect(ch, Venom.class).set(2f, strength);
+					if (ch.canBreate()) {
+                        //todo: keep venom debuff?
+                        //Buff.affect(ch, Venom.class).set(2f, strength);
+                    }
 				}
 			}
 		}

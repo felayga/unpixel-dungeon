@@ -5,7 +5,7 @@
  * Shattered Pixel Dungeon
  * Copyright (C) 2014-2015 Evan Debenham
  *
- * Unpixel Dungeon
+ * unPixel Dungeon
  * Copyright (C) 2015-2016 Randall Foudray
  *
  * This program is free software: you can redistribute it and/or modify
@@ -21,6 +21,7 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>
  *
+ *
  */
 package com.felayga.unpixeldungeon.items.potions;
 
@@ -33,12 +34,12 @@ import com.felayga.unpixeldungeon.actors.blobs.Acid;
 import com.felayga.unpixeldungeon.actors.blobs.Fire;
 import com.felayga.unpixeldungeon.actors.buffs.Buff;
 import com.felayga.unpixeldungeon.actors.buffs.hero.Encumbrance;
+import com.felayga.unpixeldungeon.actors.buffs.negative.AcidBurning;
 import com.felayga.unpixeldungeon.actors.buffs.negative.Burning;
-import com.felayga.unpixeldungeon.actors.buffs.negative.Ooze;
 import com.felayga.unpixeldungeon.actors.hero.Hero;
 import com.felayga.unpixeldungeon.effects.Splash;
 import com.felayga.unpixeldungeon.items.Item;
-import com.felayga.unpixeldungeon.items.ItemStatusHandler;
+import com.felayga.unpixeldungeon.items.ItemRandomizationHandler;
 import com.felayga.unpixeldungeon.levels.Level;
 import com.felayga.unpixeldungeon.levels.Terrain;
 import com.felayga.unpixeldungeon.mechanics.Constant;
@@ -112,37 +113,46 @@ restoration
 full restoration
     */
 
-	private static final Class<?>[] potions = {
+	protected static final Class<?>[] potions = {
 			//RANDOMIZED
-			PotionOfHealing.class,
-			PotionOfExperience.class,
-			PotionOfToxicGas.class,
-			PotionOfLiquidFlame.class,
-			PotionOfStrength.class,
-			PotionOfParalyticGas.class,
-			PotionOfLevitation.class,
-			PotionOfMindVision.class,
-			PotionOfPurity.class,
-			PotionOfInvisibility.class,
-			PotionOfMight.class,
-			PotionOfFrost.class,
-			PotionOfBooze.class,
-			PotionOfAcid.class,
-			PotionOfExtraHealing.class,
-			PotionOfFullHealing.class,
-			PotionOfHallucination.class,
-            PotionOfFruitJuice.class,
-            PotionOfEnergy.class,
-            PotionOfFullEnergy.class,
-            PotionOfSickness.class,
+            PotionOfAcid.class,
             PotionOfBlindness.class,
             PotionOfConfusion.class,
-            PotionOfRestoration.class,
+            PotionOfEnergy.class,
+            PotionOfFrost.class,
+            PotionOfFullEnergy.class,
+            PotionOfFullHealing.class,
             PotionOfFullRestoration.class,
+            PotionOfGainAbility.class,
+            PotionOfGainLevel.class,
+            PotionOfHallucination.class,
+            PotionOfHealing.class,
+            PotionOfInvisibility.class,
             PotionOfIpecac.class,
+            PotionOfLevitation.class,
+            PotionOfMonsterDetection.class,
+            PotionOfObjectDetection.class,
+            PotionOfOil.class,
+            PotionOfParalyticGas.class,
+            PotionOfPolymorph.class,
+            PotionOfPurity.class,
+            PotionOfRestoration.class,
+            PotionOfRestoreAbility.class,
+            PotionOfSeeInvisible.class,
+            PotionOfSleeping.class,
+            PotionOfSpeed.class,
+            PotionOfToxicGas.class,
+            PotionOfShielding.class,
+            PotionOfHeroism.class,
+
+            PotionOfBooze.class,
+            PotionOfFruitJuice.class,
+            PotionOfSickness.class,
+
 			//NOT RANDOMIZED
 			PotionOfWater.class
 	};
+
 	private static final String[] colors = {
 			//RANDOMIZED
 			"ruby", "pink", "orange", "yellow", "emerald",
@@ -203,15 +213,15 @@ full restoration
 			ItemSpriteSheet.POTION_CLEAR
 	};
 
-	private static ItemStatusHandler<Potion> handler;
+	protected static ItemRandomizationHandler<Potion> handler;
 
-	private String color;
+	protected String color;
 
 	public boolean ownedByFruit = false;
 
 	@SuppressWarnings("unchecked")
 	public static void initColors() {
-		handler = new ItemStatusHandler<Potion>((Class<? extends Potion>[]) potions, colors, images, NONRANDOMPOTIONSATENDOFLISTS);
+		handler = new ItemRandomizationHandler<Potion>((Class<? extends Potion>[]) potions, colors, images, NONRANDOMPOTIONSATENDOFLISTS);
 	}
 
 	public static void save(Bundle bundle) {
@@ -220,11 +230,8 @@ full restoration
 
 	@SuppressWarnings("unchecked")
 	public static void restore(Bundle bundle) {
-		handler = new ItemStatusHandler<Potion>((Class<? extends Potion>[]) potions, colors, images, bundle);
+		handler = new ItemRandomizationHandler<Potion>((Class<? extends Potion>[]) potions, colors, images, bundle);
 	}
-
-    protected Class alchemyPrimary;
-    protected Class alchemySecondary;
 
 	public Potion() {
 		super();
@@ -235,7 +242,7 @@ full restoration
 		stackable = true;
 		defaultAction = Constant.Action.DRINK;
 		fragile = true;
-        hasLevels = false;
+        hasLevels(false);
 		weight(Encumbrance.UNIT * 20);
         price = 20;
 	}
@@ -251,6 +258,7 @@ full restoration
 	@Override
 	public ArrayList<String> actions(Hero hero) {
 		ArrayList<String> actions = super.actions(hero);
+        actions.add(Constant.Action.APPLY);
 		actions.add(Constant.Action.DRINK);
 		return actions;
 	}
@@ -267,8 +275,6 @@ full restoration
 									drink(hero);
 								}
 							}
-
-							;
 						}
 				);
 			} else {
@@ -304,7 +310,7 @@ full restoration
 		}
 	}
 
-	protected void drink(Hero hero) {
+	protected void drink(Char hero) {
 		hero.belongings.remove(this, 1);
 
 		hero.spend_new(TIME_TO_DRINK, false);
@@ -313,32 +319,35 @@ full restoration
 
 		Sample.INSTANCE.play(Assets.SND_DRINK);
 
-		hero.sprite.operate(hero.pos);
+		hero.sprite.operate(hero.pos());
 	}
 
 	@Override
-	protected void onThrow(int cell, Char thrower) {
+	protected void onThrow(Char thrower, int cell) {
 		if (Dungeon.level.map[cell] == Terrain.WELL || Level.pit[cell]) {
 
-			super.onThrow(cell, thrower);
+			super.onThrow(thrower, cell);
 
 		} else {
 
-			shatter(cell);
+			shatter(thrower, cell);
 
 		}
 	}
 
 	public void apply(Char hero) {
-		shatter(hero.pos);
+		shatter(hero, hero.pos());
 	}
 
-	public void shatter(int cell) {
+	public void shatter(Char thrower, int cell) {
 		if (Dungeon.visible[cell]) {
 			GLog.i("The flask shatters and " + color() + " liquid splashes harmlessly");
-			Sample.INSTANCE.play(Assets.SND_SHATTER);
-			splash(cell);
+            splash(cell);
 		}
+
+        if (Dungeon.audible[cell]) {
+            Sample.INSTANCE.play(Assets.SND_SHATTER);
+        }
 	}
 
 	@Override
@@ -428,17 +437,19 @@ full restoration
 		Splash.at(cell, color, 5);
 
 		Fire fire = (Fire) Dungeon.level.blobs.get(Fire.class);
-		if (fire != null)
-			fire.clear(cell);
+		if (fire != null) {
+            fire.clear(cell);
+        }
 
 		Acid acid = (Acid) Dungeon.level.blobs.get(Acid.class);
-		if (acid != null)
-			acid.clear(cell);
+		if (acid != null) {
+            acid.clear(cell);
+        }
 
 		Char ch = Actor.findChar(cell);
 		if (ch != null) {
 			Buff.detach(ch, Burning.class);
-			Buff.detach(ch, Ooze.class);
+			Buff.detach(ch, AcidBurning.class);
 		}
 	}
 

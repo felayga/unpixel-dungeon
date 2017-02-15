@@ -5,7 +5,7 @@
  * Shattered Pixel Dungeon
  * Copyright (C) 2014-2015 Evan Debenham
  *
- * Unpixel Dungeon
+ * unPixel Dungeon
  * Copyright (C) 2015-2016 Randall Foudray
  *
  * This program is free software: you can redistribute it and/or modify
@@ -20,6 +20,7 @@
  *
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>
+ *
  *
  */
 package com.felayga.unpixeldungeon.levels;
@@ -202,7 +203,7 @@ public class SewerBossLevel extends RegularLevel {
         for (int i = start; i < end; i++) {
             if (i != exit && map[i] == Terrain.WALL) {
                 map[i] = Terrain.WALL_DECO;
-                map[i + WIDTH] = Terrain.WATER;
+                map[i + WIDTH] = Terrain.PUDDLE;
             } else {
                 map[i + WIDTH] = Terrain.EMPTY;
             }
@@ -258,7 +259,7 @@ public class SewerBossLevel extends RegularLevel {
         if (entrance != 0) {
             super.seal();
 
-            set(entrance, Terrain.WATER_TILES, true);
+            set(entrance, Terrain.PUDDLE_TILES, true);
             GameScene.updateMap(entrance);
             GameScene.ripple(entrance);
 
@@ -299,7 +300,7 @@ public class SewerBossLevel extends RegularLevel {
     @Override
     public String tileName(int tile) {
         switch (tile) {
-            case Terrain.WATER:
+            case Terrain.PUDDLE:
                 return "Murky water";
             default:
                 return super.tileName(tile);

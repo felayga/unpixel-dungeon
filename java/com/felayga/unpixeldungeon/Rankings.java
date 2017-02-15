@@ -5,7 +5,7 @@
  * Shattered Pixel Dungeon
  * Copyright (C) 2014-2015 Evan Debenham
  *
- * Unpixel Dungeon
+ * unPixel Dungeon
  * Copyright (C) 2015-2016 Randall Foudray
  *
  * This program is free software: you can redistribute it and/or modify
@@ -20,6 +20,7 @@
  *
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>
+ *
  *
  */
 package com.felayga.unpixeldungeon;
@@ -222,7 +223,7 @@ public enum Rankings {
 
 			//basically every patch until 0.2.3d, extracts the hero's level from the bundle structure.
 			//the second condition in the if is important, helps account for bugged rankings from pre 0.2.3d
-			if (!bundle.contains(LEVEL) || bundle.getInt(LEVEL) == 0 && ShatteredPixelDungeon.version() < 30) {
+			if (!bundle.contains(LEVEL) || bundle.getInt(LEVEL) == 0 && unPixelDungeon.version() < 30) {
 				try {
 
 					InputStream input = Game.instance.openFileInput(gameFile);

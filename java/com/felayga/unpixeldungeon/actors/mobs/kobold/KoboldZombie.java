@@ -5,7 +5,7 @@
  * Shattered Pixel Dungeon
  * Copyright (C) 2014-2015 Evan Debenham
  *
- * Unpixel Dungeon
+ * unPixel Dungeon
  * Copyright (C) 2015-2016 Randall Foudray
  *
  * This program is free software: you can redistribute it and/or modify
@@ -21,6 +21,7 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>
  *
+ *
  */
 
 package com.felayga.unpixeldungeon.actors.mobs.kobold;
@@ -28,6 +29,7 @@ package com.felayga.unpixeldungeon.actors.mobs.kobold;
 import com.felayga.unpixeldungeon.actors.buffs.hero.Encumbrance;
 import com.felayga.unpixeldungeon.actors.mobs.Mob;
 import com.felayga.unpixeldungeon.items.weapon.melee.mob.MeleeMobAttack;
+import com.felayga.unpixeldungeon.mechanics.Characteristic;
 import com.felayga.unpixeldungeon.mechanics.CorpseEffect;
 import com.felayga.unpixeldungeon.mechanics.GameTime;
 import com.felayga.unpixeldungeon.mechanics.MagicType;
@@ -44,7 +46,6 @@ public class KoboldZombie extends Mob {
         name = "kobold zombie";
         spriteClass = KoboldZombieSprite.class;
 
-        experience = 1;
         movementSpeed(GameTime.TICK * 2);
         attackSpeed(GameTime.TICK);
         defenseMundane = 10;
@@ -53,6 +54,7 @@ public class KoboldZombie extends Mob {
         nutrition = 50;
         immunityMagical = MagicType.Cold.value | MagicType.Poison.value | MagicType.Sleep.value;
         corpseEffects = CorpseEffect.Rotten.value | CorpseEffect.Poisonous.value;
+        characteristics = Characteristic.value(Characteristic.CannotUseItems, Characteristic.NonBreather, Characteristic.Brainless, Characteristic.Humanoid);
 
         belongings.collectEquip(new MeleeMobAttack(GameTime.TICK, 1, 4));
     }

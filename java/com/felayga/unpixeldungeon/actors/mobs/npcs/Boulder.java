@@ -5,7 +5,7 @@
  * Shattered Pixel Dungeon
  * Copyright (C) 2014-2015 Evan Debenham
  *
- * Unpixel Dungeon
+ * unPixel Dungeon
  * Copyright (C) 2015-2016 Randall Foudray
  *
  * This program is free software: you can redistribute it and/or modify
@@ -20,6 +20,7 @@
  *
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>
+ *
  *
  */
 package com.felayga.unpixeldungeon.actors.mobs.npcs;
@@ -119,7 +120,7 @@ public class Boulder extends NPC {
 
         final int actionsLength = actions.size();
 
-        ShatteredPixelDungeon.scene().add(
+        unPixelDungeon.scene().add(
                 new WndOptions("Boulder", "A large boulder is in your way.",
                         actions.toArray(new String[actionsLength]),
                         actionOptions.toArray(new Boolean[actionsLength])) {
@@ -143,16 +144,10 @@ public class Boulder extends NPC {
     }
 
     private void interactPush() {
-        int newPos = this.pos * 2 - Dungeon.hero.pos;
+        int newPos = this.pos() * 2 - Dungeon.hero.pos();
         boolean mobBlock = false;
 
-        for (Char c : Actor.chars()) {
-            if (newPos == c.pos)
-            {
-                mobBlock = true;
-                break;
-            }
-        }
+        mobBlock = Actor.findChar(newPos) != null;
 
         if (!mobBlock) {
             if (Level.passable[newPos]) {
@@ -205,10 +200,10 @@ public class Boulder extends NPC {
     private boolean initializing = false;
     private void initializationCheck()
     {
-        if (storedPos == -1 || (!Level.losBlocking[pos]))
+        if (storedPos == -1 || (!Level.losBlocking[pos()]))
         {
             initializing = true;
-            move(pos);
+            move(pos());
             initializing = false;
         }
     }
@@ -245,10 +240,10 @@ public class Boulder extends NPC {
             Dungeon.level.press(newPos, this);
         }
 
-        if (pos != newPos) {
+        if (pos() != newPos) {
             Dungeon.level.press(newPos, this);
             super.move(newPos);
-            sprite.move(pos, newPos);
+            sprite.move(pos(), newPos);
         }
     }
 
@@ -258,32 +253,34 @@ public class Boulder extends NPC {
         super.onMotionComplete();
 
         if (!pluggingPit) {
-            Level.losBlocking[pos] = true;
+            Level.losBlocking[pos()] = true;
             sprite.idle();
         }
         else {
             die(null);
-            Dungeon.level.set(pos, Terrain.EMPTY, true);
+            Dungeon.level.set(pos(), Terrain.EMPTY, true);
         }
 
-        GameScene.updateMap(pos);
+        GameScene.updateMap(pos());
         Dungeon.observe();
     }
 
     @Override
     public void die(Actor cause)
     {
+        sprite.interruptMotion();
+
         if (!pluggingPit){
             Sample.INSTANCE.play(Assets.SND_BOULDER_SMASH);
-            Dungeon.level.spawnGemstones(pos);
-            Dungeon.level.drop(new Rock(Random.Int(3, 23)), pos);
+            //Dungeon.level.spawnGemstones(pos);
+            Dungeon.level.drop(new Rock(Random.Int(3, 23)), pos());
 
             Level.losBlocking[storedPos] = storedFlag;
             GameScene.updateMap(storedPos);
             Dungeon.observe();
         }
 
-        CellEmitter.get(pos).burst(Speck.factory(Speck.DUST), 5);
+        CellEmitter.get(pos()).burst(Speck.factory(Speck.DUST), 5);
 
         super.die(cause);
     }

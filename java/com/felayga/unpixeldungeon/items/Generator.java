@@ -5,7 +5,7 @@
  * Shattered Pixel Dungeon
  * Copyright (C) 2014-2015 Evan Debenham
  *
- * Unpixel Dungeon
+ * unPixel Dungeon
  * Copyright (C) 2015-2016 Randall Foudray
  *
  * This program is free software: you can redistribute it and/or modify
@@ -21,6 +21,7 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>
  *
+ *
  */
 package com.felayga.unpixeldungeon.items;
 
@@ -33,12 +34,10 @@ import com.felayga.unpixeldungeon.items.armor.medium.ScaleArmor;
 import com.felayga.unpixeldungeon.items.artifacts.AlchemistsToolkit;
 import com.felayga.unpixeldungeon.items.artifacts.Artifact_old;
 import com.felayga.unpixeldungeon.items.artifacts.CapeOfThorns;
-import com.felayga.unpixeldungeon.items.artifacts.ChaliceOfBlood;
 import com.felayga.unpixeldungeon.items.artifacts.CloakOfShadows;
 import com.felayga.unpixeldungeon.items.artifacts.EtherealChains;
 import com.felayga.unpixeldungeon.items.artifacts.HornOfPlenty;
 import com.felayga.unpixeldungeon.items.artifacts.MasterThievesArmband;
-import com.felayga.unpixeldungeon.items.artifacts.SandalsOfNature;
 import com.felayga.unpixeldungeon.items.artifacts.TalismanOfForesight;
 import com.felayga.unpixeldungeon.items.artifacts.TimekeepersHourglass;
 import com.felayga.unpixeldungeon.items.artifacts.UnstableSpellbook;
@@ -49,20 +48,37 @@ import com.felayga.unpixeldungeon.items.bags.LargeChest;
 import com.felayga.unpixeldungeon.items.food.Pasty;
 import com.felayga.unpixeldungeon.items.food.Ration;
 import com.felayga.unpixeldungeon.items.potions.Potion;
+import com.felayga.unpixeldungeon.items.potions.PotionOfAcid;
+import com.felayga.unpixeldungeon.items.potions.PotionOfBlindness;
 import com.felayga.unpixeldungeon.items.potions.PotionOfBooze;
-import com.felayga.unpixeldungeon.items.potions.PotionOfExperience;
-import com.felayga.unpixeldungeon.items.potions.PotionOfExtraHealing;
+import com.felayga.unpixeldungeon.items.potions.PotionOfConfusion;
+import com.felayga.unpixeldungeon.items.potions.PotionOfEnergy;
 import com.felayga.unpixeldungeon.items.potions.PotionOfFrost;
+import com.felayga.unpixeldungeon.items.potions.PotionOfFruitJuice;
+import com.felayga.unpixeldungeon.items.potions.PotionOfFullEnergy;
+import com.felayga.unpixeldungeon.items.potions.PotionOfFullHealing;
+import com.felayga.unpixeldungeon.items.potions.PotionOfFullRestoration;
+import com.felayga.unpixeldungeon.items.potions.PotionOfGainAbility;
+import com.felayga.unpixeldungeon.items.potions.PotionOfGainLevel;
 import com.felayga.unpixeldungeon.items.potions.PotionOfHallucination;
 import com.felayga.unpixeldungeon.items.potions.PotionOfHealing;
+import com.felayga.unpixeldungeon.items.potions.PotionOfHeroism;
 import com.felayga.unpixeldungeon.items.potions.PotionOfInvisibility;
+import com.felayga.unpixeldungeon.items.potions.PotionOfIpecac;
 import com.felayga.unpixeldungeon.items.potions.PotionOfLevitation;
-import com.felayga.unpixeldungeon.items.potions.PotionOfLiquidFlame;
-import com.felayga.unpixeldungeon.items.potions.PotionOfMight;
-import com.felayga.unpixeldungeon.items.potions.PotionOfMindVision;
+import com.felayga.unpixeldungeon.items.potions.PotionOfMonsterDetection;
+import com.felayga.unpixeldungeon.items.potions.PotionOfObjectDetection;
+import com.felayga.unpixeldungeon.items.potions.PotionOfOil;
 import com.felayga.unpixeldungeon.items.potions.PotionOfParalyticGas;
+import com.felayga.unpixeldungeon.items.potions.PotionOfPolymorph;
 import com.felayga.unpixeldungeon.items.potions.PotionOfPurity;
-import com.felayga.unpixeldungeon.items.potions.PotionOfStrength;
+import com.felayga.unpixeldungeon.items.potions.PotionOfRestoration;
+import com.felayga.unpixeldungeon.items.potions.PotionOfRestoreAbility;
+import com.felayga.unpixeldungeon.items.potions.PotionOfSeeInvisible;
+import com.felayga.unpixeldungeon.items.potions.PotionOfShielding;
+import com.felayga.unpixeldungeon.items.potions.PotionOfSickness;
+import com.felayga.unpixeldungeon.items.potions.PotionOfSleeping;
+import com.felayga.unpixeldungeon.items.potions.PotionOfSpeed;
 import com.felayga.unpixeldungeon.items.potions.PotionOfToxicGas;
 import com.felayga.unpixeldungeon.items.potions.PotionOfWater;
 import com.felayga.unpixeldungeon.items.rings.Ring;
@@ -213,24 +229,41 @@ public class Generator {
         Category.SCROLL.probs = new float[]{30, 10, 15, 0, 15, 15, 12, 8, 8, 0, 4, 10};
 
         Category.POTION.classes = new Class<?>[]{
-                PotionOfHealing.class,
-                PotionOfExperience.class,
-                PotionOfToxicGas.class,
-                PotionOfParalyticGas.class,
-                PotionOfLiquidFlame.class,
-                PotionOfLevitation.class,
-                PotionOfStrength.class,
-                PotionOfMindVision.class,
-                PotionOfPurity.class,
-                PotionOfInvisibility.class,
-                PotionOfMight.class,
-                PotionOfFrost.class,
+                PotionOfAcid.class,
+                PotionOfBlindness.class,
                 PotionOfBooze.class,
-                PotionOfExtraHealing.class,
+                PotionOfConfusion.class,
+                PotionOfEnergy.class,
+                PotionOfFrost.class,
+                PotionOfFruitJuice.class,
+                PotionOfFullEnergy.class,
+                PotionOfFullHealing.class,
+                PotionOfFullRestoration.class,
+                PotionOfGainAbility.class,
+                PotionOfGainLevel.class,
                 PotionOfHallucination.class,
+                PotionOfHealing.class,
+                PotionOfInvisibility.class,
+                PotionOfIpecac.class,
+                PotionOfLevitation.class,
+                PotionOfMonsterDetection.class,
+                PotionOfObjectDetection.class,
+                PotionOfOil.class,
+                PotionOfParalyticGas.class,
+                PotionOfPolymorph.class,
+                PotionOfPurity.class,
+                PotionOfRestoration.class,
+                PotionOfRestoreAbility.class,
+                PotionOfSeeInvisible.class,
+                PotionOfSickness.class,
+                PotionOfSleeping.class,
+                PotionOfSpeed.class,
+                PotionOfToxicGas.class,
+                PotionOfShielding.class,
+                PotionOfHeroism.class,
                 PotionOfWater.class
         };
-        Category.POTION.probs = new float[]{45, 4, 15, 10, 15, 10, 0, 20, 12, 10, 0, 10, 10, 20, 45, 40};
+        Category.POTION.probs = new float[]{5, 20, 15, 20, 20, 10, 25, 10, 10, 10, 20, 10, 20, 30, 20, 20, 25, 20, 20, 15, 20, 5, 10, 25, 20, 25, 5, 20, 30, 20, 20, 20, 100};
 
         //TODO: add last ones when implemented
         Category.WAND.classes = new Class<?>[]{
@@ -300,11 +333,11 @@ public class Generator {
 
         Category.ARTIFACT.classes = new Class<?>[]{
                 CapeOfThorns.class,
-                ChaliceOfBlood.class,
+                //ChaliceOfBlood.class,
                 CloakOfShadows.class,
                 HornOfPlenty.class,
                 MasterThievesArmband.class,
-                SandalsOfNature.class,
+                //SandalsOfNature.class,
                 TalismanOfForesight.class,
                 TimekeepersHourglass.class,
                 UnstableSpellbook.class,
@@ -332,7 +365,7 @@ public class Generator {
                 Stormvine.Seed.class,
                 Sungrass.Seed.class,
                 Swampweed.Seed.class};
-        Category.SEED.probs = new float[]{24, 24, 12, 18, 24, 18, 24, 18, 24, 18, 24, 6, 12, 24, 24, 6};
+        Category.SEED.probs = new float[]{4, 4, 2, 3, 4, 3, 4, 3, 4, 3, 4, 1, 2, 4, 4, 1};
 
         Category.GEMSTONE.classes = new Class<?>[]{
                 Gemstone.BlackOpal.class,
@@ -370,7 +403,7 @@ public class Generator {
                 LargeChest.class,
                 LargeBox.class,
                 IceBox.class};
-        Category.CONTAINER.probs = new float[]{8, 11, 1};
+        Category.CONTAINER.probs = new float[]{7, 8, 1};
     }
 
 	public static void reset() {
@@ -413,7 +446,7 @@ public class Generator {
 
 	public static Item random(Class<? extends Item> cl) {
 		try {
-			return ((Item) cl.newInstance()).random();
+			return cl.newInstance().random();
 		} catch (Exception e) {
 
 			return null;

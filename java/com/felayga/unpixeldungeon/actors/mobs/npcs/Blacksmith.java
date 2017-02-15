@@ -5,7 +5,7 @@
  * Shattered Pixel Dungeon
  * Copyright (C) 2014-2015 Evan Debenham
  *
- * Unpixel Dungeon
+ * unPixel Dungeon
  * Copyright (C) 2015-2016 Randall Foudray
  *
  * This program is free software: you can redistribute it and/or modify
@@ -20,6 +20,7 @@
  *
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>
+ *
  *
  */
 package com.felayga.unpixeldungeon.actors.mobs.npcs;
@@ -94,7 +95,7 @@ public class Blacksmith extends NPC {
 	@Override
 	public void interact() {
 		
-		sprite.turnTo(pos, Dungeon.hero.pos);
+		sprite.turnTo(pos(), Dungeon.hero.pos());
 		
 		if (!Quest.given) {
 			
@@ -112,7 +113,7 @@ public class Blacksmith extends NPC {
 					if (pick.doPickUp( Dungeon.hero )) {
 						GLog.i( Hero.TXT_YOU_NOW_HAVE, pick.getDisplayName() );
 					} else {
-						Dungeon.level.drop( pick, Dungeon.hero.pos ).sprite.drop();
+						Dungeon.level.drop( pick, Dungeon.hero.pos() ).sprite.drop();
 					}
 				};
 			} );
@@ -192,7 +193,7 @@ public class Blacksmith extends NPC {
 			return "I don't work with cursed items!";
 		}
 		
-		if (item1.level < 0 || item2.level < 0) {
+		if (item1.level() < 0 || item2.level() < 0) {
 			return "It's a junk, the quality is too poor!";
 		}
 		
@@ -206,7 +207,7 @@ public class Blacksmith extends NPC {
 	public static void upgrade( Item item1, Item item2 ) {
 		
 		Item first, second;
-		if (item2.level > item1.level) {
+		if (item2.level() > item1.level()) {
 			first = item2;
 			second = item1;
 		} else {

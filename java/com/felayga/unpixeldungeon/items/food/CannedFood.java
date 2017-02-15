@@ -5,7 +5,7 @@
  * Shattered Pixel Dungeon
  * Copyright (C) 2014-2015 Evan Debenham
  *
- * Unpixel Dungeon
+ * unPixel Dungeon
  * Copyright (C) 2015-2016 Randall Foudray
  *
  * This program is free software: you can redistribute it and/or modify
@@ -20,6 +20,7 @@
  *
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>
+ *
  *
  */
 
@@ -42,6 +43,7 @@ import com.watabou.utils.Bundle;
 import com.watabou.utils.Random;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashSet;
 
 /**
@@ -61,9 +63,7 @@ public class CannedFood extends Food {
         String[] known = bundle.getStringArray(KNOWNCANS);
 
         if (known != null) {
-            for (int n = 0; n < known.length; n++) {
-                knownCans.add(known[n]);
-            }
+            Collections.addAll(knownCans, known);
         }
     }
 
@@ -135,7 +135,7 @@ public class CannedFood extends Food {
     @Override
     public boolean execute(final Hero hero, String action) {
         if (action.equals(Constant.Action.OPEN)) {
-            hero.sprite.operate(hero.pos);
+            hero.sprite.operate(hero.pos());
 
             EquippableItem weapon = hero.belongings.weapon();
 
@@ -159,6 +159,7 @@ public class CannedFood extends Food {
                         effort = GameTime.TICK * Random.IntRange(10, 10 + 250 / hero.STRCON());
                         break;
                 }
+                GLog.p("You manage to get the can open with your bare hands.");
             }
 
             hero.curAction = new HeroAction.UseItem.SlowAction(this, Constant.Action.SLOWACTION, effort);

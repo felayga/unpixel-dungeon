@@ -5,7 +5,7 @@
  * Shattered Pixel Dungeon
  * Copyright (C) 2014-2015 Evan Debenham
  *
- * Unpixel Dungeon
+ * unPixel Dungeon
  * Copyright (C) 2015-2016 Randall Foudray
  *
  * This program is free software: you can redistribute it and/or modify
@@ -20,6 +20,7 @@
  *
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>
+ *
  *
  */
 package com.felayga.unpixeldungeon.items.wands;
@@ -36,10 +37,11 @@ import com.felayga.unpixeldungeon.actors.hero.HeroClass;
 import com.felayga.unpixeldungeon.actors.hero.HeroSubClass;
 import com.felayga.unpixeldungeon.effects.MagicMissile;
 import com.felayga.unpixeldungeon.items.Item;
-import com.felayga.unpixeldungeon.items.ItemStatusHandler;
+import com.felayga.unpixeldungeon.items.ItemRandomizationHandler;
 import com.felayga.unpixeldungeon.items.weapon.melee.simple.MagesStaff;
 import com.felayga.unpixeldungeon.mechanics.BUCStatus;
 import com.felayga.unpixeldungeon.mechanics.Ballistica;
+import com.felayga.unpixeldungeon.mechanics.Constant;
 import com.felayga.unpixeldungeon.mechanics.GameTime;
 import com.felayga.unpixeldungeon.scenes.CellSelector;
 import com.felayga.unpixeldungeon.scenes.GameScene;
@@ -126,13 +128,13 @@ public abstract class Wand extends Item {
             ItemSpriteSheet.WAND_20
     };
 
-    private static ItemStatusHandler<Wand> handler;
+    private static ItemRandomizationHandler<Wand> handler;
 
     private String rune;
 
     @SuppressWarnings("unchecked")
     public static void initLabels() {
-        handler = new ItemStatusHandler<Wand>( (Class<? extends Wand>[])wands, appearances, images, 0 );
+        handler = new ItemRandomizationHandler<Wand>( (Class<? extends Wand>[])wands, appearances, images, 0 );
     }
 
     public static void save( Bundle bundle ) {
@@ -141,7 +143,7 @@ public abstract class Wand extends Item {
 
     @SuppressWarnings("unchecked")
     public static void restore( Bundle bundle ) {
-        handler = new ItemStatusHandler<Wand>( (Class<? extends Wand>[])wands, appearances, images, bundle );
+        handler = new ItemRandomizationHandler<Wand>( (Class<? extends Wand>[])wands, appearances, images, bundle );
     }
 
     public boolean isKnown() {
@@ -195,7 +197,7 @@ public abstract class Wand extends Item {
 		usesTargeting = true;
         this.maxCharges = maxCharges;
         this.curCharges = maxCharges;
-        hasLevels = false;
+        hasLevels(false);
 
 		weight(Encumbrance.UNIT * 7);
         price = 75;
@@ -260,11 +262,11 @@ public abstract class Wand extends Item {
 	}
 	*/
 
-	protected void processSoulMark(Char target){
+	protected void processSoulMark(Char target, Char source){
 		if (target != Dungeon.hero &&
 				Dungeon.hero.subClass == HeroSubClass.WARLOCK &&
-				Random.Float() < .15f + (level*1*0.03f)){
-			SoulMark.prolong(target, SoulMark.class, SoulMark.DURATION);
+				Random.Float() < .15f + (level()*1*0.03f)){
+			SoulMark.prolong(target, source, SoulMark.class, SoulMark.DURATION);
 		}
 	}
 
@@ -297,7 +299,7 @@ public abstract class Wand extends Item {
 
 	@Override
 	public Item identify(boolean updateQuickslot) {
-		if (setKnown() || curChargeKnown != true) {
+		if (setKnown() || !curChargeKnown) {
 			curChargeKnown = true;
 			updateQuickslot = true;
 		}
@@ -343,7 +345,7 @@ public abstract class Wand extends Item {
 	
 	@Override
 	public String status() {
-		if (levelKnown) {
+		if (levelKnown()) {
             if (curChargeKnown) {
                 return curCharges + "/" + maxCharges;
             } else {
@@ -375,8 +377,7 @@ public abstract class Wand extends Item {
 			identify();
 			GLog.w( TXT_IDENTIFY, getDisplayName() );
 		} else {
-			if (curUser.heroClass == HeroClass.MAGE) levelKnown = true;
-			updateQuickslot();
+			//if (curUser.heroClass == HeroClass.MAGE) levelKnown(true, true);
 		}
 
         //todo: wand zap time verification
@@ -409,14 +410,14 @@ public abstract class Wand extends Item {
 		
 		@Override
 		public boolean onSelect( Integer target ) {
-			if (target != null) {
+			if (target != null && target != Constant.Position.NONE) {
 
 				final Wand curWand = (Wand)Wand.curItem;
 
-				final Ballistica shot = new Ballistica( curUser.pos, target, curWand.collisionProperties);
+				final Ballistica shot = new Ballistica( curUser.pos(), target, curWand.collisionProperties);
 				int cell = shot.collisionPos;
 				
-				if (target == curUser.pos || cell == curUser.pos) {
+				if (target == curUser.pos() || cell == curUser.pos()) {
 					GLog.i( TXT_SELF_TARGET );
 					return false;
 				}
@@ -434,7 +435,7 @@ public abstract class Wand extends Item {
 					curUser.busy();
 
 					if (curWand.bucStatus == BUCStatus.Cursed){
-						CursedWand.cursedZap(curWand, curUser, new Ballistica( curUser.pos, target, Ballistica.MAGIC_BOLT));
+						CursedWand.cursedZap(curWand, curUser, new Ballistica( curUser.pos(), target, Ballistica.MAGIC_BOLT));
 						if (!curWand.bucStatusKnown){
 							curWand.bucStatusKnown = true;
 							GLog.n("This " + curItem.getDisplayName() + " is cursed!");
@@ -447,8 +448,9 @@ public abstract class Wand extends Item {
 							}
 						});
 					}
-					
-					Invisibility.dispel();
+
+                    //todo: not all wands should be dispelling invisibility
+					Invisibility.dispelAttack(curUser);
 					
 				} else {
 

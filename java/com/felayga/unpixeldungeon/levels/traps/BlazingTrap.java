@@ -5,7 +5,7 @@
  * Shattered Pixel Dungeon
  * Copyright (C) 2014-2015 Evan Debenham
  *
- * Unpixel Dungeon
+ * unPixel Dungeon
  * Copyright (C) 2015-2016 Randall Foudray
  *
  * This program is free software: you can redistribute it and/or modify
@@ -21,10 +21,12 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>
  *
+ *
  */
 package com.felayga.unpixeldungeon.levels.traps;
 
 import com.felayga.unpixeldungeon.Assets;
+import com.felayga.unpixeldungeon.actors.Char;
 import com.felayga.unpixeldungeon.actors.blobs.Blob;
 import com.felayga.unpixeldungeon.actors.blobs.Fire;
 import com.felayga.unpixeldungeon.effects.CellEmitter;
@@ -45,12 +47,14 @@ public class BlazingTrap extends Trap {
 
 	@Override
 	public void activate() {
-		for (int i : Level.NEIGHBOURS9DIST2){
+        Char owner = Char.Registry.get(ownerRegistryIndex());
+
+        for (int i : Level.NEIGHBOURS9DIST2){
 			if (Level.insideMap(pos+i) && !Level.solid[pos+i]) {
-				if (Level.pit[pos+i] || Level.water[pos+i])
-					GameScene.add(Blob.seed(pos + i, 1, Fire.class));
+				if (Level.pit[pos+i] || Level.puddle[pos+i])
+					GameScene.add(Blob.seed(owner, pos + i, 1, Fire.class));
 				else
-					GameScene.add(Blob.seed(pos + i, 5, Fire.class));
+					GameScene.add(Blob.seed(owner, pos + i, 5, Fire.class));
 				CellEmitter.get(pos + i).burst(FlameParticle.FACTORY, 5);
 			}
 		}

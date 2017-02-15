@@ -5,7 +5,7 @@
  * Shattered Pixel Dungeon
  * Copyright (C) 2014-2015 Evan Debenham
  *
- * Unpixel Dungeon
+ * unPixel Dungeon
  * Copyright (C) 2015-2016 Randall Foudray
  *
  * This program is free software: you can redistribute it and/or modify
@@ -20,6 +20,7 @@
  *
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>
+ *
  *
  */
 package com.felayga.unpixeldungeon.items.artifacts;
@@ -54,7 +55,7 @@ public class EtherealChains extends Artifact_old {
 		name = "ethereal chains";
 		image = ItemSpriteSheet.ARTIFACT_CHAINS;
 
-		level = 0;
+		level(0);
 		levelCap = 5;
 		exp = 0;
 
@@ -100,7 +101,7 @@ public class EtherealChains extends Artifact_old {
 				int missileProperties = (Level.flags & Level.FLAG_NOTELEPORTATION) != 0 ?
 						Ballistica.PROJECTILE : Ballistica.STOP_CHARS | Ballistica.STOP_TARGET;
 
-				final Ballistica chain = new Ballistica(curUser.pos, target, missileProperties);
+				final Ballistica chain = new Ballistica(curUser.pos(), target, missileProperties);
 
 				//determine if we're grabbing an enemy, pulling to a location, or doing nothing.
 				if (Actor.findChar( chain.collisionPos ) != null){
@@ -111,12 +112,12 @@ public class EtherealChains extends Artifact_old {
 							break;
 						}
 					}
-					if (newPos == -1){
+					if (newPos < 0){
 						GLog.w("That won't do anything");
 					} else {
 						final int newMobPos = newPos;
 						final Char affected = Actor.findChar( chain.collisionPos );
-						int chargeUse = Level.distance(affected.pos, newMobPos);
+						int chargeUse = Level.distance(affected.pos(), newMobPos);
 						if (chargeUse > charge){
 							GLog.w("Your chains do not have enough charge.");
 							return true;
@@ -125,10 +126,10 @@ public class EtherealChains extends Artifact_old {
 							updateQuickslot();
 						}
 						curUser.busy();
-						curUser.sprite.parent.add(new Chains(curUser.pos, affected.pos, new Callback() {
+						curUser.sprite.parent.add(new Chains(curUser.pos(), affected.pos(), new Callback() {
 							public void call() {
-								Actor.add(new Pushing(affected, affected.pos, newMobPos));
-								affected.pos = newMobPos;
+								Actor.add(new Pushing(affected, affected.pos(), newMobPos));
+								affected.pos(newMobPos);
 								Dungeon.observe();
 								curUser.spend_new(GameTime.TICK, true);
 								Dungeon.level.press(newMobPos, affected);
@@ -145,11 +146,11 @@ public class EtherealChains extends Artifact_old {
 					for (int i : chain.subPath(1, chain.dist)){
 						if (!Level.solid[i] && Actor.findChar(i) == null) newPos = i;
 						}
-					if (newPos == -1) {
+					if (newPos < 0) {
 						GLog.w("That won't do anything");
 					} else {
 						final int newHeroPos = newPos;
-						int chargeUse = Level.distance(curUser.pos, newHeroPos);
+						int chargeUse = Level.distance(curUser.pos(), newHeroPos);
 						if (chargeUse > charge){
 							GLog.w("Your chains do not have enough charge.");
 							return true;
@@ -158,15 +159,15 @@ public class EtherealChains extends Artifact_old {
 							updateQuickslot();
 						}
 						curUser.busy();
-						curUser.sprite.parent.add(new Chains(curUser.pos, target, new Callback() {
+						curUser.sprite.parent.add(new Chains(curUser.pos(), target, new Callback() {
 							public void call() {
-								Actor.add(new Pushing(curUser, curUser.pos, newHeroPos, new Callback() {
+								Actor.add(new Pushing(curUser, curUser.pos(), newHeroPos, new Callback() {
 									public void call() {
 										Dungeon.level.press(newHeroPos, curUser);
 									}
 								}));
 								curUser.spend_new(GameTime.TICK, true);
-								curUser.pos = newHeroPos;
+								curUser.pos(newHeroPos);
 								Dungeon.observe();
 							}
 						}));
@@ -214,12 +215,12 @@ public class EtherealChains extends Artifact_old {
 
 		@Override
 		public boolean act() {
-			int chargeTarget = 5+(level*2);
+			int chargeTarget = 5+(level()*2);
 			LockedFloor lock = target.buff(LockedFloor.class);
 			if (charge < chargeTarget && bucStatus != BUCStatus.Cursed && (lock == null || lock.regenOn())) {
 				partialCharge += 1 / (40f - (chargeTarget - charge)*2f);
 			} else if (bucStatus == BUCStatus.Cursed && Random.Int(100) == 0){
-				Buff.prolong( target, Cripple.class, GameTime.TICK * 10);
+				Buff.prolong( target, parent().owner(), Cripple.class, GameTime.TICK * 10);
 			}
 
 			if (partialCharge >= 1) {
@@ -240,13 +241,13 @@ public class EtherealChains extends Artifact_old {
 			exp += Math.round(levelPortion*100);
 
 			//past the soft charge cap, gaining  charge from leveling is slowed.
-			if (charge > 5+(level*2)){
-				levelPortion *= (5+((float)level*2))/charge;
+			if (charge > 5+(level()*2)){
+				levelPortion *= (5+((float)level()*2))/charge;
 			}
 			partialCharge += levelPortion*10f;
 
-			if (exp > 100+level*50 && level < levelCap){
-				exp -= 100+level*50;
+			if (exp > 100+level()*50 && level() < levelCap){
+				exp -= 100+level()*50;
 				GLog.p("Your chains grow stronger!");
 				upgrade(null, 1);
 			}

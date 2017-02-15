@@ -5,7 +5,7 @@
  * Shattered Pixel Dungeon
  * Copyright (C) 2014-2015 Evan Debenham
  *
- * Unpixel Dungeon
+ * unPixel Dungeon
  * Copyright (C) 2015-2016 Randall Foudray
  *
  * This program is free software: you can redistribute it and/or modify
@@ -20,6 +20,7 @@
  *
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>
+ *
  *
  */
 package com.felayga.unpixeldungeon.levels;
@@ -99,13 +100,13 @@ public class LastLevel extends Level {
 
 		int pos = pedestal;
 
-		map[pos-WIDTH] = map[pos-1] = map[pos+1] = map[pos-2] = map[pos+2] = Terrain.WATER;
+		map[pos-WIDTH] = map[pos-1] = map[pos+1] = map[pos-2] = map[pos+2] = Terrain.PUDDLE;
 		pos+=WIDTH;
-		map[pos] = map[pos-2] = map[pos+2] = map[pos-3] = map[pos+3] = Terrain.WATER;
+		map[pos] = map[pos-2] = map[pos+2] = map[pos-3] = map[pos+3] = Terrain.PUDDLE;
 		pos+=WIDTH;
-		map[pos-3] = map[pos-2] = map[pos-1] = map[pos] = map[pos+1] = map[pos+2] = map[pos+3] = Terrain.WATER;
+		map[pos-3] = map[pos-2] = map[pos-1] = map[pos] = map[pos+1] = map[pos+2] = map[pos+3] = Terrain.PUDDLE;
 		pos+=WIDTH;
-		map[pos-2] = map[pos+2] = Terrain.WATER;
+		map[pos-2] = map[pos+2] = Terrain.PUDDLE;
 
 
 		feeling = Feeling.NONE;
@@ -148,7 +149,7 @@ public class LastLevel extends Level {
 	@Override
 	public String tileName( int tile ) {
 		switch (tile) {
-		case Terrain.WATER:
+		case Terrain.PUDDLE:
 			return "Cold lava";
 		case Terrain.GRASS:
 			return "Embermoss";
@@ -165,7 +166,7 @@ public class LastLevel extends Level {
 	@Override
 	public String tileDesc(int tile) {
 		switch (tile) {
-		case Terrain.WATER:
+		case Terrain.PUDDLE:
 			return "It looks like lava, but it's cold and probably safe to touch.";
 		case Terrain.STATUE:
 		case Terrain.STATUE_SP:

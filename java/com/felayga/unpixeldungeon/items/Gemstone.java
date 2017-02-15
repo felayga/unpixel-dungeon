@@ -5,7 +5,7 @@
  * Shattered Pixel Dungeon
  * Copyright (C) 2014-2015 Evan Debenham
  *
- * Unpixel Dungeon
+ * unPixel Dungeon
  * Copyright (C) 2015-2016 Randall Foudray
  *
  * This program is free software: you can redistribute it and/or modify
@@ -21,10 +21,12 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>
  *
+ *
  */
 
 package com.felayga.unpixeldungeon.items;
 
+import com.felayga.unpixeldungeon.Badges;
 import com.felayga.unpixeldungeon.actors.Char;
 import com.felayga.unpixeldungeon.actors.buffs.hero.Encumbrance;
 import com.felayga.unpixeldungeon.actors.hero.Hero;
@@ -39,10 +41,11 @@ import com.watabou.utils.Random;
  * Created by HELLO on 3/16/2016.
  */
 public class Gemstone extends Item {
-    public static final String COLOR = "color";
+
     public GemstoneColor color;
     public String colorName;
     public boolean hardness;
+    private boolean identified = false;
 
     public Gemstone(int price, boolean isHard, GemstoneColor... choices) {
         super();
@@ -62,16 +65,35 @@ public class Gemstone extends Item {
         stackable = true;
 
         weight(Encumbrance.UNIT);
+        hasBuc(false);
+        hasLevels(false);
+    }
+
+    @Override
+    public boolean isIdentified() {
+        return super.isIdentified() && identified;
+    }
+
+    @Override
+    public Item identify(boolean updateQuickslot) {
+        identified = true;
+
+        return super.identify(updateQuickslot);
     }
 
     protected void buildName() {
         name = "bad gemstone";
     }
 
+
+    private static final String COLOR = "color";
+    private static final String IDENTIFIED = "identified";
+
     @Override
     public void storeInBundle(Bundle bundle) {
         super.storeInBundle(bundle);
         bundle.put(COLOR, color.value);
+        bundle.put(IDENTIFIED, identified);
     }
 
     @Override
@@ -79,22 +101,23 @@ public class Gemstone extends Item {
         super.restoreFromBundle(bundle);
 
         setColor(GemstoneColor.fromInt(bundle.getInt(COLOR)));
+        identified = bundle.getBoolean(IDENTIFIED);
     }
 
     @Override
     public String getName() {
-        return levelKnown ? super.getName() : colorName + " gem";
+        return isIdentified() ? super.getName() : colorName + " gem";
     }
 
     @Override
     public String info() {
-        return levelKnown ?
+        return isIdentified() ?
                 desc() :
                 "This is a " + colorName + "-colored gemstone.  Who knows what it is?";
     }
 
 
-    protected enum GemstoneColor {
+    public enum GemstoneColor {
         White(0),
         Red(1),
         Orange(2),
@@ -533,8 +556,7 @@ public class Gemstone extends Item {
     }
 
     public static class Glass extends Gemstone {
-        public Glass()
-        {
+        public Glass() {
             super(0, false,
                     GemstoneColor.White,
                     GemstoneColor.Red,
@@ -548,16 +570,37 @@ public class Gemstone extends Item {
             );
         }
 
+        public int shopkeeperPriceJacking() {
+            switch(color){
+                case White:
+                    return 800;
+                case Blue:
+                case Red:
+                    return 700;
+                case Brown:
+                    return 600;
+                case Orange:
+                    return 500;
+                case Yellow:
+                    return 400;
+                case Violet:
+                    return 300;
+                case Black:
+                case Green:
+                    return 200;
+                default:
+                    return 100;
+            }
+        }
+
         @Override
-        protected void buildName()
-        {
+        protected void buildName() {
             name = "piece of " + colorName + " glass";
         }
 
         @Override
-        public String desc()
-        {
-            return "This is a piece of "+color+"-colored glass. It is completely worthless.";
+        public String desc() {
+            return "This is a piece of " + color + "-colored glass. It is completely worthless.";
         }
     }
 
@@ -647,6 +690,8 @@ public class Gemstone extends Item {
             bucStatus(BUCStatus.Cursed, false);
         }
 
+        //special pickup logic already implemented in Hero
+
         @Override
         protected void buildName() {
             name = "loadstone";
@@ -666,17 +711,17 @@ public class Gemstone extends Item {
         }
 
         @Override
-        protected void onThrow(int cell, Char thrower) {
+        protected void onThrow(Char thrower, int cell) {
             if (bucStatus == BUCStatus.Cursed) {
                 if (!bucStatusKnown) {
                     bucStatus(true);
                 }
 
-                ((MissileSprite) thrower.sprite.parent.recycle(MissileSprite.class)).reset(cell, thrower.pos, this, null);
+                ((MissileSprite) thrower.sprite.parent.recycle(MissileSprite.class)).reset(cell, thrower.pos(), this, null);
                 GLog.n("The " + getDisplayName()+" finds its way back into your backpack!");
                 thrower.belongings.collect(this);
             } else {
-                super.onThrow(cell, thrower);
+                super.onThrow(thrower, cell);
             }
         }
     }
@@ -698,6 +743,8 @@ public class Gemstone extends Item {
             super(45, true, GemstoneColor.Gray);
             weight(Encumbrance.UNIT * 10);
         }
+
+        //todo: touchstone application
 
         @Override
         protected void buildName() {

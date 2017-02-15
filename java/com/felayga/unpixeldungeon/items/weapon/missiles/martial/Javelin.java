@@ -5,7 +5,7 @@
  * Shattered Pixel Dungeon
  * Copyright (C) 2014-2015 Evan Debenham
  *
- * Unpixel Dungeon
+ * unPixel Dungeon
  * Copyright (C) 2015-2016 Randall Foudray
  *
  * This program is free software: you can redistribute it and/or modify
@@ -20,6 +20,7 @@
  *
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>
+ *
  *
  */
 package com.felayga.unpixeldungeon.items.weapon.missiles.martial;
@@ -55,7 +56,7 @@ public class Javelin extends MissileWeapon {
 	public int proc( Char attacker, boolean thrown, Char defender, int damage ) {
 		damage = super.proc( attacker, thrown, defender, damage );
 
-		Buff.prolong( defender, Cripple.class, Cripple.DURATION );
+		Buff.prolong( defender, attacker, Cripple.class, Cripple.DURATION );
 
 		return damage;
 	}

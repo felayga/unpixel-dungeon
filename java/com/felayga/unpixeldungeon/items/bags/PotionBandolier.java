@@ -5,7 +5,7 @@
  * Shattered Pixel Dungeon
  * Copyright (C) 2014-2015 Evan Debenham
  *
- * Unpixel Dungeon
+ * unPixel Dungeon
  * Copyright (C) 2015-2016 Randall Foudray
  *
  * This program is free software: you can redistribute it and/or modify
@@ -21,9 +21,11 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>
  *
+ *
  */
 package com.felayga.unpixeldungeon.items.bags;
 
+import com.felayga.unpixeldungeon.actors.buffs.hero.Encumbrance;
 import com.felayga.unpixeldungeon.items.Item;
 import com.felayga.unpixeldungeon.items.potions.Potion;
 import com.felayga.unpixeldungeon.sprites.ItemSpriteSheet;
@@ -32,7 +34,7 @@ public class PotionBandolier extends Bag {
 
 	public PotionBandolier()
 	{
-		super(null, false);
+		super(null, false, 30 * Encumbrance.UNIT);
 
 		name = "potion bandolier";
 		image = ItemSpriteSheet.BANDOLIER;

@@ -5,7 +5,7 @@
  * Shattered Pixel Dungeon
  * Copyright (C) 2014-2015 Evan Debenham
  *
- * Unpixel Dungeon
+ * unPixel Dungeon
  * Copyright (C) 2015-2016 Randall Foudray
  *
  * This program is free software: you can redistribute it and/or modify
@@ -21,10 +21,10 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>
  *
+ *
  */
 package com.felayga.unpixeldungeon.levels;
 
-import com.felayga.unpixeldungeon.ShatteredPixelDungeon;
 import com.felayga.unpixeldungeon.levels.painters.ArmoryPainter;
 import com.felayga.unpixeldungeon.levels.painters.BlacksmithPainter;
 import com.felayga.unpixeldungeon.levels.painters.BossExitPainter;
@@ -48,6 +48,7 @@ import com.felayga.unpixeldungeon.levels.painters.TreasuryPainter;
 import com.felayga.unpixeldungeon.levels.painters.TunnelPainter;
 import com.felayga.unpixeldungeon.levels.painters.VaultPainter;
 import com.felayga.unpixeldungeon.levels.painters.WeakFloorPainter;
+import com.felayga.unpixeldungeon.unPixelDungeon;
 import com.watabou.utils.Bundlable;
 import com.watabou.utils.Bundle;
 import com.watabou.utils.Graph;
@@ -117,14 +118,15 @@ public class Room extends Rect implements Graph.Node, Bundlable {
 			try {
 				paint.invoke( null, level, room );
 			} catch (Exception e) {
-				ShatteredPixelDungeon.reportException(e);
+				unPixelDungeon.reportException(e);
 			}
 		}
 	}
 	
 	public static final ArrayList<Type> SPECIALS = new ArrayList<>( Arrays.asList(
-		Type.WEAK_FLOOR, Type.MAGIC_WELL, Type.CRYPT, /*Type.POOL,*/ Type.GARDEN, /*Type.LIBRARY,*/ Type.ARMORY,
-		Type.TREASURY, Type.TRAPS, Type.STORAGE, /*Type.STATUE,*/ Type.LABORATORY, Type.VAULT
+		/*Type.WEAK_FLOOR, Type.MAGIC_WELL, Type.CRYPT, Type.GARDEN, Type.ARMORY,
+		Type.TREASURY, */Type.TRAPS/*, Type.STORAGE, Type.LABORATORY, Type.VAULT*/
+            //Type.POOL, Type.LIBRARY, Type.STATUE
 	) );
 	
 	public Type type = Type.NULL;
@@ -273,7 +275,7 @@ public class Room extends Rect implements Graph.Node, Bundlable {
 	public static class Door extends Point {
 		
 		public enum Type {
-			EMPTY, TUNNEL, REGULAR, UNLOCKED, HIDDEN, HIDDENLOCKED, BARRICADE, LOCKED
+			EMPTY, TUNNEL, REGULAR, REGULAR_UNBROKEN, UNLOCKED, HIDDEN, HIDDENLOCKED, BARRICADE, LOCKED
 		}
 		public Type type = Type.EMPTY;
 		

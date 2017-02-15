@@ -5,7 +5,7 @@
  * Shattered Pixel Dungeon
  * Copyright (C) 2014-2015 Evan Debenham
  *
- * Unpixel Dungeon
+ * unPixel Dungeon
  * Copyright (C) 2015-2016 Randall Foudray
  *
  * This program is free software: you can redistribute it and/or modify
@@ -21,6 +21,7 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>
  *
+ *
  */
 
 package com.felayga.unpixeldungeon.mechanics;
@@ -35,8 +36,7 @@ public class Roll {
     public static int MobHP(int level) {
         if (level > 0) {
             return HP(level, 8);
-        }
-        else {
+        } else {
             return HP(1, 4);
         }
     }
@@ -45,7 +45,7 @@ public class Roll {
         int retval = 0;
 
         while (quantity > 0) {
-            retval += Random.Int(size)+1;
+            retval += Random.Int(size) + 1;
             quantity--;
         }
 
@@ -53,6 +53,6 @@ public class Roll {
     }
 
     public static float DropBonusChance(Hero hero) {
-        return 0.5f + (hero.luck() - 2.0f) * 0.04f;
+        return 0.75f + (hero.luck() + 2.0f) * 0.015f;
     }
 }

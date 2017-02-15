@@ -5,7 +5,7 @@
  * Shattered Pixel Dungeon
  * Copyright (C) 2014-2015 Evan Debenham
  *
- * Unpixel Dungeon
+ * unPixel Dungeon
  * Copyright (C) 2015-2016 Randall Foudray
  *
  * This program is free software: you can redistribute it and/or modify
@@ -21,18 +21,19 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>
  *
+ *
  */
 package com.felayga.unpixeldungeon.scenes;
 
 import com.felayga.unpixeldungeon.Assets;
 import com.felayga.unpixeldungeon.Badges;
 import com.felayga.unpixeldungeon.Chrome;
-import com.felayga.unpixeldungeon.ShatteredPixelDungeon;
 import com.felayga.unpixeldungeon.ui.Archs;
 import com.felayga.unpixeldungeon.ui.BadgesList;
 import com.felayga.unpixeldungeon.ui.ExitButton;
 import com.felayga.unpixeldungeon.ui.ScrollPane;
 import com.felayga.unpixeldungeon.ui.Window;
+import com.felayga.unpixeldungeon.unPixelDungeon;
 import com.watabou.noosa.BitmapText;
 import com.watabou.noosa.Camera;
 import com.watabou.noosa.Game;
@@ -52,7 +53,7 @@ public class BadgesScene extends PixelScene {
 		super.create();
 
 		Music.INSTANCE.play( Assets.THEME, true );
-		Music.INSTANCE.volume( ShatteredPixelDungeon.musicVol() / 10f  );
+		Music.INSTANCE.volume( unPixelDungeon.musicVol() / 10f  );
 
 		uiCamera.visible = false;
 
@@ -100,7 +101,7 @@ public class BadgesScene extends PixelScene {
 			@Override
 			public void call() {
 				if (Game.scene() == BadgesScene.this) {
-					ShatteredPixelDungeon.switchNoFade( BadgesScene.class );
+					unPixelDungeon.switchNoFade(BadgesScene.class);
 				}
 			}
 		};
@@ -117,6 +118,6 @@ public class BadgesScene extends PixelScene {
 
 	@Override
 	protected void onBackPressed() {
-		ShatteredPixelDungeon.switchNoFade( TitleScene.class );
+		unPixelDungeon.switchNoFade(TitleScene.class);
 	}
 }

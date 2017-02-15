@@ -5,7 +5,7 @@
  * Shattered Pixel Dungeon
  * Copyright (C) 2014-2015 Evan Debenham
  *
- * Unpixel Dungeon
+ * unPixel Dungeon
  * Copyright (C) 2015-2016 Randall Foudray
  *
  * This program is free software: you can redistribute it and/or modify
@@ -21,11 +21,13 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>
  *
+ *
  */
 
 package com.felayga.unpixeldungeon.items.weapon.ranged;
 
 import com.felayga.unpixeldungeon.Dungeon;
+import com.felayga.unpixeldungeon.actors.Char;
 import com.felayga.unpixeldungeon.actors.buffs.negative.Cripple;
 import com.felayga.unpixeldungeon.actors.hero.Hero;
 import com.felayga.unpixeldungeon.items.EquippableItem;
@@ -52,7 +54,7 @@ public class RangedWeapon extends Weapon {
         this.ammunitionType = ammunitionType;
 
         stackable = false;
-        levelKnown = false;
+        levelKnown(false, false);
 
         defaultAction = Constant.Action.SHOOT;
 
@@ -147,15 +149,15 @@ public class RangedWeapon extends Weapon {
         @Override
         public boolean onSelect(Integer target) {
             GLog.d("onselectcell target="+target);
-            if (target != null) {
-                if (target == curUser.pos) {
+            if (target != null && target != Constant.Position.NONE) {
+                if (target == curUser.pos()) {
                     if (Dungeon.hero == curUser) {
                         GLog.w("You shoot yourself in the foot.");
                     } else {
                         GLog.w("The " + curUser.name + " shoots themself in the foot.");
                     }
 
-                    Cripple.prolong(curUser, Cripple.class, GameTime.TICK);
+                    Cripple.prolong(curUser, curUser, Cripple.class, GameTime.TICK);
                 }
                 else {
                     curLauncher.shoot(curUser, curAmmo, target);
