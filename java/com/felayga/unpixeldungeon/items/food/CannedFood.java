@@ -26,13 +26,19 @@
 
 package com.felayga.unpixeldungeon.items.food;
 
+import com.felayga.unpixeldungeon.Dungeon;
 import com.felayga.unpixeldungeon.actors.buffs.hero.Encumbrance;
 import com.felayga.unpixeldungeon.actors.hero.Hero;
 import com.felayga.unpixeldungeon.actors.hero.HeroAction;
+import com.felayga.unpixeldungeon.actors.mobs.Bestiary;
+import com.felayga.unpixeldungeon.actors.mobs.Mob;
+import com.felayga.unpixeldungeon.actors.mobs.npcs.Spinach;
 import com.felayga.unpixeldungeon.items.EquippableItem;
 import com.felayga.unpixeldungeon.items.Item;
 import com.felayga.unpixeldungeon.items.bags.IBag;
+import com.felayga.unpixeldungeon.items.tools.CanOpener;
 import com.felayga.unpixeldungeon.items.weapon.melee.simple.Dagger;
+import com.felayga.unpixeldungeon.mechanics.Characteristic;
 import com.felayga.unpixeldungeon.mechanics.Constant;
 import com.felayga.unpixeldungeon.mechanics.CorpseEffect;
 import com.felayga.unpixeldungeon.mechanics.GameTime;
@@ -50,6 +56,81 @@ import java.util.HashSet;
  * Created by HELLO on 7/8/2016.
  */
 public class CannedFood extends Food {
+    public enum Variety {
+        None(null, 0, 0, false),
+        Pureed("pureed", 1, 500, false),
+        Candied("candied", 2, 250, false),
+        Sauteed("sauteed", 3, 250, false),
+        StirFried("stir-fried", 4, 250, true),
+        Broiled("broiled", 5, 250, false),
+        Szechuan("szechuan", 6, 125, false),
+        DeepFried("deep-fried", 7, 125, true),
+        Dried("dried", 8, 125, false),
+        Homemade("homemade", 9, 125, false),
+        Boiled("boiled", 10, 125, false),
+        Smoked("smoked", 11, 125, false),
+        Pickled("pickled", 12, 125, false),
+        FrenchFried("french fried", 13, 125, true),
+        Rotten("rotten", 14, -125, false),
+        SpinachCursed(null, 15, 250, false),
+        SpinachUncursed(null, 16, 500, false),
+        SpinachBlessed(null, 17, 750, false);
+
+        public final String name;
+        public final int value;
+        public final int nutrition;
+        public final boolean greasy;
+
+        Variety(String name, int value, int nutrition, boolean greasy) {
+            this.name = name;
+            this.value = value;
+            this.nutrition = nutrition;
+            this.greasy = greasy;
+        }
+
+        public static Variety fromInt(int value) {
+            switch(value) {
+                case 1:
+                    return Pureed;
+                case 2:
+                    return Candied;
+                case 3:
+                    return Sauteed;
+                case 4:
+                    return StirFried;
+                case 5:
+                    return Broiled;
+                case 6:
+                    return Szechuan;
+                case 7:
+                    return DeepFried;
+                case 8:
+                    return Dried;
+                case 9:
+                    return Homemade;
+                case 10:
+                    return Boiled;
+                case 11:
+                    return Smoked;
+                case 12:
+                    return Pickled;
+                case 13:
+                    return FrenchFried;
+                case 14:
+                    return Rotten;
+                case 15:
+                    return SpinachCursed;
+                case 16:
+                    return SpinachUncursed;
+                case 17:
+                    return SpinachBlessed;
+                default:
+                    return None;
+            }
+        }
+
+    }
+
     private static HashSet<String> knownCans = new HashSet<String>();
 
     private static final String KNOWNCANS = "knownCans";
@@ -70,14 +151,14 @@ public class CannedFood extends Food {
 
     @Override
     public boolean isIdentified() {
-        return knownCans.contains(name) && bucStatusKnown;
+        return knownCans.contains(name) && bucStatusKnown();
     }
 
     @Override
     public Item identify(boolean updateQuickslot) {
         if (!isIdentified()) {
             knownCans.add(name);
-            bucStatusKnown = true;
+            bucStatus(true);
 
             updateQuickslot = true;
         }
@@ -97,21 +178,20 @@ public class CannedFood extends Food {
 
 
     public CannedFood() {
-        this(null);
+        this(null, false);
     }
 
-    public CannedFood(Corpse source) {
-        super(0, Encumbrance.UNIT * 10);
+    public CannedFood(Corpse source, boolean playerCanned) {
+        super(0, 125, Encumbrance.UNIT * 10);
 
         hasBuc(true);
 
         if (source != null) {
-            name = source.corpseName();
-            effects = (source.effects & ~(CorpseEffect.Poisonous.value | CorpseEffect.Acidic.value | CorpseEffect.Rotten.value)) | CorpseEffect.Canned.value;
-            resistances = source.resistances;
-            corpseLevel = source.corpseLevel;
-            knownCans.add(name);
-            bucStatus(source);
+            setCorpse(source);
+            if (playerCanned) {
+                knownCans.add(name);
+                effects |= CorpseEffect.PlayerCanned.value;
+            }
         } else {
             name = "unknown";
             effects = CorpseEffect.None.value;
@@ -120,8 +200,45 @@ public class CannedFood extends Food {
 
         stackable = true;
         image = ItemSpriteSheet.FOOD_CAN_UNOPENED;
+        defaultAction = null;
 
         price = 5;
+    }
+
+    private void setCorpse(Corpse source) {
+        name = source.corpseName();
+        effects = (source.effects & ~(CorpseEffect.Poisonous.value | CorpseEffect.Acidic.value | CorpseEffect.Rotten.value)) | CorpseEffect.Canned.value;
+        resistances = source.resistances;
+        corpseLevel = source.corpseLevel;
+        bucStatus(source);
+    }
+
+    @Override
+    public Item random() {
+        Corpse corpse = null;
+
+        if (Random.Int(6) != 0) {
+            int tries = 4;
+            while (tries > 0 && corpse == null) {
+                Mob mob = Bestiary.spawn(Dungeon.depthAdjusted, Dungeon.hero.level + 10);
+
+                if (mob.nutrition > 0 && ((mob.characteristics & Characteristic.Corpseless.value) == 0)) {
+                    corpse = new Corpse(mob);
+                } else {
+                    tries--;
+                }
+            }
+        }
+
+        if (corpse == null) {
+            corpse = new Corpse(new Spinach());
+        }
+
+        setCorpse(corpse);
+
+        super.random();
+
+        return this;
     }
 
     @Override
@@ -141,12 +258,14 @@ public class CannedFood extends Food {
 
             long effort;
 
-            //todo: can opener
             if (weapon instanceof Dagger) {
                 Dagger dagger = (Dagger) weapon;
 
                 effort = GameTime.TICK * 3;
-                GLog.p("You pry open the can with your " + dagger.getDisplayName() + ".");
+                GLog.p("You pry open the can with your " + dagger.getName() + ".");
+            } else if (hero.belongings.contains(CanOpener.class, false)) {
+                effort = GameTime.TICK;
+                GLog.p("You open the can with your can opener.");
             } else {
                 switch (bucStatus()) {
                     case Blessed:
@@ -159,7 +278,7 @@ public class CannedFood extends Food {
                         effort = GameTime.TICK * Random.IntRange(10, 10 + 250 / hero.STRCON());
                         break;
                 }
-                GLog.p("You manage to get the can open with your bare hands.");
+                GLog.w("You wrestle the can open with your bare hands.");
             }
 
             hero.curAction = new HeroAction.UseItem.SlowAction(this, Constant.Action.SLOWACTION, effort);
@@ -169,7 +288,103 @@ public class CannedFood extends Food {
             IBag parent = parent();
             Item removed = parent.remove(this, 1);
             CannedFood split = (CannedFood) removed;
-            Corpse opened = new Corpse(split);
+
+            Variety variation;
+
+            if ((split.effects & CorpseEffect.Spinach.value) != 0) {
+                switch (split.bucStatus()) {
+                    case Cursed:
+                        variation = Variety.SpinachCursed;
+                        break;
+                    case Blessed:
+                        variation = Variety.SpinachBlessed;
+                        break;
+                    default:
+                        variation = Variety.SpinachUncursed;
+                        break;
+                }
+            } else if ((split.effects & CorpseEffect.PlayerCanned.value) != 0) {
+                switch (split.bucStatus()) {
+                    case Cursed:
+                        variation = Variety.Rotten;
+                        break;
+                    case Blessed:
+                        variation = Variety.Homemade;
+                        break;
+                    default:
+                        if (Random.Int(7) == 0) {
+                            variation = Variety.Rotten;
+                        } else {
+                            variation = Variety.Homemade;
+                        }
+                }
+            } else {
+                variation = Variety.None;
+
+                switch (split.bucStatus()) {
+                    case Cursed:
+                        variation = Variety.Rotten;
+                        break;
+                    case Blessed:
+                        //nothing
+                        break;
+                    case Uncursed:
+                        if (Random.Int(14) == 0) {
+                            variation = Variety.Rotten;
+                        }
+                        break;
+                }
+
+                if (variation == Variety.None) {
+                    switch (Random.Int(15)) {
+                        case 1:
+                            variation = Variety.Pureed;
+                            break;
+                        case 2:
+                            variation = Variety.Candied;
+                            break;
+                        case 3:
+                            variation = Variety.Sauteed;
+                            break;
+                        case 4:
+                            variation = Variety.StirFried;
+                            break;
+                        case 5:
+                            variation = Variety.Broiled;
+                            break;
+                        case 6:
+                            variation = Variety.Szechuan;
+                            break;
+                        case 7:
+                            variation = Variety.DeepFried;
+                            break;
+                        case 8:
+                            variation = Variety.Dried;
+                            break;
+                        case 10:
+                            variation = Variety.Boiled;
+                            break;
+                        case 11:
+                            variation = Variety.Smoked;
+                            break;
+                        case 12:
+                            variation = Variety.Pickled;
+                            break;
+                        case 13:
+                            variation = Variety.FrenchFried;
+                            break;
+                        default:
+                            variation = Variety.Homemade;
+                            break;
+                    }
+                }
+            }
+
+            if (variation == Variety.Rotten && (split.effects & CorpseEffect.Unrottable.value) != 0) {
+                variation = Variety.Homemade;
+            }
+
+            Corpse opened = new Corpse(split, variation);
             hero.belongings.collect(opened);
             return false;
             /*
@@ -190,7 +405,7 @@ public class CannedFood extends Food {
 
     @Override
     protected boolean checkSimilarity(Item item) {
-        if (item instanceof CannedFood) {
+        if (super.checkSimilarity(item)) {
             CannedFood can = (CannedFood)item;
 
             if (can.effects == effects && can.resistances == resistances && can.corpseLevel == corpseLevel && can.name.equals(name)) {

@@ -28,6 +28,7 @@ package com.felayga.unpixeldungeon.sprites;
 import com.felayga.unpixeldungeon.Assets;
 import com.felayga.unpixeldungeon.DungeonTilemap;
 import com.felayga.unpixeldungeon.actors.Char;
+import com.felayga.unpixeldungeon.actors.buffs.positive.Invisibility;
 import com.felayga.unpixeldungeon.effects.DarkBlock;
 import com.felayga.unpixeldungeon.effects.EmoIcon;
 import com.felayga.unpixeldungeon.effects.FloatingText;
@@ -89,6 +90,8 @@ public class CharSprite extends MovieClip implements Tweener.Listener, MovieClip
 	protected IceBlock iceBlock;
 	protected DarkBlock darkBlock;
 	protected TorchHalo halo;
+
+    protected boolean invisible;
 	
 	protected EmoIcon emo;
 
@@ -283,7 +286,8 @@ public class CharSprite extends MovieClip implements Tweener.Listener, MovieClip
                 levitation.pour(Speck.factory(Speck.JET), 0.02f);
                 break;
             case INVISIBLE:
-                PotionOfInvisibility.melt(ch);
+                invisible = true;
+                Invisibility.meltFx(ch);
                 break;
             case PARALYSED:
                 paused = true;
@@ -325,6 +329,8 @@ public class CharSprite extends MovieClip implements Tweener.Listener, MovieClip
                 }
                 break;
             case INVISIBLE:
+                invisible = false;
+                Invisibility.unmeltFx(ch);
                 alpha(1f);
                 break;
             case PARALYSED:
@@ -385,6 +391,9 @@ public class CharSprite extends MovieClip implements Tweener.Listener, MovieClip
 		if (chilled != null) {
 			chilled.visible = visible;
 		}
+        if (invisible) {
+            alpha(Invisibility.ALPHA_INVISIBLE);
+        }
 		if (sleeping) {
 			showSleep();
 		} else {

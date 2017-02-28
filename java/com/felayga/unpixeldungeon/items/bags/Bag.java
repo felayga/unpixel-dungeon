@@ -35,7 +35,6 @@ import com.felayga.unpixeldungeon.items.Item;
 import com.felayga.unpixeldungeon.items.potions.Potion;
 import com.felayga.unpixeldungeon.items.wands.Wand;
 import com.felayga.unpixeldungeon.items.weapon.missiles.martial.Boomerang;
-import com.felayga.unpixeldungeon.levels.Level;
 import com.felayga.unpixeldungeon.mechanics.Constant;
 import com.felayga.unpixeldungeon.mechanics.IDecayable;
 import com.felayga.unpixeldungeon.scenes.GameScene;
@@ -211,25 +210,42 @@ public class Bag extends Item implements Iterable<Item>, IBag {
 		return actions;
 	}
 
+    @Override
+    public boolean execute(Hero hero) {
+        //defaultAction usage override to facilitate bags not closing to whole inventory from QuickSlotButton usage
+
+        if (defaultAction.equals(AC_OPEN)) {
+            executeOpenBag(false);
+
+            return false;
+        } else {
+            return execute(hero, defaultAction);
+        }
+    }
+
 	@Override
 	public boolean execute(Hero hero, String action) {
 		if (action.equals(AC_OPEN)) {
-            if (locked) {
-
-            } else {
-                if (parent() instanceof Heap) {
-                    Heap heap = (Heap) parent();
-                    GameScene.show(new WndBag(this, null, WndBackpack.Mode.ALL, null, null, heap.pos));
-                } else {
-                    GameScene.show(new WndBag(this, null, WndBackpack.Mode.ALL, null, null, Constant.Position.NONE));
-                }
-            }
+            executeOpenBag(true);
 
 			return false;
 		} else {
 			return super.execute(hero, action);
 		}
 	}
+
+    private void executeOpenBag(boolean closeToBackpack) {
+        if (locked) {
+
+        } else {
+            if (parent() instanceof Heap) {
+                Heap heap = (Heap) parent();
+                GameScene.show(new WndBag(this, null, WndBackpack.Mode.ALL, null, null, heap.pos, closeToBackpack));
+            } else {
+                GameScene.show(new WndBag(this, null, WndBackpack.Mode.ALL, null, null, Constant.Position.NONE, closeToBackpack));
+            }
+        }
+    }
 
 	public boolean collect(Item collectItem) {
 		if (this.items.contains(collectItem)) {
@@ -299,8 +315,9 @@ public class Bag extends Item implements Iterable<Item>, IBag {
 			return null;
 		}
 
-		onItemRemoved(item);
-		this.items.remove(item);
+        onItemRemoved(item);
+        this.items.remove(item);
+        item.onDetach();
 		return item;
 	}
 
@@ -350,11 +367,6 @@ public class Bag extends Item implements Iterable<Item>, IBag {
 
         return super.canPerformActionExternally(hero, action);
     }
-
-	@Override
-	public boolean isUpgradable() {
-		return false;
-	}
 
 	@Override
 	public boolean isIdentified() {
@@ -409,6 +421,17 @@ public class Bag extends Item implements Iterable<Item>, IBag {
 		}
 		return false;
 	}
+
+    public boolean contains(Class<?> type, boolean allowNested) {
+        for (Item i: items) {
+            if (type.isAssignableFrom(i.getClass())) {
+                return true;
+            } else if (allowNested && i instanceof IBag && ((IBag)i).contains(type, allowNested)) {
+                return true;
+            }
+        }
+        return false;
+    }
 
 	public boolean grab(Item item) {
 		return false;

@@ -47,15 +47,6 @@ public class IronOldKey extends OldKey {
 		super();
 		this.depth = depth;
 	}
-
-	@Override
-	public void onDetach( ) {
-        /*
-		if (depth == Dungeon.depth) {
-			Dungeon.hero.belongings.countIronKeys();
-		}
-		*/
-	}
 	
 	@Override
 	public String toString() {

@@ -36,15 +36,12 @@ public class RatSkull extends Item {
 	{
 		name = "giant rat skull";
 		image = ItemSpriteSheet.SKULL;
+
+        hasLevels(false);
 		
 		unique = true;
 
         price = 100;
-	}
-	
-	@Override
-	public boolean isUpgradable() {
-		return false;
 	}
 	
 	@Override

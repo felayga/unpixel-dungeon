@@ -64,8 +64,8 @@ public class PotionOfEnergy extends Potion {
             heal(hero, healAmount(hero));
         }
 
-        int bonus = Random.Int(7, 12);
-        switch (bucStatus) {
+        int bonus = Random.IntRange(7, 12);
+        switch (bucStatus()) {
             case Blessed:
                 bonus += 5;
                 break;
@@ -88,7 +88,7 @@ public class PotionOfEnergy extends Potion {
     }
 
     protected void heal(Char hero, int healAmount) {
-        switch(bucStatus) {
+        switch(bucStatus()) {
             case Blessed:
                 healAmount += healAmount / 2;
                 break;

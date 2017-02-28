@@ -45,10 +45,25 @@ import com.felayga.unpixeldungeon.items.bags.Bag;
 import com.felayga.unpixeldungeon.items.bags.IceBox;
 import com.felayga.unpixeldungeon.items.bags.LargeBox;
 import com.felayga.unpixeldungeon.items.bags.LargeChest;
-import com.felayga.unpixeldungeon.items.food.Pasty;
+import com.felayga.unpixeldungeon.items.food.Blandfruit;
+import com.felayga.unpixeldungeon.items.food.CannedFood;
+import com.felayga.unpixeldungeon.items.food.CramRation;
+import com.felayga.unpixeldungeon.items.food.LembasWafer;
 import com.felayga.unpixeldungeon.items.food.Ration;
+import com.felayga.unpixeldungeon.items.food.TripeRation;
+import com.felayga.unpixeldungeon.items.food.fruit.Apple;
+import com.felayga.unpixeldungeon.items.food.fruit.Banana;
+import com.felayga.unpixeldungeon.items.food.fruit.Grapes;
+import com.felayga.unpixeldungeon.items.food.fruit.Orange;
+import com.felayga.unpixeldungeon.items.food.fruit.Pear;
+import com.felayga.unpixeldungeon.items.food.vegetable.BellPepper;
+import com.felayga.unpixeldungeon.items.food.vegetable.Carrot;
+import com.felayga.unpixeldungeon.items.food.vegetable.Garlic;
+import com.felayga.unpixeldungeon.items.food.vegetable.GingerRoot;
+import com.felayga.unpixeldungeon.items.food.vegetable.Potato;
 import com.felayga.unpixeldungeon.items.potions.Potion;
 import com.felayga.unpixeldungeon.items.potions.PotionOfAcid;
+import com.felayga.unpixeldungeon.items.potions.PotionOfAwareness;
 import com.felayga.unpixeldungeon.items.potions.PotionOfBlindness;
 import com.felayga.unpixeldungeon.items.potions.PotionOfBooze;
 import com.felayga.unpixeldungeon.items.potions.PotionOfConfusion;
@@ -261,9 +276,10 @@ public class Generator {
                 PotionOfToxicGas.class,
                 PotionOfShielding.class,
                 PotionOfHeroism.class,
+                PotionOfAwareness.class,
                 PotionOfWater.class
         };
-        Category.POTION.probs = new float[]{5, 20, 15, 20, 20, 10, 25, 10, 10, 10, 20, 10, 20, 30, 20, 20, 25, 20, 20, 15, 20, 5, 10, 25, 20, 25, 5, 20, 30, 20, 20, 20, 100};
+        Category.POTION.probs = new float[]{5, 20, 15, 20, 20, 10, 25, 10, 10, 10, 20, 10, 20, 30, 20, 20, 25, 20, 20, 15, 20, 5, 10, 25, 20, 25, 5, 20, 30, 20, 20, 20, 10, 100};
 
         //TODO: add last ones when implemented
         Category.WAND.classes = new Class<?>[]{
@@ -312,10 +328,24 @@ public class Generator {
         Category.ARMOR.probs = new float[]{1, 1, 1, 1, 1};
 
         Category.FOOD.classes = new Class<?>[]{
+                TripeRation.class,
+                Apple.class,
+                Banana.class,
+                Grapes.class,
+                Orange.class,
+                Pear.class,
+                Blandfruit.class,
+                BellPepper.class,
+                Carrot.class,
+                Garlic.class,
+                GingerRoot.class,
+                Potato.class,
+                CramRation.class,
                 Ration.class,
-                Pasty.class,
-                /*MysteryMeat.class*/};
-        Category.FOOD.probs = new float[]{4, 1, 0};
+                LembasWafer.class,
+                CannedFood.class
+                };
+        Category.FOOD.probs = new float[]{140, 20, 20, 20, 20, 20, 80, 20, 20, 20, 20, 20, 140, 380, 20, 375};
 
         Category.RING.classes = new Class<?>[]{
                 RingOfAccuracy.class,

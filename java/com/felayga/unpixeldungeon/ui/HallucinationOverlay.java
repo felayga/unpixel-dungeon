@@ -29,7 +29,6 @@ import android.opengl.GLES20;
 
 import com.felayga.unpixeldungeon.DungeonTilemap;
 import com.felayga.unpixeldungeon.FogOfWar;
-import com.felayga.unpixeldungeon.utils.GLog;
 import com.watabou.noosa.Image;
 
 import java.util.Arrays;
@@ -149,8 +148,8 @@ public class HallucinationOverlay extends Image {
     }
 
     public void surfaceChanged() {
+        //todo: what the fuck is screwing up the texture on phone sleep/wake?  ghetto fix here
         texture.pixels(subWidth, subHeight, pixels);
-        //todo: what the fuck is screwing up the texture on phone sleep/wake?
     }
 
     @Override

@@ -39,6 +39,7 @@ import com.felayga.unpixeldungeon.items.Item;
 import com.felayga.unpixeldungeon.items.potions.PotionOfFullHealing;
 import com.felayga.unpixeldungeon.items.potions.PotionOfHealing;
 import com.felayga.unpixeldungeon.items.tools.unlocking.SkeletonKey;
+import com.felayga.unpixeldungeon.items.wands.WandOfBlastWave;
 import com.felayga.unpixeldungeon.items.wands.WandOfMagicMissile;
 import com.felayga.unpixeldungeon.items.weapon.ammunition.simple.Rock;
 import com.felayga.unpixeldungeon.items.weapon.melee.mob.MeleeMobAttack;
@@ -59,11 +60,9 @@ import com.watabou.utils.Random;
 import com.watabou.utils.SparseArray;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
-import java.util.Map;
 
 public class Shopkeeper extends NPC {
     public static class Registry {
@@ -167,13 +166,13 @@ public class Shopkeeper extends NPC {
         characteristics = Characteristic.value(Characteristic.Humanoid, Characteristic.Omnivore, Characteristic.WarmBlooded);
 
         belongings.collectEquip(new MeleeMobAttack(GameTime.TICK, 4, 16));
-        belongings.collect(new Gold(1000 + 30 * Random.Int(1,100)));
+        belongings.collect(new Gold(1000 + 30 * Random.IntRange(1,100)));
         belongings.collect(new SkeletonKey());
 
-        int extras = Random.Int(1,4);
+        int extras = Random.IntRange(1,4);
 
         if (extras > 0) {
-            //todo: wand of striking
+            belongings.collect(new WandOfBlastWave().random());
             extras--;
         }
         if (extras > 0) {
@@ -444,6 +443,7 @@ public class Shopkeeper extends NPC {
             case Terrain.SECRET_DOOR:
             case Terrain.LOCKED_DOOR:
             case Terrain.SECRET_LOCKED_DOOR:
+            case Terrain.OPEN_DOOR:
                 //nothing
                 break;
             default:

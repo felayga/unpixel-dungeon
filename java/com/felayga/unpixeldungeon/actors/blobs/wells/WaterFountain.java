@@ -33,7 +33,6 @@ import com.felayga.unpixeldungeon.DungeonTilemap;
 import com.felayga.unpixeldungeon.Journal;
 import com.felayga.unpixeldungeon.actors.buffs.Buff;
 import com.felayga.unpixeldungeon.actors.buffs.positive.ItemVision;
-import com.felayga.unpixeldungeon.actors.buffs.positive.MindVision;
 import com.felayga.unpixeldungeon.actors.hero.Hero;
 import com.felayga.unpixeldungeon.effects.Identification;
 import com.felayga.unpixeldungeon.items.Item;

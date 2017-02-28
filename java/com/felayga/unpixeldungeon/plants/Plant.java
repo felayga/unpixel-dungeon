@@ -51,6 +51,7 @@ import com.watabou.utils.Bundle;
 import java.util.ArrayList;
 
 public abstract class Plant implements Bundlable {
+    public static final int EFFECTDURATION = 6;
 
     public final String plantName;
     public final int image;
@@ -198,11 +199,6 @@ public abstract class Plant implements Bundlable {
             } catch (Exception e) {
                 return null;
             }
-        }
-
-        @Override
-        public boolean isUpgradable() {
-            return false;
         }
 
         @Override

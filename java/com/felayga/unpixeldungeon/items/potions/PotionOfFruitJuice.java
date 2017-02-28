@@ -48,11 +48,9 @@ public class PotionOfFruitJuice extends Potion {
 
     @Override
     public void apply( Char hero ) {
-        setKnown();
-
         GLog.p("This tastes like fruit juice.");
 
-        switch(bucStatus) {
+        switch(bucStatus()) {
             case Cursed:
                 hero.buff(Hunger.class).satisfy_new(250);
                 break;

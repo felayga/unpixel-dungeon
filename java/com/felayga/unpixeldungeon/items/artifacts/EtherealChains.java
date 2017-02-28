@@ -68,7 +68,7 @@ public class EtherealChains extends Artifact_old {
 	@Override
 	public ArrayList<String> actions(Hero hero) {
 		ArrayList<String> actions = super.actions( hero );
-		if (isEquipped(hero) && charge > 0 && bucStatus != BUCStatus.Cursed)
+		if (isEquipped(hero) && charge > 0 && bucStatus() != BUCStatus.Cursed)
 			actions.add(AC_CAST);
 		return actions;
 	}
@@ -80,7 +80,7 @@ public class EtherealChains extends Artifact_old {
 
 			if      (!isEquipped( hero ))       GLog.i("You need to equip the chains to do that.");
 			else if (charge < 1)                GLog.i("Your chains do not have any available charge.");
-			else if (bucStatus == BUCStatus.Cursed)                    GLog.w("You can't use cursed chains.");
+			else if (bucStatus() == BUCStatus.Cursed)                    GLog.w("You can't use cursed chains.");
 			else {
 				GameScene.selectCell(caster);
 			}
@@ -98,8 +98,8 @@ public class EtherealChains extends Artifact_old {
 			if (target != null && (Dungeon.level.visited[target] || Dungeon.level.mapped[target])){
 
 				//ballistica does not go through walls on pre-rework boss arenas
-				int missileProperties = (Level.flags & Level.FLAG_NOTELEPORTATION) != 0 ?
-						Ballistica.PROJECTILE : Ballistica.STOP_CHARS | Ballistica.STOP_TARGET;
+                Ballistica.Mode missileProperties = (Level.flags & Level.FLAG_NOTELEPORTATION) != 0 ?
+						Ballistica.Mode.Projectile : Ballistica.Mode.SeekerBolt;
 
 				final Ballistica chain = new Ballistica(curUser.pos(), target, missileProperties);
 
@@ -201,7 +201,7 @@ public class EtherealChains extends Artifact_old {
 				"extend and pull targets through walls!";
 
 		if (isEquipped( Dungeon.hero )){
-			if (bucStatus != BUCStatus.Cursed) {
+			if (bucStatus() != BUCStatus.Cursed) {
 				desc += "\n\nThe chains rest around your side, slowly siphoning the spiritual energy of those you defeat. " +
 						"Each charge is a link in the chain, which will extend out exactly one tile.";
 
@@ -217,9 +217,9 @@ public class EtherealChains extends Artifact_old {
 		public boolean act() {
 			int chargeTarget = 5+(level()*2);
 			LockedFloor lock = target.buff(LockedFloor.class);
-			if (charge < chargeTarget && bucStatus != BUCStatus.Cursed && (lock == null || lock.regenOn())) {
+			if (charge < chargeTarget && bucStatus() != BUCStatus.Cursed && (lock == null || lock.regenOn())) {
 				partialCharge += 1 / (40f - (chargeTarget - charge)*2f);
-			} else if (bucStatus == BUCStatus.Cursed && Random.Int(100) == 0){
+			} else if (bucStatus() == BUCStatus.Cursed && Random.Int(100) == 0){
 				Buff.prolong( target, parent().owner(), Cripple.class, GameTime.TICK * 10);
 			}
 
@@ -236,7 +236,7 @@ public class EtherealChains extends Artifact_old {
 		}
 
 		public void gainExp( float levelPortion ) {
-			if (bucStatus == BUCStatus.Cursed) return;
+			if (bucStatus() == BUCStatus.Cursed) return;
 
 			exp += Math.round(levelPortion*100);
 

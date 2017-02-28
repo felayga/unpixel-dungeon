@@ -26,7 +26,6 @@
 package com.felayga.unpixeldungeon.items;
 
 import com.felayga.unpixeldungeon.Assets;
-import com.felayga.unpixeldungeon.actors.Char;
 import com.felayga.unpixeldungeon.actors.hero.Hero;
 import com.felayga.unpixeldungeon.effects.CellEmitter;
 import com.felayga.unpixeldungeon.effects.Speck;
@@ -57,6 +56,8 @@ public class Ankh extends Item {
 		name = "Ankh";
 		image = ItemSpriteSheet.ANKH;
 
+        hasLevels(false);
+
 		//You tell the ankh no, don't revive me, and then it comes back to revive you again in another run.
 		//I'm not sure if that's enthusiasm or passive-aggression.
 		bones = true;
@@ -64,11 +65,6 @@ public class Ankh extends Item {
 	}
 
 	private Boolean blessed = false;
-	
-	@Override
-	public boolean isUpgradable() {
-		return false;
-	}
 	
 	@Override
 	public boolean isIdentified() {

@@ -130,9 +130,9 @@ public class MeleeWeapon extends Weapon {
 		if (isEquipped( Dungeon.hero )) {
 			info.append( p );
 			info.append( "You hold the " + name + " at the ready" +
-				(bucStatus == BUCStatus.Cursed ? ", and because it is cursed, you are powerless to let go." : ".") );
+				(bucStatus() == BUCStatus.Cursed ? ", and because it is cursed, you are powerless to let go." : ".") );
 		} else {
-			if (bucStatusKnown && bucStatus == BUCStatus.Cursed) {
+			if (bucStatusKnown() && bucStatus() == BUCStatus.Cursed) {
 				info.append( p );
 				info.append( "You can feel a malevolent magic lurking within the " + name +"." );
 			}

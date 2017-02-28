@@ -28,7 +28,6 @@ package com.felayga.unpixeldungeon.items;
 import com.felayga.unpixeldungeon.Badges;
 import com.felayga.unpixeldungeon.Dungeon;
 import com.felayga.unpixeldungeon.Statistics;
-import com.felayga.unpixeldungeon.actors.Char;
 import com.felayga.unpixeldungeon.actors.hero.Hero;
 import com.felayga.unpixeldungeon.scenes.AmuletScene;
 import com.felayga.unpixeldungeon.sprites.ItemSpriteSheet;
@@ -44,6 +43,8 @@ public class Amulet extends Item {
 	{
 		name = "Amulet of Yendor";
 		image = ItemSpriteSheet.AMULET;
+
+        hasLevels(false);
 		
 		unique = true;
 	}
@@ -94,11 +95,6 @@ public class Amulet extends Item {
 	@Override
 	public boolean isIdentified() {
 		return true;
-	}
-	
-	@Override
-	public boolean isUpgradable() {
-		return false;
 	}
 	
 	@Override

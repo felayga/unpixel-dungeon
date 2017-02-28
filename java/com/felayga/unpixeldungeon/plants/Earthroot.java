@@ -29,23 +29,21 @@ import com.felayga.unpixeldungeon.Dungeon;
 import com.felayga.unpixeldungeon.actors.Actor;
 import com.felayga.unpixeldungeon.actors.Char;
 import com.felayga.unpixeldungeon.actors.buffs.Buff;
+import com.felayga.unpixeldungeon.actors.buffs.negative.Roots;
 import com.felayga.unpixeldungeon.effects.CellEmitter;
 import com.felayga.unpixeldungeon.effects.particles.EarthParticle;
 import com.felayga.unpixeldungeon.items.potions.IAlchemyComponent;
 import com.felayga.unpixeldungeon.items.potions.PotionOfBrewing;
 import com.felayga.unpixeldungeon.mechanics.GameTime;
 import com.felayga.unpixeldungeon.sprites.ItemSpriteSheet;
-import com.felayga.unpixeldungeon.ui.BuffIndicator;
-import com.felayga.unpixeldungeon.utils.Utils;
 import com.watabou.noosa.Camera;
-import com.watabou.utils.Bundle;
 
 public class Earthroot extends Plant {
     private static final String TXT_NAME = "Earthroot";
 
 	private static final String TXT_DESC =
 		"When a creature touches an Earthroot, its roots " +
-		"create a kind of immobile natural armor around it.";
+		"entangle the creature, rendering it temporarily immobile.";
 
     public Earthroot()
 	{
@@ -54,17 +52,19 @@ public class Earthroot extends Plant {
 	
 	@Override
 	public void activate() {
-		Char ch = Actor.findChar(pos);
-		
-		if (ch == Dungeon.hero) {
-			Buff.affect( ch, Char.Registry.get(ownerRegistryIndex()), Armor.class ).level = ch.HT;
-		}
-		
-		if (Dungeon.visible[pos]) {
-			CellEmitter.bottom( pos ).start( EarthParticle.FACTORY, 0.05f, 8 );
-			Camera.main.shake( 1, 0.4f );
-		}
-	}
+        Char ch = Actor.findChar(pos);
+
+        if (ch != null) {
+            Buff.prolong(ch, Char.Registry.get(ownerRegistryIndex()), Roots.class, GameTime.TICK * EFFECTDURATION);
+        }
+
+        if (Dungeon.visible[pos]) {
+            CellEmitter.bottom(pos).start(EarthParticle.FACTORY, 0.05f, 8);
+            if (ch == Dungeon.hero) {
+                Camera.main.shake(1, 0.4f);
+            }
+        }
+    }
 	
 	@Override
 	public String desc() {
@@ -88,7 +88,8 @@ public class Earthroot extends Plant {
 			return TXT_DESC;
 		}
 	}
-	
+
+    /*
 	public static class Armor extends Buff {
 		
 		private static final long STEP = GameTime.TICK;
@@ -170,6 +171,7 @@ public class Earthroot extends Plant {
 			level = bundle.getInt( LEVEL );
 		}
 	}
+	*/
 
     public static class Brew extends PotionOfBrewing {
         {

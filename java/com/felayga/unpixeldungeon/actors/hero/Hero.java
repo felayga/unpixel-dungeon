@@ -49,8 +49,8 @@ import com.felayga.unpixeldungeon.actors.buffs.negative.Paralysis;
 import com.felayga.unpixeldungeon.actors.buffs.negative.Poison;
 import com.felayga.unpixeldungeon.actors.buffs.negative.Vertigo;
 import com.felayga.unpixeldungeon.actors.buffs.positive.Bless;
-import com.felayga.unpixeldungeon.actors.buffs.positive.Invisibility;
 import com.felayga.unpixeldungeon.actors.buffs.positive.MindVision;
+import com.felayga.unpixeldungeon.actors.buffs.positive.SeeInvisible;
 import com.felayga.unpixeldungeon.actors.mobs.Mob;
 import com.felayga.unpixeldungeon.actors.mobs.npcs.Boulder;
 import com.felayga.unpixeldungeon.actors.mobs.npcs.NPC;
@@ -76,6 +76,7 @@ import com.felayga.unpixeldungeon.items.artifacts.TimekeepersHourglass;
 import com.felayga.unpixeldungeon.items.bags.Bag;
 import com.felayga.unpixeldungeon.items.bags.IBag;
 import com.felayga.unpixeldungeon.items.bags.LargeChest;
+import com.felayga.unpixeldungeon.items.bags.backpack.Belongings;
 import com.felayga.unpixeldungeon.items.food.Food;
 import com.felayga.unpixeldungeon.items.rings.RingOfMight;
 import com.felayga.unpixeldungeon.items.rings.RingOfTenacity;
@@ -776,12 +777,29 @@ public class Hero extends Char {
                 Heap heap = Dungeon.level.heaps.get(action.dst);
                 Item item;
                 if (heap != null && ((item = heap.peek()) != null)) {
-                    int distance = getAttributeModifier(AttributeType.STRCON) + 4 - item.weight() / Encumbrance.UNIT / 40;
+                    int distance = -1;
 
-                    if (distance > 0) {
-                        int direction = heap.pos - pos();
-                        int target = heap.pos + direction * distance;
-                        item.cast(this, heap.pos, target);
+                    boolean messaged = false;
+
+                    if (Dungeon.level.passable[dst]) {
+                        distance = getAttributeModifier(AttributeType.STRCON) + 4 - item.weight() / Encumbrance.UNIT / 40;
+
+                        if (distance > 0) {
+                            int direction = heap.pos - pos();
+                            int target = heap.pos + direction * distance;
+                            item.cast(this, heap.pos, target);
+                        }
+                    } else {
+                        heap.remove(item);
+                        Dungeon.level.drop(item, pos());
+
+                        if (item.quantity() == 1) {
+                            GLog.p("The " + item.getName() + " comes loose.");
+                        } else {
+                            GLog.p("The " + item.getName() + "s come loose.");
+                        }
+
+                        messaged = true;
                     }
 
                     if (item instanceof Bag) {
@@ -806,7 +824,9 @@ public class Hero extends Char {
                                     Sample.INSTANCE.play(Assets.SND_DOOR_KICKOPEN);
                                 }
                             } else {
-                                GLog.w("Thud!");
+                                if (!messaged) {
+                                    GLog.w("Thud!");
+                                }
 
                                 if (Dungeon.audible[pos()]) {
                                     Sample.INSTANCE.play(Assets.SND_DOOR_THUMP);
@@ -825,7 +845,9 @@ public class Hero extends Char {
                         bag.contentsImpact(true);
                     } else {
                         if (distance < 1) {
-                            GLog.w("Thud!");
+                            if (!messaged) {
+                                GLog.w("Thud!");
+                            }
 
                             if (Dungeon.audible[pos()]) {
                                 Sample.INSTANCE.play(Assets.SND_DOOR_THUMP);
@@ -840,6 +862,8 @@ public class Hero extends Char {
                     } else {
                         GLog.w("You kick at empty space.");
                     }
+
+                    Dungeon.level.setLight(dst, 5, true);
                 } else {
                     GLog.n("Ouch!  That hurts.");
                     damage(Random.IntRange(1, 4), MagicType.Mundane, null);
@@ -956,14 +980,21 @@ public class Hero extends Char {
                                             Dungeon.level.setEmpty(digPos, true, true);
                                         }
 
-                                        if (Random.Int(12) == 0) {
-                                            GLog.w("You've dug out a boulder!");
-                                            Boulder npc = new Boulder();
-                                            npc.pos(digPos);
-                                            Dungeon.level.mobs.add(npc);
-                                            GameScene.add(npc);
-                                        } else {
-                                            Dungeon.level.drop(new Rock(Random.Int(3, 23)), digPos);
+                                        switch(Random.Int(12)) {
+                                            case 0:
+                                                GLog.w("You've dug out a boulder!");
+                                                Boulder npc = new Boulder();
+                                                npc.pos(digPos);
+                                                Dungeon.level.mobs.add(npc);
+                                                GameScene.add(npc);
+                                                break;
+                                            case 1:
+                                            case 2:
+                                                Dungeon.level.drop(new Rock().random(), digPos).rockBottom();
+                                                break;
+                                            default:
+                                                //nothing
+                                                break;
                                         }
 
                                         if (Dungeon.audible[digPos]) {
@@ -1175,7 +1206,7 @@ public class Hero extends Char {
                         GLog.p("The cool draught refreshes you.");
                         Hunger hunger = buff(Hunger.class);
                         if (hunger != null) {
-                            hunger.satisfy_new(Food.AMOUNT_EATEN_PER_ROUND);
+                            hunger.satisfy_new(Food.WELL_SUSTENANCE);
                         }
                     }
                 } else {
@@ -1184,7 +1215,7 @@ public class Hero extends Char {
                             GLog.p("The cool draught refreshes you.");
                             Hunger hunger = buff(Hunger.class);
                             if (hunger != null) {
-                                hunger.satisfy_new(Food.AMOUNT_EATEN_PER_ROUND);
+                                hunger.satisfy_new(Food.WELL_SUSTENANCE);
                             }
                             break;
                         case 1:
@@ -1433,7 +1464,7 @@ public class Hero extends Char {
             if (bag.locked()) {
 
             } else {
-                GameScene.show(new WndBag(bag, null, WndBackpack.Mode.ALL, null, null, dst));
+                GameScene.show(new WndBag(bag, null, WndBackpack.Mode.ALL, null, null, dst, false));
             }
 
             ready();
@@ -1971,7 +2002,7 @@ public class Hero extends Char {
 
         Mob target = null;
         for (Mob m : Dungeon.level.mobs) {
-            if (Level.fieldOfView[m.pos()] && m.hostile) {
+            if (Level.fieldOfView[m.pos()] && m.hostile && (m.invisible <= 0 || Dungeon.hero.buff(SeeInvisible.class) != null)) {
                 visible.add(m);
                 if (!visibleEnemies.contains(m)) {
                     newMob = true;
@@ -2385,6 +2416,11 @@ public class Hero extends Char {
     }
 
     @Override
+    protected void dropAll() {
+        belongings.dropAll(pos(), 1);
+    }
+
+    @Override
     public void move(int step) {
         super.move(step);
 
@@ -2440,13 +2476,12 @@ public class Hero extends Char {
                 if (Dungeon.audible[action.targetPos]) {
                     Sample.INSTANCE.play(Assets.SND_MISS);
                 }
-
-                Dungeon.level.warnings.remove(action.targetPos);
             }
-        }
-        curAction = null;
 
-        Invisibility.dispelAttack(this);
+            Dungeon.level.warnings.remove(action.targetPos);
+        }
+
+        curAction = null;
 
         super.onAttackComplete();
     }
@@ -2595,7 +2630,7 @@ public class Hero extends Char {
 
                         Dungeon.level.discover(p);
 
-                        ScrollOfMagicMapping.discover(p);
+                        ScrollOfMagicMapping.discoverFx(p);
 
                         smthFound = true;
 

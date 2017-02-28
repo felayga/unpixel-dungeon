@@ -43,6 +43,10 @@ public class FireImbue extends Buff {
 
 	protected long left;
 
+    public FireImbue() {
+
+    }
+
 	@Override
 	public void storeInBundle( Bundle bundle ) {
 		super.storeInBundle( bundle );

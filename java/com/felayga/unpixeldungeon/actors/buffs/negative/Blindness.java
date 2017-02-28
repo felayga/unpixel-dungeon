@@ -34,6 +34,7 @@ import com.felayga.unpixeldungeon.ui.BuffIndicator;
 
 public class Blindness extends FlavourBuff {
 
+    public Blindness()
 	{
 		type = buffType.NEGATIVE;
 	}

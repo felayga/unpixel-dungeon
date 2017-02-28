@@ -25,11 +25,6 @@
  */
 package com.felayga.unpixeldungeon.actors.buffs.positive;
 
-import com.felayga.unpixeldungeon.actors.blobs.ConfusionGas;
-import com.felayga.unpixeldungeon.actors.blobs.ParalyticGas;
-import com.felayga.unpixeldungeon.actors.blobs.StenchGas;
-import com.felayga.unpixeldungeon.actors.blobs.ToxicGas;
-import com.felayga.unpixeldungeon.actors.blobs.VenomGas;
 import com.felayga.unpixeldungeon.actors.buffs.FlavourBuff;
 import com.felayga.unpixeldungeon.mechanics.GameTime;
 import com.felayga.unpixeldungeon.ui.BuffIndicator;
@@ -37,6 +32,10 @@ import com.felayga.unpixeldungeon.ui.BuffIndicator;
 public class GasesImmunity extends FlavourBuff {
 	
 	public static final long DURATION	= GameTime.TICK * 15;
+
+    public GasesImmunity() {
+
+    }
 	
 	@Override
 	public int icon() {

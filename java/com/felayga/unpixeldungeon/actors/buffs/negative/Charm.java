@@ -38,6 +38,7 @@ public class Charm extends FlavourBuff {
 
 	private static final String OBJECT    = "object";
 
+    public Charm()
 	{
 		type = buffType.NEGATIVE;
 	}

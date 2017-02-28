@@ -27,7 +27,6 @@ package com.felayga.unpixeldungeon.items.keys;
 
 import com.felayga.unpixeldungeon.Assets;
 import com.felayga.unpixeldungeon.items.Item;
-import com.felayga.unpixeldungeon.mechanics.GameTime;
 import com.watabou.utils.Bundle;
 
 public class OldKey extends Item {
@@ -36,6 +35,8 @@ public class OldKey extends Item {
         pickupSound = Assets.SND_ITEM_KEY;
 		stackable = true;
 		unique = true;
+
+        hasLevels(false);
 	}
 
 
@@ -58,11 +59,6 @@ public class OldKey extends Item {
 	public void restoreFromBundle( Bundle bundle ) {
 		super.restoreFromBundle( bundle );
 		depth = bundle.getInt( DEPTH );
-	}
-	
-	@Override
-	public boolean isUpgradable() {
-		return false;
 	}
 	
 	@Override

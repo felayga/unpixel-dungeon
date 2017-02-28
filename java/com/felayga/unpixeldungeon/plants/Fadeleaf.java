@@ -28,23 +28,21 @@ package com.felayga.unpixeldungeon.plants;
 import com.felayga.unpixeldungeon.Dungeon;
 import com.felayga.unpixeldungeon.actors.Actor;
 import com.felayga.unpixeldungeon.actors.Char;
-import com.felayga.unpixeldungeon.actors.hero.Hero;
+import com.felayga.unpixeldungeon.actors.buffs.Buff;
+import com.felayga.unpixeldungeon.actors.buffs.negative.Paralysis;
 import com.felayga.unpixeldungeon.actors.mobs.Mob;
 import com.felayga.unpixeldungeon.effects.CellEmitter;
 import com.felayga.unpixeldungeon.effects.Speck;
 import com.felayga.unpixeldungeon.items.potions.IAlchemyComponent;
 import com.felayga.unpixeldungeon.items.potions.PotionOfBrewing;
-import com.felayga.unpixeldungeon.items.scrolls.ScrollOfTeleportation;
-import com.felayga.unpixeldungeon.levels.Level;
-import com.felayga.unpixeldungeon.mechanics.Constant;
+import com.felayga.unpixeldungeon.mechanics.GameTime;
 import com.felayga.unpixeldungeon.sprites.ItemSpriteSheet;
 
 public class Fadeleaf extends Plant {
     private static final String TXT_NAME = "Fadeleaf";
 
 	private static final String TXT_DESC =
-		"Touching a Fadeleaf will teleport any creature " +
-		"to a random place on the current level.";
+		"Touching a Fadeleaf will temporarily paralyze any creature.";
 
     public Fadeleaf()
 	{
@@ -54,7 +52,16 @@ public class Fadeleaf extends Plant {
 	@Override
 	public void activate() {
 		Char ch = Actor.findChar(pos);
-		
+
+        if (ch != null) {
+            Buff.prolong( ch, Char.Registry.get(ownerRegistryIndex()), Paralysis.class, GameTime.TICK * EFFECTDURATION );
+            if (ch instanceof Mob) {
+                if (((Mob)ch).state == ((Mob)ch).HUNTING) ((Mob)ch).state = ((Mob)ch).WANDERING;
+                ((Mob)ch).beckon( Dungeon.level.randomDestination() );
+            }
+        }
+
+        /*
 		if (ch instanceof Hero) {
 
 			if (ScrollOfTeleportation.canTeleport(ch)) {
@@ -81,6 +88,7 @@ public class Fadeleaf extends Plant {
 			}
 						
 		}
+		*/
 		
 		if (Dungeon.visible[pos]) {
 			CellEmitter.get( pos ).start( Speck.factory( Speck.LIGHT ), 0.2f, 3 );

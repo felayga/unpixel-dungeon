@@ -34,10 +34,15 @@ import com.felayga.unpixeldungeon.ui.Icons;
  * Created by hello on 3/17/16.
  */
 public class Backpack extends Bag {
+    public static final int SIZE	    = 36; //original=19
+    public static final int SUPERSIZE   = 12;
+
     public Backpack(Char owner) {
         super(owner, false, 0);
 
         tabIcon = Icons.BACKPACK;
     }
+
+
 
 }

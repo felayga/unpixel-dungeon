@@ -125,6 +125,7 @@ full restoration
             PotionOfFullRestoration.class,
             PotionOfGainAbility.class,
             PotionOfGainLevel.class,
+
             PotionOfHallucination.class,
             PotionOfHealing.class,
             PotionOfInvisibility.class,
@@ -135,6 +136,7 @@ full restoration
             PotionOfOil.class,
             PotionOfParalyticGas.class,
             PotionOfPolymorph.class,
+
             PotionOfPurity.class,
             PotionOfRestoration.class,
             PotionOfRestoreAbility.class,
@@ -144,10 +146,11 @@ full restoration
             PotionOfToxicGas.class,
             PotionOfShielding.class,
             PotionOfHeroism.class,
-
             PotionOfBooze.class,
+
             PotionOfFruitJuice.class,
             PotionOfSickness.class,
+            PotionOfAwareness.class,
 
 			//NOT RANDOMIZED
 			PotionOfWater.class
@@ -178,17 +181,18 @@ full restoration
 			ItemSpriteSheet.POTION_SKYBLUE,
 			ItemSpriteSheet.POTION_BRILLIANTBLUE,
 			ItemSpriteSheet.POTION_MAGENTA,
+
 			ItemSpriteSheet.POTION_PURPLERED,
 			ItemSpriteSheet.POTION_PUCE,
 			ItemSpriteSheet.POTION_MILKY,
 			ItemSpriteSheet.POTION_SWIRLY,
 			ItemSpriteSheet.POTION_BUBBLY,
 			ItemSpriteSheet.POTION_SMOKY,
-
 			ItemSpriteSheet.POTION_CLOUDY,
 			ItemSpriteSheet.POTION_EFFERVESCENT,
 			ItemSpriteSheet.POTION_BLACK,
 			ItemSpriteSheet.POTION_GOLDEN,
+
 			ItemSpriteSheet.POTION_BROWN,
 			ItemSpriteSheet.POTION_FIZZY,
 			ItemSpriteSheet.POTION_DARK,
@@ -199,6 +203,7 @@ full restoration
             ItemSpriteSheet.POTION_CREAMY,
             ItemSpriteSheet.POTION_GLOWING,
             ItemSpriteSheet.POTION_SILVERY,
+
             ItemSpriteSheet.POTION_PUTRESCENT,
             ItemSpriteSheet.POTION_SEAGREEN,
             ItemSpriteSheet.POTION_RAINBOW,
@@ -413,11 +418,6 @@ full restoration
 	@Override
 	public boolean isIdentified() {
 		return super.isIdentified() && isKnown();
-	}
-
-	@Override
-	public boolean isUpgradable() {
-		return false;
 	}
 
 	public static HashSet<Class<? extends Potion>> getKnown() {

@@ -26,7 +26,6 @@
 package com.felayga.unpixeldungeon.sprites.mobs;
 
 import com.felayga.unpixeldungeon.Assets;
-import com.felayga.unpixeldungeon.actors.Char;
 import com.felayga.unpixeldungeon.effects.MagicMissile;
 import com.felayga.unpixeldungeon.sprites.MobSprite;
 import com.watabou.noosa.TextureFilm;

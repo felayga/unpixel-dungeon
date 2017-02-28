@@ -30,12 +30,8 @@ import com.felayga.unpixeldungeon.Dungeon;
 import com.felayga.unpixeldungeon.actors.Char;
 import com.felayga.unpixeldungeon.actors.buffs.FlavourBuff;
 import com.felayga.unpixeldungeon.actors.buffs.ISpeedModifierBuff;
-import com.felayga.unpixeldungeon.levels.Level;
-import com.felayga.unpixeldungeon.mechanics.Constant;
 import com.felayga.unpixeldungeon.mechanics.GameTime;
 import com.felayga.unpixeldungeon.ui.BuffIndicator;
-import com.felayga.unpixeldungeon.utils.GLog;
-import com.watabou.utils.Bundle;
 
 /**
  * Created by HELLO on 6/5/2016.

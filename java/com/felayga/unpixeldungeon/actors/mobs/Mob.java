@@ -54,7 +54,6 @@ import com.felayga.unpixeldungeon.levels.Level;
 import com.felayga.unpixeldungeon.levels.Level.Feeling;
 import com.felayga.unpixeldungeon.levels.Terrain;
 import com.felayga.unpixeldungeon.levels.features.Door;
-import com.felayga.unpixeldungeon.mechanics.AttributeType;
 import com.felayga.unpixeldungeon.mechanics.Characteristic;
 import com.felayga.unpixeldungeon.mechanics.Constant;
 import com.felayga.unpixeldungeon.mechanics.GameTime;
@@ -66,13 +65,8 @@ import com.felayga.unpixeldungeon.utils.Utils;
 import com.watabou.utils.Bundle;
 import com.watabou.utils.Random;
 
-import java.nio.Buffer;
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashSet;
-import java.util.List;
-
-import javax.microedition.khronos.opengles.GL;
 
 public abstract class Mob extends Char {
 
@@ -89,7 +83,7 @@ public abstract class Mob extends Char {
 
     protected static final String TXT_NOTICE1 = "?!";
     protected static final String TXT_RAGE = "#$%^";
-    protected static final String TXT_EXP = "%+dEXP";
+    public static final String TXT_EXP = "%+dEXP";
 
     public AiState SLEEPING = new Sleeping();
     public AiState HUNTING = new Hunting();
@@ -568,40 +562,42 @@ public abstract class Mob extends Char {
             }
             Badges.validateNightHunter();
 
-            int bonus;
+            if ((characteristics & Characteristic.NoExperience.value) == 0) {
+                int bonus;
 
-            int experience = level * level + 1;
+                int experience = level * level + 1;
 
-            long movementSpeed = movementSpeed();
+                long movementSpeed = movementSpeed();
 
-            if (movementSpeed > 0) {
-                bonus = (int) ((GameTime.TICK - movementSpeed) * 16 / GameTime.TICK);
-                if (bonus > 0) {
-                    experience += bonus;
+                if (movementSpeed > 0) {
+                    bonus = (int) ((GameTime.TICK - movementSpeed) * 16 / GameTime.TICK);
+                    if (bonus > 0) {
+                        experience += bonus;
+                    }
                 }
-            }
 
-            if (defenseMundane > 17) {
-                bonus = (int) Math.pow(defenseMundane - 17, 0.8) * 5;
+                if (defenseMundane > 17) {
+                    bonus = (int) Math.pow(defenseMundane - 17, 0.8) * 5;
 
-                if (bonus > 0) {
-                    experience += bonus;
+                    if (bonus > 0) {
+                        experience += bonus;
+                    }
                 }
-            }
 
-            if (level >= 9) {
-                experience += 50;
-            }
+                if (level >= 9) {
+                    experience += 50;
+                }
 
-            //todo: rest of XP bonuses
-            //special attacks (10 spellcasting, 5 weapon, 3 others except [passive, claw, bite, kick, headbutt])
-            //damage types (50-level for sliming, stoning, drain life; level for fire, cold, shock, sleep, disintegration, magic missiles, acid, stat draining poison)
-            //damage (level if maximum damage >=24)
+                //todo: rest of XP bonuses
+                //special attacks (10 spellcasting, 5 weapon, 3 others except [passive, claw, bite, kick, headbutt])
+                //damage types (50-level for sliming, stoning, drain life; level for fire, cold, shock, sleep, disintegration, magic missiles, acid, stat draining poison)
+                //damage (level if maximum damage >=24)
 
-            //removed dungeon hero level check (Dungeon.hero.lvl <= Hero.MAX_LEVEL)
-            if (experience > 0) {
-                Dungeon.hero.sprite.showStatus(CharSprite.POSITIVE, TXT_EXP, experience);
-                Dungeon.hero.earnExp(experience);
+                //removed dungeon hero level check (Dungeon.hero.lvl <= Hero.MAX_LEVEL)
+                if (experience > 0) {
+                    Dungeon.hero.sprite.showStatus(CharSprite.POSITIVE, TXT_EXP, experience);
+                    Dungeon.hero.earnExp(experience);
+                }
             }
         }
     }

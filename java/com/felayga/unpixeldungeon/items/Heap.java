@@ -34,6 +34,7 @@ import com.felayga.unpixeldungeon.effects.Speck;
 import com.felayga.unpixeldungeon.effects.Splash;
 import com.felayga.unpixeldungeon.effects.particles.ElmoParticle;
 import com.felayga.unpixeldungeon.effects.particles.ShadowParticle;
+import com.felayga.unpixeldungeon.effects.particles.ShaftParticle;
 import com.felayga.unpixeldungeon.items.bags.IBag;
 import com.felayga.unpixeldungeon.items.bags.ItemIterator;
 import com.felayga.unpixeldungeon.items.potions.IAlchemyComponent;
@@ -41,6 +42,7 @@ import com.felayga.unpixeldungeon.items.potions.Potion;
 import com.felayga.unpixeldungeon.items.potions.PotionOfBrewing;
 import com.felayga.unpixeldungeon.items.scrolls.Scroll;
 import com.felayga.unpixeldungeon.items.wands.Wand;
+import com.felayga.unpixeldungeon.items.weapon.ammunition.simple.Rock;
 import com.felayga.unpixeldungeon.levels.Level;
 import com.felayga.unpixeldungeon.levels.Terrain;
 import com.felayga.unpixeldungeon.mechanics.BUCStatus;
@@ -89,13 +91,30 @@ public class Heap implements Bundlable, IBag {
     public boolean collect(Item item) {
         boolean retval = false;
 
+        if (Dungeon.level != null && Dungeon.level.map[pos] == Terrain.ALTAR) {
+            if (!item.bucStatusKnown()) {
+                item.bucStatus(true);
+
+                switch (item.bucStatus()) {
+                    case Blessed:
+                        CellEmitter.get(pos).start(ShaftParticle.FACTORY_GREEN, 0.2f, 3);
+                        break;
+                    case Cursed:
+                        CellEmitter.get(pos).start(ShaftParticle.FACTORY_RED, 0.2f, 3);
+                        break;
+                    default:
+                        CellEmitter.get(pos).start(ShaftParticle.FACTORY, 0.2f, 3);
+                        break;
+                }
+            }
+        }
+
         if (item.stackable) {
             for (Item subitem : items_derp) {
                 if (item.isStackableWith(subitem)) {
                     subitem.quantity(subitem.quantity() + item.quantity());
                     subitem.updateQuickslot();
 
-                    updateImage();
                     retval = true;
                 }
             }
@@ -113,6 +132,25 @@ public class Heap implements Bundlable, IBag {
         return retval;
     }
 
+    public void rockBottom() {
+        //having rocks appear over gems in mining operations would be tedious and lame
+
+        Rock rock = null;
+
+        for (Item item : items_derp) {
+            if (item instanceof Rock) {
+                rock = (Rock)item;
+                break;
+            }
+        }
+
+        if (rock != null) {
+            items_derp.remove(rock);
+            items_derp.add(0, rock);
+            updateImage();
+        }
+    }
+
     public boolean contains(Item item) {
         for (Item i : items_derp) {
             if (i == item) {
@@ -124,12 +162,23 @@ public class Heap implements Bundlable, IBag {
         return false;
     }
 
+    public boolean contains(Class<?> type, boolean allowNested) {
+        for (Item i : items_derp) {
+            if (type.isAssignableFrom(i.getClass())) {
+                return true;
+            } else if (allowNested && i instanceof IBag && ((IBag) i).contains(type, allowNested)) {
+                return true;
+            }
+        }
+        return false;
+    }
+
     public Item remove(Item item) {
         if (items_derp.contains(item)) {
+            items_derp.remove(item);
             if (item.parent() == this) {
                 item.parent(null);
             }
-            items_derp.remove(item);
 
             updateImage();
             return item;
@@ -253,7 +302,7 @@ public class Heap implements Bundlable, IBag {
 	public ItemSprite sprite;
 	public boolean seen = false;
 	
-	private LinkedList<Item> items_derp = new LinkedList<Item>();
+	private LinkedList<Item> items_derp = new LinkedList<>();
 	
 	public int image() {
 		switch (type) {
@@ -285,14 +334,14 @@ public class Heap implements Bundlable, IBag {
             case REMAINS:
                 CellEmitter.center(pos).start(Speck.factory(Speck.RATTLE), 0.1f, 3);
                 for (Item item : items_derp) {
-                    if (item.bucStatus == BUCStatus.Cursed) {
+                    if (item.bucStatus() == BUCStatus.Cursed) {
                         //todo: wraith spawn from opening remains maybe?
                         if (false/*Wraith.spawnAt( pos ) == null*/) {
                             hero.sprite.emitter().burst(ShadowParticle.CURSE, 6);
                             hero.damage(hero.HP / 2, MagicType.Magic, null);
                         }
                         Sample.INSTANCE.play(Assets.SND_CURSED);
-                        item.bucStatusKnown = true;
+                        item.bucStatus(true);
                         break;
                     }
                 }
@@ -488,7 +537,7 @@ public class Heap implements Bundlable, IBag {
             if (components.size() >= 2) {
                 Collections.shuffle(components);
 
-                retval = PotionOfBrewing.Handler.handle(pos, this, components.get(0), components.get(1), false);
+                retval = PotionOfBrewing.Handler.handle(this, components.get(0), components.get(1), false);
                 CellEmitter.center( pos ).burst( Speck.factory( Speck.EVOKE ), 3 );
 
                 if (!Random.PassFail(230 + Dungeon.hero.luck() * 2)) {

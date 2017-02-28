@@ -26,9 +26,13 @@
 
 package com.felayga.unpixeldungeon.actors.buffs.positive;
 
+import com.felayga.unpixeldungeon.actors.Char;
+import com.felayga.unpixeldungeon.actors.buffs.Buff;
 import com.felayga.unpixeldungeon.actors.buffs.FlavourBuff;
+import com.felayga.unpixeldungeon.actors.buffs.IIntrinsicBuff;
 import com.felayga.unpixeldungeon.actors.buffs.ISpeedModifierBuff;
 import com.felayga.unpixeldungeon.mechanics.GameTime;
+import com.felayga.unpixeldungeon.ui.BuffIndicator;
 
 /**
  * Created by HELLO on 2/11/2017.
@@ -44,6 +48,32 @@ public class Haste extends FlavourBuff implements ISpeedModifierBuff {
         return GameTime.TICK / 2;
     }
 
+    public Haste() {
+        type = buffType.POSITIVE;
+        improved(false);
+    }
+
+    /*
+    @Override
+    public boolean attachTo(Char target, Char source) {
+        if (super.attachTo(target, source)) {
+            List<Buff> pendingRemoval = new ArrayList<>();
+            for (Buff buff : target.buffs()) {
+                if (buff instanceof Slow) {
+                    pendingRemoval.add(buff);
+                }
+            }
+
+            for (Buff buff : pendingRemoval) {
+                buff.detach();
+            }
+            return true;
+        } else {
+            return false;
+        }
+    }
+    */
+
     @Override
     public String attachedMessage(boolean isHero) {
         if (isHero) {
@@ -51,5 +81,101 @@ public class Haste extends FlavourBuff implements ISpeedModifierBuff {
         }
 
         return super.attachedMessage(isHero);
+    }
+
+
+    private int icon;
+
+    @Override
+    public int icon() {
+        return icon;
+    }
+
+
+
+    private boolean improved;
+
+    public boolean improved() {
+        return improved;
+    }
+
+    protected void improved(boolean value) {
+        this.improved = value;
+
+        if (value) {
+            name = "Improved Haste";
+            icon = BuffIndicator.HASTE_IMPROVED;
+        } else {
+            name = "Haste";
+            icon = BuffIndicator.HASTE;
+        }
+    }
+
+    private String name;
+
+    @Override
+    public String toString() {
+        return name;
+    }
+
+
+    @Override
+    public String desc() {
+        return "Haste magic affects the target's relative time flow, decreasing the time required for both movement and attacks.\n" +
+                //descExtra() +
+                "\n" +
+                descDuration();
+    }
+
+    protected String descExtra() { return ""; }
+
+    protected String descDuration() {
+        return "The haste will last for " + dispTurns() + ".";
+    }
+
+    public static class Indefinite extends Haste {
+        @Override
+        public long movementModifier() {
+            return GameTime.TICK * 3 / 5;
+        }
+
+        public Indefinite() {
+        }
+
+        public static Indefinite prolong(Char target, Char source, Class<? extends Indefinite> haste) {
+            return Buff.prolong(target, source, haste, GameTime.TICK * 1024);
+        }
+
+        @Override
+        public boolean act() {
+            spend_new(GameTime.TICK * 1024, false);
+            return true;
+        }
+
+        @Override
+        protected String descDuration() {
+            return "The haste will last indefinitely.";
+        }
+
+    }
+
+    public static class Intrinsic extends Indefinite implements IIntrinsicBuff {
+        @Override
+        public long movementModifier() {
+            return GameTime.TICK * 3 / 4;
+        }
+
+        public Intrinsic() {
+        }
+
+        @Override
+        protected String descExtra() {
+            return "This magic also neutralizes any slowing magic in effect on the target.\n";
+        }
+
+        @Override
+        public int icon() {
+            return BuffIndicator.NONE;
+        }
     }
 }

@@ -42,7 +42,7 @@ public class StenchGas extends Blob {
 		Char ch;
 		for (int i=0; i < LENGTH; i++) {
 			if (cur[i] > 0 && (ch = Actor.findChar(i)) != null) {
-                if (ch.canBreate()) {
+                if (ch.canBreathe()) {
                     Buff.prolong(ch, Char.Registry.get(ownerRegistryIndex()), Paralysis.class, GameTime.TICK * 2);
                 }
 			}

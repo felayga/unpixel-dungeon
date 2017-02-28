@@ -27,7 +27,6 @@ package com.felayga.unpixeldungeon.items.books;
 
 import com.felayga.unpixeldungeon.Assets;
 import com.felayga.unpixeldungeon.Badges;
-import com.felayga.unpixeldungeon.actors.Char;
 import com.felayga.unpixeldungeon.actors.buffs.hero.Encumbrance;
 import com.felayga.unpixeldungeon.actors.buffs.negative.Blindness;
 import com.felayga.unpixeldungeon.actors.hero.Hero;
@@ -164,6 +163,8 @@ public abstract class Book extends Item {
         stackable = true;
         defaultAction = Scroll.AC_READ;
 
+        hasLevels(false);
+
         price = 15;
 
         syncVisuals();
@@ -246,11 +247,6 @@ public abstract class Book extends Item {
         return isKnown() ? initials : null;
     }
     */
-
-    @Override
-    public boolean isUpgradable() {
-        return false;
-    }
 
     @Override
     public boolean isIdentified() {

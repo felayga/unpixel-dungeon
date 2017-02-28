@@ -28,9 +28,7 @@ package com.felayga.unpixeldungeon.actors.buffs.hero;
 import com.felayga.unpixeldungeon.actors.Char;
 import com.felayga.unpixeldungeon.actors.buffs.Buff;
 import com.felayga.unpixeldungeon.actors.buffs.FlavourBuff;
-import com.felayga.unpixeldungeon.actors.buffs.negative.Paralysis;
 import com.felayga.unpixeldungeon.actors.buffs.negative.Roots;
-import com.felayga.unpixeldungeon.actors.buffs.negative.Slow;
 import com.felayga.unpixeldungeon.effects.CellEmitter;
 import com.felayga.unpixeldungeon.effects.particles.EarthParticle;
 import com.felayga.unpixeldungeon.mechanics.GameTime;
@@ -39,6 +37,10 @@ import com.felayga.unpixeldungeon.ui.BuffIndicator;
 public class EarthImbue extends FlavourBuff {
 
 	public static final long DURATION	= GameTime.TICK * 30;
+
+    public EarthImbue() {
+
+    }
 
 	public void proc(Char enemy){
 		Buff.affect(enemy, Char.Registry.get(ownerRegistryIndex()), Roots.class, GameTime.TICK * 2);

@@ -42,7 +42,7 @@ import com.felayga.unpixeldungeon.sprites.ItemSpriteSheet;
 public class Moongrass extends Plant {
     private static final String TXT_NAME = "Moongrass";
 
-    private static final String TXT_DESC = "Moongrass is renowned for its sap's slow but effective restorative properties.";
+    private static final String TXT_DESC = "Moongrass is renowned for its calming, mind-clearing effects.";
 
     public Moongrass()
     {
@@ -54,15 +54,9 @@ public class Moongrass extends Plant {
         Char ch = Actor.findChar(pos);
 
         if (ch != null) {
-            ch.HP = Math.min(ch.MT, ch.MP + ch.MT / 8);
+            ch.MP = Math.min(ch.MT, ch.MP + ch.MT / 8);
             ch.sprite.emitter().start(Speck.factory(Speck.MANAING), 0.4f, 2);
         }
-
-        /*
-		if (ch == Dungeon.hero) {
-			Buff.affect( ch, Health.class ).level = ch.HT;
-		}
-		*/
 
         if (Dungeon.visible[pos]) {
             CellEmitter.get(pos).start( ShaftParticle.FACTORY, 0.2f, 3 );

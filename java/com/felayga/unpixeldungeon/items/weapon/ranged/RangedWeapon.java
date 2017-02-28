@@ -27,7 +27,6 @@
 package com.felayga.unpixeldungeon.items.weapon.ranged;
 
 import com.felayga.unpixeldungeon.Dungeon;
-import com.felayga.unpixeldungeon.actors.Char;
 import com.felayga.unpixeldungeon.actors.buffs.negative.Cripple;
 import com.felayga.unpixeldungeon.actors.hero.Hero;
 import com.felayga.unpixeldungeon.items.EquippableItem;
@@ -56,13 +55,13 @@ public class RangedWeapon extends Weapon {
         stackable = false;
         levelKnown(false, false);
 
-        defaultAction = Constant.Action.SHOOT;
+        defaultAction = null;
 
         usesTargeting = true;
     }
 
     public Slot[] getSlots() {
-        return new Slot[]{ Slot.Weapon };
+        return new Slot[]{ Slot.Ranged };
     }
 
     @Override
@@ -97,7 +96,7 @@ public class RangedWeapon extends Weapon {
     }
 
     protected AmmunitionWeapon findAmmunition(Hero hero) {
-        EquippableItem item = hero.belongings.offhand();
+        EquippableItem item = hero.belongings.ammo();
 
         if (item instanceof AmmunitionWeapon) {
             AmmunitionWeapon weapon = (AmmunitionWeapon)item;
@@ -107,6 +106,15 @@ public class RangedWeapon extends Weapon {
         }
 
         return null;
+    }
+
+    public int ammoCount(Hero hero) {
+        AmmunitionWeapon test = findAmmunition(hero);
+        if (test != null) {
+            return test.quantity();
+        }
+
+        return 0;
     }
 
     protected void doShoot(){

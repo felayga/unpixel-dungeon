@@ -48,7 +48,7 @@ public class MineTownLevel extends RegularLevel {
         color1 = 0x534f3e;
         color2 = 0xb9d661;
 
-        viewDistance = 3;
+        viewDistance = 7;
     }
 
     @Override
@@ -73,6 +73,11 @@ public class MineTownLevel extends RegularLevel {
     }
 
     @Override
+    protected void buildSpecials() {
+        //nothing, manually controlled here
+    }
+
+    @Override
     protected void splitRooms() {
         int _minroomsize = minRoomSize;
         int _maxroomsize = maxRoomSize;
@@ -84,54 +89,54 @@ public class MineTownLevel extends RegularLevel {
 
         Rect bigroom = new Rect(
                 (WIDTH - EDGEBUFFER * 2) * 3 / 10 + EDGEBUFFER,
-                EDGEBUFFER + 1,
+                EDGEBUFFER,
                 (WIDTH - EDGEBUFFER * 2) * 7 / 10 + EDGEBUFFER,
-                EDGEBUFFER + bigroomheight + 2
+                EDGEBUFFER + bigroomheight + 3
         );
 
         Rect topstores = new Rect(
                 bigroom.left + 2,
-                bigroom.top,
+                bigroom.top - 1,
                 bigroom.right - 2,
                 bigroom.top + bigroom.height() * 3 / 14
         );
         split(topstores);
 
         this.topstores = rooms;
-        rooms = new HashSet<Room>();
+        rooms = new HashSet<>();
 
         Rect bottomstores = new Rect(
                 bigroom.left + 2,
                 bigroom.bottom - bigroom.height() * 3 / 14,
                 bigroom.right - 2,
-                bigroom.bottom
+                bigroom.bottom + 1
         );
         split(bottomstores);
 
         this.bottomstores = rooms;
-        rooms = new HashSet<Room>();
+        rooms = new HashSet<>();
 
         Rect midleftstores = new Rect(
-                bigroom.left + 2,
-                topstores.bottom + 2,
+                bigroom.left + 3,
+                topstores.bottom + 3,
                 bigroom.left + bigroom.width() / 3,
-                bottomstores.top - 2
+                bottomstores.top - 3
         );
         split(midleftstores);
 
         this.midleftstores = rooms;
-        rooms = new HashSet<Room>();
+        rooms = new HashSet<>();
 
         Rect midrightstores = new Rect(
                 bigroom.right - bigroom.width() / 3,
-                topstores.bottom + 2,
-                bigroom.right - 2,
-                bottomstores.top - 2
+                topstores.bottom + 3,
+                bigroom.right - 3,
+                bottomstores.top - 3
         );
         split(midrightstores);
 
         this.midrightstores = rooms;
-        rooms = new HashSet<Room>();
+        rooms = new HashSet<>();
 
         minRoomSize = _minroomsize;
         maxRoomSize = _maxroomsize;
@@ -148,10 +153,7 @@ public class MineTownLevel extends RegularLevel {
 
     @Override
     protected boolean assignRoomType() {
-        bigroom.type = Room.Type.STANDARD;
-
-        specials.clear();
-        specialsExtra.clear();
+        bigroom.type = Room.Type.PLAIN;
 
         determineShopSet(topstores);
         determineShopSet(midleftstores);
@@ -165,14 +167,14 @@ public class MineTownLevel extends RegularLevel {
             }
         }
 
-        leftmost.type = Room.Type.RITUAL_SITE;
+        leftmost.type = Room.Type.ALTAR;
 
         return super.assignRoomType();
     }
 
     private void determineShopSet(HashSet<Room> rooms) {
         for (Room room : rooms) {
-            if (room.width() > 2) {
+            if (room.width() > 3) {
                 if (Random.Int(4) == 0) {
                     room.type = Room.Type.STANDARD;
                 } else {

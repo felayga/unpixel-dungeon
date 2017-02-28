@@ -57,8 +57,6 @@ import com.watabou.utils.Callback;
 import com.watabou.utils.PointF;
 import com.watabou.utils.SparseArray;
 
-import java.util.HashMap;
-
 public class StartScene extends PixelScene {
 
 	private static final float BUTTON_HEIGHT	= 24;

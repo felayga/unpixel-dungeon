@@ -32,7 +32,6 @@ import com.felayga.unpixeldungeon.actors.Char;
 import com.felayga.unpixeldungeon.effects.Beam;
 import com.felayga.unpixeldungeon.effects.CellEmitter;
 import com.felayga.unpixeldungeon.effects.particles.PurpleParticle;
-import com.felayga.unpixeldungeon.items.weapon.enchantments.Death;
 import com.felayga.unpixeldungeon.items.weapon.melee.simple.MagesStaff;
 import com.felayga.unpixeldungeon.levels.Level;
 import com.felayga.unpixeldungeon.levels.Terrain;
@@ -51,7 +50,7 @@ public class WandOfDisintegration extends Wand {
         super(20);
 		name = "Wand of Disintegration";
 
-		collisionProperties = Ballistica.WONT_STOP;
+		collisionProperties = Ballistica.Mode.NoCollision;
 	}
 	
 	@Override
@@ -108,20 +107,20 @@ public class WandOfDisintegration extends Wand {
 		}
 	}
 
+    /*
 	@Override
 	public void onHit(MagesStaff staff, Char attacker, Char defender, int damage) {
 		//less likely Grim proc
 		if (Random.Int(3) == 0)
 			new Death().proc( staff, attacker, defender, damage);
 	}
+	*/
 
 	private int distance() {
 		return 1/*level()*/*2 + 4;
 	}
-	
-	@Override
-	protected void fx( Ballistica beam, Callback callback ) {
-		
+
+	protected void fxEffect( Ballistica beam, Callback callback ) {
 		int cell = beam.path.get(Math.min(beam.dist, distance()));
 		curUser.sprite.parent.add(new Beam.DeathRay(curUser.sprite.center(), DungeonTilemap.tileCenterToWorld( cell )));
 		callback.call();

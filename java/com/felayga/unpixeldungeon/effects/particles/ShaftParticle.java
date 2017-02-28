@@ -42,8 +42,34 @@ public class ShaftParticle extends PixelParticle {
 			return true;
 		}
 	};
-	
-	public ShaftParticle() {
+
+    public static final Emitter.Factory FACTORY_RED = new Factory() {
+        @Override
+        public void emit( Emitter emitter, int index, float x, float y ) {
+            ShaftParticle particle = ((ShaftParticle)emitter.recycle( ShaftParticle.class ));
+            particle.reset( x, y );
+            particle.hardlight(1.0f, 0.25f, 0.25f);
+        }
+        @Override
+        public boolean lightMode() {
+            return true;
+        }
+    };
+
+    public static final Emitter.Factory FACTORY_GREEN = new Factory() {
+        @Override
+        public void emit( Emitter emitter, int index, float x, float y ) {
+            ShaftParticle particle = ((ShaftParticle)emitter.recycle( ShaftParticle.class ));
+            particle.reset( x, y );
+            particle.hardlight(0.25f, 1.0f, 0.25f);
+        }
+        @Override
+        public boolean lightMode() {
+            return true;
+        }
+    };
+
+    public ShaftParticle() {
 		super();
 		
 		lifespan = 1.2f;
@@ -57,7 +83,8 @@ public class ShaftParticle extends PixelParticle {
 		
 		this.x = x;
 		this.y = y;
-		
+
+        resetColor();
 		offs = -Random.Float( lifespan );
 		left = lifespan - offs;
 	}

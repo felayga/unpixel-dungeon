@@ -34,15 +34,12 @@ public class DarkGold extends Item {
 	{
 		name = "dark gold ore";
 		image = ItemSpriteSheet.ORE;
+
+        hasLevels(false);
 		
 		stackable = true;
 		unique = true;
         price = 1;
-	}
-	
-	@Override
-	public boolean isUpgradable() {
-		return false;
 	}
 	
 	@Override

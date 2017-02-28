@@ -46,7 +46,8 @@ public enum Characteristic {
     Brainless           (0x000800),
     Amorphous           (0x001000),
     Orc                 (0x002000),
-    Concealer           (0x004000);
+    Concealer           (0x004000),
+    NoExperience        (0x008000);
 
     public final int value;
 

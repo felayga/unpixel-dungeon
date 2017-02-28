@@ -30,7 +30,6 @@ import android.graphics.RectF;
 import com.felayga.unpixeldungeon.Assets;
 import com.felayga.unpixeldungeon.Dungeon;
 import com.felayga.unpixeldungeon.actors.Char;
-import com.felayga.unpixeldungeon.actors.hero.Belongings;
 import com.felayga.unpixeldungeon.items.Heap;
 import com.felayga.unpixeldungeon.items.Item;
 import com.felayga.unpixeldungeon.items.armor.Armor;
@@ -41,11 +40,14 @@ import com.felayga.unpixeldungeon.items.bags.ScrollHolder;
 import com.felayga.unpixeldungeon.items.bags.SeedPouch;
 import com.felayga.unpixeldungeon.items.bags.WandHolster;
 import com.felayga.unpixeldungeon.items.bags.backpack.Backpack;
+import com.felayga.unpixeldungeon.items.bags.backpack.Belongings;
 import com.felayga.unpixeldungeon.items.bags.backpack.EquipmentBackpack;
+import com.felayga.unpixeldungeon.items.food.Corpse;
 import com.felayga.unpixeldungeon.items.spells.Spell;
 import com.felayga.unpixeldungeon.items.weapon.melee.MeleeWeapon;
 import com.felayga.unpixeldungeon.items.weapon.missiles.martial.Boomerang;
 import com.felayga.unpixeldungeon.mechanics.BUCStatus;
+import com.felayga.unpixeldungeon.mechanics.CorpseEffect;
 import com.felayga.unpixeldungeon.scenes.GameScene;
 import com.felayga.unpixeldungeon.scenes.PixelScene;
 import com.felayga.unpixeldungeon.sprites.ItemSpriteSheet;
@@ -67,21 +69,22 @@ import java.util.Iterator;
 public class WndBackpack extends WndTabbed {
 
 	public enum Mode {
-		ALL,
+        ALL,
         ALL_WITH_SPELL,
-		UNIDENTIFED,
-		UPGRADEABLE,
-		QUICKSLOT,
-		FOR_SALE,
-		ENCHANTABLE,
-        INSTANCEOF;
+        UNIDENTIFED,
+        UPGRADEABLE,
+        QUICKSLOT,
+        FOR_SALE,
+        ENCHANTABLE,
+        INSTANCEOF,
+        CORPSE_FRESH;
 
         public static boolean Qualify(Mode mode, Item item, Class<?> match, Class<?> unmatch) {
             if (unmatch != null && unmatch.isInstance(item)) {
                 return false;
             }
 
-            switch(mode) {
+            switch (mode) {
                 case FOR_SALE:
                     return (item.price() > 0) && (!item.isEquipped(Dungeon.hero) || item.bucStatus() != BUCStatus.Cursed);
                 case UPGRADEABLE:
@@ -101,11 +104,20 @@ public class WndBackpack extends WndTabbed {
                         return match.isInstance(item);
                     }
                     break;
+                case CORPSE_FRESH:
+                    if (item instanceof Corpse) {
+                        Corpse corpse = (Corpse) item;
+
+                        if (!corpse.partiallyEaten && (corpse.effects & CorpseEffect.Canned.value) == 0) {
+                            return true;
+                        }
+                    }
+                    break;
             }
 
             return false;
         }
-	}
+    }
 
 	protected static final int COLS_P = 6; //width original=4
 	protected static final int COLS_L = 12; //height original=6
@@ -144,6 +156,14 @@ public class WndBackpack extends WndTabbed {
 		Belongings stuff = Dungeon.hero.belongings;
         Heap test = Dungeon.level.heaps.get(Dungeon.hero.pos(), null);
 
+        if (bag instanceof Heap) {
+            bag = test;
+        }
+
+        if (bag == null) {
+            bag = stuff.backpack1;
+        }
+
 		this.listener = listener;
 		this.mode = mode;
 		this.title = title;
@@ -160,7 +180,7 @@ public class WndBackpack extends WndTabbed {
 		lastBag = bag;
 
 		nCols = unPixelDungeon.landscape() ? COLS_L : COLS_P;
-		nRows = (Belongings.BACKPACK_SIZE + 12) / nCols + ((Belongings.BACKPACK_SIZE + 12) % nCols > 0 ? 1 : 0);
+		nRows = (Backpack.SIZE + Backpack.SUPERSIZE) / nCols + ((Backpack.SIZE + Backpack.SUPERSIZE) % nCols > 0 ? 1 : 0);
 
 		int slotsWidth = SLOT_SIZE * nCols + SLOT_MARGIN * (nCols - 1);
 		int slotsHeight = SLOT_SIZE * nRows + SLOT_MARGIN * (nRows - 1);
@@ -241,36 +261,26 @@ public class WndBackpack extends WndTabbed {
 			placeItem(stuff.weapon() != null ? stuff.weapon() : new Placeholder(ItemSpriteSheet.PLACEHOLDER_WEAPON));
 			placeItem(stuff.offhand() != null ? stuff.offhand() : new Placeholder(ItemSpriteSheet.PLACEHOLDER_SHIELD));
 
-			placeItem(stuff.face() != null ? stuff.face() : new Placeholder(ItemSpriteSheet.PLACEHOLDER_FACE));
+            placeItem(stuff.armor() != null ? stuff.armor() : new Placeholder(ItemSpriteSheet.PLACEHOLDER_ARMOR));
+            placeItem(stuff.helmet() != null ? stuff.helmet() : new Placeholder(ItemSpriteSheet.PLACEHOLDER_HELMET));
+
+            placeItem(stuff.gloves() != null ? stuff.gloves() : new Placeholder(ItemSpriteSheet.PLACEHOLDER_GLOVES));
+            placeItem(stuff.boots() != null ? stuff.boots() : new Placeholder(ItemSpriteSheet.PLACEHOLDER_BOOTS));
+
+            placeItem(stuff.ranged() != null ? stuff.ranged() : new Placeholder(ItemSpriteSheet.PLACEHOLDER_RANGED));
+            placeItem(stuff.ammo() != null ? stuff.ammo() : new Placeholder(ItemSpriteSheet.PLACEHOLDER_AMMO));
+
+            placeItem(stuff.cloak() != null ? stuff.cloak() : new Placeholder(ItemSpriteSheet.PLACEHOLDER_CLOAK));
 			placeItem(stuff.amulet() != null ? stuff.amulet() : new Placeholder(ItemSpriteSheet.PLACEHOLDER_AMULET));
 
 			placeItem(stuff.ring1() != null ? stuff.ring1() : new Placeholder(ItemSpriteSheet.PLACEHOLDER_RING));
 			placeItem(stuff.ring2() != null ? stuff.ring2() : new Placeholder(ItemSpriteSheet.PLACEHOLDER_RING));
-
-			placeItem(stuff.cloak() != null ? stuff.cloak() : new Placeholder(ItemSpriteSheet.PLACEHOLDER_CLOAK));
-			placeItem(stuff.armor() != null ? stuff.armor() : new Placeholder(ItemSpriteSheet.PLACEHOLDER_ARMOR));
-
-			placeItem(stuff.helmet() != null ? stuff.helmet() : new Placeholder(ItemSpriteSheet.PLACEHOLDER_HELMET));
-			placeItem(stuff.gloves() != null ? stuff.gloves() : new Placeholder(ItemSpriteSheet.PLACEHOLDER_GLOVES));
-
-			placeItem(stuff.pants() != null ? stuff.pants() : new Placeholder(ItemSpriteSheet.PLACEHOLDER_PANTS));
-			placeItem(stuff.boots() != null ? stuff.boots() : new Placeholder(ItemSpriteSheet.PLACEHOLDER_BOOTS));
 		}
 
 		if (col != 0) {
 			col = 0;
 			row++;
 		}
-
-		/*
-		//todo: th' fuck does this accomplish?
-		boolean backpack = (container == Dungeon.hero.belongings.backpack1);
-		if (!backpack) {
-			//count = nCols;
-			col = 0;
-			row = 2;
-		}
-		*/
 
 		count = 0;
 
@@ -398,7 +408,7 @@ public class WndBackpack extends WndTabbed {
 		}
 	}
 
-	private static class Placeholder extends Item {
+	public static class Placeholder extends Item {
 		{
 			name = null;
 
@@ -496,13 +506,9 @@ public class WndBackpack extends WndTabbed {
 			Sample.INSTANCE.play(Assets.SND_CLICK, 0.7f, 0.7f, 1.2f);
 		}
 
-		;
-
 		protected void onTouchUp() {
 			bg.brightness(1.0f);
 		}
-
-		;
 
 		@Override
 		protected void onClick() {

@@ -28,16 +28,27 @@ package com.felayga.unpixeldungeon.items.weapon.ammunition.simple;
 import com.felayga.unpixeldungeon.Assets;
 import com.felayga.unpixeldungeon.actors.buffs.hero.Encumbrance;
 import com.felayga.unpixeldungeon.items.Item;
+import com.felayga.unpixeldungeon.items.bags.IBag;
 import com.felayga.unpixeldungeon.items.weapon.ammunition.AmmunitionWeapon;
 import com.felayga.unpixeldungeon.items.weapon.ranged.AmmunitionType;
 import com.felayga.unpixeldungeon.mechanics.GameTime;
 import com.felayga.unpixeldungeon.mechanics.WeaponSkill;
 import com.felayga.unpixeldungeon.sprites.ItemSpriteSheet;
+import com.felayga.unpixeldungeon.utils.GLog;
 import com.watabou.utils.Random;
 
 public class Rock extends AmmunitionWeapon {
     public Rock() {
         this( 1 );
+    }
+
+    public IBag parent() {
+        return super.parent();
+    }
+    public void parent(IBag parent) {
+        super.parent(parent);
+
+        GLog.d("set parent="+(parent != null ? parent.getDisplayName() : "<null>"));
     }
 
     public Rock(int quantity) {
@@ -47,12 +58,12 @@ public class Rock extends AmmunitionWeapon {
         image = ItemSpriteSheet.MISSILE_ROCK;
         pickupSound = Assets.SND_ITEM_ROCK;
 
-        bones = false; //Finding them in bones would be semi-frequent and disappointing.
+        requiresLauncher = false;
 
         hasLevels(false);
         hasBuc(false);
 
-        weight(Encumbrance.UNIT * 10);
+        weight(Encumbrance.UNIT * 3);
         price = 0;
     }
 
@@ -63,7 +74,7 @@ public class Rock extends AmmunitionWeapon {
 
     @Override
     public Item random() {
-        quantity(Random.Int(5, 11));
+        quantity(Random.IntRange(5, 11));
         return this;
     }
 

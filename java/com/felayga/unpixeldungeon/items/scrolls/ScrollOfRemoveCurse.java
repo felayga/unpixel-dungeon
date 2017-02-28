@@ -28,7 +28,6 @@ package com.felayga.unpixeldungeon.items.scrolls;
 import com.felayga.unpixeldungeon.Assets;
 import com.felayga.unpixeldungeon.actors.Char;
 import com.felayga.unpixeldungeon.actors.buffs.negative.Weakness;
-import com.felayga.unpixeldungeon.actors.buffs.positive.Invisibility;
 import com.felayga.unpixeldungeon.effects.Flare;
 import com.felayga.unpixeldungeon.effects.particles.ShadowParticle;
 import com.felayga.unpixeldungeon.items.Item;
@@ -61,7 +60,7 @@ public class ScrollOfRemoveCurse extends Scroll {
 		String passProc = null;
 		String failProc = "The scroll disintegrates.";
 
-		switch(bucStatus)
+		switch(bucStatus())
 		{
 			case Cursed:
 				break;

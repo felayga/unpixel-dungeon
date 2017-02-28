@@ -255,9 +255,9 @@ public class Armor extends EquippableItem {
 		
 		if (isEquipped( Dungeon.hero )) {
 			info.append( "\n\nYou are wearing the " + name +
-				(bucStatus == BUCStatus.Cursed ? ", and because it is cursed, you are powerless to remove it." : ".") );
+				(bucStatus() == BUCStatus.Cursed ? ", and because it is cursed, you are powerless to remove it." : ".") );
 		} else {
-			if (bucStatusKnown && bucStatus == BUCStatus.Cursed) {
+			if (bucStatusKnown() && bucStatus() == BUCStatus.Cursed) {
 				info.append("\n\nYou can feel a malevolent magic lurking within the " + name + ".");
 			}
 		}

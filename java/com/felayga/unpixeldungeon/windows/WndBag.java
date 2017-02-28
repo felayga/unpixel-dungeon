@@ -29,7 +29,6 @@ import android.graphics.RectF;
 
 import com.felayga.unpixeldungeon.Assets;
 import com.felayga.unpixeldungeon.Dungeon;
-import com.felayga.unpixeldungeon.actors.hero.Belongings;
 import com.felayga.unpixeldungeon.actors.hero.Hero;
 import com.felayga.unpixeldungeon.actors.hero.HeroAction;
 import com.felayga.unpixeldungeon.items.Heap;
@@ -85,6 +84,7 @@ public class WndBag extends WndTabbed {
     private String title;
     private Class<? extends Item> classMatch;
     private Class<? extends Item> classUnmatch;
+    private static boolean closeToBackpack;
 
     private int nCols;
     private int nRows;
@@ -103,11 +103,15 @@ public class WndBag extends WndTabbed {
 
     private int pos;
 
-    public WndBag(IBag bag, Listener listener, WndBackpack.Mode mode, Class<? extends Item> classMatch, String title, int pos) {
-        this(bag, listener, mode, classMatch, title, pos, null, null);
+    public WndBag(IBag bag, Listener listener, WndBackpack.Mode mode, Class<? extends Item> classMatch, String title, int pos, boolean closeToBackpack) {
+        this(bag, listener, mode, classMatch, title, pos, null, null, closeToBackpack);
     }
 
     public WndBag(IBag bag, Listener listener, WndBackpack.Mode mode, Class<? extends Item> classMatch, String title, int pos, IBag nestBag, Class<? extends Item> classUnmatch) {
+        this(bag, listener, mode, classMatch, title, pos, nestBag, classUnmatch, true);
+    }
+
+    public WndBag(IBag bag, Listener listener, WndBackpack.Mode mode, Class<? extends Item> classMatch, String title, int pos, IBag nestBag, Class<? extends Item> classUnmatch, boolean closeToBackpack) {
         super();
 
         this.listener = listener;
@@ -116,6 +120,7 @@ public class WndBag extends WndTabbed {
         this.pos = pos;
         this.classMatch = classMatch;
         this.classUnmatch = classUnmatch;
+        this.closeToBackpack = closeToBackpack;
 
         lastMode = mode;
         lastBag = bag;
@@ -124,7 +129,7 @@ public class WndBag extends WndTabbed {
         lastClassUnmatch = classUnmatch;
 
         nCols = unPixelDungeon.landscape() ? COLS_L : COLS_P;
-        nRows = (Belongings.BACKPACK_SIZE + 12) / nCols + ((Belongings.BACKPACK_SIZE + 12) % nCols > 0 ? 1 : 0);
+        nRows = (Backpack.SIZE + Backpack.SUPERSIZE) / nCols + ((Backpack.SIZE + Backpack.SUPERSIZE) % nCols > 0 ? 1 : 0);
 
         int slotsWidth = SLOT_SIZE * nCols + SLOT_MARGIN * (nCols - 1);
         int slotsHeight = SLOT_SIZE * nRows + SLOT_MARGIN * (nRows - 1);
@@ -247,7 +252,7 @@ public class WndBag extends WndTabbed {
 
             if (lastBag instanceof Heap && lastBag.size() < 1) {
             } else {
-                GameScene.show(new WndBag(lastBag, null, lastMode, lastClassMatch, null, lastPos, nestBag, null));
+                GameScene.show(new WndBag(lastBag, null, lastMode, lastClassMatch, null, lastPos, nestBag, null, closeToBackpack));
             }
         }
     };
@@ -258,8 +263,9 @@ public class WndBag extends WndTabbed {
             if (item != null) {
                 item = item.parent().remove(item);
                 lastBag.collect(item);
+                item.updateQuickslot();
             }
-            GameScene.show(new WndBag(lastBag, null, lastMode, lastClassMatch, null, lastPos, nestBag, LargeChest.class));
+            GameScene.show(new WndBag(lastBag, null, lastMode, lastClassMatch, null, lastPos, nestBag, LargeChest.class, closeToBackpack));
         }
     };
 
@@ -296,12 +302,15 @@ public class WndBag extends WndTabbed {
                         break;
                     case BTN_CLOSE:
                         hide();
+
                         IBag parent = lastBag.parent();
 
                         if (parent instanceof Backpack) {
-                            GameScene.show(new WndBackpack(parent, null, WndBackpack.Mode.ALL_WITH_SPELL, null, null, false, null));
+                            if (closeToBackpack) {
+                                GameScene.show(new WndBackpack(parent, null, WndBackpack.Mode.ALL_WITH_SPELL, null, null, false, null));
+                            }
                         } else {
-                            GameScene.show(new WndBag(parent, null, WndBackpack.Mode.ALL, null, null, Constant.Position.NONE));
+                            GameScene.show(new WndBag(parent, null, WndBackpack.Mode.ALL, null, null, Constant.Position.NONE, closeToBackpack));
                         }
                         break;
                 }
@@ -342,7 +351,7 @@ public class WndBag extends WndTabbed {
     @Override
     protected void onClick(Tab tab) {
         hide();
-        GameScene.show(new WndBag(((BagTab) tab).bag, listener, mode, classMatch, title, pos, nestBag, classUnmatch));
+        GameScene.show(new WndBag(((BagTab) tab).bag, listener, mode, classMatch, title, pos, nestBag, classUnmatch, closeToBackpack));
     }
 
     @Override
@@ -469,13 +478,10 @@ public class WndBag extends WndTabbed {
             Sample.INSTANCE.play(Assets.SND_CLICK, 0.7f, 0.7f, 1.2f);
         }
 
-        ;
-
         protected void onTouchUp() {
             bg.brightness(1.0f);
         }
 
-        ;
 
         @Override
         protected void onClick() {

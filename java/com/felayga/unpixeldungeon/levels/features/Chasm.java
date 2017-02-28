@@ -71,7 +71,6 @@ public class Chasm {
 	}
 	
 	public static void heroFall( int pos ) {
-		
 		jumpConfirmed = false;
 				
 		Sample.INSTANCE.play( Assets.SND_FALLING );
@@ -107,7 +106,7 @@ public class Chasm {
 		Camera.main.shake(4, 0.2f);
 		
 		Buff.prolong(hero, null, Cripple.class, Cripple.DURATION);
-		hero.damage( Random.IntRange( hero.HP / 2, hero.HT / 2 ), MagicType.Mundane, null);
+		hero.damage( Random.IntRange( 1, 8 ), MagicType.Mundane, null);
 		//todo: fix message from falling to death
 		/*
 		new Hero.Doom() {

@@ -36,6 +36,7 @@ public class Weakness extends FlavourBuff {
 
     private static final long DURATION = GameTime.TICK * 40;
 
+    public Weakness()
     {
         type = buffType.NEGATIVE;
     }

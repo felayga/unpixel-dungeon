@@ -25,7 +25,6 @@
  */
 package com.felayga.unpixeldungeon.items.tools;
 
-import com.felayga.unpixeldungeon.actors.Char;
 import com.felayga.unpixeldungeon.actors.hero.Hero;
 import com.felayga.unpixeldungeon.items.Item;
 import com.felayga.unpixeldungeon.mechanics.Constant;
@@ -49,7 +48,7 @@ public abstract class Tool extends Item implements ITool {
         this(applyCell, applyItem, WndBackpack.Mode.ALL, null);
 
         if (applyItem) {
-            GLog.d("bad constructor for applyItem=true");
+            GLog.d("use other constructor for applyItem=true");
             GLog.d(""+1/0);
         }
     }
@@ -69,17 +68,21 @@ public abstract class Tool extends Item implements ITool {
         curTool = this;
 
         if (action.equals(Constant.Action.APPLY)) {
-            if (applyCell && applyItem) {
-            } else if (applyCell) {
-                GameScene.selectCell(cellApplier);
-            } else if (applyItem) {
-                GameScene.selectItem(itemApplier, applyItemMode, applyItemClass, "Apply " + this.getToolClass(), true, null, this);
-            }
+            doApply(hero);
 
             return false;
         }
         else {
             return super.execute(hero, action);
+        }
+    }
+
+    protected void doApply(Hero hero) {
+        if (applyCell && applyItem) {
+        } else if (applyCell) {
+            GameScene.selectCell(cellApplier);
+        } else if (applyItem) {
+            GameScene.selectItem(itemApplier, applyItemMode, applyItemClass, "Apply " + this.getToolClass(), true, null, this);
         }
     }
 

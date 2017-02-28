@@ -38,18 +38,19 @@ import com.felayga.unpixeldungeon.actors.buffs.negative.Frost;
 import com.felayga.unpixeldungeon.actors.buffs.negative.Held;
 import com.felayga.unpixeldungeon.actors.buffs.negative.Paralysis;
 import com.felayga.unpixeldungeon.actors.buffs.negative.Vertigo;
+import com.felayga.unpixeldungeon.actors.buffs.positive.Barkskin;
 import com.felayga.unpixeldungeon.actors.buffs.positive.GasesImmunity;
 import com.felayga.unpixeldungeon.actors.buffs.positive.Invisibility;
 import com.felayga.unpixeldungeon.actors.buffs.positive.MagicalSleep;
 import com.felayga.unpixeldungeon.actors.buffs.positive.MindVision;
 import com.felayga.unpixeldungeon.actors.buffs.positive.SeeInvisible;
-import com.felayga.unpixeldungeon.actors.hero.Belongings;
 import com.felayga.unpixeldungeon.actors.hero.Hero;
 import com.felayga.unpixeldungeon.actors.mobs.Bestiary;
 import com.felayga.unpixeldungeon.actors.mobs.Mob;
 import com.felayga.unpixeldungeon.items.EquippableItem;
 import com.felayga.unpixeldungeon.items.armor.Armor;
 import com.felayga.unpixeldungeon.items.armor.glyphs.Bounce;
+import com.felayga.unpixeldungeon.items.bags.backpack.Belongings;
 import com.felayga.unpixeldungeon.items.food.Corpse;
 import com.felayga.unpixeldungeon.items.weapon.IWeapon;
 import com.felayga.unpixeldungeon.items.weapon.Weapon;
@@ -73,11 +74,7 @@ import com.watabou.utils.GameMath;
 import com.watabou.utils.Random;
 import com.watabou.utils.SparseArray;
 
-import java.util.HashMap;
 import java.util.HashSet;
-import java.util.Map;
-
-import javax.microedition.khronos.opengles.GL;
 
 public abstract class Char extends Actor {
     public static class Registry {
@@ -378,7 +375,7 @@ public abstract class Char extends Actor {
 
     private boolean canBreathe = true;
 
-    public boolean canBreate() {
+    public boolean canBreathe() {
         if (!canBreathe) {
             return false;
         }
@@ -439,6 +436,9 @@ public abstract class Char extends Actor {
     }
 
     public boolean visibilityOverride(boolean state) {
+        if (invisible > 0 && Dungeon.hero.buff(SeeInvisible.class) == null) {
+            return false;
+        }
         return state;
     }
 
@@ -730,7 +730,9 @@ public abstract class Char extends Actor {
     }
 
     public static boolean tryHit(Char attacker, IWeapon weapon, boolean thrown, Char defender, boolean touch) {
-        int roll = Random.Int(1, 20);
+        Invisibility.dispelAttack(attacker);
+
+        int roll = Random.IntRange(1, 20);
         int skill = attacker.attackSkill(weapon, thrown, defender);
         int defense = defender.defenseMundane(attacker, touch);
 
@@ -785,8 +787,14 @@ public abstract class Char extends Actor {
 			defense += ((RingOfEvasion.Evasion)buff).effectiveLevel;
 		}
 		*/
+        int armor = belongings.getArmor(getAttributeModifier(AttributeType.DEXCHA), touch);
 
-        return defenseMundane + belongings.getArmor(getAttributeModifier(AttributeType.DEXCHA), touch);
+        Barkskin barkskin = buff(Barkskin.class);
+        if (barkskin != null) {
+            armor = Math.max(armor, barkskin.level());
+        }
+
+        return defenseMundane + armor;
     }
 
     public int defenseMagical(Char enemy, MagicType type) {
@@ -855,6 +863,7 @@ public abstract class Char extends Actor {
         Invisibility.dispelAttack(this);
 
         //todo: strange bug here needs to be traced: ready state failing in the chain somewhere occasionally if: enemy dies (every occurrence of bug), player had one ammo item left (most occurrences) or player had more than one ammo item left (rare occurrences)
+        //hasn't occurred recently, various overhauls of logic probably took care of it
 
         return result;
     }
@@ -875,10 +884,14 @@ public abstract class Char extends Actor {
             GLog.d("no corpse because nutrition=" + nutrition);
         }
 
-        belongings.dropAll(pos());
+        dropAll();
 
         destroy(src);
         sprite.die();
+    }
+
+    protected void dropAll() {
+        belongings.dropAll(pos(), 0);
     }
 
     public boolean isAlive() {

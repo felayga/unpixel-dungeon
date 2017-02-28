@@ -27,7 +27,6 @@ package com.felayga.unpixeldungeon.items.scrolls;
 
 import com.felayga.unpixeldungeon.Assets;
 import com.felayga.unpixeldungeon.Badges;
-import com.felayga.unpixeldungeon.actors.Char;
 import com.felayga.unpixeldungeon.actors.buffs.hero.Encumbrance;
 import com.felayga.unpixeldungeon.actors.buffs.negative.Blindness;
 import com.felayga.unpixeldungeon.actors.hero.Hero;
@@ -244,11 +243,6 @@ public abstract class Scroll extends Item {
 
 	public String initials(){
 		return isKnown() ? initials : null;
-	}
-
-	@Override
-	public boolean isUpgradable() {
-		return false;
 	}
 	
 	@Override

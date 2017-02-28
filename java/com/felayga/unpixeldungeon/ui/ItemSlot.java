@@ -34,7 +34,6 @@ import com.felayga.unpixeldungeon.items.scrolls.ScrollOfUpgrade;
 import com.felayga.unpixeldungeon.scenes.PixelScene;
 import com.felayga.unpixeldungeon.sprites.ItemSprite;
 import com.felayga.unpixeldungeon.sprites.ItemSpriteSheet;
-import com.felayga.unpixeldungeon.utils.Utils;
 import com.watabou.noosa.BitmapText;
 import com.watabou.noosa.ui.Button;
 import com.watabou.utils.PointF;
@@ -183,7 +182,7 @@ public class ItemSlot extends Button {
 			
 			icon.view( item );
 			
-			topLeft.text( item.status()  );
+			topLeft.text( item.status() );
 
             if (item.shopkeeperRegistryIndex() >= 0) {
                 bottomLeft.text("$");
@@ -229,7 +228,14 @@ public class ItemSlot extends Button {
                 if (item.levelKnown()) {
                     int level = item.level();
 
-                    bottomRight.text(item.levelKnown() ? Utils.format(TXT_LEVEL, level) : TXT_CURSED);
+                    String text;
+                    if (level >= 0) {
+                        text = "+" + level;
+                    } else {
+                        text = "" + level;
+                    }
+
+                    bottomRight.text(text);
                     bottomRight.measure();
 
                     if (level > 0) {

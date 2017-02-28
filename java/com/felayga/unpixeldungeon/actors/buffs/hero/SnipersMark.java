@@ -25,30 +25,15 @@
  */
 package com.felayga.unpixeldungeon.actors.buffs.hero;
 
-import com.felayga.unpixeldungeon.actors.Actor;
 import com.felayga.unpixeldungeon.actors.Char;
 import com.felayga.unpixeldungeon.actors.buffs.FlavourBuff;
 import com.felayga.unpixeldungeon.ui.BuffIndicator;
-import com.watabou.utils.Bundle;
 
 public class SnipersMark extends FlavourBuff {
 
-	public int object = 0;
+    public SnipersMark() {
 
-	private static final String OBJECT    = "object";
-
-	@Override
-	public void storeInBundle( Bundle bundle ) {
-		super.storeInBundle( bundle );
-		bundle.put( OBJECT, object );
-
-	}
-
-	@Override
-	public void restoreFromBundle( Bundle bundle ) {
-		super.restoreFromBundle( bundle );
-		object = bundle.getInt( OBJECT );
-	}
+    }
 
 	@Override
 	public int icon() {

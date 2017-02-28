@@ -31,6 +31,7 @@ import com.felayga.unpixeldungeon.ui.BuffIndicator;
 
 public class MindVision extends FlavourBuff {
 
+    public MindVision()
 	{
 		type = buffType.POSITIVE;
 	}

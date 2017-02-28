@@ -26,7 +26,7 @@
 package com.felayga.unpixeldungeon;
 
 import com.felayga.unpixeldungeon.items.Item;
-import com.felayga.unpixeldungeon.utils.GLog;
+import com.felayga.unpixeldungeon.ui.QuickSlotButton;
 import com.watabou.utils.Bundlable;
 import com.watabou.utils.Bundle;
 import com.watabou.utils.Random;
@@ -35,140 +35,142 @@ import java.util.ArrayList;
 import java.util.Collection;
 
 public class QuickSlot {
+    /**
+     * Slots contain objects which are also in a player's inventory. The one exception to this is when quantity is 0,
+     * which can happen for a stackable item that has been 'used up', these are refered to a placeholders.
+     */
 
-	/**
-	 * Slots contain objects which are also in a player's inventory. The one exception to this is when quantity is 0,
-	 * which can happen for a stackable item that has been 'used up', these are refered to a placeholders.
-	 */
-
-	//note that the current max size is coded at 4, due to UI constraints, but it could be much much bigger with no issue.
-	public static int SIZE = 4;
-	private Item[] slots = new Item[SIZE];
+    //note that the current max size is coded at 4, due to UI constraints, but it could be much much bigger with no issue.
+    private Item[] slots = new Item[QuickSlotButton.MAXCOUNT];
 
 
-	//direct array interaction methods, everything should build from these methods.
-	public void setSlot(int slot, Item item) {
-        GLog.d("QuickSlot: setSlot(" + slot + "," + item.getDisplayName() + ") quantity=" + item.quantity());
-        if (item.getDisplayName().equals("rock") && item.quantity()==1) {
-            GLog.d(""+1/0);
+    //direct array interaction methods, everything should build from these methods.
+    public void setSlot(int slot, Item item) {
+        //GLog.d("QuickSlot: setSlot(" + slot + "," + item.getDisplayName() + ") quantity=" + item.quantity());
+        //if (slot==0 && "leather boots".equals(item.getDisplayName()) && item.quantity()==1) {
+        //    GLog.d("asdf");
+        //}
+        //if (item.getDisplayName().equals("rock") && item.quantity() == 1) {
+        //    GLog.d("" + 1 / 0);
+        //}
+        clearItem(item); //we don't want to allow the same item in multiple slots.
+        slots[slot] = item;
+    }
+
+    public void clearSlot(int slot) {
+        slots[slot] = null;
+    }
+
+    public void reset() {
+        slots = new Item[QuickSlotButton.MAXCOUNT];
+    }
+
+    public Item getItem(int slot) {
+        return slots[slot];
+    }
+
+
+    //utility methods, for easier use of the internal array.
+    public int getSlot(Item item) {
+        for (int i = 0; i < QuickSlotButton.MAXCOUNT; i++) {
+            Item test = getItem(i);
+            if (test != null && test.isSimilar(item)) {
+                return i;
+            }
         }
-		clearItem(item); //we don't want to allow the same item in multiple slots.
-		slots[slot] = item;
-	}
+        return -1;
+    }
 
-	public void clearSlot(int slot){
-		slots[slot] = null;
-	}
+    public int getPlaceholder(Item item) {
+        for (int n = 0; n < QuickSlotButton.MAXCOUNT; n++) {
+            if (isPlaceholder(n)) {
+                Item subitem = getItem(n);
 
-	public void reset(){
-		slots = new Item[SIZE];
-	}
+                if (subitem.getClass() == item.getClass()) {
+                    return n;
+                }
+            }
+        }
 
-	public Item getItem(int slot){
-		return slots[slot];
-	}
+        return -1;
+    }
 
+    public boolean isPlaceholder(int slot) {
+        return getItem(slot) != null && getItem(slot).quantity() == 0;
+    }
 
-	//utility methods, for easier use of the internal array.
-	public int getSlot(Item item) {
-		for (int i = 0; i < SIZE; i++) {
-			if (getItem(i) == item) {
-				return i;
-			}
-		}
-		return -1;
-	}
+    public boolean isNonePlaceholder(int slot) {
+        return getItem(slot) != null && getItem(slot).quantity() > 0;
+    }
 
-	public int getPlaceholder(Item item) {
-		for (int n=0;n<SIZE;n++) {
-			if (isPlaceholder(n)) {
-				Item subitem = getItem(n);
+    public void clearItem(Item item) {
+        if (contains(item)) {
+            clearSlot(getSlot(item));
+        }
+    }
 
-				if (subitem.getClass() == item.getClass()) {
-					return n;
-				}
-			}
-		}
+    public boolean contains(Item item) {
+        return getSlot(item) != -1;
+    }
 
-		return -1;
-	}
+    public void replaceSimilar(Item item) {
+        for (int i = 0; i < QuickSlotButton.MAXCOUNT; i++)
+            if (getItem(i) != null && item.isSimilar(getItem(i)))
+                setSlot(i, item);
+    }
 
-	public Boolean isPlaceholder(int slot){
-		return getItem(slot) != null && getItem(slot).quantity() == 0;
-	}
+    public void convertToPlaceholder(Item item) {
+        Item placeholder = Item.virtual(item.getClass());
 
-	public Boolean isNonePlaceholder(int slot){
-		return getItem(slot) != null && getItem(slot).quantity() > 0;
-	}
+        if (placeholder != null && contains(item))
+            for (int i = 0; i < QuickSlotButton.MAXCOUNT; i++)
+                if (getItem(i) == item)
+                    setSlot(i, placeholder);
+    }
 
-	public void clearItem(Item item){
-		if (contains(item)) {
-			clearSlot(getSlot(item));
-		}
-	}
+    public Item randomNonePlaceholder() {
 
-	public boolean contains(Item item){
-		return getSlot(item) != -1;
-	}
+        ArrayList<Item> result = new ArrayList<Item>();
+        for (int i = 0; i < QuickSlotButton.MAXCOUNT; i++)
+            if (getItem(i) != null && !isPlaceholder(i))
+                result.add(getItem(i));
 
-	public void replaceSimilar(Item item){
-		for (int i = 0; i < SIZE; i++)
-			if (getItem(i) != null && item.isSimilar(getItem(i)))
-				setSlot( i , item );
-	}
+        return Random.element(result);
+    }
 
-	public void convertToPlaceholder(Item item){
-		Item placeholder = Item.virtual(item.getClass());
+    private final String PLACEHOLDERS = "placeholders";
+    private final String PLACEMENTS = "placements";
 
-		if (placeholder != null && contains(item))
-			for (int i = 0; i < SIZE; i++)
-				if (getItem(i) == item)
-					setSlot( i , placeholder );
-	}
+    /**
+     * Placements array is used as order is preserved while bundling, but exact index is not, so if we
+     * bundle both the placeholders (which preserves their order) and an array telling us where the placeholders are,
+     * we can reconstruct them perfectly.
+     */
 
-	public Item randomNonePlaceholder(){
+    public void storePlaceholders(Bundle bundle) {
+        ArrayList<Item> placeholders = new ArrayList<Item>(QuickSlotButton.MAXCOUNT);
+        boolean[] placements = new boolean[QuickSlotButton.MAXCOUNT];
 
-		ArrayList<Item> result = new ArrayList<Item>();
-		for (int i = 0; i < SIZE; i ++)
-		if (getItem(i) != null && !isPlaceholder(i))
-				result.add(getItem(i));
+        for (int i = 0; i < QuickSlotButton.MAXCOUNT; i++)
+            if (isPlaceholder(i)) {
+                placeholders.add(getItem(i));
+                placements[i] = true;
+            }
+        bundle.put(PLACEHOLDERS, placeholders);
+        bundle.put(PLACEMENTS, placements);
+    }
 
-		return Random.element(result);
-	}
+    public void restorePlaceholders(Bundle bundle) {
+        Collection<Bundlable> placeholders = bundle.getCollection(PLACEHOLDERS);
+        boolean[] placements = bundle.getBooleanArray(PLACEMENTS);
 
-	private final String PLACEHOLDERS = "placeholders";
-	private final String PLACEMENTS = "placements";
+        int i = 0;
+        for (Bundlable item : placeholders) {
+            while (!placements[i]) i++;
+            setSlot(i, (Item) item);
+            i++;
+        }
 
-	/**
-	 * Placements array is used as order is preserved while bundling, but exact index is not, so if we
-	 * bundle both the placeholders (which preserves their order) and an array telling us where the placeholders are,
-	 * we can reconstruct them perfectly.
-	 */
-
-	public void storePlaceholders(Bundle bundle){
-		ArrayList<Item> placeholders = new ArrayList<Item>(SIZE);
-		boolean[] placements = new boolean[SIZE];
-
-		for (int i = 0; i < SIZE; i++)
-			if (isPlaceholder(i)) {
-				placeholders.add(getItem(i));
-				placements[i] = true;
-			}
-		bundle.put( PLACEHOLDERS, placeholders );
-		bundle.put( PLACEMENTS, placements );
-	}
-
-	public void restorePlaceholders(Bundle bundle){
-		Collection<Bundlable> placeholders = bundle.getCollection(PLACEHOLDERS);
-		boolean[] placements = bundle.getBooleanArray( PLACEMENTS );
-
-		int i = 0;
-		for (Bundlable item : placeholders){
-			while (!placements[i]) i++;
-			setSlot( i, (Item)item );
-			i++;
-		}
-
-	}
+    }
 
 }

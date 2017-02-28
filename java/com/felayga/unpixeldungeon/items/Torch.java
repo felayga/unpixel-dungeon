@@ -30,12 +30,39 @@ import com.felayga.unpixeldungeon.actors.buffs.positive.Light;
 import com.felayga.unpixeldungeon.actors.hero.Hero;
 import com.felayga.unpixeldungeon.effects.particles.FlameParticle;
 import com.felayga.unpixeldungeon.mechanics.GameTime;
+import com.felayga.unpixeldungeon.mechanics.IDecayable;
 import com.felayga.unpixeldungeon.sprites.ItemSpriteSheet;
 import com.watabou.noosa.particles.Emitter;
+import com.watabou.utils.Bundle;
 
 import java.util.ArrayList;
 
-public class Torch extends Item {
+public class Torch extends Item implements IDecayable {
+    protected long decay = -20 * GameTime.TICK;
+    protected long decayTime;
+
+    public long decay() {
+        return decay;
+    }
+
+    public boolean decay(long currentTime, boolean updateTime, boolean fixTime) {
+        if (fixTime || updateTime) {
+            long newAmount = currentTime - decayTime;
+            if (fixTime) {
+                decayTime = 0;
+            } else {
+                decayTime = currentTime;
+            }
+            currentTime = newAmount;
+        } else {
+            decayTime = currentTime;
+            currentTime = 0;
+        }
+
+        decay += currentTime;
+
+        return false;
+    }
 
 	public static final String AC_LIGHT	= "LIGHT";
 	
@@ -47,10 +74,31 @@ public class Torch extends Item {
 		image = ItemSpriteSheet.TORCH;
 		
 		stackable = true;
+
+        hasLevels(false);
 		
 		defaultAction = AC_LIGHT;
         price = 10;
 	}
+
+    private static final String DECAY = "decay";
+    private static final String DECAYTIME = "decayTime";
+
+    @Override
+    public void storeInBundle(Bundle bundle) {
+        super.storeInBundle(bundle);
+
+        bundle.put(DECAY, decay);
+        bundle.put(DECAYTIME, decayTime);
+    }
+
+    @Override
+    public void restoreFromBundle(Bundle bundle) {
+        super.restoreFromBundle(bundle);
+
+        decay = bundle.getLong(DECAY);
+        decayTime = bundle.getLong(DECAYTIME);
+    }
 	
 	@Override
 	public ArrayList<String> actions( Hero hero ) {
@@ -68,9 +116,9 @@ public class Torch extends Item {
 			
 			hero.sprite.operate(hero.pos());
 
-			hero.belongings.remove(this, 1);
-			Buff.affect(hero, hero, Light.class, Light.DURATION);
-			
+			Light buff = Buff.append(hero, hero, Light.class);
+            buff.ignite(decay);
+
 			Emitter emitter = hero.sprite.centerEmitter(-1);
 			emitter.start( FlameParticle.FACTORY, 0.2f, 3 );
 
@@ -78,11 +126,6 @@ public class Torch extends Item {
 		} else {
 			return super.execute( hero, action );
 		}
-	}
-	
-	@Override
-	public boolean isUpgradable() {
-		return false;
 	}
 	
 	@Override

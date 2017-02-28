@@ -40,6 +40,7 @@ public class Shadows extends Invisibility {
 
     private static final String LEFT = "left";
 
+    public Shadows()
     {
         type = buffType.SILENT;
     }

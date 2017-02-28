@@ -45,6 +45,8 @@ public class MerchantsBeacon extends Item {
 
 		defaultAction = AC_USE;
 
+        hasLevels(false);
+
 		bones = true;
 
         price = 5;
@@ -68,11 +70,6 @@ public class MerchantsBeacon extends Item {
 		} else {
 			return super.execute(hero, action);
 		}
-	}
-
-	@Override
-	public boolean isUpgradable() {
-		return false;
 	}
 
 	@Override

@@ -26,7 +26,13 @@
 
 package com.felayga.unpixeldungeon.items.potions;
 
+import com.felayga.unpixeldungeon.Dungeon;
 import com.felayga.unpixeldungeon.actors.Char;
+import com.felayga.unpixeldungeon.actors.buffs.Buff;
+import com.felayga.unpixeldungeon.actors.buffs.positive.SeeInvisible;
+import com.felayga.unpixeldungeon.mechanics.GameTime;
+import com.felayga.unpixeldungeon.utils.GLog;
+import com.watabou.utils.Random;
 
 /**
  * Created by HELLO on 2/4/2017.
@@ -45,6 +51,25 @@ public class PotionOfSeeInvisible extends Potion {
 
     @Override
     public void apply( Char hero ) {
+        if (hero == Dungeon.hero) {
+            switch (bucStatus()) {
+                case Cursed:
+                    GLog.w("This tastes like rotten fruit juice.");
+                    break;
+                default:
+                    GLog.i("This tastes like fruit juice.");
+                    break;
+            }
+        }
+
+        switch (bucStatus()) {
+            case Blessed:
+                Buff.affect(hero, hero, SeeInvisible.Intrinsic.class);
+                return;
+            default:
+                Buff.prolong(hero, hero, SeeInvisible.class, GameTime.TICK * Random.IntRange(750, 850));
+                break;
+        }
     }
 
     @Override

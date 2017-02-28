@@ -23,8 +23,9 @@
  *
  *
  */
-package com.felayga.unpixeldungeon.items.unused.wands;
-/*
+
+package com.felayga.unpixeldungeon.items.wands;
+
 import com.felayga.unpixeldungeon.Assets;
 import com.felayga.unpixeldungeon.Dungeon;
 import com.felayga.unpixeldungeon.DungeonTilemap;
@@ -32,18 +33,15 @@ import com.felayga.unpixeldungeon.ResultDescriptions;
 import com.felayga.unpixeldungeon.actors.Actor;
 import com.felayga.unpixeldungeon.actors.Char;
 import com.felayga.unpixeldungeon.actors.buffs.negative.Paralysis;
-import com.felayga.unpixeldungeon.actors.mobs.Golem;
-import com.felayga.unpixeldungeon.actors.mobs.King;
-import com.felayga.unpixeldungeon.actors.mobs.RotHeart;
-import com.felayga.unpixeldungeon.actors.mobs.RotLasher;
-import com.felayga.unpixeldungeon.actors.mobs.Yog;
 import com.felayga.unpixeldungeon.effects.Effects;
 import com.felayga.unpixeldungeon.effects.MagicMissile;
 import com.felayga.unpixeldungeon.effects.Pushing;
+import com.felayga.unpixeldungeon.items.Heap;
 import com.felayga.unpixeldungeon.items.weapon.melee.simple.MagesStaff;
 import com.felayga.unpixeldungeon.levels.Level;
+import com.felayga.unpixeldungeon.mechanics.AttributeType;
 import com.felayga.unpixeldungeon.mechanics.Ballistica;
-import com.felayga.unpixeldungeon.sprites.ItemSpriteSheet;
+import com.felayga.unpixeldungeon.mechanics.MagicType;
 import com.felayga.unpixeldungeon.utils.GLog;
 import com.felayga.unpixeldungeon.utils.Utils;
 import com.watabou.noosa.Game;
@@ -56,11 +54,13 @@ import com.watabou.utils.Random;
 
 public class WandOfBlastWave extends Wand {
 
+    public WandOfBlastWave()
 	{
-		name = "Wand of Blast Wave";
-		image = ItemSpriteSheet.WAND_BLAST_WAVE;
+        super(8);
 
-		collisionProperties = Ballistica.PROJECTILE;
+		name = "Wand of Blast Wave";
+
+		collisionProperties = Ballistica.Mode.Projectile;
 	}
 
 	@Override
@@ -68,38 +68,42 @@ public class WandOfBlastWave extends Wand {
 		Sample.INSTANCE.play( Assets.SND_BLAST );
 		BlastWave.blast(bolt.collisionPos);
 
-		int damage = Random.NormalIntRange(1, 6+(int)(level*level/4f));
+		int damage = Random.NormalIntRange(2, 12);
 
 		//presses all tiles in the AOE first
-		for (int i : Level.NEIGHBOURS9){
-			Dungeon.level.press(bolt.collisionPos+i, Actor.findChar(bolt.collisionPos+i));
-		}
+		for (int i : Level.NEIGHBOURS9) {
+            Dungeon.level.press(bolt.collisionPos + i, Actor.findChar(bolt.collisionPos + i));
+            Heap heap = Dungeon.level.heaps.get(bolt.collisionPos + 1);
+            if (heap != null) {
+                heap.contentsImpact(true);
+            }
+        }
+
+        int intwisModifier = curUser.getAttributeModifier(AttributeType.INTWIS);
 
 		//throws other chars around the center.
-		for (int i  : Level.NEIGHBOURS8){
-			Char ch = Actor.findChar(bolt.collisionPos + i);
+		for (int i  : Level.NEIGHBOURS8) {
+            Char ch = Actor.findChar(bolt.collisionPos + i);
 
-			if (ch != null){
-				processSoulMark(ch, chargesPerCast());
-				ch.damage(damage, this);
+            if (ch != null) {
+                ch.damage(damage, MagicType.Mundane, curUser);
 
-				if (ch.isAlive()) {
-					Ballistica trajectory = new Ballistica(ch.pos, ch.pos + i, Ballistica.MAGIC_BOLT);
-					int strength = 1 + ((level + 1) / 3);
-					throwChar(ch, trajectory, strength);
-				}
-			}
-		}
+                if (ch.isAlive()) {
+                    Ballistica trajectory = new Ballistica(ch.pos(), ch.pos() + i, Ballistica.Mode.MagicBolt);
+                    int strength = Random.Int(1, 4) + ((intwisModifier + 1) / 3);
+                    throwChar(ch, trajectory, strength);
+                }
+            }
+        }
 
 		//throws the char at the center of the blast
 		Char ch = Actor.findChar(bolt.collisionPos);
 		if (ch != null){
-			processSoulMark(ch, chargesPerCast());
-			ch.damage(damage, this);
+			ch.damage(damage, MagicType.Mundane, curUser);
 
 			if (ch.isAlive() && bolt.path.size() > bolt.dist+1) {
-				Ballistica trajectory = new Ballistica(ch.pos, bolt.path.get(bolt.dist + 1), Ballistica.MAGIC_BOLT);
-				int strength = level + 3;
+				Ballistica trajectory = new Ballistica(ch.pos(), bolt.path.get(bolt.dist + 1), Ballistica.Mode.MagicBolt);
+				int strength = Random.NormalIntRange(2, 8) + ((intwisModifier + 1) / 3);
 				throwChar(ch, trajectory, strength);
 			}
 		}
@@ -113,11 +117,18 @@ public class WandOfBlastWave extends Wand {
 	private void throwChar(final Char ch, final Ballistica trajectory, int power){
 		int dist = Math.min(trajectory.dist, power);
 
+        /*
 		//FIXME: sloppy
 		if ((ch instanceof King) || (ch instanceof Golem) || (ch instanceof Yog.RottingFist))
 			dist /= 2;
 
 		if (dist == 0 || ch instanceof Yog || ch instanceof RotLasher || ch instanceof RotHeart) return;
+
+		*/
+
+        if (dist <= 0) {
+            return;
+        }
 
 		if (Actor.findChar(trajectory.path.get(dist)) != null){
 			dist--;
@@ -125,22 +136,23 @@ public class WandOfBlastWave extends Wand {
 
 		final int newPos = trajectory.path.get(dist);
 
-		if (newPos == ch.pos) return;
+		if (newPos == ch.pos()) return;
 
 		final int finalDist = dist;
 
-		Actor.addDelayed(new Pushing(ch, ch.pos, newPos, new Callback() {
+		Actor.addDelayed(new Pushing(ch, ch.pos(), newPos, new Callback() {
 			public void call() {
-				ch.pos = newPos;
-				if (ch.pos == trajectory.collisionPos) {
-					ch.damage(Random.NormalIntRange((finalDist + 1) / 2, finalDist), this);
-					Paralysis.prolong(ch, Paralysis.class, Random.NormalIntRange((finalDist + 1) / 2, finalDist));
+				ch.pos(newPos);
+				if (ch.pos() == trajectory.collisionPos) {
+					ch.damage(Random.NormalIntRange((finalDist + 1) / 2, finalDist), MagicType.Mundane, curUser);
+					Paralysis.prolong(ch, curUser, Paralysis.class, Random.NormalIntRange((finalDist + 1) / 2, finalDist));
 				}
-				Dungeon.level.press(ch.pos, ch);
+				Dungeon.level.press(ch.pos(), ch);
 			}
 		}), -1);
 	}
 
+    /*
 	@Override
 	//a weaker knockback, not dissimilar to the glyph of bounce, but a fair bit stronger.
 	public void onHit(MagesStaff staff, Char attacker, Char defender, int damage) {
@@ -155,11 +167,11 @@ public class WandOfBlastWave extends Wand {
 			throwChar(defender, trajectory, 2);
 		}
 	}
+	*/
 
 	@Override
-	protected void fx(Ballistica bolt, Callback callback) {
+	protected void fxEffect(Ballistica bolt, Callback callback) {
 		MagicMissile.slowness(curUser.sprite.parent, bolt.sourcePos, bolt.collisionPos, callback);
-		Sample.INSTANCE.play(Assets.SND_ZAP);
 	}
 
 	@Override
@@ -222,4 +234,3 @@ public class WandOfBlastWave extends Wand {
 				"but the force of this blast is enough to knock even the biggest of foes around.";
 	}
 }
-*/

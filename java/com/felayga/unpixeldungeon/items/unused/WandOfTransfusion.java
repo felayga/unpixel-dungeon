@@ -23,7 +23,8 @@
  *
  *
  */
-package com.felayga.unpixeldungeon.items.unused.wands;
+
+package com.felayga.unpixeldungeon.items.unused;
 /*
 import com.felayga.unpixeldungeon.Assets;
 import com.felayga.unpixeldungeon.Dungeon;

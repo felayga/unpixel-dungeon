@@ -30,6 +30,7 @@ import com.felayga.unpixeldungeon.ui.BuffIndicator;
 
 public class Bless extends FlavourBuff {
 
+    public Bless()
 	{
 		type = buffType.POSITIVE;
 	}

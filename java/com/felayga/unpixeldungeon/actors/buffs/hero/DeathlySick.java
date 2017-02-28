@@ -41,7 +41,7 @@ public class DeathlySick extends Buff implements Hero.Doom {
     {
         super();
 
-        roundsLeft = GameTime.TICK * Random.Int(10, 20);
+        roundsLeft = GameTime.TICK * Random.IntRange(10, 20);
     }
 
     private static final String ROUNDSLEFT = "roundsLeft";

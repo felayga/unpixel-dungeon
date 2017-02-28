@@ -32,8 +32,6 @@ import com.watabou.utils.Bundlable;
 import com.watabou.utils.Bundle;
 import com.watabou.utils.SparseArray;
 
-import java.util.HashMap;
-
 public class GamesInProgress {
 	public static final int MAXIMUM = 4;
 

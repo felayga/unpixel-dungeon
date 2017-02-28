@@ -37,7 +37,6 @@ import com.felayga.unpixeldungeon.items.potions.IAlchemyComponent;
 import com.felayga.unpixeldungeon.items.potions.PotionOfBrewing;
 import com.felayga.unpixeldungeon.mechanics.GameTime;
 import com.felayga.unpixeldungeon.sprites.ItemSpriteSheet;
-import com.watabou.utils.Random;
 
 public class Blindweed extends Plant {
     private static final String TXT_NAME = "Blindweed";
@@ -56,9 +55,7 @@ public class Blindweed extends Plant {
 		Char ch = Actor.findChar(pos);
 		
 		if (ch != null) {
-			long len = Random.Int( 5, 10 ) * GameTime.TICK;
-			Buff.prolong( ch, Char.Registry.get(ownerRegistryIndex()), Blindness.class, len );
-			//Buff.prolong( ch, Cripple.class, len );
+			Buff.prolong( ch, Char.Registry.get(ownerRegistryIndex()), Blindness.class, GameTime.TICK * EFFECTDURATION );
 			if (ch instanceof Mob) {
 				if (((Mob)ch).state == ((Mob)ch).HUNTING) ((Mob)ch).state = ((Mob)ch).WANDERING;
 				((Mob)ch).beckon( Dungeon.level.randomDestination() );

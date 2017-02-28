@@ -26,29 +26,86 @@
 
 package com.felayga.unpixeldungeon.mechanics;
 
+import java.util.ArrayList;
+import java.util.List;
+
 /**
  * Created by HELLO on 5/19/2016.
  */
 public enum MagicType {
-    None                (0x0000),
-    Acid                (0x0001),
-    Cold                (0x0002),
-    Disintegration      (0x0004),
-    Fire                (0x0008),
-    Magic               (0x0010),
-    Poison              (0x0020),
-    Shock               (0x0040),
-    Sleep               (0x0080),
-    Hallucination       (0x0100),
-    Drain               (0x0200),
-    Stoning             (0x0400),
-    Sliming             (0x0800),
-    Sickness            (0x1000),
-    Mundane             (0x2000);
+    None(0x0000, "None"),
+    Acid(0x0001, "Acid"),
+    Cold(0x0002, "Cold"),
+    Disintegration(0x0004, "Disintegration"),
+    Fire(0x0008, "Fire"),
+    Magic(0x0010, "Magic"),
+    Poison(0x0020, "Poison"),
+    Shock(0x0040, "Shock"),
+    Sleep(0x0080, "Sleep"),
+    Hallucination(0x0100, "Hallucination"),
+    Drain(0x0200, "Drain"),
+    Stoning(0x0400, "Stoning"),
+    Sliming(0x0800, "Sliming"),
+    Sickness(0x1000, "Sickness"),
+    Mundane(0x2000, "Mundane");
 
     public final int value;
+    public final String name;
 
-    MagicType(int value) {
+    MagicType(int value, String name) {
         this.value = value;
+        this.name = name;
+    }
+
+    public static MagicType fromInt(int index) {
+        switch (index) {
+            case 0:
+                return Acid;
+            case 1:
+                return Cold;
+            case 2:
+                return Disintegration;
+            case 3:
+                return Fire;
+            case 4:
+                return Magic;
+            case 5:
+                return Poison;
+            case 6:
+                return Shock;
+            case 7:
+                return Sleep;
+            case 8:
+                return Hallucination;
+            case 9:
+                return Drain;
+            case 10:
+                return Stoning;
+            case 11:
+                return Sliming;
+            case 12:
+                return Sickness;
+            case 13:
+                return Mundane;
+            default:
+                return None;
+        }
+    }
+
+    public static List<MagicType> toList(int flags) {
+        List<MagicType> retval = new ArrayList<>();
+
+        for (int n = 0; n < 14; n++) {
+            MagicType type = fromInt(n);
+            if ((flags & type.value) != 0) {
+                retval.add(type);
+            }
+        }
+
+        if (flags == None.value) {
+            retval.add(None);
+        }
+
+        return retval;
     }
 }

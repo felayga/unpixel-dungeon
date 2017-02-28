@@ -29,16 +29,13 @@ package com.felayga.unpixeldungeon.plants;
 import com.felayga.unpixeldungeon.Dungeon;
 import com.felayga.unpixeldungeon.actors.Actor;
 import com.felayga.unpixeldungeon.actors.Char;
-import com.felayga.unpixeldungeon.actors.hero.Hero;
-import com.felayga.unpixeldungeon.actors.mobs.Mob;
+import com.felayga.unpixeldungeon.actors.buffs.Buff;
+import com.felayga.unpixeldungeon.actors.buffs.negative.AcidBurning;
 import com.felayga.unpixeldungeon.effects.CellEmitter;
-import com.felayga.unpixeldungeon.effects.Speck;
 import com.felayga.unpixeldungeon.items.potions.IAlchemyComponent;
 import com.felayga.unpixeldungeon.items.potions.PotionOfBrewing;
-import com.felayga.unpixeldungeon.items.scrolls.ScrollOfTeleportation;
-import com.felayga.unpixeldungeon.levels.Level;
-import com.felayga.unpixeldungeon.mechanics.Constant;
 import com.felayga.unpixeldungeon.sprites.ItemSpriteSheet;
+import com.felayga.unpixeldungeon.sprites.mobs.goo.BlackGooSprite;
 
 /**
  * Created by HELLO on 11/22/2016.
@@ -47,8 +44,8 @@ public class Deathroot extends Plant {
     private static final String TXT_NAME = "Deathroot";
 
     private static final String TXT_DESC =
-            "Touching a Fadeleaf will teleport any creature " +
-                    "to a random place on the current level.";
+            "Touching a Deathroot will coat the unlucky victim " +
+                    "with a caustic acid that the root secretes.";
 
     public Deathroot()
     {
@@ -59,35 +56,12 @@ public class Deathroot extends Plant {
     public void activate() {
         Char ch = Actor.findChar(pos);
 
-        if (ch instanceof Hero) {
-
-            if (ScrollOfTeleportation.canTeleport(ch)) {
-                ScrollOfTeleportation.doTeleport(ch, Constant.Position.RANDOM);
-            }
-            ((Hero)ch).curAction = null;
-
-        } else if (ch instanceof Mob) {
-
-            int count = 10;
-            int newPos;
-            do {
-                newPos = Dungeon.level.randomRespawnCell();
-                if (count-- <= 0) {
-                    break;
-                }
-            } while (newPos < 0);
-
-            if (newPos != -1 && (Dungeon.level.flags & Level.FLAG_NOTELEPORTATION) == 0) {
-                ch.pos(newPos);
-                ch.sprite.place( ch.pos() );
-                ch.sprite.visible = Dungeon.visible[pos];
-
-            }
-
+        if (ch != null) {
+            Buff.affect(ch, Char.Registry.get(ownerRegistryIndex()), AcidBurning.class).resplash(ch);
         }
 
         if (Dungeon.visible[pos]) {
-            CellEmitter.get(pos).start( Speck.factory(Speck.LIGHT), 0.2f, 3 );
+            CellEmitter.get( pos ).burst(BlackGooSprite.GooParticle.FACTORY, 4 );
         }
     }
 

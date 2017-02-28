@@ -28,7 +28,6 @@ package com.felayga.unpixeldungeon.items.food;
 import com.felayga.unpixeldungeon.Assets;
 import com.felayga.unpixeldungeon.Badges;
 import com.felayga.unpixeldungeon.Statistics;
-import com.felayga.unpixeldungeon.actors.Char;
 import com.felayga.unpixeldungeon.actors.buffs.hero.Hunger;
 import com.felayga.unpixeldungeon.actors.hero.Hero;
 import com.felayga.unpixeldungeon.effects.SpellSprite;
@@ -44,9 +43,11 @@ import com.watabou.utils.Bundle;
 import java.util.ArrayList;
 
 public class Food extends Item {
-    public static final int AMOUNT_EATEN_PER_ROUND = 125;
+    public static final int WELL_SUSTENANCE = 125;
+    public static final int VOMIT_SUSTENANCE = -75;
 
     private int energy;
+    private int amountEatenPerRound;
 
     private void subtractEnergy(int amount) {
         energy -= amount;
@@ -74,8 +75,9 @@ public class Food extends Item {
         return super.checkSimilarity(item);
     }
 
-    public Food(int energy, int weight) {
+    public Food(int energy, int amountEatenPerRound, int weight) {
         this.energy = energy;
+        this.amountEatenPerRound = amountEatenPerRound;
         this.energyOriginal = energy;
         this.weightOriginal = weight;
 
@@ -153,15 +155,20 @@ public class Food extends Item {
 
         if (action.equals(Constant.Action.EAT)) {
             long time;
-            int subenergy;
+            int subEnergy;
             Hunger hunger = hero.buff(Hunger.class);
 
-            if (energy > AMOUNT_EATEN_PER_ROUND) {
-                subenergy = AMOUNT_EATEN_PER_ROUND;
+            if (energy > amountEatenPerRound) {
+                subEnergy = amountEatenPerRound;
                 time = GameTime.TICK;
             } else {
-                subenergy = energy;
-                time = Math.max(GameTime.TICK * subenergy / AMOUNT_EATEN_PER_ROUND, 1);
+                subEnergy = energy;
+                time = Math.max(GameTime.TICK * subEnergy / amountEatenPerRound, 1);
+            }
+
+            if (subEnergy > 125) {
+                time = (time * 125 / subEnergy);
+                subEnergy = 125;
             }
 
             if (!partiallyEaten) {
@@ -170,8 +177,8 @@ public class Food extends Item {
                 continuedEating(hero);
             }
 
-            subtractEnergy(subenergy);
-            hunger.satisfy_new(subenergy);
+            subtractEnergy(subEnergy);
+            hunger.satisfy_new(subEnergy);
 
             if (hunger.isStuffed() && hunger.choke(hero)) {
                 GLog.n(TXT_OVEREATING_DEAD, name);
@@ -298,10 +305,4 @@ public class Food extends Item {
     public String message() {
         return "Om nom nom.";
     }
-
-    @Override
-    public boolean isUpgradable() {
-        return false;
-    }
-
 }

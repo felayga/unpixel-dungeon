@@ -39,7 +39,6 @@ import com.felayga.unpixeldungeon.actors.blobs.ToxicGas;
 import com.felayga.unpixeldungeon.actors.buffs.Buff;
 import com.felayga.unpixeldungeon.actors.buffs.negative.Burning;
 import com.felayga.unpixeldungeon.actors.buffs.negative.Frost;
-import com.felayga.unpixeldungeon.actors.hero.Hero;
 import com.felayga.unpixeldungeon.actors.mobs.npcs.Sheep;
 import com.felayga.unpixeldungeon.effects.CellEmitter;
 import com.felayga.unpixeldungeon.effects.Flare;

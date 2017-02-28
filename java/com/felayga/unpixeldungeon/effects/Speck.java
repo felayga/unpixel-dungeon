@@ -57,6 +57,7 @@ public class Speck extends Image {
 	public static final int WOOD		= 15;
 	public static final int FIZZLE		= 16;
     public static final int MANAING     = 17;
+    public static final int PILLS       = 18;
 
 	public static final int DISCOVER	= 101;
 	public static final int EVOKE		= 102;
@@ -136,6 +137,8 @@ public class Speck extends Image {
 		switch (type) {
 
 			case HEALING:
+            case MANAING:
+            case PILLS:
 				speed.set(0, -20);
 				lifespan = 1f;
 				break;
@@ -250,7 +253,7 @@ public class Speck extends Image {
 				break;
 
 			case HEART:
-				speed.set(Random.Int(-10, +10), -40);
+				speed.set(Random.IntRange(-10, +10), -40);
 				angularSpeed = Random.Float(-45, +45);
 				lifespan = 1f;
 				break;
@@ -333,7 +336,7 @@ public class Speck extends Image {
 
 			case FIZZLE:
 				angle = Random.Float(360);
-				angularSpeed = Random.Float(-360, +360);
+				angularSpeed = Random.Float(360);
 				speed.set(0, 64);
 				lifespan = 0.2f;
 				y -= speed.y * lifespan;
@@ -373,6 +376,8 @@ public class Speck extends Image {
 				case EVOKE:
 
 				case HEALING:
+                case MANAING:
+                case PILLS:
 					am = p < 0.5f ? 1 : 2 - p * 2;
 					break;
 

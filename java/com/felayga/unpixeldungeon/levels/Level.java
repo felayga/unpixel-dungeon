@@ -39,6 +39,7 @@ import com.felayga.unpixeldungeon.actors.buffs.hero.LockedFloor;
 import com.felayga.unpixeldungeon.actors.buffs.hero.Shadows;
 import com.felayga.unpixeldungeon.actors.buffs.negative.Blindness;
 import com.felayga.unpixeldungeon.actors.buffs.positive.ItemVision;
+import com.felayga.unpixeldungeon.actors.buffs.positive.Light;
 import com.felayga.unpixeldungeon.actors.buffs.positive.MindVision;
 import com.felayga.unpixeldungeon.actors.mobs.Bestiary;
 import com.felayga.unpixeldungeon.actors.mobs.Mob;
@@ -50,7 +51,6 @@ import com.felayga.unpixeldungeon.items.Gemstone;
 import com.felayga.unpixeldungeon.items.Generator;
 import com.felayga.unpixeldungeon.items.Heap;
 import com.felayga.unpixeldungeon.items.Item;
-import com.felayga.unpixeldungeon.items.Torch;
 import com.felayga.unpixeldungeon.items.armor.Armor;
 import com.felayga.unpixeldungeon.items.artifacts.AlchemistsToolkit;
 import com.felayga.unpixeldungeon.items.artifacts.TimekeepersHourglass;
@@ -110,7 +110,6 @@ public abstract class Level implements Bundlable, IDecayable {
     public static final int HEIGHT      = 31; //21
     public static final int LENGTH      = WIDTH * HEIGHT;
     public static final int EDGEBUFFER  = 7;
-    public static final int ROOMBUFFER  = 2;
 
     public static final int[] NEIGHBOURS4 = {-WIDTH, +1, +WIDTH, -1};
     public static final int[] NEIGHBOURS4DIAGONAL = {+1 - WIDTH, +1 + WIDTH, -1 + WIDTH, -1 - WIDTH};
@@ -147,7 +146,7 @@ public abstract class Level implements Bundlable, IDecayable {
 
     public WarningHandler warnings = new WarningHandler();
 
-    public int viewDistance = Dungeon.isChallenged(Challenges.DARKNESS) ? 3 : 8;
+    public int viewDistance = 8;
 
     public static boolean[] fieldOfView = new boolean[LENGTH];
     public static boolean[] fieldOfTouch = new boolean[LENGTH];
@@ -164,6 +163,8 @@ public abstract class Level implements Bundlable, IDecayable {
     public static boolean[] pit = new boolean[LENGTH];
     public static boolean[] burnable = new boolean[LENGTH];
     public static boolean[] stone = new boolean[LENGTH];
+    public static boolean[] losDark = new boolean[LENGTH];
+    public int[] lightMap = new int[LENGTH];
 
     public static boolean[] discoverable = new boolean[LENGTH];
 
@@ -174,6 +175,79 @@ public abstract class Level implements Bundlable, IDecayable {
     public static final int FLAG_UNDIGGABLEFLOOR    = 0x0002;
     public static final int FLAG_UNDIGGABLEBOULDERS = 0x0004;
     public static final int FLAG_NOTELEPORTATION    = 0x0008;
+
+
+    //lightMap: 0x01 dark 0x02 magiclit 0x04 magicdark
+    //lightMap: 0x00 lit 0x01 dark 0x02 0x03 magiclit 0x04 0x05 magicdark 0x06 0x07 invalid (0x02 and 0x04 are exclusive)
+    //lightMap: 0x00FFFFF8 handled by Light.Registry, 0x7F000000 reserved for mobile darkness if I feel like implementing it
+    //dark: 0x01 0x04 0x05
+    public static final int LIGHTMAP_NATURALMASK    = 0x00FFFFFE;
+    public static final int LIGHTMAP_NATURALLIT     = 0x00000000;
+    public static final int LIGHTMAP_NATURALDARK    = 0x00000001;
+
+    public static final int LIGHTMAP_ARTIFICIALMASK = 0x00FFFFF9;
+    public static final int LIGHTMAP_ARTIFICIALLIT  = 0x00000002;
+    public static final int LIGHTMAP_ARTIFICIALDARK = 0x00000004;
+
+    public static final int LIGHTMAP_MOBILEMASK     = 0x00000007;
+    public static final int LIGHTMAP_MOBILELIT      = 0x00FFFFF8;
+
+    public static final int LIGHTMAP_FULLMASK       = 0x00FFFFFF;
+
+
+    public void setLight(int pos, int radius, boolean light) {
+        if (radius > 0) {
+            int centerx = pos % WIDTH;
+            int centery = pos / WIDTH;
+
+            int y1 = centery + radius;
+
+            for (int x1 = centerx; x1 >= centerx - radius; x1--) {
+                while (distance(x1, y1, centerx, centery) > radius) {
+                    y1--;
+                }
+
+                GLog.d("x1="+x1+" y1="+y1+" distance="+distance(x1, y1, centerx, centery));
+
+                int x2 = centerx + centerx - x1;
+                int y2 = centery + centery - y1;
+
+                if (x1 >= 0 && x1 < WIDTH) {
+                    if (y1 >= 0 && y1 < HEIGHT) {
+                        setLight(x1 + y1 * WIDTH, 0, light);
+                    }
+
+                    if (y2 != y1) {
+                        for (int suby2 = y2;suby2 < y1;suby2++) {
+                            if (suby2 >= 0 && suby2 < HEIGHT) {
+                                setLight(x1 + suby2 * WIDTH, 0, light);
+                            }
+                        }
+                    }
+                }
+
+                if (x2 != x1 && x1 >= 0 && x2 < WIDTH) {
+                    if (y1 >= 0 && y1 < HEIGHT) {
+                        setLight(x2 + y1 * WIDTH, 0, light);
+                    }
+
+                    if (y2 != y1) {
+                        for (int suby2 = y2;suby2 < y1;suby2++) {
+                            if (suby2 >= 0 && suby2 < HEIGHT) {
+                                setLight(x2 + suby2 * WIDTH, 0, light);
+                            }
+                        }
+                    }
+                }
+            }
+            GameScene.updateMap();
+            Dungeon.observe();
+        } else {
+            lightMap[pos] = (lightMap[pos] & LIGHTMAP_ARTIFICIALMASK) | (light ? LIGHTMAP_ARTIFICIALLIT : LIGHTMAP_ARTIFICIALDARK);
+            updateLightMap(pos);
+        }
+    }
+
 
     public Feeling feeling = Feeling.NONE;
 
@@ -211,6 +285,7 @@ public abstract class Level implements Bundlable, IDecayable {
     private static final String ENTRANCEALTERNATE = "entranceAlternate";
     private static final String EXITALTERNATE = "exitAlternate";
     private static final String LOCKED = "locked";
+    private static final String LIGHTMAP = "lightMap";
     private static final String HEAPS = "heaps";
     private static final String PLANTS = "plants";
     private static final String TRAPS = "traps";
@@ -269,6 +344,7 @@ public abstract class Level implements Bundlable, IDecayable {
         */
 
         feeling = determineFeeling();
+        applyFeeling(feeling);
 
         boolean pitNeeded = Dungeon.depthAdjusted > 1 && weakFloorCreated;
 
@@ -289,6 +365,7 @@ public abstract class Level implements Bundlable, IDecayable {
         decorate();
 
         buildFlagMaps();
+        updateLightMap();
         cleanWalls();
 
         createMobs();
@@ -310,8 +387,6 @@ public abstract class Level implements Bundlable, IDecayable {
                     break;
                 case 2:
                     retval = Feeling.DARK;
-                    addItemToSpawn(new Torch());
-                    viewDistance = (int) Math.ceil(viewDistance / 3f);
                     break;
                 case 3:
                     if ((flagsLocal & FLAG_UNDIGGABLEFLOOR) == 0) {
@@ -322,6 +397,22 @@ public abstract class Level implements Bundlable, IDecayable {
         }
 
         return retval;
+    }
+
+    private final void applyFeeling(Feeling feeling) {
+        boolean dark = Dungeon.isChallenged(Challenges.DARKNESS);
+
+        switch(feeling) {
+            case DARK:
+                dark = true;
+                //addItemToSpawn(new Torch());
+                //viewDistance = (int) Math.ceil(viewDistance / 3f);
+                break;
+        }
+
+        if (dark) {
+            Arrays.fill(lightMap, LIGHTMAP_ARTIFICIALDARK);
+        }
     }
 
     protected void initializeMap() {
@@ -395,10 +486,8 @@ public abstract class Level implements Bundlable, IDecayable {
         return false;
     }
 
-
     @Override
     public void restoreFromBundle(Bundle bundle) {
-
         version = bundle.getInt(VERSION);
 
         mobs = new HashSet<>();
@@ -421,6 +510,7 @@ public abstract class Level implements Bundlable, IDecayable {
         exitAlternate = bundle.getInt(EXITALTERNATE);
 
         locked = bundle.getBoolean(LOCKED);
+        lightMap = bundle.getIntArray(LIGHTMAP);
 
         flagsLocal = bundle.getInt(FLAGSLOCAL);
         time = bundle.getLong(TIME);
@@ -440,8 +530,9 @@ public abstract class Level implements Bundlable, IDecayable {
             if (resizingNeeded) {
                 heap.pos = adjustPos(heap.pos);
             }
-            if (heap.size() > 0)
+            if (heap.size() > 0) {
                 heaps.put(heap.pos, heap);
+            }
         }
 
         collection = bundle.getCollection(PLANTS);
@@ -494,9 +585,6 @@ public abstract class Level implements Bundlable, IDecayable {
             }
         }
 
-        Char.Registry.register(this);
-        Shopkeeper.Registry.register(this);
-
         collection = bundle.getCollection(BLOBS);
         for (Bundlable b : collection) {
             Blob blob = (Blob) b;
@@ -504,11 +592,14 @@ public abstract class Level implements Bundlable, IDecayable {
         }
 
         feeling = bundle.getEnum(FEELING, Feeling.class);
+        /*
         if (feeling == Feeling.DARK) {
             viewDistance = (int) Math.ceil(viewDistance / 3f);
         }
+        */
 
         buildFlagMaps();
+        updateLightMap();
         cleanWalls();
     }
 
@@ -524,6 +615,7 @@ public abstract class Level implements Bundlable, IDecayable {
         bundle.put(ENTRANCEALTERNATE, entranceAlternate);
         bundle.put(EXITALTERNATE, exitAlternate);
         bundle.put(LOCKED, locked);
+        bundle.put(LIGHTMAP, lightMap);
         bundle.put(HEAPS, heaps.values());
         bundle.put(PLANTS, plants.values());
         bundle.put(TRAPS, traps.values());
@@ -533,9 +625,6 @@ public abstract class Level implements Bundlable, IDecayable {
         bundle.put(FEELING, feeling);
         bundle.put(FLAGSLOCAL, flagsLocal);
         bundle.put(TIME, time);
-
-        Char.Registry.unregister(this);
-        Shopkeeper.Registry.unregister(this);
     }
 
     public int tunnelTile() {
@@ -759,6 +848,7 @@ public abstract class Level implements Bundlable, IDecayable {
     }
 
     public ArrayList<Integer> randomPositionsNear(int pos, int quantity, RandomPositionValidator validator) {
+        //todo: this rarely returns a null ArrayList for some reason, fixme
         ArrayList<Integer> positionOffsets = new ArrayList<>();
 
         for (Integer ofs : Level.NEIGHBOURS9) {
@@ -876,6 +966,21 @@ public abstract class Level implements Bundlable, IDecayable {
         puddle[pos] = (flags & Terrain.FLAG_LIQUID) != 0;
         pit[pos] = (flags & Terrain.FLAG_PIT) != 0;
         stone[pos] = (flags & Terrain.FLAG_STONE) != 0;
+        lightMap[pos] = (lightMap[pos] & LIGHTMAP_NATURALMASK) | (((flags & Terrain.FLAG_LOSDARK) != 0) ? LIGHTMAP_NATURALDARK : LIGHTMAP_NATURALLIT);
+    }
+
+    protected void updateLightMap(int pos) {
+        boolean lit = (lightMap[pos] & LIGHTMAP_MOBILEMASK) == LIGHTMAP_NATURALLIT;
+        lit |= (lightMap[pos] & LIGHTMAP_ARTIFICIALLIT) != 0;
+        lit |= (lightMap[pos] & LIGHTMAP_MOBILELIT) != 0;
+        losDark[pos] = !lit;
+    }
+
+    public void updateLightMap() {
+        GLog.d("updatelightmap");
+        for (int n = 0; n < LENGTH; n++) {
+            updateLightMap(n);
+        }
     }
 
     protected void buildFlagMaps() {
@@ -1032,6 +1137,7 @@ public abstract class Level implements Bundlable, IDecayable {
 
         if (flagUpdates) {
             updateFlagMap(cell);
+            updateLightMap(cell);
         }
     }
 
@@ -1389,7 +1495,6 @@ public abstract class Level implements Bundlable, IDecayable {
             ItemSprite sprite = heap.sprite = new ItemSprite();
             sprite.link(heap);
             return heap;
-
         }
 
         if ((map[cell] == Terrain.ALCHEMY) && (
@@ -1406,7 +1511,6 @@ public abstract class Level implements Bundlable, IDecayable {
 
         Heap heap = heaps.get(cell);
         if (heap == null) {
-
             heap = new Heap();
             heap.seen = Dungeon.visible[cell];
             heap.pos = cell;
@@ -1475,10 +1579,18 @@ public abstract class Level implements Bundlable, IDecayable {
     }
 
     public void discover(int cell) {
-        set(cell, Terrain.discover(map[cell]), true);
-        Trap trap = traps.get(cell);
-        if (trap != null) {
-            trap.reveal();
+        discover(cell, true, true);
+    }
+
+    public void discover(int cell, boolean terrain, boolean traps) {
+        if (terrain) {
+            set(cell, Terrain.discover(map[cell]), true);
+        }
+        if (traps) {
+            Trap trap = this.traps.get(cell);
+            if (trap != null) {
+                trap.reveal();
+            }
         }
         GameScene.updateMap(cell);
     }
@@ -1609,7 +1721,7 @@ public abstract class Level implements Bundlable, IDecayable {
 
         if (c.viewDistance == c.hearDistance) {
             if (hasVision) {
-                ShadowCaster.castShadow(cx, cy, fieldOfView, c.viewDistance);
+                ShadowCaster.castShadow(cx, cy, fieldOfView, c.viewDistance, c.touchDistance);
 
                 if (hasHearing) {
                     System.arraycopy(fieldOfView, 0, fieldOfSound, 0, fieldOfView.length);
@@ -1618,16 +1730,16 @@ public abstract class Level implements Bundlable, IDecayable {
                 }
             } else if (hasHearing) {
                 Arrays.fill(fieldOfView, false);
-                ShadowCaster.castShadow(cx, cy, fieldOfSound, c.viewDistance);
+                ShadowCaster.castShadow(cx, cy, fieldOfSound, c.viewDistance, c.touchDistance);
             }
         } else {
             if (hasVision) {
-                ShadowCaster.castShadow(cx, cy, fieldOfView, c.viewDistance);
+                ShadowCaster.castShadow(cx, cy, fieldOfView, c.viewDistance, c.touchDistance);
             } else {
                 Arrays.fill(fieldOfView, false);
             }
             if (hasHearing) {
-                ShadowCaster.castShadow(cx, cy, fieldOfSound, c.hearDistance);
+                ShadowCaster.castShadow(cx, cy, fieldOfSound, c.hearDistance, c.touchDistance);
             } else {
                 Arrays.fill(fieldOfSound, false);
             }
@@ -1646,7 +1758,7 @@ public abstract class Level implements Bundlable, IDecayable {
                     fieldOfTouch[c.pos()] = true;
                     break;
                 default:
-                    ShadowCaster.castShadow(cx, cy, fieldOfTouch, c.touchDistance);
+                    ShadowCaster.castShadow(cx, cy, fieldOfTouch, c.touchDistance, c.touchDistance);
                     break;
             }
         } else {
@@ -1786,6 +1898,13 @@ public abstract class Level implements Bundlable, IDecayable {
         return Math.max(Math.abs(ax - bx), Math.abs(ay - by));
     }
 
+    public static int distance(int x1, int y1, int x2, int y2) {
+        x1 -= x2;
+        y1 -= y2;
+
+        return (int)Math.sqrt(x1*x1+y1*y1);
+    }
+
     public static boolean canReach(int a, int b) {
         int diff = Math.abs(a - b);
         return diff == 1 || diff == WIDTH || diff == WIDTH + 1 || diff == WIDTH - 1;
@@ -1886,6 +2005,8 @@ public abstract class Level implements Bundlable, IDecayable {
                 return "Stone Wall";
             case Terrain.ALCHEMY_EMPTY:
                 return "Empty Brewing Station";
+            case Terrain.ALTAR:
+                return "Altar";
             default:
                 return "???";
         }
@@ -1932,6 +2053,8 @@ public abstract class Level implements Bundlable, IDecayable {
                 return "Unrecognizable debris covers the floor.";
             case Terrain.WOOD_DEBRIS:
                 return "Wooden debris covers the floor.";
+            case Terrain.ALTAR:
+                return "Drop items here to determine their blessed or cursed status.";
             default:
                 if (tile >= Terrain.PUDDLE_TILES && tile <= Terrain.PUDDLE) {
                     return tileDesc(Terrain.PUDDLE);

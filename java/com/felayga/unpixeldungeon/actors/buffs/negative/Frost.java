@@ -43,6 +43,7 @@ public class Frost extends FlavourBuff {
 
     private static final long DURATION = GameTime.TICK * 5;
 
+    public Frost()
     {
         type = buffType.NEGATIVE;
     }

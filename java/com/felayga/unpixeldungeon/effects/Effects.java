@@ -63,10 +63,10 @@ public class Effects {
 				icon.frame(icon.texture.uvRect(16, 16, 32, 24));
 				break;
 			case LIGHT_RAY:
-				icon.frame(icon.texture.uvRect(16, 23, 32, 31));
+				icon.frame(icon.texture.uvRect(16, 24, 32, 32));
 				break;
 			case HEALTH_RAY:
-				icon.frame(icon.texture.uvRect(16, 30, 32, 38));
+				icon.frame(icon.texture.uvRect(16, 32, 32, 40));
 				break;
 		}
 		return icon;

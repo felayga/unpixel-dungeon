@@ -50,7 +50,7 @@ public class PotionOfGainAbility extends Potion {
 
     @Override
     public void apply( Char hero ) {
-        if (bucStatus == BUCStatus.Cursed) {
+        if (bucStatus() == BUCStatus.Cursed) {
             GLog.n("Ulch!  That potion tasted foul!");
         }
         else {

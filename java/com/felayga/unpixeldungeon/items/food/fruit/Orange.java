@@ -24,30 +24,29 @@
  *
  */
 
-package com.felayga.unpixeldungeon.items.armor.mask;
+package com.felayga.unpixeldungeon.items.food.fruit;
 
-import com.felayga.unpixeldungeon.items.armor.Armor;
-import com.felayga.unpixeldungeon.mechanics.GameTime;
-import com.felayga.unpixeldungeon.sprites.hero.HeroSprite;
+import com.felayga.unpixeldungeon.actors.buffs.hero.Encumbrance;
+import com.felayga.unpixeldungeon.sprites.ItemSpriteSheet;
 
 /**
- * Created by HELLO on 2/5/2017.
+ * Created by HELLO on 2/16/2017.
  */
-public class Mask extends Armor {
-    public Mask(int armor, int armorMagic, long speedModifier) {
-        super(armor, 32767, armorMagic, speedModifier, GameTime.TICK / 2, 0);
+public class Orange extends Fruit {
+    public Orange() {
+        super(70, Encumbrance.UNIT * 2);
+
+        stackable = true;
+        name = "orange";
+        image = ItemSpriteSheet.FOOD_ORANGE;
+
+        bones = true;
+
+        price = 9;
     }
 
     @Override
-    public Slot[] getSlots() {
-        return new Slot[]{ Slot.Face };
+    public String info() {
+        return "Rich in vitamin C, this acidic fruit has a wide variety of uses." + super.info();
     }
-
-    @Override
-    protected void setHeroSpriteArmor(HeroSprite heroSprite, boolean equip) {
-        //empty
-    }
-
-
 }
-

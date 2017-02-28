@@ -25,7 +25,6 @@
  */
 package com.felayga.unpixeldungeon.items.potions;
 
-import com.felayga.unpixeldungeon.Dungeon;
 import com.felayga.unpixeldungeon.actors.Char;
 import com.felayga.unpixeldungeon.actors.buffs.Buff;
 import com.felayga.unpixeldungeon.actors.buffs.negative.Hallucination;

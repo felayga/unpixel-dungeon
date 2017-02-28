@@ -34,8 +34,6 @@ import com.felayga.unpixeldungeon.windows.WndBackpack;
 import com.watabou.utils.Bundle;
 import com.watabou.utils.Random;
 
-import javax.microedition.khronos.opengles.GL;
-
 public class ScrollOfIdentify extends InventoryScroll {
     protected int usesLeft;
 
@@ -72,7 +70,7 @@ public class ScrollOfIdentify extends InventoryScroll {
     protected void prepareRead(Hero hero) {
         int roll;
 
-        switch (bucStatus) {
+        switch (bucStatus()) {
             case Blessed:
                 roll = Random.Int(5);
                 if (roll == 0) {

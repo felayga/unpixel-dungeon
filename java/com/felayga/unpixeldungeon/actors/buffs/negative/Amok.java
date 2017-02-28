@@ -31,6 +31,7 @@ import com.felayga.unpixeldungeon.ui.BuffIndicator;
 
 public class Amok extends FlavourBuff {
 
+    public Amok()
 	{
 		type = buffType.NEGATIVE;
 	}

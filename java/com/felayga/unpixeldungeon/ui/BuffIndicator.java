@@ -99,6 +99,8 @@ public class BuffIndicator extends Component {
     public static final int INVISIBLE_IMPROVED      = 52;
     public static final int DEAFENED                = 53;
     public static final int ITEM_VISION             = 54;
+    public static final int HASTE                   = 55;
+    public static final int HASTE_IMPROVED          = 56;
 
 	public static final int SIZE	= 7;
 	

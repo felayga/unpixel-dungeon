@@ -25,6 +25,7 @@
  */
 package com.felayga.unpixeldungeon.levels;
 
+import com.felayga.unpixeldungeon.levels.painters.AltarPainter;
 import com.felayga.unpixeldungeon.levels.painters.ArmoryPainter;
 import com.felayga.unpixeldungeon.levels.painters.BlacksmithPainter;
 import com.felayga.unpixeldungeon.levels.painters.BossExitPainter;
@@ -39,6 +40,7 @@ import com.felayga.unpixeldungeon.levels.painters.MagicWellPainter;
 import com.felayga.unpixeldungeon.levels.painters.Painter;
 import com.felayga.unpixeldungeon.levels.painters.PassagePainter;
 import com.felayga.unpixeldungeon.levels.painters.PitPainter;
+import com.felayga.unpixeldungeon.levels.painters.PlainPainter;
 import com.felayga.unpixeldungeon.levels.painters.RitualSitePainter;
 import com.felayga.unpixeldungeon.levels.painters.ShopPainter;
 import com.felayga.unpixeldungeon.levels.painters.StandardPainter;
@@ -102,7 +104,9 @@ public class Room extends Rect implements Graph.Node, Bundlable {
 		//prison quests
 		//MASS_GRAVE        (MassGravePainter.class),
 		//ROT_GARDEN        (RotGardenPainter.class),
-		RITUAL_SITE         (RitualSitePainter.class);
+		RITUAL_SITE         (RitualSitePainter.class),
+        ALTAR               (AltarPainter.class),
+        PLAIN               (PlainPainter.class);
 		
 		private Method paint;
 		

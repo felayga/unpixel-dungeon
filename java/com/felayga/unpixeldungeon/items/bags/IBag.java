@@ -28,16 +28,10 @@ package com.felayga.unpixeldungeon.items.bags;
 
 import com.felayga.unpixeldungeon.actors.Char;
 import com.felayga.unpixeldungeon.items.Item;
-import com.felayga.unpixeldungeon.items.potions.Potion;
-import com.felayga.unpixeldungeon.items.wands.Wand;
 import com.felayga.unpixeldungeon.mechanics.IDecayable;
 import com.felayga.unpixeldungeon.ui.Icons;
-import com.felayga.unpixeldungeon.utils.GLog;
-import com.watabou.utils.Random;
 
-import java.util.ArrayList;
 import java.util.Iterator;
-import java.util.List;
 
 /**
  * Created by HELLO on 3/29/2016.
@@ -63,6 +57,7 @@ public interface IBag extends IDecayable {
     Item remove(Item item, int quantity);
 
     boolean contains(Item item);
+    boolean contains(Class<?> type, boolean allowNested);
 
     boolean locked();
 

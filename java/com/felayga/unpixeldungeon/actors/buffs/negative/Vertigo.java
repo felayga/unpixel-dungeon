@@ -30,6 +30,7 @@ import com.felayga.unpixeldungeon.ui.BuffIndicator;
 
 public class Vertigo extends FlavourBuff {
 
+    public Vertigo()
 	{
 		type = buffType.NEGATIVE;
 	}

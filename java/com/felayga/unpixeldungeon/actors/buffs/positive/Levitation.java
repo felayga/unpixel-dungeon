@@ -37,6 +37,10 @@ public class Levitation extends FlavourBuff {
 
     public static final long DURATION = GameTime.TICK * 20;
 
+    public Levitation() {
+
+    }
+
     @Override
     public boolean attachTo(Char target, Char source) {
         if (super.attachTo(target, source)) {

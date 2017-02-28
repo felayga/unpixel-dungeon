@@ -25,7 +25,6 @@
  */
 package com.felayga.unpixeldungeon.items.wands;
 
-import com.felayga.unpixeldungeon.Assets;
 import com.felayga.unpixeldungeon.actors.Actor;
 import com.felayga.unpixeldungeon.actors.Char;
 import com.felayga.unpixeldungeon.actors.blobs.Blob;
@@ -41,7 +40,6 @@ import com.felayga.unpixeldungeon.mechanics.Ballistica;
 import com.felayga.unpixeldungeon.mechanics.GameTime;
 import com.felayga.unpixeldungeon.mechanics.MagicType;
 import com.felayga.unpixeldungeon.scenes.GameScene;
-import com.watabou.noosa.audio.Sample;
 import com.watabou.utils.Callback;
 import com.watabou.utils.Random;
 
@@ -54,7 +52,7 @@ public class WandOfFireblast extends Wand {
         super(20);
 		name = "Wand of Fireblast";
 
-		collisionProperties = Ballistica.STOP_TERRAIN;
+		collisionProperties = Ballistica.Mode.StopTerrain;
 	}
 
 	//the actual affected cells
@@ -115,15 +113,16 @@ public class WandOfFireblast extends Wand {
 		return direction == 7 ? 0 : direction+1;
 	}
 
+    /*
 	@Override
 	public void onHit(MagesStaff staff, Char attacker, Char defender, int damage) {
 		//acts like blazing enchantment, package conflict.....
 		new com.felayga.unpixeldungeon.items.weapon.enchantments.Fire()
 				.proc( staff, attacker, defender, damage);
 	}
+	*/
 
-	@Override
-	protected void fx( Ballistica bolt, Callback callback ) {
+	protected void fxEffect( Ballistica bolt, Callback callback ) {
 		//need to perform flame spread logic here so we can determine what cells to put flames in.
 		affectedCells = new HashSet<>();
 		visualCells = new HashSet<>();
@@ -159,7 +158,6 @@ public class WandOfFireblast extends Wand {
 			MagicMissile.fire(curUser.sprite.parent, bolt.sourcePos, cell, null);
 		}
 		MagicMissile.fire( curUser.sprite.parent, bolt.sourcePos, bolt.path.get(dist), callback );
-		Sample.INSTANCE.play( Assets.SND_ZAP );
 	}
 
     /*

@@ -85,7 +85,7 @@ public class AlchemistsToolkit extends Artifact_old {
 	@Override
 	public ArrayList<String> actions( Hero hero ) {
 		ArrayList<String> actions = super.actions( hero );
-		if (isEquipped( hero ) && level() < levelCap && bucStatus != BUCStatus.Cursed)
+		if (isEquipped( hero ) && level() < levelCap && bucStatus() != BUCStatus.Cursed)
 			actions.add(AC_BREW);
 		return actions;
 	}
@@ -177,7 +177,7 @@ public class AlchemistsToolkit extends Artifact_old {
 				"cooking potions.\n\n";
 
 		if (isEquipped(Dungeon.hero))
-			if (bucStatus == BUCStatus.Cursed)
+			if (bucStatus() == BUCStatus.Cursed)
 				result += "The cursed toolkit has bound itself to your side, and refuses to let you use alchemy.\n\n";
 			else
 				result += "The toolkit rests on your hip, the various tools inside make a light jingling sound as you move.\n\n";

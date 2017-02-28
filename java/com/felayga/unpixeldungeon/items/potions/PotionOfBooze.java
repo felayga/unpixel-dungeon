@@ -58,7 +58,7 @@ public class PotionOfBooze extends Potion {
 		setKnown();
 		GLog.p("Oof!  This tastes like liquid fire!");
 
-        switch(bucStatus) {
+        switch(bucStatus()) {
             case Cursed:
                 hero.buff(Hunger.class).satisfy_new(125);
                 break;
@@ -72,9 +72,9 @@ public class PotionOfBooze extends Potion {
         }
 
         hero.HP = Math.min(hero.HT, hero.HP + 1);
-		Buff.affect(hero, hero, Vertigo.class, Random.Int(3, 9) * GameTime.TICK);
+		Buff.affect(hero, hero, Vertigo.class, Random.IntRange(3, 8) * GameTime.TICK);
 
-        switch(bucStatus) {
+        switch(bucStatus()) {
             case Cursed:
                 Buff.affect(hero, hero, MagicalSleep.class);
                 break;

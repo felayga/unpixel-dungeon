@@ -32,7 +32,10 @@ import com.felayga.unpixeldungeon.items.food.CannedFood;
 import com.felayga.unpixeldungeon.items.food.Corpse;
 import com.felayga.unpixeldungeon.mechanics.Constant;
 import com.felayga.unpixeldungeon.sprites.ItemSpriteSheet;
+import com.felayga.unpixeldungeon.utils.GLog;
 import com.felayga.unpixeldungeon.windows.WndBackpack;
+import com.watabou.utils.Bundle;
+import com.watabou.utils.Random;
 
 import java.util.ArrayList;
 
@@ -41,7 +44,7 @@ import java.util.ArrayList;
  */
 public class CanningKit extends Tool {
     public CanningKit() {
-        super(false, true, WndBackpack.Mode.INSTANCEOF, Corpse.class);
+        super(false, true, WndBackpack.Mode.CORPSE_FRESH, null);
 
         name = "canning kit";
         image = ItemSpriteSheet.TOOL_CANNINGKIT;
@@ -51,18 +54,58 @@ public class CanningKit extends Tool {
         defaultAction = Constant.Action.APPLY;
     }
 
+    private static final String CUR_CHARGES = "curCharges";
+
+    @Override
+    public void storeInBundle(Bundle bundle) {
+        super.storeInBundle(bundle);
+        bundle.put(CUR_CHARGES, curCharges);
+    }
+
+    @Override
+    public void restoreFromBundle(Bundle bundle) {
+        super.restoreFromBundle(bundle);
+        curCharges = bundle.getInt(CUR_CHARGES);
+    }
+
     @Override
     public String getToolClass() {
         return "canning kit";
     }
 
     @Override
-    public ArrayList<String> actions( Hero hero ) {
-        ArrayList<String> actions = super.actions( hero );
-        actions.add(Constant.Action.APPLY);
+    public ArrayList<String> actions(Hero hero) {
+        ArrayList<String> actions = super.actions(hero);
+        if (curCharges > 0) {
+            actions.add(Constant.Action.APPLY);
+        }
         return actions;
     }
 
+    private int curCharges = 0;
+
+    @Override
+    public Item random() {
+        super.random();
+
+        curCharges = Random.IntRange(30, 100);
+
+        return this;
+    }
+
+    @Override
+    public String status() {
+        return curCharges + "";
+    }
+
+    @Override
+    protected void doApply(Hero hero) {
+        if (curCharges > 0) {
+            super.doApply(hero);
+        } else {
+            GLog.w("This canning kit is out of materials.");
+        }
+    }
 
     @Override
     public void apply(Hero hero, int target) {
@@ -74,8 +117,21 @@ public class CanningKit extends Tool {
             return;
         }
 
-        Corpse corpse = (Corpse)item.parent().remove(item, 1);
+        Corpse test = (Corpse) item;
 
-        hero.belongings.collect(new CannedFood(corpse));
+        if (!test.partiallyEaten) {
+            Corpse corpse = (Corpse) item.parent().remove(item, 1);
+            hero.belongings.collect(new CannedFood(corpse, true).bucStatus(this));
+            curCharges--;
+            updateQuickslot();
+        } else {
+            GLog.n("Eh, it's been partially eaten.");
+        }
+    }
+
+    @Override
+    public String desc() {
+        return "This is a collection of the materials required to purify and preserve monster corpses for later consumption." +
+                "\n\nThere are enough supplies left to prepare " + curCharges + " more can" + (curCharges != 1 ? "s" : "") + ".";
     }
 }

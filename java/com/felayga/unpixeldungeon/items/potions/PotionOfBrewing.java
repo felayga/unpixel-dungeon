@@ -29,6 +29,7 @@ package com.felayga.unpixeldungeon.items.potions;
 import com.felayga.unpixeldungeon.Assets;
 import com.felayga.unpixeldungeon.Dungeon;
 import com.felayga.unpixeldungeon.actors.hero.Hero;
+import com.felayga.unpixeldungeon.items.Heap;
 import com.felayga.unpixeldungeon.items.Item;
 import com.felayga.unpixeldungeon.items.bags.IBag;
 import com.felayga.unpixeldungeon.items.food.Blandfruit;
@@ -116,7 +117,8 @@ public abstract class PotionOfBrewing extends PotionOfWater {
             Swampweed.Seed.class, Starflower.Seed.class,
             Sorrowmoss.Seed.class, Deathroot.Seed.class,
             Earthroot.Seed.class, Icecap.Seed.class,
-            Earthroot.Seed.class, Firebloom.Seed.class
+            Earthroot.Seed.class, Firebloom.Seed.class,
+            Stoneberry.Seed.class, Swampweed.Seed.class
     };
     private static final Class<?>[] basicAlchemy = {
             BlandfruitBush.Brew.class, Blandfruit.class,
@@ -226,12 +228,12 @@ public abstract class PotionOfBrewing extends PotionOfWater {
             @Override
             public void onSelect(Item item) {
                 if (item != null) {
-                    handle(curUser.pos(), curUser.belongings.backpack1, curComponent, (Potion) item);
+                    handle(curUser, curUser.belongings.backpack1, curComponent, (Potion) item);
                 }
             }
         };
 
-        public static Potion handle(int pos, IBag container, IAlchemyComponent component1, IAlchemyComponent component2, boolean collect) {
+        public static Potion handle(Heap container, IAlchemyComponent component1, IAlchemyComponent component2, boolean collect) {
             Potion result;
 
             BrewingRecipe recipe = Handler.fromSeeds.get(component1.getClass()).get(component2.getClass());
@@ -251,7 +253,7 @@ public abstract class PotionOfBrewing extends PotionOfWater {
             container.remove(component2.getSelf(), 1);
 
             if (result != null) {
-                resultSfx(pos, true);
+                resultSfx(container.pos(), true);
 
                 result.random();
                 if (collect) {
@@ -259,13 +261,13 @@ public abstract class PotionOfBrewing extends PotionOfWater {
                     GameScene.show(new WndBackpack(container, null, WndBackpack.Mode.ALL_WITH_SPELL, null, null, false, null));
                 }
             } else {
-                resultSfx(pos, false);
+                resultSfx(container.pos(), false);
             }
 
             return result;
         }
 
-        public static void handle(int pos, IBag container, IAlchemyComponent component, Potion potion) {
+        public static void handle(Hero user, IBag container, IAlchemyComponent component, Potion potion) {
             Potion result;
 
             BrewingRecipe recipe = Handler.fromPotion.get(potion.getClass());
@@ -307,17 +309,17 @@ public abstract class PotionOfBrewing extends PotionOfWater {
                 }
             }
 
-            container.remove(component.getSelf(), 1);
-            container.remove(potion, 1);
+            user.belongings.remove(component.getSelf(), 1);
+            user.belongings.remove(potion, 1);
 
             if (result != null) {
-                resultSfx(pos, true);
+                resultSfx(user.pos(), true);
 
                 result.bucStatus(potion);
                 container.collect(result);
                 GameScene.show(new WndBackpack(container, null, WndBackpack.Mode.ALL_WITH_SPELL, null, null, false, null));
             } else {
-                resultSfx(pos, false);
+                resultSfx(user.pos(), false);
             }
         }
     }

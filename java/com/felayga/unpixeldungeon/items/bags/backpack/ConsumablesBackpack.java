@@ -45,6 +45,9 @@ public class ConsumablesBackpack extends Backpack {
     {
         super(owner);
 
+        name = "consumables";
+        size = Backpack.SIZE + Backpack.SUPERSIZE;
+
         tabIcon = Icons.BACKPACK_CONSUMABLES;
         priority = 15;
     }

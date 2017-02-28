@@ -72,7 +72,7 @@ public class CurareDart extends MissileWeapon {
 	
 	@Override
 	public Item random() {
-		quantity(Random.Int(2, 5));
+		quantity(Random.IntRange(1, 5));
 		return this;
 	}
 

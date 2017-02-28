@@ -32,7 +32,7 @@ public class Pasty extends Food {
 
     public Pasty()
 	{
-        super(750, Encumbrance.UNIT * 20);
+        super(800, 800 / 4, Encumbrance.UNIT * 20);
 
 		name = "pasty";
 		image = ItemSpriteSheet.FOOD_PASTY;

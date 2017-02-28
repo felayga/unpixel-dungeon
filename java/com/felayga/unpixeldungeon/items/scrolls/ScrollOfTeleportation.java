@@ -29,7 +29,6 @@ import com.felayga.unpixeldungeon.Assets;
 import com.felayga.unpixeldungeon.Dungeon;
 import com.felayga.unpixeldungeon.actors.Char;
 import com.felayga.unpixeldungeon.actors.buffs.Buff;
-import com.felayga.unpixeldungeon.actors.buffs.positive.Invisibility;
 import com.felayga.unpixeldungeon.actors.hero.Hero;
 import com.felayga.unpixeldungeon.effects.Speck;
 import com.felayga.unpixeldungeon.items.artifacts.TimekeepersHourglass;
@@ -66,7 +65,7 @@ public class ScrollOfTeleportation extends PositionScroll {
 		curUser.spend_new(TIME_TO_READ, true);
 
 		if (canTeleport(curUser)) {
-			switch (bucStatus) {
+			switch (bucStatus()) {
 				case Cursed:
 					if (Random.Int(5) != 0) {
 						doLevelPort(curUser);

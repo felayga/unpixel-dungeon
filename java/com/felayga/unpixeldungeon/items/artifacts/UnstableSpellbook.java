@@ -91,9 +91,9 @@ public class UnstableSpellbook extends Artifact_old {
 	@Override
 	public ArrayList<String> actions( Hero hero ) {
 		ArrayList<String> actions = super.actions( hero );
-		if (isEquipped( hero ) && charge > 0 && bucStatus != BUCStatus.Cursed)
+		if (isEquipped( hero ) && charge > 0 && bucStatus() != BUCStatus.Cursed)
 			actions.add(AC_READ);
-		if (isEquipped( hero ) && level() < levelCap && bucStatus != BUCStatus.Cursed)
+		if (isEquipped( hero ) && level() < levelCap && bucStatus() != BUCStatus.Cursed)
 			actions.add(AC_ADD);
 		return actions;
 	}
@@ -104,7 +104,7 @@ public class UnstableSpellbook extends Artifact_old {
 			if (hero.buff( Blindness.class ) != null) GLog.w("You cannot read from the book while blinded.");
 			else if (!isEquipped( hero ))             GLog.i("You need to equip your spellbook to do that.");
 			else if (charge == 0)                     GLog.i("Your spellbook is out of energy for now.");
-			else if (bucStatus == BUCStatus.Cursed)   GLog.i("Your cannot read from a cursed spellbook.");
+			else if (bucStatus() == BUCStatus.Cursed)   GLog.i("Your cannot read from a cursed spellbook.");
 			else {
 				charge--;
 
@@ -163,7 +163,7 @@ public class UnstableSpellbook extends Artifact_old {
 
 		if (isEquipped (Dungeon.hero)) {
 
-			if (bucStatus != BUCStatus.Cursed)
+			if (bucStatus() != BUCStatus.Cursed)
 				desc += "The book fits firmly at your side, sending you the occasional zip of static energy.";
 			else
 				desc += "The cursed book has bound itself to you, it is inhibiting your ability to use most scrolls.";
@@ -205,7 +205,7 @@ public class UnstableSpellbook extends Artifact_old {
 		@Override
 		public boolean act() {
 			LockedFloor lock = target.buff(LockedFloor.class);
-			if (charge < chargeCap && bucStatus != BUCStatus.Cursed && (lock == null || lock.regenOn())) {
+			if (charge < chargeCap && bucStatus() != BUCStatus.Cursed && (lock == null || lock.regenOn())) {
 				partialCharge += 1 / (150f - (chargeCap - charge)*15f);
 
 				if (partialCharge >= 1) {

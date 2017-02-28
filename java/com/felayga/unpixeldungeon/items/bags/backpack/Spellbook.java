@@ -40,6 +40,9 @@ public class Spellbook extends Backpack {
     {
         super(owner);
 
+        name = "spellbook";
+        size = Backpack.SIZE + Backpack.SUPERSIZE;
+
         priority = 15;
         tabIcon = Icons.SPELLBOOK;
     }

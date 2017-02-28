@@ -25,17 +25,14 @@
  */
 package com.felayga.unpixeldungeon.items.wands;
 
-import com.felayga.unpixeldungeon.Assets;
 import com.felayga.unpixeldungeon.actors.Actor;
 import com.felayga.unpixeldungeon.actors.Char;
 import com.felayga.unpixeldungeon.actors.blobs.Blob;
 import com.felayga.unpixeldungeon.actors.blobs.VenomGas;
 import com.felayga.unpixeldungeon.effects.MagicMissile;
-import com.felayga.unpixeldungeon.items.weapon.enchantments.Poison;
 import com.felayga.unpixeldungeon.items.weapon.melee.simple.MagesStaff;
 import com.felayga.unpixeldungeon.mechanics.Ballistica;
 import com.felayga.unpixeldungeon.scenes.GameScene;
-import com.watabou.noosa.audio.Sample;
 import com.watabou.utils.Callback;
 
 public class WandOfVenom extends Wand {
@@ -45,7 +42,7 @@ public class WandOfVenom extends Wand {
         super(20);
 		name = "Wand of Venom";
 
-		collisionProperties = Ballistica.STOP_TARGET | Ballistica.STOP_TERRAIN;
+		collisionProperties = Ballistica.Mode.SplasherBolt;
 	}
 
 	@Override
@@ -61,15 +58,16 @@ public class WandOfVenom extends Wand {
 	}
 
 	@Override
-	protected void fx(Ballistica bolt, Callback callback) {
+	protected void fxEffect(Ballistica bolt, Callback callback) {
 		MagicMissile.poison(curUser.sprite.parent, bolt.sourcePos, bolt.collisionPos, callback);
-		Sample.INSTANCE.play(Assets.SND_ZAP);
 	}
 
+    /*
 	@Override
 	public void onHit(MagesStaff staff, Char attacker, Char defender, int damage) {
 		new Poison().proc(staff, attacker, defender, damage);
 	}
+	*/
 
 	@Override
 	public void staffFx(MagesStaff.StaffParticle particle) {

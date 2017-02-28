@@ -27,7 +27,6 @@ package com.felayga.unpixeldungeon.items.scrolls;
 
 import com.felayga.unpixeldungeon.Badges;
 import com.felayga.unpixeldungeon.actors.Char;
-import com.felayga.unpixeldungeon.actors.hero.Hero;
 import com.felayga.unpixeldungeon.effects.Speck;
 import com.felayga.unpixeldungeon.items.Item;
 import com.felayga.unpixeldungeon.utils.GLog;

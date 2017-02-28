@@ -39,6 +39,7 @@ import com.watabou.utils.Random;
 
 public class Bleeding extends Buff {
 
+    public Bleeding()
 	{
 		type = buffType.NEGATIVE;
 	}
@@ -78,7 +79,7 @@ public class Bleeding extends Buff {
 	public boolean act() {
 		if (target.isAlive()) {
 			
-			if ((level = Random.Int( level / 2, level )) > 0) {
+			if ((level = Random.IntRange( level / 2, level )) > 0) {
 				
 				target.damage( level, MagicType.Mundane, null );
 				if (target.sprite.visible) {

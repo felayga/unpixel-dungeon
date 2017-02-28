@@ -53,7 +53,7 @@ public class KoboldZombie extends Mob {
         weight = Encumbrance.UNIT * 400;
         nutrition = 50;
         immunityMagical = MagicType.Cold.value | MagicType.Poison.value | MagicType.Sleep.value;
-        corpseEffects = CorpseEffect.Rotten.value | CorpseEffect.Poisonous.value;
+        corpseEffects = CorpseEffect.value(CorpseEffect.Rotten, CorpseEffect.Poisonous);
         characteristics = Characteristic.value(Characteristic.CannotUseItems, Characteristic.NonBreather, Characteristic.Brainless, Characteristic.Humanoid);
 
         belongings.collectEquip(new MeleeMobAttack(GameTime.TICK, 1, 4));

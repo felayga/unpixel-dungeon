@@ -54,7 +54,7 @@ public class GreenMold extends Mob {
         weight = Encumbrance.UNIT * 50;
         nutrition = 30;
         immunityMagical = MagicType.Acid.value | MagicType.Stoning.value;
-        corpseEffects = CorpseEffect.Vegetable.value | CorpseEffect.Unstoning.value | CorpseEffect.Acidic.value;
+        corpseEffects = CorpseEffect.value(CorpseEffect.Vegetable, CorpseEffect.Unstoning, CorpseEffect.Acidic);
         corpseResistances = MagicType.None.value;
         viewDistance = 0;
         characteristics = Characteristic.value(Characteristic.NonBreather, Characteristic.CannotUseItems, Characteristic.Brainless);

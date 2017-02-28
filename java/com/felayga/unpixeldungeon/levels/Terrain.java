@@ -83,25 +83,26 @@ public class Terrain {
     public static final int STAIRS_DOWN_ALTERNATE   = 38;
 
     public static final int ALCHEMY_EMPTY           = 39;
+    public static final int ALTAR                   = 40;
 
 
-    public static final int FACED_TILE_MIN          = 64; //needs to be aligned to blocksize
-    public static final int FACED_TILE_MAX          = 127;
+    public static final int FACED_TILE_MIN          = 128; //needs to be aligned to FACED_TILE_BLOCKSIZE
+    public static final int FACED_TILE_MAX          = 255;
     public static final int FACED_TILE_BLOCKSIZE    = 16;
 
-	public static final int PUDDLE_TILES	    	= 64;
+	public static final int PUDDLE_TILES	    	= 192;
 	public static final int PUDDLE		    	    = PUDDLE_TILES + FACED_TILE_BLOCKSIZE - 1;
 
-    public static final int WATER_DEEP_TILES	    = 80;
+    public static final int WATER_DEEP_TILES	    = PUDDLE_TILES + FACED_TILE_BLOCKSIZE;
     public static final int WATER_DEEP			    = WATER_DEEP_TILES + FACED_TILE_BLOCKSIZE - 1;
 
-    public static final int DIRT_TILES			    = 96;
-	public static final int DIRT				    = DIRT_TILES + FACED_TILE_BLOCKSIZE - 1;
+    public static final int DIRT_TILES			    = WATER_DEEP_TILES + FACED_TILE_BLOCKSIZE;
+    public static final int DIRT				    = DIRT_TILES + FACED_TILE_BLOCKSIZE - 1;
 
-	public static final int DIRT_DEEP_TILES		    = 112;
-	public static final int DIRT_DEEP			    = DIRT_DEEP_TILES + FACED_TILE_BLOCKSIZE - 1;
+    public static final int DIRT_DEEP_TILES		    = DIRT_TILES + FACED_TILE_BLOCKSIZE;
+    public static final int DIRT_DEEP			    = DIRT_DEEP_TILES + FACED_TILE_BLOCKSIZE - 1;
 
-    public static final int TILE_MAX                = 127;
+    public static final int TILE_MAX                = 255;
 
 	public static final int FLAG_PASSABLE		    = 0x0001;
 	public static final int FLAG_LOSBLOCKING	    = 0x0002;
@@ -118,72 +119,75 @@ public class Terrain {
 	public static final int FLAG_STONE			    = 0x0800;
     public static final int FLAG_UNDIGGABLE         = 0x1000;
 
+    public static final int FLAG_LOSDARK            = 0x2000;
+
     public static final int FLAG_DIAGONALPASSAGE    = 0x8000;
 
 
 	public static final int[] flags = new int[256];
 	static {
-		flags[CHASM] = FLAG_AVOID | FLAG_PIT | FLAG_UNSTITCHABLE | FLAG_DIAGONALPASSAGE;
-		flags[EMPTY] = FLAG_PASSABLE | FLAG_DIAGONALPASSAGE;
-		flags[GRASS] = FLAG_PASSABLE | FLAG_BURNABLE | FLAG_DIAGONALPASSAGE;
-		flags[EMPTY_WELL] = FLAG_STONE | FLAG_DIAGONALPASSAGE;
-		flags[PUDDLE] = FLAG_PASSABLE | FLAG_LIQUID | FLAG_UNSTITCHABLE | FLAG_DIAGONALPASSAGE;
-		flags[WALL] = FLAG_LOSBLOCKING | FLAG_SOLID | FLAG_STONE | FLAG_UNSTITCHABLE | FLAG_UNDISCOVERABLE;
-		flags[DOOR] = FLAG_PATHABLE | FLAG_LOSBLOCKING | FLAG_BURNABLE | FLAG_SOLID | FLAG_UNSTITCHABLE;
-		flags[OPEN_DOOR] = FLAG_PASSABLE | FLAG_BURNABLE | FLAG_UNSTITCHABLE;
-		flags[STAIRS_UP] = FLAG_PASSABLE | FLAG_DIAGONALPASSAGE | FLAG_UNDIGGABLE;
-		flags[STAIRS_DOWN] = FLAG_PASSABLE | FLAG_DIAGONALPASSAGE | FLAG_UNDIGGABLE;
-		flags[EMBERS] = FLAG_PASSABLE | FLAG_DIAGONALPASSAGE;
-		flags[LOCKED_DOOR] = FLAG_PATHABLE | FLAG_LOSBLOCKING | FLAG_SOLID | FLAG_BURNABLE | FLAG_UNSTITCHABLE;
-		flags[PEDESTAL] = FLAG_PASSABLE | FLAG_UNSTITCHABLE | FLAG_DIAGONALPASSAGE;
-		flags[WALL_DECO] = FLAG_LOSBLOCKING | FLAG_SOLID | FLAG_STONE | FLAG_UNSTITCHABLE | FLAG_UNDISCOVERABLE;
-		flags[BARRICADE] = FLAG_BURNABLE | FLAG_SOLID | FLAG_LOSBLOCKING;
-		flags[EMPTY_SP] = FLAG_PASSABLE | FLAG_UNSTITCHABLE | FLAG_DIAGONALPASSAGE;
-		flags[HIGH_GRASS] = FLAG_PASSABLE | FLAG_LOSBLOCKING | FLAG_BURNABLE | FLAG_DIAGONALPASSAGE;
+        flags[CHASM] = FLAG_AVOID | FLAG_PIT | FLAG_UNSTITCHABLE | FLAG_DIAGONALPASSAGE;
+        flags[EMPTY] = FLAG_PASSABLE | FLAG_DIAGONALPASSAGE;
+        flags[GRASS] = FLAG_PASSABLE | FLAG_BURNABLE | FLAG_DIAGONALPASSAGE;
+        flags[EMPTY_WELL] = FLAG_STONE | FLAG_DIAGONALPASSAGE;
+        flags[PUDDLE] = FLAG_PASSABLE | FLAG_LIQUID | FLAG_UNSTITCHABLE | FLAG_DIAGONALPASSAGE;
+        flags[WALL] = FLAG_LOSBLOCKING | FLAG_SOLID | FLAG_STONE | FLAG_UNSTITCHABLE | FLAG_UNDISCOVERABLE;
+        flags[DOOR] = FLAG_PATHABLE | FLAG_LOSBLOCKING | FLAG_BURNABLE | FLAG_SOLID | FLAG_UNSTITCHABLE;
+        flags[OPEN_DOOR] = FLAG_PASSABLE | FLAG_BURNABLE | FLAG_UNSTITCHABLE;
+        flags[STAIRS_UP] = FLAG_PASSABLE | FLAG_DIAGONALPASSAGE | FLAG_UNDIGGABLE;
+        flags[STAIRS_DOWN] = FLAG_PASSABLE | FLAG_DIAGONALPASSAGE | FLAG_UNDIGGABLE;
+        flags[EMBERS] = FLAG_PASSABLE | FLAG_DIAGONALPASSAGE;
+        flags[LOCKED_DOOR] = FLAG_PATHABLE | FLAG_LOSBLOCKING | FLAG_SOLID | FLAG_BURNABLE | FLAG_UNSTITCHABLE;
+        flags[PEDESTAL] = FLAG_PASSABLE | FLAG_UNSTITCHABLE | FLAG_DIAGONALPASSAGE;
+        flags[WALL_DECO] = FLAG_LOSBLOCKING | FLAG_SOLID | FLAG_STONE | FLAG_UNSTITCHABLE | FLAG_UNDISCOVERABLE;
+        flags[BARRICADE] = FLAG_BURNABLE | FLAG_SOLID | FLAG_LOSBLOCKING;
+        flags[EMPTY_SP] = FLAG_PASSABLE | FLAG_UNSTITCHABLE | FLAG_DIAGONALPASSAGE;
+        flags[HIGH_GRASS] = FLAG_PASSABLE | FLAG_LOSBLOCKING | FLAG_BURNABLE | FLAG_DIAGONALPASSAGE;
 
-		flags[SECRET_DOOR] = FLAG_LOSBLOCKING | FLAG_SOLID | FLAG_SECRET | FLAG_BURNABLE | FLAG_UNSTITCHABLE;
+        flags[SECRET_DOOR] = FLAG_LOSBLOCKING | FLAG_SOLID | FLAG_SECRET | FLAG_BURNABLE | FLAG_UNSTITCHABLE;
         flags[SECRET_LOCKED_DOOR] = flags[SECRET_DOOR];
-		flags[SECRET_TRAP] = FLAG_PASSABLE | FLAG_SECRET;
-		flags[TRAP] = FLAG_PASSABLE | FLAG_AVOID | FLAG_DIAGONALPASSAGE;
-		flags[INACTIVE_TRAP] = FLAG_PASSABLE | FLAG_DIAGONALPASSAGE;
+        flags[SECRET_TRAP] = FLAG_PASSABLE | FLAG_SECRET;
+        flags[TRAP] = FLAG_PASSABLE | FLAG_AVOID | FLAG_DIAGONALPASSAGE;
+        flags[INACTIVE_TRAP] = FLAG_PASSABLE | FLAG_DIAGONALPASSAGE;
 
-		flags[EMPTY_DECO] = FLAG_PASSABLE | FLAG_DIAGONALPASSAGE;
-		flags[LOCKED_EXIT] = FLAG_SOLID;
-		flags[UNLOCKED_EXIT] = FLAG_PASSABLE;
-		flags[SIGN] = FLAG_PASSABLE | FLAG_BURNABLE | FLAG_DIAGONALPASSAGE;
-		flags[WELL] = flags[EMPTY_WELL];
-		flags[STATUE] = FLAG_SOLID | FLAG_STONE;
-		flags[STATUE_SP] = FLAG_SOLID | FLAG_STONE | FLAG_UNSTITCHABLE;
-		flags[ALCHEMY] = FLAG_PASSABLE | FLAG_DIAGONALPASSAGE;
+        flags[EMPTY_DECO] = FLAG_PASSABLE | FLAG_DIAGONALPASSAGE;
+        flags[LOCKED_EXIT] = FLAG_SOLID;
+        flags[UNLOCKED_EXIT] = FLAG_PASSABLE;
+        flags[SIGN] = FLAG_PASSABLE | FLAG_BURNABLE | FLAG_DIAGONALPASSAGE;
+        flags[WELL] = flags[EMPTY_WELL];
+        flags[STATUE] = FLAG_SOLID | FLAG_STONE;
+        flags[STATUE_SP] = FLAG_SOLID | FLAG_STONE | FLAG_UNSTITCHABLE;
+        flags[ALCHEMY] = FLAG_PASSABLE | FLAG_DIAGONALPASSAGE;
 
-		flags[CHASM_WALL] = flags[CHASM];
-		flags[CHASM_FLOOR] = flags[CHASM];
-		flags[CHASM_FLOOR_SP] = flags[CHASM];
-		flags[CHASM_WATER] = flags[CHASM];
-		flags[DENATURED_DEBRIS] = flags[EMBERS];
-		flags[WOOD_DEBRIS] = flags[OPEN_DOOR] | FLAG_DIAGONALPASSAGE;
-		flags[WALL_STONE] = flags[WALL];
+        flags[CHASM_WALL] = flags[CHASM];
+        flags[CHASM_FLOOR] = flags[CHASM];
+        flags[CHASM_FLOOR_SP] = flags[CHASM];
+        flags[CHASM_WATER] = flags[CHASM];
+        flags[DENATURED_DEBRIS] = flags[EMBERS];
+        flags[WOOD_DEBRIS] = flags[OPEN_DOOR] | FLAG_DIAGONALPASSAGE;
+        flags[WALL_STONE] = flags[WALL] | FLAG_LOSDARK;
         flags[WELL_MAGIC] = flags[EMPTY_WELL];
         flags[STAIRS_UP_ALTERNATE] = flags[STAIRS_UP];
         flags[STAIRS_DOWN_ALTERNATE] = flags[STAIRS_DOWN];
         flags[ALCHEMY_EMPTY] = flags[ALCHEMY];
+        flags[ALTAR] = flags[TRAP];
 
-		for (int n = PUDDLE_TILES; n <= PUDDLE; n++) {
-			flags[n] = flags[PUDDLE];
-		}
+        for (int n = PUDDLE_TILES; n <= PUDDLE; n++) {
+            flags[n] = flags[PUDDLE];
+        }
 
-		for (int n = DIRT_TILES; n <= DIRT; n++) {
-			flags[n] = flags[EMPTY];
-		}
+        for (int n = DIRT_TILES; n <= DIRT; n++) {
+            flags[n] = flags[EMPTY] | FLAG_LOSDARK;
+        }
 
-		for (int n = WATER_DEEP_TILES; n <= WATER_DEEP; n++) {
+        for (int n = WATER_DEEP_TILES; n <= WATER_DEEP; n++) {
 
-		}
+        }
 
-		for (int n = DIRT_DEEP_TILES; n <= DIRT_DEEP; n++) {
+        for (int n = DIRT_DEEP_TILES; n <= DIRT_DEEP; n++) {
             flags[n] = FLAG_AVOID | FLAG_PIT | FLAG_DIAGONALPASSAGE;
-		}
-	};
+        }
+    }
 
 	public static int discover( int terr ) {
         switch (terr) {

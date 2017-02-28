@@ -29,7 +29,6 @@ import com.felayga.unpixeldungeon.actors.Char;
 import com.felayga.unpixeldungeon.actors.blobs.Blob;
 import com.felayga.unpixeldungeon.actors.blobs.ToxicGas;
 import com.felayga.unpixeldungeon.actors.buffs.Buff;
-import com.felayga.unpixeldungeon.actors.buffs.negative.Poison;
 import com.felayga.unpixeldungeon.mechanics.GameTime;
 import com.felayga.unpixeldungeon.scenes.GameScene;
 import com.felayga.unpixeldungeon.ui.BuffIndicator;
@@ -40,6 +39,10 @@ public class ToxicImbue extends Buff {
 	public static final long DURATION	= 30 * GameTime.TICK;
 
 	protected long left;
+
+    public ToxicImbue() {
+
+    }
 
 	@Override
 	public void storeInBundle( Bundle bundle ) {

@@ -224,8 +224,8 @@ public class ShopPainter extends Painter {
 					Generator.random( Generator.Category.SCROLL ) );
 
 
-		itemsToSpawn.add( new OverpricedRation() );
-		itemsToSpawn.add( new OverpricedRation() );
+		itemsToSpawn.add( new CramRation() );
+		itemsToSpawn.add( new CramRation() );
 
 		itemsToSpawn.add( new Bomb().random() );
 		switch (Random.Int(5)){

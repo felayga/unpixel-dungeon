@@ -52,7 +52,7 @@ public class ItemIterator implements Iterator<Item> {
         if (nested != null) {
             return nested.hasNext() || index < items.size();
         } else {
-            return index < items.size();
+            return items != null && index < items.size();
         }
     }
 

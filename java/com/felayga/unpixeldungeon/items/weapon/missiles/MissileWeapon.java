@@ -31,6 +31,7 @@ import com.felayga.unpixeldungeon.actors.Char;
 import com.felayga.unpixeldungeon.actors.buffs.Buff;
 import com.felayga.unpixeldungeon.actors.buffs.hero.PinCushion;
 import com.felayga.unpixeldungeon.actors.hero.Hero;
+import com.felayga.unpixeldungeon.items.EquippableItem;
 import com.felayga.unpixeldungeon.items.rings.RingOfSharpshooting;
 import com.felayga.unpixeldungeon.items.weapon.Weapon;
 import com.felayga.unpixeldungeon.items.weapon.missiles.martial.Boomerang;
@@ -51,6 +52,7 @@ public class MissileWeapon extends Weapon {
 
     public boolean throwable;
     public AmmunitionType ammunitionType;
+    public boolean requiresLauncher;
 
 	public MissileWeapon(WeaponSkill weaponSkill, long delay, int damageMin, int damageMax, int quantity, boolean throwable, AmmunitionType ammunitionType) {
         super(weaponSkill, delay, damageMin, damageMax);
@@ -61,19 +63,26 @@ public class MissileWeapon extends Weapon {
 
         this.throwable = throwable;
         this.ammunitionType = ammunitionType;
+        this.cursedCannotUnequip = false;
 
-        if (throwable) {
-            defaultAction = Constant.Action.THROW;
-        } else if (ammunitionType != AmmunitionType.None) {
-            defaultAction = Constant.Action.EQUIP;
-        }
+        defaultAction = null;
 
         usesTargeting = true;
     }
-	
-	@Override
+
+    @Override
+    public EquippableItem.Slot[] getSlots() {
+        return new Slot[]{ Slot.Ammo };
+    }
+
+    @Override
 	public ArrayList<String> actions( Hero hero ) {
 		ArrayList<String> actions = super.actions(hero);
+
+        if (throwable && isEquipped(hero)) {
+            actions.add(Constant.Action.THROW);
+        }
+
         /*
 		if (hero.heroClass != HeroClass.HUNTRESS && hero.heroClass != HeroClass.ROGUE) {
 			actions.remove( AC_EQUIP );
@@ -115,9 +124,10 @@ public class MissileWeapon extends Weapon {
 	}
 	
 	protected void miss( int cell, Char thrower ) {
-        //todo: determine if any of this is cared about
         super.onThrow(thrower, cell);
+
         /*
+        //todo: determine if any of this is cared about
         int bonus = 0;
 		for (Buff buff : curUser.buffs(RingOfSharpshooting.Aim.class)) {
 			bonus += ((RingOfSharpshooting.Aim)buff).level;
@@ -171,11 +181,6 @@ public class MissileWeapon extends Weapon {
 		return false;
 	}
 	*/
-	
-	@Override
-	public boolean isUpgradable() {
-		return false;
-	}
 	
 	@Override
 	public boolean isIdentified() {

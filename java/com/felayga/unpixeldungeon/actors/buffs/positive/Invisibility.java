@@ -29,18 +29,77 @@ import com.felayga.unpixeldungeon.Dungeon;
 import com.felayga.unpixeldungeon.actors.Char;
 import com.felayga.unpixeldungeon.actors.buffs.Buff;
 import com.felayga.unpixeldungeon.actors.buffs.FlavourBuff;
-import com.felayga.unpixeldungeon.items.artifacts.CloakOfShadows;
-import com.felayga.unpixeldungeon.items.artifacts.TimekeepersHourglass;
 import com.felayga.unpixeldungeon.mechanics.GameTime;
 import com.felayga.unpixeldungeon.sprites.CharSprite;
 import com.felayga.unpixeldungeon.ui.BuffIndicator;
+import com.felayga.unpixeldungeon.utils.GLog;
+import com.watabou.noosa.Visual;
+import com.watabou.noosa.tweeners.AlphaTweener;
 
 import java.util.ArrayList;
 import java.util.List;
 
 public class Invisibility extends FlavourBuff {
-
+    public static final float ALPHA_INVISIBLE = 0.4f;
+    public static final float ALPHA_VISIBLE = 1.0f;
     public static final long DURATION = GameTime.TICK * 20;
+
+    public Invisibility()
+    {
+        type = buffType.POSITIVE;
+        improved(false);
+    }
+
+    @Override
+    public boolean restore(Char target) {
+        target.invisible++;
+        if (super.restore(target)) {
+            return true;
+        } else {
+            target.invisible--;
+            return false;
+        }
+    }
+
+    @Override
+    public void detach() {
+        target.invisible--;
+        fx(false);
+        target.remove(this);
+    }
+
+    private int icon;
+
+    @Override
+    public int icon() {
+        return icon;
+    }
+
+    @Override
+    public void fx(boolean on) {
+        if (on) {
+            if (target.invisible > 0) {
+                GLog.d("make invisible="+target.invisible+" target="+target.name);
+                target.sprite.add(CharSprite.State.INVISIBLE);
+            }
+        }
+        else {
+            if (target.invisible <= 0) {
+                GLog.d("take invisible="+target.invisible+" target="+target.name);
+                target.sprite.remove(CharSprite.State.INVISIBLE);
+            }
+        }
+
+        if (target != Dungeon.hero) {
+            boolean oldVisible = target.sprite.visible;
+            target.sprite.visible = target.visibilityOverride(Dungeon.visible[target.pos()]);
+            GLog.d("target.sprite.visible old="+oldVisible+" new="+target.sprite.visible);
+            if (Dungeon.level != null && oldVisible && !target.sprite.visible) {
+                Dungeon.level.warnings.add(target.pos(), false);
+            }
+        }
+    }
+
 
     private boolean improved;
 
@@ -56,53 +115,13 @@ public class Invisibility extends FlavourBuff {
         }
     }
 
-    public boolean improved() {
-        return improved;
-    }
-
-    {
-        type = buffType.POSITIVE;
-        improved = false;
-    }
-
-
-    @Override
-    public boolean attachTo(Char target, Char source) {
-        if (super.attachTo(target, source)) {
-            target.invisible++;
-            return true;
-        } else {
-            return false;
-        }
-    }
-
-    @Override
-    public void detach() {
-        if (target.invisible > 0) {
-            target.invisible--;
-        }
-        super.detach();
-    }
-
-    private int icon;
-
-    @Override
-    public int icon() {
-        return icon;
-    }
-
-    @Override
-    public void fx(boolean on) {
-        if (on) target.sprite.add(CharSprite.State.INVISIBLE);
-        else if (target.invisible == 0) target.sprite.remove(CharSprite.State.INVISIBLE);
-    }
-
     private String name;
 
     @Override
     public String toString() {
         return name;
     }
+
 
     @Override
     public String desc() {
@@ -185,5 +204,29 @@ public class Invisibility extends FlavourBuff {
             return "The invisibility will last indefinitely.";
         }
 
+    }
+
+    public static void meltFx(Char ch) {
+        if (ch.sprite.parent != null) {
+            ch.sprite.parent.removeAll(InvisibilityTweener.class);
+            ch.sprite.parent.add(new InvisibilityTweener(ch.sprite, Invisibility.ALPHA_INVISIBLE));
+        } else {
+            ch.sprite.alpha(Invisibility.ALPHA_INVISIBLE);
+        }
+    }
+
+    public static void unmeltFx(Char ch) {
+        if (ch.sprite.parent != null) {
+            ch.sprite.parent.removeAll(InvisibilityTweener.class);
+            ch.sprite.parent.add(new InvisibilityTweener(ch.sprite, Invisibility.ALPHA_VISIBLE));
+        } else {
+            ch.sprite.alpha(Invisibility.ALPHA_VISIBLE);
+        }
+    }
+
+    private static class InvisibilityTweener extends AlphaTweener {
+        public InvisibilityTweener(Visual image, float alpha) {
+            super(image, alpha, 0.4f);
+        }
     }
 }

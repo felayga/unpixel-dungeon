@@ -28,7 +28,6 @@ package com.felayga.unpixeldungeon.items.armor.cloak.randomized;
 
 import com.felayga.unpixeldungeon.actors.buffs.hero.Encumbrance;
 import com.felayga.unpixeldungeon.mechanics.GameTime;
-import com.felayga.unpixeldungeon.sprites.ItemSpriteSheet;
 
 /**
  * Created by HELLO on 2/12/2017.

@@ -29,13 +29,12 @@ import com.felayga.unpixeldungeon.actors.Char;
 import com.felayga.unpixeldungeon.actors.buffs.FlavourBuff;
 import com.felayga.unpixeldungeon.mechanics.GameTime;
 import com.felayga.unpixeldungeon.ui.BuffIndicator;
-import com.watabou.utils.Bundle;
 
 public class Terror extends FlavourBuff {
 
 	public static final long DURATION = GameTime.TICK * 10;
 
-
+    public Terror()
 	{
 		type = buffType.NEGATIVE;
 	}

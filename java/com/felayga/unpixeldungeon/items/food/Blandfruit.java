@@ -48,23 +48,22 @@ import java.util.ArrayList;
 
 public class Blandfruit extends Food implements IAlchemyComponent {
 
-	public String message = "You eat the Blandfruit, bleugh!";
-	public String info = "So dry and insubstantial.  At least it's filling.";
+    public String message = "You eat the Blandfruit, bleugh!";
+    public String info = "So dry and unpleasant.  At least it's filling.";
 
-	public Potion potionAttrib = null;
-	public ItemSprite.Glowing potionGlow = null;
+    public Potion potionAttrib = null;
+    public ItemSprite.Glowing potionGlow = null;
 
-    public Blandfruit()
-	{
-        super(250, Encumbrance.UNIT * 20);
+    public Blandfruit() {
+        super(250, 100, Encumbrance.UNIT * 5);
 
-		name = "Blandfruit";
-		stackable = true;
-		image = ItemSpriteSheet.FOOD_BLANDFRUIT;
+        name = "Blandfruit";
+        stackable = true;
+        image = ItemSpriteSheet.FOOD_BLANDFRUIT;
 
-		bones = true;
-        price = 20;
-	}
+        bones = true;
+        price = 17;
+    }
 
     public Item getSelf() {
         return this;
@@ -89,17 +88,17 @@ public class Blandfruit extends Food implements IAlchemyComponent {
 
     @Override
     protected boolean checkSimilarity(Item item) {
-		if (item instanceof Blandfruit){
-			if (potionAttrib == null){
-				if (((Blandfruit)item).potionAttrib == null)
-					return true;
-			} else if (((Blandfruit)item).potionAttrib != null){
-				if (((Blandfruit)item).potionAttrib.getClass() == potionAttrib.getClass())
-					return true;
-			}
-		}
-		return false;
-	}
+        if (item instanceof Blandfruit) {
+            if (potionAttrib == null) {
+                if (((Blandfruit) item).potionAttrib == null)
+                    return true;
+            } else if (((Blandfruit) item).potionAttrib != null) {
+                if (((Blandfruit) item).potionAttrib.getClass() == potionAttrib.getClass())
+                    return true;
+            }
+        }
+        return false;
+    }
 
     @Override
     protected void doneEating(Hero hero, boolean stuffed) {
@@ -148,10 +147,10 @@ public class Blandfruit extends Food implements IAlchemyComponent {
         */
     }
 
-	@Override
-	public String info() {
-		return info + super.info();
-	}
+    @Override
+    public String info() {
+        return info + super.info();
+    }
 
     /*
 	public Item cook(Seed seed){
@@ -165,22 +164,22 @@ public class Blandfruit extends Food implements IAlchemyComponent {
 	}
 	*/
 
-	public Item imbuePotion(Potion potion){
+    public Item imbuePotion(Potion potion) {
 
-		potionAttrib = potion;
-		potionAttrib.ownedByFruit = true;
+        potionAttrib = potion;
+        potionAttrib.ownedByFruit = true;
 
-		potionAttrib.image = ItemSpriteSheet.FOOD_BLANDFRUIT;
+        potionAttrib.image = ItemSpriteSheet.FOOD_BLANDFRUIT;
 
 
-		info = "The fruit has plumped up from its time soaking in the pot and has even absorbed the properties "+
-			   "of the seed it was cooked with.\n\n";
+        info = "The fruit has plumped up from its time soaking in the pot and has even absorbed the properties " +
+                "of the seed it was cooked with.\n\n";
 
-		if (potionAttrib instanceof PotionOfHealing){
+        if (potionAttrib instanceof PotionOfHealing) {
 
-			name = "Sunfruit";
-			potionGlow = new ItemSprite.Glowing( 0x2EE62E );
-			info += "It looks delicious and hearty, ready to be eaten!";
+            name = "Sunfruit";
+            potionGlow = new ItemSprite.Glowing(0x2EE62E);
+            info += "It looks delicious and hearty, ready to be eaten!";
         /*
 		} else if (potionAttrib instanceof PotionOfStrength){
 
@@ -188,29 +187,29 @@ public class Blandfruit extends Food implements IAlchemyComponent {
 			potionGlow = new ItemSprite.Glowing( 0xCC0022 );
 			info += "It looks delicious and powerful, ready to be eaten!";
         */
-		} else if (potionAttrib instanceof PotionOfParalyticGas){
+        } else if (potionAttrib instanceof PotionOfParalyticGas) {
 
-			name = "Earthfruit";
-			potionGlow = new ItemSprite.Glowing( 0x67583D );
-			info += "It looks delicious and firm, ready to be eaten!";
+            name = "Earthfruit";
+            potionGlow = new ItemSprite.Glowing(0x67583D);
+            info += "It looks delicious and firm, ready to be eaten!";
 
-		} else if (potionAttrib instanceof PotionOfInvisibility){
+        } else if (potionAttrib instanceof PotionOfInvisibility) {
 
-			name = "Blindfruit";
-			potionGlow = new ItemSprite.Glowing( 0xE5D273 );
-			info += "It looks delicious and shiny, ready to be eaten!";
+            name = "Blindfruit";
+            potionGlow = new ItemSprite.Glowing(0xE5D273);
+            info += "It looks delicious and shiny, ready to be eaten!";
 
-		} else if (potionAttrib instanceof PotionOfOil){
+        } else if (potionAttrib instanceof PotionOfOil) {
 
-			name = "Firefruit";
-			potionGlow = new ItemSprite.Glowing( 0xFF7F00 );
-			info += "It looks delicious and spicy, ready to be eaten!";
+            name = "Firefruit";
+            potionGlow = new ItemSprite.Glowing(0xFF7F00);
+            info += "It looks delicious and spicy, ready to be eaten!";
 
-		} else if (potionAttrib instanceof PotionOfFrost){
+        } else if (potionAttrib instanceof PotionOfFrost) {
 
-			name = "Icefruit";
-			potionGlow = new ItemSprite.Glowing( 0x66B3FF );
-			info += "It looks delicious and refreshing, ready to be eaten!";
+            name = "Icefruit";
+            potionGlow = new ItemSprite.Glowing(0x66B3FF);
+            info += "It looks delicious and refreshing, ready to be eaten!";
         /*
 		} else if (potionAttrib instanceof PotionOfMindVision){
 
@@ -218,23 +217,23 @@ public class Blandfruit extends Food implements IAlchemyComponent {
 			potionGlow = new ItemSprite.Glowing( 0xB8E6CF );
 			info += "It looks delicious and shadowy, ready to be eaten!";
         */
-		} else if (potionAttrib instanceof PotionOfToxicGas){
+        } else if (potionAttrib instanceof PotionOfToxicGas) {
 
-			name = "Sorrowfruit";
-			potionGlow = new ItemSprite.Glowing( 0xA15CE5 );
-			info += "It looks delicious and crisp, ready to be eaten!";
+            name = "Sorrowfruit";
+            potionGlow = new ItemSprite.Glowing(0xA15CE5);
+            info += "It looks delicious and crisp, ready to be eaten!";
 
-		} else if (potionAttrib instanceof PotionOfLevitation) {
+        } else if (potionAttrib instanceof PotionOfLevitation) {
 
-			name = "Stormfruit";
-			potionGlow = new ItemSprite.Glowing( 0x1C3A57 );
-			info += "It looks delicious and lightweight, ready to be eaten!";
+            name = "Stormfruit";
+            potionGlow = new ItemSprite.Glowing(0x1C3A57);
+            info += "It looks delicious and lightweight, ready to be eaten!";
 
-		} else if (potionAttrib instanceof PotionOfPurity) {
+        } else if (potionAttrib instanceof PotionOfPurity) {
 
-			name = "Dreamfruit";
-			potionGlow = new ItemSprite.Glowing( 0x8E2975 );
-			info += "It looks delicious and clean, ready to be eaten!";
+            name = "Dreamfruit";
+            potionGlow = new ItemSprite.Glowing(0x8E2975);
+            info += "It looks delicious and clean, ready to be eaten!";
         /*
 		} else if (potionAttrib instanceof PotionOfExperience) {
 
@@ -242,38 +241,38 @@ public class Blandfruit extends Food implements IAlchemyComponent {
 			potionGlow = new ItemSprite.Glowing( 0xA79400 );
 			info += "It looks delicious and glorious, ready to be eaten!";
         */
-		}
+        }
 
-		return this;
-	}
+        return this;
+    }
 
-	public static final String POTIONATTRIB = "potionattrib";
+    public static final String POTIONATTRIB = "potionattrib";
 
-	@Override
-	public void cast( final Hero user, int dst ) {
-		if (potionAttrib instanceof PotionOfOil ||
-				potionAttrib instanceof PotionOfToxicGas ||
-				potionAttrib instanceof PotionOfParalyticGas ||
-				potionAttrib instanceof PotionOfFrost ||
-				potionAttrib instanceof PotionOfLevitation ||
-				potionAttrib instanceof PotionOfPurity) {
-			potionAttrib.cast(user, dst);
-			user.belongings.remove(this, 1);
-		} else {
-			super.cast(user, dst);
-		}
+    @Override
+    public void cast(final Hero user, int dst) {
+        if (potionAttrib instanceof PotionOfOil ||
+                potionAttrib instanceof PotionOfToxicGas ||
+                potionAttrib instanceof PotionOfParalyticGas ||
+                potionAttrib instanceof PotionOfFrost ||
+                potionAttrib instanceof PotionOfLevitation ||
+                potionAttrib instanceof PotionOfPurity) {
+            potionAttrib.cast(user, dst);
+            user.belongings.remove(this, 1);
+        } else {
+            super.cast(user, dst);
+        }
 
-	}
+    }
 
-	@Override
-	public void storeInBundle(Bundle bundle){
-		super.storeInBundle(bundle);
-		bundle.put( POTIONATTRIB , potionAttrib);
-	}
+    @Override
+    public void storeInBundle(Bundle bundle) {
+        super.storeInBundle(bundle);
+        bundle.put(POTIONATTRIB, potionAttrib);
+    }
 
-	@Override
-	public void restoreFromBundle(Bundle bundle){
-		super.restoreFromBundle(bundle);
+    @Override
+    public void restoreFromBundle(Bundle bundle) {
+        super.restoreFromBundle(bundle);
 
         /*
 		if (bundle.contains( POTIONATTRIB )) {
@@ -305,12 +304,11 @@ public class Blandfruit extends Food implements IAlchemyComponent {
 				cook(new Dreamfoil.Seed());
 		}
         */
-	}
+    }
 
 
-	@Override
-	public ItemSprite.Glowing glowing() {
-		return potionGlow;
-	}
-
+    @Override
+    public ItemSprite.Glowing glowing() {
+        return potionGlow;
+    }
 }

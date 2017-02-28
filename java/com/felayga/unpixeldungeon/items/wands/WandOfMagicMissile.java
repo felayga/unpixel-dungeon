@@ -27,12 +27,7 @@ package com.felayga.unpixeldungeon.items.wands;
 
 import com.felayga.unpixeldungeon.actors.Actor;
 import com.felayga.unpixeldungeon.actors.Char;
-import com.felayga.unpixeldungeon.actors.buffs.Buff;
-import com.felayga.unpixeldungeon.effects.SpellSprite;
-import com.felayga.unpixeldungeon.items.scrolls.ScrollOfRecharging;
-import com.felayga.unpixeldungeon.items.weapon.melee.simple.MagesStaff;
 import com.felayga.unpixeldungeon.mechanics.Ballistica;
-import com.felayga.unpixeldungeon.mechanics.GameTime;
 import com.felayga.unpixeldungeon.mechanics.MagicType;
 import com.watabou.utils.Random;
 
@@ -40,26 +35,30 @@ public class WandOfMagicMissile extends Wand {
 
     public WandOfMagicMissile()
 	{
-        super(20);
+        super(8);
 		name = "Wand of Magic Missile";
 	}
+
+    @Override
+    public int randomCharges() {
+        return Random.IntRange(4, 8);
+    }
 	
 	@Override
 	protected void onZap( Ballistica bolt ) {
 				
 		Char ch = Actor.findChar( bolt.collisionPos );
 		if (ch != null) {
-			
-			int level = 1;//level();
 
 			processSoulMark(ch, curUser);
-			ch.damage(Random.NormalIntRange(4 , 6 + level * 2), MagicType.Magic, null);
+			ch.damage(Random.NormalIntRange(4 , 12), MagicType.Magic, null);
 
-			ch.sprite.burst(0xFFFFFFFF, level / 2 + 2);
+			ch.sprite.burst(0xFFFFFFFF, 2);
 
 		}
 	}
 
+    /*
 	@Override
 	public void onHit(MagesStaff staff, Char attacker, Char defender, int damage) {
 		//gain 1 turn of recharging buff per level of the wand.
@@ -68,10 +67,7 @@ public class WandOfMagicMissile extends Wand {
 			SpellSprite.show(attacker, SpellSprite.CHARGE);
 		}
 	}
-	
-	protected int initialCharges() {
-		return 3;
-	}
+	*/
 	
 	@Override
 	public String desc() {

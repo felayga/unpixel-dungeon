@@ -40,21 +40,27 @@ public class Ballistica {
 	public Integer collisionPos = null;
 	public Integer dist = 0;
 
-	//parameters to specify the colliding cell
-	public static final int STOP_TARGET = 1; //ballistica will stop at the target cell
-	public static final int STOP_CHARS = 2; //ballistica will stop on first char hit
-	public static final int STOP_TERRAIN = 4; //ballistica will stop on terrain(LOS blocking, impassable, etc.)
+    //parameters to specify the colliding cell
+    public enum Mode {
+        NoCollision (0x0000),
+        StopTarget  (0x0001), //ballistica will stop at the target cell
+        StopChars   (0x0002), //ballistica will stop on first char hit
+        StopTerrain (0x0004), //ballistica will stop on terrain(LOS blocking, impassable, etc.)
+        Projectile  (StopTarget.value | StopChars.value | StopTerrain.value),
+        MagicBolt   (StopChars.value | StopTerrain.value),
+        SeekerBolt  (StopTarget.value | StopChars.value),
+        SplasherBolt(StopTarget.value | StopTerrain.value);
 
-	public static final int PROJECTILE =  	STOP_TARGET	| STOP_CHARS	| STOP_TERRAIN;
+        public final int value;
 
-	public static final int MAGIC_BOLT =    STOP_CHARS  | STOP_TERRAIN;
+        Mode(int value) {
+            this.value = value;
+        }
+    }
 
-	public static final int WONT_STOP =     0;
-
-
-	public Ballistica( int from, int to, int params ){
+	public Ballistica( int from, int to, Mode params ){
 		sourcePos = from;
-		build(from, to, (params & STOP_TARGET) > 0, (params & STOP_CHARS) > 0, (params & STOP_TERRAIN) > 0);
+		build(from, to, params);
 		if (collisionPos != null) {
 			dist = path.indexOf(collisionPos);
 		}
@@ -69,7 +75,11 @@ public class Ballistica {
 		}
 	}
 
-	private void build( int from, int to, boolean stopTarget, boolean stopChars, boolean stopTerrain ) {
+	private void build( int from, int to, Mode params ) {
+        boolean stopTarget = (params.value & Mode.StopTarget.value) != 0;
+        boolean stopChars = (params.value & Mode.StopChars.value) != 0;
+        boolean stopTerrain = (params.value & Mode.StopTerrain.value) != 0;
+
 		int w = Level.WIDTH;
 
 		int x0 = from % w;

@@ -49,7 +49,7 @@ public class PotionOfFullHealing extends PotionOfHealing {
     {
         super.heal(hero);
 
-        if (bucStatus == BUCStatus.Blessed) {
+        if (bucStatus() == BUCStatus.Blessed) {
             int oldOverhealAmount = overhealAmount;
             overhealAmount /= 2;
             super.heal(hero);

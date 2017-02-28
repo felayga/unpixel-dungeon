@@ -96,9 +96,7 @@ public class MagesStaff extends SimpleMeleeWeapon {
 	public ArrayList<String> actions(Hero hero) {
 		ArrayList<String> actions = super.actions( hero );
 		actions.add(AC_IMBUE);
-		if (wand!= null && wand.hasCharges()) {
-			actions.add( AC_ZAP );
-		}
+        actions.add( AC_ZAP );
 		return actions;
 	}
 
@@ -134,7 +132,7 @@ public class MagesStaff extends SimpleMeleeWeapon {
 		if (wand != null && Dungeon.hero.subClass == HeroSubClass.BATTLEMAGE) {
 			//if (wand.curCharges < wand.maxCharges) wand.partialCharge += 0.33f;
 			ScrollOfRecharging.charge(attacker);
-			wand.onHit(this, attacker, defender, damage);
+			//wand.onHit(this, attacker, defender, damage);
 		}
 
 		return damage;

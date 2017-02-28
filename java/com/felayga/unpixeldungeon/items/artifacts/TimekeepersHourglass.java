@@ -81,7 +81,7 @@ public class TimekeepersHourglass extends Artifact_old {
 	@Override
 	public ArrayList<String> actions( Hero hero ) {
 		ArrayList<String> actions = super.actions( hero );
-		if (isEquipped( hero ) && charge > 0 && bucStatus != BUCStatus.Cursed)
+		if (isEquipped( hero ) && charge > 0 && bucStatus() != BUCStatus.Cursed)
 			actions.add(AC_ACTIVATE);
 		return actions;
 	}
@@ -92,7 +92,7 @@ public class TimekeepersHourglass extends Artifact_old {
 			if (!isEquipped( hero ))        GLog.i("You need to equip your hourglass to do that.");
 			else if (activeBuff != null)    GLog.i("Your hourglass is already in use.");
 			else if (charge <= 1)           GLog.i("Your hourglass hasn't recharged enough to be usable yet.");
-			else if (bucStatus == BUCStatus.Cursed)                GLog.i("You cannot use a cursed hourglass.");
+			else if (bucStatus() == BUCStatus.Cursed)                GLog.i("You cannot use a cursed hourglass.");
 			else GameScene.show(
 						new WndOptions(TXT_HGLASS, TXT_DESC, TXT_STASIS, TXT_FREEZE) {
 							@Override
@@ -163,7 +163,7 @@ public class TimekeepersHourglass extends Artifact_old {
 				"surely invoking this magic would give you some power over time.";
 
 		if (isEquipped( Dungeon.hero )){
-			if (bucStatus != BUCStatus.Cursed) {
+			if (bucStatus() != BUCStatus.Cursed) {
 				desc += "\n\nThe hourglass rests at your side, the whisper of steadily pouring sand is reassuring.";
 
 				if (level() < levelCap )
@@ -213,7 +213,7 @@ public class TimekeepersHourglass extends Artifact_old {
 		public boolean act() {
 
 			LockedFloor lock = target.buff(LockedFloor.class);
-			if (charge < chargeCap && bucStatus != BUCStatus.Cursed && (lock == null || lock.regenOn())) {
+			if (charge < chargeCap && bucStatus() != BUCStatus.Cursed && (lock == null || lock.regenOn())) {
 				partialCharge += 1 / (60f - (chargeCap - charge)*2f);
 
 				if (partialCharge >= 1) {
@@ -224,7 +224,7 @@ public class TimekeepersHourglass extends Artifact_old {
 						partialCharge = 0;
 					}
 				}
-			} else if (bucStatus == BUCStatus.Cursed && Random.Int(10) == 0)
+			} else if (bucStatus() == BUCStatus.Cursed && Random.Int(10) == 0)
 				target.spend_new(GameTime.TICK, false);
 
 			updateQuickslot();
@@ -370,7 +370,7 @@ public class TimekeepersHourglass extends Artifact_old {
 		@Override
 		public boolean doPickUp( Hero hero ) {
 			TimekeepersHourglass hourglass = hero.belongings.getItem( TimekeepersHourglass.class );
-			if (hourglass != null && hourglass.bucStatus != BUCStatus.Cursed) {
+			if (hourglass != null && hourglass.bucStatus() != BUCStatus.Cursed) {
 				hourglass.upgrade(this, 1);
 				Sample.INSTANCE.play( Assets.SND_DEWDROP );
 				if (hourglass.level() == hourglass.levelCap)

@@ -26,18 +26,13 @@
 
 package com.felayga.unpixeldungeon.plants;
 
-import com.felayga.unpixeldungeon.Dungeon;
 import com.felayga.unpixeldungeon.actors.Actor;
 import com.felayga.unpixeldungeon.actors.Char;
-import com.felayga.unpixeldungeon.actors.hero.Hero;
-import com.felayga.unpixeldungeon.actors.mobs.Mob;
-import com.felayga.unpixeldungeon.effects.CellEmitter;
-import com.felayga.unpixeldungeon.effects.Speck;
+import com.felayga.unpixeldungeon.actors.buffs.Buff;
+import com.felayga.unpixeldungeon.actors.buffs.negative.Hallucination;
 import com.felayga.unpixeldungeon.items.potions.IAlchemyComponent;
 import com.felayga.unpixeldungeon.items.potions.PotionOfBrewing;
-import com.felayga.unpixeldungeon.items.scrolls.ScrollOfTeleportation;
-import com.felayga.unpixeldungeon.levels.Level;
-import com.felayga.unpixeldungeon.mechanics.Constant;
+import com.felayga.unpixeldungeon.mechanics.GameTime;
 import com.felayga.unpixeldungeon.sprites.ItemSpriteSheet;
 
 /**
@@ -47,8 +42,8 @@ public class Swampweed extends Plant {
     private static final String TXT_NAME = "Swampweed";
 
     private static final String TXT_DESC =
-            "Touching a Fadeleaf will teleport any creature " +
-                    "to a random place on the current level.";
+            "Swampweed is well-known for its mind-altering effects. " +
+                    "Some creatures are known to deliberately seek out these plants for that reason.";
 
     public Swampweed()
     {
@@ -59,35 +54,8 @@ public class Swampweed extends Plant {
     public void activate() {
         Char ch = Actor.findChar(pos);
 
-        if (ch instanceof Hero) {
-
-            if (ScrollOfTeleportation.canTeleport(ch)) {
-                ScrollOfTeleportation.doTeleport(ch, Constant.Position.RANDOM);
-            }
-            ((Hero)ch).curAction = null;
-
-        } else if (ch instanceof Mob) {
-
-            int count = 10;
-            int newPos;
-            do {
-                newPos = Dungeon.level.randomRespawnCell();
-                if (count-- <= 0) {
-                    break;
-                }
-            } while (newPos < 0);
-
-            if (newPos != -1 && (Dungeon.level.flags & Level.FLAG_NOTELEPORTATION) == 0) {
-                ch.pos(newPos);
-                ch.sprite.place( ch.pos() );
-                ch.sprite.visible = Dungeon.visible[pos];
-
-            }
-
-        }
-
-        if (Dungeon.visible[pos]) {
-            CellEmitter.get(pos).start( Speck.factory(Speck.LIGHT), 0.2f, 3 );
+        if (ch != null) {
+            Buff.affect(ch, Char.Registry.get(ownerRegistryIndex()), Hallucination.class, GameTime.TICK * EFFECTDURATION );
         }
     }
 

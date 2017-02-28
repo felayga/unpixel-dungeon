@@ -34,6 +34,7 @@ import com.felayga.unpixeldungeon.effects.particles.PoisonParticle;
 import com.felayga.unpixeldungeon.items.potions.IAlchemyComponent;
 import com.felayga.unpixeldungeon.items.potions.PotionOfBrewing;
 import com.felayga.unpixeldungeon.sprites.ItemSpriteSheet;
+import com.watabou.utils.Random;
 
 public class Sorrowmoss extends Plant {
     private static final String TXT_NAME = "Sorrowmoss";
@@ -48,17 +49,21 @@ public class Sorrowmoss extends Plant {
 	
 	@Override
 	public void activate() {
-		Char ch = Actor.findChar(pos);
-		
-		if (ch != null) {
-            //todo: poison damage rebalancing after buff update
-            Poison.affect(ch, Char.Registry.get(ownerRegistryIndex()), 4 + Dungeon.depthAdjusted / 2);
-		}
-		
-		if (Dungeon.visible[pos]) {
-			CellEmitter.center( pos ).burst( PoisonParticle.SPLASH, 3 );
-		}
-	}
+        Char ch = Actor.findChar(pos);
+
+        if (ch != null) {
+            int damage = 0;
+            for (int n = 0; n < EFFECTDURATION; n++) {
+                damage += Random.IntRange(1, 4);
+            }
+
+            Poison.affect(ch, Char.Registry.get(ownerRegistryIndex()), damage);
+        }
+
+        if (Dungeon.visible[pos]) {
+            CellEmitter.center(pos).burst(PoisonParticle.SPLASH, 3);
+        }
+    }
 	
 	@Override
 	public String desc() {

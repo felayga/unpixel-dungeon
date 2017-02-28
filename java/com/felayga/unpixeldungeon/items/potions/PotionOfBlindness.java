@@ -61,7 +61,7 @@ public class PotionOfBlindness extends Potion {
         }
 
         int duration = Random.Int(250);
-        switch(bucStatus) {
+        switch(bucStatus()) {
             case Cursed:
                 duration += 375;
                 break;

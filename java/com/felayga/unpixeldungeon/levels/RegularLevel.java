@@ -84,6 +84,33 @@ public abstract class RegularLevel extends Level {
         return true;
     }
 
+    protected void buildSpecials() {
+        specials.addAll(Room.SPECIALS);
+
+        if (Dungeon.depth() >= 3 && Dungeon.depth() >= DungeonBranch.Normal.levelMin && Dungeon.depth() <= DungeonBranch.Normal.levelMax) {
+            if (3.0f / (float) (Dungeon.depthAdjusted - 1) >= Random.Float()) {
+                specialsExtra.add(Room.Type.SHOP);
+            }
+        }
+
+        if ((flags & FLAG_UNDIGGABLEFLOOR) != 0) {
+            specials.remove(Room.Type.WEAK_FLOOR);
+        }
+
+        for (DungeonBranch branch : DungeonBranch.values()) {
+            if (branch.branchLevel() == Dungeon.depth()) {
+                GLog.d("branch=" + branch + " level=" + branch.branchLevel() + " depth=" + Dungeon.depth() + " (true)");
+                if (branch.branchDown) {
+                    specialsExtra.add(Type.EXIT_ALTERNATE);
+                } else {
+                    specialsExtra.add(Type.ENTRANCE_ALTERNATE);
+                }
+            } else {
+                GLog.d("branch=" + branch + " level=" + branch.branchLevel() + " depth=" + Dungeon.depth() + " (false)");
+            }
+        }
+    }
+
     @Override
     protected boolean build() {
         if (!initRooms()) {
@@ -145,31 +172,9 @@ public abstract class RegularLevel extends Level {
             }
         }
 
-        specials = new ArrayList<Room.Type>(Room.SPECIALS);
-        specialsExtra = new ArrayList<Room.Type>();
-
-        if (Dungeon.depth() >= 3 && Dungeon.depth() >= DungeonBranch.Normal.levelMin && Dungeon.depth() <= DungeonBranch.Normal.levelMax) {
-            if (3.0f / (float)(Dungeon.depthAdjusted - 1) >= Random.Float()) {
-                specialsExtra.add(Room.Type.SHOP);
-            }
-        }
-
-        if ((flags & FLAG_UNDIGGABLEFLOOR) != 0) {
-            specials.remove(Room.Type.WEAK_FLOOR);
-        }
-
-        for (DungeonBranch branch : DungeonBranch.values()) {
-            if (branch.branchLevel() == Dungeon.depth()) {
-                GLog.d("branch=" + branch + " level=" + branch.branchLevel() + " depth=" + Dungeon.depth() + " (true)");
-                if (branch.branchDown) {
-                    specialsExtra.add(Type.EXIT_ALTERNATE);
-                } else {
-                    specialsExtra.add(Type.ENTRANCE_ALTERNATE);
-                }
-            } else {
-                GLog.d("branch="+branch+" level="+branch.branchLevel()+" depth="+Dungeon.depth()+" (false)");
-            }
-        }
+        specials = new ArrayList<>();
+        specialsExtra = new ArrayList<>();
+        buildSpecials();
 
         /*
         if (Dungeon.isChallenged(Challenges.NO_ARMOR)) {

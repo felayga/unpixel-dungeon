@@ -85,7 +85,7 @@ public class Shrieker extends Mob {
         int enrageDistance = 0;
 
         for (int n = 0; n < 8; n++) {
-            enrageDistance += Random.Int(0, distance);
+            enrageDistance += Random.IntRange(0, distance);
         }
 
 

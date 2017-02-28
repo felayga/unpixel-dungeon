@@ -32,6 +32,7 @@ import com.felayga.unpixeldungeon.ui.BuffIndicator;
 
 public class Hallucination extends FlavourBuff {
 
+    public Hallucination()
     {
         type = buffType.NEGATIVE;
     }

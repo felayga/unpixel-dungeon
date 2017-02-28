@@ -54,6 +54,7 @@ public class Burning extends Buff implements Hero.Doom {
 	
 	private long left;
 
+    public Burning()
 	{
 		type = buffType.NEGATIVE;
 	}
@@ -74,7 +75,7 @@ public class Burning extends Buff implements Hero.Doom {
 	public boolean act() {
         if (target.isAlive()) {
 
-            target.damage(Random.Int(1, 4), MagicType.Fire, null);
+            target.damage(Random.IntRange(1, 4), MagicType.Fire, null);
             Buff.detach(target, Chill.class);
             Buff.detach(target, AcidBurning.class);
 
@@ -114,7 +115,7 @@ public class Burning extends Buff implements Hero.Doom {
         left -= GameTime.TICK;
 
         if (left <= 0 ||
-                Random.Float() > (2 + (float) target.HP / target.HT) / 3 ||
+                /*Random.Float() > (2 + (float) target.HP / target.HT) / 3 ||*/
                 (Level.puddle[target.pos()] && !target.flying())) {
 
             detach();

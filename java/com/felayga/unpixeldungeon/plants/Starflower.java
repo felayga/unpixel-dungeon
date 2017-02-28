@@ -28,20 +28,19 @@ package com.felayga.unpixeldungeon.plants;
 import com.felayga.unpixeldungeon.Dungeon;
 import com.felayga.unpixeldungeon.actors.Actor;
 import com.felayga.unpixeldungeon.actors.Char;
-import com.felayga.unpixeldungeon.actors.buffs.Buff;
-import com.felayga.unpixeldungeon.actors.buffs.positive.Bless;
+import com.felayga.unpixeldungeon.effects.CellEmitter;
+import com.felayga.unpixeldungeon.effects.Speck;
+import com.felayga.unpixeldungeon.effects.particles.ShaftParticle;
 import com.felayga.unpixeldungeon.items.potions.IAlchemyComponent;
 import com.felayga.unpixeldungeon.items.potions.PotionOfBrewing;
-import com.felayga.unpixeldungeon.mechanics.GameTime;
 import com.felayga.unpixeldungeon.sprites.ItemSpriteSheet;
-import com.watabou.utils.Random;
 
 public class Starflower extends Plant {
     private static final String TXT_NAME = "Starflower";
 
 	private static final String TXT_DESC =
-			"An extremely rare plant, " +
-			"Starflower is said to grant holy power to whomever touches it.";
+			"A highly coveted plant, " +
+			"Starflower is said to restore the mind and body of whomever touches it.";
 
     public Starflower()
 	{
@@ -52,12 +51,20 @@ public class Starflower extends Plant {
 	public void activate() {
 		Char ch = Actor.findChar(pos);
 
-		if (ch != null) Buff.prolong(ch, Char.Registry.get(ownerRegistryIndex()), Bless.class, GameTime.TICK * 30);
+        if (ch != null) {
+            //Buff.prolong(ch, Char.Registry.get(ownerRegistryIndex()), Bless.class, GameTime.TICK * 30);
 
-		if (Random.Int(5) == 0){
-			Dungeon.level.drop(new Seed(), pos).sprite.drop();
-		}
-	}
+            ch.HP = Math.min(ch.HT, ch.HP + ch.HT / 8);
+            ch.sprite.emitter().start(Speck.factory(Speck.HEALING), 0.4f, 2);
+
+            ch.MP = Math.min(ch.MT, ch.MP + ch.MT / 8);
+            ch.sprite.emitter().start(Speck.factory(Speck.MANAING), 0.4f, 2);
+        }
+
+        if (Dungeon.visible[pos]) {
+            CellEmitter.get(pos).start( ShaftParticle.FACTORY, 0.2f, 3 );
+        }
+    }
 
 	@Override
 	public String desc() {

@@ -36,6 +36,7 @@ public class Paralysis extends FlavourBuff {
 
     private static final long DURATION = GameTime.TICK * 10;
 
+    public Paralysis()
     {
         type = buffType.NEGATIVE;
     }

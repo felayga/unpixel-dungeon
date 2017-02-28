@@ -230,9 +230,9 @@ public class Ring extends EquippableItem {
         if (isEquipped(Dungeon.hero)) {
 
             return desc() + "\n\n" + "The " + getDisplayName() + " is on your finger" +
-                    (bucStatus == BUCStatus.Cursed ? ", and because it is cursed, you are powerless to remove it." : ".");
+                    (bucStatus() == BUCStatus.Cursed ? ", and because it is cursed, you are powerless to remove it." : ".");
 
-        } else if (bucStatusKnown && bucStatus == BUCStatus.Cursed) {
+        } else if (bucStatusKnown() && bucStatus() == BUCStatus.Cursed) {
 
             return desc() + "\n\nYou can feel a malevolent magic lurking within the " + getDisplayName() + ".";
 

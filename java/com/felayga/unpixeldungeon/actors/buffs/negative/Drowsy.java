@@ -34,6 +34,7 @@ import com.watabou.utils.Random;
 
 public class Drowsy extends Buff {
 
+    public Drowsy()
     {
         type = buffType.NEUTRAL;
     }

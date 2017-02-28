@@ -139,7 +139,7 @@ public class WndSettings extends WndTabbed {
                 scale.setRect(0, 0, 0, 0);
             }
 
-            OptionSlider brightness = new OptionSlider("Brightness", "Dark", "Bright", -2, 4) {
+            OptionSlider brightness = new OptionSlider("Brightness", "Dark", "Bright", -6, 0) {
                 @Override
                 protected void onChange() {
                     unPixelDungeon.brightness(getSelectedValue());

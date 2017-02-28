@@ -38,7 +38,7 @@ import com.felayga.unpixeldungeon.sprites.ItemSpriteSheet;
 public class Sungrass extends Plant {
     private static final String TXT_NAME = "Sungrass";
 
-	private static final String TXT_DESC = "Sungrass is renowned for its sap's slow but effective healing properties.";
+	private static final String TXT_DESC = "Sungrass is renowned for its sap's effective healing properties.";
 
     public Sungrass()
 	{

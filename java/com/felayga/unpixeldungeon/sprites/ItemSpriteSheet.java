@@ -45,15 +45,15 @@ public class ItemSpriteSheet {
 	private static final int ROW_SEED           = 18 * ROWSIZE;
     private static final int ROW_ALCHEMY        = 19 * ROWSIZE;
 	private static final int ROW_FOOD           = 20 * ROWSIZE;
-	private static final int ROW_QUEST          = 21 * ROWSIZE;
-	private static final int ROW_TOOLS          = 22 * ROWSIZE;
-	private static final int ROW_GEMSTONE       = 23 * ROWSIZE;
-	private static final int ROW_BOOK           = 24 * ROWSIZE;
-	private static final int ROW_SPELL          = 27 * ROWSIZE;
-	private static final int ROW_BOOTS          = 28 * ROWSIZE;
-	private static final int ROW_GLOVES         = 29 * ROWSIZE;
-	private static final int ROW_HELMET         = 30 * ROWSIZE;
-    private static final int ROW_CLOAK          = 31 * ROWSIZE;
+	private static final int ROW_QUEST          = 22 * ROWSIZE;
+	private static final int ROW_TOOLS          = 23 * ROWSIZE;
+	private static final int ROW_GEMSTONE       = 24 * ROWSIZE;
+	private static final int ROW_BOOK           = 25 * ROWSIZE;
+	private static final int ROW_SPELL          = 28 * ROWSIZE;
+	private static final int ROW_BOOTS          = 29 * ROWSIZE;
+	private static final int ROW_GLOVES         = 30 * ROWSIZE;
+	private static final int ROW_HELMET         = 31 * ROWSIZE;
+    private static final int ROW_CLOAK          = 32 * ROWSIZE;
 
 	//Row One: Items which can't be obtained
 	//null warning occupies space 0, should only show up if there's a bug.
@@ -77,19 +77,18 @@ public class ItemSpriteSheet {
     public static final int SACK_OILSKIN    = ROW_HEAPS + 15;
 
 	// Placeholders
-	public static final int PLACEHOLDER_WEAPON	= ROW_PLACEHOLDERS + 0;
-	public static final int PLACEHOLDER_ARMOR	= ROW_PLACEHOLDERS + 1;
-	public static final int PLACEHOLDER_RING	= ROW_PLACEHOLDERS + 2;
-	public static final int PLACEHOLDER_SMTH	= ROW_PLACEHOLDERS + 3;
+    public static final int PLACEHOLDER_SMTH	= ROW_PLACEHOLDERS + 0;
+	public static final int PLACEHOLDER_WEAPON	= ROW_PLACEHOLDERS + 1;
+	public static final int PLACEHOLDER_ARMOR	= ROW_PLACEHOLDERS + 2;
+	public static final int PLACEHOLDER_RING	= ROW_PLACEHOLDERS + 3;
 	public static final int PLACEHOLDER_SHIELD	= ROW_PLACEHOLDERS + 4;
-	public static final int PLACEHOLDER_TOOL	= ROW_PLACEHOLDERS + 5;
+    public static final int PLACEHOLDER_HELMET	= ROW_PLACEHOLDERS + 5;
 	public static final int PLACEHOLDER_GLOVES	= ROW_PLACEHOLDERS + 6;
 	public static final int PLACEHOLDER_BOOTS	= ROW_PLACEHOLDERS + 7;
 	public static final int PLACEHOLDER_CLOAK	= ROW_PLACEHOLDERS + 8;
 	public static final int PLACEHOLDER_AMULET	= ROW_PLACEHOLDERS + 9;
-	public static final int PLACEHOLDER_FACE	= ROW_PLACEHOLDERS + 10;
-	public static final int PLACEHOLDER_HELMET	= ROW_PLACEHOLDERS + 11;
-	public static final int PLACEHOLDER_PANTS	= ROW_PLACEHOLDERS + 12;
+    public static final int PLACEHOLDER_RANGED	= ROW_PLACEHOLDERS + 10;
+    public static final int PLACEHOLDER_AMMO	= ROW_PLACEHOLDERS + 11;
 
 	//Row Two: Miscellaneous single use items
 	public static final int GOLD	        = ROW_MISCELLANEOUS + 0;
@@ -128,17 +127,21 @@ public class ItemSpriteSheet {
     public static final int MELEE_CRICKETBAT    = ROW_WEAPONMELEE + 14;
 
     //Row Derp: Ranged weapons
-    public static final int RANGED_SLING           = ROW_WEAPONRANGED + 0;
+    public static final int RANGED_SLING            = ROW_WEAPONRANGED + 0;
+    public static final int RANGED_BOOMERANG        = ROW_WEAPONRANGED + 1;
 
 	//Row Four: Missile weapons
 	public static final int MISSILE_DART			= ROW_WEAPONAMMO + 0;
-	public static final int MISSILE_BOOMERANG		= ROW_WEAPONAMMO + 1;
-	public static final int MISSILE_INCENDIARY_DART	= ROW_WEAPONAMMO + 2;
-	public static final int MISSILE_SHURIKEN		= ROW_WEAPONAMMO + 3;
-	public static final int MISSILE_CURARE_DART		= ROW_WEAPONAMMO + 4;
-	public static final int MISSILE_JAVELIN			= ROW_WEAPONAMMO + 5;
-	public static final int MISSILE_TOMAHAWK		= ROW_WEAPONAMMO + 6;
-	public static final int MISSILE_ROCK			= ROW_WEAPONAMMO + 7;
+	public static final int MISSILE_INCENDIARY_DART	= ROW_WEAPONAMMO + 1;
+    public static final int MISSILE_CURARE_DART		= ROW_WEAPONAMMO + 2;
+    public static final int MISSILE_JAVELIN			= ROW_WEAPONAMMO + 3;
+	public static final int MISSILE_SHURIKEN		= ROW_WEAPONAMMO + 4;
+	public static final int MISSILE_TOMAHAWK		= ROW_WEAPONAMMO + 5;
+	public static final int MISSILE_ROCK			= ROW_WEAPONAMMO + 6;
+    public static final int MISSILE_ARROW           = ROW_WEAPONAMMO + 7;
+    public static final int MISSILE_ARROW_ELVISH    = ROW_WEAPONAMMO + 8;
+    public static final int MISSILE_ARROW_ORCISH    = ROW_WEAPONAMMO + 9;
+    public static final int MISSILE_ARROW_SILVER    = ROW_WEAPONAMMO + 10;
 
 	//Row Five: Armors
 	public static final int ARMOR_CLOTH				= ROW_ARMOR + 0;
@@ -151,33 +154,32 @@ public class ItemSpriteSheet {
 	public static final int ARMOR_HIDE				= ROW_ARMOR + 7;
 	public static final int ARMOR_BANDED			= ROW_ARMOR + 8;
 
-
-	public static final int ARMOR_WARRIOR			= ROW_ARMOR + 5;
-	public static final int ARMOR_MAGE				= ROW_ARMOR + 13;
-	public static final int ARMOR_ROGUE				= ROW_ARMOR + 14;
-	public static final int ARMOR_HUNTRESS			= ROW_ARMOR + 15;
-
 	//Row Six: Wands
-    public static final int WAND_01     = ROW_WAND + 0;
-    public static final int WAND_02     = ROW_WAND + 1;
-    public static final int WAND_03     = ROW_WAND + 2;
-    public static final int WAND_04     = ROW_WAND + 3;
-    public static final int WAND_05     = ROW_WAND + 4;
-    public static final int WAND_06     = ROW_WAND + 5;
-    public static final int WAND_07     = ROW_WAND + 6;
-    public static final int WAND_08     = ROW_WAND + 7;
-    public static final int WAND_09     = ROW_WAND + 8;
-    public static final int WAND_10     = ROW_WAND + 9;
-    public static final int WAND_11     = ROW_WAND + 10;
-    public static final int WAND_12     = ROW_WAND + 11;
-    public static final int WAND_13     = ROW_WAND + 12;
-    public static final int WAND_14     = ROW_WAND + 13;
-    public static final int WAND_15     = ROW_WAND + 14;
-    public static final int WAND_16     = ROW_WAND + 15;
-    public static final int WAND_17     = ROW_WAND + 16;
-    public static final int WAND_18     = ROW_WAND + 17;
-    public static final int WAND_19     = ROW_WAND + 18;
-    public static final int WAND_20     = ROW_WAND + 19;
+    public static final int WAND_GLASS      = ROW_WAND + 0;
+    public static final int WAND_BALSA      = ROW_WAND + 1;
+    public static final int WAND_CRYSTAL    = ROW_WAND + 2;
+    public static final int WAND_MAPLE      = ROW_WAND + 3;
+    public static final int WAND_PINE       = ROW_WAND + 4;
+    public static final int WAND_OAK        = ROW_WAND + 5;
+    public static final int WAND_EBONY      = ROW_WAND + 6;
+    public static final int WAND_MARBLE     = ROW_WAND + 7;
+    public static final int WAND_TIN        = ROW_WAND + 8;
+    public static final int WAND_BRASS      = ROW_WAND + 9;
+    public static final int WAND_COPPER     = ROW_WAND + 10;
+    public static final int WAND_SILVER     = ROW_WAND + 11;
+    public static final int WAND_ALUMINUM   = ROW_WAND + 12;
+    public static final int WAND_URANIUM    = ROW_WAND + 13;
+    public static final int WAND_IRON       = ROW_WAND + 14;
+    public static final int WAND_STEEL      = ROW_WAND + 15;
+    public static final int WAND_GOLD       = ROW_WAND + 16;
+    public static final int WAND_JEWELED    = ROW_WAND + 17;
+    public static final int WAND_FORKED     = ROW_WAND + 18;
+    public static final int WAND_CURVED     = ROW_WAND + 19;
+    public static final int WAND_SHORT      = ROW_WAND + 20;
+    public static final int WAND_SPIKED     = ROW_WAND + 21;
+    public static final int WAND_RUNED      = ROW_WAND + 22;
+    public static final int WAND_PLASTIC    = ROW_WAND + 23;
+
     /*
 	public static final int WAND_MAGIC_MISSILE	= ROW_WAND + 0;
 	public static final int WAND_FIREBOLT		= ROW_WAND + 1;
@@ -383,6 +385,19 @@ public class ItemSpriteSheet {
     public static final int FOOD_MRE            = ROW_FOOD + 11;
     public static final int FOOD_CRATION        = ROW_FOOD + 12;
     public static final int FOOD_LEMBAS         = ROW_FOOD + 13;
+    public static final int FOOD_APPLE          = ROW_FOOD + 14;
+    public static final int FOOD_BANANA         = ROW_FOOD + 15;
+    public static final int FOOD_PEAR           = ROW_FOOD + 16;
+    public static final int FOOD_ORANGE         = ROW_FOOD + 17;
+    public static final int FOOD_GRAPES         = ROW_FOOD + 18;
+    public static final int FOOD_TRIPE          = ROW_FOOD + 19;
+    public static final int FOOD_CARROT         = ROW_FOOD + 20;
+    public static final int FOOD_POTATO         = ROW_FOOD + 21;
+    public static final int FOOD_GARLIC         = ROW_FOOD + 22;
+    public static final int FOOD_BELLPEPPER     = ROW_FOOD + 23;
+    public static final int FOOD_GINGER         = ROW_FOOD + 24;
+    public static final int FOOD_MEATBALL       = ROW_FOOD + 25;
+    public static final int FOOD_MEATWAD        = ROW_FOOD + 26;
 
 	//Row Fourteen: Quest Items
 	public static final int SKULL		    = ROW_QUEST + 0;
@@ -400,6 +415,7 @@ public class ItemSpriteSheet {
     public static final int TOOL_CANNINGKIT = ROW_TOOLS + 3;
     public static final int TOOL_BLINDFOLD  = ROW_TOOLS + 4;
     public static final int TOOL_TOWEL      = ROW_TOOLS + 5;
+    public static final int TOOL_CANOPENER  = ROW_TOOLS + 6;
 
 	//Row Sixteen: Unused
 	public static final int GEMSTONE_WHITE	= ROW_GEMSTONE + 0;

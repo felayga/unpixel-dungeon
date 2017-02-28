@@ -27,9 +27,7 @@ package com.felayga.unpixeldungeon.items;
 
 import com.felayga.unpixeldungeon.Assets;
 import com.felayga.unpixeldungeon.Dungeon;
-import com.felayga.unpixeldungeon.actors.Char;
 import com.felayga.unpixeldungeon.actors.hero.Hero;
-import com.felayga.unpixeldungeon.actors.hero.HeroClass;
 import com.felayga.unpixeldungeon.effects.Speck;
 import com.felayga.unpixeldungeon.mechanics.GameTime;
 import com.felayga.unpixeldungeon.sprites.CharSprite;
@@ -62,6 +60,8 @@ public class DewVial extends Item {
 		image = ItemSpriteSheet.VIAL;
 
 		defaultAction = AC_DRINK;
+
+        hasLevels(false);
 
 		unique = true;
 	}
@@ -130,11 +130,6 @@ public class DewVial extends Item {
 	}
 
 	public void empty() {volume = 0; updateQuickslot();}
-
-	@Override
-	public boolean isUpgradable() {
-		return false;
-	}
 
 	@Override
 	public boolean isIdentified() {

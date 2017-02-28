@@ -23,33 +23,36 @@
  *
  *
  */
+
 package com.felayga.unpixeldungeon.items.food;
 
 import com.felayga.unpixeldungeon.actors.buffs.hero.Encumbrance;
 import com.felayga.unpixeldungeon.sprites.ItemSpriteSheet;
 
-public class OverpricedRation extends Food {
+/**
+ * Created by HELLO on 2/23/2017.
+ */
+public class Meatwad extends Food {
+    public Meatwad() {
+        super(2500, 125, Encumbrance.UNIT * 200);
 
-    public OverpricedRation()
-	{
-        super(600, Encumbrance.UNIT * 15);
-
-		name = "cram ration";
-		image = ItemSpriteSheet.FOOD_OVERPRICED;
+        stackable = true;
+        name = "meatwad";
+        image = ItemSpriteSheet.FOOD_MEATWAD;
 
         bones = true;
-        price = 35;
-	}
-	
-	@Override
-	public String info() {
-		return "It looks exactly like a standard ration of food but smaller." + super.info();
-	}
 
-	@Override
-	public String message()
-	{
-		return "That food tasted bland.";
-	}
+        price = 105;
+    }
 
+    @Override
+    public String info() {
+        return "A huge artificial meat product from dubious sources.  Seems edible..." + super.info();
+    }
+
+    @Override
+    public String message() {
+        return "This " + name + " tastes okay.";
+    }
 }
+

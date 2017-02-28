@@ -37,8 +37,6 @@ import com.watabou.utils.SparseArray;
 
 import java.util.HashSet;
 
-import javax.microedition.khronos.opengles.GL;
-
 public abstract class Actor implements Bundlable {
     private long time;
 

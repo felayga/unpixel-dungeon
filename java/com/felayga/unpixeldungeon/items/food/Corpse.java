@@ -53,7 +53,7 @@ public class Corpse extends Food implements IDecayable {
     }
 
     public Corpse(Char source) {
-        super(source != null ? source.nutrition : 1, source != null ? source.weight : Encumbrance.UNIT);
+        super(source != null ? source.nutrition : 1, 125, source != null ? source.weight : Encumbrance.UNIT);
 
         if (source != null) {
             name = source.name;
@@ -75,8 +75,8 @@ public class Corpse extends Food implements IDecayable {
         price = 5;
     }
 
-    public Corpse(CannedFood source) {
-        super(Food.AMOUNT_EATEN_PER_ROUND, Encumbrance.UNIT * 10);
+    public Corpse(CannedFood source, CannedFood.Variety variety) {
+        super(variety.nutrition, variety.nutrition, Encumbrance.UNIT * 10);
 
         hasBuc(true);
 
@@ -92,6 +92,8 @@ public class Corpse extends Food implements IDecayable {
             effects = CorpseEffect.None.value;
             resistances = MagicType.None.value;
         }
+
+        cannedVariation = variety;
 
         image = getSprite(isRotten(), isVegetable(), isCanned());
         stackable = false;
@@ -175,6 +177,7 @@ public class Corpse extends Food implements IDecayable {
     public long effects;
     public long resistances;
     public int corpseLevel;
+    public CannedFood.Variety cannedVariation;
 
     protected void rot(int amount) {
         boolean rotten = isRotten();
@@ -271,6 +274,7 @@ public class Corpse extends Food implements IDecayable {
     private static final String EFFECTS = "effects";
     private static final String RESISTANCES = "resistances";
     private static final String CORPSELEVEL = "corpseLevel";
+    private static final String CANNEDVARIATION = "cannedVariation";
 
     @Override
     public void storeInBundle(Bundle bundle) {
@@ -284,6 +288,7 @@ public class Corpse extends Food implements IDecayable {
         bundle.put(EFFECTS, effects);
         bundle.put(RESISTANCES, resistances);
         bundle.put(CORPSELEVEL, corpseLevel);
+        bundle.put(CANNEDVARIATION, cannedVariation != null ? cannedVariation.value : CannedFood.Variety.None.value);
     }
 
     @Override
@@ -298,6 +303,7 @@ public class Corpse extends Food implements IDecayable {
         effects = bundle.getLong(EFFECTS);
         resistances = bundle.getLong(RESISTANCES);
         corpseLevel = bundle.getInt(CORPSELEVEL);
+        cannedVariation = CannedFood.Variety.fromInt(bundle.getInt(CANNEDVARIATION));
 
         rot(0);
     }
@@ -307,7 +313,7 @@ public class Corpse extends Food implements IDecayable {
             GLog.n("Ulch - that food was tainted!");
             Buff.affect(hero, null, DeathlySick.class);
         } else if (isRotten()) {
-            hero.damage(Random.Int(0, 8) + 1, MagicType.Mundane, null);
+            hero.damage(Random.IntRange(1, 8), MagicType.Mundane, null);
             Buff.prolong(hero, null, Sick.class, 14);
         }
     }
@@ -325,10 +331,10 @@ public class Corpse extends Food implements IDecayable {
 
         qualityCheck(hero);
 
-        applyEffectsResistances(hero, effects, resistances, corpseLevel);
+        applyEffectsResistances(hero, effects, resistances, corpseLevel, bucStatus());
     }
 
-    public static void applyEffectsResistances(Hero hero, long effects, long resistances, int corpseLevel) {
+    public static void applyEffectsResistances(Hero hero, long effects, long resistances, int corpseLevel, BUCStatus bucStatus) {
         //region effects
 
         if ((effects & CorpseEffect.Poisonous.value) != 0) {
@@ -336,10 +342,14 @@ public class Corpse extends Food implements IDecayable {
             if ((hero.immunityMagical & MagicType.Poison.value) != 0) {
                 GLog.p("You seem unaffected by the poison.");
             } else {
-                hero.damage(Random.Int(1, 15), MagicType.Poison, null);
+                hero.damage(Random.IntRange(1, 15), MagicType.Poison, null);
 
                 hero.useAttribute(AttributeType.STRCON, -Random.Float(1.0f, 2.0f));
             }
+        }
+
+        if (!hero.isAlive()) {
+            return;
         }
 
         if ((effects & CorpseEffect.ManaBoost.value) != 0) {
@@ -380,12 +390,37 @@ public class Corpse extends Food implements IDecayable {
         if ((effects & CorpseEffect.Acidic.value) != 0) {
             if ((hero.immunityMagical & MagicType.Acid.value) == 0) {
                 GLog.p("Ecch.  That really burns!");
-                hero.damage(Random.Int(1, 15), MagicType.Acid, null);
+                hero.damage(Random.IntRange(1, 15), MagicType.Acid, null);
             }
+        }
+
+        if (!hero.isAlive()) {
+            return;
         }
 
         if ((effects & CorpseEffect.Sickening.value) != 0) {
             Buff.prolong(hero, null, Sick.class, 14);
+        }
+
+        if ((effects & CorpseEffect.Spinach.value) != 0) {
+            int amount = 1;
+            if (hero.STRCON() < 18 && Random.Int(4) == 0) {
+                amount = Random.IntRange(1, 7);
+            }
+
+            switch (bucStatus) {
+                case Cursed:
+                    hero.damageAttribute(AttributeType.STRCON, amount);
+                    break;
+                default:
+                    hero.increaseAttribute(AttributeType.STRCON, amount);
+                    GLog.p("This makes you feel as strong as a sailor!");
+                    break;
+            }
+        }
+
+        if (!hero.isAlive()) {
+            return;
         }
 
         //endregion
@@ -429,7 +464,7 @@ public class Corpse extends Food implements IDecayable {
             }
         } else {
             if (partiallyEaten) {
-                return "partially eaten " + name + " corpse";
+                return "partially eaten " + name;
             } else {
                 return name;
             }
@@ -462,6 +497,15 @@ public class Corpse extends Food implements IDecayable {
 
     @Override
     public String message() {
-        return "This " + name + " tastes terrible!";
+        if (isCanned()) {
+            String variation = null;
+            if (cannedVariation != null) {
+                variation = cannedVariation.name;
+            }
+
+            return "This can of " + (variation != null ? variation +" " : "") + name + " tastes okay.";
+        } else {
+            return "This " + name + " tastes terrible!";
+        }
     }
 }

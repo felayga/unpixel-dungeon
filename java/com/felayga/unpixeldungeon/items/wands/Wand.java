@@ -33,7 +33,6 @@ import com.felayga.unpixeldungeon.actors.buffs.hero.Encumbrance;
 import com.felayga.unpixeldungeon.actors.buffs.hero.SoulMark;
 import com.felayga.unpixeldungeon.actors.buffs.positive.Invisibility;
 import com.felayga.unpixeldungeon.actors.hero.Hero;
-import com.felayga.unpixeldungeon.actors.hero.HeroClass;
 import com.felayga.unpixeldungeon.actors.hero.HeroSubClass;
 import com.felayga.unpixeldungeon.effects.MagicMissile;
 import com.felayga.unpixeldungeon.items.Item;
@@ -58,20 +57,20 @@ import java.util.ArrayList;
 
 public abstract class Wand extends Item {
 
-	private static final int USAGES_TO_KNOW    = 20;
+    private static final int USAGES_TO_KNOW = 20;
 
-	public static final String AC_ZAP	= "ZAP";
-	
-	private static final String TXT_WOOD	= "This thin %s wand is warm to the touch. Who knows what it will do when used?";
-	private static final String TXT_DAMAGE	= "When this wand is used as a melee weapon, its average damage is %d points per hit.";
-	private static final String TXT_WEAPON	= "You can use this wand as a melee weapon.";
-			
-	private static final String TXT_FIZZLES		= "your wand fizzles; it must not have enough charge.";
-	private static final String TXT_SELF_TARGET	= "You can't target yourself";
+    public static final String AC_ZAP = "ZAP";
 
-	private static final String TXT_IDENTIFY    = "You are now familiar with your %s.";
+    private static final String TXT_WOOD = "This thin %s wand is warm to the touch. Who knows what it will do when used?";
+    private static final String TXT_DAMAGE = "When this wand is used as a melee weapon, its average damage is %d points per hit.";
+    private static final String TXT_WEAPON = "You can use this wand as a melee weapon.";
 
-	private static final long TIME_TO_ZAP	= GameTime.TICK;
+    private static final String TXT_FIZZLES = "your wand fizzles; it must not have enough charge.";
+    private static final String TXT_SELF_TARGET = "You can't target yourself";
+
+    private static final String TXT_IDENTIFY = "You are now familiar with your %s.";
+
+    private static final long TIME_TO_ZAP = GameTime.TICK;
 
 
     private static final Class<?>[] wands = {
@@ -81,7 +80,14 @@ public abstract class Wand extends Item {
             WandOfLightning.class,
             WandOfMagicMissile.class,
             WandOfRegrowth.class,
-            WandOfVenom.class
+            WandOfVenom.class,
+            WandOfLight.class,
+            WandOfNothing.class,
+            WandOfTunneling.class,
+            WandOfMakeInvisible.class,
+            WandOfHaste.class,
+            WandOfSlow.class,
+            WandOfBlastWave.class
     };
     private static final String[] appearances = {
             "glass",
@@ -103,29 +109,37 @@ public abstract class Wand extends Item {
             "gold",
             "jeweled",
             "forked",
-            "curved"
+            "curved",
+            "short",
+            "spiked",
+            "runed",
+            "plastic"
     };
     private static final Integer[] images = {
-            ItemSpriteSheet.WAND_01,
-            ItemSpriteSheet.WAND_02,
-            ItemSpriteSheet.WAND_03,
-            ItemSpriteSheet.WAND_04,
-            ItemSpriteSheet.WAND_05,
-            ItemSpriteSheet.WAND_06,
-            ItemSpriteSheet.WAND_07,
-            ItemSpriteSheet.WAND_08,
-            ItemSpriteSheet.WAND_09,
-            ItemSpriteSheet.WAND_10,
-            ItemSpriteSheet.WAND_11,
-            ItemSpriteSheet.WAND_12,
-            ItemSpriteSheet.WAND_13,
-            ItemSpriteSheet.WAND_14,
-            ItemSpriteSheet.WAND_15,
-            ItemSpriteSheet.WAND_16,
-            ItemSpriteSheet.WAND_17,
-            ItemSpriteSheet.WAND_18,
-            ItemSpriteSheet.WAND_19,
-            ItemSpriteSheet.WAND_20
+            ItemSpriteSheet.WAND_GLASS,
+            ItemSpriteSheet.WAND_BALSA,
+            ItemSpriteSheet.WAND_CRYSTAL,
+            ItemSpriteSheet.WAND_MAPLE,
+            ItemSpriteSheet.WAND_PINE,
+            ItemSpriteSheet.WAND_OAK,
+            ItemSpriteSheet.WAND_EBONY,
+            ItemSpriteSheet.WAND_MARBLE,
+            ItemSpriteSheet.WAND_TIN,
+            ItemSpriteSheet.WAND_BRASS,
+            ItemSpriteSheet.WAND_COPPER,
+            ItemSpriteSheet.WAND_SILVER,
+            ItemSpriteSheet.WAND_ALUMINUM,
+            ItemSpriteSheet.WAND_URANIUM,
+            ItemSpriteSheet.WAND_IRON,
+            ItemSpriteSheet.WAND_STEEL,
+            ItemSpriteSheet.WAND_GOLD,
+            ItemSpriteSheet.WAND_JEWELED,
+            ItemSpriteSheet.WAND_FORKED,
+            ItemSpriteSheet.WAND_CURVED,
+            ItemSpriteSheet.WAND_SHORT,
+            ItemSpriteSheet.WAND_SPIKED,
+            ItemSpriteSheet.WAND_RUNED,
+            ItemSpriteSheet.WAND_PLASTIC
     };
 
     private static ItemRandomizationHandler<Wand> handler;
@@ -134,20 +148,20 @@ public abstract class Wand extends Item {
 
     @SuppressWarnings("unchecked")
     public static void initLabels() {
-        handler = new ItemRandomizationHandler<Wand>( (Class<? extends Wand>[])wands, appearances, images, 0 );
+        handler = new ItemRandomizationHandler<Wand>((Class<? extends Wand>[]) wands, appearances, images, 0);
     }
 
-    public static void save( Bundle bundle ) {
-        handler.save( bundle );
+    public static void save(Bundle bundle) {
+        handler.save(bundle);
     }
 
     @SuppressWarnings("unchecked")
-    public static void restore( Bundle bundle ) {
-        handler = new ItemRandomizationHandler<Wand>( (Class<? extends Wand>[])wands, appearances, images, bundle );
+    public static void restore(Bundle bundle) {
+        handler = new ItemRandomizationHandler<Wand>((Class<? extends Wand>[]) wands, appearances, images, bundle);
     }
 
     public boolean isKnown() {
-        return handler.isKnown( this );
+        return handler.isKnown(this);
     }
 
     public boolean setKnown() {
@@ -165,76 +179,87 @@ public abstract class Wand extends Item {
     public Item random() {
         super.random();
 
-        int luck = Dungeon.hero.luck();
-
-        float min = (float)Math.pow(((double) luck + 11.0) / 31.0, 1.5);
-        float max = (float)Math.pow(((double) luck + 21.0) / 31.0, 0.5);
-        double charges = Random.Float(min, max);
-
-        curCharges = (int)Math.ceil(charges * (double)maxCharges);
+        curCharges = randomCharges();
 
         return this;
     }
 
-    private int maxCharges;
-	private int curCharges;
+    protected int randomCharges() {
+        int luck = Dungeon.hero.luck();
 
-    public boolean hasCharges() {
-        return curCharges > 0;
+        float min = (float) Math.pow(((double) luck + 11.0) / 31.0, 1.5);
+        float max = (float) Math.pow(((double) luck + 21.0) / 31.0, 0.5);
+        double charges = Random.Float(min, max);
+
+        return (int) Math.ceil(charges * (double) maxCharges);
     }
-	
-	private boolean curChargeKnown = false;
 
-	protected int usagesToKnow = USAGES_TO_KNOW;
+    private int maxCharges;
+    private int curCharges;
 
-	protected int collisionProperties = Ballistica.MAGIC_BOLT;
+    public int curCharges() {
+        return curCharges;
+    }
 
-	public Wand(int maxCharges)
-	{
+    private boolean curChargeKnown = false;
+
+    protected int usagesToKnow = USAGES_TO_KNOW;
+
+    protected Ballistica.Mode collisionProperties = Ballistica.Mode.MagicBolt;
+
+    protected boolean isOffensive;
+    protected boolean directionalZap;
+    protected boolean canTargetSelf;
+
+    public Wand(int maxCharges) {
         syncVisuals();
 
-		defaultAction = AC_ZAP;
-		usesTargeting = true;
+        defaultAction = AC_ZAP;
+        usesTargeting = true;
         this.maxCharges = maxCharges;
         this.curCharges = maxCharges;
         hasLevels(false);
 
-		weight(Encumbrance.UNIT * 7);
+        weight(Encumbrance.UNIT * 7);
         price = 75;
-	}
+
+        isOffensive = true;
+        directionalZap = true;
+        canTargetSelf = false;
+    }
 
     @Override
     public void syncVisuals() {
         image = handler.image(this);
         rune = handler.label(this);
     }
-	
-	@Override
-	public ArrayList<String> actions( Hero hero ) {
-		ArrayList<String> actions = super.actions( hero );
-		if (hasCharges() || !curChargeKnown) {
-			actions.add( AC_ZAP );
-		}
 
-		return actions;
-	}
-	
-	@Override
-	public boolean execute( Hero hero, String action ) {
-		if (action.equals( AC_ZAP )) {
-			curUser = hero;
-			curItem = this;
-			GameScene.selectCell( zapper );
+    @Override
+    public ArrayList<String> actions(Hero hero) {
+        ArrayList<String> actions = super.actions(hero);
+        actions.add(AC_ZAP);
+        return actions;
+    }
 
-			return false;
-		} else {
-			return super.execute( hero, action );
-		}
-	}
-	
-	protected abstract void onZap( Ballistica attack );
+    @Override
+    public boolean execute(Hero hero, String action) {
+        if (action.equals(AC_ZAP)) {
+            curUser = hero;
+            curItem = this;
 
-	public abstract void onHit( MagesStaff staff, Char attacker, Char defender, int damage);
+            if (directionalZap) {
+                GameScene.selectCell(zapper);
+            } else {
+                doZap(hero, hero.pos());
+            }
+
+            return false;
+        } else {
+            return super.execute(hero, action);
+        }
+    }
+
+    protected abstract void onZap(Ballistica attack);
 
 	/*
 	@Override
@@ -262,20 +287,13 @@ public abstract class Wand extends Item {
 	}
 	*/
 
-	protected void processSoulMark(Char target, Char source){
-		if (target != Dungeon.hero &&
-				Dungeon.hero.subClass == HeroSubClass.WARLOCK &&
-				Random.Float() < .15f + (level()*1*0.03f)){
-			SoulMark.prolong(target, source, SoulMark.class, SoulMark.DURATION);
-		}
-	}
-
-	@Override
-	public void onDetach( ) {
-		/*
-		stopCharging();
-		*/
-	}
+    protected void processSoulMark(Char target, Char source) {
+        if (target != Dungeon.hero &&
+                Dungeon.hero.subClass == HeroSubClass.WARLOCK &&
+                Random.Float() < .15f + (level() * 1 * 0.03f)) {
+            SoulMark.prolong(target, source, SoulMark.class, SoulMark.DURATION);
+        }
+    }
 
 	/*
 	public void stopCharging() {
@@ -297,28 +315,28 @@ public abstract class Wand extends Item {
 	}
 	*/
 
-	@Override
-	public Item identify(boolean updateQuickslot) {
-		if (setKnown() || !curChargeKnown) {
-			curChargeKnown = true;
-			updateQuickslot = true;
-		}
-		
-		return super.identify(updateQuickslot);
+    @Override
+    public Item identify(boolean updateQuickslot) {
+        if (setKnown() || !curChargeKnown) {
+            curChargeKnown = true;
+            updateQuickslot = true;
+        }
+
+        return super.identify(updateQuickslot);
     }
-	
-	@Override
-	public String toString() {
-		
-		StringBuilder sb = new StringBuilder( super.toString() );
-		
-		String status = status();
-		if (status != null) {
-			sb.append( " (" + status +  ")" );
-		}
-		
-		return sb.toString();
-	}
+
+    @Override
+    public String toString() {
+
+        StringBuilder sb = new StringBuilder(super.toString());
+
+        String status = status();
+        if (status != null) {
+            sb.append(" (" + status + ")");
+        }
+
+        return sb.toString();
+    }
 
     @Override
     public String getName() {
@@ -326,7 +344,7 @@ public abstract class Wand extends Item {
     }
 
     @Override
-	public final String info() {
+    public final String info() {
         return isKnown() ?
                 desc() :
                 "This " + rune + " wand is an expertly crafted capacitor of magical energy." +
@@ -336,136 +354,185 @@ public abstract class Wand extends Item {
 				desc() + "\n\nThis wand is cursed, making its magic chaotic and random." :
 				desc();
 		*/
-	}
-	
-	@Override
-	public boolean isIdentified() {
-		return super.isIdentified() && curChargeKnown;
-	}
-	
-	@Override
-	public String status() {
-		if (levelKnown()) {
+    }
+
+    @Override
+    public boolean isIdentified() {
+        return super.isIdentified() && curChargeKnown;
+    }
+
+    @Override
+    public String status() {
+        if (levelKnown()) {
             if (curChargeKnown) {
-                return curCharges + "/" + maxCharges;
+                return curCharges + "";// + "/" + maxCharges;
             } else {
-                return "???";
+                return "?";
             }
-		} else {
-			return null;
-		}
-	}
+        } else {
+            return null;
+        }
+    }
 
-	
-	protected void fx( Ballistica bolt, Callback callback ) {
-		MagicMissile.whiteLight( curUser.sprite.parent, bolt.sourcePos, bolt.collisionPos, callback );
-		Sample.INSTANCE.play( Assets.SND_ZAP );
-	}
 
-	public void staffFx( MagesStaff.StaffParticle particle ){
-		particle.color(0xFFFFFF); particle.am = 0.3f;
-		particle.setLifespan( 1f);
-		particle.speed.polar( Random.Float(PointF.PI2), 2f );
-		particle.setSize( 1f, 2.5f );
-		particle.radiateXY(1f);
-	}
+    private final void fx(Ballistica bolt, Callback callback) {
+        if (bolt != null) {
+            fxEffect(bolt, callback);
+        } else {
+            if (callback != null) {
+                callback.call();
+            }
+        }
+        Sample.INSTANCE.play(Assets.SND_ZAP);
+    }
 
-	protected void wandUsed() {
-		usagesToKnow -= 1;
-		curCharges -= 1;
-		if (!isIdentified() && usagesToKnow <= 0) {
-			identify();
-			GLog.w( TXT_IDENTIFY, getDisplayName() );
-		} else {
-			//if (curUser.heroClass == HeroClass.MAGE) levelKnown(true, true);
-		}
+    protected void fxEffect(Ballistica bolt, Callback callback) {
+        MagicMissile.whiteLight(curUser.sprite.parent, bolt.sourcePos, bolt.collisionPos, callback);
+    }
+
+    public void staffFx(MagesStaff.StaffParticle particle) {
+        //todo: remove
+        particle.color(0xFFFFFF);
+        particle.am = 0.3f;
+        particle.setLifespan(1f);
+        particle.speed.polar(Random.Float(PointF.PI2), 2f);
+        particle.setSize(1f, 2.5f);
+        particle.radiateXY(1f);
+    }
+
+    protected void wandUsed() {
+        usagesToKnow--;
+        curCharges--;
+
+        if (curCharges < 0) {
+            GLog.w("The " + getName() + " turns to dust!");
+            curUser.belongings.remove(this);
+        } else {
+            if (!isIdentified() && usagesToKnow <= 0) {
+                identify();
+                GLog.w(TXT_IDENTIFY, getDisplayName());
+            } else {
+                //if (curUser.heroClass == HeroClass.MAGE) levelKnown(true, true);
+            }
+        }
+
+        updateQuickslot();
 
         //todo: wand zap time verification
-		curUser.spend_new(TIME_TO_ZAP, true);
-	}
-
-	private static final String UNFAMILIRIARITY        = "unfamiliarity";
-	private static final String CUR_CHARGES			= "curCharges";
-	private static final String CUR_CHARGE_KNOWN	= "curChargeKnown";
-	
-	@Override
-	public void storeInBundle( Bundle bundle ) {
-		super.storeInBundle( bundle);
-        bundle.put( UNFAMILIRIARITY, usagesToKnow );
-		bundle.put( CUR_CHARGES, curCharges );
-		bundle.put( CUR_CHARGE_KNOWN, curChargeKnown );
-	}
-	
-	@Override
-	public void restoreFromBundle( Bundle bundle ) {
-		super.restoreFromBundle( bundle );
-		if ((usagesToKnow = bundle.getInt( UNFAMILIRIARITY )) == 0) {
-			usagesToKnow = USAGES_TO_KNOW;
-		}
-		curCharges = bundle.getInt( CUR_CHARGES);
-        curChargeKnown = bundle.getBoolean( CUR_CHARGE_KNOWN);
+        curUser.spend_new(TIME_TO_ZAP, true);
     }
-	
-	protected static CellSelector.Listener zapper = new  CellSelector.Listener() {
-		
-		@Override
-		public boolean onSelect( Integer target ) {
-			if (target != null && target != Constant.Position.NONE) {
 
-				final Wand curWand = (Wand)Wand.curItem;
+    private static final String UNFAMILIRIARITY = "unfamiliarity";
+    private static final String CUR_CHARGES = "curCharges";
+    private static final String CUR_CHARGE_KNOWN = "curChargeKnown";
 
-				final Ballistica shot = new Ballistica( curUser.pos(), target, curWand.collisionProperties);
-				int cell = shot.collisionPos;
-				
-				if (target == curUser.pos() || cell == curUser.pos()) {
-					GLog.i( TXT_SELF_TARGET );
-					return false;
-				}
+    @Override
+    public void storeInBundle(Bundle bundle) {
+        super.storeInBundle(bundle);
+        bundle.put(UNFAMILIRIARITY, usagesToKnow);
+        bundle.put(CUR_CHARGES, curCharges);
+        bundle.put(CUR_CHARGE_KNOWN, curChargeKnown);
+    }
 
-				curUser.sprite.zap(cell);
+    @Override
+    public void restoreFromBundle(Bundle bundle) {
+        super.restoreFromBundle(bundle);
+        if ((usagesToKnow = bundle.getInt(UNFAMILIRIARITY)) == 0) {
+            usagesToKnow = USAGES_TO_KNOW;
+        }
+        curCharges = bundle.getInt(CUR_CHARGES);
+        curChargeKnown = bundle.getBoolean(CUR_CHARGE_KNOWN);
+    }
 
-				//attempts to target the cell aimed at if something is there, otherwise targets the collision pos.
-				if (Actor.findChar(target) != null)
-					QuickSlotButton.target(Actor.findChar(target));
-				else
-					QuickSlotButton.target(Actor.findChar(cell));
-				
-				if (curWand.hasCharges()) {
-					
-					curUser.busy();
+    protected static CellSelector.Listener zapper = new CellSelector.Listener() {
 
-					if (curWand.bucStatus == BUCStatus.Cursed){
-						CursedWand.cursedZap(curWand, curUser, new Ballistica( curUser.pos(), target, Ballistica.MAGIC_BOLT));
-						if (!curWand.bucStatusKnown){
-							curWand.bucStatusKnown = true;
-							GLog.n("This " + curItem.getDisplayName() + " is cursed!");
-						}
-					} else {
-						curWand.fx(shot, new Callback() {
-							public void call() {
-								curWand.onZap(shot);
-								curWand.wandUsed();
-							}
-						});
-					}
+        @Override
+        public boolean onSelect(Integer target) {
+            if (target != null && target != Constant.Position.NONE) {
 
-                    //todo: not all wands should be dispelling invisibility
-					Invisibility.dispelAttack(curUser);
-					
-				} else {
+                final Wand curWand = (Wand) Wand.curItem;
 
-					GLog.w( TXT_FIZZLES );
-
-				}
-				
-			}
+                return curWand.doZap(curUser, target);
+            }
 
             return true;
-		}
-		
-		@Override
-		public String prompt() {
-			return "Choose a location to zap";
-		}
-	};
+        }
+
+        @Override
+        public String prompt() {
+            return "Choose a location to zap";
+        }
+    };
+
+    protected boolean doZap(Char curUser, int target) {
+        Ballistica shot = new Ballistica(curUser.pos(), target, collisionProperties);
+        int cell = shot.collisionPos;
+
+        if (target == curUser.pos() || cell == curUser.pos()) {
+            if (!canTargetSelf && directionalZap) {
+                GLog.i(TXT_SELF_TARGET);
+                return false;
+            } else {
+                shot = null;
+            }
+        }
+
+        curUser.sprite.zap(cell);
+
+        if (isOffensive) {
+            //attempts to target the cell aimed at if something is there, otherwise targets the collision pos.
+            Char charTarget = Actor.findChar(target);
+            if (charTarget == null) {
+                charTarget = Actor.findChar(cell);
+            }
+
+            QuickSlotButton.target(charTarget);
+        }
+
+        boolean hasCharges = curCharges > 0;
+
+        if (!hasCharges && Random.Int(20) == 0) {
+            hasCharges = true;
+            GLog.p("You wrest one last charge out of the wand.");
+        }
+
+        if (hasCharges) {
+            //todo: not all wands should be dispelling invisibility
+            Invisibility.dispelAttack(curUser);
+
+            curUser.busy();
+
+            if (bucStatus() == BUCStatus.Cursed && Random.Int(100) == 0) {
+                explode(curUser);
+                /*
+                CursedWand.cursedZap(this, curUser, new Ballistica(curUser.pos(), target, Ballistica.Mode.MagicBolt));
+                if (!bucStatusKnown()) {
+                    bucStatus(true);
+                    GLog.n("This " + curItem.getDisplayName() + " is cursed!");
+                }
+                */
+            } else {
+                final Ballistica finalShot = shot;
+
+                fx(finalShot, new Callback() {
+                    public void call() {
+                        onZap(finalShot);
+                        wandUsed();
+                    }
+                });
+            }
+
+        } else {
+
+            GLog.w(TXT_FIZZLES);
+
+        }
+
+        return true;
+    }
+
+    public void explode(Char user) {
+        GLog.n("The " + getName() + " suddenly explodes!");
+        user.belongings.remove(this);
+    }
 }

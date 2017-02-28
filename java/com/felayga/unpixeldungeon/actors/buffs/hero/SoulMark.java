@@ -35,6 +35,7 @@ public class SoulMark extends FlavourBuff {
 
     public static final long DURATION = GameTime.TICK * 50;
 
+    public SoulMark()
     {
         type = buffType.NEGATIVE;
     }

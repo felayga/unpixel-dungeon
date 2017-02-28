@@ -56,7 +56,6 @@ import com.watabou.utils.Random;
 import com.watabou.utils.SparseArray;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 
 //import com.felayga.unpixeldungeon.actors.mobs.npcs.Ghost;
 
@@ -289,10 +288,10 @@ public class Bestiary {
 
         switch(group.size) {
             case Large:
-                retval.quantity = Random.Int(2, 12);
+                retval.quantity = Random.IntRange(2, 12);
                 break;
             case Small:
-                retval.quantity = Random.Int(2, 5);
+                retval.quantity = Random.IntRange(2, 5);
                 break;
             default:
                 retval.quantity = 1;

@@ -39,6 +39,9 @@ public class UncategorizedBackpack extends Backpack {
     {
         super(owner);
 
+        name = "valuables";
+        size = Backpack.SIZE + Backpack.SUPERSIZE;
+
         tabIcon = Icons.BACKPACK_VALUABLES;
     }
 

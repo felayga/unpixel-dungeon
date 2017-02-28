@@ -45,9 +45,11 @@ public class Sick extends FlavourBuff {
     private static final long DURATIONMODIFIER = 2;
     private static final long DURATION = 14;
 
-    private long left;
     private static final String LEFT = "left";
 
+    private long left;
+
+    public Sick()
     {
         type = buffType.NEGATIVE;
         left = DURATION * DURATIONMODIFIER;
@@ -107,7 +109,7 @@ public class Sick extends FlavourBuff {
 
         Hunger hunger = target.buff(Hunger.class);
         if (hunger != null) {
-            hunger.satisfy_new(-Food.AMOUNT_EATEN_PER_ROUND / 3);
+            hunger.satisfy_new(Food.VOMIT_SUSTENANCE);
         }
     }
 

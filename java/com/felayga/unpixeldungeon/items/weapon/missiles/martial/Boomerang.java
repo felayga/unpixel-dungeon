@@ -42,7 +42,7 @@ public class Boomerang extends MissileWeapon {
 		super(WeaponSkill.Martial, GameTime.TICK, 1, 5, 1, true, AmmunitionType.None);
 
 		name = "boomerang";
-		image = ItemSpriteSheet.MISSILE_BOOMERANG;
+		image = ItemSpriteSheet.RANGED_BOOMERANG;
 		
 		//STR = 10;
 		
@@ -50,11 +50,6 @@ public class Boomerang extends MissileWeapon {
 
 		unique = true;
 		bones = false;
-	}
-	
-	@Override
-	public boolean isUpgradable() {
-		return true;
 	}
 
 	@Override

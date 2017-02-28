@@ -73,7 +73,7 @@ public class PotionOfRestoration extends Potion {
         if (hero.HP == hero.HT) {
             int overhealAmount = this.overhealAmount;
 
-            switch (bucStatus) {
+            switch (bucStatus()) {
                 case Blessed:
                     overhealAmount *= 2;
                     break;
@@ -94,7 +94,7 @@ public class PotionOfRestoration extends Potion {
         if (hero.MP == hero.MT) {
             int overhealAmount = this.overhealAmount;
 
-            switch (bucStatus) {
+            switch (bucStatus()) {
                 case Blessed:
                     overhealAmount *= 2;
                     break;
@@ -114,7 +114,7 @@ public class PotionOfRestoration extends Potion {
     }
 
     protected void healHealth(Char hero, int healAmount) {
-        switch (bucStatus) {
+        switch (bucStatus()) {
             case Blessed:
                 healAmount += healAmount / 2;
                 break;
@@ -126,7 +126,7 @@ public class PotionOfRestoration extends Potion {
     }
 
     protected void healMana(Char hero, int healAmount) {
-        switch (bucStatus) {
+        switch (bucStatus()) {
             case Blessed:
                 healAmount += healAmount / 2;
                 break;

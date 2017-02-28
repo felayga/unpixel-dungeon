@@ -32,12 +32,16 @@ import com.felayga.unpixeldungeon.ui.BuffIndicator;
 public class Barkskin extends Buff {
 
 	private int level = 0;
+
+    public Barkskin() {
+
+    }
 	
 	@Override
 	public boolean act() {
 		if (target.isAlive()) {
 
-            spend_new(GameTime.TICK, false );
+            spend_new(GameTime.TICK, false);
 			if (--level <= 0) {
 				detach();
 			}

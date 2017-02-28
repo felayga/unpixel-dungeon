@@ -51,7 +51,7 @@ public class PotionOfFullRestoration extends PotionOfRestoration {
     public void heal(Char hero) {
         super.heal(hero);
 
-        if (bucStatus == BUCStatus.Blessed) {
+        if (bucStatus() == BUCStatus.Blessed) {
             int oldOverhealAmount = overhealAmount;
             overhealAmount /= 2;
             super.heal(hero);

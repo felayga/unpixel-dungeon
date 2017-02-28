@@ -83,7 +83,7 @@ public class PotionOfOil extends Potion {
         if (target.buff(Burning.class) != null) {
             applyBurn(target, target);
         } else {
-            if (bucStatus == BUCStatus.Cursed) {
+            if (bucStatus() == BUCStatus.Cursed) {
                 GLog.w("This tastes like castor oil.");
                 bucStatus(true);
             }
@@ -136,7 +136,7 @@ public class PotionOfOil extends Potion {
         Char test = Actor.findChar(cell);
 
         if (test != null) {
-            test.damage(Random.Int(1,4), MagicType.Fire, null);
+            test.damage(Random.IntRange(1,4), MagicType.Fire, null);
         }
 
         GLog.w("The potion explodes in flames!");

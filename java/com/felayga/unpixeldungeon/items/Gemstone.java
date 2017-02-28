@@ -26,7 +26,6 @@
 
 package com.felayga.unpixeldungeon.items;
 
-import com.felayga.unpixeldungeon.Badges;
 import com.felayga.unpixeldungeon.actors.Char;
 import com.felayga.unpixeldungeon.actors.buffs.hero.Encumbrance;
 import com.felayga.unpixeldungeon.actors.hero.Hero;
@@ -699,8 +698,8 @@ public class Gemstone extends Item {
 
         @Override
         public void doDrop(final Hero hero) {
-            if (bucStatus == BUCStatus.Cursed) {
-                if (!bucStatusKnown) {
+            if (bucStatus() == BUCStatus.Cursed) {
+                if (!bucStatusKnown()) {
                     bucStatus(true);
                 }
 
@@ -712,8 +711,8 @@ public class Gemstone extends Item {
 
         @Override
         protected void onThrow(Char thrower, int cell) {
-            if (bucStatus == BUCStatus.Cursed) {
-                if (!bucStatusKnown) {
+            if (bucStatus() == BUCStatus.Cursed) {
+                if (!bucStatusKnown()) {
                     bucStatus(true);
                 }
 

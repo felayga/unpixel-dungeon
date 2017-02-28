@@ -55,6 +55,8 @@ public class Bomb extends Item {
 		name = "bomb";
 		image = ItemSpriteSheet.BOMB;
 
+        hasLevels(false);
+
 		defaultAction = AC_LIGHTTHROW;
 		usesTargeting = true;
 
@@ -178,11 +180,6 @@ public class Bomb extends Item {
 
         explode(cell, true, Dungeon.depthAdjusted + 5, 10 + Dungeon.depthAdjusted * 2);
     }
-	
-	@Override
-	public boolean isUpgradable() {
-		return false;
-	}
 	
 	@Override
 	public boolean isIdentified() {

@@ -66,7 +66,7 @@ public class GrimTrap extends Trap {
             for (int n = 0; n < chars.size(); n++) {
                 Char c = chars.valueAt(n);
 
-                Ballistica bolt = new Ballistica(pos, c.pos(), Ballistica.PROJECTILE);
+                Ballistica bolt = new Ballistica(pos, c.pos(), Ballistica.Mode.Projectile);
                 if (bolt.collisionPos == c.pos() &&
                         (target == null || Level.distance(pos, c.pos()) < Level.distance(pos, target.pos()))) {
                     target = c;

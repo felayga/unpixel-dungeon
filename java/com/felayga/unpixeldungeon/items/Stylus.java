@@ -54,6 +54,8 @@ public class Stylus extends Item {
 		
 		stackable = true;
 
+        hasLevels(false);
+
 		bones = true;
 
         price = 30;
@@ -76,11 +78,6 @@ public class Stylus extends Item {
 		} else {
 			return super.execute( hero, action );
 		}
-	}
-	
-	@Override
-	public boolean isUpgradable() {
-		return false;
 	}
 	
 	@Override

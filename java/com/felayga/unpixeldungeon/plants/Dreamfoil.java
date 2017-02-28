@@ -54,9 +54,7 @@ public class Dreamfoil extends Plant {
         Char ch = Actor.findChar(pos);
 
         if (ch != null) {
-            PotionOfHealing.cure(ch);
-
-            if (ch instanceof Hero) {
+            if (PotionOfHealing.cure(ch) && ch instanceof Hero) {
                 GLog.i("You feel refreshed.");
             }
 

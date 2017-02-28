@@ -57,10 +57,10 @@ public class PotionOfConfusion extends Potion {
     private void apply(Char hero, Char source, boolean quaffed) {
         setKnown();
 
-        int duration = Random.Int(1, 9);
+        int duration = Random.IntRange(1, 8);
 
         if (quaffed) {
-            switch (bucStatus) {
+            switch (bucStatus()) {
                 case Cursed:
                     duration += 24;
                     break;

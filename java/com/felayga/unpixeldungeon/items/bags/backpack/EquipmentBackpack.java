@@ -41,6 +41,9 @@ public class EquipmentBackpack extends Backpack {
     {
         super(owner);
 
+        name = "equipment";
+        size = Backpack.SIZE;
+
         tabIcon = Icons.BACKPACK_EQUIPMENT;
         priority = 15;
     }

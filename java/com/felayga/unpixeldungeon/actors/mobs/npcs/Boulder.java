@@ -34,7 +34,7 @@ import com.felayga.unpixeldungeon.effects.CellEmitter;
 import com.felayga.unpixeldungeon.effects.Speck;
 import com.felayga.unpixeldungeon.items.weapon.ammunition.simple.Rock;
 import com.felayga.unpixeldungeon.levels.Level;
-import com.felayga.unpixeldungeon.levels.Terrain;
+import com.felayga.unpixeldungeon.mechanics.Characteristic;
 import com.felayga.unpixeldungeon.mechanics.MagicType;
 import com.felayga.unpixeldungeon.scenes.GameScene;
 import com.felayga.unpixeldungeon.sprites.npcs.BoulderSprite;
@@ -44,8 +44,6 @@ import com.watabou.utils.Bundle;
 import com.watabou.utils.Random;
 
 public class Boulder extends NPC {
-    public final static String TXT_PUSH = "PUSH";
-
     public final static String STOREDPOS = "storedPos";
     public final static String STOREDFLAG = "storedFlag";
 
@@ -55,6 +53,7 @@ public class Boulder extends NPC {
         name = "boulder";
         spriteClass = BoulderSprite.class;
         HP = HT = 101;
+        characteristics = Characteristic.value(Characteristic.Brainless, Characteristic.NonBreather, Characteristic.NoExperience);
 
         state = PASSIVE;
         actPriority = -1; // gotta be before the hero if pushed
@@ -258,7 +257,8 @@ public class Boulder extends NPC {
         }
         else {
             die(null);
-            Dungeon.level.set(pos(), Terrain.EMPTY, true);
+
+            Dungeon.level.setDirt(pos(), true, true);
         }
 
         GameScene.updateMap(pos());
@@ -273,7 +273,7 @@ public class Boulder extends NPC {
         if (!pluggingPit){
             Sample.INSTANCE.play(Assets.SND_BOULDER_SMASH);
             //Dungeon.level.spawnGemstones(pos);
-            Dungeon.level.drop(new Rock(Random.Int(3, 23)), pos());
+            Dungeon.level.drop(new Rock(Random.IntRange(3, 23)), pos());
 
             Level.losBlocking[storedPos] = storedFlag;
             GameScene.updateMap(storedPos);

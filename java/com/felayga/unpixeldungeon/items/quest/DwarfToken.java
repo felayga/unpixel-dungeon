@@ -38,12 +38,9 @@ public class DwarfToken extends Item {
 		stackable = true;
 		unique = true;
 
+        hasLevels(false);
+
         price = 100;
-	}
-	
-	@Override
-	public boolean isUpgradable() {
-		return false;
 	}
 	
 	@Override

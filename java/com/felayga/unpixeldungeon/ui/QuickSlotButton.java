@@ -27,22 +27,21 @@ package com.felayga.unpixeldungeon.ui;
 
 import com.felayga.unpixeldungeon.Dungeon;
 import com.felayga.unpixeldungeon.DungeonTilemap;
-import com.felayga.unpixeldungeon.actors.Actor;
 import com.felayga.unpixeldungeon.actors.Char;
 import com.felayga.unpixeldungeon.items.Item;
 import com.felayga.unpixeldungeon.levels.Level;
 import com.felayga.unpixeldungeon.mechanics.Ballistica;
 import com.felayga.unpixeldungeon.scenes.GameScene;
-import com.felayga.unpixeldungeon.utils.GLog;
 import com.felayga.unpixeldungeon.windows.WndBackpack;
 import com.watabou.noosa.Image;
 import com.watabou.noosa.ui.Button;
 
 public class QuickSlotButton extends Button implements WndBackpack.Listener {
+    public static final int MAXCOUNT = 4;
 
     private static final String TXT_SELECT_ITEM = "Select an item to quickslot";
 
-    private static QuickSlotButton[] instance = new QuickSlotButton[4];
+    private static QuickSlotButton[] instance = new QuickSlotButton[MAXCOUNT];
     private int slotNum;
 
     private ItemSlot slot;
@@ -69,7 +68,7 @@ public class QuickSlotButton extends Button implements WndBackpack.Listener {
     }
 
     public static void reset() {
-        instance = new QuickSlotButton[4];
+        instance = new QuickSlotButton[MAXCOUNT];
 
         lastTarget = null;
     }
@@ -92,8 +91,9 @@ public class QuickSlotButton extends Button implements WndBackpack.Listener {
                     }
                 } else {
                     Item item = select(slotNum);
-                    if (item.usesTargeting)
+                    if (item.usesTargeting) {
                         useTargeting();
+                    }
                     item.execute(Dungeon.hero);
                 }
             }
@@ -161,16 +161,18 @@ public class QuickSlotButton extends Button implements WndBackpack.Listener {
         String itemname;
         int itemquantity;
         if (item != null) {
+            //GLog.d("QuickSlotButton.item("+item.getDisplayName()+")");
             itemname = item.getDisplayName();
             itemquantity = item.quantity();
         } else {
+            //GLog.d("QuickSlotButton.item(<null>)");
             itemname = "<null>";
             itemquantity = -1;
         }
         //GLog.d("QuickSlotButton item("+itemname+") quantity="+itemquantity);
-        if (itemname.equals("rock") && itemquantity == 1) {
-            GLog.d("" + 1 / 0);
-        }
+        //if (itemname.equals("rock") && itemquantity == 1) {
+        //    GLog.d("" + 1 / 0);
+        //}
         slot.item(item);
         enableSlot();
     }
@@ -212,13 +214,13 @@ public class QuickSlotButton extends Button implements WndBackpack.Listener {
 
     public static int autoAim(Char target) {
         //first try to directly target
-        if (new Ballistica(Dungeon.hero.pos(), target.pos(), Ballistica.PROJECTILE).collisionPos == target.pos()) {
+        if (new Ballistica(Dungeon.hero.pos(), target.pos(), Ballistica.Mode.Projectile).collisionPos == target.pos()) {
             return target.pos();
         }
 
         //Otherwise pick nearby tiles to try and 'angle' the shot, auto-aim basically.
         for (int i : Level.NEIGHBOURS9DIST2) {
-            if (new Ballistica(Dungeon.hero.pos(), target.pos() + i, Ballistica.PROJECTILE).collisionPos == target.pos()) {
+            if (new Ballistica(Dungeon.hero.pos(), target.pos() + i, Ballistica.Mode.Projectile).collisionPos == target.pos()) {
                 return target.pos() + i;
             }
         }
@@ -229,6 +231,7 @@ public class QuickSlotButton extends Button implements WndBackpack.Listener {
 
     public static void refresh() {
         for (int i = 0; i < instance.length; i++) {
+            //GLog.d("QuickSlotButton.refresh("+i+")");
             if (instance[i] != null) {
                 instance[i].item(select(i));
             }

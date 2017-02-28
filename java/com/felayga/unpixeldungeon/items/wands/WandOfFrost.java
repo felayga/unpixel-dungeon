@@ -25,12 +25,10 @@
  */
 package com.felayga.unpixeldungeon.items.wands;
 
-import com.felayga.unpixeldungeon.Assets;
 import com.felayga.unpixeldungeon.Dungeon;
 import com.felayga.unpixeldungeon.actors.Actor;
 import com.felayga.unpixeldungeon.actors.Char;
 import com.felayga.unpixeldungeon.actors.buffs.Buff;
-import com.felayga.unpixeldungeon.actors.buffs.FlavourBuff;
 import com.felayga.unpixeldungeon.actors.buffs.negative.Chill;
 import com.felayga.unpixeldungeon.actors.buffs.negative.Frost;
 import com.felayga.unpixeldungeon.effects.MagicMissile;
@@ -40,7 +38,6 @@ import com.felayga.unpixeldungeon.levels.Level;
 import com.felayga.unpixeldungeon.mechanics.Ballistica;
 import com.felayga.unpixeldungeon.mechanics.GameTime;
 import com.felayga.unpixeldungeon.mechanics.MagicType;
-import com.watabou.noosa.audio.Sample;
 import com.watabou.utils.Callback;
 import com.watabou.utils.PointF;
 import com.watabou.utils.Random;
@@ -93,11 +90,11 @@ public class WandOfFrost extends Wand {
 	}
 
 	@Override
-	protected void fx(Ballistica bolt, Callback callback) {
+	protected void fxEffect(Ballistica bolt, Callback callback) {
 		MagicMissile.blueLight(curUser.sprite.parent, bolt.sourcePos, bolt.collisionPos, callback);
-		Sample.INSTANCE.play(Assets.SND_ZAP);
 	}
 
+    /*
 	@Override
 	//TODO: balancing, this could be mighty OP
 	public void onHit(MagesStaff staff, Char attacker, Char defender, int damage) {
@@ -114,6 +111,7 @@ public class WandOfFrost extends Wand {
 			}.attachTo(defender, attacker);
 		}
 	}
+	*/
 
 	@Override
 	public void staffFx(MagesStaff.StaffParticle particle) {

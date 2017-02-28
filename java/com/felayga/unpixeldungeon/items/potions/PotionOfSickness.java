@@ -58,19 +58,19 @@ public class PotionOfSickness extends Potion {
         int healthDamage;
         int attributeDamage;
 
-        switch (bucStatus) {
+        switch (bucStatus()) {
             case Blessed:
                 healthDamage = 1;
                 attributeDamage = 0;
                 GLog.w("Must be stale fruit juice.");
                 break;
             case Cursed:
-                healthDamage = Random.Int(1, 16);
-                attributeDamage = Random.Int(1,5);
+                healthDamage = Random.IntRange(1, 16);
+                attributeDamage = Random.IntRange(1,5);
                 break;
             default:
-                healthDamage = Random.Int(1, 10);
-                attributeDamage = Random.Int(1,3);
+                healthDamage = Random.IntRange(1, 10);
+                attributeDamage = Random.IntRange(1,3);
                 break;
         }
 

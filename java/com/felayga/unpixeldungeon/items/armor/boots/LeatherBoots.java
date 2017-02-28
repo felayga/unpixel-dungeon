@@ -26,29 +26,24 @@
 
 package com.felayga.unpixeldungeon.items.armor.boots;
 
-import com.felayga.unpixeldungeon.mechanics.Constant;
+import com.felayga.unpixeldungeon.actors.buffs.hero.Encumbrance;
 import com.felayga.unpixeldungeon.mechanics.GameTime;
 import com.felayga.unpixeldungeon.sprites.ItemSpriteSheet;
-import com.felayga.unpixeldungeon.utils.GLog;
-import com.watabou.utils.Bundle;
 
 /**
  * Created by HELLO on 3/23/2016.
  */
 public class LeatherBoots extends Boots {
     public LeatherBoots() {
-        super(0, 0, GameTime.TICK);
+        super(1, 0, GameTime.TICK);
 
         name = "leather boots";
         image = ItemSpriteSheet.BOOTS_LEATHER;
         hasLevels(false);
         hasBuc(false);
+
+        weight(Encumbrance.UNIT * 10);
+        price = 8;
     }
 
-    @Override
-    public void restoreFromBundle(Bundle bundle) {
-        super.restoreFromBundle(bundle);
-
-        GLog.d("defaultaction="+defaultAction+" good="+defaultAction.equals(Constant.Action.KICK));
-    }
 }

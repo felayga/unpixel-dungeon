@@ -68,6 +68,8 @@ public class OldPickaxe extends Weapon {
 		image = ItemSpriteSheet.TOOL_PICKAXE;
 		
 		unique = true;
+
+        hasLevels(false);
 		
 		defaultAction = AC_MINE;
 		
@@ -137,11 +139,6 @@ public class OldPickaxe extends Weapon {
 		} else {
 			return super.execute( hero, action );
 		}
-	}
-	
-	@Override
-	public boolean isUpgradable() {
-		return false;
 	}
 	
 	@Override

@@ -31,16 +31,14 @@ import com.felayga.unpixeldungeon.sprites.ItemSpriteSheet;
 
 public class Embers extends Item {
 
+    public Embers()
 	{
 		name = "elemental embers";
 		image = ItemSpriteSheet.EMBER;
 
-		unique = true;
-	}
+        hasLevels(false);
 
-	@Override
-	public boolean isUpgradable() {
-		return false;
+		unique = true;
 	}
 
 	@Override

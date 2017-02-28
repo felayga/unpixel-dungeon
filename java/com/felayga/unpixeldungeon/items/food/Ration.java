@@ -35,7 +35,7 @@ import com.felayga.unpixeldungeon.sprites.ItemSpriteSheet;
 public class Ration extends Food {
     public Ration()
     {
-        super(800, Encumbrance.UNIT * 20);
+        super(800, 800 / 5, Encumbrance.UNIT * 20);
 
         stackable = true;
         name = "ration of food";

@@ -55,7 +55,7 @@ import com.felayga.unpixeldungeon.levels.branches.DungeonBranch;
 import com.felayga.unpixeldungeon.mechanics.Constant;
 import com.felayga.unpixeldungeon.mechanics.GameTime;
 import com.felayga.unpixeldungeon.scenes.GameScene;
-import com.felayga.unpixeldungeon.ui.QuickSlotButton;
+import com.felayga.unpixeldungeon.ui.Toolbar;
 import com.felayga.unpixeldungeon.utils.BArray;
 import com.felayga.unpixeldungeon.utils.GLog;
 import com.felayga.unpixeldungeon.utils.Utils;
@@ -74,8 +74,6 @@ import java.io.OutputStream;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashSet;
-
-import javax.microedition.khronos.opengles.GL;
 
 //import com.felayga.unpixeldungeon.actors.mobs.npcs.Ghost;
 //import com.felayga.unpixeldungeon.actors.mobs.npcs.Imp;
@@ -143,8 +141,7 @@ public class Dungeon {
         Statistics.reset();
         Journal.reset();
 
-        quickslot.reset();
-        QuickSlotButton.reset();
+        Toolbar.reset();
 
         __depth = 0;
         depthAdjusted = 0;
@@ -201,7 +198,7 @@ public class Dungeon {
 
         Level level;
         if (__depth >= DungeonBranch.Normal.levelMin && __depth <= DungeonBranch.Normal.levelMax) {
-            level = new SewerLevel();
+            level = new MinesLevel();//new SewerLevel();
         } else if (__depth >= DungeonBranch.Mines.levelMin && __depth <= DungeonBranch.Mines.levelMax) {
             int offset = __depth - DungeonBranch.Mines.levelMin;
 
@@ -305,6 +302,11 @@ public class Dungeon {
 
     @SuppressWarnings("deprecation")
     public static void switchLevel(final Level level, int pos) {
+        if (Dungeon.level != null) {
+            Light.Registry.unregister(Dungeon.level);
+            Char.Registry.unregister(Dungeon.level);
+            Shopkeeper.Registry.unregister(Dungeon.level);
+        }
 
         Dungeon.level = level;
         Actor.init();
@@ -330,25 +332,24 @@ public class Dungeon {
 
         hero.pos(pos);
 
+        /*
         Light light = hero.buff(Light.class);
         hero.viewDistance = light == null ? level.viewDistance : Math.max(Light.DISTANCE, level.viewDistance);
+        */
 
-        //logic for pre 0.3.0 saves, need to give mages a staff.
-        if (Dungeon.version <= 38 && Dungeon.hero.heroClass == HeroClass.MAGE) {
-            MagesStaff staff = new MagesStaff();
-            staff.identify();
-            if (!Dungeon.hero.belongings.collect(staff)) {
-                Dungeon.level.drop(staff, Dungeon.hero.pos());
-            }
-        }
-
-        observe();
         try {
             saveAll();
         } catch (IOException e) {
 			/*This only catches IO errors. Yes, this means things can go wrong, and they can go wrong catastrophically.
 			But when they do the user will get a nice 'report this issue' dialogue, and I can fix the bug.*/
         }
+
+        Char.Registry.register(Dungeon.level);
+        Shopkeeper.Registry.register(Dungeon.level);
+        Light.Registry.register(Dungeon.level);
+
+        Dungeon.level.updateLightMap();
+        Dungeon.observe();
     }
 
     public static void dropToChasm(Item item) {
@@ -386,11 +387,6 @@ public class Dungeon {
 
     public static final String HERO = "hero";
     public static final String DEPTH = "depth";
-
-    //TODO: to support pre-0.2.3 saves, remove when needed
-    private static final String POS = "potionsOfStrength";
-    private static final String SOU = "scrollsOfEnhancement";
-    private static final String AS = "arcaneStyli";
 
     public static String gameFile(int index) {
         return "SAVE" + index + ".DAT";
@@ -470,7 +466,7 @@ public class Dungeon {
         }
     }
 
-    public static void saveLevel() throws IOException {
+    public static void saveLevel(boolean unregistry) throws IOException {
         Bundle bundle = new Bundle();
         bundle.put(LEVEL, level);
 
@@ -485,7 +481,7 @@ public class Dungeon {
 
             GameTime.fix();
             saveGame(gameFile(WndInitHero.savedGameIndex));
-            saveLevel();
+            saveLevel(false);
 
             GamesInProgress.set(WndInitHero.savedGameIndex, hero.heroClass, hero.level, __depth);
 
@@ -516,8 +512,7 @@ public class Dungeon {
         Char.Registry.restore(bundle);
         Shopkeeper.Registry.restore(bundle);
 
-        quickslot.reset();
-        QuickSlotButton.reset();
+        Toolbar.reset();
 
         Dungeon.challenges = bundle.getInt(CHALLENGES);
 

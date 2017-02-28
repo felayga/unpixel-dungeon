@@ -28,13 +28,11 @@ package com.felayga.unpixeldungeon.actors.hero;
 import com.felayga.unpixeldungeon.Badges;
 import com.felayga.unpixeldungeon.Challenges;
 import com.felayga.unpixeldungeon.Dungeon;
-import com.felayga.unpixeldungeon.actors.mobs.kobold.KoboldZombie;
+import com.felayga.unpixeldungeon.actors.mobs.npcs.Spinach;
+import com.felayga.unpixeldungeon.items.Torch;
+import com.felayga.unpixeldungeon.items.armor.amulet.mask.Blindfold;
 import com.felayga.unpixeldungeon.items.armor.boots.LeatherBoots;
-import com.felayga.unpixeldungeon.items.armor.cloak.LeatherCloak;
-import com.felayga.unpixeldungeon.items.armor.cloak.randomized.CloakOfDisplacement;
 import com.felayga.unpixeldungeon.items.armor.cloak.randomized.CloakOfInvisibility;
-import com.felayga.unpixeldungeon.items.armor.cloak.randomized.CloakOfMagicResistance;
-import com.felayga.unpixeldungeon.items.armor.cloak.randomized.CloakOfProtection;
 import com.felayga.unpixeldungeon.items.armor.gloves.LeatherGloves;
 import com.felayga.unpixeldungeon.items.armor.heavy.HalfPlateArmor;
 import com.felayga.unpixeldungeon.items.armor.medium.ScaleArmor;
@@ -42,31 +40,34 @@ import com.felayga.unpixeldungeon.items.artifacts.CloakOfShadows;
 import com.felayga.unpixeldungeon.items.artifacts.MasterThievesArmband;
 import com.felayga.unpixeldungeon.items.bags.ScrollHolder;
 import com.felayga.unpixeldungeon.items.bags.SeedPouch;
+import com.felayga.unpixeldungeon.items.food.CannedFood;
 import com.felayga.unpixeldungeon.items.food.Corpse;
 import com.felayga.unpixeldungeon.items.food.Ration;
-import com.felayga.unpixeldungeon.items.potions.PotionOfBlindness;
-import com.felayga.unpixeldungeon.items.potions.PotionOfHallucination;
-import com.felayga.unpixeldungeon.items.potions.PotionOfMonsterDetection;
-import com.felayga.unpixeldungeon.items.potions.PotionOfOil;
-import com.felayga.unpixeldungeon.items.potions.PotionOfWater;
+import com.felayga.unpixeldungeon.items.potions.PotionOfAwareness;
+import com.felayga.unpixeldungeon.items.potions.PotionOfSeeInvisible;
 import com.felayga.unpixeldungeon.items.rings.RingOfWealth;
 import com.felayga.unpixeldungeon.items.scrolls.ScrollOfIdentify;
 import com.felayga.unpixeldungeon.items.scrolls.ScrollOfMagicMapping;
 import com.felayga.unpixeldungeon.items.scrolls.ScrollOfTeleportation;
 import com.felayga.unpixeldungeon.items.scrolls.ScrollOfUpgrade;
-import com.felayga.unpixeldungeon.items.armor.mask.Blindfold;
+import com.felayga.unpixeldungeon.items.tools.CanOpener;
 import com.felayga.unpixeldungeon.items.tools.CanningKit;
 import com.felayga.unpixeldungeon.items.tools.Towel;
 import com.felayga.unpixeldungeon.items.tools.digging.Pickaxe;
+import com.felayga.unpixeldungeon.items.wands.WandOfHaste;
 import com.felayga.unpixeldungeon.items.wands.WandOfMagicMissile;
+import com.felayga.unpixeldungeon.items.wands.WandOfMakeInvisible;
+import com.felayga.unpixeldungeon.items.weapon.ammunition.martial.Arrow;
+import com.felayga.unpixeldungeon.items.weapon.ammunition.simple.Rock;
 import com.felayga.unpixeldungeon.items.weapon.melee.martial.BattleAxe;
 import com.felayga.unpixeldungeon.items.weapon.melee.martial.Longsword;
 import com.felayga.unpixeldungeon.items.weapon.melee.simple.MagesStaff;
 import com.felayga.unpixeldungeon.items.weapon.missiles.martial.Boomerang;
 import com.felayga.unpixeldungeon.items.weapon.missiles.simple.Dart;
+import com.felayga.unpixeldungeon.items.weapon.ranged.simple.Sling;
 import com.felayga.unpixeldungeon.mechanics.BUCStatus;
 import com.felayga.unpixeldungeon.mechanics.WeaponSkill;
-import com.felayga.unpixeldungeon.plants.Blindweed;
+import com.felayga.unpixeldungeon.plants.Starflower;
 import com.felayga.unpixeldungeon.unPixelDungeon;
 import com.watabou.utils.Bundle;
 import com.watabou.utils.Random;
@@ -186,7 +187,7 @@ public enum HeroClass {
 		}
 
 		if (!Dungeon.isChallenged(Challenges.NO_FOOD)) {
-			hero.belongings.collect(new Ration().quantity(Random.Int(4, 8)).identify());
+			hero.belongings.collect(new Ration().quantity(Random.IntRange(4, 8)).identify());
 		}
 
         hero.belongings.collectEquip(new LeatherBoots());
@@ -230,11 +231,10 @@ public enum HeroClass {
         hero.initAttributes(generateAttributes(10, 10, 10, 8, 33, 33, 33));
 
 		Dart darts = new Dart( 8 );
-		hero.belongings.collect(darts.identify());
+        darts.identify();
+		hero.belongings.collectEquip(darts);
 
         hero.weaponSkill = WeaponSkill.Simple;
-
-        Dungeon.quickslot.setSlot(0, darts);
 
 		hero.belongings.collectEquip(new HalfPlateArmor());
         hero.belongings.armor().upgrade(darts, 20);
@@ -242,6 +242,9 @@ public enum HeroClass {
 		hero.belongings.collectEquip(new BattleAxe());
         hero.belongings.weapon().upgrade(darts, 20);
 
+        hero.belongings.collect(new Arrow(20));
+        hero.belongings.collect(new Sling());
+        hero.belongings.collect(new Rock(20));
 
 		hero.belongings.collectEquip(new RingOfWealth());
         hero.belongings.ring1().upgrade(darts, 20);
@@ -271,8 +274,8 @@ public enum HeroClass {
         //hero.belongings.collect(new Rock(5));
 
         //hero.belongings.collect(new IceBox().random());
-        hero.belongings.collect(new Blindweed.Seed().quantity(10));
-        hero.belongings.collect(new CanningKit().identify());
+        hero.belongings.collect(new Starflower.Seed().quantity(10));
+        hero.belongings.collect(new CanningKit().random().identify());
 
         /*
         hero.belongings.collect(new PotionOfOil().bucStatus(BUCStatus.Uncursed, true).quantity(5));
@@ -280,14 +283,23 @@ public enum HeroClass {
         hero.belongings.collect(new PotionOfBlindness().identify().quantity(2));
         */
         //hero.belongings.collect(new PotionOfMonsterDetection().bucStatus(BUCStatus.Blessed, true).identify().quantity(10));
-        hero.belongings.collect(new PotionOfHallucination().bucStatus(BUCStatus.Blessed, true).identify().quantity(10));
+        hero.belongings.collect(new PotionOfAwareness().bucStatus(BUCStatus.Blessed, true).identify().quantity(5));
+        hero.belongings.collect(new PotionOfSeeInvisible().bucStatus(BUCStatus.Uncursed, true).identify().quantity(5));
+        hero.belongings.collect(new WandOfMakeInvisible().random().bucStatus(BUCStatus.Blessed, true).identify());
+        hero.belongings.collect(new WandOfHaste().random().bucStatus(BUCStatus.Blessed, true).identify());
 
         hero.belongings.collect(new Blindfold());
         hero.belongings.collect(new Towel());
+        hero.belongings.collect(new Torch());
 
         hero.belongings.collect(new ScrollOfIdentify().bucStatus(BUCStatus.Uncursed, true).quantity(5).identify());
         hero.belongings.collect(new CloakOfInvisibility().identify());
-        hero.belongings.collect(new Corpse(new KoboldZombie()));
+
+        hero.belongings.collect(new CannedFood(new Corpse(new Spinach()), false).bucStatus(BUCStatus.Blessed, true));
+        hero.belongings.collect(new CannedFood(new Corpse(new Spinach()), false).bucStatus(BUCStatus.Uncursed, true));
+        hero.belongings.collect(new CannedFood(new Corpse(new Spinach()), false).bucStatus(BUCStatus.Cursed, true));
+        hero.belongings.collect(new CanOpener());
+        //hero.belongings.collect(new Corpse(new KoboldZombie()));
         /*
         hero.belongings.collect(new LeatherCloak());
         hero.belongings.collect(new CloakOfDisplacement().random());

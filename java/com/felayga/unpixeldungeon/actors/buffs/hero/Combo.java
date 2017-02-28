@@ -37,6 +37,10 @@ public class Combo extends Buff {
 	private static String TXT_COMBO = "%d hit combo!";
 	
 	public int count = 0;
+
+    public Combo() {
+
+    }
 	
 	@Override
 	public int icon() {

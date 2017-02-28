@@ -29,14 +29,10 @@ import com.felayga.unpixeldungeon.Assets;
 import com.felayga.unpixeldungeon.Dungeon;
 import com.felayga.unpixeldungeon.actors.Actor;
 import com.felayga.unpixeldungeon.actors.Char;
-import com.felayga.unpixeldungeon.actors.buffs.hero.SnipersMark;
 import com.felayga.unpixeldungeon.actors.hero.Hero;
-import com.felayga.unpixeldungeon.actors.mobs.Mob;
 import com.felayga.unpixeldungeon.actors.mobs.npcs.Shopkeeper;
 import com.felayga.unpixeldungeon.effects.Speck;
 import com.felayga.unpixeldungeon.items.bags.IBag;
-import com.felayga.unpixeldungeon.items.weapon.missiles.MissileWeapon;
-import com.felayga.unpixeldungeon.levels.Level;
 import com.felayga.unpixeldungeon.mechanics.BUCStatus;
 import com.felayga.unpixeldungeon.mechanics.Ballistica;
 import com.felayga.unpixeldungeon.mechanics.Constant;
@@ -46,6 +42,7 @@ import com.felayga.unpixeldungeon.sprites.ItemSprite;
 import com.felayga.unpixeldungeon.sprites.ItemSpriteSheet;
 import com.felayga.unpixeldungeon.sprites.MissileSprite;
 import com.felayga.unpixeldungeon.ui.QuickSlotButton;
+import com.felayga.unpixeldungeon.ui.Toolbar;
 import com.felayga.unpixeldungeon.utils.GLog;
 import com.felayga.unpixeldungeon.windows.WndItemDropMultiple;
 import com.watabou.noosa.audio.Sample;
@@ -167,6 +164,12 @@ public class Item implements Bundlable {
         return level(level, levelKnown);
     }
     public Item level(int level, boolean levelKnown) {
+        level(level, levelKnown, true);
+
+        return this;
+    }
+
+    public void level(int level, boolean levelKnown, boolean updateQuickslot) {
         if (hasLevels) {
             this.level = level;
             this.levelKnown = levelKnown;
@@ -175,9 +178,9 @@ public class Item implements Bundlable {
             this.levelKnown = true;
         }
 
-        updateQuickslot();
-
-        return this;
+        if (updateQuickslot) {
+            updateQuickslot();
+        }
     }
 
     public boolean levelKnown() {
@@ -195,15 +198,13 @@ public class Item implements Bundlable {
 
     public boolean hasLevels() { return hasLevels; }
     public void hasLevels(boolean state) {
-        if (hasLevels != state) {
-            hasLevels = state;
+        hasLevels = state;
 
-            level(level, levelKnown);
-        }
+        level(level, levelKnown);
     }
 
-	protected BUCStatus bucStatus = BUCStatus.Uncursed;
-	protected boolean bucStatusKnown = false;
+    private BUCStatus bucStatus = BUCStatus.Uncursed;
+	private boolean bucStatusKnown = false;
 	private boolean hasBuc = true;
 
 	public BUCStatus bucStatus() {
@@ -311,7 +312,6 @@ public class Item implements Bundlable {
         IBag oldParent = parent();
 
         if (parent().remove(this) == this) {
-
             if (hero.belongings.collect(this)) {
                 GameScene.pickUp(this);
                 playPickupSound();
@@ -332,26 +332,37 @@ public class Item implements Bundlable {
 	}
 
 	public void doDrop(final Hero hero) {
-		if (quantity > 1) {
-			GameScene.show(new WndItemDropMultiple(this) {
-				@Override
-				public void doDrop(int quantity) {
+        if (quantity > 1) {
+            GameScene.show(new WndItemDropMultiple(this) {
+                @Override
+                public void doDrop(int quantity) {
+                    Item removed = null;
                     if (quantity == Item.this.quantity) {
-                        Dungeon.level.drop(hero.belongings.remove(Item.this), hero.pos()).sprite.drop(hero.pos());
+                        removed = hero.belongings.remove(Item.this);
                     } else if (quantity > 0) {
-                        Dungeon.level.drop(hero.belongings.remove(Item.this, quantity), hero.pos()).sprite.drop(hero.pos());
+                        removed = hero.belongings.remove(Item.this, quantity);
                     } else {
                         GLog.w("You drop nothing.  The nothing clatters noisily as it impacts the ground.");
                     }
-                    hero.spend_new(Constant.Time.ITEM_DROP, true);
+
+                    if (removed != null) {
+                        Heap heap = Dungeon.level.drop(removed, hero.pos());
+                        if (heap != null) {
+                            heap.sprite.drop(hero.pos());
+                        }
+                        hero.spend_new(Constant.Time.ITEM_DROP, true);
+                    }
                 }
-			});
-		}
-		else {
-			Dungeon.level.drop(hero.belongings.remove(this), hero.pos()).sprite.drop(hero.pos());
-			hero.spend_new(Constant.Time.ITEM_DROP, true);
-		}
-	}
+            });
+        } else {
+            Item removed = hero.belongings.remove(this);
+            Heap heap = Dungeon.level.drop(removed, hero.pos());
+            if (heap != null) {
+                heap.sprite.drop(hero.pos());
+            }
+            hero.spend_new(Constant.Time.ITEM_DROP, true);
+        }
+    }
 
 	public void syncVisuals() {
 		//do nothing by default, as most items need no visual syncing.
@@ -381,10 +392,10 @@ public class Item implements Bundlable {
 
 	protected void onThrow(Char thrower, int cell) {
 		GLog.d("onthrow cell="+cell);
-		Heap heap = Dungeon.level.drop(this, cell);
-		if (heap.size() > 0) {
-			heap.sprite.drop(cell);
-		}
+        Heap heap = Dungeon.level.drop(this, cell);
+        if (heap != null) {
+            heap.sprite.drop(cell);
+        }
 	}
 
 
@@ -393,7 +404,7 @@ public class Item implements Bundlable {
 	}
 
     public final boolean isStackableWith(Item item) {
-        return stackable && item.stackable && checkSimilarity(item) && this.shopkeeperRegistryIndex == item.shopkeeperRegistryIndex;
+        return stackable && item.stackable && isSimilar(item) && this.shopkeeperRegistryIndex == item.shopkeeperRegistryIndex;
     }
 
     protected boolean checkSimilarity(Item item) {
@@ -401,6 +412,7 @@ public class Item implements Bundlable {
     }
 
 	public void onDetach() {
+        updateQuickslot();
 	}
 
     public static Item ghettoSplitStack(Item item, int quantity, Char owner) {
@@ -431,24 +443,20 @@ public class Item implements Bundlable {
 			GLog.d("upgrade item="+getDisplayName()+" because "+source.getDisplayName()+" said so ("+n+")");
 			switch (source.bucStatus) {
 				case Cursed:
-					bucStatus = BUCStatus.Cursed;
+                    bucStatus(BUCStatus.Cursed);
 					break;
 				case Uncursed:
 					if (bucStatus == BUCStatus.Cursed) {
-						bucStatus = BUCStatus.Uncursed;
+                        bucStatus(BUCStatus.Uncursed);
 					}
 					break;
 				case Blessed:
 					if (bucStatus == BUCStatus.Cursed) {
-						bucStatus = BUCStatus.Uncursed;
+                        bucStatus(BUCStatus.Uncursed);
 					} else {
-						bucStatus = BUCStatus.Blessed;
+                        bucStatus(BUCStatus.Blessed);
 					}
 					break;
-			}
-
-			if (source.bucStatusKnown) {
-				bucStatusKnown = true;
 			}
 		}
 		else {
@@ -474,8 +482,8 @@ public class Item implements Bundlable {
 		return bucStatusKnown ? bucStatus : BUCStatus.Unknown;
 	}
 
-	public boolean isUpgradable() {
-		return true;
+	public final boolean isUpgradable() {
+		return hasLevels;
 	}
 
 	public boolean isIdentified() {
@@ -633,12 +641,14 @@ public class Item implements Bundlable {
 	}
 
 	public String status() {
-		return quantity != 1 || stackable ? Integer.toString(quantity) : null;
+		return stackable ? Integer.toString(quantity) : null;
 	}
 
 	public final void updateQuickslot() {
+        //GLog.d("updateQuickslot");
+
         if (parent_whut != null && parent_whut.owner() instanceof Hero) {
-            QuickSlotButton.refresh();
+            Toolbar.refresh();
         }
 
         if (parent_whut instanceof Heap && Dungeon.hero != null) {
@@ -652,10 +662,15 @@ public class Item implements Bundlable {
 	}
 
 	private static final String QUANTITY = "quantity";
+
 	private static final String LEVEL = "level";
+    private static final String HASLEVELS = "hasLevels";
 	private static final String LEVEL_KNOWN = "levelKnown";
+
 	private static final String BUCSTATUS = "bucStatus";
+    private static final String HASBUC = "hasBuc";
 	private static final String BUCSTATUS_KNOWN = "bucStatusKnown";
+
 	private static final String QUICKSLOT = "quickslotpos";
 	private static final String DEFAULTACTION = "defaultAction";
     private static final String WEIGHT = "weight";
@@ -665,14 +680,21 @@ public class Item implements Bundlable {
 	@Override
 	public void storeInBundle(Bundle bundle) {
 		bundle.put(QUANTITY, quantity);
+
+        bundle.put(HASLEVELS, hasLevels);
 		bundle.put(LEVEL, level);
 		bundle.put(LEVEL_KNOWN, levelKnown);
-		bundle.put(BUCSTATUS, BUCStatus.ToInt(bucStatus));
+
+        bundle.put(HASBUC, hasBuc);
+		bundle.put(BUCSTATUS, bucStatus.value);
 		bundle.put(BUCSTATUS_KNOWN, bucStatusKnown);
+
 		if (Dungeon.quickslot.contains(this)) {
 			bundle.put(QUICKSLOT, Dungeon.quickslot.getSlot(this));
 		}
-		bundle.put(DEFAULTACTION, defaultAction);
+        if (defaultAction != null) {
+            bundle.put(DEFAULTACTION, defaultAction);
+        }
         bundle.put(WEIGHT, weight);
 
         bundle.put(SHOPKEEPERREGISTRYINDEX, shopkeeperRegistryIndex);
@@ -681,25 +703,29 @@ public class Item implements Bundlable {
 
 	@Override
 	public void restoreFromBundle(Bundle bundle) {
-		defaultAction = bundle.getString(DEFAULTACTION);
+        if (bundle.contains(DEFAULTACTION)) {
+            defaultAction = bundle.getString(DEFAULTACTION);
+        } else {
+            defaultAction = null;
+        }
 		quantity = bundle.getInt(QUANTITY);
+
+        hasLevels = bundle.getBoolean(HASLEVELS);
+        level = bundle.getInt(LEVEL);
 		levelKnown = bundle.getBoolean(LEVEL_KNOWN);
-		bucStatusKnown = bundle.getBoolean(BUCSTATUS_KNOWN);
 
-		int level = bundle.getInt(LEVEL);
-		if (level > 0) {
-			upgrade(null, level);
-		} else if (level < 0) {
-			upgrade(null, -level);
-		}
+        level(level, levelKnown, false);
 
-		bucStatus = BUCStatus.FromInt(bundle.getInt(BUCSTATUS));
+        hasBuc = bundle.getBoolean(HASBUC);
+		bucStatus = BUCStatus.fromInt(bundle.getInt(BUCSTATUS));
+        bucStatusKnown = bundle.getBoolean(BUCSTATUS_KNOWN);
 
 		bucStatus(bucStatus, bucStatusKnown);
 
 		//only want to populate slot on first load.
 		if (Dungeon.hero == null) {
-			if (bundle.contains(QUICKSLOT)) {
+			if (bundle.contains(QUICKSLOT) && defaultAction != null) {
+                GLog.d("restore, quickslot because defaultaction="+defaultAction);
 				Dungeon.quickslot.setSlot(bundle.getInt(QUICKSLOT), this);
 			}
 		}
@@ -716,18 +742,18 @@ public class Item implements Bundlable {
 	public void cast(final Char user, int pos, int dst) {
         //todo: make sure throwing item weights are right, etc.
 
-        final int endPos = new Ballistica(pos, dst, Ballistica.PROJECTILE).collisionPos;
+        final int endPos = new Ballistica(pos, dst, Ballistica.Mode.Projectile).collisionPos;
 
         user.sprite.zap(endPos);
         user.busy();
 
-		Sample.INSTANCE.play(Assets.SND_MISS, 0.6f, 0.6f, 1.5f);
+        Sample.INSTANCE.play(Assets.SND_MISS, 0.6f, 0.6f, 1.5f);
 
-		Char enemy = Actor.findChar(endPos);
-		QuickSlotButton.target(enemy);
+        Char enemy = Actor.findChar(endPos);
+        QuickSlotButton.target(enemy);
 
-		// FIXME!!!
-		final long delay = Constant.Time.ITEM_THROW;
+        // FIXME!!!
+        final long delay = Constant.Time.ITEM_THROW;
         /*
 		if (this instanceof MissileWeapon) {
 			//delay *= ((MissileWeapon)this).speedFactor( user );
@@ -744,21 +770,40 @@ public class Item implements Bundlable {
 		final long finalDelay = delay;
 		*/
 
-        final Item item = this.parent().remove(Item.this, 1);
+        boolean updateQuickslot = false;
 
+        if (user.belongings.ammo() == this) {
+            GLog.d("isammo quantity="+this.quantity());
+            if (this.quantity() == 1) {
+                user.belongings.ranOutOfAmmo(this);
+                updateQuickslot = true;
+            }
+        } else {
+            Item test = user.belongings.ammo();
+            GLog.d("not isammo? " + (test != null ? test.getDisplayName() : "<null>"));
+        }
+
+        final Item item = user.belongings.remove(Item.this, 1);
+
+        if (updateQuickslot) {
+            updateQuickslot();
+        }
+
+        /*
         if (enemy != null && Random.Int(2)==0) {
             enemy.belongings.collect(item);
         }
+        */
 
-		((MissileSprite) user.sprite.parent.recycle(MissileSprite.class)).
-				reset(pos, endPos, this, new Callback() {
-					@Override
-					public void call() {
+        ((MissileSprite) user.sprite.parent.recycle(MissileSprite.class)).
+                reset(pos, endPos, this, new Callback() {
+                    @Override
+                    public void call() {
                         item.onThrow(user, endPos);
                         user.spend_new(delay, true);
-					}
-				});
-	}
+                    }
+                });
+    }
 
 	protected static Hero curUser = null;
 	protected static Item curItem = null;

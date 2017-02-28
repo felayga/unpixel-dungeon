@@ -26,14 +26,8 @@
 
 package com.felayga.unpixeldungeon.items;
 
-import com.felayga.unpixeldungeon.Dungeon;
-import com.felayga.unpixeldungeon.utils.GLog;
 import com.watabou.utils.Bundle;
-import com.watabou.utils.Random;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.HashMap;
 import java.util.HashSet;
 
 /**

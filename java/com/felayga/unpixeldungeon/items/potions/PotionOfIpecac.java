@@ -53,7 +53,7 @@ public class PotionOfIpecac extends Potion {
 
         Sick.vomit(hero, hero);
         
-        if (bucStatus == BUCStatus.Cursed || (bucStatus == BUCStatus.Uncursed && Random.Int(2)==0)) {
+        if (bucStatus() == BUCStatus.Cursed || (bucStatus() == BUCStatus.Uncursed && Random.Int(2)==0)) {
             Buff.prolong(hero, hero, Sick.class, 0);
         }
     }

@@ -33,6 +33,7 @@ public class Fury extends Buff {
 	
 	public static float LEVEL	= 0.5f;
 
+    public Fury()
 	{
 		type = buffType.POSITIVE;
 	}

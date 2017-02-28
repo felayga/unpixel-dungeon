@@ -36,6 +36,10 @@ public class LockedFloor extends Buff {
 	//the amount of turns remaining before beneficial passive effects turn off
 	private float left = 50; //starts at 50 turns
 
+    public LockedFloor() {
+
+    }
+
 	@Override
 	public boolean act() {
         spend_new(GameTime.TICK, false);

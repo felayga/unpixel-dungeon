@@ -32,22 +32,25 @@ import com.felayga.unpixeldungeon.utils.GLog;
 
 public abstract class EquippableItem extends Item {
 	public enum Slot {
-		Weapon(0),
-		Offhand(1),
+        Weapon(0),
+        Offhand(1),
 
-        Face(2),
-        Amulet(3),
-        Ring1(4),
-        Ring2(5),
+        Armor(2),
+        Helmet(3),
+        Gloves(4),
+        Boots(5),
 
-        Cloak(6),
-		Armor(7),
-        Helmet(8),
-		Gloves(9),
-        Pants(10),
-        Boots(11),
+        Ranged(6),
+        Ammo(7),
+
+        Cloak(8),
+        Amulet(9),
+        Ring1(10),
+        Ring2(11),
 
         None(-1);
+
+        public static final int MAXEQUIPPED = 12;
 
         public final int value;
 
@@ -55,42 +58,41 @@ public abstract class EquippableItem extends Item {
             this.value = value;
         }
 
-        public static int HIGHEST() { return Boots.value; }
-
         public static Slot fromInt(int value) {
-            switch(value) {
+            switch (value) {
                 case 0:
                     return Weapon;
                 case 1:
                     return Offhand;
                 case 2:
-                    return Face;
-                case 3:
-                    return Amulet;
-                case 4:
-                    return Ring1;
-                case 5:
-                    return Ring2;
-                case 6:
-                    return Cloak;
-                case 7:
                     return Armor;
-                case 8:
+                case 3:
                     return Helmet;
-                case 9:
+                case 4:
                     return Gloves;
-                case 10:
-                    return Pants;
-                case 11:
+                case 5:
                     return Boots;
+                case 6:
+                    return Ranged;
+                case 7:
+                    return Ammo;
+                case 8:
+                    return Cloak;
+                case 9:
+                    return Amulet;
+                case 10:
+                    return Ring1;
+                case 11:
+                    return Ring2;
                 default:
                     return None;
             }
         }
-	}
+    }
 
 	public long equipTime;
 	public boolean twoHanded = false;
+    public boolean cursedCannotUnequip = true;
 
 	public EquippableItem(long equipTime)
 	{
@@ -153,7 +155,7 @@ public abstract class EquippableItem extends Item {
 
 	@Override
 	public void cast( final Hero user, int dst ) {
-		if (isEquipped( user )) {
+		if (cursedCannotUnequip && isEquipped( user )) {
 			if (quantity() == 1 && !user.belongings.unequip(this, true)) {
                 GLog.d("quantity=1, failed unequip, returned");
 				return;

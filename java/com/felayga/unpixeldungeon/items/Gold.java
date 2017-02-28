@@ -46,6 +46,7 @@ public class Gold extends Item {
         pickupSound = Assets.SND_GOLD;
 		stackable = true;
 		hasBuc(false);
+        hasLevels(false);
 
 		quantity(quantity);
 		weight(1);
@@ -76,11 +77,6 @@ public class Gold extends Item {
 		return true;
 	}
 	*/
-
-	@Override
-	public boolean isUpgradable() {
-		return false;
-	}
 	
 	@Override
 	public boolean isIdentified() {
@@ -108,7 +104,7 @@ public class Gold extends Item {
 	@Override
 	public Item random() {
         GLog.d("depth="+Dungeon.depth()+" adjusted="+Dungeon.depthAdjusted);
-		quantity(Random.Int(
+		quantity(Random.IntRange(
                 30 + (Dungeon.depthAdjusted * 3 / 8 + Dungeon.hero.level / 8) * 10,
                 60 + (Dungeon.depthAdjusted * 3 / 8 + Dungeon.hero.level / 8) * 20
         ));

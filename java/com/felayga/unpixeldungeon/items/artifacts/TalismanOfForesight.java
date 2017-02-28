@@ -65,7 +65,7 @@ public class TalismanOfForesight extends Artifact_old {
 	@Override
 	public ArrayList<String> actions( Hero hero ) {
 		ArrayList<String> actions = super.actions( hero );
-		if (isEquipped( hero ) && charge == chargeCap && bucStatus != BUCStatus.Cursed)
+		if (isEquipped( hero ) && charge == chargeCap && bucStatus() != BUCStatus.Cursed)
 			actions.add(AC_SCRY);
 		return actions;
 	}
@@ -115,7 +115,7 @@ public class TalismanOfForesight extends Artifact_old {
 		String desc = "A smooth stone, almost too big for your pocket or hand, with strange engravings on it. " +
 				"You feel like it's watching you, assessing your every move.";
 		if ( isEquipped( Dungeon.hero ) ){
-			if (bucStatus != BUCStatus.Cursed) {
+			if (bucStatus() != BUCStatus.Cursed) {
 				desc += "\n\nWhen you hold the talisman you feel like your senses are heightened.";
 				if (charge == chargeCap)
 					desc += "\n\nThe talisman is radiating energy, prodding at your mind. You wonder what would " +
@@ -166,7 +166,7 @@ public class TalismanOfForesight extends Artifact_old {
 				}
 			}
 
-			if (smthFound && bucStatus != BUCStatus.Cursed){
+			if (smthFound && bucStatus() != BUCStatus.Cursed){
 				if (warn == 0){
 					GLog.w("You feel uneasy.");
 					if (target instanceof Hero){
@@ -183,7 +183,7 @@ public class TalismanOfForesight extends Artifact_old {
 
 			//fully charges in 2500 turns at lvl=0, scaling to 1000 turns at lvl = 10.
 			LockedFloor lock = target.buff(LockedFloor.class);
-			if (charge < chargeCap && bucStatus != BUCStatus.Cursed && (lock == null || lock.regenOn())) {
+			if (charge < chargeCap && bucStatus() != BUCStatus.Cursed && (lock == null || lock.regenOn())) {
 				partialCharge += 0.04+(level()*0.006);
 
 				if (partialCharge > 1 && charge < chargeCap) {

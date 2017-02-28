@@ -48,6 +48,7 @@ public class AcidBurning extends Buff implements Hero.Doom {
 
     private long left;
 
+    public AcidBurning()
     {
         type = buffType.NEGATIVE;
     }
@@ -67,7 +68,7 @@ public class AcidBurning extends Buff implements Hero.Doom {
     @Override
     public boolean act() {
         if (target.isAlive()) {
-            target.damage(Random.Int(1, 4), MagicType.Acid, null);
+            target.damage(Random.IntRange(1, 4), MagicType.Acid, null);
         } else {
             detach();
         }
@@ -76,7 +77,7 @@ public class AcidBurning extends Buff implements Hero.Doom {
         left -= GameTime.TICK;
 
         if (left <= 0 ||
-                Random.Float() > (2 + (float) target.HP / target.HT) / 3 ||
+                /*Random.Float() > (2 + (float) target.HP / target.HT) / 3 ||*/
                 (Level.puddle[target.pos()] && !target.flying())) {
 
             detach();

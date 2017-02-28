@@ -27,7 +27,6 @@ package com.felayga.unpixeldungeon.actors.blobs;
 
 import com.felayga.unpixeldungeon.actors.Actor;
 import com.felayga.unpixeldungeon.actors.Char;
-import com.felayga.unpixeldungeon.actors.buffs.Buff;
 import com.felayga.unpixeldungeon.effects.BlobEmitter;
 import com.felayga.unpixeldungeon.effects.Speck;
 import com.watabou.utils.Bundle;
@@ -46,7 +45,7 @@ public class VenomGas extends Blob {
 			Char ch;
 			for (int i = 0; i < LENGTH; i++) {
 				if (cur[i] > 0 && (ch = Actor.findChar(i)) != null) {
-					if (ch.canBreate()) {
+					if (ch.canBreathe()) {
                         //todo: keep venom debuff?
                         //Buff.affect(ch, Venom.class).set(2f, strength);
                     }

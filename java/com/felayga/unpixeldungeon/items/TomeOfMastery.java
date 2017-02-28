@@ -51,11 +51,14 @@ public class TomeOfMastery extends Item {
 	public static final long TIME_TO_READ = GameTime.TICK * 10;
 	
 	public static final String AC_READ	= "READ";
-	
+
+    public TomeOfMastery()
 	{
 		stackable = false;
 		name = "Tome of Mastery";
 		image = ItemSpriteSheet.MASTERY;
+
+        hasLevels(false);
 		
 		unique = true;
 	}
@@ -109,11 +112,6 @@ public class TomeOfMastery extends Item {
 	public boolean doPickUp( Hero hero ) {
 		Badges.validateMastery();
 		return super.doPickUp( hero );
-	}
-	
-	@Override
-	public boolean isUpgradable() {
-		return false;
 	}
 	
 	@Override

@@ -35,6 +35,7 @@ import com.felayga.unpixeldungeon.ui.BuffIndicator;
  */
 public class ItemVision extends FlavourBuff {
 
+    public ItemVision()
     {
         type = buffType.POSITIVE;
     }

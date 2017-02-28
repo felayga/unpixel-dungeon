@@ -42,6 +42,7 @@ public class Sheep extends NPC {
 
         defenseMundane = 32767;
         defenseMagical = 32767;
+        characteristics = Characteristic.value(Characteristic.NoExperience);
 
 		name = "sheep";
 		spriteClass = SheepSprite.class;

@@ -33,6 +33,7 @@ import com.felayga.unpixeldungeon.ui.BuffIndicator;
 
 public class Corruption extends Buff {
 
+    public Corruption()
 	{
 		type = buffType.NEGATIVE;
 	}

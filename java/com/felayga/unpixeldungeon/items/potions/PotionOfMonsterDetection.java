@@ -58,7 +58,7 @@ public class PotionOfMonsterDetection extends Potion {
         setKnown();
 
         long duration = 20;
-        switch(bucStatus) {
+        switch(bucStatus()) {
             case Blessed:
                 duration += Random.Int(40);
                 break;

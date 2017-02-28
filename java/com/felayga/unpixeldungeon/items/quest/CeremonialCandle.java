@@ -45,17 +45,15 @@ public class CeremonialCandle extends Item {
     //generated with the wandmaker quest
     public static int ritualPos;
 
+    public CeremonialCandle()
     {
         name = "ceremonial candle";
         image = ItemSpriteSheet.CANDLE;
 
+        hasLevels(false);
+
         unique = true;
         stackable = true;
-    }
-
-    @Override
-    public boolean isUpgradable() {
-        return false;
     }
 
     @Override

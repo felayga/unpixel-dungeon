@@ -55,7 +55,7 @@ public class AcidBlob extends Mob {
         weight = Encumbrance.UNIT * 30;
         nutrition = 10;
         immunityMagical = MagicType.Sleep.value | MagicType.Poison.value | MagicType.Acid.value | MagicType.Stoning.value;
-        corpseEffects = CorpseEffect.Unstoning.value | CorpseEffect.Acidic.value | CorpseEffect.Vegetable.value | CorpseEffect.Unrottable.value;
+        corpseEffects = CorpseEffect.value(CorpseEffect.Unstoning, CorpseEffect.Acidic, CorpseEffect.Vegetable, CorpseEffect.Unrottable);
         corpseResistances = MagicType.None.value;
         viewDistance = 0;
         characteristics = Characteristic.value(Characteristic.CannotUseItems, Characteristic.NonBreather, Characteristic.Brainless, Characteristic.Amorphous);

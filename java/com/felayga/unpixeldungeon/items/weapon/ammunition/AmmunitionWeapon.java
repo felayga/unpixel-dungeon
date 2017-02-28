@@ -26,7 +26,6 @@
 
 package com.felayga.unpixeldungeon.items.weapon.ammunition;
 
-import com.felayga.unpixeldungeon.items.EquippableItem;
 import com.felayga.unpixeldungeon.items.weapon.missiles.MissileWeapon;
 import com.felayga.unpixeldungeon.items.weapon.ranged.AmmunitionType;
 import com.felayga.unpixeldungeon.items.weapon.ranged.RangedWeapon;
@@ -38,11 +37,6 @@ import com.felayga.unpixeldungeon.mechanics.WeaponSkill;
 public class AmmunitionWeapon extends MissileWeapon {
     public AmmunitionWeapon(WeaponSkill weaponSkill, long delay, int damageMin, int damageMax, int quantity, boolean throwable, AmmunitionType ammunitionType) {
         super(weaponSkill, delay, damageMin, damageMax, quantity, throwable, ammunitionType);
-    }
-
-    @Override
-    public EquippableItem.Slot[] getSlots() {
-        return new Slot[]{ Slot.Weapon, Slot.Offhand };
     }
 
     public RangedWeapon launcher;

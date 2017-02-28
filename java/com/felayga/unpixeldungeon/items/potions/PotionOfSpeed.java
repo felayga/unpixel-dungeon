@@ -30,7 +30,6 @@ import com.felayga.unpixeldungeon.actors.Char;
 import com.felayga.unpixeldungeon.actors.buffs.Buff;
 import com.felayga.unpixeldungeon.actors.buffs.negative.Cripple;
 import com.felayga.unpixeldungeon.actors.buffs.positive.Haste;
-import com.felayga.unpixeldungeon.actors.buffs.positive.MindVision;
 import com.felayga.unpixeldungeon.mechanics.GameTime;
 import com.watabou.utils.Random;
 
@@ -55,7 +54,7 @@ public class PotionOfSpeed extends Potion {
         Buff.detach(hero, Cripple.class);
 
         long duration = Random.Int(20);
-        switch (bucStatus) {
+        switch (bucStatus()) {
             case Blessed:
                 duration += 150;
                 break;

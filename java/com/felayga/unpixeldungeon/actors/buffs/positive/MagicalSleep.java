@@ -38,6 +38,10 @@ public class MagicalSleep extends Buff {
     private static final long STEP = GameTime.TICK;
     public static final long SWS = GameTime.TICK * 3 / 2;
 
+    public MagicalSleep() {
+
+    }
+
     @Override
     public boolean attachTo(Char target, Char source) {
         //todo: MagicalSleep immunity/resistance

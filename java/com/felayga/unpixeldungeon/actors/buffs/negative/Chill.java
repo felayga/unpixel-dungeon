@@ -42,6 +42,7 @@ public class Chill extends FlavourBuff implements ISpeedModifierBuff {
 
 	private static final String TXT_FREEZES = "%s freezes!";
 
+    public Chill()
 	{
 		type = buffType.NEGATIVE;
 	}

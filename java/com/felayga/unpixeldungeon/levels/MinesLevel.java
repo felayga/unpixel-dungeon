@@ -70,12 +70,11 @@ public class MinesLevel extends RegularLevel {
         color1 = 0x534f3e;
         color2 = 0xb9d661;
 
-        viewDistance = 3;
+        viewDistance = 7;
     }
 
     @Override
     protected Feeling determineFeeling() {
-        viewDistance = (int) Math.ceil(viewDistance / 3f);
         return Feeling.DARK;
     }
 
@@ -88,12 +87,12 @@ public class MinesLevel extends RegularLevel {
 
     @Override
     public boolean build() {
-        value = 0.0;
+        value = -0.25;
         xscale = 7.5;
         yscale = 750000.0;
         offset = Random.Float() * 524288.0;
 
-        ghettorecursive = new ArrayList<Integer>();
+        ghettorecursive = new ArrayList<>();
         simplexPlain();
         ghettorecursive.clear();
         int[] regions = getAndFillRegions();
@@ -149,7 +148,7 @@ public class MinesLevel extends RegularLevel {
         return true;
     }
 
-    ArrayList<Integer> ghettorecursive;
+    private ArrayList<Integer> ghettorecursive;
 
     private int[] getAndFillRegions() {
         ArrayList<Integer> retval = new ArrayList<Integer>();
@@ -253,7 +252,7 @@ public class MinesLevel extends RegularLevel {
             tested[n] = false;
         }
 
-        for (int y = 0; y < EDGEBUFFER; y++) {
+        for (int y = 0; y < EDGEBUFFER * 5 / 3; y++) {
             for (int x = 0; x < WIDTH; x++) {
                 pos = x + y * WIDTH;
                 tested[pos] = true;

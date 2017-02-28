@@ -42,12 +42,23 @@ public enum CorpseEffect {
     Acidic              (0x0100),
     Hallucinogenic      (0x0200),
     Sickening           (0x0400),
-    Greasy              (0x0800),
-    Canned              (0x1000);
+    Canned              (0x0800),
+    PlayerCanned        (0x1000),
+    Spinach             (0x2000);
 
     public final int value;
 
     CorpseEffect(int value) {
         this.value = value;
+    }
+
+    public static int value(CorpseEffect... effects) {
+        int retval = 0;
+
+        for (CorpseEffect effect : effects) {
+            retval |= effect.value;
+        }
+
+        return retval;
     }
 }

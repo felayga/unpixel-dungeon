@@ -39,6 +39,7 @@ import com.felayga.unpixeldungeon.ui.BuffIndicator;
 
 public class Deafness extends FlavourBuff {
 
+    public Deafness()
     {
         type = buffType.NEGATIVE;
     }

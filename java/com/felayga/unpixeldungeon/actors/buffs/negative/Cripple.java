@@ -34,6 +34,7 @@ public class Cripple extends FlavourBuff implements ISpeedModifierBuff {
 
 	public static final long DURATION	= GameTime.TICK * 10;
 
+    public Cripple()
 	{
 		type = buffType.NEGATIVE;
 	}

@@ -56,7 +56,7 @@ public class YellowMold extends Mob {
         weight = Encumbrance.UNIT * 50;
         nutrition = 30;
         immunityMagical = MagicType.Poison.value;
-        corpseEffects = CorpseEffect.Poisonous.value | CorpseEffect.Hallucinogenic.value | CorpseEffect.Vegetable.value;
+        corpseEffects = CorpseEffect.value(CorpseEffect.Poisonous, CorpseEffect.Hallucinogenic, CorpseEffect.Vegetable);
         corpseResistances = MagicType.Poison.value;
         viewDistance = 0;
         characteristics = Characteristic.value(Characteristic.NonBreather, Characteristic.CannotUseItems, Characteristic.Brainless);

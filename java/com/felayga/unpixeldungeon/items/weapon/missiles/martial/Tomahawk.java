@@ -70,7 +70,7 @@ public class Tomahawk extends MissileWeapon {
 	
 	@Override
 	public Item random() {
-		quantity(Random.Int(5, 12));
+		quantity(Random.IntRange(5, 15));
 		return this;
 	}
 

@@ -26,51 +26,120 @@
 package com.felayga.unpixeldungeon.actors.buffs.negative;
 
 import com.felayga.unpixeldungeon.actors.Char;
+import com.felayga.unpixeldungeon.actors.buffs.Buff;
 import com.felayga.unpixeldungeon.actors.buffs.FlavourBuff;
+import com.felayga.unpixeldungeon.actors.buffs.IIntrinsicBuff;
 import com.felayga.unpixeldungeon.actors.buffs.ISpeedModifierBuff;
-import com.felayga.unpixeldungeon.items.rings.RingOfElements.Resistance;
+import com.felayga.unpixeldungeon.actors.buffs.positive.Haste;
 import com.felayga.unpixeldungeon.mechanics.GameTime;
 import com.felayga.unpixeldungeon.ui.BuffIndicator;
 
 public class Slow extends FlavourBuff implements ISpeedModifierBuff {
-
-	{
-		type = buffType.NEGATIVE;
-	}
-
-	private static final long DURATION = GameTime.TICK * 10;
-
-	@Override
-	public int icon() {
-		return BuffIndicator.SLOW;
-	}
-	
-	@Override
-	public String toString() {
-		return "Slowed";
-	}
-
-	@Override
-	public String desc() {
-		return "Slowing magic affects the target's rate of time, to them everything is moving super-fast.\n" +
-				"\n" +
-				"A slowed character performs all actions in twice the amount of time they would normally take.\n" +
-				"\n" +
-				"This slow will last for " + dispTurns() + ".";
-	}
-
-	public static long duration( Char ch ) {
-		Resistance r = ch.buff( Resistance.class );
-		return r != null ? r.durationFactor() * DURATION : DURATION;
-	}
-
     @Override
     public long movementModifier() {
-        return GameTime.TICK * 2;
+        return GameTime.TICK * 5 / 3;
     }
 
     @Override
     public long attackModifier() {
-        return movementModifier();
+        return GameTime.TICK * 2;
+    }
+
+    public Slow() {
+        type = buffType.NEGATIVE;
+    }
+
+    /*
+    @Override
+    public boolean attachTo(Char target, Char source) {
+        if (super.attachTo(target, source)) {
+            List<Buff> pendingRemoval = new ArrayList<>();
+            for (Buff buff : target.buffs()) {
+                if (buff instanceof Haste) {
+                    Haste haste = (Haste)buff;
+                    if (!haste.improved()) {
+                        pendingRemoval.add(haste);
+                    }
+                }
+            }
+
+            for (Buff buff : pendingRemoval) {
+                buff.detach();
+            }
+            return true;
+        } else {
+            return false;
+        }
+    }
+    */
+
+    @Override
+    public String attachedMessage(boolean isHero) {
+        if (isHero) {
+            return "You feel yourself slow down.";
+        }
+
+        return super.attachedMessage(isHero);
+    }
+
+    @Override
+    public int icon() {
+        return BuffIndicator.SLOW;
+    }
+
+
+    @Override
+    public String toString() {
+        return "Slow";
+    }
+
+
+    @Override
+    public String desc() {
+        return "Slowing magic affects the target's relative time flow, requiring more time for movement and attack actions.\n" +
+                //"This magic also neutralizes any haste magic in effect on the target.\n" +
+                "\n" +
+                descDuration();
+    }
+
+
+    protected String descDuration() {
+        return "The slowness will last for " + dispTurns() + ".";
+    }
+
+    public static class Indefinite extends Haste {
+        @Override
+        public long movementModifier() {
+            return GameTime.TICK * 3 / 5;
+        }
+
+        public Indefinite() {
+        }
+
+        public static Indefinite prolong(Char target, Char source, Class<? extends Indefinite> haste) {
+            return Buff.prolong(target, source, haste, GameTime.TICK * 1024);
+        }
+
+        @Override
+        public boolean act() {
+            spend_new(GameTime.TICK * 1024, false);
+            return true;
+        }
+
+        @Override
+        protected String descDuration() {
+            return "The slowness will last indefinitely.";
+        }
+
+    }
+
+    public static class Intrinsic extends Indefinite implements IIntrinsicBuff {
+        public Intrinsic() {
+        }
+
+        @Override
+        public int icon() {
+            return BuffIndicator.NONE;
+        }
     }
 }

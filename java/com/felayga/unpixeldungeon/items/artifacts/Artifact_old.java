@@ -73,6 +73,7 @@ public class Artifact_old extends EquippableItem {
 	public Artifact_old(){
 		super(GameTime.TICK);
         price = 100;
+        hasLevels(false);
 	}
 
 	@Override
@@ -113,12 +114,6 @@ public class Artifact_old extends EquippableItem {
 		}
 	}
 
-
-	@Override
-	public boolean isUpgradable() {
-		return false;
-	}
-
 	@Override
 	public int visiblyUpgraded() {
 		return ((level()*10)/levelCap);
@@ -131,7 +126,7 @@ public class Artifact_old extends EquippableItem {
 
 	@Override
 	public String info() {
-		if (bucStatus == BUCStatus.Cursed && bucStatusKnown && !isEquipped( Dungeon.hero )) {
+		if (bucStatus() == BUCStatus.Cursed && bucStatusKnown() && !isEquipped( Dungeon.hero )) {
 
 			return desc() + "\n\nYou can feel a malevolent magic lurking within the " + getDisplayName() + ".";
 
@@ -206,7 +201,7 @@ public class Artifact_old extends EquippableItem {
 	public class ArtifactBuff extends Buff {
 
 		public boolean isCursed() {
-			return bucStatus == BUCStatus.Cursed;
+			return bucStatus() == BUCStatus.Cursed;
 		}
 
 	}

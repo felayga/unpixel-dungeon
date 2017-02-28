@@ -55,7 +55,7 @@ public class WeakeningTrap extends Trap{
         if (ch == Dungeon.hero){
 			Buff.prolong( ch, owner, Weakness.class, Weakness.duration(ch) * 2);
 		} else if (ch != null) {
-			Buff.prolong( ch, owner, Slow.class, Slow.duration(ch));
+			Buff.prolong( ch, owner, Slow.class, Weakness.duration(ch) * 2);
 		}
 	}
 

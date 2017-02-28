@@ -30,7 +30,12 @@ package com.felayga.unpixeldungeon.actors.buffs.positive;
  * Created by HELLO on 11/13/2016.
  */
 
+import com.felayga.unpixeldungeon.Dungeon;
+import com.felayga.unpixeldungeon.actors.Char;
+import com.felayga.unpixeldungeon.actors.buffs.Buff;
 import com.felayga.unpixeldungeon.actors.buffs.FlavourBuff;
+import com.felayga.unpixeldungeon.actors.buffs.IIntrinsicBuff;
+import com.felayga.unpixeldungeon.actors.mobs.Mob;
 import com.felayga.unpixeldungeon.mechanics.GameTime;
 import com.felayga.unpixeldungeon.ui.BuffIndicator;
 
@@ -38,10 +43,35 @@ public class SeeInvisible extends FlavourBuff {
 
     public static final long DURATION	= GameTime.TICK * 20;
 
+    public SeeInvisible()
     {
         type = buffType.POSITIVE;
     }
 
+    @Override
+    public boolean attachTo(Char target, Char source) {
+        if (super.attachTo(target, source)) {
+            if (target == Dungeon.hero) {
+                for (Mob mob : Dungeon.level.mobs) {
+                    mob.updateSpriteState();
+                }
+            }
+            return true;
+        } else {
+            return false;
+        }
+    }
+
+    @Override
+    public void detach() {
+        super.detach();
+
+        if (target == Dungeon.hero) {
+            for (Mob mob : Dungeon.level.mobs) {
+                mob.updateSpriteState();
+            }
+        }
+    }
 
     @Override
     public int icon() {
@@ -56,7 +86,44 @@ public class SeeInvisible extends FlavourBuff {
 
     @Override
     public String desc() {
-        return "see invisible";
+        return "Your eyes are magically enhanced, allowing you to just barely make out invisible creatures."+
+                "\n" +
+                descDuration();
     }
 
-}
+
+    protected String descDuration() {
+        return "The enhancement will last for " + dispTurns() + ".";
+    }
+
+
+    public static class Indefinite extends SeeInvisible {
+        public Indefinite() {
+        }
+
+        public static Indefinite prolong(Char target, Char source, Class<? extends Indefinite> seeinvisible) {
+            return Buff.prolong(target, source, seeinvisible, GameTime.TICK * 1024);
+        }
+
+        @Override
+        public boolean act() {
+            spend_new(GameTime.TICK * 1024, false);
+            return true;
+        }
+
+        @Override
+        protected String descDuration() {
+            return "The enhancement will last indefinitely.";
+        }
+
+    }
+
+    public static class Intrinsic extends Indefinite implements IIntrinsicBuff {
+        public Intrinsic() {
+        }
+
+        @Override
+        public int icon() {
+            return BuffIndicator.NONE;
+        }
+    }}

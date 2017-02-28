@@ -29,15 +29,13 @@ package com.felayga.unpixeldungeon.plants;
 import com.felayga.unpixeldungeon.Dungeon;
 import com.felayga.unpixeldungeon.actors.Actor;
 import com.felayga.unpixeldungeon.actors.Char;
-import com.felayga.unpixeldungeon.actors.hero.Hero;
-import com.felayga.unpixeldungeon.actors.mobs.Mob;
+import com.felayga.unpixeldungeon.actors.buffs.Buff;
+import com.felayga.unpixeldungeon.actors.buffs.positive.MindVision;
 import com.felayga.unpixeldungeon.effects.CellEmitter;
 import com.felayga.unpixeldungeon.effects.Speck;
 import com.felayga.unpixeldungeon.items.potions.IAlchemyComponent;
 import com.felayga.unpixeldungeon.items.potions.PotionOfBrewing;
-import com.felayga.unpixeldungeon.items.scrolls.ScrollOfTeleportation;
-import com.felayga.unpixeldungeon.levels.Level;
-import com.felayga.unpixeldungeon.mechanics.Constant;
+import com.felayga.unpixeldungeon.mechanics.GameTime;
 import com.felayga.unpixeldungeon.sprites.ItemSpriteSheet;
 
 /**
@@ -47,8 +45,8 @@ public class Stoneberry extends Plant {
     private static final String TXT_NAME = "Stoneberry";
 
     private static final String TXT_DESC =
-            "Touching a Fadeleaf will teleport any creature " +
-                    "to a random place on the current level.";
+            "The Stoneberry's fruit is renowned for its ability " +
+                    "to heighten the senses.";
 
     public Stoneberry()
     {
@@ -59,6 +57,11 @@ public class Stoneberry extends Plant {
     public void activate() {
         Char ch = Actor.findChar(pos);
 
+        if (ch != null) {
+            Buff.prolong( ch, Char.Registry.get(ownerRegistryIndex()), MindVision.class, GameTime.TICK * EFFECTDURATION );
+        }
+
+        /*
         if (ch instanceof Hero) {
 
             if (ScrollOfTeleportation.canTeleport(ch)) {
@@ -85,6 +88,7 @@ public class Stoneberry extends Plant {
             }
 
         }
+        */
 
         if (Dungeon.visible[pos]) {
             CellEmitter.get(pos).start( Speck.factory(Speck.LIGHT), 0.2f, 3 );

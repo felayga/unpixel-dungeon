@@ -51,8 +51,9 @@ public class CorpseDust extends Item {
         name = "corpse dust";
         image = ItemSpriteSheet.DUST;
 
-        bucStatus = BUCStatus.Cursed;
-        bucStatusKnown = true;
+        bucStatus(BUCStatus.Cursed, true);
+
+        hasLevels(false);
 
         unique = true;
     }
@@ -60,11 +61,6 @@ public class CorpseDust extends Item {
     @Override
     public ArrayList<String> actions(Hero hero) {
         return new ArrayList<>(); //yup, no dropping this one
-    }
-
-    @Override
-    public boolean isUpgradable() {
-        return false;
     }
 
     @Override
@@ -82,6 +78,7 @@ public class CorpseDust extends Item {
         return false;
     }
 
+    /*
     @Override
     public void onDetach() {
         DustGhostSpawner spawner = Dungeon.hero.buff(DustGhostSpawner.class);
@@ -89,6 +86,7 @@ public class CorpseDust extends Item {
             spawner.dispel();
         }
     }
+    */
 
     @Override
     public String info() {

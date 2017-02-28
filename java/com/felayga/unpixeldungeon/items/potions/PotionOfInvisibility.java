@@ -30,44 +30,35 @@ import com.felayga.unpixeldungeon.actors.Char;
 import com.felayga.unpixeldungeon.actors.buffs.Buff;
 import com.felayga.unpixeldungeon.actors.buffs.positive.Invisibility;
 import com.felayga.unpixeldungeon.utils.GLog;
+import com.watabou.noosa.Visual;
 import com.watabou.noosa.audio.Sample;
 import com.watabou.noosa.tweeners.AlphaTweener;
 
 public class PotionOfInvisibility extends Potion {
 
-	private static final float ALPHA	= 0.4f;
+    public PotionOfInvisibility() {
+        name = "Potion of Invisibility";
+        initials = "In";
 
-    public PotionOfInvisibility()
-	{
-		name = "Potion of Invisibility";
-		initials = "In";
-
-		isHelpful = true;
+        isHelpful = true;
 
         price = 40;
     }
-	
-	@Override
-	public void apply( Char hero ) {
-		setKnown();
-		Buff.affect( hero, hero, Invisibility.class, Invisibility.DURATION );
-		GLog.i( "You see your hands turn invisible!" );
-		Sample.INSTANCE.play( Assets.SND_MELD );
-	}
-	
-	@Override
-	public String desc() {
-		return
-			"Drinking this potion will render you temporarily invisible. While invisible, " +
-			"enemies will be unable to see you. Attacking an enemy, as well as using a wand or a scroll " +
-			"before enemy's eyes, will dispel the effect.";
-	}
-	
-	public static void melt( Char ch ) {
-		if (ch.sprite.parent != null) {
-			ch.sprite.parent.add( new AlphaTweener( ch.sprite, ALPHA, 0.4f ) );
-		} else {
-			ch.sprite.alpha( ALPHA );
-		}
-	}
+
+    @Override
+    public void apply(Char hero) {
+        setKnown();
+        Buff.affect(hero, hero, Invisibility.class, Invisibility.DURATION);
+        GLog.i("You see your hands turn invisible!");
+        Sample.INSTANCE.play(Assets.SND_MELD);
+    }
+
+    @Override
+    public String desc() {
+        return
+                "Drinking this potion will render you temporarily invisible. While invisible, " +
+                        "enemies will be unable to see you. Attacking an enemy, as well as using a wand or a scroll " +
+                        "before enemy's eyes, will dispel the effect.";
+    }
+
 }

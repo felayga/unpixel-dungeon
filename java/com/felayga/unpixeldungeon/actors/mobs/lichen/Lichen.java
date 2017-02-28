@@ -37,7 +37,6 @@ import com.felayga.unpixeldungeon.mechanics.CorpseEffect;
 import com.felayga.unpixeldungeon.mechanics.GameTime;
 import com.felayga.unpixeldungeon.mechanics.MagicType;
 import com.felayga.unpixeldungeon.sprites.mobs.fungus.LichenSprite;
-import com.watabou.utils.Bundlable;
 import com.watabou.utils.Bundle;
 
 import java.util.ArrayList;
@@ -62,7 +61,7 @@ public class Lichen extends Mob {
         weight = Encumbrance.UNIT * 20;
         nutrition = 200;
         immunityMagical = MagicType.None.value;
-        corpseEffects = CorpseEffect.Unrottable.value | CorpseEffect.Undecayable.value | CorpseEffect.Vegetable.value;
+        corpseEffects = CorpseEffect.value(CorpseEffect.Unrottable, CorpseEffect.Undecayable, CorpseEffect.Vegetable);
         viewDistance = 0;
         characteristics = Characteristic.value(Characteristic.NonBreather, Characteristic.CannotUseItems, Characteristic.Brainless);
     }

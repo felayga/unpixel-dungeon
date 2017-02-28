@@ -32,7 +32,6 @@ import com.felayga.unpixeldungeon.effects.CellEmitter;
 import com.felayga.unpixeldungeon.effects.particles.EarthParticle;
 import com.felayga.unpixeldungeon.items.armor.Armor;
 import com.felayga.unpixeldungeon.items.armor.Armor.Glyph;
-import com.felayga.unpixeldungeon.plants.Earthroot;
 import com.felayga.unpixeldungeon.sprites.ItemSprite;
 import com.felayga.unpixeldungeon.sprites.ItemSprite.Glowing;
 import com.watabou.noosa.Camera;
@@ -52,7 +51,7 @@ public class Entanglement extends Glyph {
 		if (Random.Int( 4 ) == 0) {
 			
 			Buff.prolong( defender, attacker, Roots.class, 5 - level / 5 );
-			Buff.affect( defender, attacker, Earthroot.Armor.class ).level( 5 * (level + 1) );
+			Buff.affect( defender, attacker, Roots.class );
 			CellEmitter.bottom( defender.pos() ).start( EarthParticle.FACTORY, 0.05f, 8 );
 			Camera.main.shake( 1, 0.4f );
 			

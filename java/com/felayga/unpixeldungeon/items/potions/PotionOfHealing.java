@@ -68,7 +68,7 @@ public class PotionOfHealing extends Potion {
         if (hero.HP == hero.HT) {
             int overhealAmount = this.overhealAmount;
 
-            switch (bucStatus) {
+            switch (bucStatus()) {
                 case Blessed:
                     overhealAmount *= 2;
                     break;
@@ -89,7 +89,7 @@ public class PotionOfHealing extends Potion {
     }
 
     protected void heal(Char hero, int healAmount) {
-        switch (bucStatus) {
+        switch (bucStatus()) {
             case Blessed:
                 healAmount += healAmount / 2;
                 break;
@@ -104,14 +104,14 @@ public class PotionOfHealing extends Potion {
         return (int) Math.ceil((double) hero.HT / 4.0);
     }
 
-    public static void cure(Char hero) {
-        Buff.detach(hero, Poison.class);
-        Buff.detach(hero, Cripple.class);
-        Buff.detach(hero, Weakness.class);
-        Buff.detach(hero, Bleeding.class);
-        Buff.detach(hero, Drowsy.class);
-        Buff.detach(hero, Slow.class);
-        Buff.detach(hero, Vertigo.class);
+    public static boolean cure(Char hero) {
+        return Buff.detach(hero, Poison.class) |
+                Buff.detach(hero, Cripple.class) |
+                Buff.detach(hero, Weakness.class) |
+                Buff.detach(hero, Bleeding.class) |
+                Buff.detach(hero, Drowsy.class) |
+                Buff.detach(hero, Slow.class) |
+                Buff.detach(hero, Vertigo.class);
     }
 
     @Override

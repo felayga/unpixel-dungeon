@@ -33,9 +33,7 @@ import com.felayga.unpixeldungeon.FogOfWar;
 import com.felayga.unpixeldungeon.Statistics;
 import com.felayga.unpixeldungeon.WarningSpriteHandler;
 import com.felayga.unpixeldungeon.actors.Actor;
-import com.felayga.unpixeldungeon.actors.Char;
 import com.felayga.unpixeldungeon.actors.blobs.Blob;
-import com.felayga.unpixeldungeon.actors.buffs.negative.Hallucination;
 import com.felayga.unpixeldungeon.actors.mobs.Mob;
 import com.felayga.unpixeldungeon.effects.BannerSprites;
 import com.felayga.unpixeldungeon.effects.BlobEmitter;
@@ -53,7 +51,6 @@ import com.felayga.unpixeldungeon.levels.RegularLevel;
 import com.felayga.unpixeldungeon.levels.branches.DungeonBranch;
 import com.felayga.unpixeldungeon.levels.features.Chasm;
 import com.felayga.unpixeldungeon.levels.traps.Trap;
-import com.felayga.unpixeldungeon.mechanics.Constant;
 import com.felayga.unpixeldungeon.plants.Plant;
 import com.felayga.unpixeldungeon.sprites.CharSprite;
 import com.felayga.unpixeldungeon.sprites.DiscardedItemSprite;
@@ -102,8 +99,6 @@ import com.watabou.utils.Random;
 
 import java.io.IOException;
 import java.util.ArrayList;
-
-import javax.microedition.khronos.opengles.GL;
 
 //import com.felayga.unpixeldungeon.items.Honeypot;
 
@@ -454,6 +449,7 @@ public class GameScene extends PixelScene {
         }
 
         if (tagAttack != attack.active || tagLoot != loot.visible || tagResume != resume.visible || tagAction != action.visible) {
+            //todo: figure out if tab positioning behavior (gaps underneath in some circumstances) is desirable
             boolean atkAppearing = attack.active && !tagAttack;
             boolean lootAppearing = loot.visible && !tagLoot;
             boolean resAppearing = resume.visible && !tagResume;
@@ -495,7 +491,7 @@ public class GameScene extends PixelScene {
             scene.log.setRect(0, scene.toolbar.top(), uiCamera.width - scene.attack.width(), 0);
         }
 
-        float pos = scene.toolbar.top();
+        float pos = scene.toolbar.actualTop();
 
         if (scene.tagAttack) {
             scene.attack.setPos(tagLeft, pos - scene.attack.height());
@@ -536,6 +532,7 @@ public class GameScene extends PixelScene {
     }
 
     public void brightness(int value) {
+        value += 4;
         float shift;
         if (value >= 0)
             shift = value / 2f;

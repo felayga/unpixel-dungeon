@@ -38,6 +38,10 @@ public class PinCushion extends Buff {
 
 	private ArrayList<MissileWeapon> items = new ArrayList<MissileWeapon>();
 
+    public PinCushion() {
+
+    }
+
 	public void stick(MissileWeapon item){
 		items.add(item);
 	}

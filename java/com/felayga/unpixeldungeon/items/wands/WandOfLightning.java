@@ -32,7 +32,6 @@ import com.felayga.unpixeldungeon.actors.Char;
 import com.felayga.unpixeldungeon.effects.CellEmitter;
 import com.felayga.unpixeldungeon.effects.Lightning;
 import com.felayga.unpixeldungeon.effects.particles.SparkParticle;
-import com.felayga.unpixeldungeon.items.weapon.enchantments.Shock;
 import com.felayga.unpixeldungeon.items.weapon.melee.simple.MagesStaff;
 import com.felayga.unpixeldungeon.levels.Level;
 import com.felayga.unpixeldungeon.mechanics.Ballistica;
@@ -83,11 +82,13 @@ public class WandOfLightning extends Wand {
 		}
 	}
 
+    /*
 	@Override
 	public void onHit(MagesStaff staff, Char attacker, Char defender, int damage) {
 		//acts like shocking enchantment
 		new Shock().proc(staff, attacker, defender, damage);
 	}
+	*/
 
 	private void arc( Char ch ) {
 		
@@ -119,7 +120,7 @@ public class WandOfLightning extends Wand {
 	}
 	
 	@Override
-	protected void fx( Ballistica bolt, Callback callback ) {
+	protected void fxEffect( Ballistica bolt, Callback callback ) {
 
 		affected.clear();
 		arcs.clear();

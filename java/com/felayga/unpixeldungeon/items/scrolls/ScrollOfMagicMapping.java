@@ -27,7 +27,6 @@ package com.felayga.unpixeldungeon.items.scrolls;
 
 import com.felayga.unpixeldungeon.Assets;
 import com.felayga.unpixeldungeon.Dungeon;
-import com.felayga.unpixeldungeon.actors.buffs.positive.Invisibility;
 import com.felayga.unpixeldungeon.effects.CellEmitter;
 import com.felayga.unpixeldungeon.effects.Speck;
 import com.felayga.unpixeldungeon.effects.SpellSprite;
@@ -61,11 +60,11 @@ public class ScrollOfMagicMapping extends Scroll {
 
 			if (allowDiscovery && (Terrain.flags[terr] & Terrain.FLAG_SECRET) != 0) {
 
-				Dungeon.level.discover(index);
+				Dungeon.level.discover(index, true, allowDiscovery);
 
 				if (Dungeon.visible[index]) {
 					GameScene.discoverTile(index, terr);
-					discover(index);
+					discoverFx(index);
 
 					return true;
 				}
@@ -81,7 +80,7 @@ public class ScrollOfMagicMapping extends Scroll {
 		
 		boolean noticed = false;
 
-		if (bucStatus == BUCStatus.Cursed) {
+		if (bucStatus() == BUCStatus.Cursed) {
 			for (int i=0;i<length/14;i++) {
 				int index = Random.Int(Level.WIDTH - 1) + Random.Int(Level.HEIGHT - 1) * Level.WIDTH;
 				noticed |= discoverCell(index, false);
@@ -92,7 +91,7 @@ public class ScrollOfMagicMapping extends Scroll {
 
 			GLog.n(TXT_LAYOUT + " " + TXT_LAYOUT_CURSED);
 		}
-		else if (bucStatus == BUCStatus.Blessed) {
+		else if (bucStatus() == BUCStatus.Blessed) {
 			for (int i = 0; i < length; i++) {
 				noticed |= discoverCell(i, true);
 			}
@@ -129,7 +128,7 @@ public class ScrollOfMagicMapping extends Scroll {
 			"The locations of items and creatures will remain unknown.";
 	}
 	
-	public static void discover( int cell ) {
+	public static void discoverFx( int cell ) {
 		CellEmitter.get( cell ).start( Speck.factory( Speck.DISCOVER ), 0.1f, 4 );
 	}
 }

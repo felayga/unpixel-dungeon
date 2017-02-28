@@ -25,9 +25,12 @@
  */
 package com.felayga.unpixeldungeon.mechanics;
 
+import com.felayga.unpixeldungeon.Dungeon;
 import com.felayga.unpixeldungeon.levels.Level;
 
+import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.List;
 
 public final class ShadowCaster {
 
@@ -36,10 +39,12 @@ public final class ShadowCaster {
 	private static final int WIDTH	= Level.WIDTH;
 	private static final int HEIGHT	= Level.HEIGHT;
 	
-	private static int distance;
+	private static int visibleDistance;
+    private static int touchableDistance;
 	private static int limits[];
 	
 	private static boolean[] losBlocking;
+    private static boolean[] losDark;
 	private static boolean[] fieldOfView;
 	
 	private static int[][] rounding;
@@ -55,31 +60,32 @@ public final class ShadowCaster {
 	
 	private static Obstacles obs = new Obstacles();
 	
-	public static void castShadow( int x, int y, boolean[] fieldOfView, int distance ) {
+	public static void castShadow( int x, int y, boolean[] fieldOfView, int visibleDistance, int touchableDistance ) {
 		losBlocking = Level.losBlocking;
+        losDark = Level.losDark;
 		
-		ShadowCaster.distance = distance;
-		limits = rounding[distance];
+		ShadowCaster.visibleDistance = visibleDistance;
+        ShadowCaster.touchableDistance = touchableDistance;
+		limits = rounding[visibleDistance];
 		
 		ShadowCaster.fieldOfView = fieldOfView;
 		Arrays.fill( fieldOfView, false );
 		fieldOfView[y * WIDTH + x] = true;
 		
-		scanSector( x, y, +1, +1, 0, 0 );
-		scanSector( x, y, -1, +1, 0, 0 );
-		scanSector( x, y, +1, -1, 0, 0 );
-		scanSector( x, y, -1, -1, 0, 0 );
-		scanSector( x, y, 0, 0, +1, +1 );
-		scanSector( x, y, 0, 0, -1, +1 );
-		scanSector( x, y, 0, 0, +1, -1 );
-		scanSector( x, y, 0, 0, -1, -1 );
+		scanSectorShadow( x, y, +1, +1, 0, 0 );
+		scanSectorShadow( x, y, -1, +1, 0, 0 );
+		scanSectorShadow( x, y, +1, -1, 0, 0 );
+		scanSectorShadow( x, y, -1, -1, 0, 0 );
+		scanSectorShadow( x, y, 0, 0, +1, +1 );
+		scanSectorShadow( x, y, 0, 0, -1, +1 );
+		scanSectorShadow( x, y, 0, 0, +1, -1 );
+		scanSectorShadow( x, y, 0, 0, -1, -1 );
 	}
 	
-	private static void scanSector( int cx, int cy, int m1, int m2, int m3, int m4 ) {
-		
+	private static void scanSectorShadow( int cx, int cy, int m1, int m2, int m3, int m4 ) {
 		obs.reset();
 		
-		for (int p=1; p <= distance; p++) {
+		for (int p=1; p <= visibleDistance; p++) {
 
 			float dq2 = 0.5f / p;
 			
@@ -101,7 +107,11 @@ public final class ShadowCaster {
 
 						// Do nothing
 					} else {
-						fieldOfView[pos] = true;
+                        if (losDark[pos]) {
+                            fieldOfView[pos] = p <= touchableDistance;
+                        } else {
+                            fieldOfView[pos] = true;
+                        }
 					}
 					
 					if (losBlocking[pos]) {
@@ -114,8 +124,82 @@ public final class ShadowCaster {
 			obs.nextRow();
 		}
 	}
-	
-	private static final class Obstacles {
+
+    private static int lightDistance;
+    private static int lightFlag;
+    private static int[] lightMap;
+    private static List<Integer> lightUndoList;
+
+    public static List<Integer> castLight( int x, int y, Level level, int lightDistance, int lightFlag ) {
+        losBlocking = Level.losBlocking;
+
+        ShadowCaster.lightDistance = lightDistance;
+        ShadowCaster.lightFlag = lightFlag;
+        lightUndoList = new ArrayList<>();
+        limits = rounding[lightDistance];
+
+        ShadowCaster.lightMap = level.lightMap;
+
+        lightUndoList.add(y * WIDTH + x);
+        lightMap[y * WIDTH + x] |= lightFlag;
+        /*
+        ShadowCaster.lightFlag ^= Level.LIGHTMAP_FULLMASK;
+        lightMap[y * WIDTH + x] &= lightFlag;
+        */
+
+        scanSectorLight( x, y, +1, +1, 0, 0 );
+        scanSectorLight( x, y, -1, +1, 0, 0 );
+        scanSectorLight( x, y, +1, -1, 0, 0 );
+        scanSectorLight( x, y, -1, -1, 0, 0 );
+        scanSectorLight( x, y, 0, 0, +1, +1 );
+        scanSectorLight( x, y, 0, 0, -1, +1 );
+        scanSectorLight( x, y, 0, 0, +1, -1 );
+        scanSectorLight( x, y, 0, 0, -1, -1 );
+
+        return lightUndoList;
+    }
+
+    private static void scanSectorLight( int cx, int cy, int m1, int m2, int m3, int m4 ) {
+        obs.reset();
+
+        for (int p=1; p <= lightDistance; p++) {
+
+            float dq2 = 0.5f / p;
+
+            int pp = limits[p];
+            for (int q=0; q <= pp; q++) {
+
+                int x = cx + q * m1 + p * m3;
+                int y = cy + p * m2 + q * m4;
+
+                if (y >= 0 && y < HEIGHT && x >= 0 && x < WIDTH) {
+
+                    float a0 = (float)q / p;
+                    float a1 = a0 - dq2;
+                    float a2 = a0 + dq2;
+
+                    int pos = y * WIDTH + x;
+
+                    if (obs.isBlocked( a0 ) && obs.isBlocked( a1 ) && obs.isBlocked( a2 )) {
+
+                        // Do nothing
+                    } else {
+                        lightMap[pos] |= lightFlag;
+                        lightUndoList.add(pos);
+                    }
+
+                    if (losBlocking[pos]) {
+                        obs.add( a1, a2 );
+                    }
+
+                }
+            }
+
+            obs.nextRow();
+        }
+    }
+
+    private static final class Obstacles {
 		
 		private static int SIZE = (MAX_DISTANCE+1) * (MAX_DISTANCE+1) / 2;
 		private static float[] a1 = new float[SIZE];

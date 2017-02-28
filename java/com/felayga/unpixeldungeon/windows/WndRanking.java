@@ -29,8 +29,8 @@ import com.felayga.unpixeldungeon.Assets;
 import com.felayga.unpixeldungeon.Badges;
 import com.felayga.unpixeldungeon.Dungeon;
 import com.felayga.unpixeldungeon.Statistics;
-import com.felayga.unpixeldungeon.actors.hero.Belongings;
 import com.felayga.unpixeldungeon.items.Item;
+import com.felayga.unpixeldungeon.items.bags.backpack.Belongings;
 import com.felayga.unpixeldungeon.mechanics.BUCStatus;
 import com.felayga.unpixeldungeon.scenes.PixelScene;
 import com.felayga.unpixeldungeon.sprites.hero.HeroSprite;
@@ -257,8 +257,28 @@ public class WndRanking extends WndTabbed {
 				addItem(stuff.offhand());
 			}
 
-            if (stuff.face() != null) {
-                addItem(stuff.face());
+            if (stuff.armor() != null) {
+                addItem(stuff.armor());
+            }
+            if (stuff.helmet() != null) {
+                addItem(stuff.helmet());
+            }
+            if (stuff.gloves() != null) {
+                addItem(stuff.gloves());
+            }
+            if (stuff.boots() != null) {
+                addItem(stuff.boots());
+            }
+
+            if (stuff.ranged() != null) {
+                addItem(stuff.ranged());
+            }
+            if (stuff.ammo() != null) {
+                addItem(stuff.ammo());
+            }
+
+            if (stuff.cloak() != null) {
+                addItem(stuff.cloak());
             }
             if (stuff.amulet() != null) {
                 addItem(stuff.amulet());
@@ -269,25 +289,6 @@ public class WndRanking extends WndTabbed {
 			if (stuff.ring2() != null) {
 				addItem(stuff.ring2());
 			}
-
-			if (stuff.cloak() != null) {
-				addItem(stuff.cloak());
-			}
-			if (stuff.armor() != null) {
-				addItem(stuff.armor());
-			}
-            if (stuff.helmet() != null) {
-                addItem(stuff.helmet());
-            }
-			if (stuff.gloves() != null) {
-				addItem(stuff.gloves());
-			}
-			if (stuff.pants() != null) {
-				addItem(stuff.pants());
-			}
-            if (stuff.boots() != null) {
-                addItem(stuff.boots());
-            }
 
 			pos = 0;
 			for (int i = 0; i < 4; i++){
