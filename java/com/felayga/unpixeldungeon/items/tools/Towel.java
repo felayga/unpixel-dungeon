@@ -26,6 +26,7 @@
 
 package com.felayga.unpixeldungeon.items.tools;
 
+import com.felayga.unpixeldungeon.Dungeon;
 import com.felayga.unpixeldungeon.actors.Char;
 import com.felayga.unpixeldungeon.actors.buffs.negative.Blindness;
 import com.felayga.unpixeldungeon.actors.hero.Hero;
@@ -65,7 +66,7 @@ public class Towel extends Mask implements ITool {
         GLog.i("You wrap the towel around your head.");
 
         blindness = Blindness.Indefinite.prolong(owner, owner, TowelBlindness.class);
-        if (owner instanceof Hero) {
+        if (owner == Dungeon.hero) {
             Hero hero = (Hero)owner;
             hero.motivate(true);
         }

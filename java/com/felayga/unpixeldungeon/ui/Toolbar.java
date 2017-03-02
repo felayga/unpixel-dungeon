@@ -608,7 +608,7 @@ public class Toolbar extends Component {
 				
 			} else {
 				float p = left / DURATION;
-				scale.set( (float)Math.sqrt( p ) );
+				scale( (float)Math.sqrt( p ) );
 				float offset = DISTANCE * p;
 				x = dstX - offset;
 				y = dstY - offset;

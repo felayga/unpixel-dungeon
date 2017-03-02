@@ -128,7 +128,7 @@ public class Armor extends EquippableItem {
 		super.onEquip(owner, cursed);
 
 		if (cursed) {
-			if (owner instanceof Hero) {
+			if (owner == Dungeon.hero) {
 				GLog.n(TXT_EQUIP_CURSED_HERO, getDisplayName());
 				setHeroSpriteArmor((HeroSprite)owner.sprite, true);
 			}
@@ -138,7 +138,7 @@ public class Armor extends EquippableItem {
 			}
 		}
         else {
-            if (owner instanceof Hero) {
+            if (owner == Dungeon.hero) {
                 setHeroSpriteArmor((HeroSprite)owner.sprite, true);
             }
         }
@@ -148,7 +148,7 @@ public class Armor extends EquippableItem {
 	public void onUnequip(Char owner) {
 		super.onUnequip(owner);
 
-		if (owner instanceof Hero) {
+		if (owner == Dungeon.hero) {
 			setHeroSpriteArmor((HeroSprite) owner.sprite, false);
 		}
 	}
@@ -334,7 +334,7 @@ public class Armor extends EquippableItem {
 		}
 		
 		public boolean checkOwner( Char owner ) {
-			if (!owner.isAlive() && owner instanceof Hero) {
+			if (!owner.isAlive() && owner == Dungeon.hero) {
 
 				Dungeon.fail( Utils.format( ResultDescriptions.GLYPH, name() ) );
 				GLog.n( "%s killed you...", name() );

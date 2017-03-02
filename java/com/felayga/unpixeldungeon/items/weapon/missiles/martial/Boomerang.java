@@ -56,7 +56,7 @@ public class Boomerang extends MissileWeapon {
 	public int proc( Char attacker, boolean thrown, Char defender, int damage ) {
 		damage = super.proc( attacker, thrown, defender, damage );
 
-		if (attacker instanceof Hero && thrown) {
+		if (attacker == Dungeon.hero && thrown) {
 			circleBack( defender.pos(), attacker );
 		}
 

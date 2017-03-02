@@ -28,8 +28,14 @@ package com.felayga.unpixeldungeon.items.potions;
 
 import com.felayga.unpixeldungeon.actors.Char;
 import com.felayga.unpixeldungeon.actors.hero.Hero;
+import com.felayga.unpixeldungeon.effects.particles.FlameParticle;
 import com.felayga.unpixeldungeon.mechanics.Constant;
+import com.felayga.unpixeldungeon.sprites.ItemSpriteSheet;
 import com.felayga.unpixeldungeon.utils.GLog;
+import com.watabou.noosa.Visual;
+import com.watabou.noosa.particles.Emitter;
+import com.watabou.utils.PointF;
+import com.watabou.utils.Random;
 
 /**
  * Created by HELLO on 2/3/2017.
@@ -45,6 +51,41 @@ public class PotionOfOilLit extends PotionOfOil {
         defaultAction = Constant.Action.THROW;
 
         price = 0;
+    }
+
+    public Emitter emitter() {
+        Emitter emitter = new Emitter();
+
+        emitter.pour(new Emitter.Factory() {
+            @Override
+            public void emit(Emitter emitter, int index, float x, float y) {
+                Visual target = emitter.target();
+                PointF scale = target.scale();
+
+                FlameParticle p = ((FlameParticle) emitter.recycle(FlameParticle.class));
+                float xrand = target.width * 2.0f / 16.0f * scale.x;
+                float yrand = target.height * 2.0f / 16.0f * scale.y;
+                x += target.width * 8.0f / 16.0f * scale.x;
+                y += target.height * 6.0f / 16.0f * scale.y;
+
+                if (Random.Int(2) == 0) {
+                    x += Random.Float(xrand);
+                } else {
+                    x -= Random.Float(xrand);
+                }
+
+                if (Random.Int(2) == 0) {
+                    y += Random.Float(yrand);
+                } else {
+                    y -= Random.Float(yrand);
+                }
+
+                p.reset(x, y);
+            }
+        }, 0.1f);
+        emitter.fillTarget = false;
+
+        return emitter;
     }
 
     @Override

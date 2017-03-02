@@ -52,7 +52,7 @@ public class WindParticle extends PixelParticle {
 		super();
 		
 		lifespan = Random.Float( 1, 2 );
-		scale.set( size = Random.Float( 3 ) );
+		scale( size = Random.Float( 3 ) );
 	}
 	
 	public void reset( float x, float y ) {

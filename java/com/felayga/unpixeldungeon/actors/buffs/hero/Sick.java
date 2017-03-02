@@ -26,6 +26,7 @@
 
 package com.felayga.unpixeldungeon.actors.buffs.hero;
 
+import com.felayga.unpixeldungeon.Dungeon;
 import com.felayga.unpixeldungeon.actors.Char;
 import com.felayga.unpixeldungeon.actors.buffs.Buff;
 import com.felayga.unpixeldungeon.actors.buffs.FlavourBuff;
@@ -98,7 +99,7 @@ public class Sick extends FlavourBuff {
     public static void vomit(Char target, Char source) {
         Buff.prolong(target, source, Paralysis.class, 2 * GameTime.TICK);
 
-        if (target instanceof Hero) {
+        if (target == Dungeon.hero) {
             GLog.w("You suddenly vomit!");
         } else {
             GLog.w("The " + target.name + " suddenly vomits!");

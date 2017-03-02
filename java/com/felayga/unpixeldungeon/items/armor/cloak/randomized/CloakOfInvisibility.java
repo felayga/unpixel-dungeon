@@ -26,6 +26,7 @@
 
 package com.felayga.unpixeldungeon.items.armor.cloak.randomized;
 
+import com.felayga.unpixeldungeon.Dungeon;
 import com.felayga.unpixeldungeon.actors.Char;
 import com.felayga.unpixeldungeon.actors.buffs.hero.Encumbrance;
 import com.felayga.unpixeldungeon.actors.buffs.positive.Invisibility;
@@ -53,7 +54,7 @@ public class CloakOfInvisibility extends RandomizedCloak {
         super.onEquip(owner, cursed);
 
         invisibility = Invisibility.Indefinite.prolong(owner, null, CloakOfInvisibilityInvisibility.class);
-        if (owner instanceof Hero) {
+        if (owner == Dungeon.hero) {
             Hero hero = (Hero)owner;
             hero.motivate(true);
         }

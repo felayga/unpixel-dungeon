@@ -110,7 +110,7 @@ public abstract class DiggingTool extends SimpleMeleeWeapon implements ITool {
             return;
         }
 
-        if (ch instanceof Hero) {
+        if (ch == Dungeon.hero) {
             Hero hero = (Hero)ch;
 
             Mob mob = Dungeon.level.findMob(target);

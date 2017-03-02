@@ -58,7 +58,6 @@ public class MissileWeapon extends Weapon {
         super(weaponSkill, delay, damageMin, damageMax);
 
         stackable = true;
-        levelKnown(true, false);
         quantity(quantity);
 
         this.throwable = throwable;
@@ -145,7 +144,7 @@ public class MissileWeapon extends Weapon {
 	public int proc( Char attacker, boolean thrown, Char defender, int damage ) {
 		damage = super.proc( attacker, thrown, defender, damage );
 
-		if (attacker instanceof Hero) {
+		if (attacker == Dungeon.hero) {
 			Hero hero = (Hero) attacker;
 			if (stackable) {
 				quantity(quantity()-1);

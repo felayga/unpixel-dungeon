@@ -87,9 +87,9 @@ public class PlantSprite extends Image {
 		case GROWING:
 			if ((time -= Game.elapsed) <= 0) {
 				state = State.NORMAL;
-				scale.set( 1 );
+				scale( 1 );
 			} else {
-				scale.set( 1 - time / DELAY );
+				scale( 1 - time / DELAY );
 			}
 			break;
 		case WITHERING:

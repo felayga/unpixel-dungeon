@@ -60,13 +60,13 @@ public class EmoIcon extends Image {
 		
 		if (visible) {
 			if (growing) {
-				scale.set( Math.min(scale.x + Game.elapsed * timeScale, maxSize ));
-				if (scale.x >= maxSize) {
+				scale( Math.min(scale().x + Game.elapsed * timeScale, maxSize ));
+				if (scale().x >= maxSize) {
 					growing = false;
 				}
 			} else {
-				scale.set( Math.max(scale.x - Game.elapsed * timeScale, 1f ));
-				if (scale.x <= 1) {
+				scale( Math.max(scale().x - Game.elapsed * timeScale, 1f ));
+				if (scale().x <= 1) {
 					growing = true;
 				}
 			}
@@ -90,7 +90,7 @@ public class EmoIcon extends Image {
 			timeScale = 0.5f;
 			
 			origin.set( width / 2, height / 2 );
-			scale.set( Random.Float( 1, maxSize ) );
+			scale( Random.Float( 1, maxSize ) );
 		}
 	}
 	
@@ -106,7 +106,7 @@ public class EmoIcon extends Image {
 			timeScale = 2;
 			
 			origin.set( 2.5f, height - 2.5f );
-			scale.set( Random.Float( 1, maxSize ) );
+			scale( Random.Float( 1, maxSize ) );
 		}
 	}
 

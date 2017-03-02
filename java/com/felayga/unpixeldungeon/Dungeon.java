@@ -37,6 +37,7 @@ import com.felayga.unpixeldungeon.actors.mobs.npcs.Wandmaker;
 import com.felayga.unpixeldungeon.items.Ankh;
 import com.felayga.unpixeldungeon.items.Generator;
 import com.felayga.unpixeldungeon.items.Item;
+import com.felayga.unpixeldungeon.items.Torch;
 import com.felayga.unpixeldungeon.items.armor.cloak.randomized.RandomizedCloak;
 import com.felayga.unpixeldungeon.items.food.CannedFood;
 import com.felayga.unpixeldungeon.items.potions.Potion;
@@ -176,8 +177,8 @@ public class Dungeon {
     }
 
     public static Level newLevel(int index) {
-
         Dungeon.level = null;
+
         Actor.clear();
 
         depth(index);
@@ -302,12 +303,6 @@ public class Dungeon {
 
     @SuppressWarnings("deprecation")
     public static void switchLevel(final Level level, int pos) {
-        if (Dungeon.level != null) {
-            Light.Registry.unregister(Dungeon.level);
-            Char.Registry.unregister(Dungeon.level);
-            Shopkeeper.Registry.unregister(Dungeon.level);
-        }
-
         Dungeon.level = level;
         Actor.init();
 
@@ -346,7 +341,7 @@ public class Dungeon {
 
         Char.Registry.register(Dungeon.level);
         Shopkeeper.Registry.register(Dungeon.level);
-        Light.Registry.register(Dungeon.level);
+        Torch.Registry.register(Dungeon.level);
 
         Dungeon.level.updateLightMap();
         Dungeon.observe();
@@ -467,6 +462,12 @@ public class Dungeon {
     }
 
     public static void saveLevel(boolean unregistry) throws IOException {
+        if (unregistry) {
+            Torch.Registry.unregister(Dungeon.level);
+            Char.Registry.unregister(Dungeon.level);
+            Shopkeeper.Registry.unregister(Dungeon.level);
+        }
+
         Bundle bundle = new Bundle();
         bundle.put(LEVEL, level);
 
@@ -600,6 +601,7 @@ public class Dungeon {
 
     public static Level loadLevel(int index) throws IOException {
         Dungeon.level = null;
+
         Actor.clear();
 
         InputStream input = Game.instance.openFileInput(Utils.format(depthFile(index), __depth));

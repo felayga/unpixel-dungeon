@@ -26,6 +26,7 @@
 package com.felayga.unpixeldungeon.ui;
 
 import com.felayga.unpixeldungeon.items.Item;
+import com.felayga.unpixeldungeon.items.Torch;
 import com.felayga.unpixeldungeon.items.potions.Potion;
 import com.felayga.unpixeldungeon.items.potions.PotionOfOilLit;
 import com.felayga.unpixeldungeon.items.scrolls.Scroll;
@@ -53,7 +54,6 @@ public class ItemSlot extends Button {
 	private static final float DISABLED	= 0.3f;
 
 	protected ItemSprite icon;
-    protected ItemSprite fg;
 	protected BitmapText topLeft;
 	protected BitmapText topRight;
     protected BitmapText bottomLeft;
@@ -103,27 +103,23 @@ public class ItemSlot extends Button {
 		super.createChildren();
 		
 		icon = new ItemSprite();
-		icon.scale = getIconScale();
+		icon.scale(getIconScale());
 		add(icon);
-
-        fg = new ItemSprite();
-        fg.scale = getIconScale();
-        add(fg);
 		
 		topLeft = new BitmapText(PixelScene.pixelFont);
-		topLeft.scale = getFontScale();
+		topLeft.scale(getFontScale());
 		add(topLeft);
 
 		topRight = new BitmapText(PixelScene.pixelFont);
-		topRight.scale = getFontScale();
+		topRight.scale(getFontScale());
 		add(topRight);
 
         bottomLeft = new BitmapText(PixelScene.pixelFont);
-        bottomLeft.scale = getFontScale();
+        bottomLeft.scale(getFontScale());
         add(bottomLeft);
 		
 		bottomRight = new BitmapText(PixelScene.pixelFont);
-		bottomRight.scale = getFontScale();
+		bottomRight.scale(getFontScale());
 		add(bottomRight);
 	}
 
@@ -131,11 +127,13 @@ public class ItemSlot extends Button {
 	protected void layout() {
 		super.layout();
 		
-		icon.x = x + (width - icon.width * icon.scale.x) / 2;
-		icon.y = y + (height - icon.height * icon.scale.y) / 2;
+		icon.x = x + (width - icon.width * icon.scale().x) / 2;
+		icon.y = y + (height - icon.height * icon.scale().y) / 2;
 
+        /*
         fg.x = icon.x;
         fg.y = icon.y;
+        */
 
 		if (topLeft != null) {
 			topLeft.x = x;
@@ -168,17 +166,23 @@ public class ItemSlot extends Button {
 			active = false;
 			topLeft.visible = topRight.visible = bottomRight.visible = bottomLeft.visible = false;
 			icon.visible(false);
+            /*
             fg.view(ItemSpriteSheet.ITEM_EMPTY, null);
+            */
 		} else {
 			active = true;
 			topLeft.visible = topRight.visible = bottomLeft.visible = bottomRight.visible = true;
 			icon.visible(true);
 
+            /*
             if (item instanceof PotionOfOilLit) {
                 fg.view(ItemSpriteSheet.POTION_BURNING, null);
+            } else if ((item instanceof Torch) && ((Torch)item).ignited()) {
+                fg.view(ItemSpriteSheet.TORCH_BURNING, null);
             } else {
                 fg.view(ItemSpriteSheet.ITEM_EMPTY, null);
             }
+            */
 			
 			icon.view( item );
 			
@@ -276,7 +280,9 @@ public class ItemSlot extends Button {
 		
 		float alpha = value ? ENABLED : DISABLED;
 		icon.alpha( alpha );
+        /*
         fg.alpha(alpha);
+        */
 		topLeft.alpha( alpha );
 		topRight.alpha( alpha );
 		bottomRight.alpha( alpha );

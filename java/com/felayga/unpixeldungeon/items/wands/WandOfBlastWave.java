@@ -205,16 +205,16 @@ public class WandOfBlastWave extends Wand {
 
 		@Override
 		public void update() {
-			super.update();
+            super.update();
 
-			if ((time -= Game.elapsed) <= 0) {
-				kill();
-			} else {
-				float p = time / TIME_TO_FADE;
-				alpha(p);
-				scale.y = scale.x = (1-p)*3;
-			}
-		}
+            if ((time -= Game.elapsed) <= 0) {
+                kill();
+            } else {
+                float p = time / TIME_TO_FADE;
+                alpha(p);
+                scale((1 - p) * 3);
+            }
+        }
 
 		public static void blast(int pos) {
 			Group parent = Dungeon.hero.sprite.parent;

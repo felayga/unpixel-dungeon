@@ -55,6 +55,7 @@ import com.felayga.unpixeldungeon.plants.Plant;
 import com.felayga.unpixeldungeon.sprites.CharSprite;
 import com.felayga.unpixeldungeon.sprites.DiscardedItemSprite;
 import com.felayga.unpixeldungeon.sprites.ItemSprite;
+import com.felayga.unpixeldungeon.sprites.ItemSpriteBase;
 import com.felayga.unpixeldungeon.sprites.PlantSprite;
 import com.felayga.unpixeldungeon.sprites.TrapSprite;
 import com.felayga.unpixeldungeon.sprites.hero.HeroSprite;
@@ -662,7 +663,9 @@ public class GameScene extends PixelScene {
     }
 
     public static void effect(Visual effect) {
-        scene.effects.add(effect);
+        if (scene != null) {
+            scene.effects.add(effect);
+        }
     }
 
     public static Ripple ripple(int pos) {

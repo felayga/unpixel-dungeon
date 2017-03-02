@@ -25,6 +25,7 @@
  */
 package com.felayga.unpixeldungeon.plants;
 
+import com.felayga.unpixeldungeon.Dungeon;
 import com.felayga.unpixeldungeon.actors.Actor;
 import com.felayga.unpixeldungeon.actors.Char;
 import com.felayga.unpixeldungeon.actors.buffs.Buff;
@@ -54,7 +55,7 @@ public class Dreamfoil extends Plant {
         Char ch = Actor.findChar(pos);
 
         if (ch != null) {
-            if (PotionOfHealing.cure(ch) && ch instanceof Hero) {
+            if (PotionOfHealing.cure(ch) && ch == Dungeon.hero) {
                 GLog.i("You feel refreshed.");
             }
 

@@ -28,6 +28,7 @@ package com.felayga.unpixeldungeon.sprites.hero;
 import android.graphics.RectF;
 
 import com.felayga.unpixeldungeon.Assets;
+import com.felayga.unpixeldungeon.Dungeon;
 import com.felayga.unpixeldungeon.actors.Char;
 import com.felayga.unpixeldungeon.actors.hero.Hero;
 import com.felayga.unpixeldungeon.items.EquippableItem;
@@ -100,7 +101,7 @@ public class HeroSprite extends CharSprite {
 	public void link(Char ch) {
 		super.link(ch);
 
-		if (ch instanceof Hero) {
+		if (ch == Dungeon.hero) {
             Hero hero = (Hero) ch;
 
             heroGender = WndInitHero.genderSelected;

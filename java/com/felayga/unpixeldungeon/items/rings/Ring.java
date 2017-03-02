@@ -66,7 +66,7 @@ public class Ring extends EquippableItem {
             RingOfMight.class,
             RingOfSharpshooting.class,
             RingOfTenacity.class,
-            RingOfWealth.class,
+            RingOfWealth.class
     };
     private static final String[] gems =
             {
@@ -77,7 +77,7 @@ public class Ring extends EquippableItem {
                     "steel", "silver", "gold", "coral",
                     "tigereye", "wooden", "ivory", "twisted",
                     "moonstone", "jade", "pearl", "granite",
-                    "vine", "ammolite", "spinel", "meat"
+                    "vine", "ammolite", "spinel"
             };
     private static final Integer[] images = {
             ItemSpriteSheet.RING_DIAMOND,
@@ -110,8 +110,7 @@ public class Ring extends EquippableItem {
             ItemSpriteSheet.RING_GRANITE,
             ItemSpriteSheet.RING_VINE,
             ItemSpriteSheet.RING_AMMOLITE,
-            ItemSpriteSheet.RING_SPINEL,
-            ItemSpriteSheet.RING_MEAT
+            ItemSpriteSheet.RING_SPINEL
     };
 
     private static ItemRandomizationHandler<Ring> handler;
@@ -122,7 +121,7 @@ public class Ring extends EquippableItem {
 
     @SuppressWarnings("unchecked")
     public static void initGems() {
-        handler = new ItemRandomizationHandler<Ring>((Class<? extends Ring>[]) rings, gems, images, 1);
+        handler = new ItemRandomizationHandler<>((Class<? extends Ring>[]) rings, gems, images, 1);
     }
 
     public static void save(Bundle bundle) {
@@ -131,7 +130,7 @@ public class Ring extends EquippableItem {
 
     @SuppressWarnings("unchecked")
     public static void restore(Bundle bundle) {
-        handler = new ItemRandomizationHandler<Ring>((Class<? extends Ring>[]) rings, gems, images, bundle);
+        handler = new ItemRandomizationHandler<>((Class<? extends Ring>[]) rings, gems, images, bundle);
     }
 
     public Ring() {
@@ -168,7 +167,7 @@ public class Ring extends EquippableItem {
         buff.attachTo(owner, null);
 
         if (cursed) {
-            if (owner instanceof Hero) {
+            if (owner == Dungeon.hero) {
                 GLog.n("your " + this.getDisplayName() + " tightens around your finger painfully");
             } else {
                 //todo: ring cursed in enemy hands description
@@ -294,8 +293,7 @@ public class Ring extends EquippableItem {
 
         @Override
         public boolean attachTo(Char target, Char source) {
-
-            if (target instanceof Hero && ((Hero) target).heroClass == HeroClass.ROGUE && !isKnown()) {
+            if (target == Dungeon.hero && ((Hero) target).heroClass == HeroClass.ROGUE && !isKnown()) {
                 setKnown();
                 GLog.i(TXT_KNOWN, getDisplayName());
                 Badges.validateItemLevelAquired(Ring.this);
@@ -306,7 +304,6 @@ public class Ring extends EquippableItem {
 
         @Override
         public boolean act() {
-
             if (!isIdentified() && --ticksToKnow <= 0) {
                 String gemName = getDisplayName();
                 identify();

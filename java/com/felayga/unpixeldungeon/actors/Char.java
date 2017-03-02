@@ -96,7 +96,7 @@ public abstract class Char extends Actor {
             if (c.charRegistryIndex >= 0) {
                 GLog.d("tried to register char, already has index=" + c.charRegistryIndex);
 
-                if (c instanceof Hero) {
+                if (c == Dungeon.hero) {
                     GLog.d("it's fine, I guess");
                     return;
                 } else {
@@ -738,7 +738,7 @@ public abstract class Char extends Actor {
 
         GLog.d("roll=" + roll + " + " + skill + " >= " + defense + "?");
 
-        if (defender instanceof Hero) {
+        if (defender == Dungeon.hero) {
             if (defender.buff(Blindness.class) != null) {
                 Dungeon.level.warnings.add(attacker.pos());
             } else if (attacker.invisible > 0) {
@@ -881,7 +881,7 @@ public abstract class Char extends Actor {
         if (nutrition > 0 && shouldDropCorpse()) {
             Dungeon.level.drop(new Corpse(this), pos());
         } else {
-            GLog.d("no corpse because nutrition=" + nutrition);
+            //GLog.d("no corpse because nutrition=" + nutrition);
         }
 
         dropAll();

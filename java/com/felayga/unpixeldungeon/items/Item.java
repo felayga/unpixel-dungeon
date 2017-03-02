@@ -39,6 +39,7 @@ import com.felayga.unpixeldungeon.mechanics.Constant;
 import com.felayga.unpixeldungeon.scenes.CellSelector;
 import com.felayga.unpixeldungeon.scenes.GameScene;
 import com.felayga.unpixeldungeon.sprites.ItemSprite;
+import com.felayga.unpixeldungeon.sprites.ItemSpriteBase;
 import com.felayga.unpixeldungeon.sprites.ItemSpriteSheet;
 import com.felayga.unpixeldungeon.sprites.MissileSprite;
 import com.felayga.unpixeldungeon.ui.QuickSlotButton;
@@ -645,9 +646,7 @@ public class Item implements Bundlable {
 	}
 
 	public final void updateQuickslot() {
-        //GLog.d("updateQuickslot");
-
-        if (parent_whut != null && parent_whut.owner() instanceof Hero) {
+        if (parent_whut != null && parent_whut.owner() == Dungeon.hero) {
             Toolbar.refresh();
         }
 

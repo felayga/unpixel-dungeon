@@ -56,6 +56,8 @@ public interface IBag extends IDecayable {
     Item remove(Item item);
     Item remove(Item item, int quantity);
 
+    void onNestedItemRemoved(Item item);
+
     boolean contains(Item item);
     boolean contains(Class<?> type, boolean allowNested);
 

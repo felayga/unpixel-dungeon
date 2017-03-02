@@ -47,7 +47,7 @@ public class Ripple extends Image {
 		y = (p / Level.WIDTH) * DungeonTilemap.SIZE;
 		
 		origin.set( width / 2, height / 2 );
-		scale.set( 0 );
+		scale( 0 );
 		
 		time = TIME_TO_FADE;
 	}
@@ -60,7 +60,7 @@ public class Ripple extends Image {
 			kill();
 		} else {
 			float p = time / TIME_TO_FADE;
-			scale.set( 1 - p );
+			scale( 1 - p );
 			alpha( p );
 		}
 	}

@@ -97,19 +97,20 @@ public class Bomb extends Item {
 
 	@Override
 	protected void onThrow( Char thrower, int cell ) {
-		if (!Level.pit[ cell ] && lightingFuse) {
-			Actor.addDelayed(fuse = new Fuse().ignite(this), 2);
-		}
-		if (Actor.findChar( cell ) != null && !(Actor.findChar( cell ) instanceof Hero) ){
-			ArrayList<Integer> candidates = new ArrayList<>();
-			for (int i : Level.NEIGHBOURS8)
-				if (Level.passable[cell + i])
-					candidates.add(cell + i);
-			int newCell = candidates.isEmpty() ? cell : Random.element(candidates);
-			Dungeon.level.drop( this, newCell ).sprite.drop( cell );
-		} else
-			super.onThrow( thrower, cell );
-	}
+        if (!Level.pit[cell] && lightingFuse) {
+            Actor.addDelayed(fuse = new Fuse().ignite(this), 2);
+        }
+        if (Actor.findChar(cell) != null && !(Actor.findChar(cell) == Dungeon.hero)) {
+            ArrayList<Integer> candidates = new ArrayList<>();
+            for (int i : Level.NEIGHBOURS8)
+                if (Level.passable[cell + i])
+                    candidates.add(cell + i);
+            int newCell = candidates.isEmpty() ? cell : Random.element(candidates);
+            Dungeon.level.drop(this, newCell).sprite.drop(cell);
+        } else {
+            super.onThrow(thrower, cell);
+        }
+    }
 
 	@Override
 	public boolean doPickUp(Hero hero) {

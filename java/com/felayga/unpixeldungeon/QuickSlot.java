@@ -129,7 +129,6 @@ public class QuickSlot {
     }
 
     public Item randomNonePlaceholder() {
-
         ArrayList<Item> result = new ArrayList<Item>();
         for (int i = 0; i < QuickSlotButton.MAXCOUNT; i++)
             if (getItem(i) != null && !isPlaceholder(i))

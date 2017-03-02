@@ -161,7 +161,7 @@ public class BuffIndicator extends Component {
 					@Override
 					protected void updateValues( float progress ) {
 						super.updateValues( progress );
-						image.scale.set( 1 + 5 * progress );
+						image.scale( 1 + 5 * progress );
 					};
 				} );
 			}

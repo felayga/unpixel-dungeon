@@ -169,7 +169,7 @@ public class TalismanOfForesight extends Artifact_old {
 			if (smthFound && bucStatus() != BUCStatus.Cursed){
 				if (warn == 0){
 					GLog.w("You feel uneasy.");
-					if (target instanceof Hero){
+					if (target == Dungeon.hero){
 						((Hero)target).interrupt();
 					}
 				}

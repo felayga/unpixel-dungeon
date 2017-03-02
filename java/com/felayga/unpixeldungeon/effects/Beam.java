@@ -54,7 +54,7 @@ public class Beam extends Image {
 		float dx = e.x - s.x;
 		float dy = e.y - s.y;
 		angle = (float)(Math.atan2( dy, dx ) * A);
-		scale.x = (float)Math.sqrt( dx * dx + dy * dy ) / width;
+		scale((float)Math.sqrt( dx * dx + dy * dy ) / width, scale().y);
 		
 		Sample.INSTANCE.play( Assets.SND_RAY );
 		
@@ -85,7 +85,7 @@ public class Beam extends Image {
 		
 		float p = timeLeft / duration;
 		alpha( p );
-		scale.set( scale.x, p );
+		scale( scale().x, p );
 		
 		if ((timeLeft -= Game.elapsed) <= 0) {
 			killAndErase();

@@ -74,7 +74,7 @@ public abstract class Plant implements Bundlable {
 
         Char ch = Actor.findChar(pos);
 
-        if (ch instanceof Hero && ((Hero) ch).subClass == HeroSubClass.WARDEN) {
+        if (ch == Dungeon.hero && ((Hero) ch).subClass == HeroSubClass.WARDEN) {
             Buff.affect(ch, null, Barkskin.class).level(ch.HT / 3);
         }
 

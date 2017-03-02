@@ -48,6 +48,7 @@ import com.felayga.unpixeldungeon.mechanics.BUCStatus;
 import com.felayga.unpixeldungeon.mechanics.Constant;
 import com.felayga.unpixeldungeon.mechanics.IDecayable;
 import com.felayga.unpixeldungeon.ui.Icons;
+import com.felayga.unpixeldungeon.ui.Toolbar;
 import com.felayga.unpixeldungeon.unPixelDungeon;
 import com.felayga.unpixeldungeon.utils.GLog;
 import com.felayga.unpixeldungeon.windows.WndOptions;
@@ -222,7 +223,7 @@ public class Belongings implements Iterable<Item>, IDecayable, IBag {
     }
 
     public Item remove(Item item, boolean equipped, boolean unequipped) {
-        if (owner instanceof Hero) {
+        if (owner == Dungeon.hero) {
             Dungeon.quickslot.convertToPlaceholder(item);
         }
 
@@ -282,6 +283,14 @@ public class Belongings implements Iterable<Item>, IDecayable, IBag {
         }
 
         return null;
+    }
+
+    public void onNestedItemRemoved(Item item) {
+        if (owner == Dungeon.hero) {
+            Dungeon.quickslot.convertToPlaceholder(item);
+        }
+
+        item.updateQuickslot();
     }
 
     public boolean tryMergeExistingStack(Item test) {
@@ -442,7 +451,7 @@ public class Belongings implements Iterable<Item>, IDecayable, IBag {
             }
         }
 
-        if (owner instanceof Hero) {
+        if (owner == Dungeon.hero) {
             for (int n = 0; n < slots.length; n++) {
                 quickslots[n] = Dungeon.quickslot.getSlot(items[n]);
             }
@@ -575,7 +584,7 @@ public class Belongings implements Iterable<Item>, IDecayable, IBag {
 
     public boolean unequip(EquippableItem item, boolean collect, boolean single) {
         if (item.cursedCannotUnequip && item.bucStatus() == BUCStatus.Cursed) {
-            if (owner instanceof Hero) {
+            if (owner == Dungeon.hero) {
                 GLog.w(TXT_UNEQUIP_CANT, item.getDisplayName());
                 item.bucStatus(true);
             }
@@ -587,7 +596,7 @@ public class Belongings implements Iterable<Item>, IDecayable, IBag {
         onItemUnequipped(owner, item, single);
 
         if (collect && !collect(item, false)) {
-            if (owner instanceof Hero) {
+            if (owner == Dungeon.hero) {
                 Dungeon.quickslot.clearItem(item);
             }
             item.updateQuickslot();
@@ -717,7 +726,7 @@ public class Belongings implements Iterable<Item>, IDecayable, IBag {
             Map.Entry<EquippableItem.Slot, EquippableItem> pair = iterator.next();
 
             bundle.put(ITEM + pair.getKey().value, pair.getValue());
-            GLog.d("bundle put " + ITEM + pair.getKey().value + " = " + pair.getValue().getDisplayName());
+            //GLog.d("bundle put " + ITEM + pair.getKey().value + " = " + pair.getValue().getDisplayName());
         }
 
         bundle.put(LASTAMMO, _ranOutOfAmmo);
@@ -1257,6 +1266,9 @@ public class Belongings implements Iterable<Item>, IDecayable, IBag {
                 backpack3.decay(currentTime, updateTime, fixTime) |
                 backpack4.decay(currentTime, updateTime, fixTime);
 
+        if (updated && owner == Dungeon.hero) {
+            Toolbar.refresh();
+        }
         return updated;
     }
 

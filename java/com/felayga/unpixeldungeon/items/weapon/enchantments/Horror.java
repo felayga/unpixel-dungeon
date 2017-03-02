@@ -33,7 +33,6 @@ import com.felayga.unpixeldungeon.actors.buffs.negative.Vertigo;
 import com.felayga.unpixeldungeon.items.weapon.Weapon;
 import com.felayga.unpixeldungeon.mechanics.GameTime;
 import com.felayga.unpixeldungeon.sprites.ItemSprite;
-import com.felayga.unpixeldungeon.sprites.ItemSprite.Glowing;
 import com.watabou.utils.Random;
 
 public class Horror extends Weapon.Enchantment {
@@ -64,7 +63,7 @@ public class Horror extends Weapon.Enchantment {
 	}
 	
 	@Override
-	public Glowing glowing() {
+	public ItemSprite.Glowing glowing() {
 		return GREY;
 	}
 	

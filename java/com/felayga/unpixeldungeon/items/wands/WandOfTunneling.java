@@ -197,7 +197,7 @@ public class WandOfTunneling extends Wand {
         target.damage(damage, MagicType.Mundane, curUser);
 
         if (chasm) {
-            if (target instanceof Hero) {
+            if (target == Dungeon.hero) {
                 Chasm.heroFall(target.pos());
             } else if (target instanceof Mob) {
                 Chasm.mobFall((Mob) target);

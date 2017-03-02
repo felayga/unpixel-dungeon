@@ -23,32 +23,21 @@
  *
  *
  */
-package com.felayga.unpixeldungeon.effects;
 
-import com.felayga.unpixeldungeon.Assets;
-import com.watabou.gltextures.SmartTexture;
-import com.watabou.noosa.NinePatch;
+package com.felayga.unpixeldungeon.items.food;
 
-public class ShadowBox extends NinePatch {
+import com.felayga.unpixeldungeon.sprites.ItemSpriteSheet;
 
-	public static final float SIZE	= 16;
-	
-	public ShadowBox() {
-		super( Assets.SHADOW, 1 );
-		
-		texture.filter( SmartTexture.LINEAR, SmartTexture.LINEAR );
-		
-		scale( SIZE, SIZE );
-	}
-	
-	@Override
-	public void size(float width, float height) {
-		super.size( width / SIZE, height / SIZE );
-	}
+/**
+ * Created by HELLO on 3/1/2017.
+ */
 
-	public void boxRect( float x, float y, float width, float height ) {
-		this.x = x - SIZE;
-		this.y = y - SIZE;
-		size( width + SIZE * 2, height + SIZE * 2 );
-	}
+public class MeatRing extends Meatball {
+    public MeatRing() {
+        super();
+
+        stackable = true;
+        name = "meat ring";
+        image = ItemSpriteSheet.FOOD_MEATRING;
+    }
 }

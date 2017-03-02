@@ -128,7 +128,7 @@ public class Speck extends Image {
 		this.y = y - origin.y;
 
 		resetColor();
-		scale.set(1);
+		scale(1);
 		speed.set(0);
 		acc.set(0);
 		angle = 0;
@@ -234,7 +234,7 @@ public class Speck extends Image {
 			case ROCK:
 				angle = Random.Float(360);
 				angularSpeed = Random.Float(-360, +360);
-				scale.set(Random.Float(1, 2));
+				scale(Random.Float(1, 2));
 				speed.set(0, 64);
 				lifespan = 0.2f;
 				y -= speed.y * lifespan;
@@ -260,7 +260,7 @@ public class Speck extends Image {
 
 			case BUBBLE:
 				speed.set(0, -15);
-				scale.set(Random.Float(0.8f, 1));
+				scale(Random.Float(0.8f, 1));
 				lifespan = Random.Float(0.8f, 1.5f);
 				break;
 
@@ -364,7 +364,7 @@ public class Speck extends Image {
 
 				case STAR:
 				case FORGE:
-					scale.set(1 - p);
+					scale(1 - p);
 					am = p < 0.2f ? p * 5f : (1 - p) * 1.25f;
 					break;
 
@@ -382,25 +382,26 @@ public class Speck extends Image {
 					break;
 
 				case LIGHT:
-					am = scale.set(p < 0.2f ? p * 5f : (1 - p) * 1.25f).x;
+                    scale(p < 0.2f ? p * 5f : (1 - p) * 1.25f);
+					am = scale().x;
 					break;
 
 				case DISCOVER:
 					am = 1 - p;
-					scale.set((p < 0.5f ? p : 1 - p) * 2);
+					scale((p < 0.5f ? p : 1 - p) * 2);
 					break;
 
 				case QUESTION:
-					scale.set((float) (Math.sqrt(p < 0.5f ? p : 1 - p) * 3));
+					scale((float) (Math.sqrt(p < 0.5f ? p : 1 - p) * 3));
 					break;
 
 				case UP:
-					scale.set((float) (Math.sqrt(p < 0.5f ? p : 1 - p) * 2));
+					scale((float) (Math.sqrt(p < 0.5f ? p : 1 - p) * 2));
 					break;
 
 				case SCREAM:
 					am = (float) Math.sqrt((p < 0.5f ? p : 1 - p) * 2f);
-					scale.set(p * 7);
+					scale(p * 7);
 					break;
 
 				case BONE:
@@ -417,17 +418,17 @@ public class Speck extends Image {
 					break;
 
 				case WOOL:
-					scale.set(1 - p);
+					scale(1 - p);
 					break;
 
 				case CHANGE:
 					am = (float) Math.sqrt((p < 0.5f ? p : 1 - p) * 2);
-					scale.y = (1 + p) * 0.5f;
-					scale.x = scale.y * (float) Math.cos(left * 15);
+                    float y = (1 + p) * 0.5f;
+                    scale(y * (float) Math.cos(left * 15), y);
 					break;
 
 				case HEART:
-					scale.set(1 - p);
+					scale(1 - p);
 					am = 1 - p * p;
 					break;
 
@@ -440,31 +441,31 @@ public class Speck extends Image {
 				case PARALYSIS:
 				case CONFUSION:
 					am = p < 0.5f ? p : 1 - p;
-					scale.set(1 + p * 2);
+					scale(1 + p * 2);
 					break;
 
 				case DUST:
 				case WOOD:
 				case FIZZLE:
 					am = p < 0.5f ? p : 1 - p;
-					scale.set(2.0f - p * 1.5f);
+					scale(2.0f - p * 1.5f);
 					break;
 
 				case VENOM:
 					hardlight(ColorMath.interpolate(0x8844FF, 0x00FF00, p));
 				case STENCH:
 					am = (p < 0.5f ? p : 1 - p) * 2;
-					scale.set(1 + p * 2);
+					scale(1 + p * 2);
 					break;
 
 				case JET:
 					am = (p < 0.5f ? p : 1 - p) * 2;
-					scale.set(p * 1.5f);
+					scale(p * 1.5f);
 					break;
 
 				case COIN:
-					scale.x = (float) Math.cos(left * 5);
-					rm = gm = bm = (Math.abs(scale.x) + 1) * 0.5f;
+					scale((float) Math.cos(left * 5), scale().y);
+					rm = gm = bm = (Math.abs(scale().x) + 1) * 0.5f;
 					am = p < 0.9f ? 1 : (1 - p) * 10;
 					break;
 			}

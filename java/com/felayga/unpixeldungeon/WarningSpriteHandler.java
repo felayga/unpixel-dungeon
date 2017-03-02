@@ -136,7 +136,7 @@ public class WarningSpriteHandler extends Group {
             timeScale = 2;
 
             origin.set(2.5f, height - 2.5f);
-            scale.set(Random.Float(1, maxSize));
+            scale(Random.Float(1, maxSize));
         }
 
         public void setPos(int p) {

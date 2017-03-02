@@ -26,6 +26,7 @@
 package com.felayga.unpixeldungeon.items.weapon;
 
 import com.felayga.unpixeldungeon.Assets;
+import com.felayga.unpixeldungeon.Dungeon;
 import com.felayga.unpixeldungeon.actors.Char;
 import com.felayga.unpixeldungeon.actors.hero.Hero;
 import com.felayga.unpixeldungeon.items.EquippableItem;
@@ -125,7 +126,7 @@ public class Weapon extends EquippableItem implements IWeapon {
         super.onEquip(owner, cursed);
 
         if (cursed) {
-            if (owner instanceof Hero) {
+            if (owner == Dungeon.hero) {
                 GLog.n( TXT_EQUIP_CURSED, getDisplayName() );
             }
             else {
@@ -151,7 +152,7 @@ public class Weapon extends EquippableItem implements IWeapon {
             enchantment.proc(this, attacker, defender, damage);
         }
 
-        if (attacker instanceof Hero && !levelKnown()) {
+        if (attacker == Dungeon.hero && !levelKnown()) {
             if (--hitsToKnow <= 0) {
                 levelKnown(true, true);
             }

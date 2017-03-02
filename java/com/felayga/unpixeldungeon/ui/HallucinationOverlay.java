@@ -53,7 +53,7 @@ public class HallucinationOverlay extends Image {
 
         texture(new FogOfWar.FogTexture(subWidth, subHeight, HallucinationOverlay.class));
 
-        scale.set(
+        scale(
                 DungeonTilemap.SIZE * mapWidth,
                 DungeonTilemap.SIZE * mapHeight);
 

@@ -65,6 +65,7 @@ public class CanOpener extends Tool {
 
     @Override
     public void apply(Hero hero, int pos) {
+        //nothing
     }
 
     @Override
@@ -76,6 +77,11 @@ public class CanOpener extends Tool {
         CannedFood can = (CannedFood)item;
 
         can.execute(hero, Constant.Action.OPEN);
+    }
+
+    @Override
+    public void apply(Hero hero) {
+        //nothing
     }
 
     @Override

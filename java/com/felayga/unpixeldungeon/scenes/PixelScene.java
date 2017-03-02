@@ -173,7 +173,7 @@ public class PixelScene extends Scene {
 		chooseFont( size );
 		
 		BitmapText result = new BitmapText( text, font );
-		result.scale.set( scale );
+		result.scale( scale );
 		
 		return result;
 	}
@@ -187,7 +187,7 @@ public class PixelScene extends Scene {
 		chooseFont( size );
 		
 		BitmapTextMultiline result = new BitmapTextMultiline( text, font );
-		result.scale.set( scale );
+		result.scale( scale );
 		
 		return result;
 	}

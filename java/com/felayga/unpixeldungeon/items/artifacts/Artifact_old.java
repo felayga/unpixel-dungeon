@@ -96,7 +96,7 @@ public class Artifact_old extends EquippableItem {
         passiveBuff.attachTo(owner, null);
 
 		if (cursed) {
-			if (owner instanceof Hero) {
+			if (owner == Dungeon.hero) {
 				GLog.n("the " + this.name + " painfully binds itself to you");
 			}
 		}

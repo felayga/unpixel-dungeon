@@ -26,6 +26,7 @@
 
 package com.felayga.unpixeldungeon.items.weapon.melee.mob;
 
+import com.felayga.unpixeldungeon.Dungeon;
 import com.felayga.unpixeldungeon.actors.Char;
 import com.felayga.unpixeldungeon.actors.buffs.negative.Poison;
 import com.felayga.unpixeldungeon.actors.hero.Hero;
@@ -60,7 +61,7 @@ public class PoisonChance extends MeleeMobAttack {
 
             if ((target.immunityMagical & MagicType.Poison.value) == 0) {
                 if (Random.Int(8) == 0) {
-                    if (target instanceof Hero) {
+                    if (target == Dungeon.hero) {
                         Hero hero = (Hero) target;
 
                         if (Random.Int(3) == 0) {

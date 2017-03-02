@@ -103,7 +103,7 @@ public class SurfaceScene extends PixelScene {
 		boolean dayTime = Calendar.getInstance().get(Calendar.HOUR_OF_DAY) >= 7;
 		
 		Sky sky = new Sky( dayTime );
-		sky.scale.set( SKY_WIDTH, SKY_HEIGHT );
+		sky.scale( SKY_WIDTH, SKY_HEIGHT );
 		window.add( sky );
 		
 		if (!dayTime) {
@@ -287,12 +287,12 @@ public class SurfaceScene extends PixelScene {
 			
 			this.y = y;
 
-			scale.set( 1 - y / SKY_HEIGHT );
+			scale( 1 - y / SKY_HEIGHT );
 			x = Random.Float( SKY_WIDTH + width() ) - width();
-			speed.x = scale.x * (dayTime ? +8 : -8);
+			speed.x = scale().x * (dayTime ? +8 : -8);
 			
 			if (dayTime) {
-				tint( 0xCCEEFF, 1 - scale.y );
+				tint( 0xCCEEFF, 1 - scale().y );
 			} else {
 				rm = gm = bm = +3.0f;
 				ra = ga = ba = -2.1f;
@@ -369,10 +369,10 @@ public class SurfaceScene extends PixelScene {
 			a += Random.Float( Game.elapsed * 5 );
 			angle = (2 + Math.cos( a )) * (forward ? +0.2 : -0.2);
 			
-			scale.y = (float)Math.cos( angle );
+			scale(scale().x, (float)Math.cos( angle ));
 			
 			x = tx + (float)Math.tan( angle ) * width;
-			y = ty - scale.y * height;
+			y = ty - scale().y * height;
 		}
 		
 		@Override

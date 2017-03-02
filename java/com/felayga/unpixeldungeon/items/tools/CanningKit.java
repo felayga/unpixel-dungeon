@@ -109,6 +109,7 @@ public class CanningKit extends Tool {
 
     @Override
     public void apply(Hero hero, int target) {
+        //nothing
     }
 
     @Override
@@ -127,6 +128,11 @@ public class CanningKit extends Tool {
         } else {
             GLog.n("Eh, it's been partially eaten.");
         }
+    }
+
+    @Override
+    public void apply(Hero hero) {
+        //nothing
     }
 
     @Override

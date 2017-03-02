@@ -167,11 +167,9 @@ public class WndCatalogus extends WndTabbed {
 				//todo: WHAT THE FUCK IS THIS SHIT
 				item = cl.newInstance();
 				if (identified = item.isIdentified()) {
-					sprite.view( item.image(), null );
-					label.text( "WHAT THE FUCK IS THIS SHIT" ); //item.name()
+					sprite.view( item );
 				} else {
 					sprite.view( 127, null );
-					label.text( "WHAT THE FUCK IS THIS SHIT TOO" ); //item.trueName()
 					label.hardlight( 0xCCCCCC );
 				}
 			} catch (Exception e) {

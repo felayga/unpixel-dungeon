@@ -72,9 +72,7 @@ public class FogOfWar extends Image {
 		
 		texture( new FogTexture(width2, height2, FogOfWar.class) );
 		
-		scale.set(
-			DungeonTilemap.SIZE,
-			DungeonTilemap.SIZE );
+		scale(DungeonTilemap.SIZE);
 		
 		x = y = -size / 2;
 	}

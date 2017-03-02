@@ -26,13 +26,13 @@
 package com.felayga.unpixeldungeon.items.weapon.enchantments;
 
 import com.felayga.unpixeldungeon.Badges;
+import com.felayga.unpixeldungeon.Dungeon;
 import com.felayga.unpixeldungeon.actors.Char;
 import com.felayga.unpixeldungeon.actors.hero.Hero;
 import com.felayga.unpixeldungeon.effects.particles.ShadowParticle;
 import com.felayga.unpixeldungeon.items.weapon.Weapon;
 import com.felayga.unpixeldungeon.mechanics.MagicType;
 import com.felayga.unpixeldungeon.sprites.ItemSprite;
-import com.felayga.unpixeldungeon.sprites.ItemSprite.Glowing;
 import com.watabou.utils.Random;
 
 public class Death extends Weapon.Enchantment {
@@ -53,7 +53,7 @@ public class Death extends Weapon.Enchantment {
 			defender.damage( defender.HP, MagicType.Drain, null );
 			defender.sprite.emitter().burst( ShadowParticle.UP, 5 );
 			
-			if (!defender.isAlive() && attacker instanceof Hero) {
+			if (!defender.isAlive() && attacker == Dungeon.hero) {
 				Badges.validateGrimWeapon();
 			}
 			
@@ -67,7 +67,7 @@ public class Death extends Weapon.Enchantment {
 	}
 	
 	@Override
-	public Glowing glowing() {
+	public ItemSprite.Glowing glowing() {
 		return BLACK;
 	}
 	

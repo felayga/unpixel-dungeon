@@ -25,6 +25,7 @@
  */
 package com.felayga.unpixeldungeon.actors.buffs.positive;
 
+import com.felayga.unpixeldungeon.Dungeon;
 import com.felayga.unpixeldungeon.actors.Char;
 import com.felayga.unpixeldungeon.actors.buffs.Buff;
 import com.felayga.unpixeldungeon.actors.hero.Hero;
@@ -47,7 +48,7 @@ public class MagicalSleep extends Buff {
         //todo: MagicalSleep immunity/resistance
         if (super.attachTo(target, source)/* && !target.immunities().contains(Sleep.class)*/) {
 
-            if (target instanceof Hero) {
+            if (target == Dungeon.hero) {
                 /*
 				if (target.HP == target.HT) {
 					GLog.i("You are too healthy, and resist the urge to sleep.");
@@ -73,7 +74,7 @@ public class MagicalSleep extends Buff {
 
     @Override
     public boolean act() {
-        if (target instanceof Hero) {
+        if (target == Dungeon.hero) {
             target.HP = Math.min(target.HP + 1, target.HT);
             ((Hero) target).resting = true;
             if (target.HP == target.HT) {
@@ -87,10 +88,12 @@ public class MagicalSleep extends Buff {
 
     @Override
     public void detach() {
-        if (target.paralysed > 0)
+        if (target.paralysed > 0) {
             target.paralysed--;
-        if (target instanceof Hero)
+        }
+        if (target == Dungeon.hero) {
             ((Hero) target).resting = false;
+        }
         super.detach();
     }
 

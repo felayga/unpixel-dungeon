@@ -44,6 +44,7 @@ import com.felayga.unpixeldungeon.items.food.CannedFood;
 import com.felayga.unpixeldungeon.items.food.Corpse;
 import com.felayga.unpixeldungeon.items.food.Ration;
 import com.felayga.unpixeldungeon.items.potions.PotionOfAwareness;
+import com.felayga.unpixeldungeon.items.potions.PotionOfOil;
 import com.felayga.unpixeldungeon.items.potions.PotionOfSeeInvisible;
 import com.felayga.unpixeldungeon.items.rings.RingOfWealth;
 import com.felayga.unpixeldungeon.items.scrolls.ScrollOfIdentify;
@@ -283,14 +284,14 @@ public enum HeroClass {
         hero.belongings.collect(new PotionOfBlindness().identify().quantity(2));
         */
         //hero.belongings.collect(new PotionOfMonsterDetection().bucStatus(BUCStatus.Blessed, true).identify().quantity(10));
-        hero.belongings.collect(new PotionOfAwareness().bucStatus(BUCStatus.Blessed, true).identify().quantity(5));
+        hero.belongings.collect(new PotionOfOil().bucStatus(BUCStatus.Blessed, true).identify().quantity(5));
         hero.belongings.collect(new PotionOfSeeInvisible().bucStatus(BUCStatus.Uncursed, true).identify().quantity(5));
         hero.belongings.collect(new WandOfMakeInvisible().random().bucStatus(BUCStatus.Blessed, true).identify());
         hero.belongings.collect(new WandOfHaste().random().bucStatus(BUCStatus.Blessed, true).identify());
 
         hero.belongings.collect(new Blindfold());
         hero.belongings.collect(new Towel());
-        hero.belongings.collect(new Torch());
+        hero.belongings.collect(new Torch().random());
 
         hero.belongings.collect(new ScrollOfIdentify().bucStatus(BUCStatus.Uncursed, true).quantity(5).identify());
         hero.belongings.collect(new CloakOfInvisibility().identify());

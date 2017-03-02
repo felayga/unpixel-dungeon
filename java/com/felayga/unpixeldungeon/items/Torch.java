@@ -25,27 +25,175 @@
  */
 package com.felayga.unpixeldungeon.items;
 
+import com.felayga.unpixeldungeon.Dungeon;
+import com.felayga.unpixeldungeon.actors.Char;
+import com.felayga.unpixeldungeon.actors.blobs.Blob;
+import com.felayga.unpixeldungeon.actors.blobs.Fire;
 import com.felayga.unpixeldungeon.actors.buffs.Buff;
 import com.felayga.unpixeldungeon.actors.buffs.positive.Light;
 import com.felayga.unpixeldungeon.actors.hero.Hero;
+import com.felayga.unpixeldungeon.actors.mobs.Mob;
+import com.felayga.unpixeldungeon.effects.Fireball;
 import com.felayga.unpixeldungeon.effects.particles.FlameParticle;
+import com.felayga.unpixeldungeon.items.bags.IBag;
+import com.felayga.unpixeldungeon.items.bags.backpack.Backpack;
+import com.felayga.unpixeldungeon.items.bags.backpack.Belongings;
+import com.felayga.unpixeldungeon.items.tools.Tool;
+import com.felayga.unpixeldungeon.levels.Level;
+import com.felayga.unpixeldungeon.mechanics.Constant;
 import com.felayga.unpixeldungeon.mechanics.GameTime;
 import com.felayga.unpixeldungeon.mechanics.IDecayable;
+import com.felayga.unpixeldungeon.scenes.GameScene;
 import com.felayga.unpixeldungeon.sprites.ItemSpriteSheet;
+import com.felayga.unpixeldungeon.utils.GLog;
+import com.watabou.noosa.Visual;
 import com.watabou.noosa.particles.Emitter;
 import com.watabou.utils.Bundle;
+import com.watabou.utils.PointF;
+import com.watabou.utils.Random;
 
 import java.util.ArrayList;
+import java.util.Iterator;
+import java.util.List;
 
-public class Torch extends Item implements IDecayable {
-    protected long decay = -20 * GameTime.TICK;
+public class Torch extends Tool implements IDecayable {
+    public static class Registry {
+        private static Torch[] occupado = new Torch[13 + 8];
+
+        public static void register(Torch what) {
+            if (what.registryFlag != 0) {
+                int index = lazylog2(what.registryFlag) - 3;
+                GLog.d("tried to register already-registered torch=" + index);
+                if (occupado[index] == null) {
+                    GLog.d("not occupied, let it have it");
+                    occupado[index] = what;
+                }
+
+                return;
+            }
+
+            int index = -1;
+            for (int n = 0; n < occupado.length; n++) {
+                if (occupado[n] == null) {
+                    index = n;
+                    break;
+                }
+            }
+
+            if (index < 0) {
+                GLog.d("tried to register too many torches, failing");
+                GLog.d("" + 1 / 0);
+            } else {
+                GLog.d("register torch with index=" + index);
+            }
+
+            occupado[index] = what;
+
+            what.registryFlag = 1 << (index + 3);
+        }
+
+        public static void unregister(Torch what) {
+            if (what.registryFlag == 0) {
+                GLog.d("tried to unregister not-registered torch");
+                return;
+            }
+
+            int index = lazylog2(what.registryFlag) - 3;
+
+            if (occupado[index] != what) {
+                GLog.d("tried to unregister improperly registered torch (expected torch with index=" + index + ", " + "found index=" + (occupado[index] != null ? (lazylog2(occupado[index].registryFlag) - 3) + "" : "<null>"));
+                return;
+            }
+            occupado[index] = null;
+
+            GLog.d("unregister torch with index=" + index);
+
+            what.registryFlag = 0;
+        }
+
+        private static int lazylog2(int value) {
+            return (31 - Integer.numberOfLeadingZeros(value));
+        }
+
+        public static void register(Level level) {
+            for (Mob mob : level.mobs) {
+                register(level, mob.belongings, mob);
+            }
+
+            for (int n=0;n<level.heaps.size();n++) {
+                Heap heap = level.heaps.valueAt(n);
+                register(level, heap, null);
+            }
+
+            register(level, Dungeon.hero.belongings, Dungeon.hero);
+        }
+
+        private static void register(Level level, IBag container, Char owner) {
+            Iterator<Item> iterator = container.iterator(false);
+            while (iterator.hasNext()) {
+                Item item = iterator.next();
+
+                if (item instanceof Torch) {
+                    Torch torch = (Torch)item;
+
+                    if (torch.ignited) {
+                        Registry.register(torch);
+                        torch.attachBuff(level, torch.parent(), owner);
+                    }
+                }
+            }
+        }
+
+        public static void unregister(Level level) {
+            for (Mob mob : level.mobs) {
+                unregister(level, mob.belongings, mob);
+            }
+
+            for (int n=0;n<level.heaps.size();n++) {
+                Heap heap = level.heaps.valueAt(n);
+                unregister(level, heap, null);
+            }
+
+            unregister(level, Dungeon.hero.belongings, Dungeon.hero);
+        }
+
+        private static void unregister(Level level, IBag container, Char owner) {
+            Iterator<Item> iterator = container.iterator(false);
+            while (iterator.hasNext()) {
+                Item item = iterator.next();
+
+                if (item instanceof Torch) {
+                    Torch torch = (Torch)item;
+
+                    if (torch.ignited) {
+                        torch.detachBuff(level, torch.parent(), owner);
+                        Registry.unregister(torch);
+                    }
+                }
+            }
+        }
+
+    }
+
+    List<Integer> lightUndoList = new ArrayList<>();
+
+    protected long maxDecay;
+    protected long decay;
     protected long decayTime;
+    protected boolean ignited;
+    protected int registryFlag;
+    protected int distance;
 
     public long decay() {
         return decay;
     }
 
     public boolean decay(long currentTime, boolean updateTime, boolean fixTime) {
+        if (!ignited) {
+            updateTime = false;
+            fixTime = false;
+        }
+
         if (fixTime || updateTime) {
             long newAmount = currentTime - decayTime;
             if (fixTime) {
@@ -59,30 +207,181 @@ public class Torch extends Item implements IDecayable {
             currentTime = 0;
         }
 
-        decay += currentTime;
+        decay -= currentTime;
+
+        if (ignited && Random.Int(16) == 0) {
+            IBag parent = parent();
+            if (parent instanceof Heap) {
+                int pos = parent.pos();
+
+                if (Level.burnable[pos]) {
+                    GameScene.add(Blob.seed(null, pos, 2, Fire.class));
+                }
+            }
+        }
+
+        if (decay <= 0) {
+            if (ignited) {
+                return burnout();
+            }
+        }
 
         return false;
     }
 
-	public static final String AC_LIGHT	= "LIGHT";
-	
+    protected boolean burnout() {
+        IBag parent = parent();
+        Char owner = parent.owner();
+
+        extinguish(parent, owner);
+
+        return true;
+    }
+
 	public static final long TIME_TO_LIGHT = GameTime.TICK;
 
-    public Torch()
+    public Torch() {
+        this(800 * GameTime.TICK);
+
+        hasBuc(false);
+    }
+
+    public Torch(long maxLife)
 	{
+        super(false, false);
+        maxDecay = maxLife;
+
 		name = "torch";
 		image = ItemSpriteSheet.TORCH;
 		
-		stackable = true;
-
+		stackable = false;
         hasLevels(false);
-		
-		defaultAction = AC_LIGHT;
+
+        distance = 4;
+        ignited = false;
+
         price = 10;
-	}
+
+        defaultAction = Constant.Action.APPLY;
+    }
+
+    @Override
+    public Item random() {
+        super.random();
+
+        decay = Random.LongRange(maxDecay * 3 / 4, maxDecay);
+
+        return this;
+    }
+
+    @Override
+    public ArrayList<String> actions( Hero hero ) {
+        ArrayList<String> actions = super.actions( hero );
+        actions.add(Constant.Action.APPLY);
+        return actions;
+    }
+
+    @Override
+    public String getToolClass() {
+        return "light source";
+    }
+
+    public Emitter emitter() {
+        if (ignited) {
+            Emitter emitter = new Emitter();
+
+            emitter.pour(new Emitter.Factory() {
+                @Override
+                public void emit(Emitter emitter, int index, float x, float y) {
+                    Visual target = emitter.target();
+                    PointF scale = target.scale();
+
+                    FlameParticle p = ((FlameParticle) emitter.recycle(FlameParticle.class));
+                    float xrand = target.width * 2.0f / 16.0f * scale.x;
+                    float yrand = target.height * 2.0f / 16.0f * scale.y;
+                    x += target.width * 4.0f / 16.0f * scale.x;
+                    y += target.height * 5.0f / 16.0f * scale.y;
+
+                    if (Random.Int(2) == 0) {
+                        x += Random.Float(xrand);
+                    } else {
+                        x -= Random.Float(xrand);
+                    }
+
+                    if (Random.Int(2) == 0) {
+                        y += Random.Float(yrand);
+                    } else {
+                        y -= Random.Float(yrand);
+                    }
+
+                    p.reset(x, y);
+                }
+            }, 0.1f);
+            emitter.fillTarget = false;
+
+            return emitter;
+        }
+
+        return null;
+    }
+
+
+    @Override
+    public void parent(IBag parent) {
+        if (ignited) {
+            boolean updateLightMap = false;
+
+            IBag oldParent = this.parent();
+            Char oldOwner = null;
+
+            if (oldParent != null) {
+                oldOwner = oldParent.owner();
+            }
+
+            super.parent(parent);
+
+            Char owner = null;
+            if (parent != null) {
+                owner = parent.owner();
+            }
+
+            boolean keeplit = true;
+            if (parent != null) {
+                if (parent instanceof Backpack || parent instanceof Belongings || parent instanceof Heap) {
+                    //nothing
+                } else {
+                    //nested in bag, extinguish
+                    keeplit = false;
+                }
+            }
+
+            if (oldOwner != owner) {
+                updateLightMap |= detachBuff(Dungeon.level, oldParent, oldOwner);
+                if (keeplit) {
+                    updateLightMap |= attachBuff(Dungeon.level, parent, owner);
+                }
+            }
+
+            if (!keeplit) {
+                updateLightMap |= extinguish(parent, owner);
+            }
+
+            if (updateLightMap) {
+                Dungeon.level.updateLightMap();
+                Dungeon.observe();
+            }
+
+        } else {
+            super.parent(parent);
+        }
+    }
 
     private static final String DECAY = "decay";
     private static final String DECAYTIME = "decayTime";
+    private static final String IGNITED = "ignited";
+    private static final String REGISTRYFLAG = "registryFlag";
+    private static final String DISTANCE = "distance";
+    private static final String LIGHTUNDOLIST = "lightUndoList";
 
     @Override
     public void storeInBundle(Bundle bundle) {
@@ -90,6 +389,15 @@ public class Torch extends Item implements IDecayable {
 
         bundle.put(DECAY, decay);
         bundle.put(DECAYTIME, decayTime);
+        bundle.put(IGNITED, ignited);
+        bundle.put(REGISTRYFLAG, registryFlag);
+        bundle.put(DISTANCE, distance);
+
+        int[] undo = new int[lightUndoList.size()];
+        for (int n=0;n<lightUndoList.size();n++) {
+            undo[n] = lightUndoList.get(n);
+        }
+        bundle.put(LIGHTUNDOLIST, undo);
     }
 
     @Override
@@ -98,35 +406,113 @@ public class Torch extends Item implements IDecayable {
 
         decay = bundle.getLong(DECAY);
         decayTime = bundle.getLong(DECAYTIME);
+        ignited = bundle.getBoolean(IGNITED);
+        registryFlag = bundle.getInt(REGISTRYFLAG);
+        distance = bundle.getInt(DISTANCE);
+
+        int[] undo = bundle.getIntArray(LIGHTUNDOLIST);
+        lightUndoList.clear();
+        for (int n=0;n<undo.length;n++) {
+            lightUndoList.add(undo[n]);
+        }
     }
-	
-	@Override
-	public ArrayList<String> actions( Hero hero ) {
-		ArrayList<String> actions = super.actions( hero );
-		actions.add( AC_LIGHT );
-		return actions;
-	}
-	
-	@Override
-	public boolean execute( Hero hero, String action ) {
-		if (action.equals( AC_LIGHT )) {
-			
-			hero.spend_new(TIME_TO_LIGHT, false);
-			hero.busy();
-			
-			hero.sprite.operate(hero.pos());
 
-			Light buff = Buff.append(hero, hero, Light.class);
-            buff.ignite(decay);
+    public void apply(Hero hero, int target) {
+        //nothing
+    }
 
-			Emitter emitter = hero.sprite.centerEmitter(-1);
-			emitter.start( FlameParticle.FACTORY, 0.2f, 3 );
+    public void apply(Hero hero, Item target) {
+        //nothing
+    }
 
-			return false;
-		} else {
-			return super.execute( hero, action );
-		}
-	}
+    @Override
+    public void apply(Hero hero) {
+        hero.spend_new(TIME_TO_LIGHT, false);
+        hero.busy();
+
+        hero.sprite.operate(hero.pos());
+
+        if (ignited) {
+            extinguish(parent(), hero);
+        } else {
+            light(parent(), hero);
+        }
+    }
+
+    private void light(IBag parent, Char owner) {
+        ignited = true;
+
+        Registry.register(this);
+        attachBuff(Dungeon.level, parent, owner);
+
+        Emitter emitter = owner.sprite.centerEmitter(-1);
+        emitter.start(FlameParticle.FACTORY, 0.2f, 3);
+
+        updateQuickslot();
+    }
+
+    private boolean attachBuff(Level level, IBag parent, Char owner) {
+        if (owner != null) {
+            Light light = null;
+            for (Buff buff : owner.buffs()) {
+                if (buff instanceof Light) {
+                    Light subLight = (Light) buff;
+                    if (subLight.registryFlag == registryFlag) {
+                        light = subLight;
+                        break;
+                    }
+                }
+            }
+
+            if (light == null) {
+                light = Buff.append(owner, owner, Light.class);
+            }
+            light.ignite(level, distance, registryFlag);
+
+            return false;
+        }
+        else if (parent != null) {
+            Light.handleArea(parent.pos(), distance, registryFlag, lightUndoList, level, true, true);
+
+            return true;
+        }
+
+        return false;
+    }
+
+    private boolean extinguish(IBag parent, Char owner) {
+        ignited = false;
+
+        boolean retval = detachBuff(Dungeon.level, parent, owner);
+
+        Registry.unregister(this);
+
+        updateQuickslot();
+
+        return retval;
+    }
+
+    private boolean detachBuff(Level level, IBag parent, Char owner) {
+        if (owner != null) {
+            for (Buff buff : owner.buffs()) {
+                if (buff instanceof Light) {
+                    Light light = (Light) buff;
+                    if (light.registryFlag == registryFlag) {
+                        light.detach(level);
+                        return false;
+                    }
+                }
+            }
+
+            return true;
+        } else if (parent != null) {
+            Light.handleArea(parent.pos(), distance, registryFlag, lightUndoList, level, false, true);
+
+            return true;
+        }
+
+        return false;
+    }
 	
 	@Override
 	public boolean isIdentified() {
@@ -135,7 +521,26 @@ public class Torch extends Item implements IDecayable {
 	
 	@Override
 	public String info() {
-		return
-			"An adventuring staple, when a dungeon goes dark, a torch can help lead the way.";
+        String retval = "An adventuring staple, when a dungeon goes dark, a torch can help lead the way.";
+
+        float amount = (float) decay / (float) maxDecay;
+
+        if (amount >= 0.8) {
+            retval += "\n\nLooks like it's hardly been used.";
+        } else if (amount >= 0.6) {
+            retval += "\n\nIt's been used, but it should last a while.";
+        } else if (amount >= 0.4) {
+            retval += "\n\nAround half of the flammable material has been used up.";
+        } else if (amount >= 0.2) {
+            retval += "\n\nMost of the flammable material has been used up.";
+        } else {
+            retval += "\n\nThere's not much left to burn.  It'll extinguish itself soon.";
+        }
+
+        if (ignited) {
+            retval += "\n\nThis torch is burning.";
+        }
+
+		return retval;
 	}
 }

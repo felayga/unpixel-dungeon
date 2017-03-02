@@ -36,7 +36,6 @@ import com.felayga.unpixeldungeon.levels.Level;
 import com.felayga.unpixeldungeon.mechanics.MagicType;
 import com.felayga.unpixeldungeon.scenes.GameScene;
 import com.felayga.unpixeldungeon.sprites.ItemSprite;
-import com.felayga.unpixeldungeon.sprites.ItemSprite.Glowing;
 import com.watabou.utils.Random;
 
 import java.util.ArrayList;
@@ -84,7 +83,7 @@ public class Multiplicity extends Glyph {
 	}
 
 	@Override
-	public Glowing glowing() {
+	public ItemSprite.Glowing glowing() {
 		return PINK;
 	}
 }

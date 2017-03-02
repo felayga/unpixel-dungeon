@@ -91,7 +91,7 @@ public class PotionOfOil extends Potion {
                 GLog.w("That was smooth!");
             }
 
-            if (target instanceof Hero) {
+            if (target == Dungeon.hero) {
                 Hero hero = (Hero)target;
 
                 hero.useAttribute(AttributeType.INTWIS, -4);
@@ -102,7 +102,7 @@ public class PotionOfOil extends Potion {
     }
 
     protected void applyBurn(Char target, Char source) {
-        if (target instanceof Hero) {
+        if (target == Dungeon.hero) {
             Hero hero = (Hero) target;
 
             hero.useAttribute(AttributeType.INTWIS, -16);
@@ -136,7 +136,7 @@ public class PotionOfOil extends Potion {
         Char test = Actor.findChar(cell);
 
         if (test != null) {
-            test.damage(Random.IntRange(1,4), MagicType.Fire, null);
+            test.damage(Random.IntRange(1, 4), MagicType.Fire, null);
         }
 
         GLog.w("The potion explodes in flames!");

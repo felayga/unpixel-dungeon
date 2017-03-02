@@ -39,6 +39,7 @@ import com.felayga.unpixeldungeon.mechanics.Constant;
 import com.felayga.unpixeldungeon.mechanics.IDecayable;
 import com.felayga.unpixeldungeon.scenes.GameScene;
 import com.felayga.unpixeldungeon.ui.Icons;
+import com.felayga.unpixeldungeon.ui.Toolbar;
 import com.felayga.unpixeldungeon.utils.GLog;
 import com.felayga.unpixeldungeon.windows.WndBackpack;
 import com.felayga.unpixeldungeon.windows.WndBag;
@@ -271,7 +272,7 @@ public class Bag extends Item implements Iterable<Item>, IBag {
 			items.add(collectItem);
 			onItemAdded(collectItem);
 
-            if (this.owner instanceof Hero) {
+            if (this.owner == Dungeon.hero) {
                 if (collectItem.stackable || collectItem instanceof Boomerang) {
                     Dungeon.quickslot.replaceSimilar(collectItem);
                 }
@@ -280,7 +281,7 @@ public class Bag extends Item implements Iterable<Item>, IBag {
 			Collections.sort(items, collectItem.itemComparator);
 			return true;
 		} else {
-			if (this.owner instanceof Hero) {
+			if (this.owner == Dungeon.hero) {
 				GLog.n(TXT_PACK_FULL, collectItem.getDisplayName());
 			}
 			return false;
@@ -317,7 +318,7 @@ public class Bag extends Item implements Iterable<Item>, IBag {
 
         onItemRemoved(item);
         this.items.remove(item);
-        item.onDetach();
+        item.updateQuickslot();
 		return item;
 	}
 
@@ -340,10 +341,12 @@ public class Bag extends Item implements Iterable<Item>, IBag {
 	protected void onItemRemoved(Item item) {
 		onWeightChanged(-item.weight() * item.quantity());
 
-		if (item.parent() == this) {
-			item.parent(null);
-		}
+        this.parent().onNestedItemRemoved(item);
 	}
+
+    public void onNestedItemRemoved(Item item) {
+        this.parent().onNestedItemRemoved(item);
+    }
 
 	@Override
 	public void onDetach() {

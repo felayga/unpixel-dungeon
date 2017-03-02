@@ -33,7 +33,6 @@ import com.felayga.unpixeldungeon.items.armor.Armor.Glyph;
 import com.felayga.unpixeldungeon.levels.Level;
 import com.felayga.unpixeldungeon.scenes.GameScene;
 import com.felayga.unpixeldungeon.sprites.ItemSprite;
-import com.felayga.unpixeldungeon.sprites.ItemSprite.Glowing;
 import com.watabou.utils.Random;
 
 public class Stench extends Glyph {
@@ -62,7 +61,7 @@ public class Stench extends Glyph {
 	}
 	
 	@Override
-	public Glowing glowing() {
+	public ItemSprite.Glowing glowing() {
 		return GREEN;
 	}
 

@@ -5,7 +5,7 @@
  * Shattered Pixel Dungeon
  * Copyright (C) 2014-2015 Evan Debenham
  *
- * Unpixel Dungeon
+ * unPixel Dungeon
  * Copyright (C) 2015-2016 Randall Foudray
  *
  * This program is free software: you can redistribute it and/or modify
@@ -21,7 +21,9 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>
  *
+ *
  */
+
 package com.felayga.unpixeldungeon.sprites;
 
 import android.graphics.Bitmap;
@@ -37,7 +39,6 @@ import com.felayga.unpixeldungeon.items.Item;
 import com.felayga.unpixeldungeon.levels.Level;
 import com.felayga.unpixeldungeon.levels.Terrain;
 import com.felayga.unpixeldungeon.scenes.GameScene;
-import com.felayga.unpixeldungeon.utils.GLog;
 import com.watabou.gltextures.TextureCache;
 import com.watabou.noosa.Game;
 import com.watabou.noosa.MovieClip;
@@ -47,7 +48,7 @@ import com.watabou.noosa.particles.Emitter;
 import com.watabou.utils.PointF;
 import com.watabou.utils.Random;
 
-public class ItemSprite extends MovieClip {
+public class ItemSpriteBase extends MovieClip {
 
     public static final int SIZE = 16;
 
@@ -57,7 +58,7 @@ public class ItemSprite extends MovieClip {
 
     public Heap heap;
 
-    private Glowing glowing;
+    private ItemSprite.Glowing glowing;
     //FIXME: a lot of this emitter functionality isn't very well implemented.
     //right now I want to ship 0.3.0, but should refactor in the future.
     protected Emitter emitter;
@@ -66,11 +67,11 @@ public class ItemSprite extends MovieClip {
 
     private float dropInterval;
 
-    public ItemSprite() {
+    public ItemSpriteBase() {
         this(ItemSpriteSheet.PLACEHOLDER, null);
     }
 
-    public ItemSprite(Item item) {
+    public ItemSpriteBase(Item item) {
         super(Assets.ITEMS);
 
         if (film == null) {
@@ -80,7 +81,7 @@ public class ItemSprite extends MovieClip {
         view(item);
     }
 
-    public ItemSprite(int image, Glowing glowing) {
+    public ItemSpriteBase(int image, ItemSprite.Glowing glowing) {
         super(Assets.ITEMS);
 
         if (film == null) {
@@ -127,7 +128,7 @@ public class ItemSprite extends MovieClip {
         }
     }
 
-    public PointF worldToCamera(int cell) {
+    public static PointF worldToCamera(int cell) {
         final int csize = DungeonTilemap.SIZE;
 
         return new PointF(
@@ -141,7 +142,6 @@ public class ItemSprite extends MovieClip {
     }
 
     public void drop() {
-
         if (heap.size() <= 0) {
             return;
         }
@@ -151,14 +151,13 @@ public class ItemSprite extends MovieClip {
         speed.set(0, -100);
         acc.set(0, -speed.y / DROP_INTERVAL * 2);
 
-        if (visible && heap != null && heap.contains(Gold.class, false)) {
+        if (visible && heap != null && heap.peek() instanceof Gold) {
             CellEmitter.center(heap.pos).burst(Speck.factory(Speck.COIN), 5);
             Sample.INSTANCE.play(Assets.SND_GOLD, 1, 1, Random.Float(0.9f, 1.1f));
         }
     }
 
     public void drop(int from) {
-
         if (heap.pos == from) {
             drop();
         } else {
@@ -173,37 +172,34 @@ public class ItemSprite extends MovieClip {
         }
     }
 
-    public ItemSprite view(Item item) {
+    public ItemSpriteBase view(Item item) {
         if (item != null) {
-            //GLog.d("ItemSprite.view item="+item.getDisplayName());
             view(item.image(), item.glowing());
 
             Emitter emitter = item.emitter();
 
             if (emitter != null && parent != null) {
-                //GLog.d("add item emitter to parent=" + parent.getClass().toString());
                 emitter.pos(this);
                 parent.add(emitter);
                 this.emitter = emitter;
             }
         } else {
-            //GLog.d("ItemSprite.view item=<null>");
-            if (this.emitter != null) {
-                this.emitter.killAndErase();
-                emitter = null;
-            }
-
             view(ItemSpriteSheet.PLACEHOLDER, null);
+        }
+
+        if (this.emitter != null) {
+            this.emitter.killAndErase();
         }
 
         return this;
     }
 
-    public ItemSprite view(int image, Glowing glowing) {
+    public ItemSpriteBase view(int image, ItemSprite.Glowing glowing) {
         if (this.emitter != null) {
-            this.emitter.killAndErase();
-            emitter = null;
+            this.emitter.on = false;
         }
+
+        emitter = null;
 
         frame(film.get(image));
         if ((this.glowing = glowing) == null) {
@@ -275,27 +271,5 @@ public class ItemSprite extends MovieClip {
         int row = index / rows;
         int col = index % rows;
         return bmp.getPixel(col * SIZE + x, row * SIZE + y);
-    }
-
-    public static class Glowing {
-
-        public static final Glowing WHITE = new Glowing(0xFFFFFF, 0.6f);
-
-        public float red;
-        public float green;
-        public float blue;
-        public float period;
-
-        public Glowing(int color) {
-            this(color, 1f);
-        }
-
-        public Glowing(int color, float period) {
-            red = (color >> 16) / 255f;
-            green = ((color >> 8) & 0xFF) / 255f;
-            blue = (color & 0xFF) / 255f;
-
-            this.period = period;
-        }
     }
 }

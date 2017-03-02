@@ -33,7 +33,6 @@ import com.felayga.unpixeldungeon.effects.particles.EarthParticle;
 import com.felayga.unpixeldungeon.items.armor.Armor;
 import com.felayga.unpixeldungeon.items.armor.Armor.Glyph;
 import com.felayga.unpixeldungeon.sprites.ItemSprite;
-import com.felayga.unpixeldungeon.sprites.ItemSprite.Glowing;
 import com.watabou.noosa.Camera;
 import com.watabou.utils.Random;
 
@@ -66,7 +65,7 @@ public class Entanglement extends Glyph {
 	}
 
 	@Override
-	public Glowing glowing() {
+	public ItemSprite.Glowing glowing() {
 		return GREEN;
 	}
 		

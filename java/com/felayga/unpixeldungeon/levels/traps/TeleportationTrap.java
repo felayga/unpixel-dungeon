@@ -52,47 +52,47 @@ public class TeleportationTrap extends Trap {
 	@Override
 	public void activate() {
 
-		CellEmitter.get(pos).start(Speck.factory(Speck.LIGHT), 0.2f, 3);
-		Sample.INSTANCE.play( Assets.SND_TELEPORT );
+        CellEmitter.get(pos).start(Speck.factory(Speck.LIGHT), 0.2f, 3);
+        Sample.INSTANCE.play(Assets.SND_TELEPORT);
 
-		Char ch = Actor.findChar( pos);
-		if (ch instanceof Hero){
-			if (ScrollOfTeleportation.canTeleport(ch)) {
-				ScrollOfTeleportation.doTeleport(ch, Constant.Position.RANDOM);
-			}
-		} else if (ch != null){
-			int count = 10;
-			int pos;
-			do {
-				pos = Dungeon.level.randomRespawnCell();
-				if (count-- <= 0) {
-					break;
-				}
-			} while (pos == -1);
+        Char ch = Actor.findChar(pos);
+        if (ch == Dungeon.hero) {
+            if (ScrollOfTeleportation.canTeleport(ch)) {
+                ScrollOfTeleportation.doTeleport(ch, Constant.Position.RANDOM);
+            }
+        } else if (ch != null) {
+            int count = 10;
+            int pos;
+            do {
+                pos = Dungeon.level.randomRespawnCell();
+                if (count-- <= 0) {
+                    break;
+                }
+            } while (pos == -1);
 
-			if (pos == -1 || (Dungeon.level.flags & Level.FLAG_NOTELEPORTATION) != 0) {
+            if (pos == -1 || (Dungeon.level.flags & Level.FLAG_NOTELEPORTATION) != 0) {
 
-				GLog.w(ScrollOfTeleportation.TXT_NO_TELEPORT);
+                GLog.w(ScrollOfTeleportation.TXT_NO_TELEPORT);
 
-			} else {
+            } else {
 
-				ch.pos(pos);
-				ch.sprite.place(ch.pos());
-				ch.sprite.visible = Dungeon.visible[pos];
+                ch.pos(pos);
+                ch.sprite.place(ch.pos());
+                ch.sprite.visible = Dungeon.visible[pos];
 
-			}
-		}
+            }
+        }
 
-		Heap heap = Dungeon.level.heaps.get(pos);
+        Heap heap = Dungeon.level.heaps.get(pos);
 
-		if (heap != null){
-			int cell = Dungeon.level.randomRespawnCell();
+        if (heap != null) {
+            int cell = Dungeon.level.randomRespawnCell();
 
-			Item item = heap.pickUp();
+            Item item = heap.pickUp();
 
-            Dungeon.level.drop( item, cell );
-		}
-	}
+            Dungeon.level.drop(item, cell);
+        }
+    }
 
 	@Override
 	public String desc() {

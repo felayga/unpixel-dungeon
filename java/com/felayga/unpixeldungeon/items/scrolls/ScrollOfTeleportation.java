@@ -95,7 +95,7 @@ public class ScrollOfTeleportation extends PositionScroll {
 	}
 
     public static int doLevelPort(Char user) {
-        if (user instanceof Hero) {
+        if (user == Dungeon.hero) {
             int target = Dungeon.depth();
 
             DungeonBranch branch = DungeonBranch.currentBranch(Dungeon.depth());
@@ -173,7 +173,7 @@ public class ScrollOfTeleportation extends PositionScroll {
 			appear(user, pos);
 			Dungeon.level.press(pos, user);
 
-			if (user instanceof Hero) {
+			if (user == Dungeon.hero) {
 				Dungeon.observe();
 			}
 

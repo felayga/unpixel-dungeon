@@ -407,6 +407,7 @@ public class InterlevelScene extends PixelScene {
 
     private void teleport() throws IOException {
         GameTime.fix();
+        Dungeon.saveLevel(true);
 
         Level level;
 

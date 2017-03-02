@@ -87,7 +87,7 @@ public class MinesLevel extends RegularLevel {
 
     @Override
     public boolean build() {
-        value = -0.25;
+        value = 0.0;
         xscale = 7.5;
         yscale = 750000.0;
         offset = Random.Float() * 524288.0;
@@ -252,7 +252,7 @@ public class MinesLevel extends RegularLevel {
             tested[n] = false;
         }
 
-        for (int y = 0; y < EDGEBUFFER * 5 / 3; y++) {
+        for (int y = 0; y < EDGEBUFFER; y++) {
             for (int x = 0; x < WIDTH; x++) {
                 pos = x + y * WIDTH;
                 tested[pos] = true;

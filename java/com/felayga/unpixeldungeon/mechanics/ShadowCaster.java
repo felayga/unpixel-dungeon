@@ -130,12 +130,12 @@ public final class ShadowCaster {
     private static int[] lightMap;
     private static List<Integer> lightUndoList;
 
-    public static List<Integer> castLight( int x, int y, Level level, int lightDistance, int lightFlag ) {
+    public static void castLight( List<Integer> lightUndoList, int x, int y, Level level, int lightDistance, int lightFlag ) {
         losBlocking = Level.losBlocking;
 
         ShadowCaster.lightDistance = lightDistance;
         ShadowCaster.lightFlag = lightFlag;
-        lightUndoList = new ArrayList<>();
+        ShadowCaster.lightUndoList = lightUndoList;
         limits = rounding[lightDistance];
 
         ShadowCaster.lightMap = level.lightMap;
@@ -155,8 +155,6 @@ public final class ShadowCaster {
         scanSectorLight( x, y, 0, 0, -1, +1 );
         scanSectorLight( x, y, 0, 0, +1, -1 );
         scanSectorLight( x, y, 0, 0, -1, -1 );
-
-        return lightUndoList;
     }
 
     private static void scanSectorLight( int cx, int cy, int m1, int m2, int m3, int m4 ) {

@@ -62,7 +62,7 @@ public class Fadeleaf extends Plant {
         }
 
         /*
-		if (ch instanceof Hero) {
+		if (ch == Dungeon.hero) {
 
 			if (ScrollOfTeleportation.canTeleport(ch)) {
 				ScrollOfTeleportation.doTeleport(ch, Constant.Position.RANDOM);

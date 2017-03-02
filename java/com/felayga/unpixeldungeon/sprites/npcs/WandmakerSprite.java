@@ -102,7 +102,7 @@ public class WandmakerSprite extends MobSprite {
 				if ((phase -= Game.elapsed) <= 0) {
 					killAndErase();
 				} else {
-					scale.set( (2 - phase) * radius / RADIUS );
+					scale( (2 - phase) * radius / RADIUS );
 					am = phase * (-1);
 					aa = phase * (+1);
 				}

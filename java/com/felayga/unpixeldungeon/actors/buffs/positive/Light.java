@@ -39,110 +39,18 @@ import com.felayga.unpixeldungeon.utils.GLog;
 import com.watabou.utils.Bundle;
 
 import java.nio.Buffer;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
 public class Light extends FlavourBuff {
-    public static class Registry {
-        private static Light[] occupado = new Light[13 + 8];
-
-        public static void register(Light what) {
-            if (what.registryFlag != 0) {
-                GLog.d("tried to register already-registered light=" + what.registryFlag);
-                return;
-            }
-
-            int index = -1;
-            for (int n = 0; n < occupado.length; n++) {
-                if (occupado[n] == null) {
-                    index = n;
-                    break;
-                }
-            }
-
-            if (index < 0) {
-                GLog.d("tried to register too many lights, failing");
-                GLog.d("" + 1 / 0);
-            } else {
-                GLog.d("register light with index=" + index);
-            }
-
-            occupado[index] = what;
-
-            what.registryFlag = 1 << (index + 3);
-        }
-
-        public static void unregister(Light what) {
-            if (what.registryFlag == 0) {
-                GLog.d("tried to unregister not-registered light");
-                return;
-            }
-
-            int index = lazylog2(what.registryFlag) - 3;
-
-            if (occupado[index] != what) {
-                GLog.d("tried to unregister improperly registered light (expected light with index=" + index + ", " + "found index=" + (occupado[index] != null ? (lazylog2(occupado[index].registryFlag) - 3) + "" : "<null>"));
-                return;
-            }
-            occupado[index] = null;
-
-            GLog.d("unregister light with index=" + index);
-
-            what.registryFlag = 0;
-        }
-
-        private static int lazylog2(int value) {
-            return (31 - Integer.numberOfLeadingZeros(value));
-        }
-
-        public static void register(Level level) {
-            GLog.d("register lights in level");
-            for (int n = 0; n < Level.LENGTH; n++) {
-                level.lightMap[n] &= Level.LIGHTMAP_MOBILEMASK;
-            }
-
-            GLog.d("search hero");
-            for (Buff buff : Dungeon.hero.buffs()) {
-                if (buff instanceof Light) {
-                    GLog.d("found light");
-                    Light light = (Light)buff;
-
-                    register(light);
-                    GLog.d("registered to flag="+light.registryFlag);
-                    light.pos = light.target.pos();
-                    light.handleArea(level, true, false);
-                }
-            }
-
-            /*
-            for (Mob mob : level.mobs) {
-                for (Buff buff : mob.buffs()) {
-                    if (buff instanceof Light) {
-
-                    }
-                }
-            }
-            */
-        }
-
-        public static void unregister(Level level) {
-            for (int n = 0; n < occupado.length; n++) {
-                if (occupado[n] == null) {
-                    continue;
-                }
-
-                unregister(occupado[n]);
-            }
-        }
-    }
-
     private int distance;
 
     public int distance() {
         return distance;
     }
 
-    private int registryFlag;
+    public int registryFlag;
     private int pos;
 
     public Light() {
@@ -150,61 +58,72 @@ public class Light extends FlavourBuff {
         registryFlag = 0;
     }
 
-    private static final String LIGHTDISTANCE = "lightDistance";
-    private static final String LIGHTDURATION = "lightDuration";
+    private static final String DISTANCE = "distance";
+    private static final String DURATION = "duration";
+    private static final String REGISTRYFLAG = "registryFlag";
+    private static final String LIGHTUNDOLIST = "lightUndoList";
 
     @Override
     public void storeInBundle( Bundle bundle ) {
         super.storeInBundle(bundle);
-        bundle.put(LIGHTDISTANCE, distance);
-        bundle.put(LIGHTDURATION, duration);
+        bundle.put(DISTANCE, distance);
+        bundle.put(DURATION, duration);
+        bundle.put(REGISTRYFLAG, registryFlag);
+
+        int[] undo = new int[lightUndoList.size()];
+        for (int n=0;n<lightUndoList.size();n++) {
+            undo[n] = lightUndoList.get(n);
+        }
+        bundle.put(LIGHTUNDOLIST, undo);
     }
 
     @Override
     public void restoreFromBundle( Bundle bundle ) {
         super.restoreFromBundle(bundle);
-        distance = bundle.getInt(LIGHTDISTANCE);
-        duration = bundle.getLong(LIGHTDURATION);
-    }
+        distance = bundle.getInt(DISTANCE);
+        duration = bundle.getLong(DURATION);
+        registryFlag = bundle.getInt(REGISTRYFLAG);
 
-    @Override
-    public boolean attachTo(Char target, Char source) {
-        if (super.attachTo(target, source)) {
-            Registry.register(this);
-
-            pos = target.pos();
-
-            handleArea(Dungeon.level, true, true);
-            Dungeon.observe();
-            return true;
-        } else {
-            return false;
+        int[] undo = bundle.getIntArray(LIGHTUNDOLIST);
+        lightUndoList.clear();
+        for (int n = 0; n < undo.length; n++) {
+            lightUndoList.add(undo[n]);
         }
     }
 
     @Override
     public void detach() {
-        handleArea(Dungeon.level, false, true);
+        detach(Dungeon.level);
+    }
+
+    public void detach(Level level) {
+        handleArea(level, false, true);
         Dungeon.observe();
 
-        Registry.unregister(this);
         super.detach();
     }
 
-    private List<Integer> lightUndoList;
+    private List<Integer> lightUndoList = new ArrayList<>();
 
     private void handleArea(Level level, boolean on, boolean updateLightMap) {
+        handleArea(pos, distance, registryFlag, lightUndoList, level, on, updateLightMap);
+    }
+
+    public static void handleArea(int pos, int distance, int registryFlag, List<Integer> lightUndoList, Level level, boolean on, boolean updateLightMap) {
+        //GLog.d("Light.handleArea pos="+pos+" on="+on);
         if (level != null) {
             if (on) {
-                lightUndoList = ShadowCaster.castLight(pos % Level.WIDTH, pos / Level.WIDTH, level, distance, registryFlag);
+                ShadowCaster.castLight(lightUndoList, pos % Level.WIDTH, pos / Level.WIDTH, level, distance, registryFlag);
             } else {
-                int lightFlag = this.registryFlag ^ Level.LIGHTMAP_FULLMASK;
+                int lightFlag = registryFlag ^ Level.LIGHTMAP_FULLMASK;
 
                 if (lightUndoList != null) {
-                    for (Integer pos : lightUndoList) {
-                        level.lightMap[pos] &= lightFlag;
+                    for (Integer subPos : lightUndoList) {
+                        level.lightMap[subPos] &= lightFlag;
                     }
                 }
+
+                lightUndoList.clear();
             }
 
             if (updateLightMap) {
@@ -215,37 +134,28 @@ public class Light extends FlavourBuff {
 
     @Override
     public boolean act() {
-        if (target.isAlive()) {
-            duration -= GameTime.TICK;
-            spend_new(GameTime.TICK, false);
-
-            if (duration >= 0) {
-                update(Dungeon.level);
-            } else {
-                detach();
-            }
-
-        } else {
-
-            detach();
-
-        }
-
-        return true;
-    }
-
-    protected void update(Level level) {
+        spend_new(target.movementSpeed(), false);
         if (target.pos() != pos) {
-            handleArea(level, false, false);
+            handleArea(Dungeon.level, false, false);
             pos = target.pos();
-            handleArea(level, true, true);
+            handleArea(Dungeon.level, true, true);
         }
+        return true;
     }
 
     private long duration;
 
-    public void ignite(long time) {
-        duration = time;
+    public void ignite(int distance, int registryFlag) {
+        ignite(Dungeon.level, distance, registryFlag);
+    }
+
+    public void ignite(Level level, int distance, int registryFlag) {
+        this.distance = distance;
+        this.registryFlag = registryFlag;
+        pos = target.pos();
+
+        handleArea(level, true, true);
+        Dungeon.observe();
     }
 
     @Override

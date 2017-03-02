@@ -32,6 +32,7 @@ import com.felayga.unpixeldungeon.items.Item;
 import com.felayga.unpixeldungeon.levels.Level;
 import com.felayga.unpixeldungeon.mechanics.Ballistica;
 import com.felayga.unpixeldungeon.scenes.GameScene;
+import com.felayga.unpixeldungeon.utils.GLog;
 import com.felayga.unpixeldungeon.windows.WndBackpack;
 import com.watabou.noosa.Image;
 import com.watabou.noosa.ui.Button;
@@ -158,21 +159,20 @@ public class QuickSlotButton extends Button implements WndBackpack.Listener {
     }
 
     public void item(Item item) {
+        /*
         String itemname;
         int itemquantity;
         if (item != null) {
-            //GLog.d("QuickSlotButton.item("+item.getDisplayName()+")");
+            GLog.d("QuickSlotButton.item("+item.getDisplayName()+")");
             itemname = item.getDisplayName();
             itemquantity = item.quantity();
         } else {
-            //GLog.d("QuickSlotButton.item(<null>)");
+            GLog.d("QuickSlotButton.item(<null>)");
             itemname = "<null>";
             itemquantity = -1;
         }
-        //GLog.d("QuickSlotButton item("+itemname+") quantity="+itemquantity);
-        //if (itemname.equals("rock") && itemquantity == 1) {
-        //    GLog.d("" + 1 / 0);
-        //}
+        GLog.d("QuickSlotButton item("+itemname+") quantity="+itemquantity);
+        */
         slot.item(item);
         enableSlot();
     }

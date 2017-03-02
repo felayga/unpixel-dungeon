@@ -29,7 +29,6 @@ import com.felayga.unpixeldungeon.actors.Char;
 import com.felayga.unpixeldungeon.items.weapon.Weapon;
 import com.felayga.unpixeldungeon.mechanics.MagicType;
 import com.felayga.unpixeldungeon.sprites.ItemSprite;
-import com.felayga.unpixeldungeon.sprites.ItemSprite.Glowing;
 
 public class Luck extends Weapon.Enchantment {
 
@@ -60,7 +59,7 @@ public class Luck extends Weapon.Enchantment {
 	}
 
 	@Override
-	public Glowing glowing() {
+	public ItemSprite.Glowing glowing() {
 		return GREEN;
 	}
 }

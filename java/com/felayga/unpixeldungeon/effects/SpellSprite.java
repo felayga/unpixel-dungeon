@@ -89,7 +89,7 @@ public class SpellSprite extends Image {
 		switch (phase) {
 		case FADE_IN:
 			alpha( passed / duration );
-			scale.set( passed / duration );
+			scale( passed / duration );
 			break;
 		case STATIC:
 			break;

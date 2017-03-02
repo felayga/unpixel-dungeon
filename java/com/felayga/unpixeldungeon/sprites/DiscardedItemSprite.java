@@ -39,7 +39,7 @@ public class DiscardedItemSprite extends ItemSprite {
 	
 	@Override
 	public void drop() {
-		scale.set( 1 );
+		scale( 1 );
 		am = 1;
 		if (emitter != null) emitter.killAndErase();
 	}
@@ -49,7 +49,7 @@ public class DiscardedItemSprite extends ItemSprite {
 		
 		super.update();
 		
-		scale.set( scale.x * 0.9f );
+		scale( scale().x * 0.9f );
 		if ((am -= Game.elapsed) <= 0) {
 			remove();
 		}

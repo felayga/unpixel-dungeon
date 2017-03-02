@@ -50,7 +50,7 @@ public class CheckedCell extends Image {
 	public void update() {
 		if ((alpha -= Game.elapsed) > 0) {
 			alpha( alpha );
-			scale.set( DungeonTilemap.SIZE * alpha );
+			scale( DungeonTilemap.SIZE * alpha );
 		} else {
 			killAndErase();
 		}

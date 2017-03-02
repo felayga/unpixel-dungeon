@@ -72,7 +72,11 @@ public class LargeChest extends Bag {
     public Item random() {
         float dropBonusChance = Roll.DropBonusChance(Dungeon.hero) / 2.0f;
 
-        int itemcount = 0;
+        int itemcount = 1;
+
+        if (Random.Int(3)==0) {
+            itemcount = 0;
+        }
 
         while (Random.Float() < dropBonusChance) {
             itemcount++;

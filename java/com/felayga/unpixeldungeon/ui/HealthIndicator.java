@@ -51,11 +51,11 @@ public class HealthIndicator extends Component {
 	@Override
 	protected void createChildren() {
 		bg = new Image( TextureCache.createSolid( 0xFFcc0000 ) );
-		bg.scale.y = HEIGHT;
+		bg.scale(bg.scale().x, HEIGHT);
 		add( bg );
 		
 		level = new Image( TextureCache.createSolid( 0xFF00cc00 ) );
-		level.scale.y = HEIGHT;
+		level.scale(level.scale().x, HEIGHT);
 		add( level );
 	}
 	
@@ -65,8 +65,8 @@ public class HealthIndicator extends Component {
 		
 		if (target != null && target.isAlive() && target.sprite.visible) {
 			CharSprite sprite = target.sprite;
-			bg.scale.x = sprite.width;
-			level.scale.x = sprite.width * target.HP / target.HT;
+			bg.scale(sprite.width, bg.scale().y);
+			level.scale(sprite.width * target.HP / target.HT, level.scale().y);
 			bg.x = level.x = sprite.x;
 			bg.y = level.y = sprite.y - HEIGHT - 1;
 			

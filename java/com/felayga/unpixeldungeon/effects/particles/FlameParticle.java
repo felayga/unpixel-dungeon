@@ -25,31 +25,58 @@
  */
 package com.felayga.unpixeldungeon.effects.particles;
 
+import com.felayga.unpixeldungeon.utils.GLog;
 import com.watabou.noosa.particles.Emitter;
 import com.watabou.noosa.particles.Emitter.Factory;
 import com.watabou.noosa.particles.PixelParticle;
+import com.watabou.utils.Random;
 
 public class FlameParticle extends PixelParticle.Shrinking {
-	
 	public static final Emitter.Factory FACTORY = new Factory() {
 		@Override
 		public void emit( Emitter emitter, int index, float x, float y ) {
 			((FlameParticle)emitter.recycle( FlameParticle.class )).reset( x, y );
 		}
+
 		@Override
 		public boolean lightMode() {
 			return true;
-		};
+		}
 	};
+
+    private static int flameParticleIndex = 0;
 	
 	public FlameParticle() {
-		super();
-		
-		color( 0xEE7722 );
-		lifespan = 0.6f;
-		
-		acc.set( 0, -80 );
-	}
+        super();
+
+        flameParticleIndex++;
+
+        switch (flameParticleIndex % 8) {
+            case 0:
+            case 1:
+            case 2:
+                color(0xFF5500);
+                break;
+            case 3:
+            case 4:
+                color(0xEE7722);
+                break;
+            case 5:
+                color(0xFF9D33);
+                break;
+            case 6:
+                color(0xFFC852);
+                break;
+            case 7:
+                color(0xFFE566);
+                break;
+        }
+
+        //color(0xEE7722);
+        lifespan = 0.6f;
+
+        acc.set(0, -80);
+    }
 	
 	public void reset( float x, float y ) {
 		revive();

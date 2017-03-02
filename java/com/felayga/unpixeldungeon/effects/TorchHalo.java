@@ -52,14 +52,14 @@ public class TorchHalo extends Halo {
 			if ((phase += Game.elapsed) >= 0) {
 				killAndErase();
 			} else {
-				scale.set( (2 + phase) * radius / RADIUS );
+				scale( (2 + phase) * radius / RADIUS );
 				am = -phase * brightness;
 			}
 		} else if (phase < 1) {
 			if ((phase += Game.elapsed) >= 1) {
 				phase = 1;
 			}
-			scale.set( phase * radius / RADIUS );
+			scale( phase * radius / RADIUS );
 			am = phase * brightness;
 		}
 		

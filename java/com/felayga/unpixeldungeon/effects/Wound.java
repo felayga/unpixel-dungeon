@@ -62,7 +62,7 @@ public class Wound extends Image {
 		} else {
 			float p = time / TIME_TO_FADE;
 			alpha( p );
-			scale.x = 1 + p;
+			scale(1 + p, scale().y);
 		}
 	}
 	

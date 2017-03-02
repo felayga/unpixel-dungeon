@@ -134,7 +134,7 @@ public class Flare extends Visual {
 				
 				float p = 1 - lifespan / duration;	// 0 -> 1
 				p =  p < 0.25f ? p * 4 : (1 - p) * 1.333f;
-				scale.set( p );
+				scale( p );
 				alpha( p );
 				
 			} else {

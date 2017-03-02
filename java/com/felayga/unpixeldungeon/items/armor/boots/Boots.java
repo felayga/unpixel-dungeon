@@ -117,7 +117,7 @@ public class Boots extends Armor implements IWeapon {
 
         defaultAction = Constant.Action.KICK;
 
-        if (owner instanceof Hero) {
+        if (owner == Dungeon.hero) {
             int index = Dungeon.quickslot.getPlaceholder(this);
             if (index >= 0) {
                 Dungeon.quickslot.setSlot(index, this);
@@ -132,7 +132,7 @@ public class Boots extends Armor implements IWeapon {
 
         defaultAction = null;
 
-        if (owner instanceof Hero) {
+        if (owner == Dungeon.hero) {
             int index = Dungeon.quickslot.getSlot(this);
             if (index >= 0) {
                 Dungeon.quickslot.convertToPlaceholder(this);
@@ -165,7 +165,7 @@ public class Boots extends Armor implements IWeapon {
     }
 
     public void kick(Char maybeHero, int target) {
-        if (maybeHero instanceof Hero) {
+        if (maybeHero == Dungeon.hero) {
             Hero hero = (Hero) maybeHero;
 
             Char ch;

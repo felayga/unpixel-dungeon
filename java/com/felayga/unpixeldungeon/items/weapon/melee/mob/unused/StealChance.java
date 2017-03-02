@@ -49,7 +49,7 @@ public class StealChance extends MeleeMobAttack {
     {
         damage = super.proc(attacker, thrown, target, damage);
 
-        if (target instanceof Hero && steal( attacker, (Hero)target )) {
+        if (target == Dungeon.hero && steal( attacker, (Hero)target )) {
             if (attacker instanceof Thief) {
                 Thief thief = (Thief)attacker;
                 thief.flee();

@@ -104,6 +104,12 @@ public class UnlockingTool extends Tool implements ITool {
 
     @Override
     public void apply(Hero hero, Item item) {
+        //nothing
+    }
+
+    @Override
+    public void apply(Hero hero) {
+        //nothing
     }
 
 }

@@ -47,7 +47,7 @@ public class HighGrass {
         if (!Dungeon.isChallenged(Challenges.NO_HERBALISM)) {
             int luck = 0;
 
-            if (ch instanceof Hero) {
+            if (ch == Dungeon.hero) {
                 Hero hero = (Hero) ch;
 
                 luck = hero.luck();
@@ -94,7 +94,7 @@ public class HighGrass {
 
         /*
         // Barkskin
-        if (ch instanceof Hero && ((Hero) ch).subClass == HeroSubClass.WARDEN) {
+        if (ch == Dungeon.hero && ((Hero) ch).subClass == HeroSubClass.WARDEN) {
             Buff.affect(ch, Barkskin.class).level(ch.HT / 3);
             leaves = 8;
         }

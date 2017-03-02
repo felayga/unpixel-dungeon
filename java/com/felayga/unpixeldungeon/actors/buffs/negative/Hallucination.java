@@ -25,6 +25,7 @@
  */
 package com.felayga.unpixeldungeon.actors.buffs.negative;
 
+import com.felayga.unpixeldungeon.Dungeon;
 import com.felayga.unpixeldungeon.actors.buffs.FlavourBuff;
 import com.felayga.unpixeldungeon.actors.hero.Hero;
 import com.felayga.unpixeldungeon.scenes.GameScene;
@@ -39,7 +40,7 @@ public class Hallucination extends FlavourBuff {
 
     @Override
     public void fx(boolean on) {
-        if (target != null && target instanceof Hero) {
+        if (target != null && target == Dungeon.hero) {
             if (on) {
                 GameScene.startHallucinating();
             }

@@ -26,6 +26,7 @@
 
 package com.felayga.unpixeldungeon.items.armor.amulet.mask;
 
+import com.felayga.unpixeldungeon.Dungeon;
 import com.felayga.unpixeldungeon.actors.Char;
 import com.felayga.unpixeldungeon.actors.buffs.negative.Blindness;
 import com.felayga.unpixeldungeon.actors.hero.Hero;
@@ -55,7 +56,7 @@ public class Blindfold extends Mask {
         super.onEquip(owner, cursed);
 
         blindness = Blindness.Indefinite.prolong(owner, null, BlindfoldBlindness.class);
-        if (owner instanceof Hero) {
+        if (owner == Dungeon.hero) {
             Hero hero = (Hero)owner;
             hero.motivate(true);
         }

@@ -28,7 +28,6 @@ package com.felayga.unpixeldungeon.items.weapon.enchantments;
 import com.felayga.unpixeldungeon.actors.Char;
 import com.felayga.unpixeldungeon.items.weapon.Weapon;
 import com.felayga.unpixeldungeon.sprites.ItemSprite;
-import com.felayga.unpixeldungeon.sprites.ItemSprite.Glowing;
 import com.watabou.utils.Random;
 
 public class Poison extends Weapon.Enchantment {
@@ -55,7 +54,7 @@ public class Poison extends Weapon.Enchantment {
 	}
 	
 	@Override
-	public Glowing glowing() {
+	public ItemSprite.Glowing glowing() {
 		return PURPLE;
 	}
 	

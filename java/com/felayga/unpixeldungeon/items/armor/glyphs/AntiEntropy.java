@@ -37,7 +37,6 @@ import com.felayga.unpixeldungeon.items.armor.Armor.Glyph;
 import com.felayga.unpixeldungeon.levels.Level;
 import com.felayga.unpixeldungeon.mechanics.GameTime;
 import com.felayga.unpixeldungeon.sprites.ItemSprite;
-import com.felayga.unpixeldungeon.sprites.ItemSprite.Glowing;
 import com.watabou.utils.Random;
 
 public class AntiEntropy extends Glyph {
@@ -70,7 +69,7 @@ public class AntiEntropy extends Glyph {
 	}
 
 	@Override
-	public Glowing glowing() {
+	public ItemSprite.Glowing glowing() {
 		return BLUE;
 	}
 }

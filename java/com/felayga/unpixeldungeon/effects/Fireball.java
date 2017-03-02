@@ -163,7 +163,7 @@ public class Fireball extends Component {
 			} else {
 				
 				float p = timeLeft / LIFESPAN;
-				scale.set( p );
+				scale( p );
 				alpha( p > 0.8f ? (1 - p) * 5f : p * 1.25f );
 				
 			}

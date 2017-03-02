@@ -977,7 +977,7 @@ public abstract class Level implements Bundlable, IDecayable {
     }
 
     public void updateLightMap() {
-        GLog.d("updatelightmap");
+        //GLog.d("updatelightmap");
         for (int n = 0; n < LENGTH; n++) {
             updateLightMap(n);
         }

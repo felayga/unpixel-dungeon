@@ -49,6 +49,7 @@ import com.felayga.unpixeldungeon.mechanics.BUCStatus;
 import com.felayga.unpixeldungeon.mechanics.IDecayable;
 import com.felayga.unpixeldungeon.mechanics.MagicType;
 import com.felayga.unpixeldungeon.sprites.ItemSprite;
+import com.felayga.unpixeldungeon.sprites.ItemSpriteBase;
 import com.felayga.unpixeldungeon.sprites.ItemSpriteSheet;
 import com.felayga.unpixeldungeon.ui.Icons;
 import com.felayga.unpixeldungeon.utils.GLog;
@@ -197,6 +198,10 @@ public class Heap implements Bundlable, IBag {
         return null;
     }
 
+    public void onNestedItemRemoved(Item item) {
+        //heap don't care
+    }
+
     public boolean locked() { return false; }
 
     public Item randomItem() {
@@ -303,7 +308,8 @@ public class Heap implements Bundlable, IBag {
 	public boolean seen = false;
 	
 	private LinkedList<Item> items_derp = new LinkedList<>();
-	
+
+    /*
 	public int image() {
 		switch (type) {
 		case HEAP:
@@ -320,9 +326,10 @@ public class Heap implements Bundlable, IBag {
 		}
 	}
 	
-	public ItemSprite.Glowing glowing() {
+	public ItemSpriteBase.Glowing glowing() {
 		return (type == Type.HEAP || type == Type.FOR_SALE) && items_derp.size() > 0 ? items_derp.peekLast().glowing() : null;
 	}
+	*/
 	
 	public void open( Hero hero ) {
         switch (type) {
@@ -374,7 +381,7 @@ public class Heap implements Bundlable, IBag {
 			destroy();
 		}
 		else if (sprite != null) {
-			sprite.view(image(), glowing());
+			sprite.view(peek());
 		}
 	}
 	
@@ -431,7 +438,7 @@ public class Heap implements Bundlable, IBag {
 			if (size() <= 0) {
 				destroy();
 			} else if (sprite != null) {
-				sprite.view( image(), glowing() );
+				sprite.view( peek() );
 			}
 			
 		}
@@ -508,7 +515,7 @@ public class Heap implements Bundlable, IBag {
 			if (size() <= 0) {
 				destroy();
 			} else if (sprite != null) {
-				sprite.view( image(), glowing() );
+				sprite.view( peek() );
 			}
 		}
 	}

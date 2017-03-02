@@ -76,6 +76,6 @@ public class Halo extends Image {
 	}
 	
 	public void radius( float value ) {
-		scale.set(  (this.radius = value) / RADIUS );
+		scale(  (this.radius = value) / RADIUS );
 	}
 }

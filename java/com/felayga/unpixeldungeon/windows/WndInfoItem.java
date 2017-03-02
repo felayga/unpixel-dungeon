@@ -94,8 +94,10 @@ public class WndInfoItem extends Window {
 				title = TTL_LOCKED_CHEST;
 				info = TXT_NEED_KEY;
 			}
+
+            Item item = heap.peek();
 			
-			fillFields( heap.image(), heap.glowing(), TITLE_COLOR, title, info );
+			fillFields( item.image(), item.glowing(), TITLE_COLOR, title, info );
 			
 		}
 	}

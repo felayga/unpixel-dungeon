@@ -55,16 +55,16 @@ public class Surprise extends Image {
 
 	@Override
 	public void update() {
-		super.update();
+        super.update();
 
-		if ((time -= Game.elapsed) <= 0) {
-			kill();
-		} else {
-			float p = time / TIME_TO_FADE;
-			alpha(p);
-			scale.y = 1 + p/2;
-		}
-	}
+        if ((time -= Game.elapsed) <= 0) {
+            kill();
+        } else {
+            float p = time / TIME_TO_FADE;
+            alpha(p);
+            scale(scale().x, 1 + p / 2);
+        }
+    }
 
 	public static void hit(Char ch) {
 		hit(ch, 0);

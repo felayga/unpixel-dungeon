@@ -32,7 +32,6 @@ import com.felayga.unpixeldungeon.items.armor.Armor;
 import com.felayga.unpixeldungeon.items.armor.Armor.Glyph;
 import com.felayga.unpixeldungeon.sprites.CharSprite;
 import com.felayga.unpixeldungeon.sprites.ItemSprite;
-import com.felayga.unpixeldungeon.sprites.ItemSprite.Glowing;
 import com.felayga.unpixeldungeon.ui.BuffIndicator;
 import com.watabou.utils.Random;
 
@@ -76,7 +75,7 @@ public class Metabolism extends Glyph {
 	}
 
 	@Override
-	public Glowing glowing() {
+	public ItemSprite.Glowing glowing() {
 		return RED;
 	}
 }

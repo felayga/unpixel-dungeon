@@ -77,7 +77,7 @@ public class ItemSpriteSheet {
     public static final int SACK_OILSKIN    = ROW_HEAPS + 15;
 
 	// Placeholders
-    public static final int PLACEHOLDER_SMTH	= ROW_PLACEHOLDERS + 0;
+    public static final int PLACEHOLDER     	= ROW_PLACEHOLDERS + 0;
 	public static final int PLACEHOLDER_WEAPON	= ROW_PLACEHOLDERS + 1;
 	public static final int PLACEHOLDER_ARMOR	= ROW_PLACEHOLDERS + 2;
 	public static final int PLACEHOLDER_RING	= ROW_PLACEHOLDERS + 3;
@@ -93,12 +93,11 @@ public class ItemSpriteSheet {
 	//Row Two: Miscellaneous single use items
 	public static final int GOLD	        = ROW_MISCELLANEOUS + 0;
 	public static final int TORCH	        = ROW_MISCELLANEOUS + 1;
-	public static final int STYLUS	        = ROW_MISCELLANEOUS + 2;
-	public static final int ANKH	        = ROW_MISCELLANEOUS + 3;
-	// Keys
+
+	public static final int STYLUS	        = ROW_MISCELLANEOUS + 3;
+	public static final int ANKH	        = ROW_MISCELLANEOUS + 4;
 	public static final int GOLDEN_KEY		= ROW_MISCELLANEOUS + 5;
 	public static final int SKELETON_KEY	= ROW_MISCELLANEOUS + 6;
-	//Boss Rewards
 	public static final int BEACON	        = ROW_MISCELLANEOUS + 7;
 	public static final int MASTERY	        = ROW_MISCELLANEOUS + 8;
 	public static final int KIT		        = ROW_MISCELLANEOUS + 9;
@@ -228,7 +227,6 @@ public class ItemSpriteSheet {
 	public static final int RING_VINE		= ROW_RING + 28;
 	public static final int RING_AMMOLITE	= ROW_RING + 29;
 	public static final int RING_SPINEL		= ROW_RING + 30;
-	public static final int RING_MEAT		= ROW_RING + 31;
 
 
 	//Row Eight: Artifacts with Static Images
@@ -332,7 +330,6 @@ public class ItemSpriteSheet {
     public static final int POTION_CHARTREUSE   = ROW_POTION + 37;
     public static final int POTION_FLESHCOLORED = ROW_POTION + 38;
     public static final int POTION_CLEAR		= ROW_POTION + 39;
-    public static final int POTION_BURNING      = ROW_POTION + 40;
 
 	//Row Twelve: Seeds
     public static final int SEED_BLOODLEAF  = ROW_SEED + 0;
@@ -398,6 +395,7 @@ public class ItemSpriteSheet {
     public static final int FOOD_GINGER         = ROW_FOOD + 24;
     public static final int FOOD_MEATBALL       = ROW_FOOD + 25;
     public static final int FOOD_MEATWAD        = ROW_FOOD + 26;
+    public static final int FOOD_MEATRING       = ROW_FOOD + 27;
 
 	//Row Fourteen: Quest Items
 	public static final int SKULL		    = ROW_QUEST + 0;

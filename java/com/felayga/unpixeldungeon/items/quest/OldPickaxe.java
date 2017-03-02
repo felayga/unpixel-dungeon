@@ -38,7 +38,7 @@ import com.felayga.unpixeldungeon.levels.Terrain;
 import com.felayga.unpixeldungeon.mechanics.GameTime;
 import com.felayga.unpixeldungeon.mechanics.WeaponSkill;
 import com.felayga.unpixeldungeon.scenes.GameScene;
-import com.felayga.unpixeldungeon.sprites.ItemSprite.Glowing;
+import com.felayga.unpixeldungeon.sprites.ItemSprite;
 import com.felayga.unpixeldungeon.sprites.ItemSpriteSheet;
 import com.felayga.unpixeldungeon.ui.BuffIndicator;
 import com.felayga.unpixeldungeon.utils.GLog;
@@ -58,7 +58,7 @@ public class OldPickaxe extends Weapon {
 	
 	private static final String TXT_NO_VEIN = "There is no dark gold vein near you to mine";
 	
-	private static final Glowing BLOODY = new Glowing( 0x550000 );
+	private static final ItemSprite.Glowing BLOODY = new ItemSprite.Glowing( 0x550000 );
 
 	public OldPickaxe()
 	{
@@ -177,7 +177,7 @@ public class OldPickaxe extends Weapon {
 	}
 	
 	@Override
-	public Glowing glowing() {
+	public ItemSprite.Glowing glowing() {
 		return bloodStained ? BLOODY : null;
 	}
 	

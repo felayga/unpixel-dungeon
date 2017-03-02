@@ -36,7 +36,6 @@ import com.felayga.unpixeldungeon.mechanics.GameTime;
 import com.felayga.unpixeldungeon.mechanics.MagicType;
 import com.felayga.unpixeldungeon.sprites.CharSprite;
 import com.felayga.unpixeldungeon.sprites.ItemSprite;
-import com.felayga.unpixeldungeon.sprites.ItemSprite.Glowing;
 import com.felayga.unpixeldungeon.ui.BuffIndicator;
 import com.felayga.unpixeldungeon.utils.GLog;
 import com.felayga.unpixeldungeon.utils.Utils;
@@ -82,7 +81,7 @@ public class Viscosity extends Glyph {
     }
 
     @Override
-    public Glowing glowing() {
+    public ItemSprite.Glowing glowing() {
         return PURPLE;
     }
 

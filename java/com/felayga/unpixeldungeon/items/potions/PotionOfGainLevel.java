@@ -26,6 +26,7 @@
 
 package com.felayga.unpixeldungeon.items.potions;
 
+import com.felayga.unpixeldungeon.Dungeon;
 import com.felayga.unpixeldungeon.actors.Char;
 import com.felayga.unpixeldungeon.actors.hero.Hero;
 
@@ -49,7 +50,7 @@ public class PotionOfGainLevel extends Potion {
     public void apply( Char c ) {
         setKnown();
 
-        if (c instanceof Hero) {
+        if (c == Dungeon.hero) {
             Hero hero = (Hero) c;
             hero.earnExp(hero.maxExp());
         }
