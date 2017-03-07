@@ -24,24 +24,30 @@
  *
  */
 
-package com.felayga.unpixeldungeon.items.weapon.melee.simple;
+package com.felayga.unpixeldungeon.items.weapon.ammunition.martial;
 
-import com.felayga.unpixeldungeon.mechanics.GameTime;
+import com.felayga.unpixeldungeon.Assets;
+import com.felayga.unpixeldungeon.mechanics.Material;
 import com.felayga.unpixeldungeon.sprites.ItemSpriteSheet;
 
 /**
- * Created by HELLO on 6/9/2016.
+ * Created by HELLO on 3/6/2017.
  */
-public class DaggerRuned extends Dagger {
-    public DaggerRuned() {
-        super( GameTime.TICK, 1, 5 );
 
-        name = "dagger";
-        image = ItemSpriteSheet.MELEE_DAGGER_RUNED;
+public class ArrowRuned extends Arrow {
+    public ArrowRuned() {
+        super(1, 7);
+
+        name = "runed arrow";
+        image = ItemSpriteSheet.MISSILE_ARROW_RUNED;
+        pickupSound = Assets.SND_ITEM_BLADE;
+        material = Material.Wood;
+
+        price = 2;
     }
 
     @Override
     public String desc() {
-        return "A simple iron dagger with a well worn wooden handle.";
+        return "This is a shafted wooden projectile designed to be launched at a target using a bow.";
     }
 }

@@ -25,6 +25,7 @@
  */
 package com.felayga.unpixeldungeon.actors.buffs.negative;
 
+import com.felayga.unpixeldungeon.actors.Char;
 import com.felayga.unpixeldungeon.actors.buffs.Buff;
 import com.felayga.unpixeldungeon.mechanics.GameTime;
 import com.felayga.unpixeldungeon.mechanics.MagicType;
@@ -48,7 +49,7 @@ public class Corruption extends Buff {
 		buildToDamage -= damage;
 
 		if (damage > 0)
-			target.damage(damage, MagicType.Magic, null);
+			target.damage(damage, MagicType.Magic, Char.Registry.get(ownerRegistryIndex()), null);
 
         spend_new(GameTime.TICK, false);
 

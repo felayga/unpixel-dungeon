@@ -147,11 +147,11 @@ public abstract class EquippableItem extends Item {
     }
 
 	@Override
-	public void doDrop( Hero hero ) {
-		if (!isEquipped( hero ) || hero.belongings.unequip(this, true)) {
-			super.doDrop( hero );
-		}
-	}
+	protected void doDrop( Hero hero, Item item ) {
+        if (!isEquipped(hero) || (!cursedCannotUnequip && hero.belongings.unequip(this, true))) {
+            super.doDrop(hero, item);
+        }
+    }
 
 	@Override
 	public void cast( final Hero user, int dst ) {

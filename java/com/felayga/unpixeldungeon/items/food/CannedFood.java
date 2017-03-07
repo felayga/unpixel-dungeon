@@ -37,12 +37,13 @@ import com.felayga.unpixeldungeon.items.EquippableItem;
 import com.felayga.unpixeldungeon.items.Item;
 import com.felayga.unpixeldungeon.items.bags.IBag;
 import com.felayga.unpixeldungeon.items.tools.CanOpener;
-import com.felayga.unpixeldungeon.items.weapon.melee.simple.Dagger;
+import com.felayga.unpixeldungeon.items.weapon.melee.simple.dagger.Dagger;
 import com.felayga.unpixeldungeon.mechanics.Characteristic;
 import com.felayga.unpixeldungeon.mechanics.Constant;
 import com.felayga.unpixeldungeon.mechanics.CorpseEffect;
 import com.felayga.unpixeldungeon.mechanics.GameTime;
 import com.felayga.unpixeldungeon.mechanics.MagicType;
+import com.felayga.unpixeldungeon.mechanics.Material;
 import com.felayga.unpixeldungeon.sprites.ItemSpriteSheet;
 import com.felayga.unpixeldungeon.utils.GLog;
 import com.watabou.utils.Bundle;
@@ -71,10 +72,10 @@ public class CannedFood extends Food {
         Smoked("smoked", 11, 125, false),
         Pickled("pickled", 12, 125, false),
         FrenchFried("french fried", 13, 125, true),
-        Rotten("rotten", 14, -125, false),
+        Rotten(null, 14, -125, false), // handled better by info
         SpinachCursed(null, 15, 250, false),
         SpinachUncursed(null, 16, 500, false),
-        SpinachBlessed(null, 17, 750, false);
+        SpinachBlessed("fresh", 17, 750, false);
 
         public final String name;
         public final int value;
@@ -89,7 +90,7 @@ public class CannedFood extends Food {
         }
 
         public static Variety fromInt(int value) {
-            switch(value) {
+            switch (value) {
                 case 1:
                     return Pureed;
                 case 2:
@@ -200,6 +201,8 @@ public class CannedFood extends Food {
 
         stackable = true;
         image = ItemSpriteSheet.FOOD_CAN_UNOPENED;
+        material = Material.Metal;
+
         defaultAction = null;
 
         price = 5;
@@ -281,10 +284,10 @@ public class CannedFood extends Food {
                 GLog.w("You wrestle the can open with your bare hands.");
             }
 
-            hero.curAction = new HeroAction.UseItem.SlowAction(this, Constant.Action.SLOWACTION, effort);
+            hero.curAction = new HeroAction.UseItem.SlowAction(this, Constant.Action.SLOW_ACTION, effort);
             hero.motivate(true);
             return true;
-        } else if (action.equals(Constant.Action.SLOWACTION)) {
+        } else if (action.equals(Constant.Action.SLOW_ACTION)) {
             IBag parent = parent();
             Item removed = parent.remove(this, 1);
             CannedFood split = (CannedFood) removed;
@@ -406,7 +409,7 @@ public class CannedFood extends Food {
     @Override
     protected boolean checkSimilarity(Item item) {
         if (super.checkSimilarity(item)) {
-            CannedFood can = (CannedFood)item;
+            CannedFood can = (CannedFood) item;
 
             if (can.effects == effects && can.resistances == resistances && can.corpseLevel == corpseLevel && can.name.equals(name)) {
                 return true;
@@ -449,7 +452,7 @@ public class CannedFood extends Food {
     }
 
     @Override
-    public String getName() {
+    public String getName(boolean partiallyEaten) {
         if (knownCans.contains(name)) {
             if ((effects & CorpseEffect.Vegetable.value) != 0) {
                 return "can of " + name;
@@ -459,5 +462,15 @@ public class CannedFood extends Food {
         } else {
             return "can";
         }
+    }
+
+    @Override
+    public String info() {
+        return "A sealed rigid metal container used to preserve all sorts of foods.\n" +
+                "\n" +
+                (knownCans.contains(name) ?
+                        "This can contains a preparation of " + name + ((effects & CorpseEffect.Vegetable.value) != 0 ? "" : " meat") + "." :
+                        "There's no way to know what's in this can before opening it.") +
+                super.info();
     }
 }

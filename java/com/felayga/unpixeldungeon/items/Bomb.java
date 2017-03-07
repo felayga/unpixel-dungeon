@@ -31,12 +31,15 @@ import com.felayga.unpixeldungeon.actors.Actor;
 import com.felayga.unpixeldungeon.actors.Char;
 import com.felayga.unpixeldungeon.actors.hero.Hero;
 import com.felayga.unpixeldungeon.effects.CellEmitter;
+import com.felayga.unpixeldungeon.effects.particles.BlastMagicParticle;
 import com.felayga.unpixeldungeon.effects.particles.BlastParticle;
 import com.felayga.unpixeldungeon.effects.particles.SmokeParticle;
+import com.felayga.unpixeldungeon.items.bags.IBag;
 import com.felayga.unpixeldungeon.levels.Level;
 import com.felayga.unpixeldungeon.levels.Terrain;
 import com.felayga.unpixeldungeon.mechanics.Constant;
 import com.felayga.unpixeldungeon.mechanics.MagicType;
+import com.felayga.unpixeldungeon.mechanics.Material;
 import com.felayga.unpixeldungeon.scenes.GameScene;
 import com.felayga.unpixeldungeon.sprites.CharSprite;
 import com.felayga.unpixeldungeon.sprites.ItemSprite;
@@ -48,12 +51,13 @@ import com.watabou.utils.Random;
 
 import java.util.ArrayList;
 
-public class Bomb extends Item {
+public class Bomb extends Item implements IFlammable {
 
     public Bomb()
 	{
 		name = "bomb";
 		image = ItemSpriteSheet.BOMB;
+        material = Material.Mineral;
 
         hasLevels(false);
 
@@ -61,8 +65,16 @@ public class Bomb extends Item {
 		usesTargeting = true;
 
 		stackable = true;
-        price = 20;
+        price = 50;
 	}
+
+    @Override
+    public boolean burn(Char cause) {
+        IBag parent = parent();
+        parent.remove(this, 1);
+        explode(cause, parent.pos());
+        return true;
+    }
 
 	public Fuse fuse;
 
@@ -98,7 +110,7 @@ public class Bomb extends Item {
 	@Override
 	protected void onThrow( Char thrower, int cell ) {
         if (!Level.pit[cell] && lightingFuse) {
-            Actor.addDelayed(fuse = new Fuse().ignite(this), 2);
+            Actor.addDelayed(fuse = new Fuse(thrower).ignite(this), 2);
         }
         if (Actor.findChar(cell) != null && !(Actor.findChar(cell) == Dungeon.hero)) {
             ArrayList<Integer> candidates = new ArrayList<>();
@@ -121,11 +133,15 @@ public class Bomb extends Item {
 		return super.doPickUp(hero);
 	}
 
-    public static void explode(int cell, boolean destroyItems, int minDamage, int maxDamage) {
+    public static void explode(Char cause, Item causeItem, int cell, boolean destroyItems, MagicType damageType, int minDamage, int maxDamage) {
         Sample.INSTANCE.play( Assets.SND_BLAST );
 
         if (Dungeon.visible[cell]) {
-            CellEmitter.center( cell ).burst( BlastParticle.FACTORY, 30 );
+            if (damageType == MagicType.Magic) {
+                CellEmitter.center(cell).burst(BlastMagicParticle.FACTORY, 30);
+            } else {
+                CellEmitter.center(cell).burst(BlastParticle.FACTORY, 30);
+            }
         }
 
         boolean terrainAffected = false;
@@ -146,7 +162,7 @@ public class Bomb extends Item {
                     //destroys items / triggers bombs caught in the blast.
                     Heap heap = Dungeon.level.heaps.get(c);
                     if (heap != null) {
-                        heap.explode();
+                        heap.explode(cause);
                     }
                 }
 
@@ -160,7 +176,7 @@ public class Bomb extends Item {
 
                     int dmg = Random.NormalIntRange( minCorrected, maxDamage );
                     if (dmg > 0) {
-                        ch.damage( dmg, MagicType.Mundane, null );
+                        ch.damage( dmg, damageType, cause, causeItem );
                     }
 
                     if (ch == Dungeon.hero && !ch.isAlive()) {
@@ -175,11 +191,11 @@ public class Bomb extends Item {
         }
     }
 
-	public void explode(int cell) {
+	public void explode(Char cause, int cell) {
         //We're blowing up, so no need for a fuse anymore.
         this.fuse = null;
 
-        explode(cell, true, Dungeon.depthAdjusted + 5, 10 + Dungeon.depthAdjusted * 2);
+        explode(cause, null, cell, true, MagicType.Mundane, 3, 18);
     }
 	
 	@Override
@@ -228,10 +244,14 @@ public class Bomb extends Item {
 
 
 	public static class Fuse extends Actor{
+        private Char cause;
 
+        public Fuse(Char cause)
 		{
 			actPriority = 3; //as if it were a buff
-		}
+
+            this.cause = cause;
+        }
 
 		private Bomb bomb;
 
@@ -242,7 +262,6 @@ public class Bomb extends Item {
 
 		@Override
 		protected boolean act() {
-
 			//something caused our bomb to explode early, or be defused. Do nothing.
 			if (bomb.fuse != this){
 				Actor.remove( this );
@@ -254,7 +273,7 @@ public class Bomb extends Item {
 				if (heap.contains(bomb)) {
 					heap.remove(bomb);
 
-					bomb.explode(heap.pos);
+					bomb.explode(cause, heap.pos);
 
 					Actor.remove(this);
 					return true;

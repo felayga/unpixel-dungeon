@@ -55,7 +55,7 @@ public class BrownMold extends Mob {
         defenseMagical = 0;
         weight = Encumbrance.UNIT * 50;
         nutrition = 30;
-        immunityMagical = MagicType.Poison.value | MagicType.Cold.value;
+        resistanceMagical = MagicType.value(MagicType.Poison, MagicType.Cold);
         corpseEffects = CorpseEffect.Vegetable.value;
         corpseResistances = MagicType.Poison.value | MagicType.Cold.value;
         viewDistance = 0;
@@ -113,7 +113,7 @@ public class BrownMold extends Mob {
             for (int n=0;n<=level;n++) {
                 dmg += Random.IntRange(1, 6);
             }
-            dmg = enemy.damage(dmg, MagicType.Cold, null);
+            dmg = enemy.damage(dmg, MagicType.Cold, this, null);
             splitterAbsorbDamage(dmg);
         }
 

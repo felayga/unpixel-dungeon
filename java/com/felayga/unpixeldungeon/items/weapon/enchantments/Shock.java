@@ -84,7 +84,7 @@ public class Shock extends Weapon.Enchantment {
 		}
 		
 		affected.add(ch);
-		ch.damage(Level.puddle[ch.pos()] && !ch.flying() ? damage * 2 : damage, MagicType.Shock, null);
+		ch.damage(Level.puddle[ch.pos()] && !ch.flying() ? damage * 2 : damage, MagicType.Shock, null, null);
 		
 		ch.sprite.centerEmitter(-1).burst(SparkParticle.FACTORY, 3);
 		ch.sprite.flash();

@@ -51,7 +51,7 @@ public class IntrinsicAwareness extends FlavourBuff {
 
     @Override
     public String desc() {
-        return "You have been granted knowledge of your current innate abilities and resistances.\n" +
+        return "You have been granted knowledge of this being's innate abilities and resistances.\n" +
                 "\n" +
                 descResistances() +
                 "\n" +
@@ -61,7 +61,7 @@ public class IntrinsicAwareness extends FlavourBuff {
     protected String descResistances() {
         String retval = "Current resistances:\n";
 
-        List<MagicType> resistances = MagicType.toList(target.immunityMagical);
+        List<MagicType> resistances = MagicType.toList(target.resistanceMagical);
         for (int n=0;n<resistances.size();n++) {
             retval += resistances.get(n).name + "\n";
         }

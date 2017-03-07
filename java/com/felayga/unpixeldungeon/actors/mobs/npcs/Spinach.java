@@ -27,6 +27,8 @@
 package com.felayga.unpixeldungeon.actors.mobs.npcs;
 
 import com.felayga.unpixeldungeon.actors.Actor;
+import com.felayga.unpixeldungeon.actors.Char;
+import com.felayga.unpixeldungeon.items.Item;
 import com.felayga.unpixeldungeon.mechanics.Characteristic;
 import com.felayga.unpixeldungeon.mechanics.CorpseEffect;
 import com.felayga.unpixeldungeon.mechanics.GameTime;
@@ -72,7 +74,7 @@ public class Spinach extends NPC {
     }
 
     @Override
-    public int damage(int dmg, MagicType type, Actor source) {
+    public int damage(int dmg, MagicType type, Char source, Item sourceItem) {
         return 0;
     }
 

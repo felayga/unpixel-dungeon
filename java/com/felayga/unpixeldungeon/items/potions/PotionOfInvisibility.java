@@ -29,10 +29,14 @@ import com.felayga.unpixeldungeon.Assets;
 import com.felayga.unpixeldungeon.actors.Char;
 import com.felayga.unpixeldungeon.actors.buffs.Buff;
 import com.felayga.unpixeldungeon.actors.buffs.positive.Invisibility;
+import com.felayga.unpixeldungeon.items.scrolls.ScrollOfRage;
+import com.felayga.unpixeldungeon.levels.Level;
+import com.felayga.unpixeldungeon.mechanics.GameTime;
 import com.felayga.unpixeldungeon.utils.GLog;
 import com.watabou.noosa.Visual;
 import com.watabou.noosa.audio.Sample;
 import com.watabou.noosa.tweeners.AlphaTweener;
+import com.watabou.utils.Random;
 
 public class PotionOfInvisibility extends Potion {
 
@@ -48,7 +52,19 @@ public class PotionOfInvisibility extends Potion {
     @Override
     public void apply(Char hero) {
         setKnown();
-        Buff.affect(hero, hero, Invisibility.class, Invisibility.DURATION);
+
+        switch(bucStatus()) {
+            case Blessed:
+                Buff.affect(hero, hero, Invisibility.Indefinite.class);
+                break;
+            case Cursed:
+                ScrollOfRage.enrage(curUser, curUser.pos(), 16);
+                //passthrough
+            default:
+                Buff.prolong(hero, hero, Invisibility.class, Random.IntRange(30, 45) * GameTime.TICK);
+                break;
+        }
+
         GLog.i("You see your hands turn invisible!");
         Sample.INSTANCE.play(Assets.SND_MELD);
     }

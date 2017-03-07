@@ -134,7 +134,7 @@ public class Viscosity extends Glyph {
         public boolean act() {
             if (target.isAlive()) {
 
-                target.damage(1, MagicType.Mundane, null);
+                target.damage(1, MagicType.Mundane, null, null);
                 if (target == Dungeon.hero && !target.isAlive()) {
 
                     Glyph glyph = new Viscosity();

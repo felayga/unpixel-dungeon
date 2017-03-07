@@ -26,14 +26,16 @@
 package com.felayga.unpixeldungeon.items.armor.medium;
 
 import com.felayga.unpixeldungeon.actors.buffs.hero.Encumbrance;
+import com.felayga.unpixeldungeon.mechanics.Material;
 import com.felayga.unpixeldungeon.sprites.ItemSpriteSheet;
 
 public class HideArmor extends MediumArmor {
-    public HideArmor()
-    {
+    public HideArmor() {
         super(3, 4, 0, 64);
+
         name = "hide armor";
         image = ItemSpriteSheet.ARMOR_HIDE;
+        material = Material.Leather;
 
         price = 15;
         textureIndex = 9;

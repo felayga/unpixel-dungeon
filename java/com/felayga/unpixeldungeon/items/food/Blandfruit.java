@@ -40,6 +40,7 @@ import com.felayga.unpixeldungeon.items.potions.PotionOfParalyticGas;
 import com.felayga.unpixeldungeon.items.potions.PotionOfPurity;
 import com.felayga.unpixeldungeon.items.potions.PotionOfToxicGas;
 import com.felayga.unpixeldungeon.mechanics.Constant;
+import com.felayga.unpixeldungeon.mechanics.Material;
 import com.felayga.unpixeldungeon.sprites.ItemSprite;
 import com.felayga.unpixeldungeon.sprites.ItemSpriteSheet;
 import com.watabou.utils.Bundle;
@@ -58,9 +59,10 @@ public class Blandfruit extends Food implements IAlchemyComponent {
         super(250, 100, Encumbrance.UNIT * 5);
 
         name = "Blandfruit";
-        stackable = true;
         image = ItemSpriteSheet.FOOD_BLANDFRUIT;
+        material = Material.Vegetable;
 
+        stackable = true;
         bones = true;
         price = 17;
     }

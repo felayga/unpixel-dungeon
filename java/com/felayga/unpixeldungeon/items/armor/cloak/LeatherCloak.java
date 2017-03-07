@@ -28,6 +28,7 @@ package com.felayga.unpixeldungeon.items.armor.cloak;
 
 import com.felayga.unpixeldungeon.actors.buffs.hero.Encumbrance;
 import com.felayga.unpixeldungeon.mechanics.GameTime;
+import com.felayga.unpixeldungeon.mechanics.Material;
 import com.felayga.unpixeldungeon.sprites.ItemSpriteSheet;
 
 /**
@@ -39,8 +40,9 @@ public class LeatherCloak extends Cloak {
 
         name = "leather cloak";
         image = ItemSpriteSheet.CLOAK_LEATHER;
-        price = 40;
+        material = Material.Leather;
 
+        price = 40;
         weight(Encumbrance.UNIT * 15);
     }
 

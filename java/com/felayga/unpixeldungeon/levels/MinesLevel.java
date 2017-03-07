@@ -409,26 +409,23 @@ public class MinesLevel extends RegularLevel {
         while (decorationPlaces > 0) {
             pos = randomDestination(Terrain.EMPTY, 0, WIDTH);
 
+            ArrayList<Integer> spots = null;
+            int terrain = 0;
+
             switch (what % 6) {
                 case 0:
                 case 3:
-                    for (Integer subpos : randomPositionsNear(pos, Random.IntRange(4, 16), validator)) {
-                        map[subpos] = Terrain.HIGH_GRASS;
-                        decorationPlaces--;
-                    }
+                    spots = randomPositionsNear(pos, Random.IntRange(4, 16), validator);
+                    terrain = Terrain.HIGH_GRASS;
                     break;
                 case 1:
                 case 4:
-                    for (Integer subpos : randomPositionsNear(pos, Random.IntRange(4, 8), validator)) {
-                        map[subpos] = Terrain.GRASS;
-                        decorationPlaces--;
-                    }
+                    spots = randomPositionsNear(pos, Random.IntRange(4, 8), validator);
+                    terrain = Terrain.GRASS;
                     break;
                 case 2:
-                    for (Integer subpos : randomPositionsNear(pos, Random.IntRange(4, 12), validator)) {
-                        map[subpos] = Terrain.EMPTY_DECO;
-                        decorationPlaces--;
-                    }
+                    spots = randomPositionsNear(pos, Random.IntRange(4, 12), validator);
+                    terrain = Terrain.EMPTY_DECO;
                     break;
                 default:
                     int count = Random.IntRange(4, 12);
@@ -441,6 +438,13 @@ public class MinesLevel extends RegularLevel {
                     map[pos] = Terrain.EMPTY_DECO;
                     decorationPlaces--;
                     break;
+            }
+
+            if (spots != null) {
+                for (Integer subpos : spots) {
+                    map[subpos] = terrain;
+                    decorationPlaces--;
+                }
             }
 
             what++;

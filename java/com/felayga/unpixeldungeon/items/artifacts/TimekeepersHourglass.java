@@ -369,7 +369,7 @@ public class TimekeepersHourglass extends Artifact_old {
 
 		@Override
 		public boolean doPickUp( Hero hero ) {
-			TimekeepersHourglass hourglass = hero.belongings.getItem( TimekeepersHourglass.class );
+			TimekeepersHourglass hourglass = hero.belongings.getItem( TimekeepersHourglass.class, true );
 			if (hourglass != null && hourglass.bucStatus() != BUCStatus.Cursed) {
 				hourglass.upgrade(this, 1);
 				Sample.INSTANCE.play( Assets.SND_DEWDROP );

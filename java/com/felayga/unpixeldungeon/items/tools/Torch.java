@@ -23,26 +23,29 @@
  *
  *
  */
-package com.felayga.unpixeldungeon.items;
+
+package com.felayga.unpixeldungeon.items.tools;
 
 import com.felayga.unpixeldungeon.Dungeon;
 import com.felayga.unpixeldungeon.actors.Char;
 import com.felayga.unpixeldungeon.actors.blobs.Blob;
 import com.felayga.unpixeldungeon.actors.blobs.Fire;
 import com.felayga.unpixeldungeon.actors.buffs.Buff;
+import com.felayga.unpixeldungeon.actors.buffs.hero.Encumbrance;
 import com.felayga.unpixeldungeon.actors.buffs.positive.Light;
 import com.felayga.unpixeldungeon.actors.hero.Hero;
 import com.felayga.unpixeldungeon.actors.mobs.Mob;
-import com.felayga.unpixeldungeon.effects.Fireball;
 import com.felayga.unpixeldungeon.effects.particles.FlameParticle;
+import com.felayga.unpixeldungeon.items.Heap;
+import com.felayga.unpixeldungeon.items.Item;
 import com.felayga.unpixeldungeon.items.bags.IBag;
 import com.felayga.unpixeldungeon.items.bags.backpack.Backpack;
 import com.felayga.unpixeldungeon.items.bags.backpack.Belongings;
-import com.felayga.unpixeldungeon.items.tools.Tool;
 import com.felayga.unpixeldungeon.levels.Level;
 import com.felayga.unpixeldungeon.mechanics.Constant;
 import com.felayga.unpixeldungeon.mechanics.GameTime;
 import com.felayga.unpixeldungeon.mechanics.IDecayable;
+import com.felayga.unpixeldungeon.mechanics.Material;
 import com.felayga.unpixeldungeon.scenes.GameScene;
 import com.felayga.unpixeldungeon.sprites.ItemSpriteSheet;
 import com.felayga.unpixeldungeon.utils.GLog;
@@ -58,11 +61,13 @@ import java.util.List;
 
 public class Torch extends Tool implements IDecayable {
     public static class Registry {
-        private static Torch[] occupado = new Torch[13 + 8];
+        private static final int BITOFFSET = 4;
+
+        private static Torch[] occupado = new Torch[12 + 8];
 
         public static void register(Torch what) {
             if (what.registryFlag != 0) {
-                int index = lazylog2(what.registryFlag) - 3;
+                int index = lazylog2(what.registryFlag) - BITOFFSET;
                 GLog.d("tried to register already-registered torch=" + index);
                 if (occupado[index] == null) {
                     GLog.d("not occupied, let it have it");
@@ -89,7 +94,7 @@ public class Torch extends Tool implements IDecayable {
 
             occupado[index] = what;
 
-            what.registryFlag = 1 << (index + 3);
+            what.registryFlag = 1 << (index + BITOFFSET);
         }
 
         public static void unregister(Torch what) {
@@ -98,10 +103,10 @@ public class Torch extends Tool implements IDecayable {
                 return;
             }
 
-            int index = lazylog2(what.registryFlag) - 3;
+            int index = lazylog2(what.registryFlag) - BITOFFSET;
 
             if (occupado[index] != what) {
-                GLog.d("tried to unregister improperly registered torch (expected torch with index=" + index + ", " + "found index=" + (occupado[index] != null ? (lazylog2(occupado[index].registryFlag) - 3) + "" : "<null>"));
+                GLog.d("tried to unregister improperly registered torch (expected torch with index=" + index + ", " + "found index=" + (occupado[index] != null ? (lazylog2(occupado[index].registryFlag) - BITOFFSET) + "" : "<null>"));
                 return;
             }
             occupado[index] = null;
@@ -180,9 +185,12 @@ public class Torch extends Tool implements IDecayable {
     protected long maxDecay;
     protected long decay;
     protected long decayTime;
+    protected long tileIgnition;
     protected boolean ignited;
     protected int registryFlag;
     protected int distance;
+
+    protected boolean ignitesTiles;
 
     public long decay() {
         return decay;
@@ -209,13 +217,24 @@ public class Torch extends Tool implements IDecayable {
 
         decay -= currentTime;
 
-        if (ignited && Random.Int(16) == 0) {
-            IBag parent = parent();
-            if (parent instanceof Heap) {
-                int pos = parent.pos();
+        if (ignitesTiles) {
+            tileIgnition += currentTime;
 
-                if (Level.burnable[pos]) {
-                    GameScene.add(Blob.seed(null, pos, 2, Fire.class));
+            if (tileIgnition >= GameTime.TICK) {
+                IBag parent = parent();
+                boolean burnt = false;
+
+                while (tileIgnition >= GameTime.TICK) {
+                    if (!burnt && ignited && parent instanceof Heap && Random.Int(Constant.Chance.TORCH_IGNITE_TILE) == 0) {
+                        int pos = parent.pos();
+
+                        if (Level.burnable[pos]) {
+                            burnt = true;
+                            GameScene.add(Blob.seed(null, pos, 2, Fire.class));
+                        }
+                    }
+
+                    tileIgnition -= GameTime.TICK;
                 }
             }
         }
@@ -242,8 +261,12 @@ public class Torch extends Tool implements IDecayable {
 
     public Torch() {
         this(800 * GameTime.TICK);
+        material = Material.Wood;
 
         hasBuc(false);
+
+        price = 8;
+        weight(20 * Encumbrance.UNIT);
     }
 
     public Torch(long maxLife)
@@ -259,6 +282,7 @@ public class Torch extends Tool implements IDecayable {
 
         distance = 4;
         ignited = false;
+        ignitesTiles = true;
 
         price = 10;
 
@@ -382,6 +406,7 @@ public class Torch extends Tool implements IDecayable {
     private static final String REGISTRYFLAG = "registryFlag";
     private static final String DISTANCE = "distance";
     private static final String LIGHTUNDOLIST = "lightUndoList";
+    private static final String TILEIGNITION = "tileIgnition";
 
     @Override
     public void storeInBundle(Bundle bundle) {
@@ -398,6 +423,8 @@ public class Torch extends Tool implements IDecayable {
             undo[n] = lightUndoList.get(n);
         }
         bundle.put(LIGHTUNDOLIST, undo);
+
+        bundle.put(TILEIGNITION, tileIgnition);
     }
 
     @Override
@@ -415,6 +442,8 @@ public class Torch extends Tool implements IDecayable {
         for (int n=0;n<undo.length;n++) {
             lightUndoList.add(undo[n]);
         }
+
+        tileIgnition = bundle.getLong(TILEIGNITION);
     }
 
     public void apply(Hero hero, int target) {

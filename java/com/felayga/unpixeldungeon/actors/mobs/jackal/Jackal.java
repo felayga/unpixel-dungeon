@@ -52,7 +52,7 @@ public class Jackal extends Mob {
         defenseMagical = 0;
         weight = Encumbrance.UNIT * 300;
         nutrition = 250;
-        immunityMagical = MagicType.None.value;
+        resistanceMagical = MagicType.None.value;
         corpseEffects = CorpseEffect.None.value;
         characteristics = Characteristic.value(Characteristic.Carnivore, Characteristic.Animal, Characteristic.WarmBlooded, Characteristic.CannotUseItems);
 

@@ -44,27 +44,26 @@ public class Potential extends Glyph {
 	
 	@Override
 	public int proc( Armor armor, Char attacker, Char defender, int damage) {
+        int level = Math.max(0, armor.level());
 
-		int level = Math.max( 0, armor.level() );
-		
-		if (Level.canReach( attacker.pos(), defender.pos() ) && Random.Int( level + 7 ) >= 6) {
-			
-			int dmg = Random.IntRange( 1, damage );
-			attacker.damage( dmg, MagicType.Shock, null );
-			dmg = Random.IntRange( 1, dmg );
-			defender.damage( dmg, MagicType.Shock, null );
-			
-			checkOwner( defender );
-			if (defender == Dungeon.hero) {
-				Camera.main.shake( 2, 0.3f );
-			}
+        if (Level.canReach(attacker.pos(), defender.pos()) && Random.Int(level + 7) >= 6) {
 
-			attacker.sprite.parent.add( new Lightning( attacker.pos(), defender.pos(), null ) );
+            int dmg = Random.IntRange(1, damage);
+            attacker.damage(dmg, MagicType.Shock, defender, armor);
+            dmg = Random.IntRange(1, dmg);
+            defender.damage(dmg, MagicType.Shock, defender, armor);
 
-		}
-		
-		return damage;
-	}
+            checkOwner(defender);
+            if (defender == Dungeon.hero) {
+                Camera.main.shake(2, 0.3f);
+            }
+
+            attacker.sprite.parent.add(new Lightning(attacker.pos(), defender.pos(), null));
+
+        }
+
+        return damage;
+    }
 	
 	@Override
 	public String name( String weaponName) {

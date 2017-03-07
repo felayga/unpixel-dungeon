@@ -25,6 +25,7 @@
  */
 package com.felayga.unpixeldungeon.levels.traps;
 
+import com.felayga.unpixeldungeon.actors.Char;
 import com.felayga.unpixeldungeon.items.Bomb;
 import com.felayga.unpixeldungeon.sprites.TrapSprite;
 
@@ -38,7 +39,7 @@ public class ExplosiveTrap extends Trap {
 
 	@Override
 	public void activate() {
-		new Bomb().explode(pos);
+		new Bomb().explode(Char.Registry.get(ownerRegistryIndex()), pos);
 	}
 
 	@Override

@@ -52,7 +52,7 @@ public class GiantRat extends Mob {
         defenseMagical = 0;
         weight = Encumbrance.UNIT * 30;
         nutrition = 30;
-        immunityMagical = MagicType.None.value;
+        resistanceMagical = MagicType.None.value;
         corpseEffects = CorpseEffect.None.value;
         characteristics = Characteristic.value(Characteristic.Animal, Characteristic.Carnivore, Characteristic.CannotUseItems, Characteristic.WarmBlooded);
 

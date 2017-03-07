@@ -35,8 +35,8 @@ import com.felayga.unpixeldungeon.mechanics.WeaponSkill;
  * Created by HELLO on 6/12/2016.
  */
 public class AmmunitionWeapon extends MissileWeapon {
-    public AmmunitionWeapon(WeaponSkill weaponSkill, long delay, int damageMin, int damageMax, int quantity, boolean throwable, AmmunitionType ammunitionType) {
-        super(weaponSkill, delay, damageMin, damageMax, quantity, throwable, ammunitionType);
+    public AmmunitionWeapon(WeaponSkill weaponSkill, long delay, int damageMin, int damageMax, boolean throwable, AmmunitionType ammunitionType) {
+        super(weaponSkill, delay, damageMin, damageMax, throwable, ammunitionType);
     }
 
     public RangedWeapon launcher;

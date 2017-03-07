@@ -33,6 +33,7 @@ import com.felayga.unpixeldungeon.items.Heap;
 import com.felayga.unpixeldungeon.items.Item;
 import com.felayga.unpixeldungeon.items.bags.IBag;
 import com.felayga.unpixeldungeon.items.food.Blandfruit;
+import com.felayga.unpixeldungeon.mechanics.Material;
 import com.felayga.unpixeldungeon.plants.BlandfruitBush;
 import com.felayga.unpixeldungeon.plants.Blindweed;
 import com.felayga.unpixeldungeon.plants.Bloodleaf;
@@ -74,11 +75,13 @@ public abstract class PotionOfBrewing extends PotionOfWater {
 
         price = 30;
 
+        material = Material.Glass;
+
         setKnown();
     }
 
     @Override
-    public void syncVisuals() {
+    public void syncRandomizedProperties() {
         //nope
     }
 

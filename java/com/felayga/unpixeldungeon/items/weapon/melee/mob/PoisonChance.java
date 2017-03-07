@@ -59,7 +59,7 @@ public class PoisonChance extends MeleeMobAttack {
         if (Random.Int(8) == 0) {
             Poison.affect(target, attacker, Random.IntRange(poisonMin, poisonMax));
 
-            if ((target.immunityMagical & MagicType.Poison.value) == 0) {
+            if ((target.resistanceMagical & MagicType.Poison.value) == 0) {
                 if (Random.Int(8) == 0) {
                     if (target == Dungeon.hero) {
                         Hero hero = (Hero) target;

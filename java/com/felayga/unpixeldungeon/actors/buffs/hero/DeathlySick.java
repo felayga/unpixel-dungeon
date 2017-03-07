@@ -70,7 +70,7 @@ public class DeathlySick extends Buff implements Hero.Doom {
             roundsLeft -= GameTime.TICK;
 
             if (roundsLeft <= 0) {
-                target.damage(target.HP, MagicType.Mundane, null);
+                target.damage(target.HP, MagicType.Mundane, null, null);
                 target.sprite.die();
             }
         } else {

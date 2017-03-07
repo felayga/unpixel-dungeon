@@ -43,7 +43,7 @@ public class TorchHalo extends Halo {
 		target = sprite;
 		am = 0;
 	}
-	
+
 	@Override
 	public void update() {
 		super.update();
@@ -62,8 +62,8 @@ public class TorchHalo extends Halo {
 			scale( phase * radius / RADIUS );
 			am = phase * brightness;
 		}
-		
-		point( target.x + target.width / 2, target.y + target.height / 2 );
+
+        point(target.x + target.width / 2, target.y + target.height / 2);
 	}
 	
 	@Override

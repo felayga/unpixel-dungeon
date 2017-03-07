@@ -29,26 +29,23 @@ import com.felayga.unpixeldungeon.items.Item;
 import com.felayga.unpixeldungeon.items.weapon.missiles.MissileWeapon;
 import com.felayga.unpixeldungeon.items.weapon.ranged.AmmunitionType;
 import com.felayga.unpixeldungeon.mechanics.GameTime;
+import com.felayga.unpixeldungeon.mechanics.Material;
 import com.felayga.unpixeldungeon.mechanics.WeaponSkill;
 import com.felayga.unpixeldungeon.sprites.ItemSpriteSheet;
 import com.watabou.utils.Random;
 
 public class Shuriken extends MissileWeapon {
 
-	public Shuriken(int quantity)
+	public Shuriken()
 	{
-		super(WeaponSkill.Martial, GameTime.TICK/2, 2, 6, quantity, true, AmmunitionType.None);
+		super(WeaponSkill.Martial, GameTime.TICK/2, 2, 6, true, AmmunitionType.None);
 
 		name = "shuriken";
 		image = ItemSpriteSheet.MISSILE_SHURIKEN;
+        material = Material.Iron;
 
 		//STR = 13;
         price = 6;
-	}
-
-	public Shuriken()
-	{
-		this(1);
 	}
 	
 	@Override

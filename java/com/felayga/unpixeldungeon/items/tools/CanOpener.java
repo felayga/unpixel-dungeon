@@ -26,10 +26,12 @@
 
 package com.felayga.unpixeldungeon.items.tools;
 
+import com.felayga.unpixeldungeon.actors.buffs.hero.Encumbrance;
 import com.felayga.unpixeldungeon.actors.hero.Hero;
 import com.felayga.unpixeldungeon.items.Item;
 import com.felayga.unpixeldungeon.items.food.CannedFood;
 import com.felayga.unpixeldungeon.mechanics.Constant;
+import com.felayga.unpixeldungeon.mechanics.Material;
 import com.felayga.unpixeldungeon.sprites.ItemSpriteSheet;
 import com.felayga.unpixeldungeon.windows.WndBackpack;
 
@@ -45,11 +47,15 @@ public class CanOpener extends Tool {
 
         name = "can opener";
         image = ItemSpriteSheet.TOOL_CANOPENER;
+        material = Material.Iron;
 
         hasLevels(false);
         hasBuc(false);
 
         defaultAction = Constant.Action.APPLY;
+
+        price = 30;
+        weight(4 * Encumbrance.UNIT);
     }
 
     public String getToolClass() {

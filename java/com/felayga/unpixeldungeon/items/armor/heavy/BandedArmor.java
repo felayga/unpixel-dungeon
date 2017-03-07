@@ -26,14 +26,16 @@
 package com.felayga.unpixeldungeon.items.armor.heavy;
 
 import com.felayga.unpixeldungeon.actors.buffs.hero.Encumbrance;
+import com.felayga.unpixeldungeon.mechanics.Material;
 import com.felayga.unpixeldungeon.sprites.ItemSpriteSheet;
 
 public class BandedArmor extends HeavyArmor {
-    public BandedArmor()
-    {
+    public BandedArmor() {
         super(6, 1, 0, 112);
+
         name = "banded armor";
         image = ItemSpriteSheet.ARMOR_BANDED;
+        material = Material.Iron;
 
         price = 250;
         textureIndex = 10;

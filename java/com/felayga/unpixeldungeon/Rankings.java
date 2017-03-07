@@ -54,7 +54,6 @@ public enum Rankings {
 	public int wonNumber;
 
 	public void submit( boolean win ) {
-
 		load();
 		
 		Record rec = new Record();

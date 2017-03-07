@@ -26,6 +26,7 @@
 
 package com.felayga.unpixeldungeon.items.food;
 
+import com.felayga.unpixeldungeon.mechanics.Material;
 import com.felayga.unpixeldungeon.sprites.ItemSpriteSheet;
 
 /**
@@ -36,8 +37,10 @@ public class MeatRing extends Meatball {
     public MeatRing() {
         super();
 
-        stackable = true;
         name = "meat ring";
         image = ItemSpriteSheet.FOOD_MEATRING;
+        material = Material.Flesh;
+
+        stackable = true;
     }
 }

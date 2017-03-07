@@ -27,6 +27,7 @@
 package com.felayga.unpixeldungeon.items.food;
 
 import com.felayga.unpixeldungeon.actors.buffs.hero.Encumbrance;
+import com.felayga.unpixeldungeon.mechanics.Material;
 import com.felayga.unpixeldungeon.sprites.ItemSpriteSheet;
 
 /**
@@ -40,6 +41,7 @@ public class Ration extends Food {
         stackable = true;
         name = "ration of food";
         image = ItemSpriteSheet.FOOD_RATION;
+        material = Material.Vegetable;
 
         bones = true;
 
@@ -48,7 +50,7 @@ public class Ration extends Food {
 
     @Override
     public String info() {
-        return "Nothing fancy here: dried meat, some biscuits - things like that." + super.info();
+        return "Nothing fancy here: cheese, biscuits, and some fresh fruit." + super.info();
     }
 
     public String message()

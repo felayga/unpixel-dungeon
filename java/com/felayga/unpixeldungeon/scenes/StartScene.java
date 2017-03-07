@@ -408,7 +408,7 @@ public class StartScene extends PixelScene {
 
                 text += "\n";
 
-                text += (info.gender == 0 ? "Male" : "Female") + " " + HeroClass.toHeroClass(info.heroClass).toString().toLowerCase();
+                text += (info.gender == 0 ? "Male" : "Female") + " " + HeroClass.fromInt(info.heroClass).name.toLowerCase();
                 text += "\n";
 
                 text += "Depth " + DungeonBranch.getDepthText(info.depth);

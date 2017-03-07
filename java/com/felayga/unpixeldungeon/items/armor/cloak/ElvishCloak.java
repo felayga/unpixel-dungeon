@@ -28,6 +28,7 @@ package com.felayga.unpixeldungeon.items.armor.cloak;
 
 import com.felayga.unpixeldungeon.actors.buffs.hero.Encumbrance;
 import com.felayga.unpixeldungeon.mechanics.GameTime;
+import com.felayga.unpixeldungeon.mechanics.Material;
 import com.felayga.unpixeldungeon.sprites.ItemSpriteSheet;
 
 /**
@@ -39,8 +40,9 @@ public class ElvishCloak extends Cloak {
 
         name = "elvish cloak";
         image = ItemSpriteSheet.CLOAK_ELVISH;
-        price = 60;
+        material = Material.Cloth;
 
+        price = 60;
         weight(Encumbrance.UNIT * 10);
     }
 

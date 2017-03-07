@@ -27,7 +27,9 @@
 package com.felayga.unpixeldungeon.items.tools.unlocking;
 
 import com.felayga.unpixeldungeon.actors.Char;
+import com.felayga.unpixeldungeon.actors.buffs.hero.Encumbrance;
 import com.felayga.unpixeldungeon.mechanics.BUCStatus;
+import com.felayga.unpixeldungeon.mechanics.Material;
 import com.felayga.unpixeldungeon.sprites.ItemSpriteSheet;
 import com.watabou.utils.Random;
 
@@ -39,6 +41,10 @@ public class LockPick extends UnlockingTool {
     {
         name = "lockpick";
         image = ItemSpriteSheet.TOOL_LOCKPICK;
+        material = Material.Iron;
+
+        weight(4 * Encumbrance.UNIT);
+        price = 20;
     }
 
     public boolean unlockDoor(Char user) {

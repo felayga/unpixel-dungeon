@@ -45,27 +45,26 @@ import java.util.ArrayList;
 
 public class WandOfDisintegration extends Wand {
 
-    public WandOfDisintegration()
-	{
+    public WandOfDisintegration() {
         super(20);
-		name = "Wand of Disintegration";
+        name = "Wand of Disintegration";
 
-		collisionProperties = Ballistica.Mode.NoCollision;
-	}
-	
-	@Override
-	protected void onZap( Ballistica beam ) {
-		
-		boolean terrainAffected = false;
-		
-		int level = 1;//level();
-		
-		int maxDistance = Math.min(distance(), beam.dist);
-		
-		ArrayList<Char> chars = new ArrayList<>();
+        collisionProperties = Ballistica.Mode.NoCollision;
+    }
 
-		int terrainPassed = 2, terrainBonus = 0;
-		for (int c : beam.subPath(1, maxDistance)) {
+    @Override
+    protected void onZap(Ballistica beam) {
+
+        boolean terrainAffected = false;
+
+        int level = 1;//level();
+
+        int maxDistance = Math.min(distance(), beam.dist);
+
+        ArrayList<Char> chars = new ArrayList<>();
+
+        int terrainPassed = 2, terrainBonus = 0;
+        for (int c : beam.subPath(1, maxDistance)) {
 
             Char ch;
             if ((ch = Actor.findChar(c)) != null) {
@@ -91,21 +90,21 @@ public class WandOfDisintegration extends Wand {
 
             CellEmitter.center(c).burst(PurpleParticle.BURST, Random.IntRange(1, 2));
         }
-		
-		if (terrainAffected) {
-			Dungeon.observe();
-		}
-		
-		int lvl = level + chars.size() + terrainBonus;
-		int dmgMin = lvl;
-		int dmgMax = (int) (8 + lvl * lvl / 3f);
-		for (Char ch : chars) {
-			processSoulMark(ch, curUser);
-			ch.damage( Random.NormalIntRange( dmgMin, dmgMax ), MagicType.Disintegration, null );
-			ch.sprite.centerEmitter(-1).burst( PurpleParticle.BURST, Random.IntRange( 1, 2 ) );
-			ch.sprite.flash();
-		}
-	}
+
+        if (terrainAffected) {
+            Dungeon.observe();
+        }
+
+        int lvl = level + chars.size() + terrainBonus;
+        int dmgMin = lvl;
+        int dmgMax = (int) (8 + lvl * lvl / 3f);
+        for (Char ch : chars) {
+            processSoulMark(ch, curUser);
+            ch.damage(Random.NormalIntRange(dmgMin, dmgMax), MagicType.Magic, curUser, null);
+            ch.sprite.centerEmitter(-1).burst(PurpleParticle.BURST, Random.IntRange(1, 2));
+            ch.sprite.flash();
+        }
+    }
 
     /*
 	@Override
@@ -116,32 +115,32 @@ public class WandOfDisintegration extends Wand {
 	}
 	*/
 
-	private int distance() {
-		return 1/*level()*/*2 + 4;
-	}
+    private int distance() {
+        return 1/*level()*/ * 2 + 4;
+    }
 
-	protected void fxEffect( Ballistica beam, Callback callback ) {
-		int cell = beam.path.get(Math.min(beam.dist, distance()));
-		curUser.sprite.parent.add(new Beam.DeathRay(curUser.sprite.center(), DungeonTilemap.tileCenterToWorld( cell )));
-		callback.call();
-	}
+    protected void fxEffect(Ballistica beam, Callback callback) {
+        int cell = beam.path.get(Math.min(beam.dist, distance()));
+        curUser.sprite.parent.add(new Beam.DeathRay(curUser.sprite.center(), DungeonTilemap.tileCenterToWorld(cell)));
+        callback.call();
+    }
 
-	@Override
-	public void staffFx(MagesStaff.StaffParticle particle) {
-		particle.color(0x220022);
-		particle.am = 0.6f;
-		particle.setLifespan(0.6f);
-		particle.acc.set(40, -40);
-		particle.setSize(0f, 3f);
-		particle.shuffleXY(2f);
-	}
+    @Override
+    public void staffFx(MagesStaff.StaffParticle particle) {
+        particle.color(0x220022);
+        particle.am = 0.6f;
+        particle.setLifespan(0.6f);
+        particle.acc.set(40, -40);
+        particle.setSize(0f, 3f);
+        particle.shuffleXY(2f);
+    }
 
-	@Override
-	public String desc() {
-		return
-			"This wand is made from a solid smooth chunk of obsidian, with a deep purple light running up its side, " +
-			"ending at the tip. It glows with destructive energy, waiting to shoot forward.\n\n" +
-			"This wand shoots a beam that pierces any obstacle, and will go farther the more it is upgraded.\n\n" +
-			"This wand deals bonus damage the more enemies and terrain it penetrates.";
-	}
+    @Override
+    public String desc() {
+        return
+                "This wand is made from a solid smooth chunk of obsidian, with a deep purple light running up its side, " +
+                        "ending at the tip. It glows with destructive energy, waiting to shoot forward.\n\n" +
+                        "This wand shoots a beam that pierces any obstacle, and will go farther the more it is upgraded.\n\n" +
+                        "This wand deals bonus damage the more enemies and terrain it penetrates.";
+    }
 }

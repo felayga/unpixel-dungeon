@@ -248,7 +248,7 @@ public class WndBackpack extends WndTabbed {
 	}
 
 	public static WndBackpack getBag(Class<? extends Bag> bagClass, Listener listener, Mode mode, Class<?> classMatch, String title, boolean groundNearby, Class<?> classUnmatch) {
-		Bag bag = Dungeon.hero.belongings.getItem(bagClass);
+		Bag bag = Dungeon.hero.belongings.getItem(bagClass, true);
 		return bag != null ?
 				new WndBackpack(bag, listener, mode, classMatch, title, groundNearby, classUnmatch) :
 				lastBag(listener, mode, classMatch, title, groundNearby, classUnmatch);

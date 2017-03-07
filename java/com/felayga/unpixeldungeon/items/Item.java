@@ -36,6 +36,7 @@ import com.felayga.unpixeldungeon.items.bags.IBag;
 import com.felayga.unpixeldungeon.mechanics.BUCStatus;
 import com.felayga.unpixeldungeon.mechanics.Ballistica;
 import com.felayga.unpixeldungeon.mechanics.Constant;
+import com.felayga.unpixeldungeon.mechanics.Material;
 import com.felayga.unpixeldungeon.scenes.CellSelector;
 import com.felayga.unpixeldungeon.scenes.GameScene;
 import com.felayga.unpixeldungeon.sprites.ItemSprite;
@@ -55,6 +56,7 @@ import com.watabou.utils.Random;
 
 import java.util.ArrayList;
 import java.util.Comparator;
+import java.util.List;
 
 public class Item implements Bundlable {
 	private static final String TXT_TO_STRING = "%s";
@@ -74,17 +76,18 @@ public class Item implements Bundlable {
         this.parent_whut = parent;
     }
 
+    public Item self() {
+        return this;
+    }
 
 	protected String name;
     protected String pickupSound;
 	public int image;
 
 	public boolean stackable = false;
-
 	public boolean droppable = true;
-	public boolean fragile = false;
-    public boolean shopkeeperPriceJacked = false;
 
+    public boolean shopkeeperPriceJacked = false;
     protected int price;
 
     public final int price() {
@@ -109,6 +112,9 @@ public class Item implements Bundlable {
     private int weight;
 
     public int weight() {
+        if (weight==0) {
+            GLog.d(getName()+" has no weight");
+        }
         return weight;
     }
 
@@ -145,18 +151,26 @@ public class Item implements Bundlable {
     }
 
     public Item() {
+        this.material = Material.None;
+
         name = "smth";
         image = ItemSpriteSheet.NULLWARN;
         pickupSound = Assets.SND_ITEM;
+
         quantity = 1;
         weight = 0;
+
         price = 0;
         shopkeeperPriceJacked = Random.Int(4) == 0;
+
+        level = 0;
+        levelKnown = false;
+        hasLevels = true;
     }
 
 	private int level = 0;
-	private boolean levelKnown = false;
-	private boolean hasLevels = true;
+	private boolean levelKnown;
+	private boolean hasLevels;
 
     public int level() {
         return level;
@@ -168,6 +182,157 @@ public class Item implements Bundlable {
         level(level, levelKnown, true);
 
         return this;
+    }
+
+    protected Material material;
+    public Material material() {
+        return material;
+    }
+
+    private int rusted;
+    private int corroded;
+    private int burnt;
+
+    public void rust() {
+        if (material.rustable) {
+            rusted++;
+
+            IBag parent = parent();
+            Char owner = null;
+            if (parent != null) {
+                owner = parent.owner();
+            }
+
+
+            switch (rusted) {
+                case 1:
+                    if (owner != null && Dungeon.visible[owner.pos()]) {
+                        if (owner == Dungeon.hero) {
+                            GLog.n("Your " + name + " gets rusty.");
+                        } else {
+                            GLog.n("The " + owner.name + "'s " + name + " gets rusty.");
+                        }
+                    }
+                    break;
+                case 2:
+                    if (owner == Dungeon.hero) {
+                        GLog.n("Your " + name + " rusts some more.");
+                    } else {
+                        GLog.n("The " + owner.name + "'s " + name + " rusts some more.");
+                    }
+                    break;
+                case 3:
+                    if (owner == Dungeon.hero) {
+                        GLog.n("Your " + name + " is thoroughly rusty.");
+                    } else {
+                        GLog.n("The " + owner.name + "'s " + name + " is thoroughly rusty.");
+                    }
+                    break;
+                default:
+                    if (owner == Dungeon.hero) {
+                        GLog.n("Your " + name + " rusts away!");
+                    } else {
+                        GLog.n("The " + owner.name + "'s " + name + " rusts away!.");
+                    }
+                    parent.remove(this);
+                    break;
+            }
+        }
+    }
+
+    public void corrode() {
+        if (material.corrodable) {
+            corroded++;
+
+            IBag parent = parent();
+            Char owner = null;
+            if (parent != null) {
+                owner = parent.owner();
+            }
+
+
+            switch (corroded) {
+                case 1:
+                    if (owner != null && Dungeon.visible[owner.pos()]) {
+                        if (owner == Dungeon.hero) {
+                            GLog.n("Your " + name + " gets corroded.");
+                        } else {
+                            GLog.n("The " + owner.name + "'s " + name + " gets corroded.");
+                        }
+                    }
+                    break;
+                case 2:
+                    if (owner == Dungeon.hero) {
+                        GLog.n("Your " + name + " corrodes some more.");
+                    } else {
+                        GLog.n("The " + owner.name + "'s " + name + " corrodes some more.");
+                    }
+                    break;
+                case 3:
+                    if (owner == Dungeon.hero) {
+                        GLog.n("Your " + name + " is thoroughly corroded.");
+                    } else {
+                        GLog.n("The " + owner.name + "'s " + name + " is thoroughly corroded.");
+                    }
+                    break;
+                default:
+                    if (owner == Dungeon.hero) {
+                        GLog.n("Your " + name + " corrodes away!");
+                    } else {
+                        GLog.n("The " + owner.name + "'s " + name + " corrodes away!.");
+                    }
+                    parent.remove(this);
+                    break;
+            }
+        }
+    }
+
+
+    public void burn() {
+        if (material.flammable) {
+            burnt++;
+
+            IBag parent = parent();
+            Char owner = null;
+            if (parent != null) {
+                owner = parent.owner();
+            }
+
+
+            switch (burnt) {
+                case 1:
+                    if (owner != null && Dungeon.visible[owner.pos()]) {
+                        if (owner == Dungeon.hero) {
+                            GLog.n("Your " + name + " gets burnt.");
+                        } else {
+                            GLog.n("The " + owner.name + "'s " + name + " gets burnt.");
+                        }
+                    }
+                    break;
+                case 2:
+                    if (owner == Dungeon.hero) {
+                        GLog.n("Your " + name + " gets burnt some more.");
+                    } else {
+                        GLog.n("The " + owner.name + "'s " + name + " gets burnt some more.");
+                    }
+                    break;
+                case 3:
+                    if (owner == Dungeon.hero) {
+                        GLog.n("Your " + name + " is thoroughly burnt.");
+                    } else {
+                        GLog.n("The " + owner.name + "'s " + name + " is thoroughly burnt.");
+                    }
+                    break;
+                default:
+                    if (owner == Dungeon.hero) {
+                        GLog.n("Your " + name + " crumbles to ash!");
+                    } else {
+                        GLog.n("The " + owner.name + "'s " + name + " crumbles to ash!.");
+                    }
+                    parent.remove(this);
+                    break;
+            }
+        }
     }
 
     public void level(int level, boolean levelKnown, boolean updateQuickslot) {
@@ -244,7 +409,7 @@ public class Item implements Bundlable {
 		if (hasBuc != state) {
 			hasBuc = state;
 
-			bucStatus(bucStatus, bucStatusKnown);
+			bucStatus(bucStatus, !state);
 		}
 	}
 
@@ -332,40 +497,44 @@ public class Item implements Bundlable {
 		Sample.INSTANCE.play(pickupSound);
 	}
 
-	public void doDrop(final Hero hero) {
+	public final void doDrop(final Hero hero) {
         if (quantity > 1) {
             GameScene.show(new WndItemDropMultiple(this) {
                 @Override
                 public void doDrop(int quantity) {
-                    Item removed = null;
                     if (quantity == Item.this.quantity) {
-                        removed = hero.belongings.remove(Item.this);
+                        Item.this.doDrop(hero, Item.this);
                     } else if (quantity > 0) {
-                        removed = hero.belongings.remove(Item.this, quantity);
+                        Item.this.doDrop(hero, Item.this, quantity);
                     } else {
                         GLog.w("You drop nothing.  The nothing clatters noisily as it impacts the ground.");
-                    }
-
-                    if (removed != null) {
-                        Heap heap = Dungeon.level.drop(removed, hero.pos());
-                        if (heap != null) {
-                            heap.sprite.drop(hero.pos());
-                        }
-                        hero.spend_new(Constant.Time.ITEM_DROP, true);
                     }
                 }
             });
         } else {
-            Item removed = hero.belongings.remove(this);
-            Heap heap = Dungeon.level.drop(removed, hero.pos());
-            if (heap != null) {
-                heap.sprite.drop(hero.pos());
-            }
-            hero.spend_new(Constant.Time.ITEM_DROP, true);
+            doDrop(hero, this);
         }
     }
 
-	public void syncVisuals() {
+    protected void doDrop(Hero hero, Item item) {
+        Item removed = hero.belongings.remove(item);
+        Heap heap = Dungeon.level.drop(removed, hero.pos());
+        if (heap != null) {
+            heap.sprite.drop(hero.pos());
+        }
+        hero.spend_new(Constant.Time.ITEM_DROP, true);
+    }
+
+    protected void doDrop(Hero hero, Item item, int quantity) {
+        Item removed = hero.belongings.remove(item, quantity);
+        Heap heap = Dungeon.level.drop(removed, hero.pos());
+        if (heap != null) {
+            heap.sprite.drop(hero.pos());
+        }
+        hero.spend_new(Constant.Time.ITEM_DROP, true);
+    }
+
+	public void syncRandomizedProperties() {
 		//do nothing by default, as most items need no visual syncing.
 	}
 
@@ -409,7 +578,7 @@ public class Item implements Bundlable {
     }
 
     protected boolean checkSimilarity(Item item) {
-        return getClass() == item.getClass() && (quantity == 0 || item.quantity == 0 || (bucStatus == item.bucStatus && bucStatusKnown == item.bucStatusKnown));
+        return getClass() == item.getClass() && (quantity == 0 || item.quantity == 0 || (bucStatus == item.bucStatus && bucStatusKnown == item.bucStatusKnown && rusted == item.rusted && corroded == item.corroded && burnt == item.burnt));
     }
 
 	public void onDetach() {
@@ -554,12 +723,63 @@ public class Item implements Bundlable {
 	public String getDisplayName() {
 		String retval = getName();
 
+        if (rusted > 0) {
+            String level;
+            switch(rusted) {
+                case 1:
+                    level = "rusty";
+                    break;
+                case 2:
+                    level = "very rusty";
+                    break;
+                default:
+                    level = "thoroughly rusty";
+                    break;
+            }
+
+            retval = level + " " + retval;
+        }
+
+        if (corroded > 0) {
+            String level;
+            switch(corroded) {
+                case 1:
+                    level = "corroded";
+                    break;
+                case 2:
+                    level = "very corroded";
+                    break;
+                default:
+                    level = "thoroughly corroded";
+                    break;
+            }
+
+            retval = level + " " + retval;
+        }
+
+        if (burnt > 0) {
+            String level;
+            switch(burnt) {
+                case 1:
+                    level = "burnt";
+                    break;
+                case 2:
+                    level = "very burnt";
+                    break;
+                default:
+                    level = "thoroughly burnt";
+                    break;
+            }
+
+            retval = level + " " + retval;
+        }
+
 		if (hasBuc) {
 			BUCStatus status = visibleBucStatus();
 
 			if (status != BUCStatus.Unknown)
 			{
-				retval = BUCStatus.getName(status) + " " + retval;
+				retval = status.name + " " + retval;
 			}
 		}
 
@@ -741,7 +961,21 @@ public class Item implements Bundlable {
 	public void cast(final Char user, int pos, int dst) {
         //todo: make sure throwing item weights are right, etc.
 
-        final int endPos = new Ballistica(pos, dst, Ballistica.Mode.Projectile).collisionPos;
+        Ballistica path = new Ballistica(pos, dst, Ballistica.Mode.Projectile);
+        //int endPos = path.collisionPos;
+
+        int distance = Ballistica.maxDistance(user, this, Ballistica.TravelCause.Thrown);
+
+        List<Integer> subPath = path.subPath(1, distance);
+
+        int _endPos;
+        if (subPath != null && subPath.size() > 0) {
+            _endPos = subPath.get(subPath.size() - 1);
+        } else {
+            _endPos = pos;
+        }
+
+        final int endPos = _endPos;
 
         user.sprite.zap(endPos);
         user.busy();

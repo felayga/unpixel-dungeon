@@ -36,22 +36,19 @@ import com.felayga.unpixeldungeon.items.weapon.missiles.MissileWeapon;
 import com.felayga.unpixeldungeon.items.weapon.ranged.AmmunitionType;
 import com.felayga.unpixeldungeon.levels.Level;
 import com.felayga.unpixeldungeon.mechanics.GameTime;
+import com.felayga.unpixeldungeon.mechanics.Material;
 import com.felayga.unpixeldungeon.mechanics.WeaponSkill;
 import com.felayga.unpixeldungeon.scenes.GameScene;
 import com.felayga.unpixeldungeon.sprites.ItemSpriteSheet;
 import com.watabou.utils.Random;
 
 public class IncendiaryDart extends MissileWeapon {
-
-	public IncendiaryDart() {
-		this( 1 );
-	}
-	
-	public IncendiaryDart( int number ) {
-		super(WeaponSkill.Simple, GameTime.TICK, 1, 2, number, true, AmmunitionType.None);
+    public IncendiaryDart() {
+		super(WeaponSkill.Simple, GameTime.TICK, 1, 2, true, AmmunitionType.None);
 
 		name = "incendiary dart";
 		image = ItemSpriteSheet.MISSILE_INCENDIARY_DART;
+        material = Material.Iron;
 
 		//STR = 12;
         price = 5;

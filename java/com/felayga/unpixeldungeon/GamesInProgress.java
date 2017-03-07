@@ -57,7 +57,7 @@ public class GamesInProgress {
 
 	public static void set( int index, HeroClass heroClass, int level, int depth ) {
 		Info info = new Info();
-		info.heroClass = HeroClass.toInt(heroClass);
+		info.heroClass = heroClass.value;
 		info.gender = WndInitHero.genderSelected;
 		info.hair = WndInitHero.hairSelected;
 		info.hairFace = WndInitHero.hairFaceSelected;

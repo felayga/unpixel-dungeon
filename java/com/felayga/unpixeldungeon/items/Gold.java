@@ -27,6 +27,7 @@ package com.felayga.unpixeldungeon.items;
 
 import com.felayga.unpixeldungeon.Assets;
 import com.felayga.unpixeldungeon.Dungeon;
+import com.felayga.unpixeldungeon.mechanics.Material;
 import com.felayga.unpixeldungeon.sprites.ItemSpriteSheet;
 import com.felayga.unpixeldungeon.utils.GLog;
 import com.felayga.unpixeldungeon.utils.Utils;
@@ -39,11 +40,12 @@ public class Gold extends Item {
 	private static final String TXT_INFO_1	= "One gold coin. " + TXT_COLLECT;
 	private static final String TXT_VALUE	= "%+d";
 
-	public Gold(int quantity)
-	{
+	public Gold(int quantity) {
 		name = "gold";
 		image = ItemSpriteSheet.GOLD;
         pickupSound = Assets.SND_GOLD;
+        material = Material.Gold;
+
 		stackable = true;
 		hasBuc(false);
         hasLevels(false);

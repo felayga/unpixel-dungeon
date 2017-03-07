@@ -178,7 +178,7 @@ public class Bones {
 					}
 				}
 				
-				item.syncVisuals();
+				item.syncRandomizedProperties();
 				
 				return item;
 			} else {

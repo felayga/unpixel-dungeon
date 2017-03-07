@@ -27,8 +27,10 @@
 package com.felayga.unpixeldungeon.items.weapon;
 
 import com.felayga.unpixeldungeon.actors.Char;
+import com.felayga.unpixeldungeon.items.Item;
 import com.felayga.unpixeldungeon.mechanics.AttributeType;
 import com.felayga.unpixeldungeon.mechanics.MagicType;
+import com.felayga.unpixeldungeon.mechanics.Material;
 import com.felayga.unpixeldungeon.mechanics.WeaponSkill;
 
 /**
@@ -41,9 +43,12 @@ public interface IWeapon {
     AttributeType damageAttribute();
 
     MagicType damageType();
+    Material material();
 
     int accuracyModifier();
     int damageRoll();
+
+    Item self();
 
     int proc(Char attacker, boolean thrown, Char defender, int damage);
 }

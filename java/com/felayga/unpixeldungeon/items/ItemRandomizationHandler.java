@@ -27,6 +27,7 @@
 package com.felayga.unpixeldungeon.items;
 
 import com.felayga.unpixeldungeon.Dungeon;
+import com.felayga.unpixeldungeon.mechanics.Material;
 import com.felayga.unpixeldungeon.utils.GLog;
 import com.watabou.utils.Bundle;
 import com.watabou.utils.Random;
@@ -42,43 +43,22 @@ public class ItemRandomizationHandler<T extends Item> {
 
     private HashMap<Class<? extends T>, Integer> images;
     private HashMap<Class<? extends T>, String> labels;
+    private HashMap<Class<? extends T>, Material> materials;
+
     private HashSet<Class<? extends T>> known;
 
-    public ItemRandomizationHandler(Class<? extends T>[] items, String[] allLabels, Integer[] allImages) {
-
+    public ItemRandomizationHandler(Class<? extends T>[] items, String[] allLabels, Integer[] allImages, Material[] allMaterials, int endlistnonrandomcount) {
         this.items = items;
 
-        this.images = new HashMap<Class<? extends T>, Integer>();
-        this.labels = new HashMap<Class<? extends T>, String>();
-        known = new HashSet<Class<? extends T>>();
+        this.images = new HashMap<>();
+        this.labels = new HashMap<>();
+        this.materials = new HashMap<>();
 
-        ArrayList<String> labelsLeft = new ArrayList<String>(Arrays.asList(allLabels));
-        ArrayList<Integer> imagesLeft = new ArrayList<Integer>(Arrays.asList(allImages));
+        known = new HashSet<>();
 
-        for (int i = 0; i < items.length; i++) {
-
-            Class<? extends T> item = items[i];
-
-            int index = Random.Int(labelsLeft.size());
-
-            labels.put(item, labelsLeft.get(index));
-            labelsLeft.remove(index);
-
-            images.put(item, imagesLeft.get(index));
-            imagesLeft.remove(index);
-        }
-    }
-
-    public ItemRandomizationHandler(Class<? extends T>[] items, String[] allLabels, Integer[] allImages, int endlistnonrandomcount) {
-
-        this.items = items;
-
-        this.images = new HashMap<Class<? extends T>, Integer>();
-        this.labels = new HashMap<Class<? extends T>, String>();
-        known = new HashSet<Class<? extends T>>();
-
-        ArrayList<String> labelsLeft = new ArrayList<String>(Arrays.asList(allLabels));
-        ArrayList<Integer> imagesLeft = new ArrayList<Integer>(Arrays.asList(allImages));
+        ArrayList<String> labelsLeft = new ArrayList<>(Arrays.asList(allLabels));
+        ArrayList<Integer> imagesLeft = new ArrayList<>(Arrays.asList(allImages));
+        ArrayList<Material> materialsLeft = new ArrayList<>(Arrays.asList(allMaterials));
 
         int index;
         for (int i = 0; i < items.length - endlistnonrandomcount; i++) {
@@ -92,6 +72,9 @@ public class ItemRandomizationHandler<T extends Item> {
 
             images.put(item, imagesLeft.get(index));
             imagesLeft.remove(index);
+
+            materials.put(item, materialsLeft.get(index));
+            materialsLeft.remove(index);
         }
 
         index = labelsLeft.size() - 1;
@@ -104,55 +87,66 @@ public class ItemRandomizationHandler<T extends Item> {
             images.put(item, imagesLeft.get(index));
             imagesLeft.remove(index);
 
+            materials.put(item, materialsLeft.get(index));
+            materialsLeft.remove(index);
+
             index--;
         }
     }
 
-    public ItemRandomizationHandler(Class<? extends T>[] items, String[] labels, Integer[] images, Bundle bundle) {
+    public ItemRandomizationHandler(Class<? extends T>[] items, String[] labels, Integer[] images, Material[] materials, Bundle bundle) {
 
         this.items = items;
 
-        this.images = new HashMap<Class<? extends T>, Integer>();
-        this.labels = new HashMap<Class<? extends T>, String>();
-        known = new HashSet<Class<? extends T>>();
+        this.images = new HashMap<>();
+        this.labels = new HashMap<>();
+        this.materials = new HashMap<>();
+        known = new HashSet<>();
 
-        restore(bundle, labels, images);
+        restore(bundle, labels, images, materials);
     }
 
-    private static final String PFX_IMAGE = "_image";
-    private static final String PFX_LABEL = "_label";
-    private static final String PFX_KNOWN = "_known";
+    private static final String SUFFIX_IMAGE = "_image";
+    private static final String SUFFIX_LABEL = "_label";
+    private static final String SUFFIX_KNOWN = "_known";
+    private static final String SUFFIX_MATERIAL = "_material";
 
     public void save(Bundle bundle) {
         for (int i = 0; i < items.length; i++) {
             String itemName = items[i].toString();
-            bundle.put(itemName + PFX_IMAGE, images.get(items[i]));
-            bundle.put(itemName + PFX_LABEL, labels.get(items[i]));
-            bundle.put(itemName + PFX_KNOWN, known.contains(items[i]));
+            bundle.put(itemName + SUFFIX_IMAGE, images.get(items[i]));
+            bundle.put(itemName + SUFFIX_LABEL, labels.get(items[i]));
+            bundle.put(itemName + SUFFIX_KNOWN, known.contains(items[i]));
+            bundle.put(itemName + SUFFIX_MATERIAL, materials.get(items[i]).value);
         }
     }
 
-    private void restore(Bundle bundle, String[] allLabels, Integer[] allImages) {
+    private void restore(Bundle bundle, String[] allLabels, Integer[] allImages, Material[] allMaterials) {
 
-        ArrayList<String> labelsLeft = new ArrayList<String>(Arrays.asList(allLabels));
-        ArrayList<Integer> imagesLeft = new ArrayList<Integer>(Arrays.asList(allImages));
+        ArrayList<String> labelsLeft = new ArrayList<>(Arrays.asList(allLabels));
+        ArrayList<Integer> imagesLeft = new ArrayList<>(Arrays.asList(allImages));
+        ArrayList<Material> materialsLeft = new ArrayList<>(Arrays.asList(allMaterials));
 
         for (int i = 0; i < items.length; i++) {
 
             Class<? extends T> item = items[i];
             String itemName = item.toString();
 
-            if (bundle.contains(itemName + PFX_LABEL) && Dungeon.version > 4) {
+            if (bundle.contains(itemName + SUFFIX_LABEL) && Dungeon.version > 4) {
 
-                String label = bundle.getString(itemName + PFX_LABEL);
+                String label = bundle.getString(itemName + SUFFIX_LABEL);
                 labels.put(item, label);
                 labelsLeft.remove(label);
 
-                Integer image = bundle.getInt(itemName + PFX_IMAGE);
+                Integer image = bundle.getInt(itemName + SUFFIX_IMAGE);
                 images.put(item, image);
                 imagesLeft.remove(image);
 
-                if (bundle.getBoolean(itemName + PFX_KNOWN)) {
+                Material material = Material.fromInt(bundle.getInt(itemName + SUFFIX_MATERIAL));
+                materials.put(item, material);
+                materialsLeft.remove(material);
+
+                if (bundle.getBoolean(itemName + SUFFIX_KNOWN)) {
                     known.add(item);
                 }
 
@@ -168,7 +162,7 @@ public class ItemRandomizationHandler<T extends Item> {
                 images.put(item, imagesLeft.get(index));
                 imagesLeft.remove(index);
 
-                if (bundle.contains(itemName + PFX_KNOWN) && bundle.getBoolean(itemName + PFX_KNOWN)) {
+                if (bundle.contains(itemName + SUFFIX_KNOWN) && bundle.getBoolean(itemName + SUFFIX_KNOWN)) {
                     known.add(item);
                 }
             }
@@ -195,6 +189,14 @@ public class ItemRandomizationHandler<T extends Item> {
 
     public String label(Class itemClass) {
         return labels.get(itemClass);
+    }
+
+    public Material material(T item) {
+        return material(item.getClass());
+    }
+
+    public Material material(Class itemClass) {
+        return materials.get(itemClass);
     }
 
     public boolean isKnown(T item) {

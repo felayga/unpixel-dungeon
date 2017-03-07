@@ -68,7 +68,7 @@ public class AcidBurning extends Buff implements Hero.Doom {
     @Override
     public boolean act() {
         if (target.isAlive()) {
-            target.damage(Random.IntRange(1, 4), MagicType.Acid, null);
+            target.damage(Random.IntRange(1, 4), MagicType.Acid, Char.Registry.get(ownerRegistryIndex()), null);
         } else {
             detach();
         }
@@ -87,7 +87,7 @@ public class AcidBurning extends Buff implements Hero.Doom {
     }
 
     public void resplash( Char ch ) {
-        left = duration( ch );
+        left = 4 * GameTime.TICK;
     }
 
     @Override
@@ -104,14 +104,6 @@ public class AcidBurning extends Buff implements Hero.Doom {
     @Override
     public String toString() {
         return "Acid";
-    }
-
-    public static long duration( Char ch ) {
-        if (ch.hasImmunity(MagicType.Acid)) {
-            return GameTime.TICK;
-        }
-
-        return DURATION;
     }
 
     @Override

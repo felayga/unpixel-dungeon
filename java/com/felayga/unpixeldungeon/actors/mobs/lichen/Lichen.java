@@ -60,7 +60,7 @@ public class Lichen extends Mob {
         defenseMagical = 0;
         weight = Encumbrance.UNIT * 20;
         nutrition = 200;
-        immunityMagical = MagicType.None.value;
+        resistanceMagical = MagicType.None.value;
         corpseEffects = CorpseEffect.value(CorpseEffect.Unrottable, CorpseEffect.Undecayable, CorpseEffect.Vegetable);
         viewDistance = 0;
         characteristics = Characteristic.value(Characteristic.NonBreather, Characteristic.CannotUseItems, Characteristic.Brainless);

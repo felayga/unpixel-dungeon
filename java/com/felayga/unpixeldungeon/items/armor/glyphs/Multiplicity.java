@@ -68,7 +68,7 @@ public class Multiplicity extends Glyph {
 				GameScene.add( mob );
 				ScrollOfTeleportation.appear( mob, Random.element( respawnPoints ) );
 				
-				defender.damage( Random.IntRange( 1, defender.HT / 6 ), MagicType.Mundane, null );
+				defender.damage( Random.IntRange( 1, defender.HT / 6 ), MagicType.Mundane, null, null );
 				checkOwner( defender );
 			}
 			

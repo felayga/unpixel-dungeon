@@ -32,6 +32,7 @@ import com.felayga.unpixeldungeon.items.Item;
 import com.felayga.unpixeldungeon.items.weapon.missiles.MissileWeapon;
 import com.felayga.unpixeldungeon.items.weapon.ranged.AmmunitionType;
 import com.felayga.unpixeldungeon.mechanics.GameTime;
+import com.felayga.unpixeldungeon.mechanics.Material;
 import com.felayga.unpixeldungeon.mechanics.WeaponSkill;
 import com.felayga.unpixeldungeon.sprites.ItemSpriteSheet;
 import com.watabou.utils.Random;
@@ -41,14 +42,11 @@ public class CurareDart extends MissileWeapon {
 	public static final long DURATION	= GameTime.TICK * 3;
 	
 	public CurareDart() {
-		this( 1 );
-	}
-	
-	public CurareDart( int number ) {
-		super(WeaponSkill.Simple, GameTime.TICK, 1, 3, number, true, AmmunitionType.None);
+		super(WeaponSkill.Simple, GameTime.TICK, 1, 3, true, AmmunitionType.None);
 
 		name = "curare dart";
 		image = ItemSpriteSheet.MISSILE_CURARE_DART;
+        material = Material.Iron;
 
 		//STR = 14;
         price = 8;

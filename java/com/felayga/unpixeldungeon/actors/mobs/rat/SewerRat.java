@@ -48,7 +48,7 @@ public class SewerRat extends Mob {
         defenseMagical = 0;
         weight = Encumbrance.UNIT * 20;
         nutrition = 12;
-        immunityMagical = MagicType.None.value;
+        resistanceMagical = MagicType.None.value;
         corpseEffects = CorpseEffect.None.value;
         characteristics = Characteristic.value(Characteristic.Animal, Characteristic.Carnivore, Characteristic.CannotUseItems, Characteristic.WarmBlooded);
 

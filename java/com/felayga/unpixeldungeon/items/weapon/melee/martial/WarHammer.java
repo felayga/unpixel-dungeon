@@ -27,6 +27,7 @@ package com.felayga.unpixeldungeon.items.weapon.melee.martial;
 
 import com.felayga.unpixeldungeon.Assets;
 import com.felayga.unpixeldungeon.mechanics.GameTime;
+import com.felayga.unpixeldungeon.mechanics.Material;
 import com.felayga.unpixeldungeon.sprites.ItemSpriteSheet;
 
 public class WarHammer extends MartialMeleeWeapon {
@@ -36,7 +37,8 @@ public class WarHammer extends MartialMeleeWeapon {
 		name = "war hammer";
 		image = ItemSpriteSheet.MELEE_WAR_HAMMER;
         pickupSound = Assets.SND_ITEM_WOOD;
-	}
+        material = Material.Wood;
+    }
 	
 	@Override
 	public String desc() {

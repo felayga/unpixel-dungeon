@@ -27,6 +27,7 @@
 package com.felayga.unpixeldungeon.items.food;
 
 import com.felayga.unpixeldungeon.actors.buffs.hero.Encumbrance;
+import com.felayga.unpixeldungeon.mechanics.Material;
 import com.felayga.unpixeldungeon.sprites.ItemSpriteSheet;
 
 /**
@@ -36,10 +37,11 @@ public class LembasWafer extends Food {
     public LembasWafer() {
         super(800, 800 / 2, Encumbrance.UNIT * 5);
 
-        stackable = true;
         name = "lembas wafer";
         image = ItemSpriteSheet.FOOD_LEMBAS;
+        material = Material.Vegetable;
 
+        stackable = true;
         bones = true;
 
         price = 20;
@@ -47,7 +49,7 @@ public class LembasWafer extends Food {
 
     @Override
     public String info() {
-        return "Nothing fancy here: dried meat, some biscuits - things like that." + super.info();
+        return "Very thin cakes, baked brown and wrapped in leaves.  Highly nutritious." + super.info();
     }
 
     public String message() {

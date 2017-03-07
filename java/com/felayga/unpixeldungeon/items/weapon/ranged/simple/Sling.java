@@ -29,6 +29,7 @@ package com.felayga.unpixeldungeon.items.weapon.ranged.simple;
 import com.felayga.unpixeldungeon.items.weapon.ranged.AmmunitionType;
 import com.felayga.unpixeldungeon.items.weapon.ranged.RangedWeapon;
 import com.felayga.unpixeldungeon.mechanics.GameTime;
+import com.felayga.unpixeldungeon.mechanics.Material;
 import com.felayga.unpixeldungeon.mechanics.WeaponSkill;
 import com.felayga.unpixeldungeon.sprites.ItemSpriteSheet;
 
@@ -41,5 +42,6 @@ public class Sling extends RangedWeapon {
 
         name = "sling";
         image = ItemSpriteSheet.RANGED_SLING;
+        material = Material.Cloth;
     }
 }

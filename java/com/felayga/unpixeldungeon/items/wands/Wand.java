@@ -42,6 +42,7 @@ import com.felayga.unpixeldungeon.mechanics.BUCStatus;
 import com.felayga.unpixeldungeon.mechanics.Ballistica;
 import com.felayga.unpixeldungeon.mechanics.Constant;
 import com.felayga.unpixeldungeon.mechanics.GameTime;
+import com.felayga.unpixeldungeon.mechanics.Material;
 import com.felayga.unpixeldungeon.scenes.CellSelector;
 import com.felayga.unpixeldungeon.scenes.GameScene;
 import com.felayga.unpixeldungeon.sprites.ItemSpriteSheet;
@@ -54,6 +55,7 @@ import com.watabou.utils.PointF;
 import com.watabou.utils.Random;
 
 import java.util.ArrayList;
+import java.util.List;
 
 public abstract class Wand extends Item {
 
@@ -87,59 +89,36 @@ public abstract class Wand extends Item {
             WandOfMakeInvisible.class,
             WandOfHaste.class,
             WandOfSlow.class,
-            WandOfBlastWave.class
+            WandOfBlastWave.class,
+            WandOfSleep.class,
+            WandOfCreateMonster.class,
+            WandOfTeleportation.class,
+            WandOfDeath.class,
+            WandOfChaos.class
     };
-    private static final String[] appearances = {
-            "glass",
-            "balsa",
-            "crystal",
-            "maple",
-            "pine",
-            "oak",
-            "ebony",
-            "marble",
-            "tin",
-            "brass",
-            "copper",
-            "silver",
-            "aluminum",
-            "uranium",
-            "iron",
-            "steel",
-            "gold",
-            "jeweled",
-            "forked",
-            "curved",
-            "short",
-            "spiked",
-            "runed",
-            "plastic"
+    private static final String[] wandAppearances = {
+            "glass", "balsa", "crystal", "maple",
+            "pine", "oak", "ebony", "marble",
+            "tin", "brass", "copper", "silver",
+            "aluminum", "uranium", "iron", "steel",
+            "gold", "jeweled", "forked", "curved",
+            "short", "spiked", "runed", "plastic"
     };
-    private static final Integer[] images = {
-            ItemSpriteSheet.WAND_GLASS,
-            ItemSpriteSheet.WAND_BALSA,
-            ItemSpriteSheet.WAND_CRYSTAL,
-            ItemSpriteSheet.WAND_MAPLE,
-            ItemSpriteSheet.WAND_PINE,
-            ItemSpriteSheet.WAND_OAK,
-            ItemSpriteSheet.WAND_EBONY,
-            ItemSpriteSheet.WAND_MARBLE,
-            ItemSpriteSheet.WAND_TIN,
-            ItemSpriteSheet.WAND_BRASS,
-            ItemSpriteSheet.WAND_COPPER,
-            ItemSpriteSheet.WAND_SILVER,
-            ItemSpriteSheet.WAND_ALUMINUM,
-            ItemSpriteSheet.WAND_URANIUM,
-            ItemSpriteSheet.WAND_IRON,
-            ItemSpriteSheet.WAND_STEEL,
-            ItemSpriteSheet.WAND_GOLD,
-            ItemSpriteSheet.WAND_JEWELED,
-            ItemSpriteSheet.WAND_FORKED,
-            ItemSpriteSheet.WAND_CURVED,
-            ItemSpriteSheet.WAND_SHORT,
-            ItemSpriteSheet.WAND_SPIKED,
-            ItemSpriteSheet.WAND_RUNED,
-            ItemSpriteSheet.WAND_PLASTIC
+    private static final Integer[] wandImages = {
+            ItemSpriteSheet.WAND_GLASS, ItemSpriteSheet.WAND_BALSA, ItemSpriteSheet.WAND_CRYSTAL, ItemSpriteSheet.WAND_MAPLE,
+            ItemSpriteSheet.WAND_PINE, ItemSpriteSheet.WAND_OAK, ItemSpriteSheet.WAND_EBONY, ItemSpriteSheet.WAND_MARBLE,
+            ItemSpriteSheet.WAND_TIN, ItemSpriteSheet.WAND_BRASS, ItemSpriteSheet.WAND_COPPER, ItemSpriteSheet.WAND_SILVER,
+            ItemSpriteSheet.WAND_ALUMINUM, ItemSpriteSheet.WAND_URANIUM, ItemSpriteSheet.WAND_IRON, ItemSpriteSheet.WAND_STEEL,
+            ItemSpriteSheet.WAND_GOLD, ItemSpriteSheet.WAND_JEWELED, ItemSpriteSheet.WAND_FORKED, ItemSpriteSheet.WAND_CURVED,
+            ItemSpriteSheet.WAND_SHORT, ItemSpriteSheet.WAND_SPIKED, ItemSpriteSheet.WAND_RUNED, ItemSpriteSheet.WAND_PLASTIC
+    };
+    private static final Material[] wandMaterials = {
+            Material.Glass, Material.Wood, Material.Glass, Material.Wood,
+            Material.Wood, Material.Wood, Material.Wood, Material.Mineral,
+            Material.Metal, Material.Metal, Material.Copper, Material.Silver,
+            Material.Metal, Material.Metal, Material.Iron, Material.Iron,
+            Material.Gold, Material.Gemstone, Material.Metal, Material.Metal,
+            Material.Metal, Material.Metal, Material.Mithril, Material.Plastic
     };
 
     private static ItemRandomizationHandler<Wand> handler;
@@ -148,7 +127,7 @@ public abstract class Wand extends Item {
 
     @SuppressWarnings("unchecked")
     public static void initLabels() {
-        handler = new ItemRandomizationHandler<Wand>((Class<? extends Wand>[]) wands, appearances, images, 0);
+        handler = new ItemRandomizationHandler<Wand>((Class<? extends Wand>[]) wands, wandAppearances, wandImages, wandMaterials, 0);
     }
 
     public static void save(Bundle bundle) {
@@ -157,7 +136,7 @@ public abstract class Wand extends Item {
 
     @SuppressWarnings("unchecked")
     public static void restore(Bundle bundle) {
-        handler = new ItemRandomizationHandler<Wand>((Class<? extends Wand>[]) wands, appearances, images, bundle);
+        handler = new ItemRandomizationHandler<Wand>((Class<? extends Wand>[]) wands, wandAppearances, wandImages, wandMaterials, bundle);
     }
 
     public boolean isKnown() {
@@ -205,20 +184,21 @@ public abstract class Wand extends Item {
 
     protected int usagesToKnow = USAGES_TO_KNOW;
 
-    protected Ballistica.Mode collisionProperties = Ballistica.Mode.MagicBolt;
+    protected Ballistica.Mode collisionProperties;
 
     protected boolean isOffensive;
     protected boolean directionalZap;
     protected boolean canTargetSelf;
 
     public Wand(int maxCharges) {
-        syncVisuals();
+        syncRandomizedProperties();
 
         defaultAction = AC_ZAP;
         usesTargeting = true;
         this.maxCharges = maxCharges;
         this.curCharges = maxCharges;
         hasLevels(false);
+        stackable = false;
 
         weight(Encumbrance.UNIT * 7);
         price = 75;
@@ -226,12 +206,14 @@ public abstract class Wand extends Item {
         isOffensive = true;
         directionalZap = true;
         canTargetSelf = false;
+        collisionProperties = Ballistica.Mode.MagicBolt;
     }
 
     @Override
-    public void syncVisuals() {
+    public void syncRandomizedProperties() {
         image = handler.image(this);
         rune = handler.label(this);
+        material = handler.material(this);
     }
 
     @Override
@@ -244,18 +226,21 @@ public abstract class Wand extends Item {
     @Override
     public boolean execute(Hero hero, String action) {
         if (action.equals(AC_ZAP)) {
-            curUser = hero;
-            curItem = this;
-
-            if (directionalZap) {
-                GameScene.selectCell(zapper);
-            } else {
-                doZap(hero, hero.pos());
-            }
-
+            initiateZap(hero);
             return false;
         } else {
             return super.execute(hero, action);
+        }
+    }
+
+    protected void initiateZap(Hero hero) {
+        curUser = hero;
+        curItem = this;
+
+        if (directionalZap) {
+            GameScene.selectCell(zapper);
+        } else {
+            doZap(hero, hero.pos());
         }
     }
 
@@ -375,9 +360,35 @@ public abstract class Wand extends Item {
     }
 
 
-    private final void fx(Ballistica bolt, Callback callback) {
+    private final void fx(Ballistica bolt, final Callback callback) {
         if (bolt != null) {
-            fxEffect(bolt, callback);
+            if (bolt.bounces.size() > 0) {
+                bouncesLeft.clear();
+
+                bouncesLeft.add(bolt.sourcePos);
+                for (int n = 0; n < bolt.bounces.size(); n++) {
+                    bouncesLeft.add(bolt.bounces.get(n));
+                }
+                bouncesLeft.add(bolt.collisionPos);
+
+                final Callback subCallback = new Callback() {
+                    @Override
+                    public void call() {
+                        int start = bouncesLeft.remove(0);
+                        int end = bouncesLeft.get(0);
+
+                        if (bouncesLeft.size() == 1) {
+                            fxEffect(start, end, callback);
+                        } else {
+                            fxEffect(start, end, this);
+                        }
+                    }
+                };
+
+                subCallback.call();
+            } else {
+                fxEffect(bolt.sourcePos, bolt.collisionPos, callback);
+            }
         } else {
             if (callback != null) {
                 callback.call();
@@ -386,8 +397,9 @@ public abstract class Wand extends Item {
         Sample.INSTANCE.play(Assets.SND_ZAP);
     }
 
-    protected void fxEffect(Ballistica bolt, Callback callback) {
-        MagicMissile.whiteLight(curUser.sprite.parent, bolt.sourcePos, bolt.collisionPos, callback);
+    private static List<Integer> bouncesLeft = new ArrayList<>();
+    protected void fxEffect(int source, int destination, Callback callback) {
+        MagicMissile.whiteLight(curUser.sprite.parent, source, destination, callback);
     }
 
     public void staffFx(MagesStaff.StaffParticle particle) {
@@ -468,7 +480,7 @@ public abstract class Wand extends Item {
         Ballistica shot = new Ballistica(curUser.pos(), target, collisionProperties);
         int cell = shot.collisionPos;
 
-        if (target == curUser.pos() || cell == curUser.pos()) {
+        if (target == curUser.pos()) {
             if (!canTargetSelf && directionalZap) {
                 GLog.i(TXT_SELF_TARGET);
                 return false;

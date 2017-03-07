@@ -36,6 +36,8 @@ import com.felayga.unpixeldungeon.actors.buffs.negative.Burning;
 import com.felayga.unpixeldungeon.actors.hero.Hero;
 import com.felayga.unpixeldungeon.effects.CellEmitter;
 import com.felayga.unpixeldungeon.effects.particles.FlameParticle;
+import com.felayga.unpixeldungeon.items.IFlammable;
+import com.felayga.unpixeldungeon.items.bags.IBag;
 import com.felayga.unpixeldungeon.levels.Level;
 import com.felayga.unpixeldungeon.mechanics.AttributeType;
 import com.felayga.unpixeldungeon.mechanics.BUCStatus;
@@ -49,7 +51,7 @@ import com.watabou.utils.Random;
 /**
  * Created by HELLO on 2/3/2017.
  */
-public class PotionOfOil extends Potion {
+public class PotionOfOil extends Potion implements IFlammable {
 
     public PotionOfOil()
     {
@@ -59,6 +61,14 @@ public class PotionOfOil extends Potion {
         isHarmful = true;
 
         price = 40;
+    }
+
+    @Override
+    public boolean burn(Char cause) {
+        IBag parent = parent();
+        parent.collect(new PotionOfOilLit().bucStatus(this));
+        parent.remove(this, 1);
+        return false;
     }
 
     @Override
@@ -136,7 +146,7 @@ public class PotionOfOil extends Potion {
         Char test = Actor.findChar(cell);
 
         if (test != null) {
-            test.damage(Random.IntRange(1, 4), MagicType.Fire, null);
+            test.damage(Random.IntRange(1, 4), MagicType.Fire, owner, null);
         }
 
         GLog.w("The potion explodes in flames!");

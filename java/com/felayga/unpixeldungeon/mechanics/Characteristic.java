@@ -47,7 +47,8 @@ public enum Characteristic {
     Amorphous           (0x001000),
     Orc                 (0x002000),
     Concealer           (0x004000),
-    NoExperience        (0x008000);
+    NoExperience        (0x008000),
+    SilverVulnerable    (0x010000);
 
     public final int value;
 

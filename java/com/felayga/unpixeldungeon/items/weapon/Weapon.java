@@ -30,6 +30,7 @@ import com.felayga.unpixeldungeon.Dungeon;
 import com.felayga.unpixeldungeon.actors.Char;
 import com.felayga.unpixeldungeon.actors.hero.Hero;
 import com.felayga.unpixeldungeon.items.EquippableItem;
+import com.felayga.unpixeldungeon.items.Item;
 import com.felayga.unpixeldungeon.items.weapon.enchantments.Death;
 import com.felayga.unpixeldungeon.items.weapon.enchantments.Fire;
 import com.felayga.unpixeldungeon.items.weapon.enchantments.Horror;
@@ -94,7 +95,6 @@ public class Weapon extends EquippableItem implements IWeapon {
     public AttributeType damageAttribute() {
         return damageAttribute;
     }
-
 
     public Weapon(WeaponSkill weaponSkill, long delay, int damageMin, int damageMax) {
         super(TIME_TO_EQUIP);

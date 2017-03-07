@@ -75,7 +75,33 @@ public abstract class Mob extends Char {
 
         actPriority = 2; //hero gets priority over mobs.
 
-        HP = HT = Roll.MobHP(level);
+        int count = 1;
+        int size = 4;
+
+        if (level > 0) {
+            count = level;
+            size = 8;
+        }
+
+        int hp = 0;
+
+        while (count > 0) {
+            hp += Random.IntRange(1, size);
+            count--;
+        }
+
+        HP = HT = hp;
+    }
+
+    public static int HP(int quantity, int size) {
+        int retval = 0;
+
+        while (quantity > 0) {
+            retval += Random.IntRange(1, size);
+            quantity--;
+        }
+
+        return retval;
     }
 
     private static final String TXT_DIED_NEAR = "You hear something die nearby.";
@@ -531,7 +557,7 @@ public abstract class Mob extends Char {
     }
 
     @Override
-    public int damage(int dmg, MagicType type, Actor source) {
+    public int damage(int dmg, MagicType type, Char source, Item sourceItem) {
         Terror.recover(this);
 
         if (state == SLEEPING) {
@@ -539,7 +565,7 @@ public abstract class Mob extends Char {
         }
         alerted = true;
 
-        return super.damage(dmg, type, source);
+        return super.damage(dmg, type, source, sourceItem);
     }
 
 

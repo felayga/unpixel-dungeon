@@ -27,7 +27,7 @@ package com.felayga.unpixeldungeon.levels;
 
 import com.felayga.unpixeldungeon.Assets;
 import com.felayga.unpixeldungeon.actors.Actor;
-import com.felayga.unpixeldungeon.items.Amulet;
+import com.felayga.unpixeldungeon.items.AmuletOfYendor;
 import com.felayga.unpixeldungeon.levels.painters.Painter;
 import com.watabou.noosa.Group;
 import com.watabou.utils.Bundle;
@@ -134,7 +134,7 @@ public class LastLevel extends Level {
 
 	@Override
 	protected void createItems() {
-		drop( new Amulet(), pedestal );
+		drop( new AmuletOfYendor(), pedestal );
 	}
 
 	@Override

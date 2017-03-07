@@ -25,7 +25,9 @@
  */
 package com.felayga.unpixeldungeon.items.weapon.melee.martial;
 
+import com.felayga.unpixeldungeon.actors.buffs.hero.Encumbrance;
 import com.felayga.unpixeldungeon.mechanics.GameTime;
+import com.felayga.unpixeldungeon.mechanics.Material;
 import com.felayga.unpixeldungeon.sprites.ItemSpriteSheet;
 
 public class Longsword extends MartialMeleeWeapon {
@@ -34,7 +36,11 @@ public class Longsword extends MartialMeleeWeapon {
 
 		name = "longsword";
 		image = ItemSpriteSheet.MELEE_LONG_SWORD;
-	}
+        material = Material.Iron;
+
+        price = 15;
+        weight(40 * Encumbrance.UNIT);
+    }
 	
 	@Override
 	public String desc() {

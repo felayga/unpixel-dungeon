@@ -28,7 +28,6 @@ package com.felayga.unpixeldungeon;
 import com.felayga.unpixeldungeon.actors.Actor;
 import com.felayga.unpixeldungeon.actors.Char;
 import com.felayga.unpixeldungeon.actors.buffs.negative.Amok;
-import com.felayga.unpixeldungeon.actors.buffs.positive.Light;
 import com.felayga.unpixeldungeon.actors.hero.Hero;
 import com.felayga.unpixeldungeon.actors.hero.HeroClass;
 import com.felayga.unpixeldungeon.actors.mobs.npcs.Blacksmith;
@@ -37,14 +36,14 @@ import com.felayga.unpixeldungeon.actors.mobs.npcs.Wandmaker;
 import com.felayga.unpixeldungeon.items.Ankh;
 import com.felayga.unpixeldungeon.items.Generator;
 import com.felayga.unpixeldungeon.items.Item;
-import com.felayga.unpixeldungeon.items.Torch;
+import com.felayga.unpixeldungeon.items.books.Book;
+import com.felayga.unpixeldungeon.items.tools.Torch;
 import com.felayga.unpixeldungeon.items.armor.cloak.randomized.RandomizedCloak;
 import com.felayga.unpixeldungeon.items.food.CannedFood;
 import com.felayga.unpixeldungeon.items.potions.Potion;
 import com.felayga.unpixeldungeon.items.rings.Ring;
 import com.felayga.unpixeldungeon.items.scrolls.Scroll;
 import com.felayga.unpixeldungeon.items.wands.Wand;
-import com.felayga.unpixeldungeon.items.weapon.melee.simple.MagesStaff;
 import com.felayga.unpixeldungeon.levels.DeadEndLevel;
 import com.felayga.unpixeldungeon.levels.Level;
 import com.felayga.unpixeldungeon.levels.MineTownLevel;
@@ -138,6 +137,7 @@ public class Dungeon {
         Ring.initGems();
         Wand.initLabels();
         RandomizedCloak.initNames();
+        Book.initLabels();
 
         Statistics.reset();
         Journal.reset();
@@ -166,7 +166,7 @@ public class Dungeon {
 
         Badges.reset();
 
-        HeroClass.toHeroClass(WndInitHero.heroClassSelected).initHero(hero);
+        HeroClass.fromInt(WndInitHero.heroClassSelected).initHero(hero);
 
         //todo: fart
         //StartScene.curClass.initHero( hero );
@@ -199,7 +199,7 @@ public class Dungeon {
 
         Level level;
         if (__depth >= DungeonBranch.Normal.levelMin && __depth <= DungeonBranch.Normal.levelMax) {
-            level = new MinesLevel();//new SewerLevel();
+            level = new SewerLevel();
         } else if (__depth >= DungeonBranch.Mines.levelMin && __depth <= DungeonBranch.Mines.levelMax) {
             int offset = __depth - DungeonBranch.Mines.levelMin;
 
@@ -437,6 +437,7 @@ public class Dungeon {
             Generator.storeInBundle(bundle);
 
             Scroll.save(bundle);
+            Book.save(bundle);
             Potion.save(bundle);
             Ring.save(bundle);
             Wand.save(bundle);
@@ -526,6 +527,7 @@ public class Dungeon {
         }
 
         Scroll.restore(bundle);
+        Book.restore(bundle);
         Potion.restore(bundle);
         Ring.restore(bundle);
         Wand.restore(bundle);
@@ -640,7 +642,7 @@ public class Dungeon {
 
     public static void fail(String desc) {
         resultDescription = desc;
-        if (hero.belongings.getItem(Ankh.class) == null) {
+        if (hero.belongings.getItem(Ankh.class, true) == null) {
             Rankings.INSTANCE.submit(false);
         }
     }

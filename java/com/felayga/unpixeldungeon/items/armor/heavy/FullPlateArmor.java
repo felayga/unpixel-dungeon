@@ -26,14 +26,16 @@
 package com.felayga.unpixeldungeon.items.armor.heavy;
 
 import com.felayga.unpixeldungeon.actors.buffs.hero.Encumbrance;
+import com.felayga.unpixeldungeon.mechanics.Material;
 import com.felayga.unpixeldungeon.sprites.ItemSpriteSheet;
 
 public class FullPlateArmor extends HeavyArmor {
-    public FullPlateArmor()
-    {
+    public FullPlateArmor() {
         super(8, 1, 2, 112);
+
         name = "full plate armor";
         image = ItemSpriteSheet.ARMOR_FULLPLATE;
+        material = Material.Iron;
 
         price = 1500;
         textureIndex = 7;

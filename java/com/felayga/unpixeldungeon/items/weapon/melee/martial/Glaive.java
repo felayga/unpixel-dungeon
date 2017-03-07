@@ -27,6 +27,7 @@ package com.felayga.unpixeldungeon.items.weapon.melee.martial;
 
 import com.felayga.unpixeldungeon.Assets;
 import com.felayga.unpixeldungeon.mechanics.GameTime;
+import com.felayga.unpixeldungeon.mechanics.Material;
 import com.felayga.unpixeldungeon.sprites.ItemSpriteSheet;
 
 public class Glaive extends MartialMeleeWeapon {
@@ -35,6 +36,8 @@ public class Glaive extends MartialMeleeWeapon {
 
 		name = "glaive";
 		image = ItemSpriteSheet.MELEE_GLAIVE;
+        material = Material.Wood;
+
         pickupSound = Assets.SND_ITEM_WOOD;
 	}
 	

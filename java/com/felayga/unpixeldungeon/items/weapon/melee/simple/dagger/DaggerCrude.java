@@ -23,25 +23,27 @@
  *
  *
  */
-package com.felayga.unpixeldungeon.items.weapon.melee.simple;
+
+package com.felayga.unpixeldungeon.items.weapon.melee.simple.dagger;
 
 import com.felayga.unpixeldungeon.mechanics.GameTime;
+import com.felayga.unpixeldungeon.mechanics.Material;
 import com.felayga.unpixeldungeon.sprites.ItemSpriteSheet;
 
-public class Dagger extends SimpleMeleeWeapon {
-    public Dagger() {
-        this(GameTime.TICK, 1, 4);
+/**
+ * Created by HELLO on 5/23/2016.
+ */
+public class DaggerCrude extends Dagger {
+    public DaggerCrude() {
+        super( GameTime.TICK, 1, 3 );
+
+        name = "dagger";
+        image = ItemSpriteSheet.MELEE_DAGGER_CRUDE;
+        material = Material.Iron;
     }
 
-	public Dagger(long delay, int damageMin, int damageMax) {
-		super(delay, damageMin, damageMax);
-
-		name = "dagger";
-		image = ItemSpriteSheet.MELEE_DAGGER;
-	}
-	
-	@Override
-	public String desc() {
-		return "A simple iron dagger with a well worn wooden handle.";
-	}
+    @Override
+    public String desc() {
+        return "A crudely-made iron dagger with a well worn wooden handle.";
+    }
 }

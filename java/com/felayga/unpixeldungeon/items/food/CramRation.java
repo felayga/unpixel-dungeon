@@ -26,15 +26,16 @@
 package com.felayga.unpixeldungeon.items.food;
 
 import com.felayga.unpixeldungeon.actors.buffs.hero.Encumbrance;
+import com.felayga.unpixeldungeon.mechanics.Material;
 import com.felayga.unpixeldungeon.sprites.ItemSpriteSheet;
 
 public class CramRation extends Food {
-
     public CramRation() {
         super(600, 600 / 3, Encumbrance.UNIT * 15);
 
         name = "cram ration";
         image = ItemSpriteSheet.FOOD_OVERPRICED;
+        material = Material.Vegetable;
 
         bones = true;
         price = 35;
@@ -42,7 +43,7 @@ public class CramRation extends Food {
 
     @Override
     public String info() {
-        return "It looks exactly like a standard ration of food but smaller." + super.info();
+        return "A fair sized biscuit-like food ration." + super.info();
     }
 
     @Override

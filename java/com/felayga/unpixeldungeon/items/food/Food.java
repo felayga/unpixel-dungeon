@@ -27,6 +27,8 @@ package com.felayga.unpixeldungeon.items.food;
 
 import com.felayga.unpixeldungeon.Assets;
 import com.felayga.unpixeldungeon.Badges;
+import com.felayga.unpixeldungeon.Dungeon;
+import com.felayga.unpixeldungeon.ResultDescriptions;
 import com.felayga.unpixeldungeon.Statistics;
 import com.felayga.unpixeldungeon.actors.buffs.hero.Hunger;
 import com.felayga.unpixeldungeon.actors.hero.Hero;
@@ -37,6 +39,7 @@ import com.felayga.unpixeldungeon.mechanics.GameTime;
 import com.felayga.unpixeldungeon.mechanics.MagicType;
 import com.felayga.unpixeldungeon.sprites.ItemSpriteSheet;
 import com.felayga.unpixeldungeon.utils.GLog;
+import com.felayga.unpixeldungeon.utils.Utils;
 import com.watabou.noosa.audio.Sample;
 import com.watabou.utils.Bundle;
 
@@ -181,8 +184,9 @@ public class Food extends Item {
             hunger.satisfy_new(subEnergy);
 
             if (hunger.isStuffed() && hunger.choke(hero)) {
+                Dungeon.fail("Choked on a " + getName(false));
                 GLog.n(TXT_OVEREATING_DEAD, name);
-                hero.damage(hero.HT, MagicType.Mundane, null);
+                hero.damage(hero.HT, MagicType.Mundane, null, null);
                 hero.sprite.die();
                 return false;
             }
@@ -273,7 +277,11 @@ public class Food extends Item {
     }
 
     @Override
-    public String getName() {
+    public final String getName() {
+        return getName(partiallyEaten);
+    }
+
+    protected String getName(boolean partiallyEaten) {
         if (partiallyEaten) {
             return "partially eaten " + super.getName();
         } else {

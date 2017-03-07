@@ -27,6 +27,8 @@ package com.felayga.unpixeldungeon.items.wands;
 
 import com.felayga.unpixeldungeon.actors.Actor;
 import com.felayga.unpixeldungeon.actors.Char;
+import com.felayga.unpixeldungeon.effects.CellEmitter;
+import com.felayga.unpixeldungeon.effects.particles.PurpleParticle;
 import com.felayga.unpixeldungeon.mechanics.Ballistica;
 import com.felayga.unpixeldungeon.mechanics.MagicType;
 import com.watabou.utils.Random;
@@ -36,7 +38,11 @@ public class WandOfMagicMissile extends Wand {
     public WandOfMagicMissile()
 	{
         super(8);
+
 		name = "Wand of Magic Missile";
+
+        collisionProperties = Ballistica.Mode.MagicRay;
+        price = 150;
 	}
 
     @Override
@@ -46,15 +52,12 @@ public class WandOfMagicMissile extends Wand {
 	
 	@Override
 	protected void onZap( Ballistica bolt ) {
-				
 		Char ch = Actor.findChar( bolt.collisionPos );
 		if (ch != null) {
-
 			processSoulMark(ch, curUser);
-			ch.damage(Random.NormalIntRange(4 , 12), MagicType.Magic, null);
+			ch.damage(Random.NormalIntRange(4 , 12), MagicType.Magic, curUser, null);
 
 			ch.sprite.burst(0xFFFFFFFF, 2);
-
 		}
 	}
 

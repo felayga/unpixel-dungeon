@@ -31,6 +31,7 @@ import com.felayga.unpixeldungeon.actors.mobs.npcs.NPC;
 import com.felayga.unpixeldungeon.items.EquippableItem;
 import com.felayga.unpixeldungeon.items.Item;
 import com.felayga.unpixeldungeon.items.bags.IBag;
+import com.felayga.unpixeldungeon.items.spells.Spell;
 import com.felayga.unpixeldungeon.items.tools.digging.DiggingTool;
 import com.felayga.unpixeldungeon.items.tools.unlocking.UnlockingTool;
 import com.felayga.unpixeldungeon.items.weapon.IWeapon;

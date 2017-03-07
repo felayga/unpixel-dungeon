@@ -45,7 +45,7 @@ import com.felayga.unpixeldungeon.items.weapon.melee.martial.Glaive;
 import com.felayga.unpixeldungeon.items.weapon.melee.martial.Longsword;
 import com.felayga.unpixeldungeon.items.weapon.melee.martial.Sword;
 import com.felayga.unpixeldungeon.items.weapon.melee.martial.WarHammer;
-import com.felayga.unpixeldungeon.items.weapon.melee.simple.Dagger;
+import com.felayga.unpixeldungeon.items.weapon.melee.simple.dagger.Dagger;
 import com.felayga.unpixeldungeon.items.weapon.melee.simple.Knuckles;
 import com.felayga.unpixeldungeon.items.weapon.melee.simple.Mace;
 import com.felayga.unpixeldungeon.items.weapon.melee.simple.Quarterstaff;

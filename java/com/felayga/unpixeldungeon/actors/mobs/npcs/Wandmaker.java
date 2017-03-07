@@ -130,7 +130,7 @@ public class Wandmaker extends NPC {
 	}
 	
 	@Override
-	public int damage( int dmg, MagicType type, Actor source) {
+	public int damage( int dmg, MagicType type, Char source, Item sourceItem) {
         return 0;
 	}
 	
@@ -153,13 +153,13 @@ public class Wandmaker extends NPC {
 			switch (Quest.type) {
 				case 1:
 				default:
-					item = Dungeon.hero.belongings.getItem(CorpseDust.class);
+					item = Dungeon.hero.belongings.getItem(CorpseDust.class, true);
 					break;
 				case 2:
-					item = Dungeon.hero.belongings.getItem(Embers.class);
+					item = Dungeon.hero.belongings.getItem(Embers.class, true);
 					break;
 				case 3:
-					item = Dungeon.hero.belongings.getItem(Rotberry.Seed.class);
+					item = Dungeon.hero.belongings.getItem(Rotberry.Seed.class, true);
 					break;
 			}
 

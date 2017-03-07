@@ -191,17 +191,24 @@ public class PrisonLevel extends RegularLevel {
 	}
 	
 	public static class Torch extends Emitter {
-		public Torch( int pos ) {
-			super();
-			this.pos = pos;
-			
-			PointF p = DungeonTilemap.tileCenterToWorld( pos );
-			pos( pos, p.x - 1, p.y + 3, 2, 0 );
-			
-			pour( FlameParticle.FACTORY, 0.15f );
-			
-			add( new Halo( 16, 0xFFFFCC, 0.2f ).point( p.x, p.y ) );
-		}
+        public Torch(int pos) {
+            this(pos, true, true);
+        }
+
+		public Torch( int pos, boolean flames, boolean halo ) {
+            super();
+            this.pos = pos;
+
+            PointF p = DungeonTilemap.tileCenterToWorld(pos);
+            pos(pos, p.x - 1, p.y + 3, 2, 0);
+
+            if (flames) {
+                pour(FlameParticle.FACTORY, 0.15f);
+            }
+            if (halo) {
+                add(new Halo(16, 0xFFFFCC, 0.2f).point(p.x, p.y));
+            }
+        }
 		
 		@Override
 		public void update() {

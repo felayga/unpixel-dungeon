@@ -134,10 +134,9 @@ import com.felayga.unpixeldungeon.items.weapon.Weapon;
 import com.felayga.unpixeldungeon.items.weapon.melee.martial.BattleAxe;
 import com.felayga.unpixeldungeon.items.weapon.melee.martial.Glaive;
 import com.felayga.unpixeldungeon.items.weapon.melee.martial.Longsword;
-import com.felayga.unpixeldungeon.items.weapon.melee.martial.ShortSword;
 import com.felayga.unpixeldungeon.items.weapon.melee.martial.Sword;
 import com.felayga.unpixeldungeon.items.weapon.melee.martial.WarHammer;
-import com.felayga.unpixeldungeon.items.weapon.melee.simple.Dagger;
+import com.felayga.unpixeldungeon.items.weapon.melee.simple.dagger.Dagger;
 import com.felayga.unpixeldungeon.items.weapon.melee.simple.Knuckles;
 import com.felayga.unpixeldungeon.items.weapon.melee.simple.Mace;
 import com.felayga.unpixeldungeon.items.weapon.melee.simple.Quarterstaff;
@@ -309,7 +308,6 @@ public class Generator {
                 BattleAxe.class,
                 WarHammer.class,
                 Glaive.class,
-                ShortSword.class,
                 Dart.class,
                 Javelin.class,
                 IncendiaryDart.class,
@@ -317,7 +315,7 @@ public class Generator {
                 Shuriken.class,
                 Boomerang.class,
                 Tomahawk.class};
-        Category.WEAPON.probs = new float[]{1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0, 0, 1, 1, 1, 1, 0, 1};
+        Category.WEAPON.probs = new float[]{1, 1, 1, 1, 1, 1, 1, 1, 1, 0, 0, 1, 1, 1, 1, 0, 1};
 
         Category.ARMOR.classes = new Class<?>[]{
                 ClothArmor.class,

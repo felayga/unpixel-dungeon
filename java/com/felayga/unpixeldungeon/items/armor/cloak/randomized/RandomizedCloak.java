@@ -29,6 +29,7 @@ package com.felayga.unpixeldungeon.items.armor.cloak.randomized;
 import com.felayga.unpixeldungeon.items.Item;
 import com.felayga.unpixeldungeon.items.ItemRandomizationHandler;
 import com.felayga.unpixeldungeon.items.armor.cloak.Cloak;
+import com.felayga.unpixeldungeon.mechanics.Material;
 import com.felayga.unpixeldungeon.sprites.ItemSpriteSheet;
 import com.watabou.utils.Bundle;
 
@@ -44,16 +45,13 @@ public class RandomizedCloak extends Cloak {
     };
 
     private static final String[] cloakTypes = {
-            "simple cloak",
-            "opera cloak",
-            "fancy cloak",
-            "tattered cape"
+            "simple cloak", "opera cloak", "fancy cloak", "tattered cape"
     };
-    private static final Integer[] images = {
-            ItemSpriteSheet.CLOAK_PLAIN,
-            ItemSpriteSheet.CLOAK_OPERA,
-            ItemSpriteSheet.CLOAK_FANCY,
-            ItemSpriteSheet.CLOAK_TATTERED
+    private static final Integer[] cloakImages = {
+            ItemSpriteSheet.CLOAK_PLAIN, ItemSpriteSheet.CLOAK_OPERA, ItemSpriteSheet.CLOAK_FANCY, ItemSpriteSheet.CLOAK_TATTERED
+    };
+    private static final Material[] cloakMaterials = {
+            Material.Cloth, Material.Cloth, Material.Cloth, Material.Cloth
     };
 
     protected static ItemRandomizationHandler<RandomizedCloak> handler;
@@ -62,7 +60,7 @@ public class RandomizedCloak extends Cloak {
 
     @SuppressWarnings("unchecked")
     public static void initNames() {
-        handler = new ItemRandomizationHandler<RandomizedCloak>((Class<? extends RandomizedCloak>[]) cloaks, cloakTypes, images, 0);
+        handler = new ItemRandomizationHandler<>((Class<? extends RandomizedCloak>[]) cloaks, cloakTypes, cloakImages, cloakMaterials, 0);
     }
 
     public static void save(Bundle bundle) {
@@ -71,19 +69,20 @@ public class RandomizedCloak extends Cloak {
 
     @SuppressWarnings("unchecked")
     public static void restore(Bundle bundle) {
-        handler = new ItemRandomizationHandler<RandomizedCloak>((Class<? extends RandomizedCloak>[]) cloaks, cloakTypes, images, bundle);
+        handler = new ItemRandomizationHandler<>((Class<? extends RandomizedCloak>[]) cloaks, cloakTypes, cloakImages, cloakMaterials, bundle);
     }
 
 
     public RandomizedCloak(int armor, int armorMagic, long speedModifier) {
         super(armor, armorMagic, speedModifier);
-        syncVisuals();
+        syncRandomizedProperties();
     }
 
     @Override
-    public void syncVisuals() {
+    public void syncRandomizedProperties() {
         image = handler.image(this);
         cloakType = handler.label(this);
+        material = handler.material(this);
     }
 
     public boolean isKnown() {

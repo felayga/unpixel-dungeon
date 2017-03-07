@@ -32,6 +32,7 @@ import com.felayga.unpixeldungeon.actors.Char;
 import com.felayga.unpixeldungeon.actors.buffs.Buff;
 import com.felayga.unpixeldungeon.effects.CellEmitter;
 import com.felayga.unpixeldungeon.effects.Speck;
+import com.felayga.unpixeldungeon.items.Item;
 import com.felayga.unpixeldungeon.items.weapon.ammunition.simple.Rock;
 import com.felayga.unpixeldungeon.levels.Level;
 import com.felayga.unpixeldungeon.mechanics.Characteristic;
@@ -68,7 +69,7 @@ public class Boulder extends NPC {
     protected Char chooseEnemy() { return null; }
 
     @Override
-    public int damage( int dmg, MagicType type, Actor source ) {
+    public int damage( int dmg, MagicType type, Char source, Item sourceItem ) {
         return 0;
     }
 
@@ -273,7 +274,7 @@ public class Boulder extends NPC {
         if (!pluggingPit){
             Sample.INSTANCE.play(Assets.SND_BOULDER_SMASH);
             //Dungeon.level.spawnGemstones(pos);
-            Dungeon.level.drop(new Rock(Random.IntRange(3, 23)), pos());
+            Dungeon.level.drop(new Rock().quantity(Random.IntRange(3, 23)), pos());
 
             Level.losBlocking[storedPos] = storedFlag;
             GameScene.updateMap(storedPos);

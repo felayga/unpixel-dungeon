@@ -92,14 +92,16 @@ public class Fire extends Blob {
 	}
 	
 	private void burn( int pos ) {
+        Char owner = Char.Registry.get(ownerRegistryIndex());
+
 		Char ch = Actor.findChar( pos );
 		if (ch != null) {
-			Buff.affect( ch, Char.Registry.get(ownerRegistryIndex()), Burning.class ).reignite( ch );
+			Buff.affect( ch, owner, Burning.class ).reignite( ch );
 		}
 		
 		Heap heap = Dungeon.level.heaps.get( pos );
 		if (heap != null) {
-			heap.burn();
+			heap.contentsBurn(owner);
 		}
 
 		Plant plant = Dungeon.level.plants.get( pos );

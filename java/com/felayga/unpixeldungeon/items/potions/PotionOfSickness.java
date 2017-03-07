@@ -74,8 +74,8 @@ public class PotionOfSickness extends Potion {
                 break;
         }
 
-        hero.damage(healthDamage, MagicType.Poison, null);
-        if (attributeDamage > 1 && hero.hasImmunity(MagicType.Poison)) {
+        hero.damage(healthDamage, MagicType.Poison, hero, null);
+        if (attributeDamage > 1 && (hero.resistanceMagical & MagicType.Poison.value) != 0) {
             attributeDamage = 1;
         }
 

@@ -28,6 +28,7 @@ package com.felayga.unpixeldungeon.items.weapon.melee.simple;
 
 import com.felayga.unpixeldungeon.Assets;
 import com.felayga.unpixeldungeon.mechanics.GameTime;
+import com.felayga.unpixeldungeon.mechanics.Material;
 import com.felayga.unpixeldungeon.sprites.ItemSpriteSheet;
 
 /**
@@ -40,11 +41,12 @@ public class CricketBat extends SimpleMeleeWeapon {
         name = "cricket bat";
         image = ItemSpriteSheet.MELEE_CRICKETBAT;
         pickupSound = Assets.SND_ITEM_WOOD;
+        material = Material.Plastic;
     }
 
     @Override
     public String desc() {
-        return "The iron head of this weapon inflicts substantial damage.";
+        return "The plastic head of this weapon inflicts average damage.";
     }
 
 }

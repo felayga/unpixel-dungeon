@@ -32,6 +32,7 @@ import com.felayga.unpixeldungeon.actors.Char;
 import com.felayga.unpixeldungeon.actors.buffs.hero.Encumbrance;
 import com.felayga.unpixeldungeon.items.Generator;
 import com.felayga.unpixeldungeon.items.Item;
+import com.felayga.unpixeldungeon.mechanics.Material;
 import com.felayga.unpixeldungeon.mechanics.Roll;
 import com.felayga.unpixeldungeon.sprites.ItemSpriteSheet;
 import com.felayga.unpixeldungeon.ui.Icons;
@@ -52,6 +53,8 @@ public class LargeChest extends Bag {
 
         name = "large chest";
         image = ItemSpriteSheet.CHEST;
+        material = Material.Metal;
+
         tabIcon = Icons.TREASURECHEST;
 
         size = 36;
@@ -74,7 +77,7 @@ public class LargeChest extends Bag {
 
         int itemcount = 1;
 
-        if (Random.Int(3)==0) {
+        if (Random.Int(3) == 0) {
             itemcount = 0;
         }
 

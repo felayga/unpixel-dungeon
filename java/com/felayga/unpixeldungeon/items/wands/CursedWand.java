@@ -79,111 +79,110 @@ import java.io.IOException;
 //helper class to contain all the cursed wand zapping logic, so the main wand class doesn't get huge.
 public class CursedWand {
 
-	private static float COMMON_CHANCE = 0.6f;
-	private static float UNCOMMON_CHANCE = 0.3f;
-	private static float RARE_CHANCE = 0.09f;
-	private static float VERY_RARE_CHANCE = 0.01f;
+    private static float COMMON_CHANCE = 0.6f;
+    private static float UNCOMMON_CHANCE = 0.3f;
+    private static float RARE_CHANCE = 0.09f;
+    private static float VERY_RARE_CHANCE = 0.01f;
 
-	public static void cursedZap(final Wand wand, final Char user, final Ballistica bolt){
-		switch (Random.chances(new float[]{COMMON_CHANCE, UNCOMMON_CHANCE, RARE_CHANCE, VERY_RARE_CHANCE})){
-			case 0:
-			default:
-				commonEffect(wand, user, bolt);
-				break;
-			case 1:
-				uncommonEffect(wand, user, bolt);
-				break;
-			case 2:
-				rareEffect(wand, user, bolt);
-				break;
-			case 3:
-				veryRareEffect(wand, user, bolt);
-				break;
-		}
-	}
+    public static void cursedZap(final Wand wand, final Char user, final Ballistica bolt) {
+        switch (Random.chances(new float[]{COMMON_CHANCE, UNCOMMON_CHANCE, RARE_CHANCE, VERY_RARE_CHANCE})) {
+            case 0:
+            default:
+                commonEffect(wand, user, bolt);
+                break;
+            case 1:
+                uncommonEffect(wand, user, bolt);
+                break;
+            case 2:
+                rareEffect(wand, user, bolt);
+                break;
+            case 3:
+                veryRareEffect(wand, user, bolt);
+                break;
+        }
+    }
 
-	private static void commonEffect(final Wand wand, final Char user, final Ballistica bolt){
-		switch(Random.Int(4)){
+    private static void commonEffect(final Wand wand, final Char user, final Ballistica bolt) {
+        switch (Random.Int(4)) {
+            //anti-entropy
+            case 0:
+                cursedFX(user, bolt, new Callback() {
+                    public void call() {
+                        Char target = Actor.findChar(bolt.collisionPos);
+                        switch (Random.Int(2)) {
+                            case 0:
+                                if (target != null)
+                                    Buff.affect(target, user, Burning.class).reignite(target);
+                                Buff.affect(user, user, Frost.class, Frost.duration(user) * Random.Long(GameTime.TICK * 3, GameTime.TICK * 5) / GameTime.TICK);
+                                break;
+                            default:
+                                Buff.affect(user, user, Burning.class).reignite(user);
+                                if (target != null)
+                                    Buff.affect(target, user, Frost.class, Frost.duration(target) * Random.Long(GameTime.TICK * 3, GameTime.TICK * 5) / GameTime.TICK);
+                                break;
+                        }
+                        wand.wandUsed();
+                    }
+                });
+                break;
 
-			//anti-entropy
-			case 0:
-				cursedFX(user, bolt, new Callback() {
-						public void call() {
-							Char target = Actor.findChar(bolt.collisionPos);
-							switch (Random.Int(2)){
-								case 0:
-									if (target != null)
-										Buff.affect(target, user, Burning.class).reignite(target);
-									Buff.affect(user, user, Frost.class, Frost.duration(user) * Random.Long(GameTime.TICK * 3, GameTime.TICK * 5) / GameTime.TICK);
-									break;
-								case 1:
-									Buff.affect(user, user, Burning.class).reignite(user);
-									if (target != null)
-										Buff.affect(target, user, Frost.class, Frost.duration(target) * Random.Long(GameTime.TICK * 3, GameTime.TICK * 5) / GameTime.TICK);
-									break;
-							}
-							wand.wandUsed();
-						}
-					});
-				break;
+            //spawns some regrowth
+            case 1:
+                cursedFX(user, bolt, new Callback() {
+                    public void call() {
+                        int c = Dungeon.level.map[bolt.collisionPos];
+                        if (c == Terrain.EMPTY ||
+                                c == Terrain.EMBERS ||
+                                c == Terrain.EMPTY_DECO ||
+                                c == Terrain.GRASS ||
+                                c == Terrain.HIGH_GRASS) {
+                            GameScene.add(Blob.seed(user, bolt.collisionPos, 30, Regrowth.class));
+                        }
+                        wand.wandUsed();
+                    }
+                });
+                break;
 
-			//spawns some regrowth
-			case 1:
-				cursedFX(user, bolt, new Callback() {
-					public void call() {
-						int c = Dungeon.level.map[bolt.collisionPos];
-						if (c == Terrain.EMPTY ||
-								c == Terrain.EMBERS ||
-								c == Terrain.EMPTY_DECO ||
-								c == Terrain.GRASS ||
-								c == Terrain.HIGH_GRASS) {
-							GameScene.add( Blob.seed(user, bolt.collisionPos, 30, Regrowth.class));
-						}
-						wand.wandUsed();
-					}
-				});
-				break;
+            //random teleportation
+            case 2:
+                switch (Random.Int(2)) {
+                    case 0:
+                        if (ScrollOfTeleportation.canTeleport(user)) {
+                            ScrollOfTeleportation.doTeleport(user, Constant.Position.RANDOM);
+                        }
+                        wand.wandUsed();
+                        break;
+                    case 1:
+                        cursedFX(user, bolt, new Callback() {
+                            public void call() {
+                                Char ch = Actor.findChar(bolt.collisionPos);
+                                if (ch != null) {
+                                    int count = 10;
+                                    int pos;
+                                    do {
+                                        pos = Dungeon.level.randomRespawnCell();
+                                        if (count-- <= 0) {
+                                            break;
+                                        }
+                                    } while (pos == -1);
+                                    if (pos == -1 || !ScrollOfTeleportation.canTeleport(user)) {
+                                        //empty, canTeleport produces failure message
+                                    } else {
+                                        ch.pos(pos);
+                                        ch.sprite.place(ch.pos());
+                                        ch.sprite.visible = Dungeon.visible[pos];
+                                    }
+                                }
+                                wand.wandUsed();
+                            }
+                        });
+                        break;
+                }
+                break;
 
-			//random teleportation
-			case 2:
-				switch(Random.Int(2)){
-					case 0:
-						if (ScrollOfTeleportation.canTeleport(user)) {
-							ScrollOfTeleportation.doTeleport(user, Constant.Position.RANDOM);
-						}
-						wand.wandUsed();
-						break;
-					case 1:
-						cursedFX(user, bolt, new Callback() {
-							public void call() {
-								Char ch = Actor.findChar( bolt.collisionPos );
-								if (ch != null) {
-									int count = 10;
-									int pos;
-									do {
-										pos = Dungeon.level.randomRespawnCell();
-										if (count-- <= 0) {
-											break;
-										}
-									} while (pos == -1);
-									if (pos == -1 || !ScrollOfTeleportation.canTeleport(user)) {
-										//empty, canTeleport produces failure message
-									} else {
-										ch.pos(pos);
-										ch.sprite.place(ch.pos());
-										ch.sprite.visible = Dungeon.visible[pos];
-									}
-								}
-								wand.wandUsed();
-							}
-						});
-						break;
-				}
-				break;
-
-			//random gas at location
-			case 3:
-				cursedFX(user, bolt, new Callback() {
+            //random gas at location
+            default:
+                cursedFX(user, bolt, new Callback() {
                     public void call() {
                         switch (Random.Int(3)) {
                             case 0:
@@ -192,131 +191,131 @@ public class CursedWand {
                             case 1:
                                 GameScene.add(Blob.seed(user, bolt.collisionPos, 500, ToxicGas.class));
                                 break;
-                            case 2:
+                            default:
                                 GameScene.add(Blob.seed(user, bolt.collisionPos, 200, ParalyticGas.class));
                                 break;
                         }
                         wand.wandUsed();
                     }
                 });
-				break;
-		}
+                break;
+        }
 
-	}
+    }
 
-	private static void uncommonEffect(final Wand wand, final Char user, final Ballistica bolt){
-		switch(Random.Int(4)){
+    private static void uncommonEffect(final Wand wand, final Char user, final Ballistica bolt) {
+        switch (Random.Int(4)) {
 
-			//Random plant
-			case 0:
-				cursedFX(user, bolt, new Callback() {
-					public void call() {
-						int pos = bolt.collisionPos;
-						//place the plant infront of an enemy so they walk into it.
-						if (Actor.findChar(pos) != null && bolt.dist > 1) {
-							pos = bolt.path.get(bolt.dist - 1);
-						}
-						Dungeon.level.plant(user, (Plant.Seed) Generator.random(Generator.Category.SEED), pos);
-						wand.wandUsed();
-					}
-				});
-				break;
-
-			//Health transfer
-			case 1:
-				final Char target = Actor.findChar( bolt.collisionPos );
-				if (target != null) {
-					cursedFX(user, bolt, new Callback() {
-						public void call() {
-							int damage = user.level * 2;
-							switch (Random.Int(2)) {
-								case 0:
-									user.HP = Math.min(user.HT, user.HP + damage);
-									user.sprite.emitter().burst(Speck.factory(Speck.HEALING), 3);
-									target.damage(damage, MagicType.Magic, null);
-									target.sprite.emitter().start(ShadowParticle.UP, 0.05f, 10);
-									break;
-								case 1:
-									user.damage( damage, MagicType.Magic, null );
-									user.sprite.emitter().start(ShadowParticle.UP, 0.05f, 10);
-									target.HP = Math.min(target.HT, target.HP + damage);
-									target.sprite.emitter().burst(Speck.factory(Speck.HEALING), 3);
-									Sample.INSTANCE.play(Assets.SND_CURSED);
-									if (!user.isAlive()) {
-										Dungeon.fail(Utils.format(ResultDescriptions.ITEM, wand.getDisplayName()));
-										GLog.n("You were killed by your own " + wand.getDisplayName());
-									}
-									break;
-							}
-							wand.wandUsed();
-						}
-					});
-				} else {
-					GLog.i("nothing happens");
-					wand.wandUsed();
-				}
-				break;
-
-			//Bomb explosion
-			case 2:
-				cursedFX(user, bolt, new Callback() {
+            //Random plant
+            case 0:
+                cursedFX(user, bolt, new Callback() {
                     public void call() {
-                        new Bomb().explode(bolt.collisionPos);
+                        int pos = bolt.collisionPos;
+                        //place the plant infront of an enemy so they walk into it.
+                        if (Actor.findChar(pos) != null && bolt.dist > 1) {
+                            pos = bolt.path.get(bolt.dist - 1);
+                        }
+                        Dungeon.level.plant(user, (Plant.Seed) Generator.random(Generator.Category.SEED), pos);
                         wand.wandUsed();
                     }
                 });
-				break;
+                break;
 
-			//shock and recharge
-			case 3:
-				new LightningTrap().set( user, user.pos() ).activate();
-				Buff.prolong(user, user, ScrollOfRecharging.Recharging.class, GameTime.TICK * 20);
-				ScrollOfRecharging.charge(user);
-				SpellSprite.show(user, SpellSprite.CHARGE);
-				wand.wandUsed();
-				break;
-		}
+            //Health transfer
+            case 1:
+                final Char target = Actor.findChar(bolt.collisionPos);
+                if (target != null) {
+                    cursedFX(user, bolt, new Callback() {
+                        public void call() {
+                            int damage = user.level * 2;
+                            switch (Random.Int(2)) {
+                                case 0:
+                                    user.HP = Math.min(user.HT, user.HP + damage);
+                                    user.sprite.emitter().burst(Speck.factory(Speck.HEALING), 3);
+                                    target.damage(damage, MagicType.Magic, null, null);
+                                    target.sprite.emitter().start(ShadowParticle.UP, 0.05f, 10);
+                                    break;
+                                default:
+                                    user.damage(damage, MagicType.Magic, null, null);
+                                    user.sprite.emitter().start(ShadowParticle.UP, 0.05f, 10);
+                                    target.HP = Math.min(target.HT, target.HP + damage);
+                                    target.sprite.emitter().burst(Speck.factory(Speck.HEALING), 3);
+                                    Sample.INSTANCE.play(Assets.SND_CURSED);
+                                    if (!user.isAlive()) {
+                                        Dungeon.fail(Utils.format(ResultDescriptions.ITEM, wand.getDisplayName()));
+                                        GLog.n("You were killed by your own " + wand.getDisplayName());
+                                    }
+                                    break;
+                            }
+                            wand.wandUsed();
+                        }
+                    });
+                } else {
+                    GLog.i("nothing happens");
+                    wand.wandUsed();
+                }
+                break;
 
-	}
+            //Bomb explosion
+            case 2:
+                cursedFX(user, bolt, new Callback() {
+                    public void call() {
+                        new Bomb().explode(user, bolt.collisionPos);
+                        wand.wandUsed();
+                    }
+                });
+                break;
 
-	private static void rareEffect(final Wand wand, final Char user, final Ballistica bolt){
-		switch(Random.Int(4)){
+            //shock and recharge
+            case 3:
+                new LightningTrap().set(user, user.pos()).activate();
+                Buff.prolong(user, user, ScrollOfRecharging.Recharging.class, GameTime.TICK * 20);
+                ScrollOfRecharging.charge(user);
+                SpellSprite.show(user, SpellSprite.CHARGE);
+                wand.wandUsed();
+                break;
+        }
 
-			//sheep transformation
-			case 0:
-				cursedFX(user, bolt, new Callback() {
-					public void call() {
-						Char ch = Actor.findChar( bolt.collisionPos );
-						//TODO: this is lazy, should think of a better way to ID bosses, or have this effect be more sophisticated.
-						if (ch != null && ch != user){
-							Sheep sheep = new Sheep();
-							sheep.lifespan = GameTime.TICK * 10;
-							sheep.pos(ch.pos());
-							ch.destroy(user);
-							ch.sprite.killAndErase();
-							Dungeon.level.mobs.remove(ch);
-							HealthIndicator.instance.target(null);
-							GameScene.add(sheep);
-							CellEmitter.get(sheep.pos()).burst(Speck.factory(Speck.WOOL), 4);
-						} else {
-							GLog.i("nothing happens");
-						}
-						wand.wandUsed();
-					}
-				});
-				break;
+    }
 
-			//curses!
-			case 1:
-				user.belongings.bucChange(true, BUCStatus.Cursed, true, true, true, false);
+    private static void rareEffect(final Wand wand, final Char user, final Ballistica bolt) {
+        switch (Random.Int(4)) {
 
-				//EquippableItem.equipCursed(user);
-				GLog.n("Your worn equipment becomes cursed!");
-				wand.wandUsed();
-				break;
+            //sheep transformation
+            case 0:
+                cursedFX(user, bolt, new Callback() {
+                    public void call() {
+                        Char ch = Actor.findChar(bolt.collisionPos);
+                        //TODO: this is lazy, should think of a better way to ID bosses, or have this effect be more sophisticated.
+                        if (ch != null && ch != user) {
+                            Sheep sheep = new Sheep();
+                            sheep.lifespan = GameTime.TICK * 10;
+                            sheep.pos(ch.pos());
+                            ch.destroy(user);
+                            ch.sprite.killAndErase();
+                            Dungeon.level.mobs.remove(ch);
+                            HealthIndicator.instance.target(null);
+                            GameScene.add(sheep);
+                            CellEmitter.get(sheep.pos()).burst(Speck.factory(Speck.WOOL), 4);
+                        } else {
+                            GLog.i("nothing happens");
+                        }
+                        wand.wandUsed();
+                    }
+                });
+                break;
 
-			//inter-level teleportation
-			case 2:
+            //curses!
+            case 1:
+                user.belongings.bucChange(true, BUCStatus.Cursed, true, true, true, false);
+
+                //EquippableItem.equipCursed(user);
+                GLog.n("Your worn equipment becomes cursed!");
+                wand.wandUsed();
+                break;
+
+            //inter-level teleportation
+            case 2:
                 if (ScrollOfTeleportation.canTeleport(user)) {
                     ScrollOfTeleportation.doLevelPort(user);
                     wand.wandUsed();
@@ -347,45 +346,45 @@ public class CursedWand {
 					wand.wandUsed();
 				}
                 */
-				break;
+                break;
 
-			//summon monsters
-			case 3:
-				new SummoningTrap().set( user, user.pos() ).activate();
-				wand.wandUsed();
-				break;
-		}
-	}
+            //summon monsters
+            case 3:
+                new SummoningTrap().set(user, user.pos()).activate();
+                wand.wandUsed();
+                break;
+        }
+    }
 
-	private static void veryRareEffect(final Wand wand, final Char user, final Ballistica bolt){
-		switch(Random.Int(4)){
+    private static void veryRareEffect(final Wand wand, final Char user, final Ballistica bolt) {
+        switch (Random.Int(4)) {
 
-			//great forest fire!
-			case 0:
-				for (int i = 0; i < Level.LENGTH; i++){
-					int c = Dungeon.level.map[i];
-					if (c == Terrain.EMPTY ||
-							c == Terrain.EMBERS ||
-							c == Terrain.EMPTY_DECO ||
-							c == Terrain.GRASS ||
-							c == Terrain.HIGH_GRASS) {
-						GameScene.add( Blob.seed(user, i, 15, Regrowth.class));
-					}
-				}
-				do {
-					GameScene.add(Blob.seed(user, Dungeon.level.randomDestination(), 10, Fire.class));
-				} while (Random.Int(5) != 0);
-				new Flare(8, 32).color(0xFFFF66, true).show(user.sprite, 2f);
-				Sample.INSTANCE.play(Assets.SND_TELEPORT);
-				GLog.p("grass explodes around you!");
-				GLog.w("you smell burning...");
-				wand.wandUsed();
-				break;
+            //great forest fire!
+            case 0:
+                for (int i = 0; i < Level.LENGTH; i++) {
+                    int c = Dungeon.level.map[i];
+                    if (c == Terrain.EMPTY ||
+                            c == Terrain.EMBERS ||
+                            c == Terrain.EMPTY_DECO ||
+                            c == Terrain.GRASS ||
+                            c == Terrain.HIGH_GRASS) {
+                        GameScene.add(Blob.seed(user, i, 15, Regrowth.class));
+                    }
+                }
+                do {
+                    GameScene.add(Blob.seed(user, Dungeon.level.randomDestination(), 10, Fire.class));
+                } while (Random.Int(5) != 0);
+                new Flare(8, 32).color(0xFFFF66, true).show(user.sprite, 2f);
+                Sample.INSTANCE.play(Assets.SND_TELEPORT);
+                GLog.p("grass explodes around you!");
+                GLog.w("you smell burning...");
+                wand.wandUsed();
+                break;
 
-			//superpowered mimic
-			case 1:
-				cursedFX(user, bolt, new Callback() {
-					public void call() {
+            //superpowered mimic
+            case 1:
+                cursedFX(user, bolt, new Callback() {
+                    public void call() {
 						/*
 						Mimic mimic = Mimic.spawnAt(bolt.collisionPos, new ArrayList<Item>());
 						mimic.adjustStats(Dungeon.depth + 10);
@@ -399,51 +398,51 @@ public class CursedWand {
 						mimic.items.clear();
 						mimic.items.add(reward);
 						*/
-						wand.wandUsed();
-					}
-				});
-				break;
+                        wand.wandUsed();
+                    }
+                });
+                break;
 
-			//crashes the game, yes, really.
-			case 2:
-				try {
-					Dungeon.saveAll();
-					GameScene.show(
-							new WndOptions("CURSED WAND ERROR", "this application will now self-destruct", "abort", "retry", "fail") {
-								@Override
-								public void hide() {
-									throw new RuntimeException("critical wand exception");
-								}
-							}
-					);
-				} catch(IOException e){
-					//oookay maybe don't kill the game if the save failed.
-					GLog.i("nothing happens");
-					wand.wandUsed();
-				}
-				break;
+            //crashes the game, yes, really.
+            case 2:
+                try {
+                    Dungeon.saveAll();
+                    GameScene.show(
+                            new WndOptions("CURSED WAND ERROR", "this application will now self-destruct", "abort", "retry", "fail") {
+                                @Override
+                                public void hide() {
+                                    throw new RuntimeException("critical wand exception");
+                                }
+                            }
+                    );
+                } catch (IOException e) {
+                    //oookay maybe don't kill the game if the save failed.
+                    GLog.i("nothing happens");
+                    wand.wandUsed();
+                }
+                break;
 
-			//random transmogrification
-			case 3:
-				wand.wandUsed();
-				user.belongings.remove(wand, 1);
-				Item result;
-				do {
-					result = Generator.random(Random.oneOf(Generator.Category.WEAPON, Generator.Category.ARMOR,
-							Generator.Category.RING, Generator.Category.ARTIFACT));
-				} while (result.level() < 0 && !(result instanceof MissileWeapon));
-				if (result.isUpgradable()) result.upgrade(null, 1);
-				result.bucStatus(BUCStatus.Cursed, true);
-				GLog.w("your wand transmogrifies into a different item!");
-				Dungeon.level.drop(result, user.pos()).sprite.drop();
-				wand.wandUsed();
-				break;
-		}
-	}
+            //random transmogrification
+            case 3:
+                wand.wandUsed();
+                user.belongings.remove(wand, 1);
+                Item result;
+                do {
+                    result = Generator.random(Random.oneOf(Generator.Category.WEAPON, Generator.Category.ARMOR,
+                            Generator.Category.RING, Generator.Category.ARTIFACT));
+                } while (result.level() < 0 && !(result instanceof MissileWeapon));
+                if (result.isUpgradable()) result.upgrade(null, 1);
+                result.bucStatus(BUCStatus.Cursed, true);
+                GLog.w("your wand transmogrifies into a different item!");
+                Dungeon.level.drop(result, user.pos()).sprite.drop();
+                wand.wandUsed();
+                break;
+        }
+    }
 
-	private static void cursedFX(final Char user, final Ballistica bolt, final Callback callback){
-		MagicMissile.rainbow(user.sprite.parent, bolt.sourcePos, bolt.collisionPos, callback);
-		Sample.INSTANCE.play( Assets.SND_ZAP );
-	}
+    private static void cursedFX(final Char user, final Ballistica bolt, final Callback callback) {
+        MagicMissile.rainbow(user.sprite.parent, bolt.sourcePos, bolt.collisionPos, callback);
+        Sample.INSTANCE.play(Assets.SND_ZAP);
+    }
 
 }

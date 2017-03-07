@@ -46,6 +46,7 @@ public class WandOfSlow extends Wand {
         name = "Wand of Slow";
 
         canTargetSelf = true;
+        price = 150;
     }
 
     @Override
@@ -54,8 +55,8 @@ public class WandOfSlow extends Wand {
     }
 
     @Override
-    protected void fxEffect(Ballistica bolt, Callback callback) {
-        MagicMissile.slowness(curUser.sprite.parent, bolt.sourcePos, bolt.collisionPos, callback);
+    protected void fxEffect(int source, int destination, Callback callback) {
+        MagicMissile.slowness(curUser.sprite.parent, source, destination, callback);
     }
 
     @Override

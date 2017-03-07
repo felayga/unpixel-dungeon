@@ -28,6 +28,7 @@ package com.felayga.unpixeldungeon.items.armor.cloak;
 
 import com.felayga.unpixeldungeon.actors.buffs.hero.Encumbrance;
 import com.felayga.unpixeldungeon.mechanics.GameTime;
+import com.felayga.unpixeldungeon.mechanics.Material;
 import com.felayga.unpixeldungeon.sprites.ItemSpriteSheet;
 
 /**
@@ -39,8 +40,9 @@ public class OilskinCloak extends Cloak {
 
         name = "oilskin cloak";
         image = ItemSpriteSheet.CLOAK_OILSKIN;
-        price = 50;
+        material = Material.Cloth;
 
+        price = 50;
         weight(Encumbrance.UNIT * 10);
     }
 

@@ -178,7 +178,7 @@ public class Encumbrance extends Buff implements Hero.Doom, ISpeedModifierBuff {
             }
 
             if (hpDecreaseTick >= 60) {
-                target.damage(1, MagicType.Mundane, null);
+                target.damage(1, MagicType.Mundane, null, null);
                 hpDecreaseTick -= 30;
             }
 

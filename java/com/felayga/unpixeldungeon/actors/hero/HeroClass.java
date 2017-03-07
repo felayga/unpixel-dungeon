@@ -29,7 +29,8 @@ import com.felayga.unpixeldungeon.Badges;
 import com.felayga.unpixeldungeon.Challenges;
 import com.felayga.unpixeldungeon.Dungeon;
 import com.felayga.unpixeldungeon.actors.mobs.npcs.Spinach;
-import com.felayga.unpixeldungeon.items.Torch;
+import com.felayga.unpixeldungeon.items.books.IdentifyBook;
+import com.felayga.unpixeldungeon.items.tools.Torch;
 import com.felayga.unpixeldungeon.items.armor.amulet.mask.Blindfold;
 import com.felayga.unpixeldungeon.items.armor.boots.LeatherBoots;
 import com.felayga.unpixeldungeon.items.armor.cloak.randomized.CloakOfInvisibility;
@@ -43,7 +44,6 @@ import com.felayga.unpixeldungeon.items.bags.SeedPouch;
 import com.felayga.unpixeldungeon.items.food.CannedFood;
 import com.felayga.unpixeldungeon.items.food.Corpse;
 import com.felayga.unpixeldungeon.items.food.Ration;
-import com.felayga.unpixeldungeon.items.potions.PotionOfAwareness;
 import com.felayga.unpixeldungeon.items.potions.PotionOfOil;
 import com.felayga.unpixeldungeon.items.potions.PotionOfSeeInvisible;
 import com.felayga.unpixeldungeon.items.rings.RingOfWealth;
@@ -54,10 +54,17 @@ import com.felayga.unpixeldungeon.items.scrolls.ScrollOfUpgrade;
 import com.felayga.unpixeldungeon.items.tools.CanOpener;
 import com.felayga.unpixeldungeon.items.tools.CanningKit;
 import com.felayga.unpixeldungeon.items.tools.Towel;
+import com.felayga.unpixeldungeon.items.tools.Tricorder;
 import com.felayga.unpixeldungeon.items.tools.digging.Pickaxe;
+import com.felayga.unpixeldungeon.items.wands.WandOfChaos;
+import com.felayga.unpixeldungeon.items.wands.WandOfCreateMonster;
+import com.felayga.unpixeldungeon.items.wands.WandOfDeath;
 import com.felayga.unpixeldungeon.items.wands.WandOfHaste;
+import com.felayga.unpixeldungeon.items.wands.WandOfLight;
+import com.felayga.unpixeldungeon.items.wands.WandOfLightning;
 import com.felayga.unpixeldungeon.items.wands.WandOfMagicMissile;
 import com.felayga.unpixeldungeon.items.wands.WandOfMakeInvisible;
+import com.felayga.unpixeldungeon.items.wands.WandOfRegrowth;
 import com.felayga.unpixeldungeon.items.weapon.ammunition.martial.Arrow;
 import com.felayga.unpixeldungeon.items.weapon.ammunition.simple.Rock;
 import com.felayga.unpixeldungeon.items.weapon.melee.martial.BattleAxe;
@@ -75,138 +82,125 @@ import com.watabou.utils.Random;
 
 public enum HeroClass {
 
-	WARRIOR( "warrior" ), MAGE( "mage" ), ROGUE( "rogue" ), HUNTRESS( "huntress" ), DEBUG( "debug" ), NONE( null );
+    WARRIOR(0, "warrior"),
+    MAGE(1, "mage"),
+    ROGUE(2, "rogue"),
+    HUNTRESS(3, "huntress"),
+    DEBUG(4, "debug"),
+    NONE(-1, null);
 
-	public static int toInt(HeroClass c) {
-		switch(c)
-		{
-			case WARRIOR:
-				return 0;
-			case ROGUE:
-				return 1;
-			case MAGE:
-				return 2;
-			case HUNTRESS:
-				return 3;
-			case DEBUG:
-				return 4;
-		}
+    public static HeroClass fromInt(int index) {
+        switch (index) {
+            case 0:
+                return WARRIOR;
+            case 1:
+                return ROGUE;
+            case 2:
+                return MAGE;
+            case 3:
+                return HUNTRESS;
+            case 4:
+                return DEBUG;
+            default:
+                return NONE;
+        }
+    }
 
-		return -1;
-	}
+    public final int value;
+    public final String name;
 
-	public static HeroClass toHeroClass(int index) {
-		switch(index) {
-			case 0:
-				return WARRIOR;
-			case 1:
-				return ROGUE;
-			case 2:
-				return MAGE;
-			case 3:
-				return HUNTRESS;
-			case 4:
-				return DEBUG;
-			default:
-				return NONE;
-		}
-	}
-	
-	private String title;
-	
-	private HeroClass( String title ) {
-		this.title = title;
-	}
-	
-	public static final String[] WAR_PERKS = {
-		"The Warrior starts with 11 points of Strength.",
-		"The Warrior starts with a unique short sword. This sword can be later \"reforged\" to upgrade another melee weapon.",
-		"The Warrior is less proficient with missile weapons.",
-		"Any piece of food restores some health when eaten.",
-		"Potions of Strength are identified from the beginning.",
-	};
-	
-	public static final String[] MAG_PERKS = {
-		"The Mage starts with a unique Staff, which can be imbued with the properties of a wand.",
-		"The Mage's staff can be used as a melee weapon or a more powerful wand.",
-		"The Mage partially identifies wands after using them.",
-		"When eaten, any piece of food restores 1 charge for all wands in the inventory.",
-		"Scrolls of Upgrade are identified from the beginning."
-	};
-	
-	public static final String[] ROG_PERKS = {
-		"The Rogue starts with a unique Cloak of Shadows.",
-		"The Rogue identifies a type of a ring on equipping it.",
-		"The Rogue is proficient with light armor, dodging better with excess strength.",
-		"The Rogue is more proficient in detecting hidden doors and traps.",
-		"The Rogue can go without food longer.",
-		"Scrolls of Magic Mapping are identified from the beginning."
-	};
-	
-	public static final String[] HUN_PERKS = {
-		"The Huntress starts with a unique upgradeable boomerang.",
-		"The Huntress is proficient with missile weapons, getting bonus damage from excess strength.",
-		"The Huntress is able to recover a single used missile weapon from each enemy.",
-		"The Huntress senses neighbouring monsters even if they are hidden behind obstacles.",
-		"Potions of Mind Vision are identified from the beginning."
-	};
+    HeroClass(int value, String name) {
+        this.value = value;
+        this.name = name;
+    }
 
-	public void initHero( Hero hero ) {
+    public static final String[] WAR_PERKS = {
+            "The Warrior starts with 11 points of Strength.",
+            "The Warrior starts with a unique short sword. This sword can be later \"reforged\" to upgrade another melee weapon.",
+            "The Warrior is less proficient with missile weapons.",
+            "Any piece of food restores some health when eaten.",
+            "Potions of Strength are identified from the beginning.",
+    };
 
-		hero.heroClass = this;
+    public static final String[] MAG_PERKS = {
+            "The Mage starts with a unique Staff, which can be imbued with the properties of a wand.",
+            "The Mage's staff can be used as a melee weapon or a more powerful wand.",
+            "The Mage partially identifies wands after using them.",
+            "When eaten, any piece of food restores 1 charge for all wands in the inventory.",
+            "Scrolls of Upgrade are identified from the beginning."
+    };
 
-		initCommon( hero );
+    public static final String[] ROG_PERKS = {
+            "The Rogue starts with a unique Cloak of Shadows.",
+            "The Rogue identifies a type of a ring on equipping it.",
+            "The Rogue is proficient with light armor, dodging better with excess strength.",
+            "The Rogue is more proficient in detecting hidden doors and traps.",
+            "The Rogue can go without food longer.",
+            "Scrolls of Magic Mapping are identified from the beginning."
+    };
 
-		switch (this) {
-			case WARRIOR:
-				initWarrior( hero );
-				break;
+    public static final String[] HUN_PERKS = {
+            "The Huntress starts with a unique upgradeable boomerang.",
+            "The Huntress is proficient with missile weapons, getting bonus damage from excess strength.",
+            "The Huntress is able to recover a single used missile weapon from each enemy.",
+            "The Huntress senses neighbouring monsters even if they are hidden behind obstacles.",
+            "Potions of Mind Vision are identified from the beginning."
+    };
 
-			case MAGE:
-				initMage( hero );
-				break;
+    public void initHero(Hero hero) {
 
-			case ROGUE:
-				initRogue( hero );
-				break;
+        hero.heroClass = this;
 
-			case HUNTRESS:
-				initHuntress( hero );
-				break;
+        initCommon(hero);
 
-			case DEBUG:
-				initDebug(hero);
-				break;
-		}
+        switch (this) {
+            case WARRIOR:
+                initWarrior(hero);
+                break;
 
-		hero.updateAwareness();
-	}
+            case MAGE:
+                initMage(hero);
+                break;
 
-	private static void initCommon( Hero hero ) {
-		if (!Dungeon.isChallenged(Challenges.NO_ARMOR)) {
-			//(hero.belongings.armor = new ClothArmor()).identify();
-		}
+            case ROGUE:
+                initRogue(hero);
+                break;
 
-		if (!Dungeon.isChallenged(Challenges.NO_FOOD)) {
-			hero.belongings.collect(new Ration().quantity(Random.IntRange(4, 8)).identify());
-		}
+            case HUNTRESS:
+                initHuntress(hero);
+                break;
+
+            case DEBUG:
+                initDebug(hero);
+                break;
+        }
+    }
+
+    private static void initCommon(Hero hero) {
+        if (!Dungeon.isChallenged(Challenges.NO_ARMOR)) {
+            //(hero.belongings.armor = new ClothArmor()).identify();
+        }
+
+        if (!Dungeon.isChallenged(Challenges.NO_FOOD)) {
+            hero.belongings.collect(new Ration().quantity(Random.IntRange(4, 8)).identify());
+        }
 
         hero.belongings.collectEquip(new LeatherBoots());
-	}
+    }
 
-	public Badges.Badge masteryBadge() {
-		switch (this) {
-			case WARRIOR:
-				return Badges.Badge.MASTERY_WARRIOR;
-			case MAGE:
-				return Badges.Badge.MASTERY_MAGE;
-			case ROGUE:
-				return Badges.Badge.MASTERY_ROGUE;
-			case HUNTRESS:
-				return Badges.Badge.MASTERY_HUNTRESS;
-		}
-		return null;
-	}
+    public Badges.Badge masteryBadge() {
+        switch (this) {
+            case WARRIOR:
+                return Badges.Badge.MASTERY_WARRIOR;
+            case MAGE:
+                return Badges.Badge.MASTERY_MAGE;
+            case ROGUE:
+                return Badges.Badge.MASTERY_ROGUE;
+            case HUNTRESS:
+                return Badges.Badge.MASTERY_HUNTRESS;
+        }
+        return null;
+    }
 
     private static int[] generateAttributes(int strcon, int dexcha, int intwis, int remainder, int strconChance, int dexchaChance, int intwisChance) {
         int sum = strconChance + dexchaChance + intwisChance;
@@ -228,29 +222,31 @@ public enum HeroClass {
         return new int[]{strcon, dexcha, intwis};
     }
 
-	private static void initDebug( Hero hero ){
+    private static void initDebug(Hero hero) {
         hero.initAttributes(generateAttributes(10, 10, 10, 8, 33, 33, 33));
+        hero.hpPerLevel = 10;
+        hero.mpPerLevel = 10;
 
-		Dart darts = new Dart( 8 );
-        darts.identify();
-		hero.belongings.collectEquip(darts);
+        Dart darts = new Dart();
+        darts.quantity(8).bucStatus(BUCStatus.Cursed, true).identify();
+        hero.belongings.collectEquip(darts);
 
         hero.weaponSkill = WeaponSkill.Simple;
 
-		hero.belongings.collectEquip(new HalfPlateArmor());
+        hero.belongings.collectEquip(new HalfPlateArmor());
         hero.belongings.armor().upgrade(darts, 20);
 
-		hero.belongings.collectEquip(new BattleAxe());
+        hero.belongings.collectEquip(new BattleAxe());
         hero.belongings.weapon().upgrade(darts, 20);
 
-        hero.belongings.collect(new Arrow(20));
+        hero.belongings.collect(new Arrow().quantity(20));
         hero.belongings.collect(new Sling());
-        hero.belongings.collect(new Rock(20));
+        hero.belongings.collect(new Rock().quantity(20));
 
-		hero.belongings.collectEquip(new RingOfWealth());
+        hero.belongings.collectEquip(new RingOfWealth());
         hero.belongings.ring1().upgrade(darts, 20);
 
-		hero.belongings.collect(new Pickaxe());
+        hero.belongings.collect(new Pickaxe());
 
         hero.belongings.collect(new SeedPouch());
         hero.belongings.collect(new ScrollHolder());
@@ -278,20 +274,24 @@ public enum HeroClass {
         hero.belongings.collect(new Starflower.Seed().quantity(10));
         hero.belongings.collect(new CanningKit().random().identify());
 
+        hero.belongings.collect(new IdentifyBook());
+
         /*
         hero.belongings.collect(new PotionOfOil().bucStatus(BUCStatus.Uncursed, true).quantity(5));
         hero.belongings.collect(new PotionOfWater().bucStatus(BUCStatus.Uncursed, true).quantity(5));
         hero.belongings.collect(new PotionOfBlindness().identify().quantity(2));
         */
         //hero.belongings.collect(new PotionOfMonsterDetection().bucStatus(BUCStatus.Blessed, true).identify().quantity(10));
-        hero.belongings.collect(new PotionOfOil().bucStatus(BUCStatus.Blessed, true).identify().quantity(5));
-        hero.belongings.collect(new PotionOfSeeInvisible().bucStatus(BUCStatus.Uncursed, true).identify().quantity(5));
-        hero.belongings.collect(new WandOfMakeInvisible().random().bucStatus(BUCStatus.Blessed, true).identify());
+        hero.belongings.collect(new WandOfRegrowth().bucStatus(BUCStatus.Blessed, true).identify());
+        hero.belongings.collect(new WandOfLightning().bucStatus(BUCStatus.Uncursed, true).identify());
+        hero.belongings.collect(new WandOfCreateMonster().random().bucStatus(BUCStatus.Blessed, true).identify());
         hero.belongings.collect(new WandOfHaste().random().bucStatus(BUCStatus.Blessed, true).identify());
+        hero.belongings.collect(new WandOfLight().random().bucStatus(BUCStatus.Blessed, true).identify());
 
         hero.belongings.collect(new Blindfold());
         hero.belongings.collect(new Towel());
         hero.belongings.collect(new Torch().random());
+        hero.belongings.collect(new Tricorder());
 
         hero.belongings.collect(new ScrollOfIdentify().bucStatus(BUCStatus.Uncursed, true).quantity(5).identify());
         hero.belongings.collect(new CloakOfInvisibility().identify());
@@ -308,101 +308,101 @@ public enum HeroClass {
         hero.belongings.collect(new CloakOfMagicResistance().random());
         hero.belongings.collect(new CloakOfProtection().random());
         */
-	}
+    }
 
-	private static void initWarrior( Hero hero ) {
+    private static void initWarrior(Hero hero) {
         hero.initAttributes(generateAttributes(12, 13, 11, 2, 50, 20, 30));
+        hero.hpPerLevel = 10;
+        hero.mpPerLevel = 2;
 
-		hero.belongings.equip(new ScaleArmor());
+        hero.belongings.equip(new ScaleArmor());
         hero.belongings.armor().identify();
 
-		hero.belongings.equip(new Longsword());
+        hero.belongings.equip(new Longsword());
         hero.belongings.weapon().identify();
 
-		hero.belongings.equip(new LeatherGloves());
+        hero.belongings.equip(new LeatherGloves());
         hero.belongings.gloves().identify();
 
-		hero.weaponSkill = WeaponSkill.Martial;
+        hero.belongings.equip(new Dart());
+        hero.belongings.ammo().quantity(8).identify();
 
-		Dart darts = new Dart( 8 );
-		hero.belongings.collect(darts.identify());
+        hero.weaponSkill = WeaponSkill.Martial;
+    }
 
-		Dungeon.quickslot.setSlot(0, darts);
-
-		//new PotionOfStrength().setKnown();
-	}
-
-	private static void initMage( Hero hero ) {
+    private static void initMage(Hero hero) {
         hero.initAttributes(generateAttributes(7, 7, 9, 15, 30, 30, 40));
+        hero.hpPerLevel = 4;
+        hero.mpPerLevel = 8;
 
-		MagesStaff staff = new MagesStaff(new WandOfMagicMissile());
-		//(hero.belongings.weapon = staff).identify();
-		//((IActivateable)hero.belongings.weapon).activate(hero);
+        MagesStaff staff = new MagesStaff(new WandOfMagicMissile());
+        //(hero.belongings.weapon = staff).identify();
+        //((IActivateable)hero.belongings.weapon).activate(hero);
 
-		Dungeon.quickslot.setSlot(0, staff);
+        Dungeon.quickslot.setSlot(0, staff);
 
-		new ScrollOfUpgrade().setKnown();
-	}
+        new ScrollOfUpgrade().setKnown();
+    }
 
-	private static void initRogue( Hero hero ) {
+    private static void initRogue(Hero hero) {
         hero.initAttributes(generateAttributes(7, 8, 7, 16, 40, 40, 20));
+        hero.hpPerLevel = 6;
+        hero.mpPerLevel = 6;
 
-		//(hero.belongings.weapon = new Dagger()).identify();
+        //(hero.belongings.weapon = new Dagger()).identify();
 
-		CloakOfShadows cloak = new CloakOfShadows();
-		//(hero.belongings.ring1 = cloak).identify();
-		//((IActivateable)hero.belongings.ring1).activate(hero);
+        CloakOfShadows cloak = new CloakOfShadows();
+        //(hero.belongings.ring1 = cloak).identify();
+        //((IActivateable)hero.belongings.ring1).activate(hero);
 
-		Dart darts = new Dart( 8 );
-		hero.belongings.collect(darts.identify());
+        Dart darts = new Dart();
+        hero.belongings.collect(darts.quantity(8).identify());
 
-		Dungeon.quickslot.setSlot(0, cloak);
-		if (unPixelDungeon.quickSlots() > 1)
-			Dungeon.quickslot.setSlot(1, darts);
+        Dungeon.quickslot.setSlot(0, cloak);
+        if (unPixelDungeon.quickSlots() > 1)
+            Dungeon.quickslot.setSlot(1, darts);
 
-		new ScrollOfMagicMapping().setKnown();
-	}
+        new ScrollOfMagicMapping().setKnown();
+    }
 
-	private static void initHuntress( Hero hero ) {
+    private static void initHuntress(Hero hero) {
         hero.initAttributes(generateAttributes(13, 8, 13, 4, 50, 30, 20));
+        hero.hpPerLevel = 8;
+        hero.mpPerLevel = 4;
 
-		//(hero.belongings.weapon = new Dagger()).identify();
-		Boomerang boomerang = new Boomerang();
-		hero.belongings.collect(boomerang.identify());
+        //(hero.belongings.weapon = new Dagger()).identify();
+        Boomerang boomerang = new Boomerang();
+        hero.belongings.collect(boomerang.identify());
 
-		Dungeon.quickslot.setSlot(0, boomerang);
+        Dungeon.quickslot.setSlot(0, boomerang);
 
-		//new PotionOfMindVision().setKnown();
-	}
-	
-	public String title() {
-		return title;
-	}
-	
-	public String[] perks() {
-		
-		switch (this) {
-		case WARRIOR:
-			return WAR_PERKS;
-		case MAGE:
-			return MAG_PERKS;
-		case ROGUE:
-			return ROG_PERKS;
-		case HUNTRESS:
-			return HUN_PERKS;
-		}
-		
-		return null;
-	}
+        //new PotionOfMindVision().setKnown();
+    }
 
-	private static final String CLASS	= "class";
-	
-	public void storeInBundle( Bundle bundle ) {
-		bundle.put( CLASS, toString() );
-	}
-	
-	public static HeroClass restoreInBundle( Bundle bundle ) {
-		String value = bundle.getString( CLASS );
-		return value.length() > 0 ? valueOf( value ) : ROGUE;
-	}
+    public String[] perks() {
+
+        switch (this) {
+            case WARRIOR:
+                return WAR_PERKS;
+            case MAGE:
+                return MAG_PERKS;
+            case ROGUE:
+                return ROG_PERKS;
+            case HUNTRESS:
+                return HUN_PERKS;
+        }
+
+        return null;
+    }
+
+    private static final String CLASS = "class";
+
+    public void storeInBundle(Bundle bundle) {
+        bundle.put(CLASS, toString());
+    }
+
+    public static HeroClass restoreInBundle(Bundle bundle) {
+        String value = bundle.getString(CLASS);
+        return value.length() > 0 ? valueOf(value) : ROGUE;
+    }
 }

@@ -31,6 +31,8 @@ import com.felayga.unpixeldungeon.actors.Char;
 import com.felayga.unpixeldungeon.actors.buffs.Buff;
 import com.felayga.unpixeldungeon.actors.hero.Hero;
 import com.felayga.unpixeldungeon.effects.Speck;
+import com.felayga.unpixeldungeon.items.Heap;
+import com.felayga.unpixeldungeon.items.Item;
 import com.felayga.unpixeldungeon.items.artifacts.TimekeepersHourglass;
 import com.felayga.unpixeldungeon.levels.Level;
 import com.felayga.unpixeldungeon.levels.branches.DungeonBranch;
@@ -42,12 +44,17 @@ import com.watabou.noosa.audio.Sample;
 import com.watabou.noosa.tweeners.AlphaTweener;
 import com.watabou.utils.Random;
 
+import java.util.ArrayList;
+import java.util.Iterator;
+import java.util.List;
+
 //import com.felayga.unpixeldungeon.items.artifacts.DriedRose;
 
 public class ScrollOfTeleportation extends PositionScroll {
 	public static final String TXT_TELEPORTED = "In a blink of an eye you were teleported to another location of the level.";
 	public static final String TXT_NO_TELEPORT = "A mysterious force prevents you from teleporting.";
 	public static final String TXT_MISSED_TELEPORT = "You feel disoriented for a moment.";
+    public static final String TXT_MISSED_TELEPORT_OTHER = "The %s shudders for a moment.";
 
     public ScrollOfTeleportation()
 	{
@@ -87,12 +94,25 @@ public class ScrollOfTeleportation extends PositionScroll {
 	public static boolean canTeleport(Char user) {
 		if ((Level.flags & Level.FLAG_NOTELEPORTATION) != 0)
 		{
-			GLog.w(TXT_NO_TELEPORT);
+            if (user == Dungeon.hero) {
+                GLog.w(TXT_NO_TELEPORT);
+            } else {
+                GLog.w("The " + user.name+" shudders for a moment.");
+            }
 			return false;
 		}
 
 		return true;
 	}
+
+    public static boolean canTeleport(Heap heap) {
+        if ((Level.flags & Level.FLAG_NOTELEPORTATION) != 0)
+        {
+            return false;
+        }
+
+        return heap != null && heap.size() > 0;
+    }
 
     public static int doLevelPort(Char user) {
         if (user == Dungeon.hero) {
@@ -141,9 +161,10 @@ public class ScrollOfTeleportation extends PositionScroll {
         doTeleport(user, position);
     }
 
-	public static void doTeleport( Char user, int pos ) {
-		int count = 10;
-		switch(pos) {
+    private static int handleTeleportPos(int pos) {
+        int count = 10;
+
+        switch(pos) {
             case Constant.Position.ENTRANCE:
                 pos = Dungeon.level.entrance;
                 break;
@@ -165,23 +186,54 @@ public class ScrollOfTeleportation extends PositionScroll {
                 } while (pos < 0);
                 break;
             case Constant.Position.NONE:
-                pos = -1;
+                //nothing
                 break;
         }
 
-		if (pos >= 0) {
-			appear(user, pos);
-			Dungeon.level.press(pos, user);
+        return pos;
+    }
 
-			if (user == Dungeon.hero) {
-				Dungeon.observe();
-			}
+	public static void doTeleport( Char target, int pos) {
+        pos = handleTeleportPos(pos);
 
-			GLog.i(TXT_TELEPORTED);
-		} else {
-			GLog.w(TXT_MISSED_TELEPORT);
-		}
-	}
+        if (pos >= 0) {
+            appear(target, pos);
+            Dungeon.level.press(pos, target);
+
+            if (target == Dungeon.hero) {
+                Dungeon.observe();
+            }
+
+            if (target == Dungeon.hero) {
+                GLog.i(TXT_TELEPORTED);
+            }
+        } else {
+            if (target == Dungeon.hero) {
+                GLog.w(TXT_MISSED_TELEPORT);
+            } else {
+                GLog.w(String.format(TXT_MISSED_TELEPORT_OTHER, target.name));
+            }
+        }
+    }
+
+    public static void doTeleport(Heap heap, int pos) {
+        List<Item> items = new ArrayList<>();
+
+        Iterator<Item> iterator = heap.iterator(false);
+        while (iterator.hasNext()) {
+            Item item = iterator.next();
+
+            items.add(item);
+        }
+
+        for (int n=0;n<items.size();n++) {
+            int subPos = handleTeleportPos(pos);
+
+            if (subPos >= 0) {
+                Dungeon.level.drop(items.get(n), subPos);
+            }
+        }
+    }
 
 	public static void appear( Char ch, int pos ) {
 		ch.sprite.interruptMotion();

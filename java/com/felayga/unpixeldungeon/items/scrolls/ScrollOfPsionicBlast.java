@@ -44,51 +44,50 @@ import com.watabou.utils.Random;
 
 public class ScrollOfPsionicBlast extends Scroll {
 
-    public ScrollOfPsionicBlast()
-	{
-		name = "Scroll of Psionic Blast";
-		initials = "PB";
+    public ScrollOfPsionicBlast() {
+        name = "Scroll of Psionic Blast";
+        initials = "PB";
 
-		bones = true;
+        bones = true;
 
         price = 80;
-	}
-	
-	@Override
-	protected void doRead() {
-		
-		GameScene.flash( 0xFFFFFF );
-		
-		Sample.INSTANCE.play( Assets.SND_BLAST );
-		Invisibility.dispelAttack(curUser);
-		
-		for (Mob mob : Dungeon.level.mobs.toArray( new Mob[Dungeon.level.mobs.size()] )) {
-			if (Level.fieldOfView[mob.pos()]) {
-				mob.damage(mob.HT, MagicType.Magic, null );
-			}
-		}
+    }
 
-		curUser.damage(Math.max(curUser.HT/5, curUser.HP/2), MagicType.Magic, null);
-		Buff.prolong( curUser, curUser, Paralysis.class, Random.IntRange( 4, 6 ) * GameTime.TICK );
-		Buff.prolong( curUser, curUser, Blindness.class, Random.IntRange( 6, 9 ) * GameTime.TICK );
-		Dungeon.observe();
-		
-		setKnown();
-		
-		curUser.spend_new( TIME_TO_READ, true );
+    @Override
+    protected void doRead() {
 
-		if (!curUser.isAlive()) {
-			Dungeon.fail( Utils.format(ResultDescriptions.ITEM, name ));
-			GLog.n("The Psionic Blast tears your mind apart...");
-		}
-	}
-	
-	@Override
-	public String desc() {
-		return
-			"This scroll contains destructive energy that can be psionically channeled to tear apart " +
-			"the minds of all visible creatures. The power unleashed by the scroll will also temporarily " +
-			"blind, stun, and seriously harm the reader.";
-	}
+        GameScene.flash(0xFFFFFF);
+
+        Sample.INSTANCE.play(Assets.SND_BLAST);
+        Invisibility.dispelAttack(curUser);
+
+        for (Mob mob : Dungeon.level.mobs.toArray(new Mob[Dungeon.level.mobs.size()])) {
+            if (Level.fieldOfView[mob.pos()]) {
+                mob.damage(mob.HT, MagicType.Magic, curUser, null);
+            }
+        }
+
+        curUser.damage(Math.max(curUser.HT / 5, curUser.HP / 2), MagicType.Magic, curUser, null);
+        Buff.prolong(curUser, curUser, Paralysis.class, Random.IntRange(4, 6) * GameTime.TICK);
+        Buff.prolong(curUser, curUser, Blindness.class, Random.IntRange(6, 9) * GameTime.TICK);
+        Dungeon.observe();
+
+        setKnown();
+
+        curUser.spend_new(TIME_TO_READ, true);
+
+        if (!curUser.isAlive()) {
+            Dungeon.fail(Utils.format(ResultDescriptions.ITEM, name));
+            GLog.n("The Psionic Blast tears your mind apart...");
+        }
+    }
+
+    @Override
+    public String desc() {
+        return
+                "This scroll contains destructive energy that can be psionically channeled to tear apart " +
+                        "the minds of all visible creatures. The power unleashed by the scroll will also temporarily " +
+                        "blind, stun, and seriously harm the reader.";
+    }
 
 }

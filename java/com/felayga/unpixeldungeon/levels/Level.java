@@ -28,6 +28,7 @@ package com.felayga.unpixeldungeon.levels;
 import com.felayga.unpixeldungeon.Assets;
 import com.felayga.unpixeldungeon.Challenges;
 import com.felayga.unpixeldungeon.Dungeon;
+import com.felayga.unpixeldungeon.DungeonTilemap;
 import com.felayga.unpixeldungeon.Statistics;
 import com.felayga.unpixeldungeon.WarningHandler;
 import com.felayga.unpixeldungeon.actors.Actor;
@@ -68,6 +69,7 @@ import com.felayga.unpixeldungeon.levels.painters.Painter;
 import com.felayga.unpixeldungeon.levels.traps.Trap;
 import com.felayga.unpixeldungeon.levels.traps.WornTrap;
 import com.felayga.unpixeldungeon.mechanics.Characteristic;
+import com.felayga.unpixeldungeon.mechanics.Constant;
 import com.felayga.unpixeldungeon.mechanics.GameTime;
 import com.felayga.unpixeldungeon.mechanics.IDecayable;
 import com.felayga.unpixeldungeon.mechanics.ShadowCaster;
@@ -78,10 +80,13 @@ import com.felayga.unpixeldungeon.sprites.ItemSprite;
 import com.felayga.unpixeldungeon.ui.CustomTileVisual;
 import com.felayga.unpixeldungeon.utils.GLog;
 import com.watabou.noosa.Game;
+import com.watabou.noosa.Gizmo;
 import com.watabou.noosa.Group;
 import com.watabou.noosa.audio.Sample;
+import com.watabou.noosa.particles.Emitter;
 import com.watabou.utils.Bundlable;
 import com.watabou.utils.Bundle;
+import com.watabou.utils.PointF;
 import com.watabou.utils.Random;
 import com.watabou.utils.SparseArray;
 
@@ -179,24 +184,30 @@ public abstract class Level implements Bundlable, IDecayable {
 
     //lightMap: 0x01 dark 0x02 magiclit 0x04 magicdark
     //lightMap: 0x00 lit 0x01 dark 0x02 0x03 magiclit 0x04 0x05 magicdark 0x06 0x07 invalid (0x02 and 0x04 are exclusive)
-    //lightMap: 0x00FFFFF8 handled by Light.Registry, 0x7F000000 reserved for mobile darkness if I feel like implementing it
+    //lightMap: 0x01000000 glowy spot
+    //lightMap: 0x00FFFFF8 handled by Light.Registry, 0x7E000000 reserved for mobile darkness if I feel like implementing it
     //dark: 0x01 0x04 0x05
-    public static final int LIGHTMAP_NATURALMASK    = 0x00FFFFFE;
+    public static final int LIGHTMAP_NATURALMASK    = 0x01FFFFFE;
     public static final int LIGHTMAP_NATURALLIT     = 0x00000000;
     public static final int LIGHTMAP_NATURALDARK    = 0x00000001;
 
-    public static final int LIGHTMAP_ARTIFICIALMASK = 0x00FFFFF9;
+    public static final int LIGHTMAP_ARTIFICIALMASK = 0x01FFFFF9;
     public static final int LIGHTMAP_ARTIFICIALLIT  = 0x00000002;
     public static final int LIGHTMAP_ARTIFICIALDARK = 0x00000004;
 
-    public static final int LIGHTMAP_MOBILEMASK     = 0x00000007;
+    public static final int LIGHTMAP_MOBILEMASK     = 0x01000007;
     public static final int LIGHTMAP_MOBILELIT      = 0x00FFFFF8;
 
-    public static final int LIGHTMAP_FULLMASK       = 0x00FFFFFF;
+    public static final int LIGHTMAP_FULLMASK       = 0x01FFFFFF;
+
+    public static final int LIGHTMAP_GLOWYSPOT      = 0x01000000;
+    public static final int LIGHTMAP_GLOWYSPOTSHOWN = LIGHTMAP_GLOWYSPOT | LIGHTMAP_ARTIFICIALLIT;
 
 
     public void setLight(int pos, int radius, boolean light) {
-        if (radius > 0) {
+        if (radius > 1) {
+            lightMap[pos] |= LIGHTMAP_GLOWYSPOT;
+
             int centerx = pos % WIDTH;
             int centery = pos / WIDTH;
 
@@ -240,6 +251,7 @@ public abstract class Level implements Bundlable, IDecayable {
                     }
                 }
             }
+
             GameScene.updateMap();
             Dungeon.observe();
         } else {
@@ -718,8 +730,15 @@ public abstract class Level implements Bundlable, IDecayable {
             if (map[i] == Terrain.WELL || map[i] == Terrain.WELL_MAGIC) {
                 visuals.add( new SewerLevel.Sink( i, -2.5f, -6.0f ) );
             }
+            if ((lightMap[i] & LIGHTMAP_GLOWYSPOTSHOWN) == LIGHTMAP_GLOWYSPOTSHOWN) {
+                visuals.add(new PrisonLevel.Torch(i, false, true));
+            }
         }
         return visuals;
+    }
+
+    public void addVisual(Gizmo what) {
+        visuals.add(what);
     }
 
     public void removeVisuals(int pos) {
@@ -737,6 +756,10 @@ public abstract class Level implements Bundlable, IDecayable {
             }
         }
         return null;
+    }
+
+    public void replaceMob(int pos, final Class<? extends Mob> type) {
+
     }
 
     public void spawnMob(final int pos, final Class<? extends Mob> type, final int quantity) {
@@ -840,41 +863,68 @@ public abstract class Level implements Bundlable, IDecayable {
     }
 
     public int randomStep(int pos) {
-        int cell;
+        int tries = 12;
+        int cell = Constant.Position.NONE;
         do {
-            cell = pos + NEIGHBOURS9[Random.Int(NEIGHBOURS9.length)];
-        } while (!passable[cell]);
-        return cell;
+            tries--;
+            if (tries <= 0) {
+                break;
+            }
+            cell = pos + NEIGHBOURS8[Random.Int(NEIGHBOURS8.length)];
+        } while (!passable[cell] || findMob(cell) != null);
+
+        if (cell != Constant.Position.NONE) {
+            return cell;
+        }
+
+        return pos;
+    }
+
+    private static class PositionUsed {
+        public boolean state;
+
+        public PositionUsed(boolean state) {
+            this.state = state;
+        }
     }
 
     public ArrayList<Integer> randomPositionsNear(int pos, int quantity, RandomPositionValidator validator) {
-        //todo: this rarely returns a null ArrayList for some reason, fixme
+        ArrayList<Integer> retval = new ArrayList<>();
         ArrayList<Integer> positionOffsets = new ArrayList<>();
 
-        for (Integer ofs : Level.NEIGHBOURS9) {
-            positionOffsets.add(ofs);
+
+        //todo: this rarely returns a null ArrayList for some reason, fixme
+
+
+        positionOffsets.clear();
+
+        for (Integer offset : Level.NEIGHBOURS4) {
+            positionOffsets.add(offset);
         }
 
-        SparseArray<Object> retval = new SparseArray<>();
+        Collections.shuffle(positionOffsets);
+        positionOffsets.add(0, 0);
+
+        SparseArray<Object> tested = new SparseArray<>();
         Object alreadyTestedFlag = new Object();
 
-        int repeatoffset = -1;
-        int iterationlimit = 16;
+        int repeatOffset = -1;
+        int iterationLimit = 16;
 
-        while (iterationlimit > 0) {
-            if (repeatoffset >= 0) {
-                if (retval.size() <= 0) {
+        while (iterationLimit > 0) {
+            if (repeatOffset >= 0) {
+                if (tested.size() <= 0) {
                     return null;
                 }
 
-                int failsafe = retval.size() * retval.size();
+                int failsafe = tested.size() * tested.size();
 
                 Object test = alreadyTestedFlag;
                 while (test == alreadyTestedFlag) {
-                    int index = Random.Int(retval.size());
+                    int index = Random.Int(tested.size());
 
-                    pos = retval.keyAt(index);
-                    test = retval.valueAt(index);
+                    pos = tested.keyAt(index);
+                    test = tested.valueAt(index);
 
                     failsafe--;
                     if (failsafe <= 0) {
@@ -882,10 +932,10 @@ public abstract class Level implements Bundlable, IDecayable {
                     }
                 }
 
-                retval.put(pos, alreadyTestedFlag);
+                tested.put(pos, alreadyTestedFlag);
             }
 
-            Collections.shuffle(positionOffsets);
+            //Collections.shuffle(positionOffsets);
 
             for (Integer ofs : positionOffsets) {
                 int cell = pos + ofs;
@@ -897,25 +947,25 @@ public abstract class Level implements Bundlable, IDecayable {
                 boolean passable = validator.isValidPosition(cell);
 
                 if (passable) {
-                    retval.put(cell, null);
+                    tested.put(cell, null);
 
-                    if (retval.size() >= quantity) {
-                        iterationlimit = 0;
+                    if (tested.size() >= quantity) {
+                        iterationLimit = 0;
                         break;
                     }
                 }
             }
 
-            repeatoffset++;
-            iterationlimit--;
+            repeatOffset++;
+            iterationLimit--;
         }
 
-        ArrayList<Integer> list = new ArrayList<>();
-        for (int n = 0; n < retval.size(); n++) {
-            list.add(retval.keyAt(n));
+        retval.clear();
+        for (int n = 0; n < tested.size(); n++) {
+            retval.add(tested.keyAt(n));
         }
-        Collections.shuffle(list);
-        return list;
+        //Collections.shuffle(retval);
+        return retval;
     }
 
     public interface RandomPositionValidator {
@@ -1287,7 +1337,7 @@ public abstract class Level implements Bundlable, IDecayable {
         boolean good;
 
         int placedTerrain = terrainType;
-        List<Integer> updates = new ArrayList<Integer>();
+        List<Integer> updates = new ArrayList<>();
 
         for (int n = 0; n < NEIGHBOURS4.length; n++) {
             good = false;
@@ -1534,7 +1584,6 @@ public abstract class Level implements Bundlable, IDecayable {
     }
 
     public Plant plant(Char thrower, Plant.Seed seed, int pos) {
-
         Plant plant = plants.get(pos);
         if (plant != null) {
             plant.wither();

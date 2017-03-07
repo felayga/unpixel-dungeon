@@ -27,6 +27,7 @@
 package com.felayga.unpixeldungeon.items.food;
 
 import com.felayga.unpixeldungeon.actors.buffs.hero.Encumbrance;
+import com.felayga.unpixeldungeon.mechanics.Material;
 import com.felayga.unpixeldungeon.sprites.ItemSpriteSheet;
 
 /**
@@ -36,10 +37,11 @@ public class Meatball extends Food {
     public Meatball() {
         super(25, 25, Encumbrance.UNIT * 1);
 
-        stackable = true;
         name = "meatball";
         image = ItemSpriteSheet.FOOD_MEATBALL;
+        material = Material.Flesh;
 
+        stackable = true;
         bones = true;
 
         price = 5;

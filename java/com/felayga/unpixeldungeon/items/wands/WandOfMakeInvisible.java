@@ -26,12 +26,16 @@
 
 package com.felayga.unpixeldungeon.items.wands;
 
+import com.felayga.unpixeldungeon.Dungeon;
 import com.felayga.unpixeldungeon.actors.Actor;
 import com.felayga.unpixeldungeon.actors.Char;
 import com.felayga.unpixeldungeon.actors.buffs.Buff;
 import com.felayga.unpixeldungeon.actors.buffs.positive.Invisibility;
 import com.felayga.unpixeldungeon.effects.MagicMissile;
+import com.felayga.unpixeldungeon.levels.Level;
 import com.felayga.unpixeldungeon.mechanics.Ballistica;
+import com.felayga.unpixeldungeon.mechanics.GameTime;
+import com.felayga.unpixeldungeon.mechanics.MagicType;
 import com.watabou.utils.Callback;
 import com.watabou.utils.Random;
 
@@ -45,6 +49,7 @@ public class WandOfMakeInvisible extends Wand {
         name = "Wand of Make Invisible";
 
         canTargetSelf = true;
+        price = 150;
     }
 
     @Override
@@ -53,8 +58,8 @@ public class WandOfMakeInvisible extends Wand {
     }
 
     @Override
-    protected void fxEffect(Ballistica bolt, Callback callback) {
-        MagicMissile.whiteLight(curUser.sprite.parent, bolt.sourcePos, bolt.collisionPos, callback);
+    protected void fxEffect(int source, int destination, Callback callback) {
+        MagicMissile.invisibility(curUser.sprite.parent, source, destination, callback);
     }
 
     @Override
@@ -71,8 +76,50 @@ public class WandOfMakeInvisible extends Wand {
             //todo: mobs need to be properly invisible, looks like a lot of work
             Buff.affect(ch, curUser, WandInvisibility.class);
 
-            ch.sprite.burst(0xFFFFFFFF, 2);
+            ch.sprite.burst(0xFFBCD3EB, 2);
         }
+    }
+
+    @Override
+    public void explode(Char user) {
+        super.explode(user);
+
+        int maxDamage = curCharges() * 4;
+
+        for (Integer offset : Level.NEIGHBOURS8) {
+            int pos = user.pos() + offset;
+            Char target = Dungeon.level.findMob(pos);
+
+            if (target == null) {
+                continue;
+            }
+
+            explode(target, maxDamage);
+        }
+
+        explode(user, maxDamage);
+    }
+
+    public void explode(Char target, int maxDamage) {
+        int damage = Random.IntRange(1, maxDamage);
+
+        target.damage(damage, MagicType.Magic, curUser, null);
+
+        if (Random.Int(10) == 0) {
+            if (target == Dungeon.hero) {
+                Buff.affect(target, curUser, Invisibility.Intrinsic.class);
+            } else {
+                Buff.affect(target, curUser, Invisibility.Improved.class, Random.IntRange(curCharges(), curCharges() * 125) * GameTime.TICK);
+            }
+        } else {
+            if (target == Dungeon.hero) {
+                Buff.affect(target, curUser, Invisibility.class, Random.IntRange(curCharges(), curCharges() * 250) * GameTime.TICK);
+            } else {
+                Buff.affect(target, curUser, Invisibility.class, Random.IntRange(curCharges(), curCharges() * 125) * GameTime.TICK);
+            }
+        }
+
+        target.sprite.burst(0xFFBCD3EB, 2);
     }
 
     /*
@@ -88,11 +135,11 @@ public class WandOfMakeInvisible extends Wand {
 
     @Override
     public String desc() {
-        return
-                "This wand launches a bolt which will render its target invisible to the naked eye.";
+        return "This wand launches a bolt which will render its target invisible to the naked eye.";
     }
 
     public static class WandInvisibility extends Invisibility.Indefinite {
+        public WandInvisibility()
         {
             improved(false);
         }

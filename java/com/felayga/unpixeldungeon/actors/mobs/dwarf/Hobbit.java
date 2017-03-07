@@ -31,8 +31,8 @@ import com.felayga.unpixeldungeon.actors.mobs.Mob;
 import com.felayga.unpixeldungeon.items.weapon.Weapon;
 import com.felayga.unpixeldungeon.items.weapon.ammunition.AmmunitionWeapon;
 import com.felayga.unpixeldungeon.items.weapon.ammunition.simple.Rock;
-import com.felayga.unpixeldungeon.items.weapon.melee.simple.Dagger;
-import com.felayga.unpixeldungeon.items.weapon.melee.simple.DaggerRuned;
+import com.felayga.unpixeldungeon.items.weapon.melee.simple.dagger.Dagger;
+import com.felayga.unpixeldungeon.items.weapon.melee.simple.dagger.DaggerRuned;
 import com.felayga.unpixeldungeon.items.weapon.ranged.simple.Sling;
 import com.felayga.unpixeldungeon.mechanics.Characteristic;
 import com.felayga.unpixeldungeon.mechanics.CorpseEffect;
@@ -59,7 +59,7 @@ public class Hobbit extends Mob {
         defenseMagical = 0;
         weight = Encumbrance.UNIT * 500;
         nutrition = 200;
-        immunityMagical = MagicType.None.value;
+        resistanceMagical = MagicType.None.value;
         corpseEffects = CorpseEffect.None.value;
         characteristics = Characteristic.value(Characteristic.Humanoid, Characteristic.Omnivore, Characteristic.WarmBlooded);
 

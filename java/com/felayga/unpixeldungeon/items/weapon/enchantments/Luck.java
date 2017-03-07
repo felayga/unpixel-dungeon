@@ -46,7 +46,7 @@ public class Luck extends Weapon.Enchantment {
 		}
 		
 		if (dmg > damage) {
-			defender.damage( dmg - damage, MagicType.Mundane, null );
+			defender.damage( dmg - damage, MagicType.Mundane, null, null );
 			return true;
 		} else {
 			return false;

@@ -27,110 +27,87 @@ package com.felayga.unpixeldungeon.items.books;
 
 import com.felayga.unpixeldungeon.Assets;
 import com.felayga.unpixeldungeon.Badges;
+import com.felayga.unpixeldungeon.Dungeon;
+import com.felayga.unpixeldungeon.actors.Char;
+import com.felayga.unpixeldungeon.actors.buffs.Buff;
 import com.felayga.unpixeldungeon.actors.buffs.hero.Encumbrance;
 import com.felayga.unpixeldungeon.actors.buffs.negative.Blindness;
+import com.felayga.unpixeldungeon.actors.buffs.negative.Paralysis;
+import com.felayga.unpixeldungeon.actors.buffs.negative.Vertigo;
 import com.felayga.unpixeldungeon.actors.hero.Hero;
+import com.felayga.unpixeldungeon.actors.hero.HeroAction;
+import com.felayga.unpixeldungeon.actors.hero.HeroClass;
+import com.felayga.unpixeldungeon.effects.Speck;
+import com.felayga.unpixeldungeon.items.Bomb;
+import com.felayga.unpixeldungeon.items.EquippableItem;
+import com.felayga.unpixeldungeon.items.Gold;
 import com.felayga.unpixeldungeon.items.Item;
 import com.felayga.unpixeldungeon.items.ItemRandomizationHandler;
 import com.felayga.unpixeldungeon.items.scrolls.Scroll;
+import com.felayga.unpixeldungeon.items.scrolls.ScrollOfRage;
+import com.felayga.unpixeldungeon.items.scrolls.ScrollOfTeleportation;
+import com.felayga.unpixeldungeon.items.spells.Spell;
+import com.felayga.unpixeldungeon.levels.Level;
+import com.felayga.unpixeldungeon.mechanics.AttributeType;
+import com.felayga.unpixeldungeon.mechanics.Constant;
+import com.felayga.unpixeldungeon.mechanics.GameTime;
+import com.felayga.unpixeldungeon.mechanics.MagicType;
+import com.felayga.unpixeldungeon.mechanics.Material;
 import com.felayga.unpixeldungeon.sprites.ItemSpriteSheet;
 import com.felayga.unpixeldungeon.utils.GLog;
+import com.watabou.noosa.audio.Sample;
 import com.watabou.utils.Bundle;
+import com.watabou.utils.Random;
 
 import java.util.ArrayList;
 import java.util.HashSet;
 
 public abstract class Book extends Item {
-
-    protected static final float TIME_TO_READ	= 1f;
-
     private static final Class<?>[] books = {
-
+            IdentifyBook.class,
+            BlankBook.class
     };
-    private static final String[] runes =
-            {
-                    "dark gray",
-                    "black",
-                    "light gray",
-                    "white",
-                    "light red",
-                    "orange",
-                    "yellow",
-                    "yellow-green",
-                    "green",
-                    "sea green",
-                    "cyan",
-                    "light blue",
-                    "blue",
-                    "lavender",
-                    "pink",
-                    "magenta",
-                    "sienna",
-                    "gold",
-                    "dark sienna",
-                    "red",
-                    "dark red",
-                    "brown",
-                    "dark yellow",
-                    "dark yellow-green",
-                    "dark green",
-                    "dark sea green",
-                    "dark cyan",
-                    "dark purple",
-                    "dark blue",
-                    "indigo",
-                    "purple",
-                    "dark magenta",
-                    "plaid",
-                    "rainbow",
-                    "polkadot",
-                    "checkered",
-                    "striped",
-                    "bloodstained",
-                    "foreboding",
-                    "blank"
-            };
-    private static final Integer[] images = {
-            ItemSpriteSheet.SPELLBOOK_01,
-            ItemSpriteSheet.SPELLBOOK_02,
-            ItemSpriteSheet.SPELLBOOK_03,
-            ItemSpriteSheet.SPELLBOOK_04,
-            ItemSpriteSheet.SPELLBOOK_05,
-            ItemSpriteSheet.SPELLBOOK_06,
-            ItemSpriteSheet.SPELLBOOK_07,
-            ItemSpriteSheet.SPELLBOOK_08,
-            ItemSpriteSheet.SPELLBOOK_09,
-            ItemSpriteSheet.SPELLBOOK_10,
-            ItemSpriteSheet.SPELLBOOK_11,
-            ItemSpriteSheet.SPELLBOOK_12,
-            ItemSpriteSheet.SPELLBOOK_13,
-            ItemSpriteSheet.SPELLBOOK_14,
-            ItemSpriteSheet.SPELLBOOK_15,
-            ItemSpriteSheet.SPELLBOOK_16,
-            ItemSpriteSheet.SPELLBOOK_17,
-            ItemSpriteSheet.SPELLBOOK_18,
-            ItemSpriteSheet.SPELLBOOK_19,
-            ItemSpriteSheet.SPELLBOOK_20,
-            ItemSpriteSheet.SPELLBOOK_21,
-            ItemSpriteSheet.SPELLBOOK_22,
-            ItemSpriteSheet.SPELLBOOK_23,
-            ItemSpriteSheet.SPELLBOOK_24,
-            ItemSpriteSheet.SPELLBOOK_25,
-            ItemSpriteSheet.SPELLBOOK_26,
-            ItemSpriteSheet.SPELLBOOK_27,
-            ItemSpriteSheet.SPELLBOOK_28,
-            ItemSpriteSheet.SPELLBOOK_29,
-            ItemSpriteSheet.SPELLBOOK_30,
-            ItemSpriteSheet.SPELLBOOK_31,
-            ItemSpriteSheet.SPELLBOOK_32,
-            ItemSpriteSheet.SPELLBOOK_33,
-            ItemSpriteSheet.SPELLBOOK_34,
-            ItemSpriteSheet.SPELLBOOK_35,
-            ItemSpriteSheet.SPELLBOOK_36,
-            ItemSpriteSheet.SPELLBOOK_37,
-            ItemSpriteSheet.SPELLBOOK_38,
-            ItemSpriteSheet.SPELLBOOK_39,
-            ItemSpriteSheet.SPELLBOOK_40
+    private static final String[] bookRunes = {
+            "dark gray", "black", "light gray", "white",
+            "light red", "orange", "yellow", "yellow-green",
+            "green", "sea green", "cyan", "light blue",
+            "blue", "lavender", "pink", "magenta",
+            "sienna", "gold", "dark sienna", "red",
+            "dark red", "brown", "dark yellow", "dark yellow-green",
+            "dark green", "dark sea green", "dark cyan", "dark purple",
+            "dark blue", "indigo", "purple", "dark magenta",
+            "plaid", "rainbow", "polkadot", "checkered",
+            "striped", "bloodstained",
+            //non-randomized
+            "foreboding", "blank"
+    };
+    private static final Integer[] bookImages = {
+            ItemSpriteSheet.SPELLBOOK_01, ItemSpriteSheet.SPELLBOOK_02, ItemSpriteSheet.SPELLBOOK_03, ItemSpriteSheet.SPELLBOOK_04,
+            ItemSpriteSheet.SPELLBOOK_05, ItemSpriteSheet.SPELLBOOK_06, ItemSpriteSheet.SPELLBOOK_07, ItemSpriteSheet.SPELLBOOK_08,
+            ItemSpriteSheet.SPELLBOOK_09, ItemSpriteSheet.SPELLBOOK_10, ItemSpriteSheet.SPELLBOOK_11, ItemSpriteSheet.SPELLBOOK_12,
+            ItemSpriteSheet.SPELLBOOK_13, ItemSpriteSheet.SPELLBOOK_14, ItemSpriteSheet.SPELLBOOK_15, ItemSpriteSheet.SPELLBOOK_16,
+            ItemSpriteSheet.SPELLBOOK_17, ItemSpriteSheet.SPELLBOOK_18, ItemSpriteSheet.SPELLBOOK_19, ItemSpriteSheet.SPELLBOOK_20,
+            ItemSpriteSheet.SPELLBOOK_21, ItemSpriteSheet.SPELLBOOK_22, ItemSpriteSheet.SPELLBOOK_23, ItemSpriteSheet.SPELLBOOK_24,
+            ItemSpriteSheet.SPELLBOOK_25, ItemSpriteSheet.SPELLBOOK_26, ItemSpriteSheet.SPELLBOOK_27, ItemSpriteSheet.SPELLBOOK_28,
+            ItemSpriteSheet.SPELLBOOK_29, ItemSpriteSheet.SPELLBOOK_30, ItemSpriteSheet.SPELLBOOK_31, ItemSpriteSheet.SPELLBOOK_32,
+            ItemSpriteSheet.SPELLBOOK_33, ItemSpriteSheet.SPELLBOOK_34, ItemSpriteSheet.SPELLBOOK_35, ItemSpriteSheet.SPELLBOOK_36,
+            ItemSpriteSheet.SPELLBOOK_37, ItemSpriteSheet.SPELLBOOK_38,
+            //non-randomized
+            ItemSpriteSheet.SPELLBOOK_39, ItemSpriteSheet.SPELLBOOK_40
+    };
+    private static final Material[] bookMaterials = {
+            Material.Paper, Material.Paper, Material.Paper, Material.Paper,
+            Material.Paper, Material.Paper, Material.Paper, Material.Paper,
+            Material.Paper, Material.Paper, Material.Paper, Material.Paper,
+            Material.Paper, Material.Paper, Material.Paper, Material.Paper,
+            Material.Paper, Material.Paper, Material.Paper, Material.Paper,
+            Material.Paper, Material.Paper, Material.Paper, Material.Paper,
+            Material.Paper, Material.Paper, Material.Paper, Material.Paper,
+            Material.Paper, Material.Paper, Material.Paper, Material.Paper,
+            Material.Paper, Material.Paper, Material.Paper, Material.Paper,
+            Material.Paper, Material.Paper,
+            //non-randomized
+            Material.Paper, Material.Paper,
     };
 
     private static ItemRandomizationHandler<Book> handler;
@@ -141,7 +118,7 @@ public abstract class Book extends Item {
 
     @SuppressWarnings("unchecked")
     public static void initLabels() {
-        handler = new ItemRandomizationHandler<Book>( (Class<? extends Book>[])books, runes, images, 2 );
+        handler = new ItemRandomizationHandler<>( (Class<? extends Book>[])books, bookRunes, bookImages, bookMaterials, 2 );
     }
 
     public static void save( Bundle bundle ) {
@@ -150,31 +127,36 @@ public abstract class Book extends Item {
 
     @SuppressWarnings("unchecked")
     public static void restore( Bundle bundle ) {
-        handler = new ItemRandomizationHandler<Book>( (Class<? extends Book>[])books, runes, images, bundle );
+        handler = new ItemRandomizationHandler<>( (Class<? extends Book>[])books, bookRunes, bookImages, bookMaterials, bundle );
     }
 
-    public Book() {
+    protected long readTime;
+
+    public Book(long readTime) {
         super();
+
+        syncRandomizedProperties();
 
         pickupSound = Assets.SND_ITEM_PAPER;
 
         weight(Encumbrance.UNIT * 50);
 
+        this.readTime = readTime;
         stackable = true;
         defaultAction = Scroll.AC_READ;
 
         hasLevels(false);
 
         price = 15;
-
-        syncVisuals();
     }
 
+
     @Override
-    public void syncVisuals(){
-        image = handler.image( this );
-        rune = handler.label( this );
-    };
+    public void syncRandomizedProperties() {
+        image = handler.image(this);
+        rune = handler.label(this);
+        material = handler.material(this);
+    }
 
     @Override
     public ArrayList<String> actions( Hero hero ) {
@@ -185,26 +167,31 @@ public abstract class Book extends Item {
 
     @Override
     public boolean execute(Hero hero, String action ) {
-        if (action.equals( Scroll.AC_READ )) {
-            if (hero.buff( Blindness.class ) != null) {
-                GLog.w( "Being blind, you're unable to read the runes in the book." );
+        if (action.equals(Scroll.AC_READ)) {
+            if (hero.buff(Blindness.class) != null) {
+                GLog.w("Being blind, you're unable to read the runes in the book.");
+                return false;
             } else {
-                prepareRead(hero);
-                doRead();
+                hero.curAction = new HeroAction.UseItem.SlowAction(this, Constant.Action.SLOW_ACTION, readTime);
+                hero.motivate(true);
+                return true;
             }
-
+        } else if (action.equals(Constant.Action.SLOW_ACTION)) {
+            prepareRead(hero);
+            doRead(hero);
             return false;
         } else {
-            return super.execute( hero, action );
+            return super.execute(hero, action);
         }
     }
 
     protected void prepareRead(Hero hero) {
         curUser = hero;
-        curItem = hero.belongings.remove(this, 1);
+        curItem = this;
     }
 
-    abstract protected void doRead();
+    protected void doRead(Char user) {
+    }
 
     public boolean isKnown() {
         return handler.isKnown( this );
@@ -232,14 +219,14 @@ public abstract class Book extends Item {
 
     @Override
     public String getName() {
-        return isKnown() ? super.getName() : "scroll \"" + rune + "\"";
+        return isKnown() ? super.getName() : rune + " book";
     }
 
     @Override
     public String info() {
         return isKnown() ?
                 desc() :
-                "This book is filled with indecipherable writing. Who knows what its pages contain?";
+                "This book is filled with nearly indecipherable writing. Who knows what its pages contain?";
     }
 
     /*

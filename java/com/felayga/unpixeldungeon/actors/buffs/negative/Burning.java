@@ -50,8 +50,6 @@ public class Burning extends Buff implements Hero.Doom {
 	private static final String TXT_BURNS_UP		= "%s burns up!";
 	private static final String TXT_BURNED_TO_DEATH	= "You burned to death...";
 	
-	private static final long DURATION = 4 * GameTime.TICK;
-	
 	private long left;
 
     public Burning()
@@ -75,9 +73,8 @@ public class Burning extends Buff implements Hero.Doom {
 	public boolean act() {
         if (target.isAlive()) {
 
-            target.damage(Random.IntRange(1, 4), MagicType.Fire, null);
+            target.damage(Random.IntRange(1, 4), MagicType.Fire, Char.Registry.get(ownerRegistryIndex()), null);
             Buff.detach(target, Chill.class);
-            Buff.detach(target, AcidBurning.class);
 
             if (target instanceof Char) {
                 Item item = target.belongings.randomUnequipped();
@@ -125,7 +122,7 @@ public class Burning extends Buff implements Hero.Doom {
     }
 	
 	public void reignite( Char ch ) {
-		left = duration( ch );
+		left = 4 * GameTime.TICK;
 	}
 	
 	@Override
@@ -142,14 +139,6 @@ public class Burning extends Buff implements Hero.Doom {
 	@Override
 	public String toString() {
 		return "Burning";
-	}
-
-	public static long duration( Char ch ) {
-        if (ch.hasImmunity(MagicType.Fire)) {
-            return GameTime.TICK;
-        }
-
-        return DURATION;
 	}
 
     @Override

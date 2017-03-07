@@ -43,11 +43,14 @@ public class Constant {
         public static final String EQUIP        = "EQUIP";
         public static final String UNEQUIP      = "UNEQUIP";
         public static final String DRINK        = "DRINK";
-        public static final String DIP          = "DIP ITEM";
+        public static final String DIP          = "DIP";
         public static final String EAT          = "EAT";
         public static final String EAT_START    = "EAT_START"; // necessary for proper handling of "you started eating" messages
         public static final String OPEN         = "OPEN";
-        public static final String SLOWACTION   = "SLOWACTION"; // necessary for items that take several rounds to perform actions
+        public static final String SLOW_ACTION  = "SLOW_ACTION"; // necessary for allowing the interruption of the use of items with actions that take several rounds to perform
+        public static final String CAST         = "CAST";
+        public static final String CAST_COMPLETE= "CAST_COMPLETE";
+        public static final String FORGET       = "FORGET";
 
         public static final String YES      = "YES";
         public static final String CANCEL   = "CANCEL";
@@ -68,6 +71,8 @@ public class Constant {
 
     public static class Text {
         public static final String HERO_READIED = "You ready your %s.";
+        public static final String YES          = "YES";
+        public static final String NO           = "NO";
     }
 
     public static class Time {
@@ -77,6 +82,17 @@ public class Constant {
 
         public static final long HERO_REST		= GameTime.TICK;
         public static final long HERO_SEARCH	= GameTime.TICK * 2;
+    }
+
+    public static class Chance {
+        public static final int ITEM_DESTROYED              = 3;
+        public static final int CHAR_MISS_INVISIBLE_ENEMY   = 5;
+        public static final int CORPSE_DROP                 = 2;
+        public static final int HUNGER_STARVING_FAINT       = 8;
+        public static final int DIG_EXCAVATE_BOULDER        = 12; // min 3
+        public static final int KICK_SPACE_CRIPPLE          = 5;
+        public static final int KICK_SOLID_CRIPPLE          = 3;
+        public static final int TORCH_IGNITE_TILE           = 6;
     }
 
 }

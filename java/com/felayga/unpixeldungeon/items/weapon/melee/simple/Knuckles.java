@@ -26,6 +26,7 @@
 package com.felayga.unpixeldungeon.items.weapon.melee.simple;
 
 import com.felayga.unpixeldungeon.mechanics.GameTime;
+import com.felayga.unpixeldungeon.mechanics.Material;
 import com.felayga.unpixeldungeon.sprites.ItemSpriteSheet;
 
 public class Knuckles extends SimpleMeleeWeapon {
@@ -35,7 +36,8 @@ public class Knuckles extends SimpleMeleeWeapon {
 
 		name = "knuckleduster";
 		image = ItemSpriteSheet.MELEE_KNUCKLEDUSTER;
-	}
+        material = Material.Iron;
+    }
 	
 	@Override
 	public String desc() {

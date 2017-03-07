@@ -102,7 +102,7 @@ public class Acid extends Blob {
             damage++;
         }
 
-        ch.damage(damage, MagicType.Acid, source);
+        ch.damage(damage, MagicType.Acid, source, null);
     }
 
     private void burn(int pos) {
@@ -113,7 +113,7 @@ public class Acid extends Blob {
 
         Heap heap = Dungeon.level.heaps.get(pos);
         if (heap != null) {
-            heap.burn();
+            heap.contentsBurn(Char.Registry.get(ownerRegistryIndex()));
         }
 
         Plant plant = Dungeon.level.plants.get(pos);

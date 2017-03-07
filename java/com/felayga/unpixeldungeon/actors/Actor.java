@@ -119,7 +119,7 @@ public abstract class Actor implements Bundlable {
             a.time -= min;
             if (a instanceof Char) {
                 Char c = (Char) a;
-                c.belongings.decay(min, true, false);
+                c.belongings.decay(min, false, true);
             }
         }
         now = 0;
@@ -213,13 +213,34 @@ public abstract class Actor implements Bundlable {
             Char ch = (Char) actor;
             GLog.d("add char at pos=" + ch.pos() + " type=" + ch.getClass().toString());
             chars.put(ch.pos(), ch);
-            Char.Registry.add(ch);
+            Char.Registry.register(ch);
             for (Buff buff : ch.buffs()) {
                 all.add(buff);
                 buff.onAdd();
             }
         }
     }
+
+    /*
+    //incomplete
+    public static void polymorph(Actor oldChar, Actor newChar) {
+        all.add(newChar);
+        newChar.time = oldChar.time;
+        newChar.onAdd();
+
+        if (newChar instanceof Char) {
+            Char ch = (Char) newChar;
+            GLog.d("polymorph char at pos=" + ch.pos() + " type=" + ch.getClass().toString());
+            chars.put(ch.pos(), ch);
+            for (Buff buff : ch.buffs()) {
+                all.add(buff);
+                buff.onAdd();
+            }
+        }
+
+        remove(oldChar);
+    }
+    */
 
     public static void remove(Actor actor) {
         if (actor != null) {

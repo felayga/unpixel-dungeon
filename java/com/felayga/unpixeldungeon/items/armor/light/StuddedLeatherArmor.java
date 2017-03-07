@@ -26,14 +26,16 @@
 package com.felayga.unpixeldungeon.items.armor.light;
 
 import com.felayga.unpixeldungeon.actors.buffs.hero.Encumbrance;
+import com.felayga.unpixeldungeon.mechanics.Material;
 import com.felayga.unpixeldungeon.sprites.ItemSpriteSheet;
 
 public class StuddedLeatherArmor extends LightArmor {
-    public StuddedLeatherArmor()
-    {
+    public StuddedLeatherArmor() {
         super(3, 5, 1, 48);
+
         name = "studded armor";
         image = ItemSpriteSheet.ARMOR_STUDDEDLEATHER;
+        material = Material.Leather;
 
         price = 25;
         textureIndex = 8;

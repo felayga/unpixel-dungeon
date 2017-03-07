@@ -27,6 +27,7 @@ package com.felayga.unpixeldungeon.items.scrolls;
 
 import com.felayga.unpixeldungeon.Assets;
 import com.felayga.unpixeldungeon.Dungeon;
+import com.felayga.unpixeldungeon.actors.Char;
 import com.felayga.unpixeldungeon.actors.buffs.Buff;
 import com.felayga.unpixeldungeon.actors.buffs.negative.Drowsy;
 import com.felayga.unpixeldungeon.actors.mobs.Mob;
@@ -48,17 +49,13 @@ public class ScrollOfLullaby extends Scroll {
 	@Override
 	protected void doRead() {
 		
-		curUser.sprite.centerEmitter(-1).start( Speck.factory( Speck.NOTE ), 0.3f, 5 );
 		Sample.INSTANCE.play( Assets.SND_LULLABY );
 
 		for (Mob mob : Dungeon.level.mobs.toArray( new Mob[Dungeon.level.mobs.size()] )) {
-			if (Level.fieldOfView[mob.pos()]) {
-				Buff.affect( mob, curUser, Drowsy.class );
-				mob.sprite.centerEmitter(-1).start( Speck.factory( Speck.NOTE ), 0.3f, 5 );
-			}
+            affect(mob, curUser);
 		}
 
-		Buff.affect( curUser, curUser, Drowsy.class );
+        affect(curUser, curUser);
 
 		GLog.i( "The scroll utters a soothing melody. You feel very sleepy." );
 
@@ -66,6 +63,13 @@ public class ScrollOfLullaby extends Scroll {
 		
 		curUser.spend_new( TIME_TO_READ, true );
 	}
+
+    public static void affect(Char target, Char source) {
+        Buff.affect( target, source, Drowsy.class );
+        if (target == Dungeon.hero || Level.fieldOfView[target.pos()]) {
+            target.sprite.centerEmitter(-1).start( Speck.factory( Speck.NOTE ), 0.3f, 5 );
+        }
+    }
 	
 	@Override
 	public String desc() {

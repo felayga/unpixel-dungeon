@@ -907,8 +907,8 @@ public class Badges {
 	
 	public static List<Badge> filtered( boolean global ) {
 		
-		HashSet<Badge> filtered = new HashSet<Badge>( global ? Badges.global : Badges.local );
-		
+		HashSet<Badge> filtered = new HashSet<>( global ? Badges.global : Badges.local );
+
 		if (!global) {
 			Iterator<Badge> iterator = filtered.iterator();
 			while (iterator.hasNext()) {

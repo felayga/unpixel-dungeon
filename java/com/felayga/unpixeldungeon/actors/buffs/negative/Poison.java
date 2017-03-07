@@ -127,7 +127,7 @@ public class Poison extends Buff implements Hero.Doom {
                 curDamage = 1;
             }
 
-            target.damage(curDamage, MagicType.Poison, null);
+            target.damage(curDamage, MagicType.Poison, Char.Registry.get(ownerRegistryIndex()), null);
             spend_new(GameTime.TICK, false);
 
             damageLeft -= curDamage;

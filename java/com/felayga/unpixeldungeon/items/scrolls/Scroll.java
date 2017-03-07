@@ -27,13 +27,16 @@ package com.felayga.unpixeldungeon.items.scrolls;
 
 import com.felayga.unpixeldungeon.Assets;
 import com.felayga.unpixeldungeon.Badges;
+import com.felayga.unpixeldungeon.actors.Char;
 import com.felayga.unpixeldungeon.actors.buffs.hero.Encumbrance;
 import com.felayga.unpixeldungeon.actors.buffs.negative.Blindness;
 import com.felayga.unpixeldungeon.actors.hero.Hero;
+import com.felayga.unpixeldungeon.items.IFlammable;
 import com.felayga.unpixeldungeon.items.Item;
 import com.felayga.unpixeldungeon.items.ItemRandomizationHandler;
 import com.felayga.unpixeldungeon.items.artifacts.UnstableSpellbook;
 import com.felayga.unpixeldungeon.mechanics.GameTime;
+import com.felayga.unpixeldungeon.mechanics.Material;
 import com.felayga.unpixeldungeon.sprites.ItemSpriteSheet;
 import com.felayga.unpixeldungeon.utils.GLog;
 import com.watabou.utils.Bundle;
@@ -41,7 +44,7 @@ import com.watabou.utils.Bundle;
 import java.util.ArrayList;
 import java.util.HashSet;
 
-public abstract class Scroll extends Item {
+public abstract class Scroll extends Item implements IFlammable {
 
 	private static final String TXT_BLINDED	= "You can't read a scroll while blinded";
 
@@ -69,67 +72,42 @@ public abstract class Scroll extends Item {
 		ScrollOfMirrorImage.class,
 		BlankScroll.class
 	};
-	private static final String[] runes =
+	private static final String[] scrollRunes =
 		//{"KAUNAN", "SOWILO", "LAGUZ", "YNGVI", "GYFU", "RAIDO", "ISAZ", "MANNAZ", "NAUDIZ", "BERKANAN", "ODAL", "TIWAZ"};
 		{
-				"ZELGO MER",
-				"JUYED AWK YACC",
-				"NR 9",
-				"XIXAXA XOXAXA XUXAXA",
-				"PRATYAVAYAH",
-				"DAIYEN FOOELS",
-				"LEP GEX VEN ZEA",
-				"PRIRUTSENIE",
-				"ELBIB YLOH",
-				"VERR YED HORRE",
-				"VENZAR BORGAVVE",
-				"THARR",
-				"YUM YUM",
-				"KERNOD WEL",
-				"ELAM EBOW",
-				"DUAM XNAHT",
-				"ANDOVA BEGARIN",
-				"KIRJE",
-				"VE FORBRYDERNE",
-				"HACKEM MUCHE",
-				"VELOX NEB",
-				"FOOBIE BLETCH",
-				"TEMOV",
-				"GARVEN DEH",
-				"READ ME",
-                "BUTT HOL",
+				"ZELGO MER", "JUYED AWK YACC", "NR 9", "XIXAXA XOXAXA XUXAXA",
+				"PRATYAVAYAH", "DAIYEN FOOELS", "LEP GEX VEN ZEA", "PRIRUTSENIE",
+				"ELBIB YLOH", "VERR YED HORRE", "VENZAR BORGAVVE", "THARR",
+				"YUM YUM", "KERNOD WEL", "ELAM EBOW", "DUAM XNAHT",
+				"ANDOVA BEGARIN", "KIRJE", "VE FORBRYDERNE", "HACKEM MUCHE",
+				"VELOX NEB", "FOOBIE BLETCH", "TEMOV", "GARVEN DEH",
+				"READ ME", "BUTT HOL",
+                //non-randomized
 				"blank"
 		};
-	private static final Integer[] images = {
-			ItemSpriteSheet.SCROLL_01,
-			ItemSpriteSheet.SCROLL_02,
-			ItemSpriteSheet.SCROLL_03,
-			ItemSpriteSheet.SCROLL_04,
-			ItemSpriteSheet.SCROLL_05,
-			ItemSpriteSheet.SCROLL_06,
-			ItemSpriteSheet.SCROLL_07,
-			ItemSpriteSheet.SCROLL_08,
-			ItemSpriteSheet.SCROLL_09,
-			ItemSpriteSheet.SCROLL_10,
-			ItemSpriteSheet.SCROLL_11,
-			ItemSpriteSheet.SCROLL_12,
-			ItemSpriteSheet.SCROLL_13,
-			ItemSpriteSheet.SCROLL_14,
-			ItemSpriteSheet.SCROLL_15,
-			ItemSpriteSheet.SCROLL_16,
-			ItemSpriteSheet.SCROLL_17,
-			ItemSpriteSheet.SCROLL_18,
-			ItemSpriteSheet.SCROLL_19,
-			ItemSpriteSheet.SCROLL_20,
-			ItemSpriteSheet.SCROLL_21,
-			ItemSpriteSheet.SCROLL_22,
-			ItemSpriteSheet.SCROLL_23,
-			ItemSpriteSheet.SCROLL_24,
-			ItemSpriteSheet.SCROLL_25,
-            ItemSpriteSheet.SCROLL_26,
+	private static final Integer[] scrollImages = {
+			ItemSpriteSheet.SCROLL_01, ItemSpriteSheet.SCROLL_02, ItemSpriteSheet.SCROLL_03, ItemSpriteSheet.SCROLL_04,
+			ItemSpriteSheet.SCROLL_05, ItemSpriteSheet.SCROLL_06, ItemSpriteSheet.SCROLL_07, ItemSpriteSheet.SCROLL_08,
+			ItemSpriteSheet.SCROLL_09, ItemSpriteSheet.SCROLL_10, ItemSpriteSheet.SCROLL_11, ItemSpriteSheet.SCROLL_12,
+			ItemSpriteSheet.SCROLL_13, ItemSpriteSheet.SCROLL_14, ItemSpriteSheet.SCROLL_15, ItemSpriteSheet.SCROLL_16,
+			ItemSpriteSheet.SCROLL_17, ItemSpriteSheet.SCROLL_18, ItemSpriteSheet.SCROLL_19, ItemSpriteSheet.SCROLL_20,
+			ItemSpriteSheet.SCROLL_21, ItemSpriteSheet.SCROLL_22, ItemSpriteSheet.SCROLL_23, ItemSpriteSheet.SCROLL_24,
+			ItemSpriteSheet.SCROLL_25, ItemSpriteSheet.SCROLL_26,
+            //non-randomized
 			ItemSpriteSheet.SCROLL_BLANK
 	};
-	
+    private static final Material[] scrollMaterials = {
+            Material.Paper, Material.Paper, Material.Paper, Material.Paper,
+            Material.Paper, Material.Paper, Material.Paper, Material.Paper,
+            Material.Paper, Material.Paper, Material.Paper, Material.Paper,
+            Material.Paper, Material.Paper, Material.Paper, Material.Paper,
+            Material.Paper, Material.Paper, Material.Paper, Material.Paper,
+            Material.Paper, Material.Paper, Material.Paper, Material.Paper,
+            Material.Paper, Material.Paper,
+            //non-randomized
+            Material.Paper,
+    };
+
 	private static ItemRandomizationHandler<Scroll> handler;
 	
 	private String rune;
@@ -138,7 +116,7 @@ public abstract class Scroll extends Item {
 
 	@SuppressWarnings("unchecked")
 	public static void initLabels() {
-		handler = new ItemRandomizationHandler<Scroll>( (Class<? extends Scroll>[])scrolls, runes, images, 1 );
+		handler = new ItemRandomizationHandler<Scroll>( (Class<? extends Scroll>[])scrolls, scrollRunes, scrollImages, scrollMaterials, 1 );
 	}
 	
 	public static void save( Bundle bundle ) {
@@ -147,12 +125,12 @@ public abstract class Scroll extends Item {
 	
 	@SuppressWarnings("unchecked")
 	public static void restore( Bundle bundle ) {
-		handler = new ItemRandomizationHandler<Scroll>( (Class<? extends Scroll>[])scrolls, runes, images, bundle );
+		handler = new ItemRandomizationHandler<Scroll>( (Class<? extends Scroll>[])scrolls, scrollRunes, scrollImages, scrollMaterials, bundle );
 	}
 	
 	public Scroll() {
 		super();
-		syncVisuals();
+        syncRandomizedProperties();
 
         pickupSound = Assets.SND_ITEM_PAPER;
 
@@ -164,11 +142,18 @@ public abstract class Scroll extends Item {
         price = 15;
 	}
 
+    @Override
+    public boolean burn(Char cause) {
+        parent().remove(this, 1);
+        return false;
+    }
+
 	@Override
-	public void syncVisuals(){
-		image = handler.image( this );
-		rune = handler.label( this );
-	};
+	public void syncRandomizedProperties() {
+        image = handler.image(this);
+        rune = handler.label(this);
+        material = handler.material(this);
+    }
 	
 	@Override
 	public ArrayList<String> actions( Hero hero ) {

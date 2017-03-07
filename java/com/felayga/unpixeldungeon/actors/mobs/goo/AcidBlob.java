@@ -54,7 +54,7 @@ public class AcidBlob extends Mob {
         defenseMagical = 0;
         weight = Encumbrance.UNIT * 30;
         nutrition = 10;
-        immunityMagical = MagicType.Sleep.value | MagicType.Poison.value | MagicType.Acid.value | MagicType.Stoning.value;
+        resistanceMagical = MagicType.value(MagicType.Sleep, MagicType.Poison, MagicType.Acid, MagicType.Stoning);
         corpseEffects = CorpseEffect.value(CorpseEffect.Unstoning, CorpseEffect.Acidic, CorpseEffect.Vegetable, CorpseEffect.Unrottable);
         corpseResistances = MagicType.None.value;
         viewDistance = 0;
@@ -75,7 +75,7 @@ public class AcidBlob extends Mob {
         if (Level.canReach(pos(), enemy.pos()) && Random.Int(4) == 0) {
             int dmg = Random.IntRange(1, 8);
             //todo: erosion attacks (corrosion)
-            enemy.damage(dmg, MagicType.Acid, null);
+            enemy.damage(dmg, MagicType.Acid, this, null);
         }
 
         return retval;

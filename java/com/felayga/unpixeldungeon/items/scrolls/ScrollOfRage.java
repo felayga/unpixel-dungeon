@@ -64,7 +64,7 @@ public class ScrollOfRage extends Scroll {
 	
 	@Override
 	protected void doRead() {
-        enrage(curUser, curUser.pos(), Math.max(Dungeon.level.WIDTH, Dungeon.level.HEIGHT));
+        enrage(curUser, curUser.pos(), Level.LENGTH);
 
 		GLog.w( "The scroll emits an enraging roar that echoes throughout the dungeon!" );
 		setKnown();

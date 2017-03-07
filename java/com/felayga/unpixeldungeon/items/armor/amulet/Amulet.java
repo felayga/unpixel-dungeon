@@ -28,6 +28,7 @@ package com.felayga.unpixeldungeon.items.armor.amulet;
 
 import com.felayga.unpixeldungeon.items.armor.Armor;
 import com.felayga.unpixeldungeon.mechanics.GameTime;
+import com.felayga.unpixeldungeon.mechanics.Material;
 import com.felayga.unpixeldungeon.sprites.hero.HeroSprite;
 
 /**

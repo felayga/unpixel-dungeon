@@ -27,6 +27,7 @@ package com.felayga.unpixeldungeon.actors.mobs.npcs;
 
 import com.felayga.unpixeldungeon.Dungeon;
 import com.felayga.unpixeldungeon.actors.Actor;
+import com.felayga.unpixeldungeon.actors.Char;
 import com.felayga.unpixeldungeon.actors.buffs.Buff;
 import com.felayga.unpixeldungeon.actors.buffs.hero.Encumbrance;
 import com.felayga.unpixeldungeon.actors.mobs.Mob;
@@ -161,7 +162,7 @@ public class Shopkeeper extends NPC {
         defenseMagical = 3;
         weight = Encumbrance.UNIT * 1450;
         nutrition = 400;
-        immunityMagical = MagicType.None.value;
+        resistanceMagical = MagicType.None.value;
         corpseEffects = CorpseEffect.None.value;
         characteristics = Characteristic.value(Characteristic.Humanoid, Characteristic.Omnivore, Characteristic.WarmBlooded);
 
@@ -456,7 +457,7 @@ public class Shopkeeper extends NPC {
 
 	//todo: shopkeeper ain't no pansy
 	@Override
-	public int damage( int dmg, MagicType type, Actor source ) {
+	public int damage( int dmg, MagicType type, Char source, Item sourceItem ) {
 		flee();
         return 0;
 	}

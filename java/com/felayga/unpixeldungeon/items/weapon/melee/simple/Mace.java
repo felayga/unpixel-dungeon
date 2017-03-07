@@ -27,6 +27,7 @@ package com.felayga.unpixeldungeon.items.weapon.melee.simple;
 
 import com.felayga.unpixeldungeon.Assets;
 import com.felayga.unpixeldungeon.mechanics.GameTime;
+import com.felayga.unpixeldungeon.mechanics.Material;
 import com.felayga.unpixeldungeon.sprites.ItemSpriteSheet;
 
 public class Mace extends SimpleMeleeWeapon {
@@ -36,7 +37,8 @@ public class Mace extends SimpleMeleeWeapon {
 		name = "mace";
 		image = ItemSpriteSheet.MELEE_MACE;
         pickupSound = Assets.SND_ITEM_WOOD;
-	}
+        material = Material.Wood;
+    }
 	
 	@Override
 	public String desc() {

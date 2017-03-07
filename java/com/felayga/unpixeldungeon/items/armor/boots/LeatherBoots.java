@@ -28,6 +28,7 @@ package com.felayga.unpixeldungeon.items.armor.boots;
 
 import com.felayga.unpixeldungeon.actors.buffs.hero.Encumbrance;
 import com.felayga.unpixeldungeon.mechanics.GameTime;
+import com.felayga.unpixeldungeon.mechanics.Material;
 import com.felayga.unpixeldungeon.sprites.ItemSpriteSheet;
 
 /**
@@ -39,6 +40,8 @@ public class LeatherBoots extends Boots {
 
         name = "leather boots";
         image = ItemSpriteSheet.BOOTS_LEATHER;
+        material = Material.Leather;
+
         hasLevels(false);
         hasBuc(false);
 

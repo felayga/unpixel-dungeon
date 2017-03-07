@@ -31,6 +31,7 @@ import com.felayga.unpixeldungeon.actors.hero.Hero;
 import com.felayga.unpixeldungeon.items.weapon.missiles.MissileWeapon;
 import com.felayga.unpixeldungeon.items.weapon.ranged.AmmunitionType;
 import com.felayga.unpixeldungeon.mechanics.GameTime;
+import com.felayga.unpixeldungeon.mechanics.Material;
 import com.felayga.unpixeldungeon.mechanics.WeaponSkill;
 import com.felayga.unpixeldungeon.sprites.ItemSpriteSheet;
 import com.felayga.unpixeldungeon.sprites.MissileSprite;
@@ -39,12 +40,13 @@ public class Boomerang extends MissileWeapon {
 
 	public Boomerang()
 	{
-		super(WeaponSkill.Martial, GameTime.TICK, 1, 5, 1, true, AmmunitionType.None);
+		super(WeaponSkill.Martial, GameTime.TICK, 1, 5, true, AmmunitionType.None);
 
 		name = "boomerang";
 		image = ItemSpriteSheet.RANGED_BOOMERANG;
-		
-		//STR = 10;
+        material = Material.Wood;
+
+        //STR = 10;
 		
 		stackable = false;
 

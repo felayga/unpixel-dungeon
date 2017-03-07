@@ -34,16 +34,23 @@ import com.felayga.unpixeldungeon.items.weapon.melee.simple.MagesStaff;
 import com.felayga.unpixeldungeon.mechanics.Ballistica;
 import com.felayga.unpixeldungeon.scenes.GameScene;
 import com.watabou.utils.Callback;
+import com.watabou.utils.Random;
 
 public class WandOfVenom extends Wand {
 
     public WandOfVenom()
 	{
-        super(20);
+        super(8);
 		name = "Wand of Venom";
 
 		collisionProperties = Ballistica.Mode.SplasherBolt;
+        price = 175;
 	}
+
+    @Override
+    public int randomCharges() {
+        return Random.IntRange(4, 8);
+    }
 
 	@Override
 	protected void onZap(Ballistica bolt) {
@@ -57,9 +64,11 @@ public class WandOfVenom extends Wand {
 		}
 	}
 
+
+
 	@Override
-	protected void fxEffect(Ballistica bolt, Callback callback) {
-		MagicMissile.poison(curUser.sprite.parent, bolt.sourcePos, bolt.collisionPos, callback);
+	protected void fxEffect(int source, int destination, Callback callback) {
+		MagicMissile.poison(curUser.sprite.parent, source, destination, callback);
 	}
 
     /*

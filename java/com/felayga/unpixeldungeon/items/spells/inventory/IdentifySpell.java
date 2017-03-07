@@ -45,6 +45,7 @@ public class IdentifySpell extends InventorySpell {
         name = "Identify";
         image = ItemSpriteSheet.SPELL_IDENTIFY;
         mode = WndBackpack.Mode.UNIDENTIFED;
+
     }
 
     @Override

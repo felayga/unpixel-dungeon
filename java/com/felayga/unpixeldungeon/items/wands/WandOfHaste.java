@@ -46,6 +46,7 @@ public class WandOfHaste extends Wand {
         name = "Wand of Haste";
 
         canTargetSelf = true;
+        price = 150;
     }
 
     @Override
@@ -54,8 +55,8 @@ public class WandOfHaste extends Wand {
     }
 
     @Override
-    protected void fxEffect(Ballistica bolt, Callback callback) {
-        MagicMissile.haste(curUser.sprite.parent, bolt.sourcePos, bolt.collisionPos, callback);
+    protected void fxEffect(int source, int destination, Callback callback) {
+        MagicMissile.haste(curUser.sprite.parent, source, destination, callback);
     }
 
     @Override

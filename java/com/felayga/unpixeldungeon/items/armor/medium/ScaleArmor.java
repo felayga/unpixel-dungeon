@@ -26,14 +26,16 @@
 package com.felayga.unpixeldungeon.items.armor.medium;
 
 import com.felayga.unpixeldungeon.actors.buffs.hero.Encumbrance;
+import com.felayga.unpixeldungeon.mechanics.Material;
 import com.felayga.unpixeldungeon.sprites.ItemSpriteSheet;
 
 public class ScaleArmor extends MediumArmor {
-	public ScaleArmor()
-	{
+	public ScaleArmor() {
 		super(4, 3, 0, 80);
+
 		name = "scale armor";
 		image = ItemSpriteSheet.ARMOR_SCALE;
+        material = Material.Iron;
 
 		price = 50;
 		textureIndex = 5;

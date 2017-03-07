@@ -112,11 +112,11 @@ public class WndInitHero extends Window {
         List<String> heroes = new ArrayList<>();
 
         int index = 0;
-        HeroClass heroClass = HeroClass.toHeroClass(index);
+        HeroClass heroClass = HeroClass.fromInt(index);
         while (heroClass != HeroClass.NONE) {
             heroes.add(heroClass.toString());
             index++;
-            heroClass = HeroClass.toHeroClass(index);
+            heroClass = HeroClass.fromInt(index);
         }
 
         addLeftRightSelector("Class", heroes, heroClassSelected, new LeftRightSelector.Listener() {

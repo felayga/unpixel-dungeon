@@ -24,10 +24,27 @@
  *
  */
 
-package com.felayga.unpixeldungeon.items.bags;
+package com.felayga.unpixeldungeon.items.weapon.melee.martial.shortsword;
+
+import com.felayga.unpixeldungeon.mechanics.GameTime;
+import com.felayga.unpixeldungeon.mechanics.Material;
+import com.felayga.unpixeldungeon.sprites.ItemSpriteSheet;
 
 /**
- * Created by HELLO on 2/7/2017.
+ * Created by HELLO on 3/6/2017.
  */
-public class BurlapSack {
+
+public class ShortSwordRuned extends ShortSword {
+    public ShortSwordRuned() {
+        super( GameTime.TICK, 1, 7 );
+
+        name = "runed short sword";
+        image = ItemSpriteSheet.MELEE_SHORT_SWORD_RUNED;
+        material = Material.Wood;
+    }
+
+    @Override
+    public String desc() {
+        return "Being just a few inches longer than a dagger, the wooden blade of the sword is indeed quite short.";
+    }
 }

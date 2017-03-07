@@ -106,7 +106,7 @@ public class Chasm {
 		Camera.main.shake(4, 0.2f);
 		
 		Buff.prolong(hero, null, Cripple.class, Cripple.DURATION);
-		hero.damage( Random.IntRange( 1, 8 ), MagicType.Mundane, null);
+		hero.damage( Random.IntRange( 1, 8 ), MagicType.Mundane, null, null);
 		//todo: fix message from falling to death
 		/*
 		new Hero.Doom() {

@@ -32,6 +32,7 @@ import com.felayga.unpixeldungeon.items.Item;
 import com.felayga.unpixeldungeon.items.weapon.ammunition.AmmunitionWeapon;
 import com.felayga.unpixeldungeon.items.weapon.ranged.AmmunitionType;
 import com.felayga.unpixeldungeon.mechanics.GameTime;
+import com.felayga.unpixeldungeon.mechanics.Material;
 import com.felayga.unpixeldungeon.mechanics.WeaponSkill;
 import com.felayga.unpixeldungeon.sprites.ItemSpriteSheet;
 import com.watabou.utils.Random;
@@ -41,15 +42,16 @@ import com.watabou.utils.Random;
  */
 public class Arrow extends AmmunitionWeapon {
     public Arrow() {
-        this( 1 );
+        this(1, 6);
     }
 
-    public Arrow(int quantity) {
-        super(WeaponSkill.Martial, GameTime.TICK, 1, 6, quantity, true, AmmunitionType.Arrow);
+    public Arrow(int minDamage, int maxDamage) {
+        super(WeaponSkill.Martial, GameTime.TICK, minDamage, maxDamage, true, AmmunitionType.Arrow);
 
         name = "arrow";
         image = ItemSpriteSheet.MISSILE_ARROW;
         pickupSound = Assets.SND_ITEM_BLADE;
+        material = Material.Iron;
 
         requiresLauncher = true;
 
@@ -57,12 +59,12 @@ public class Arrow extends AmmunitionWeapon {
         hasBuc(true);
 
         weight(Encumbrance.UNIT * 1);
-        price = 0;
+        price = 2;
     }
 
     @Override
     public String desc() {
-        return "This is a simple rock.  You could throw it, I guess.";
+        return "This is a shafted iron projectile designed to be launched at a target using a bow.";
     }
 
     @Override

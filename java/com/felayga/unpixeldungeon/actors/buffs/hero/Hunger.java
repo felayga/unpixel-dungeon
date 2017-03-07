@@ -33,6 +33,7 @@ import com.felayga.unpixeldungeon.actors.buffs.Buff;
 import com.felayga.unpixeldungeon.actors.buffs.negative.Fainting;
 import com.felayga.unpixeldungeon.actors.hero.Hero;
 import com.felayga.unpixeldungeon.actors.hero.HeroClass;
+import com.felayga.unpixeldungeon.mechanics.Constant;
 import com.felayga.unpixeldungeon.mechanics.GameTime;
 import com.felayga.unpixeldungeon.mechanics.MagicType;
 import com.felayga.unpixeldungeon.ui.BuffIndicator;
@@ -190,13 +191,13 @@ public class Hunger extends Buff implements Hero.Doom {
 				hero.interrupt();
 
 				if (HungerLevel.fromInt(level) == HungerLevel.DEAD) {
-					target.damage(target.HP, MagicType.Mundane, null);
+					target.damage(target.HP, MagicType.Mundane, null, null);
 					//todo: why doesn't this happen on its own like it should?
 					target.sprite.die();
 				}
 				else {
-					if (Random.Int(8) == 0) {
-						Buff.prolong( target, null, Fainting.class, (Random.Int(4) + 1) * GameTime.TICK );
+					if (Random.Int(Constant.Chance.HUNGER_STARVING_FAINT) == 0) {
+						Buff.prolong( target, null, Fainting.class, (Random.IntRange(1, 4)) * GameTime.TICK );
 					}
 				}
 			}

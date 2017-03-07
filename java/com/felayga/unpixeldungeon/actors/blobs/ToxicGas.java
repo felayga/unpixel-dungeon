@@ -54,7 +54,7 @@ public class ToxicGas extends Blob implements Hero.Doom {
                         damage++;
                     }
 
-                    ch.damage(damage, MagicType.Poison, Char.Registry.get(ownerRegistryIndex()));
+                    ch.damage(damage, MagicType.Poison, Char.Registry.get(ownerRegistryIndex()), null);
                 }
 			}
 		}

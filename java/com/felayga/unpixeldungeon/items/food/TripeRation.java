@@ -31,6 +31,7 @@ import com.felayga.unpixeldungeon.actors.buffs.hero.Encumbrance;
 import com.felayga.unpixeldungeon.actors.buffs.hero.Sick;
 import com.felayga.unpixeldungeon.actors.hero.Hero;
 import com.felayga.unpixeldungeon.actors.mobs.Mob;
+import com.felayga.unpixeldungeon.mechanics.Material;
 import com.felayga.unpixeldungeon.sprites.CharSprite;
 import com.felayga.unpixeldungeon.sprites.ItemSpriteSheet;
 import com.watabou.utils.Random;
@@ -45,6 +46,7 @@ public class TripeRation extends Food {
         stackable = true;
         name = "tripe ration";
         image = ItemSpriteSheet.FOOD_TRIPE;
+        material = Material.Flesh;
 
         bones = true;
 
@@ -64,7 +66,7 @@ public class TripeRation extends Food {
 
     @Override
     public String info() {
-        return "Lower-quality cuts of meat usually either thrown out or fed to carnivorous pets." + super.info();
+        return "Lower-quality cuts of meat usually either thrown out or fed to carnivorous animals." + super.info();
     }
 
     public String message() {

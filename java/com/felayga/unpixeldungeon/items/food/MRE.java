@@ -27,6 +27,7 @@
 package com.felayga.unpixeldungeon.items.food;
 
 import com.felayga.unpixeldungeon.actors.buffs.hero.Encumbrance;
+import com.felayga.unpixeldungeon.mechanics.Material;
 import com.felayga.unpixeldungeon.sprites.ItemSpriteSheet;
 
 /**
@@ -40,6 +41,7 @@ public class MRE extends Food {
         stackable = true;
         name = "MRE";
         image = ItemSpriteSheet.FOOD_MRE;
+        material = Material.Vegetable;
 
         bones = true;
 
@@ -48,7 +50,7 @@ public class MRE extends Food {
 
     @Override
     public String info() {
-        return "Nothing fancy here: dried meat, some biscuits - things like that." + super.info();
+        return "Everything a soldier needs to survive: black beans, rice, bread, peanut butter, instant coffee, and seasonings." + super.info();
     }
 
     public String message()

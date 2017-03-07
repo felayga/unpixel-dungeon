@@ -56,7 +56,7 @@ public class Shrieker extends Mob {
         defenseMagical = 0;
         weight = Encumbrance.UNIT * 100;
         nutrition = 100;
-        immunityMagical = MagicType.Poison.value;
+        resistanceMagical = MagicType.Poison.value;
         corpseEffects = CorpseEffect.Vegetable.value;
         corpseResistances = MagicType.Poison.value;
         viewDistance = 0;

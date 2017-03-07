@@ -27,10 +27,15 @@
 package com.felayga.unpixeldungeon.items.spells;
 
 import com.felayga.unpixeldungeon.actors.hero.Hero;
+import com.felayga.unpixeldungeon.actors.hero.HeroAction;
 import com.felayga.unpixeldungeon.effects.Speck;
 import com.felayga.unpixeldungeon.items.Item;
+import com.felayga.unpixeldungeon.mechanics.Constant;
 import com.felayga.unpixeldungeon.mechanics.GameTime;
+import com.felayga.unpixeldungeon.scenes.GameScene;
 import com.felayga.unpixeldungeon.utils.GLog;
+import com.felayga.unpixeldungeon.windows.WndOptions;
+import com.watabou.utils.Bundle;
 
 import java.util.ArrayList;
 
@@ -38,12 +43,39 @@ import java.util.ArrayList;
  * Created by hello on 3/18/16.
  */
 public abstract class Spell extends Item {
-    protected static final String AC_CAST = "CAST";
-    protected static final String AC_FORGET = "FORGET";
-
     public long castTime;
-
     public int spellLevel;
+
+    protected long decay = -20000 * GameTime.TICK;
+    protected long decayTime;
+
+    public void resetDecay() {
+        decay = -20000 * GameTime.TICK;
+    }
+
+    public long decay() {
+        return decay;
+    }
+
+    public boolean decay(long currentTime, boolean updateTime, boolean fixTime) {
+        if (fixTime || updateTime) {
+            long newAmount = currentTime - decayTime;
+            if (fixTime) {
+                decayTime = 0;
+            } else {
+                decayTime = currentTime;
+            }
+            currentTime = newAmount;
+        } else {
+            decayTime = currentTime;
+            currentTime = 0;
+        }
+
+        decay += currentTime;
+
+        return decay >= 0;
+    }
+
 
     public Spell(int spellLevel, long castTime)
     {
@@ -55,66 +87,80 @@ public abstract class Spell extends Item {
         droppable = false;
         hasBuc(false);
         hasLevels(false);
-        defaultAction = AC_CAST;
+        defaultAction = Constant.Action.CAST;
+    }
+
+    private static final String DECAY = "decay";
+    private static final String DECAYTIME = "decayTime";
+
+    @Override
+    public void storeInBundle(Bundle bundle) {
+        super.storeInBundle(bundle);
+
+        bundle.put(DECAY, decay);
+        bundle.put(DECAYTIME, decayTime);
+    }
+
+    @Override
+    public void restoreFromBundle(Bundle bundle) {
+        super.restoreFromBundle(bundle);
+
+        decay = bundle.getLong(DECAY);
+        decayTime = bundle.getLong(DECAYTIME);
     }
 
     @Override
     public ArrayList<String> actions( Hero hero ) {
         ArrayList<String> retval = new ArrayList<>();
-        retval.add(AC_FORGET);
-        retval.add(AC_CAST);
+        retval.add(Constant.Action.FORGET);
+        retval.add(Constant.Action.CAST);
         return retval;
     }
 
     @Override
     public boolean execute( Hero hero, String action ) {
-        if (action.equals( AC_CAST )) {
+        if (action.equals( Constant.Action.CAST )) {
             if (hero.MP >= spellLevel * 5) {
                 if (hero.tryCastSpell(spellLevel)) {
                     hero.MP -= spellLevel * 5;
-                }
-                else {
+                } else {
                     hero.MP -= (spellLevel * 5) / 2;
                     GLog.n("Your spell fizzles!");
                     hero.sprite.emitter().burst(Speck.factory(Speck.FIZZLE), 2);
                     return false;
                 }
 
-                if (!startedCasting) {
-                    startedCasting = true;
-                    castTimeLeft = castTime;
-                }
-
-                if (castTimeLeft > GameTime.TICK) {
-                    hero.spend_new(GameTime.TICK, false);
-                    castTimeLeft -= GameTime.TICK;
-
-                    return true;
-                } else {
-                    hero.spend_new(castTimeLeft, false);
-                    castTimeLeft = 0;
-
-                    prepareCast(hero);
-                    doCast();
-
-                    return false;
-                }
+                hero.curAction = new HeroAction.UseItem.SlowAction(this, Constant.Action.SLOW_ACTION, castTime);
+                hero.motivate(true);
+                return true;
             } else {
                 GLog.n("Not enough mana.");
                 return false;
             }
+        } else if (action.equals(Constant.Action.SLOW_ACTION)) {
+            prepareCast(hero);
+            doCast();
+            return false;
+        } else if (action.equals(Constant.Action.FORGET)) {
+            GameScene.show(
+                    new WndOptions("Forget " + getName(), "Are you sure you want to forget this spell?", Constant.Text.YES, Constant.Text.NO) {
+                        @Override
+                        protected void onSelect(int index) {
+                            if (index == 0) {
+                                Spell.this.forget();
+                            }
+                        }
+                    }
+            );
+            return false;
         } else {
             return super.execute( hero, action );
         }
     }
 
-    private boolean startedCasting;
-    private long castTimeLeft;
-
-    public void interrupt()
-    {
-        startedCasting = false;
-        GLog.w("Your spellcasting was interrupted!");
+    private void forget() {
+        GLog.w("You forgot how to cast " + getName()+".");
+        parent().remove(this);
     }
 
     protected void prepareCast(Hero hero) {

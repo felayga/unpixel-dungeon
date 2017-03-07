@@ -26,6 +26,7 @@
 package com.felayga.unpixeldungeon.items.weapon.melee.martial;
 
 import com.felayga.unpixeldungeon.mechanics.GameTime;
+import com.felayga.unpixeldungeon.mechanics.Material;
 import com.felayga.unpixeldungeon.sprites.ItemSpriteSheet;
 
 public class Sword extends MartialMeleeWeapon {
@@ -34,7 +35,8 @@ public class Sword extends MartialMeleeWeapon {
 
 		name = "sword";
 		image = ItemSpriteSheet.MELEE_SWORD;
-	}
+        material = Material.Iron;
+    }
 	
 	@Override
 	public String desc() {

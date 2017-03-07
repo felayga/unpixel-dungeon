@@ -48,6 +48,7 @@ import com.felayga.unpixeldungeon.actors.hero.Hero;
 import com.felayga.unpixeldungeon.actors.mobs.Bestiary;
 import com.felayga.unpixeldungeon.actors.mobs.Mob;
 import com.felayga.unpixeldungeon.items.EquippableItem;
+import com.felayga.unpixeldungeon.items.Item;
 import com.felayga.unpixeldungeon.items.armor.Armor;
 import com.felayga.unpixeldungeon.items.armor.glyphs.Bounce;
 import com.felayga.unpixeldungeon.items.bags.backpack.Belongings;
@@ -63,6 +64,7 @@ import com.felayga.unpixeldungeon.mechanics.Constant;
 import com.felayga.unpixeldungeon.mechanics.CorpseEffect;
 import com.felayga.unpixeldungeon.mechanics.GameTime;
 import com.felayga.unpixeldungeon.mechanics.MagicType;
+import com.felayga.unpixeldungeon.mechanics.Material;
 import com.felayga.unpixeldungeon.sprites.CharSprite;
 import com.felayga.unpixeldungeon.utils.GLog;
 import com.felayga.unpixeldungeon.utils.Utils;
@@ -74,6 +76,7 @@ import com.watabou.utils.GameMath;
 import com.watabou.utils.Random;
 import com.watabou.utils.SparseArray;
 
+import java.util.Arrays;
 import java.util.HashSet;
 
 public abstract class Char extends Actor {
@@ -92,15 +95,15 @@ public abstract class Char extends Actor {
             index = bundle.getInt(CHARREGISTRYINDEX);
         }
 
-        public static void add(Char c) {
+        public static int register(Char c) {
             if (c.charRegistryIndex >= 0) {
                 GLog.d("tried to register char, already has index=" + c.charRegistryIndex);
 
                 if (c == Dungeon.hero) {
                     GLog.d("it's fine, I guess");
-                    return;
+                    return c.charRegistryIndex;
                 } else {
-                    GLog.d("" + 1 / 0);
+                    return -1;
                 }
             }
 
@@ -108,7 +111,37 @@ public abstract class Char extends Actor {
             index++;
 
             fromIndex.put(c.charRegistryIndex, c);
+            return c.charRegistryIndex;
         }
+
+        public static int unregister(Char c) {
+            if (c.charRegistryIndex < 0) {
+                GLog.d("tried to unregister char, no index");
+
+                return -1;
+            }
+
+            int oldIndex = c.charRegistryIndex;
+
+            fromIndex.remove(c.charRegistryIndex);
+            c.charRegistryIndex = -1;
+
+            return oldIndex;
+        }
+
+        /*
+        public static void polymorph(Char oldChar, Char newChar) {
+            int index = unregister(oldChar);
+
+            if (index < 0) {
+                GLog.d("tried to polymorph oldChar, no index");
+                return;
+            }
+
+            newChar.charRegistryIndex = index;
+            fromIndex.put(index, newChar);
+        }
+        */
 
         public static Char get(int registryIndex) {
             return fromIndex.get(registryIndex);
@@ -148,9 +181,11 @@ public abstract class Char extends Actor {
     private static final String TXT_OUT_OF_PARALYSIS = "The pain snapped %s out of paralysis";
 
     private int _pos = Constant.Position.NONE;
+
     public int pos() {
         return _pos;
     }
+
     public void pos(int newPos) {
         if (_pos != newPos) {
             int lastPos = _pos;
@@ -162,7 +197,7 @@ public abstract class Char extends Actor {
 
     public int defenseMundane = 10;
     public int defenseMagical = 0;
-    public int immunityMagical = 0;
+    public int resistanceMagical = 0;
 
     public CharSprite sprite;
 
@@ -170,8 +205,34 @@ public abstract class Char extends Actor {
 
     public int HT;
     public int HP;
+    public int hpPerLevel;
+
     public int MT;
     public int MP;
+    public int mpPerLevel;
+
+    public int viewDistance = 8;
+    public int hearDistance = 8;
+    public int touchDistance = 1;
+
+    public int weight;
+    public int nutrition;
+    public long characteristics;
+    public long corpseEffects;
+    public long corpseResistances;
+
+    public Belongings belongings;
+
+    private long _movementSpeed = GameTime.TICK;
+    private long _attackSpeed = GameTime.TICK;
+
+    public int flying = 0;
+    public int paralysed = 0;
+    public int invisible = 0;
+    public int stealthy = 0;
+
+    public int level;
+
 
     private int charRegistryIndex = -1;
 
@@ -179,12 +240,52 @@ public abstract class Char extends Actor {
         return charRegistryIndex;
     }
 
-    private int attribute[];
+    private int attribute[] = new int[]{10, 10, 10};
+    private int attributeDamage[] = new int[]{0, 0, 0};
 
     public void initAttributes(int[] attributes) {
-        attribute[AttributeType.STRCON.value] = attributes[AttributeType.STRCON.value];
-        attribute[AttributeType.DEXCHA.value] = attributes[AttributeType.DEXCHA.value];
-        attribute[AttributeType.INTWIS.value] = attributes[AttributeType.INTWIS.value];
+        initAttributes(attributes, new int[]{0, 0, 0});
+    }
+
+    public void initAttributes(int[] attributes, int[] attributeDamage) {
+        int oldstrcon = this.attribute[AttributeType.STRCON.value];
+        int oldintwis = this.attribute[AttributeType.INTWIS.value];
+
+        this.attribute[AttributeType.STRCON.value] = attributes[AttributeType.STRCON.value];
+        this.attribute[AttributeType.DEXCHA.value] = attributes[AttributeType.DEXCHA.value];
+        this.attribute[AttributeType.INTWIS.value] = attributes[AttributeType.INTWIS.value];
+
+        this.attributeDamage[AttributeType.STRCON.value] = attributeDamage[AttributeType.STRCON.value];
+        this.attributeDamage[AttributeType.DEXCHA.value] = attributeDamage[AttributeType.DEXCHA.value];
+        this.attributeDamage[AttributeType.INTWIS.value] = attributeDamage[AttributeType.INTWIS.value];
+
+        int strcon = this.attribute[AttributeType.STRCON.value];
+        int intwis = this.attribute[AttributeType.INTWIS.value];
+
+        adjustHP(oldstrcon, strcon);
+        adjustMP(oldintwis, intwis);
+    }
+
+    private void adjustHP(int oldstrcon, int strcon) {
+        oldstrcon = getAttributeModifier(oldstrcon);
+        strcon = getAttributeModifier(strcon);
+
+        if (oldstrcon != strcon) {
+            int value = (strcon - oldstrcon) * (level - 1);
+            HP += value;
+            HT += value;
+        }
+    }
+
+    private void adjustMP(int oldintwis, int intwis) {
+        oldintwis = getAttributeModifier(oldintwis);
+        intwis = getAttributeModifier(intwis);
+
+        if (oldintwis != intwis) {
+            int value = (intwis - oldintwis) * (level - 1);
+            MP += value;
+            MT += value;
+        }
     }
 
     public int STRCON() {
@@ -198,8 +299,6 @@ public abstract class Char extends Actor {
     public int INTWIS() {
         return attribute[AttributeType.INTWIS.value];
     }
-
-    private int attributeDamage[];
 
     public int STRCON_damage() {
         return attributeDamage[AttributeType.STRCON.value];
@@ -238,6 +337,15 @@ public abstract class Char extends Actor {
             attribute = 1;
         }
 
+        switch(type) {
+            case STRCON:
+                adjustHP(this.attribute[type.value], attribute);
+                break;
+            case INTWIS:
+                adjustMP(this.attribute[type.value], attribute);
+                break;
+        }
+
         this.attribute[type.value] = attribute;
         this.attributeDamage[type.value] = damage;
     }
@@ -253,6 +361,15 @@ public abstract class Char extends Actor {
         attribute -= amount;
         damage += amount;
 
+        switch(type) {
+            case STRCON:
+                adjustHP(this.attribute[type.value], attribute);
+                break;
+            case INTWIS:
+                adjustMP(this.attribute[type.value], attribute);
+                break;
+        }
+
         this.attribute[type.value] = attribute;
         this.attributeDamage[type.value] = damage;
     }
@@ -264,35 +381,50 @@ public abstract class Char extends Actor {
     }
 
     public void undamageAttribute(AttributeType type) {
+        int oldattribute = attribute[type.value];
+
         attribute[type.value] += attributeDamage[type.value];
         attributeDamage[type.value] = 0;
+
+        switch(type) {
+            case STRCON:
+                adjustHP(oldattribute, this.attribute[type.value]);
+                break;
+            case INTWIS:
+                adjustMP(oldattribute, this.attribute[type.value]);
+                break;
+        }
     }
 
 
-    public int weight;
-    public int nutrition;
-    public long characteristics;
-    public long corpseEffects;
-    public long corpseResistances;
-
     public boolean tryIncreaseAttribute(AttributeType type, int value) {
-        if (attribute[type.value] + value > Constant.Attribute.MAXIMUM) {
+        int oldattribute = attribute[type.value];
+        if (attribute[type.value] >= Constant.Attribute.MAXIMUM) {
             attribute[type.value] = Constant.Attribute.MAXIMUM;
             return false;
+        } else if (attribute[type.value] + value >= Constant.Attribute.MAXIMUM) {
+            attribute[type.value] = Constant.Attribute.MAXIMUM;
+        } else {
+            attribute[type.value] += value;
         }
-
-        attribute[type.value] += value;
-
+        switch(type) {
+            case STRCON:
+                adjustHP(oldattribute, this.attribute[type.value]);
+                break;
+            case INTWIS:
+                adjustMP(oldattribute, this.attribute[type.value]);
+                break;
+        }
         return true;
     }
 
     public int getAttributeModifier(AttributeType type) {
-        return (attribute[type.value] - 8) / 2;
+        return getAttributeModifier(attribute[type.value]);
     }
 
-    public Belongings belongings;
-
-    private long _movementSpeed = GameTime.TICK;
+    public int getAttributeModifier(int attribute) {
+        return (attribute - 8) / 2;
+    }
 
     public long movementSpeed() {
         long bestSlow = GameTime.TICK;
@@ -329,8 +461,6 @@ public abstract class Char extends Actor {
         _movementSpeed = newMovementSpeed;
     }
 
-    private long _attackSpeed = GameTime.TICK;
-
     public long attackSpeed() {
         long bestSlow = GameTime.TICK;
         long bestFast = GameTime.TICK;
@@ -365,18 +495,8 @@ public abstract class Char extends Actor {
         this._attackSpeed = newAttackSpeed;
     }
 
-    public int paralysed = 0;
-    public int invisible = 0;
-    public int stealthy = 0;
-
-    public int viewDistance = 8;
-    public int hearDistance = 8;
-    public int touchDistance = 1;
-
-    private boolean canBreathe = true;
-
     public boolean canBreathe() {
-        if (!canBreathe) {
+        if ((characteristics & Characteristic.NonBreather.value) != 0) {
             return false;
         }
 
@@ -386,8 +506,6 @@ public abstract class Char extends Actor {
 
         return true;
     }
-
-    public int flying = 0;
 
     public boolean flying() {
         return flying > 0;
@@ -422,8 +540,6 @@ public abstract class Char extends Actor {
 
     private HashSet<Buff> buffs = new HashSet<Buff>();
 
-    public int level;
-
     public Char(int level) {
         this.level = level;
 
@@ -431,8 +547,7 @@ public abstract class Char extends Actor {
         nutrition = 0;
         corpseEffects = CorpseEffect.None.value;
 
-        attribute = new int[]{10, 10, 10};
-        attributeDamage = new int[]{0, 0, 0};
+        initAttributes(new int[]{10, 10, 10});
     }
 
     public boolean visibilityOverride(boolean state) {
@@ -484,17 +599,15 @@ public abstract class Char extends Actor {
     public void restoreFromBundle(Bundle bundle) {
         super.restoreFromBundle(bundle);
 
-        attribute = new int[]{
+        initAttributes(new int[]{
                 bundle.getInt(ATTRIBUTE0),
                 bundle.getInt(ATTRIBUTE1),
                 bundle.getInt(ATTRIBUTE2)
-        };
-
-        attributeDamage = new int[]{
+        }, new int[]{
                 bundle.getInt(ATTRIBUTE0DAMAGE),
                 bundle.getInt(ATTRIBUTE1DAMAGE),
                 bundle.getInt(ATTRIBUTE2DAMAGE)
-        };
+        });
 
         _pos = bundle.getInt(POS);
         HP = bundle.getInt(TAG_HP);
@@ -569,7 +682,7 @@ public abstract class Char extends Actor {
             if (!touch) {
                 retval = false;
                 if (!canSee(enemy)) {
-                    if (Random.Int(5) == 0) {
+                    if (Random.Int(Constant.Chance.CHAR_MISS_INVISIBLE_ENEMY) == 0) {
                         if (this == Dungeon.hero) {
                             GLog.n("You swing wildly and miss!");
                         } else {
@@ -682,12 +795,47 @@ public abstract class Char extends Actor {
                 Camera.main.shake(GameMath.gate(1, shake, 5), 0.3f);
             }
 
-            enemy.damage(effectiveDamage, weapon != null ? weapon.damageType() : MagicType.Mundane, this);
+            if (weapon != null) {
+                enemy.damage(effectiveDamage, weapon.damageType(), this, weapon.self());
+            } else {
+                Item gloves = belongings.gloves();
+                if (gloves != null) {
+                    enemy.damage(effectiveDamage, MagicType.Mundane, this, gloves);
+                } else {
+                    Item ring = null;
 
-            if (buff(FireImbue.class) != null)
+                    Item ring1 = belongings.ring1();
+                    Item ring2 = belongings.ring2();
+                    if (ring1 != null && ring2 != null) {
+                        ring = ring1.material().value > ring2.material().value ? ring1 : ring2;
+                    } else if (ring1 != null) {
+                        ring = ring1;
+                    } else if (ring2 != null) {
+                        ring = ring2;
+                    }
+
+                    enemy.damage(effectiveDamage, MagicType.Mundane, this, ring);
+                }
+            }
+
+            if ((enemy.characteristics & Characteristic.SilverVulnerable.value) != 0) {
+                Material material = Material.Flesh;
+
+                EquippableItem item;
+
+                if (weapon != null) {
+                    material = weapon.material();
+                } else if ((item = belongings.gloves()) != null) {
+                    material = item.material();
+                }
+            }
+
+            if (buff(FireImbue.class) != null) {
                 buff(FireImbue.class).proc(enemy);
-            if (buff(EarthImbue.class) != null)
+            }
+            if (buff(EarthImbue.class) != null) {
                 buff(EarthImbue.class).proc(enemy);
+            }
 
             enemy.sprite.bloodBurstA(sprite.center(), effectiveDamage);
             enemy.sprite.flash();
@@ -797,12 +945,22 @@ public abstract class Char extends Actor {
         return defenseMundane + armor;
     }
 
-    public int defenseMagical(Char enemy, MagicType type) {
-        if ((immunityMagical & type.value) != 0) {
-            return 7;
-        }
 
-        return defenseMagical + belongings.getResistance();
+
+    public final int defenseMagical(Char enemy, MagicType type) {
+        int retval = getResistance(type);
+
+        retval += belongings.getResistance();
+
+        return Math.max(Math.min(retval, 9), -9);
+    }
+
+    protected int getResistance(MagicType type) {
+        if ((resistanceMagical & type.value) != 0) {
+            return 6;
+        } else {
+            return defenseMagical;
+        }
     }
 
     public String defenseVerb() {
@@ -813,11 +971,7 @@ public abstract class Char extends Actor {
         return damage;
     }
 
-    public boolean hasImmunity(MagicType type) {
-        return (immunityMagical & type.value) != 0;
-    }
-
-    public int damage(int dmg, MagicType type, Actor source) {
+    public int damage(int dmg, MagicType type, Char source, Item weapon) {
         if (HP <= 0 || dmg < 0) {
             return 0;
         }
@@ -828,9 +982,9 @@ public abstract class Char extends Actor {
             Buff.detach(this, MagicalSleep.class);
         }
 
-        if (hasImmunity(type)) {
-            dmg /= 2;
-        }
+        int modifier = defenseMagical(source, type);
+        dmg = (int)Math.round(Math.sqrt((9.0 - (double)modifier) / 9.0) * (double)dmg);
+
         //else if (resistances().contains( srcClass )) {
         //	dmg = Random.IntRange( 0, dmg );
         //}
@@ -838,9 +992,7 @@ public abstract class Char extends Actor {
         if (buff(Paralysis.class) != null) {
             if (Random.Int(dmg) >= Random.Int(HP)) {
                 Buff.detach(this, Paralysis.class);
-                if (Dungeon.visible[pos()]) {
-                    GLog.i(TXT_OUT_OF_PARALYSIS, name);
-                }
+                GLog.i(TXT_OUT_OF_PARALYSIS, name);
             }
         }
 
@@ -856,6 +1008,51 @@ public abstract class Char extends Actor {
         }
 
         return dmg;
+    }
+
+
+
+    public void polymorph(Class<? extends Char> targetClass) {
+        Char replacement = null;
+        try {
+            replacement = targetClass.newInstance();
+        } catch (InstantiationException e) {
+
+        } catch (IllegalAccessException e) {
+
+        }
+
+        if (replacement != null) {
+            //Registry.polymorph(this, replacement);
+
+            int[] swap = Arrays.copyOf(this.attribute, this.attribute.length);
+            int[] swap2 = Arrays.copyOf(this.attributeDamage, this.attributeDamage.length);
+
+            initAttributes(replacement.attribute);
+            replacement.attribute = swap;
+
+
+            int flying = replacement.flying;
+            replacement.flying = -flying;
+
+            this.flying += flying;
+
+
+            int swapViewDistance = this.viewDistance;
+            this.viewDistance = replacement.viewDistance;
+            replacement.viewDistance = swapViewDistance;
+
+            int swapHearDistance = this.hearDistance;
+            this.hearDistance = replacement.hearDistance;
+            replacement.hearDistance = swapHearDistance;
+
+            int swapTouchDistance = this.touchDistance;
+            this.touchDistance = replacement.touchDistance;
+            replacement.touchDistance = swapTouchDistance;
+
+
+
+        }
     }
 
     public boolean shoot(Char enemy, MissileWeapon wep) {
@@ -874,7 +1071,7 @@ public abstract class Char extends Actor {
     }
 
     protected boolean shouldDropCorpse() {
-        return ((Characteristic.Corpseless.value & characteristics) == 0) && Random.Int(2) == 0;
+        return ((Characteristic.Corpseless.value & characteristics) == 0) && Random.Int(Constant.Chance.CORPSE_DROP) == 0;
     }
 
     public void die(Actor src) {

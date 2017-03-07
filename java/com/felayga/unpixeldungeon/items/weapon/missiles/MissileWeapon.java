@@ -43,22 +43,14 @@ import com.watabou.utils.Random;
 import java.util.ArrayList;
 
 public class MissileWeapon extends Weapon {
-
-	private static final String TXT_MISSILES	= "Missile weapon";
-	private static final String TXT_YES			= "Yes, I know what I'm doing";
-	private static final String TXT_NO			= "No, I changed my mind";
-	private static final String TXT_R_U_SURE	=
-		"Do you really want to equip it as a melee weapon?";
-
     public boolean throwable;
     public AmmunitionType ammunitionType;
     public boolean requiresLauncher;
 
-	public MissileWeapon(WeaponSkill weaponSkill, long delay, int damageMin, int damageMax, int quantity, boolean throwable, AmmunitionType ammunitionType) {
+	public MissileWeapon(WeaponSkill weaponSkill, long delay, int damageMin, int damageMax, boolean throwable, AmmunitionType ammunitionType) {
         super(weaponSkill, delay, damageMin, damageMax);
 
         stackable = true;
-        quantity(quantity);
 
         this.throwable = throwable;
         this.ammunitionType = ammunitionType;

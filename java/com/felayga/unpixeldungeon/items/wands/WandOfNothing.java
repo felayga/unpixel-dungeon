@@ -217,13 +217,11 @@ public class WandOfNothing extends Wand {
     */
 
     @Override
-    protected void fxEffect(Ballistica beam, Callback callback) {
-        int cell = beam.path.get(Math.min(beam.dist, 9));
-
+    protected void fxEffect(int source, int destination, Callback callback) {
         Beam beamRay = null;
         if (randomBeamClass != null) {
             try {
-                beamRay = randomBeamClass.getConstructor(PointF.class, PointF.class).newInstance(curUser.sprite.center(), DungeonTilemap.tileCenterToWorld(cell));
+                beamRay = randomBeamClass.getConstructor(PointF.class, PointF.class).newInstance(curUser.sprite.center(), DungeonTilemap.tileCenterToWorld(destination));
             } catch (Exception e) {
             }
         }

@@ -29,6 +29,7 @@ import com.felayga.unpixeldungeon.Dungeon;
 import com.felayga.unpixeldungeon.actors.Char;
 import com.felayga.unpixeldungeon.actors.buffs.Buff;
 import com.felayga.unpixeldungeon.actors.buffs.FlavourBuff;
+import com.felayga.unpixeldungeon.actors.buffs.IIntrinsicBuff;
 import com.felayga.unpixeldungeon.mechanics.GameTime;
 import com.felayga.unpixeldungeon.sprites.CharSprite;
 import com.felayga.unpixeldungeon.ui.BuffIndicator;
@@ -42,7 +43,6 @@ import java.util.List;
 public class Invisibility extends FlavourBuff {
     public static final float ALPHA_INVISIBLE = 0.4f;
     public static final float ALPHA_VISIBLE = 1.0f;
-    public static final long DURATION = GameTime.TICK * 20;
 
     public Invisibility()
     {
@@ -203,7 +203,23 @@ public class Invisibility extends FlavourBuff {
         protected String descDuration() {
             return "The invisibility will last indefinitely.";
         }
+    }
 
+    public static class Improved extends Invisibility {
+        public Improved() {
+            improved(true);
+        }
+    }
+
+    public static class Intrinsic extends Indefinite implements IIntrinsicBuff {
+        public Intrinsic() {
+            improved(true);
+        }
+
+        @Override
+        public int icon() {
+            return BuffIndicator.NONE;
+        }
     }
 
     public static void meltFx(Char ch) {

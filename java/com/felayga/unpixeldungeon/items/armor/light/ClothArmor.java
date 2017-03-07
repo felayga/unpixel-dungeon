@@ -26,14 +26,16 @@
 package com.felayga.unpixeldungeon.items.armor.light;
 
 import com.felayga.unpixeldungeon.actors.buffs.hero.Encumbrance;
+import com.felayga.unpixeldungeon.mechanics.Material;
 import com.felayga.unpixeldungeon.sprites.ItemSpriteSheet;
 
 public class ClothArmor extends LightArmor {
-	public ClothArmor()
-	{
+	public ClothArmor() {
 		super(1, 8, 0, 16);
+
 		name = "cloth armor";
 		image = ItemSpriteSheet.ARMOR_CLOTH;
+        material = Material.Cloth;
 
 		price = 5;
 		textureIndex = 2;

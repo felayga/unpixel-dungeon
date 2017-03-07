@@ -94,7 +94,11 @@ public abstract class Tool extends Item implements ITool {
         @Override
         public boolean onSelect(Integer target) {
             if (target != null && target != Constant.Position.NONE) {
-                curTool.apply(curUser, target);
+                if (target == curUser.pos()) {
+                    curTool.apply(curUser);
+                } else {
+                    curTool.apply(curUser, target);
+                }
             }
             return true;
         }

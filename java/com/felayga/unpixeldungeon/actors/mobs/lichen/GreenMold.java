@@ -53,7 +53,7 @@ public class GreenMold extends Mob {
         defenseMagical = 0;
         weight = Encumbrance.UNIT * 50;
         nutrition = 30;
-        immunityMagical = MagicType.Acid.value | MagicType.Stoning.value;
+        resistanceMagical = MagicType.value(MagicType.Acid, MagicType.Stoning);
         corpseEffects = CorpseEffect.value(CorpseEffect.Vegetable, CorpseEffect.Unstoning, CorpseEffect.Acidic);
         corpseResistances = MagicType.None.value;
         viewDistance = 0;
@@ -74,7 +74,7 @@ public class GreenMold extends Mob {
             for (int n=0;n<=level;n++) {
                 dmg += Random.IntRange(1, 4);
             }
-            dmg = enemy.damage(dmg, MagicType.Acid, null);
+            dmg = enemy.damage(dmg, MagicType.Acid, this, null);
         }
 
         return retval;

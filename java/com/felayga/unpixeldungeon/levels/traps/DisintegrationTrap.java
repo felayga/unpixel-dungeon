@@ -66,11 +66,11 @@ public class DisintegrationTrap extends Trap {
 
 
 		Heap heap = Dungeon.level.heaps.get(pos);
-		if (heap != null) heap.explode();
+		if (heap != null) heap.explode(Char.Registry.get(ownerRegistryIndex()));
 
 		Char ch = Actor.findChar(pos);
 		if (ch != null){
-			ch.damage( Math.max( ch.HT/5, Random.Int(ch.HP / 2, 2 * ch.HP / 3) ), MagicType.Disintegration, null );
+			ch.damage( Math.max( ch.HT/5, Random.Int(ch.HP / 2, 2 * ch.HP / 3) ), MagicType.Magic, null, null );
 			if (ch == Dungeon.hero){
 				Hero hero = (Hero)ch;
 				if (!hero.isAlive()){

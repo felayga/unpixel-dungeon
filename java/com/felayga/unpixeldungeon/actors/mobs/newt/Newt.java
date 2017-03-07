@@ -52,7 +52,7 @@ public class Newt extends Mob {
         defenseMagical = 0;
         weight = Encumbrance.UNIT * 10;
         nutrition = 20;
-        immunityMagical = MagicType.None.value;
+        resistanceMagical = MagicType.None.value;
         corpseEffects = CorpseEffect.ManaBoost.value;
         characteristics = Characteristic.value(Characteristic.Animal, Characteristic.Carnivore, Characteristic.CannotUseItems, Characteristic.Swimmer, Characteristic.WaterBreather);
 

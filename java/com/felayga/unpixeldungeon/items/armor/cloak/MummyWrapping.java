@@ -28,6 +28,7 @@ package com.felayga.unpixeldungeon.items.armor.cloak;
 
 import com.felayga.unpixeldungeon.actors.buffs.hero.Encumbrance;
 import com.felayga.unpixeldungeon.mechanics.GameTime;
+import com.felayga.unpixeldungeon.mechanics.Material;
 import com.felayga.unpixeldungeon.sprites.ItemSpriteSheet;
 
 /**
@@ -39,8 +40,9 @@ public class MummyWrapping extends Cloak {
 
         name = "mummy wrapping";
         image = ItemSpriteSheet.CLOAK_MUMMY;
-        price = 2;
+        material = Material.Cloth;
 
+        price = 2;
         weight(Encumbrance.UNIT * 3);
     }
 

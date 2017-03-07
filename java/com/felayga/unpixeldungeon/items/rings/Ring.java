@@ -38,6 +38,7 @@ import com.felayga.unpixeldungeon.items.ItemRandomizationHandler;
 import com.felayga.unpixeldungeon.mechanics.BUCStatus;
 import com.felayga.unpixeldungeon.mechanics.Constant;
 import com.felayga.unpixeldungeon.mechanics.GameTime;
+import com.felayga.unpixeldungeon.mechanics.Material;
 import com.felayga.unpixeldungeon.sprites.ItemSpriteSheet;
 import com.felayga.unpixeldungeon.utils.GLog;
 import com.watabou.utils.Bundle;
@@ -68,49 +69,35 @@ public class Ring extends EquippableItem {
             RingOfTenacity.class,
             RingOfWealth.class
     };
-    private static final String[] gems =
-            {
-                    "diamond", "opal", "garnet", "ruby",
-                    "amethyst", "topaz", "onyx", "tourmaline",
-                    "emerald", "sapphire", "quartz", "agate",
-                    "copper", "brass", "bronze", "iron",
-                    "steel", "silver", "gold", "coral",
-                    "tigereye", "wooden", "ivory", "twisted",
-                    "moonstone", "jade", "pearl", "granite",
-                    "vine", "ammolite", "spinel"
-            };
-    private static final Integer[] images = {
-            ItemSpriteSheet.RING_DIAMOND,
-            ItemSpriteSheet.RING_OPAL,
-            ItemSpriteSheet.RING_GARNET,
-            ItemSpriteSheet.RING_RUBY,
-            ItemSpriteSheet.RING_AMETHYST,
-            ItemSpriteSheet.RING_TOPAZ,
-            ItemSpriteSheet.RING_ONYX,
-            ItemSpriteSheet.RING_TOURMALINE,
-            ItemSpriteSheet.RING_EMERALD,
-            ItemSpriteSheet.RING_SAPPHIRE,
-            ItemSpriteSheet.RING_QUARTZ,
-            ItemSpriteSheet.RING_AGATE,
-            ItemSpriteSheet.RING_COPPER,
-            ItemSpriteSheet.RING_BRASS,
-            ItemSpriteSheet.RING_BRONZE,
-            ItemSpriteSheet.RING_IRON,
-            ItemSpriteSheet.RING_STEEL,
-            ItemSpriteSheet.RING_SILVER,
-            ItemSpriteSheet.RING_GOLD,
-            ItemSpriteSheet.RING_CORAL,
-            ItemSpriteSheet.RING_TIGEREYE,
-            ItemSpriteSheet.RING_WOODEN,
-            ItemSpriteSheet.RING_IVORY,
-            ItemSpriteSheet.RING_TWISTED,
-            ItemSpriteSheet.RING_MOONSTONE,
-            ItemSpriteSheet.RING_JADE,
-            ItemSpriteSheet.RING_PEARL,
-            ItemSpriteSheet.RING_GRANITE,
-            ItemSpriteSheet.RING_VINE,
-            ItemSpriteSheet.RING_AMMOLITE,
-            ItemSpriteSheet.RING_SPINEL
+    private static final String[] ringGems = {
+            "diamond", "opal", "garnet", "ruby",
+            "amethyst", "topaz", "onyx", "tourmaline",
+            "emerald", "sapphire", "quartz", "agate",
+            "copper", "brass", "bronze", "iron",
+            "steel", "silver", "gold", "coral",
+            "tigereye", "wooden", "ivory", "twisted",
+            "moonstone", "jade", "pearl", "granite",
+            "vine", "ammolite", "spinel"
+    };
+    private static final Integer[] ringImages = {
+            ItemSpriteSheet.RING_DIAMOND, ItemSpriteSheet.RING_OPAL, ItemSpriteSheet.RING_GARNET, ItemSpriteSheet.RING_RUBY,
+            ItemSpriteSheet.RING_AMETHYST, ItemSpriteSheet.RING_TOPAZ, ItemSpriteSheet.RING_ONYX, ItemSpriteSheet.RING_TOURMALINE,
+            ItemSpriteSheet.RING_EMERALD, ItemSpriteSheet.RING_SAPPHIRE, ItemSpriteSheet.RING_QUARTZ, ItemSpriteSheet.RING_AGATE,
+            ItemSpriteSheet.RING_COPPER, ItemSpriteSheet.RING_BRASS, ItemSpriteSheet.RING_BRONZE, ItemSpriteSheet.RING_IRON,
+            ItemSpriteSheet.RING_STEEL, ItemSpriteSheet.RING_SILVER, ItemSpriteSheet.RING_GOLD, ItemSpriteSheet.RING_CORAL,
+            ItemSpriteSheet.RING_TIGEREYE, ItemSpriteSheet.RING_WOODEN, ItemSpriteSheet.RING_IVORY, ItemSpriteSheet.RING_TWISTED,
+            ItemSpriteSheet.RING_MOONSTONE, ItemSpriteSheet.RING_JADE, ItemSpriteSheet.RING_PEARL, ItemSpriteSheet.RING_GRANITE,
+            ItemSpriteSheet.RING_VINE, ItemSpriteSheet.RING_AMMOLITE, ItemSpriteSheet.RING_SPINEL
+    };
+    private static final Material[] ringMaterials = {
+            Material.Gemstone, Material.Gemstone, Material.Gemstone, Material.Gemstone,
+            Material.Gemstone, Material.Gemstone, Material.Gemstone, Material.Gemstone,
+            Material.Gemstone, Material.Gemstone, Material.Gemstone, Material.Gemstone,
+            Material.Copper, Material.Metal, Material.Metal, Material.Iron,
+            Material.Iron, Material.Silver, Material.Gold, Material.Mineral,
+            Material.Gemstone, Material.Wood, Material.Bone, Material.Metal,
+            Material.Gemstone, Material.Gemstone, Material.Mineral, Material.Mineral,
+            Material.Vegetable, Material.Gemstone, Material.Gemstone
     };
 
     private static ItemRandomizationHandler<Ring> handler;
@@ -121,7 +108,7 @@ public class Ring extends EquippableItem {
 
     @SuppressWarnings("unchecked")
     public static void initGems() {
-        handler = new ItemRandomizationHandler<>((Class<? extends Ring>[]) rings, gems, images, 1);
+        handler = new ItemRandomizationHandler<>((Class<? extends Ring>[]) rings, ringGems, ringImages, ringMaterials, 1);
     }
 
     public static void save(Bundle bundle) {
@@ -130,13 +117,12 @@ public class Ring extends EquippableItem {
 
     @SuppressWarnings("unchecked")
     public static void restore(Bundle bundle) {
-        handler = new ItemRandomizationHandler<>((Class<? extends Ring>[]) rings, gems, images, bundle);
+        handler = new ItemRandomizationHandler<>((Class<? extends Ring>[]) rings, ringGems, ringImages, ringMaterials, bundle);
     }
 
     public Ring() {
         super(GameTime.TICK);
-
-        syncVisuals();
+        syncRandomizedProperties();
 
         weight(Encumbrance.UNIT * 3);
         price = 75;
@@ -144,9 +130,10 @@ public class Ring extends EquippableItem {
         randomEnchantmentMinimum = 1;
     }
 
-    public void syncVisuals() {
+    public void syncRandomizedProperties() {
         image = handler.image(this);
         gem = handler.label(this);
+        material = handler.material(this);
     }
 
     @Override

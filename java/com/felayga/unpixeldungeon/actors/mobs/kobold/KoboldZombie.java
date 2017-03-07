@@ -52,7 +52,7 @@ public class KoboldZombie extends Mob {
         defenseMagical = 0;
         weight = Encumbrance.UNIT * 400;
         nutrition = 50;
-        immunityMagical = MagicType.Cold.value | MagicType.Poison.value | MagicType.Sleep.value;
+        resistanceMagical = MagicType.value(MagicType.Cold, MagicType.Poison, MagicType.Sleep);
         corpseEffects = CorpseEffect.value(CorpseEffect.Rotten, CorpseEffect.Poisonous);
         characteristics = Characteristic.value(Characteristic.CannotUseItems, Characteristic.NonBreather, Characteristic.Brainless, Characteristic.Humanoid);
 

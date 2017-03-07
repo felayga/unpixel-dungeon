@@ -27,6 +27,7 @@
 package com.felayga.unpixeldungeon.items.wands;
 
 import com.felayga.unpixeldungeon.Dungeon;
+import com.felayga.unpixeldungeon.DungeonTilemap;
 import com.felayga.unpixeldungeon.actors.Char;
 import com.felayga.unpixeldungeon.actors.buffs.Buff;
 import com.felayga.unpixeldungeon.actors.buffs.hero.Encumbrance;
@@ -34,9 +35,12 @@ import com.felayga.unpixeldungeon.actors.buffs.negative.Blindness;
 import com.felayga.unpixeldungeon.effects.CellEmitter;
 import com.felayga.unpixeldungeon.effects.particles.ShaftParticle;
 import com.felayga.unpixeldungeon.levels.Level;
+import com.felayga.unpixeldungeon.levels.PrisonLevel;
 import com.felayga.unpixeldungeon.mechanics.Ballistica;
 import com.felayga.unpixeldungeon.mechanics.GameTime;
 import com.felayga.unpixeldungeon.mechanics.MagicType;
+import com.watabou.noosa.particles.Emitter;
+import com.watabou.utils.PointF;
 import com.watabou.utils.Random;
 
 /**
@@ -53,7 +57,6 @@ public class WandOfLight extends Wand {
 
         collisionProperties = Ballistica.Mode.StopTarget;
         price = 100;
-        weight(7 * Encumbrance.UNIT);
     }
 
     @Override
@@ -63,11 +66,14 @@ public class WandOfLight extends Wand {
 
     @Override
     protected void onZap(Ballistica beam) {
-        CellEmitter.get(curUser.pos()).start(ShaftParticle.FACTORY, 0.2f, 6);
+        int pos = curUser.pos();
+
+        CellEmitter.get(pos).start(ShaftParticle.FACTORY, 0.2f, 6);
         for (Integer offset : Level.NEIGHBOURS8) {
-            CellEmitter.get(curUser.pos() + offset).start(ShaftParticle.FACTORY, 0.4f, 1);
+            CellEmitter.get(pos + offset).start(ShaftParticle.FACTORY, 0.4f, 1);
         }
-        Dungeon.level.setLight(curUser.pos(), 5, true);
+        Dungeon.level.setLight(pos, 5, true);
+        Dungeon.level.addVisual(new PrisonLevel.Torch(pos, false, true));
     }
 
     /*
@@ -88,7 +94,8 @@ public class WandOfLight extends Wand {
         explode(user, maxDamage);
 
         for (Integer offset : Level.NEIGHBOURS8) {
-            Char target = Dungeon.level.findMob(user.pos() + offset);
+            int pos = user.pos() + offset;
+            Char target = Dungeon.level.findMob(pos);
 
             if (target == null) {
                 continue;
@@ -106,7 +113,7 @@ public class WandOfLight extends Wand {
 
         int damage = Random.IntRange(1, maxDamage);
 
-        target.damage(damage, MagicType.Magic, curUser);
+        target.damage(damage, MagicType.Magic, curUser, null);
         Buff.prolong(target, curUser, Blindness.class, blindness * GameTime.TICK);
     }
 

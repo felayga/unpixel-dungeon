@@ -74,7 +74,7 @@ public class Ankh extends Item {
 	@Override
 	public ArrayList<String> actions( Hero hero ) {
 		ArrayList<String> actions = super.actions(hero);
-		DewVial vial = hero.belongings.getItem(DewVial.class);
+		DewVial vial = hero.belongings.getItem(DewVial.class, true);
 		if (vial != null && vial.isFull() && !blessed)
 			actions.add( AC_BLESS );
 		return actions;
@@ -83,7 +83,7 @@ public class Ankh extends Item {
 	@Override
 	public boolean execute(final Hero hero, String action ) {
 		if (action.equals( AC_BLESS )) {
-			DewVial vial = hero.belongings.getItem(DewVial.class);
+			DewVial vial = hero.belongings.getItem(DewVial.class, true);
 			if (vial != null){
 				blessed = true;
 				vial.empty();

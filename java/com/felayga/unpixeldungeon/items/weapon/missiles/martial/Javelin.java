@@ -32,21 +32,18 @@ import com.felayga.unpixeldungeon.items.Item;
 import com.felayga.unpixeldungeon.items.weapon.missiles.MissileWeapon;
 import com.felayga.unpixeldungeon.items.weapon.ranged.AmmunitionType;
 import com.felayga.unpixeldungeon.mechanics.GameTime;
+import com.felayga.unpixeldungeon.mechanics.Material;
 import com.felayga.unpixeldungeon.mechanics.WeaponSkill;
 import com.felayga.unpixeldungeon.sprites.ItemSpriteSheet;
 import com.watabou.utils.Random;
 
 public class Javelin extends MissileWeapon {
-
 	public Javelin() {
-		this( 1 );
-	}
-	
-	public Javelin( int number ) {
-		super(WeaponSkill.Martial, GameTime.TICK, 2, 15, number, true, AmmunitionType.None);
+		super(WeaponSkill.Martial, GameTime.TICK, 2, 15, true, AmmunitionType.None);
 
 		name = "javelin";
 		image = ItemSpriteSheet.MISSILE_JAVELIN;
+        material = Material.Iron;
 
 		//STR = 15;
         price = 12;

@@ -37,9 +37,12 @@ import com.felayga.unpixeldungeon.items.weapon.melee.simple.MagesStaff;
 import com.felayga.unpixeldungeon.levels.Level;
 import com.felayga.unpixeldungeon.levels.Terrain;
 import com.felayga.unpixeldungeon.mechanics.Ballistica;
+import com.felayga.unpixeldungeon.mechanics.MagicType;
 import com.felayga.unpixeldungeon.plants.Plant;
+import com.felayga.unpixeldungeon.plants.Seedpod;
 import com.felayga.unpixeldungeon.plants.Starflower;
 import com.felayga.unpixeldungeon.scenes.GameScene;
+import com.felayga.unpixeldungeon.utils.GLog;
 import com.watabou.utils.Callback;
 import com.watabou.utils.ColorMath;
 import com.watabou.utils.Random;
@@ -49,290 +52,131 @@ import java.util.HashSet;
 import java.util.Iterator;
 
 public class WandOfRegrowth extends Wand {
+    public WandOfRegrowth() {
+        super(15);
+        name = "Wand of Regrowth";
 
-    public WandOfRegrowth()
-	{
-        super(20);
-		name = "Wand of Regrowth";
+        collisionProperties = Ballistica.Mode.SplasherBolt;
+        price = 150;
+    }
 
-		collisionProperties = Ballistica.Mode.StopTerrain;
-	}
+    @Override
+    public int randomCharges() {
+        return Random.IntRange(11, 15);
+    }
 
-	//the actual affected cells
-	private HashSet<Integer> affectedCells;
-	//the cells to trace growth particles to, for visual effects.
-	private HashSet<Integer> visualCells;
-	private int direction = 0;
-	
-	@Override
-	protected void onZap( Ballistica bolt ) {
+    @Override
+    protected void onZap(Ballistica bolt) {
+        onZap(bolt.collisionPos, Random.IntRange(3, 12));
+    }
 
-        //ignore tiles which can't have anything grow in them.
-        for (Iterator<Integer> i = affectedCells.iterator(); i.hasNext(); ) {
-            int c = Dungeon.level.map[i.next()];
-            if (!(c == Terrain.EMPTY ||
+    private static Level.RandomPositionValidator onZapSpotValidator = new Level.RandomPositionValidator() {
+        @Override
+        public boolean isValidPosition(int pos) {
+            int c = Dungeon.level.map[pos];
+            return c == Terrain.EMPTY ||
                     c == Terrain.EMBERS ||
                     c == Terrain.EMPTY_DECO ||
                     c == Terrain.GRASS ||
-                    c == Terrain.HIGH_GRASS)) {
-                i.remove();
-            }
+                    c == Terrain.HIGH_GRASS;
         }
+    };
 
-        float numPlants, numDews, numPods, numStars;
+    private void onZap(int pos, int spotCount) {
+        ArrayList<Integer> spots = Dungeon.level.randomPositionsNear(pos, spotCount, onZapSpotValidator);
 
-        int chrgUsed = 1;
-        //numbers greater than n*100% means n garunteed plants, e.g. 210% = 2 plants w/10% chance for 3 plants.
-        numPlants = 0.2f + chrgUsed * chrgUsed * 0.020f; //scales from 22% to 220%
-        numDews = 0.05f + chrgUsed * chrgUsed * 0.016f; //scales from 6.6% to 165%
-        numPods = 0.02f + chrgUsed * chrgUsed * 0.013f; //scales from 3.3% to 135%
-        numStars = (chrgUsed * chrgUsed * chrgUsed / 5f) * 0.005f; //scales from 0.1% to 100%
-        placePlants(curUser, numPlants, numDews, numPods, numStars);
+        if (spots != null) {
+            for (Integer subPos : spots) {
+                int terrain;
+                switch(Random.Int(3)) {
+                    case 0:
+                        terrain = Terrain.HIGH_GRASS;
+                        break;
+                    default:
+                        terrain = Terrain.GRASS;
+                        break;
+                }
+                Dungeon.level.set(subPos, terrain, true);
+                GameScene.add(Blob.seed(curUser, subPos, 10, Regrowth.class));
 
-        for (int i : affectedCells) {
-            int c = Dungeon.level.map[i];
-            if (c == Terrain.EMPTY ||
-                    c == Terrain.EMBERS ||
-                    c == Terrain.EMPTY_DECO) {
-                Dungeon.level.set(i, Terrain.GRASS, true);
+                if (Random.Int(4) == 0) {
+                    Plant.Seed seed;
+                    if (Random.Int(16)==0) {
+                        seed = new Seedpod.Seed();
+                    } else {
+                        seed = (Plant.Seed) Generator.random(Generator.Category.SEED);
+                    }
+
+                    Dungeon.level.plant(curUser, seed, subPos);
+                }
             }
 
-            Char ch = Actor.findChar(i);
-            if (ch != null) {
-                processSoulMark(ch, curUser);
+            for (Integer subPos : spots) {
+                if (Dungeon.visible[subPos]) {
+                    MagicMissile.foliage(curUser.sprite.parent, pos, subPos, null);
+                }
             }
-
-            GameScene.add(Blob.seed(curUser, i, 10, Regrowth.class));
-
         }
     }
 
-	private void spreadRegrowth(int cell, float strength){
-		if (strength >= 0 && Level.passable[cell] && !Level.losBlocking[cell]){
-			affectedCells.add(cell);
-			if (strength >= 1.5f) {
-				spreadRegrowth(cell + Level.NEIGHBOURS8[left(direction)], strength - 1.5f);
-				spreadRegrowth(cell + Level.NEIGHBOURS8[direction], strength - 1.5f);
-				spreadRegrowth(cell + Level.NEIGHBOURS8[right(direction)], strength-1.5f);
-			} else {
-				visualCells.add(cell);
-			}
-		} else if (!Level.passable[cell] || Level.losBlocking[cell])
-			visualCells.add(cell);
-	}
+    @Override
+    protected void fxEffect(int source, int destination, Callback callback) {
+        MagicMissile.foliage(curUser.sprite.parent, source, destination, callback);
+    }
 
-	private void placePlants(Char source, float numPlants, float numDews, float numPods, float numStars){
-		Iterator<Integer> cells = affectedCells.iterator();
-		Level floor = Dungeon.level;
-
-		while(cells.hasNext() && Random.Float() <= numPlants){
-			Plant.Seed seed = (Plant.Seed) Generator.random(Generator.Category.SEED);
-
-            floor.plant(source, seed, cells.next());
-
-			numPlants --;
-		}
-
-		while (cells.hasNext() && Random.Float() <= numDews){
-			floor.plant(source, new Dewcatcher.Seed(), cells.next());
-			numDews --;
-		}
-
-		while (cells.hasNext() && Random.Float() <= numPods){
-			floor.plant(source, new Seedpod.Seed(), cells.next());
-			numPods --;
-		}
-
-		while (cells.hasNext() && Random.Float() <= numStars){
-			floor.plant(source, new Starflower.Seed(), cells.next());
-			numStars --;
-		}
-
-	}
-
-	private int left(int direction){
-		return direction == 0 ? 7 : direction-1;
-	}
-
-	private int right(int direction){
-		return direction == 7 ? 0 : direction+1;
-	}
-
-    /*
-	@Override
-	public void onHit(MagesStaff staff, Char attacker, Char defender, int damage) {
-		//like vampiric enchantment, except with herbal healing buff
-
-		int level = Math.max( 0, staff.level() );
-
-		// lvl 0 - 33%
-		// lvl 1 - 43%
-		// lvl 2 - 50%
-		int maxValue = damage * (level + 2) / (level + 6);
-		int effValue = Math.min( Random.IntRange(0, maxValue), attacker.HT - attacker.HP );
-
-        //todo: wand of regrowth regen?
-		//Buff.affect(attacker, Sungrass.Health.class).boost( effValue );
-	}
-	*/
 
     @Override
-	protected void fxEffect( Ballistica bolt, Callback callback ) {
-		affectedCells = new HashSet<>();
-		visualCells = new HashSet<>();
+    public void staffFx(MagesStaff.StaffParticle particle) {
+        particle.color(ColorMath.random(0x004400, 0x88CC44));
+        particle.am = 1f;
+        particle.setLifespan(1.2f);
+        particle.setSize(1f, 2f);
+        particle.shuffleXY(1f);
+        float dst = Random.Float(11f);
+        particle.x -= dst;
+        particle.y += dst;
+    }
 
-		int maxDist = Math.round(1.2f + 0.8f);
-		int dist = Math.min(bolt.dist, maxDist);
+    @Override
+    public void explode(Char user) {
+        super.explode(user);
 
-		for (int i = 0; i < Level.NEIGHBOURS8.length; i++){
-			if (bolt.sourcePos+Level.NEIGHBOURS8[i] == bolt.path.get(1)){
-				direction = i;
-				break;
-			}
-		}
+        int maxDamage = curCharges() * 4;
 
-		float strength = maxDist;
-		for (int c : bolt.subPath(1, dist)) {
-			strength--; //as we start at dist 1, not 0.
-			if (!Level.losBlocking[c]) {
-				affectedCells.add(c);
-				spreadRegrowth(c + Level.NEIGHBOURS8[left(direction)], strength - 1);
-				spreadRegrowth(c + Level.NEIGHBOURS8[direction], strength - 1);
-				spreadRegrowth(c + Level.NEIGHBOURS8[right(direction)], strength - 1);
-			} else {
-				visualCells.add(c);
-			}
-		}
+        for (Integer offset : Level.NEIGHBOURS8) {
+            int pos = user.pos() + offset;
+            Char target = Dungeon.level.findMob(pos);
 
-		//going to call this one manually
-		visualCells.remove(bolt.path.get(dist));
+            if (target == null) {
+                continue;
+            }
 
-		for (int cell : visualCells){
-			//this way we only get the cells at the tip, much better performance.
-			MagicMissile.foliage(curUser.sprite.parent, bolt.sourcePos, cell, null);
-		}
-		MagicMissile.foliage( curUser.sprite.parent, bolt.sourcePos, bolt.path.get(dist), callback );
-	}
+            explode(target, maxDamage);
+        }
 
-    /*
-	@Override
-	protected int initialCharges() {
-		return 1;
-	}
+        explode(user, maxDamage);
 
-	@Override
-	//consumes all available charges, needs at least one.
-	protected int chargesPerCast() {
-		return Math.max(1, curCharges);
-	}
-	*/
+        onZap(user.pos(), 24);
+    }
 
-	@Override
-	public void staffFx(MagesStaff.StaffParticle particle) {
-		particle.color( ColorMath.random(0x004400, 0x88CC44) );
-		particle.am = 1f;
-		particle.setLifespan(1.2f);
-		particle.setSize( 1f, 2f);
-		particle.shuffleXY(1f);
-		float dst = Random.Float(11f);
-		particle.x -= dst;
-		particle.y += dst;
-	}
+    public void explode(Char target, int maxDamage) {
+        int damage = Random.IntRange(1, maxDamage);
 
-	@Override
-	public String desc() {
-		return
-				"This wand is made from a thin shaft of expertly carved wood. " +
-				"Somehow it is still alive and vibrant, bright green like a young tree's core.\n" +
-				"\n" +
-				"When used, this wand will consume all its charges to blast magical regrowth energy outward " +
-				"in a cone. This magic will cause grass, roots, and rare plants to spring to life.\n" +
-				"\n" +
-				"\"When life ceases new life always begins to grow... The eternal cycle always remains!\"";
-	}
+        target.damage(damage, MagicType.Magic, curUser, null);
 
+        fxEffect(curUser.pos(), target.pos(), null);
+    }
 
-	public static class Dewcatcher extends Plant{
-
-        public Dewcatcher()
-		{
-            super("Dewcatcher", 12);
-		}
-
-		@Override
-		public void activate() {
-
-			int nDrops = Random.NormalIntRange(2, 8);
-
-			ArrayList<Integer> candidates = new ArrayList<Integer>();
-			for (int i : Level.NEIGHBOURS8){
-				if (Level.passable[pos+i]){
-					candidates.add(pos+i);
-				}
-			}
-
-			for (int i = 0; i < nDrops && !candidates.isEmpty(); i++){
-				Integer c = Random.element(candidates);
-				Dungeon.level.drop(new Dewdrop(), c).sprite.drop(pos);
-				candidates.remove(c);
-			}
-
-		}
-
-		@Override
-		public String desc() {
-			return "Dewcatchers camouflage as grass to avoid attention, " +
-					"but their bulges of collected dew give them away.";
-		}
-
-		//seed is never dropped, only care about plant class
-		public static class Seed extends Plant.Seed {
-			{
-				plantClass = Dewcatcher.class;
-			}
-		}
-	}
-
-	public static class Seedpod extends Plant{
-
-        public Seedpod()
-		{
-            super("Seed Pod", 13);
-		}
-
-		@Override
-		public void activate() {
-
-			int nSeeds = Random.NormalIntRange(1, 5);
-
-			ArrayList<Integer> candidates = new ArrayList<Integer>();
-			for (int i : Level.NEIGHBOURS8){
-				if (Level.passable[pos+i]){
-					candidates.add(pos+i);
-				}
-			}
-
-			for (int i = 0; i < nSeeds && !candidates.isEmpty(); i++){
-				Integer c = Random.element(candidates);
-				Dungeon.level.drop(Generator.random(Generator.Category.SEED), c).sprite.drop(pos);
-				candidates.remove(c);
-			}
-
-		}
-
-		@Override
-		public String desc() {
-			return "Seed Pods look pretty, but the seeds they carry are actually " +
-					"stolen from other plants they kill with their roots.";
-		}
-
-		//seed is never dropped, only care about plant class
-		public static class Seed extends Plant.Seed {
-			{
-				plantClass = Seedpod.class;
-			}
-		}
-
-	}
+    @Override
+    public String desc() {
+        return
+                "This wand is made from a thin shaft of expertly carved wood. " +
+                        "Somehow it is still alive and vibrant, bright green like a young tree's core.\n" +
+                        "\n" +
+                        "When used, this wand will consume all its charges to blast magical regrowth energy outward " +
+                        "in a cone. This magic will cause grass, roots, and rare plants to spring to life.\n" +
+                        "\n" +
+                        "\"When life ceases new life always begins to grow... The eternal cycle always remains!\"";
+    }
 
 }

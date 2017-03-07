@@ -43,6 +43,7 @@ import com.felayga.unpixeldungeon.items.wands.WandOfRegrowth;
 import com.felayga.unpixeldungeon.items.wands.WandOfVenom;
 import com.felayga.unpixeldungeon.mechanics.BUCStatus;
 import com.felayga.unpixeldungeon.mechanics.GameTime;
+import com.felayga.unpixeldungeon.mechanics.Material;
 import com.felayga.unpixeldungeon.scenes.GameScene;
 import com.felayga.unpixeldungeon.sprites.ItemSpriteSheet;
 import com.felayga.unpixeldungeon.utils.GLog;
@@ -75,6 +76,7 @@ public class MagesStaff extends SimpleMeleeWeapon {
 		name = "staff";
 		image = ItemSpriteSheet.MELEE_MAGES_STAFF;
         pickupSound = Assets.SND_ITEM_WOOD;
+        material = Material.Wood;
 
 		defaultAction = AC_ZAP;
 		usesTargeting = true;

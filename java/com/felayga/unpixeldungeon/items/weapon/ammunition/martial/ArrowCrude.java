@@ -24,24 +24,34 @@
  *
  */
 
-package com.felayga.unpixeldungeon.items.weapon.melee.simple;
+package com.felayga.unpixeldungeon.items.weapon.ammunition.martial;
 
+import com.felayga.unpixeldungeon.Assets;
+import com.felayga.unpixeldungeon.actors.buffs.hero.Encumbrance;
+import com.felayga.unpixeldungeon.items.weapon.ranged.AmmunitionType;
 import com.felayga.unpixeldungeon.mechanics.GameTime;
+import com.felayga.unpixeldungeon.mechanics.Material;
+import com.felayga.unpixeldungeon.mechanics.WeaponSkill;
 import com.felayga.unpixeldungeon.sprites.ItemSpriteSheet;
 
 /**
- * Created by HELLO on 5/23/2016.
+ * Created by HELLO on 3/6/2017.
  */
-public class DaggerCrude extends Dagger {
-    public DaggerCrude() {
-        super( GameTime.TICK, 1, 3 );
 
-        name = "dagger";
-        image = ItemSpriteSheet.MELEE_DAGGER_CRUDE;
+public class ArrowCrude extends Arrow {
+    public ArrowCrude() {
+        super(1, 5);
+
+        name = "crude arrow";
+        image = ItemSpriteSheet.MISSILE_ARROW_CRUDE;
+        pickupSound = Assets.SND_ITEM_BLADE;
+        material = Material.Iron;
+
+        price = 2;
     }
 
     @Override
     public String desc() {
-        return "A simple iron dagger with a well worn wooden handle.";
+        return "This is a shafted iron projectile designed to be launched at a target using a bow.";
     }
 }

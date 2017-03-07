@@ -56,7 +56,7 @@ public class WndClass extends WndTabbed {
 		tabPerks = new PerksTab();
 		add( tabPerks );
 
-		Tab tab = new RankingTab( Utils.capitalize( cl.title() ), tabPerks );
+		Tab tab = new RankingTab( Utils.capitalize( cl.name ), tabPerks );
 		tab.setSize( TAB_WIDTH, tabHeight() );
 		add( tab );
 

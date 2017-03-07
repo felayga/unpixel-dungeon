@@ -32,15 +32,13 @@ import com.felayga.unpixeldungeon.items.bags.IBag;
 import com.felayga.unpixeldungeon.items.weapon.ammunition.AmmunitionWeapon;
 import com.felayga.unpixeldungeon.items.weapon.ranged.AmmunitionType;
 import com.felayga.unpixeldungeon.mechanics.GameTime;
+import com.felayga.unpixeldungeon.mechanics.Material;
 import com.felayga.unpixeldungeon.mechanics.WeaponSkill;
 import com.felayga.unpixeldungeon.sprites.ItemSpriteSheet;
 import com.felayga.unpixeldungeon.utils.GLog;
 import com.watabou.utils.Random;
 
 public class Rock extends AmmunitionWeapon {
-    public Rock() {
-        this( 1 );
-    }
 
     public IBag parent() {
         return super.parent();
@@ -51,12 +49,13 @@ public class Rock extends AmmunitionWeapon {
         GLog.d("set parent="+(parent != null ? parent.getDisplayName() : "<null>"));
     }
 
-    public Rock(int quantity) {
-        super(WeaponSkill.Simple, GameTime.TICK, 0, 2, quantity, true, AmmunitionType.Stone);
+    public Rock() {
+        super(WeaponSkill.Simple, GameTime.TICK, 0, 2, true, AmmunitionType.Stone);
 
         name = "rock";
         image = ItemSpriteSheet.MISSILE_ROCK;
         pickupSound = Assets.SND_ITEM_ROCK;
+        material = Material.Mineral;
 
         requiresLauncher = false;
 

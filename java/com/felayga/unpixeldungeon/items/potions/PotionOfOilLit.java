@@ -29,6 +29,7 @@ package com.felayga.unpixeldungeon.items.potions;
 import com.felayga.unpixeldungeon.actors.Char;
 import com.felayga.unpixeldungeon.actors.hero.Hero;
 import com.felayga.unpixeldungeon.effects.particles.FlameParticle;
+import com.felayga.unpixeldungeon.items.bags.IBag;
 import com.felayga.unpixeldungeon.mechanics.Constant;
 import com.felayga.unpixeldungeon.sprites.ItemSpriteSheet;
 import com.felayga.unpixeldungeon.utils.GLog;
@@ -51,6 +52,14 @@ public class PotionOfOilLit extends PotionOfOil {
         defaultAction = Constant.Action.THROW;
 
         price = 0;
+    }
+
+    @Override
+    public boolean burn(Char cause) {
+        IBag parent = parent();
+        parent.remove(this, 1);
+        shatter(null, parent.pos());
+        return false;
     }
 
     public Emitter emitter() {
@@ -89,9 +98,10 @@ public class PotionOfOilLit extends PotionOfOil {
     }
 
     @Override
-    public void syncVisuals() {
+    public void syncRandomizedProperties() {
         image = handler.image(PotionOfOil.class);
         color = handler.label(PotionOfOil.class);
+        material = handler.material(PotionOfOil.class);
     }
 
     @Override

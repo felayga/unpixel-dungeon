@@ -49,7 +49,7 @@ public class GridBug extends Mob {
         defenseMagical = 0;
         weight = Encumbrance.UNIT * 15;
         nutrition = 10;
-        immunityMagical = MagicType.Shock.value | MagicType.Poison.value;
+        resistanceMagical = MagicType.value(MagicType.Shock, MagicType.Poison);
         corpseEffects = CorpseEffect.None.value;
         characteristics = Characteristic.value(Characteristic.Animal, Characteristic.WarmBlooded, Characteristic.Corpseless);
 

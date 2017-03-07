@@ -53,7 +53,7 @@ public class WaterMoccasin extends Mob {
         defenseMagical = 0;
         weight = Encumbrance.UNIT * 150;
         nutrition = 80;
-        immunityMagical = MagicType.Poison.value;
+        resistanceMagical = MagicType.Poison.value;
         corpseEffects = CorpseEffect.Poisonous.value;
         corpseResistances = CorpseEffect.Poisonous.value;
         characteristics = Characteristic.value(Characteristic.Animal, Characteristic.Carnivore, Characteristic.CannotUseItems, Characteristic.Swimmer, Characteristic.Concealer);

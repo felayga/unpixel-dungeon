@@ -129,14 +129,14 @@ public class Belongings implements Iterable<Item>, IDecayable, IBag {
                 int count = item.quantity();
 
                 while (count > 0) {
-                    if (Random.Int(3) != 0) {
+                    if (Random.Int(Constant.Chance.ITEM_DESTROYED) != 0) {
                         pendingremoval.add(item);
                         shatter++;
                     }
                     count--;
                 }
             } else if (item instanceof Wand) {
-                if (Random.Int(3) != 0) {
+                if (Random.Int(Constant.Chance.ITEM_DESTROYED) != 0) {
                     pendingremoval.add(item);
                     crack++;
                 }
@@ -212,8 +212,8 @@ public class Belongings implements Iterable<Item>, IDecayable, IBag {
             retval = backpack2.collect(item);
         }
 
-        GLog.d("collect " + item.getDisplayName() + " " + retval);
-        GLog.d("weight2=" + weight + " " + backpack1.weight() + " " + backpack2.weight() + " " + backpack3.weight() + " " + backpack4.weight());
+        //GLog.d("collect " + item.getDisplayName() + " " + retval);
+        //GLog.d("weight2=" + weight + " " + backpack1.weight() + " " + backpack2.weight() + " " + backpack3.weight() + " " + backpack4.weight());
 
         return retval;
     }
@@ -250,7 +250,7 @@ public class Belongings implements Iterable<Item>, IDecayable, IBag {
             }
         }
 
-        GLog.d("weight3=" + weight + " " + backpack1.weight() + " " + backpack2.weight() + " " + backpack3.weight() + " " + backpack4.weight());
+        //GLog.d("weight3=" + weight + " " + backpack1.weight() + " " + backpack2.weight() + " " + backpack3.weight() + " " + backpack4.weight());
 
         return retval;
     }
@@ -277,7 +277,7 @@ public class Belongings implements Iterable<Item>, IDecayable, IBag {
                 iterator.remove();
                 item.onDetach();
 
-                GLog.d("weight5=" + weight + " " + backpack1.weight() + " " + backpack2.weight() + " " + backpack3.weight() + " " + backpack4.weight());
+                //GLog.d("weight5=" + weight + " " + backpack1.weight() + " " + backpack2.weight() + " " + backpack3.weight() + " " + backpack4.weight());
                 return item;
             }
         }
@@ -538,30 +538,34 @@ public class Belongings implements Iterable<Item>, IDecayable, IBag {
         return good;
     }
 
-    private void onItemEquipped(Char owner, EquippableItem item, int quickslot, boolean cursednotify) {
+    private void onItemEquipped(Char owner, EquippableItem item, int quickSlot, boolean cursedNotify) {
         boolean cursed = false;
 
         if (item.bucStatus() == BUCStatus.Cursed) {
             cursed = true;
 
-            if (owner.pos() >= 0 && Level.fieldOfView[owner.pos()]) {
-                item.bucStatus(true);
+            if (item.cursedCannotUnequip) {
+                if (owner.pos() >= 0 && Level.fieldOfView[owner.pos()]) {
+                    item.bucStatus(true);
 
-                if (owner.sprite != null) {
-                    owner.sprite.emitter().burst(ShadowParticle.CURSE, 6);
+                    if (owner.sprite != null) {
+                        owner.sprite.emitter().burst(ShadowParticle.CURSE, 6);
+                    }
+                    Sample.INSTANCE.play(Assets.SND_CURSED);
                 }
-                Sample.INSTANCE.play(Assets.SND_CURSED);
+            } else {
+                cursedNotify = false;
             }
         }
 
         item.parent(this);
-        item.onEquip(owner, cursed & cursednotify);
+        item.onEquip(owner, cursed & cursedNotify);
         onWeightChanged(item.weight() * item.quantity());
 
-        GLog.d("weight0=" + weight + " " + backpack1.weight() + " " + backpack2.weight() + " " + backpack3.weight() + " " + backpack4.weight());
+        //GLog.d("weight0=" + weight + " " + backpack1.weight() + " " + backpack2.weight() + " " + backpack3.weight() + " " + backpack4.weight());
 
-        if (quickslot != -1) {
-            Dungeon.quickslot.setSlot(quickslot, item);
+        if (quickSlot != -1) {
+            Dungeon.quickslot.setSlot(quickSlot, item);
             item.updateQuickslot();
         }
 
@@ -573,7 +577,7 @@ public class Belongings implements Iterable<Item>, IDecayable, IBag {
         weight -= item.weight() * item.quantity();
 
         owner.spend_new(item.equipTime, single);
-        GLog.d("weight1=" + weight + " " + backpack1.weight() + " " + backpack2.weight() + " " + backpack3.weight() + " " + backpack4.weight());
+        //GLog.d("weight1=" + weight + " " + backpack1.weight() + " " + backpack2.weight() + " " + backpack3.weight() + " " + backpack4.weight());
     }
 
     private static final String TXT_UNEQUIP_CANT = "You can't remove the %s!";
@@ -903,9 +907,12 @@ public class Belongings implements Iterable<Item>, IDecayable, IBag {
     }
 
     @SuppressWarnings("unchecked")
-    public <T extends Item> T getItem(Class<T> itemClass) {
+    public <T extends Item> T getItem(Class<T> itemClass, boolean allowNested) {
+        Iterator<Item> iterator = iterator(allowNested);
 
-        for (Item item : this) {
+        while (iterator.hasNext()) {
+            Item item = iterator.next();
+
             if (itemClass.isInstance(item)) {
                 return (T) item;
             }
@@ -1248,7 +1255,7 @@ public class Belongings implements Iterable<Item>, IDecayable, IBag {
                 continue;
             }
 
-            GLog.d("drop " + item.getDisplayName());
+            //GLog.d("drop " + item.getDisplayName());
             Dungeon.level.drop(remove(item), passable.get(passableIndex)).sprite.drop(pos);
 
             passableIndex = (passableIndex + 1) % passable.size();

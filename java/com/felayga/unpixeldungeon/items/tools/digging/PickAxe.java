@@ -26,7 +26,9 @@
 
 package com.felayga.unpixeldungeon.items.tools.digging;
 
+import com.felayga.unpixeldungeon.actors.buffs.hero.Encumbrance;
 import com.felayga.unpixeldungeon.mechanics.GameTime;
+import com.felayga.unpixeldungeon.mechanics.Material;
 import com.felayga.unpixeldungeon.sprites.ItemSpriteSheet;
 
 /**
@@ -38,6 +40,10 @@ public class Pickaxe extends DiggingTool {
 
         name = "pickaxe";
         image = ItemSpriteSheet.TOOL_PICKAXE;
+        material = Material.Iron;
+
+        weight(100 * Encumbrance.UNIT);
+        price = 50;
     }
 
 }

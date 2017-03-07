@@ -54,7 +54,7 @@ public class Bat extends Mob {
         defenseMagical = 0;
         weight = Encumbrance.UNIT * 20;
         nutrition = 20;
-        immunityMagical = MagicType.None.value;
+        resistanceMagical = MagicType.None.value;
         corpseEffects = CorpseEffect.Stunning.value;
         characteristics = Characteristic.value(Characteristic.Animal, Characteristic.CannotUseItems, Characteristic.Carnivore);
 

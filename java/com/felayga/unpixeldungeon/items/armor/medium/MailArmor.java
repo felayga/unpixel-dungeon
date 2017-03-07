@@ -26,14 +26,16 @@
 package com.felayga.unpixeldungeon.items.armor.medium;
 
 import com.felayga.unpixeldungeon.actors.buffs.hero.Encumbrance;
+import com.felayga.unpixeldungeon.mechanics.Material;
 import com.felayga.unpixeldungeon.sprites.ItemSpriteSheet;
 
 public class MailArmor extends MediumArmor {
-	public MailArmor()
-	{
+	public MailArmor() {
 		super(5, 2, 1, 96);
+
 		name = "chainmail armor";
 		image = ItemSpriteSheet.ARMOR_MAIL;
+        material = Material.Iron;
 
 		price = 150;
 		textureIndex = 4;

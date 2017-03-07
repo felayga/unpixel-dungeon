@@ -26,30 +26,74 @@
 package com.felayga.unpixeldungeon.mechanics;
 
 import com.felayga.unpixeldungeon.actors.Actor;
+import com.felayga.unpixeldungeon.actors.Char;
+import com.felayga.unpixeldungeon.actors.buffs.hero.Encumbrance;
+import com.felayga.unpixeldungeon.items.EquippableItem;
+import com.felayga.unpixeldungeon.items.Item;
 import com.felayga.unpixeldungeon.levels.Level;
+import com.felayga.unpixeldungeon.utils.GLog;
+import com.watabou.utils.Random;
 
 import java.util.ArrayList;
 import java.util.List;
 
 public class Ballistica {
+    public enum TravelCause {
+        Kicked,
+        Thrown,
+        Launched
+    }
+
+    public static int maxDistance(Char thrower, Item what, TravelCause cause) {
+        int strcon = thrower.getAttributeModifier(AttributeType.STRCON);
+        int itemWeight = what.weight();
+
+        EquippableItem item;
+        int enchantment = 0;
+        switch(cause) {
+            case Kicked:
+                item = thrower.belongings.boots();
+
+                if (item != null) {
+                    enchantment += item.level();
+                }
+                break;
+            case Launched:
+                item = thrower.belongings.ranged();
+
+                enchantment += 2;
+                if (item != null) {
+                    enchantment += item.level();
+                }
+                break;
+            default:
+                break;
+        }
+
+        return strcon + 4 + enchantment - itemWeight / Encumbrance.UNIT / 40;
+    }
+
 
 	//note that the path is the FULL path of the projectile, including tiles after collision.
 	//make sure to generate a subPath for the common case of going source to collision.
 	public ArrayList<Integer> path = new ArrayList<>();
+    public ArrayList<Integer> bounces = new ArrayList<>();
 	public Integer sourcePos = null;
 	public Integer collisionPos = null;
 	public Integer dist = 0;
 
     //parameters to specify the colliding cell
     public enum Mode {
-        NoCollision (0x0000),
-        StopTarget  (0x0001), //ballistica will stop at the target cell
-        StopChars   (0x0002), //ballistica will stop on first char hit
-        StopTerrain (0x0004), //ballistica will stop on terrain(LOS blocking, impassable, etc.)
-        Projectile  (StopTarget.value | StopChars.value | StopTerrain.value),
-        MagicBolt   (StopChars.value | StopTerrain.value),
-        SeekerBolt  (StopTarget.value | StopChars.value),
-        SplasherBolt(StopTarget.value | StopTerrain.value);
+        NoCollision     (0x0000),
+        StopTarget      (0x0001), //ballistica will stop at the target cell
+        StopChars       (0x0002), //ballistica will stop on first char hit
+        StopTerrain     (0x0004), //ballistica will stop on terrain(LOS blocking, impassable, etc.)
+        BounceTerrain   (0x0008), //since this value has both "bounce" and "terrain" in its name, it's fair to assume that it will bounce off terrain
+        Projectile      (StopTarget.value | StopChars.value | StopTerrain.value),
+        MagicBolt       (StopChars.value | StopTerrain.value),
+        SeekerBolt      (StopTarget.value | StopChars.value),
+        SplasherBolt    (StopTarget.value | StopTerrain.value),
+        MagicRay        (StopChars.value | StopTerrain.value | BounceTerrain.value);
 
         public final int value;
 
@@ -80,65 +124,100 @@ public class Ballistica {
         boolean stopChars = (params.value & Mode.StopChars.value) != 0;
         boolean stopTerrain = (params.value & Mode.StopTerrain.value) != 0;
 
-		int w = Level.WIDTH;
+        int w = Level.WIDTH;
 
-		int x0 = from % w;
-		int x1 = to % w;
-		int y0 = from / w;
-		int y1 = to / w;
+        int x0 = from % w;
+        int x1 = to % w;
+        int y0 = from / w;
+        int y1 = to / w;
 
-		int dx = x1 - x0;
-		int dy = y1 - y0;
+        int dx = x1 - x0;
+        int dy = y1 - y0;
 
-		int stepX = dx > 0 ? +1 : -1;
-		int stepY = dy > 0 ? +1 : -1;
+        int stepX = dx > 0 ? +1 : -1;
+        int stepY = dy > 0 ? +1 : -1;
 
-		dx = Math.abs( dx );
-		dy = Math.abs( dy );
+        dx = Math.abs(dx);
+        dy = Math.abs(dy);
 
-		int stepA;
-		int stepB;
-		int dA;
-		int dB;
+        int stepA;
+        int stepB;
+        int dA;
+        int dB;
 
-		if (dx > dy) {
-			stepA = stepX;
-			stepB = stepY * w;
-			dA = dx;
-			dB = dy;
-		} else {
-			stepA = stepY * w;
-			stepB = stepX;
-			dA = dy;
-			dB = dx;
-		}
+        if (dx > dy || (dx == dy && Random.Int(2) == 0)) {
+            stepA = stepX;
+            stepB = stepY * w;
+            dA = dx;
+            dB = dy;
+        } else {
+            stepA = stepY * w;
+            stepB = stepX;
+            dA = dy;
+            dB = dx;
+        }
 
-		int cell = from;
+        //GLog.d("Ballistica stepX=" + stepX + " stepY=" + stepY + " dA=" + dA + " dB=" + dB);
 
-		int err = dA / 2;
-		while (Level.insideMap(cell)) {
-			//if we're in a wall, collide with the previous cell along the path.
-			if (stopTerrain && cell != sourcePos && !Level.passable[cell] && !Level.avoid[cell]) {
-				collide(path.get(path.size() - 1));
-			}
+        int cell = from;
 
-			path.add(cell);
+        int bouncesLeft = (params.value & Mode.BounceTerrain.value) != 0 ? 2 : 0;
+        boolean firstRun = true;
 
-			if ((stopTerrain && cell != sourcePos && Level.losBlocking[cell])
-					|| (cell != sourcePos && stopChars && Actor.findChar( cell ) != null)
-					|| (cell == to && stopTarget)){
-				collide(cell);
-			}
+        int err = dA / 2;
+        while (Level.insideMap(cell)) {
+            boolean bounced = false;
 
-			cell += stepA;
+            //if we're in a wall, collide with the previous cell along the path.
+            if (stopTerrain && cell != sourcePos && !Level.passable[cell]) {
+                if (bouncesLeft > 0) {
+                    boolean testA = Level.passable[cell - stepA];
+                    boolean testB = Level.passable[cell - stepB];
 
-			err += dB;
-			if (err >= dA) {
-				err = err - dA;
-				cell = cell + stepB;
-			}
-		}
-	}
+                    if (testA) {
+                        stepA = -stepA;
+                    } else if (testB) {
+                        stepB = -stepB;
+                        err = dA - err;
+                    } else {
+                        stepA = -stepA;
+                        stepB = -stepB;
+                        err = dA - err;
+                    }
+
+                    bounces.add(cell);
+                    bounced = true;
+                    bouncesLeft--;
+                } else {
+                    collide(cell);
+                    break;
+                }
+            }
+
+            path.add(cell);
+
+            if (!bounced) {
+                if ((stopTerrain && (!firstRun || cell != sourcePos) && Level.losBlocking[cell])
+                        || ((!firstRun || cell != sourcePos) && stopChars && Actor.findChar(cell) != null)
+                        || (cell == to && stopTarget)) {
+                    collide(cell);
+                    break;
+                }
+            }
+
+            if (firstRun) {
+                firstRun = false;
+            }
+
+            cell += stepA;
+
+            err += dB;
+            if (err >= dA) {
+                err = err - dA;
+                cell = cell + stepB;
+            }
+        }
+    }
 
 	//we only want to record the first position collision occurs at.
 	private void collide(int cell){

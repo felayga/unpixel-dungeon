@@ -83,10 +83,10 @@ public class GrimTrap extends Trap {
 					if (finalTarget == Dungeon.hero) {
 						//almost kill the player
 						if (((float)finalTarget.HP/finalTarget.HT) >= 0.9f){
-							finalTarget.damage((finalTarget.HP-1), MagicType.Magic, null);
+							finalTarget.damage((finalTarget.HP-1), MagicType.Magic, null, null);
 						//kill 'em
 						} else {
-							finalTarget.damage(finalTarget.HP, MagicType.Magic, null);
+							finalTarget.damage(finalTarget.HP, MagicType.Magic, null, null);
 						}
 						Sample.INSTANCE.play(Assets.SND_CURSED);
 						if (!finalTarget.isAlive()) {
@@ -94,7 +94,7 @@ public class GrimTrap extends Trap {
 							GLog.n("You were killed by the blast of a grim trap...");
 						}
 					} else {
-						finalTarget.damage(finalTarget.HP, MagicType.Magic, null);
+						finalTarget.damage(finalTarget.HP, MagicType.Magic, null, null);
 						Sample.INSTANCE.play(Assets.SND_BURNING);
 					}
 					finalTarget.sprite.emitter().burst(ShadowParticle.UP, 10);

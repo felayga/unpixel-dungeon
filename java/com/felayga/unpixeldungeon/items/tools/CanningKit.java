@@ -26,11 +26,13 @@
 
 package com.felayga.unpixeldungeon.items.tools;
 
+import com.felayga.unpixeldungeon.actors.buffs.hero.Encumbrance;
 import com.felayga.unpixeldungeon.actors.hero.Hero;
 import com.felayga.unpixeldungeon.items.Item;
 import com.felayga.unpixeldungeon.items.food.CannedFood;
 import com.felayga.unpixeldungeon.items.food.Corpse;
 import com.felayga.unpixeldungeon.mechanics.Constant;
+import com.felayga.unpixeldungeon.mechanics.Material;
 import com.felayga.unpixeldungeon.sprites.ItemSpriteSheet;
 import com.felayga.unpixeldungeon.utils.GLog;
 import com.felayga.unpixeldungeon.windows.WndBackpack;
@@ -48,10 +50,14 @@ public class CanningKit extends Tool {
 
         name = "canning kit";
         image = ItemSpriteSheet.TOOL_CANNINGKIT;
+        material = Material.Iron;
 
         hasLevels(false);
 
         defaultAction = Constant.Action.APPLY;
+
+        weight(100 * Encumbrance.UNIT);
+        price = 30;
     }
 
     private static final String CUR_CHARGES = "curCharges";

@@ -30,11 +30,13 @@ import com.felayga.unpixeldungeon.Dungeon;
 import com.felayga.unpixeldungeon.actors.Actor;
 import com.felayga.unpixeldungeon.actors.Char;
 import com.felayga.unpixeldungeon.actors.buffs.Buff;
+import com.felayga.unpixeldungeon.actors.buffs.hero.Encumbrance;
 import com.felayga.unpixeldungeon.actors.buffs.positive.Barkskin;
 import com.felayga.unpixeldungeon.actors.hero.Hero;
 import com.felayga.unpixeldungeon.actors.hero.HeroSubClass;
 import com.felayga.unpixeldungeon.effects.CellEmitter;
 import com.felayga.unpixeldungeon.effects.particles.LeafParticle;
+import com.felayga.unpixeldungeon.items.IFlammable;
 import com.felayga.unpixeldungeon.items.Item;
 import com.felayga.unpixeldungeon.items.potions.IAlchemyComponent;
 import com.felayga.unpixeldungeon.items.potions.PotionOfBrewing;
@@ -42,6 +44,7 @@ import com.felayga.unpixeldungeon.levels.Level;
 import com.felayga.unpixeldungeon.levels.Terrain;
 import com.felayga.unpixeldungeon.mechanics.Constant;
 import com.felayga.unpixeldungeon.mechanics.GameTime;
+import com.felayga.unpixeldungeon.mechanics.Material;
 import com.felayga.unpixeldungeon.sprites.PlantSprite;
 import com.felayga.unpixeldungeon.utils.Utils;
 import com.watabou.noosa.audio.Sample;
@@ -132,18 +135,29 @@ public abstract class Plant implements Bundlable {
         return null;
     }
 
-    public static class Seed extends Item {
+    public static class Seed extends Item implements IFlammable {
 
         private static final String TXT_INFO = "Throw this seed to the place where you want to grow %s.\n\n%s";
 
         private static final long TIME_TO_PLANT = GameTime.TICK;
 
-        {
+        public Seed() {
             stackable = true;
             defaultAction = Constant.Action.THROW;
             pickupSound = Assets.SND_ITEM_PLANT;
+            material = Material.Vegetable;
+
             hasBuc(false);
             hasLevels(false);
+
+            price = 20;
+            weight(Encumbrance.UNIT / 16);
+        }
+
+        @Override
+        public boolean burn(Char cause) {
+            parent().remove(this, 1);
+            return false;
         }
 
         public Item getSelf() {

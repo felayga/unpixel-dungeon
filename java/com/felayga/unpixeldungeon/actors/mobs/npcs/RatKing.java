@@ -29,6 +29,7 @@ import com.felayga.unpixeldungeon.Dungeon;
 import com.felayga.unpixeldungeon.actors.Actor;
 import com.felayga.unpixeldungeon.actors.Char;
 import com.felayga.unpixeldungeon.actors.buffs.Buff;
+import com.felayga.unpixeldungeon.items.Item;
 import com.felayga.unpixeldungeon.mechanics.GameTime;
 import com.felayga.unpixeldungeon.mechanics.MagicType;
 import com.felayga.unpixeldungeon.sprites.npcs.RatKingSprite;
@@ -52,7 +53,7 @@ public class RatKing extends NPC {
 	}
 	
 	@Override
-	public int damage( int dmg, MagicType type, Actor source ) {
+	public int damage( int dmg, MagicType type, Char source, Item sourceItem ) {
         return 0;
 	}
 	

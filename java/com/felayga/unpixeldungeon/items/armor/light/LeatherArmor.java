@@ -26,14 +26,16 @@
 package com.felayga.unpixeldungeon.items.armor.light;
 
 import com.felayga.unpixeldungeon.actors.buffs.hero.Encumbrance;
+import com.felayga.unpixeldungeon.mechanics.Material;
 import com.felayga.unpixeldungeon.sprites.ItemSpriteSheet;
 
 public class LeatherArmor extends LightArmor {
-	public LeatherArmor()
-	{
+	public LeatherArmor() {
 		super(2, 6, 0, 32);
+
 		name = "leather armor";
 		image = ItemSpriteSheet.ARMOR_LEATHER;
+        material = Material.Leather;
 
 		price = 10;
 		textureIndex = 3;

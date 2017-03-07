@@ -90,20 +90,20 @@ public class Bag extends Item implements Iterable<Item>, IBag {
             Item item = iterator.next();
 
             if (item instanceof IBag) {
-                IBag bag = (IBag)item;
+                IBag bag = (IBag) item;
                 bag.contentsImpact(verbose);
             } else if (item instanceof Potion) {
                 int count = item.quantity();
 
                 while (count > 0) {
-                    if (Random.Int(3)!=0) {
+                    if (Random.Int(Constant.Chance.ITEM_DESTROYED) != 0) {
                         pendingremoval.add(item);
                         shatter++;
                     }
                     count--;
                 }
             } else if (item instanceof Wand) {
-                if (Random.Int(3)!=0) {
+                if (Random.Int(Constant.Chance.ITEM_DESTROYED) != 0) {
                     pendingremoval.add(item);
                     crack++;
                 }
@@ -133,9 +133,6 @@ public class Bag extends Item implements Iterable<Item>, IBag {
         }
     }
 
-    public Item self() {
-        return this;
-    }
     public int pos() { return Constant.Position.NONE; }
     public String action() { return null; }
     public Char owner() { return owner; }

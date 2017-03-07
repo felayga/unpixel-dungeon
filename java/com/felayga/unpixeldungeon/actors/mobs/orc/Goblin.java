@@ -32,7 +32,7 @@ import com.felayga.unpixeldungeon.items.armor.helmet.Helmet;
 import com.felayga.unpixeldungeon.items.armor.helmet.HelmetCrude;
 import com.felayga.unpixeldungeon.items.weapon.Weapon;
 import com.felayga.unpixeldungeon.items.weapon.melee.mob.MeleeMobAttack;
-import com.felayga.unpixeldungeon.items.weapon.melee.simple.DaggerCrude;
+import com.felayga.unpixeldungeon.items.weapon.melee.simple.dagger.DaggerCrude;
 import com.felayga.unpixeldungeon.mechanics.Characteristic;
 import com.felayga.unpixeldungeon.mechanics.CorpseEffect;
 import com.felayga.unpixeldungeon.mechanics.GameTime;
@@ -58,7 +58,7 @@ public class Goblin extends Mob {
         defenseMagical = 0;
         weight = Encumbrance.UNIT * 400;
         nutrition = 100;
-        immunityMagical = MagicType.None.value;
+        resistanceMagical = MagicType.None.value;
         corpseEffects = CorpseEffect.None.value;
         characteristics = Characteristic.value(Characteristic.Humanoid, Characteristic.Orc, Characteristic.Omnivore, Characteristic.WarmBlooded);
 

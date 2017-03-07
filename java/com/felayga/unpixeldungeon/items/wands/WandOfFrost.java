@@ -44,55 +44,63 @@ import com.watabou.utils.Random;
 
 public class WandOfFrost extends Wand {
 
-    public WandOfFrost()
-	{
-        super(20);
-		name = "Wand of Frost";
-	}
+    public WandOfFrost() {
+        super(8);
+        name = "Wand of Frost";
 
-	@Override
-	protected void onZap(Ballistica bolt) {
+        price = 175;
+    }
 
-		Heap heap = Dungeon.level.heaps.get(bolt.collisionPos);
-		if (heap != null) {
-			heap.freeze(curUser);
-		}
+    @Override
+    public int randomCharges() {
+        return Random.IntRange(4, 8);
+    }
 
-		Char ch = Actor.findChar(bolt.collisionPos);
-		if (ch != null){
+    @Override
+    protected void onZap(Ballistica bolt) {
+        onZap(bolt.collisionPos);
+    }
 
-			int damage = Random.NormalIntRange(5+level(), 10+(level()*level()/3));
+    private void onZap(int pos) {
+        Heap heap = Dungeon.level.heaps.get(pos);
+        if (heap != null) {
+            heap.freeze(curUser);
+        }
 
-			if (ch.buff(Frost.class) != null){
-				return; //do nothing, can't affect a frozen target
-			}
-			if (ch.buff(Chill.class) != null){
-				damage = (int)(damage * ch.buff(Chill.class).movementModifier() / GameTime.TICK);
-			} else {
-				ch.sprite.burst( 0xFF99CCFF, level() / 2 + 2 );
-			}
+        Char ch = Actor.findChar(pos);
+        if (ch != null) {
 
-			processSoulMark(ch, curUser);
-			ch.damage(damage, MagicType.Cold, null);
+            int damage = Random.NormalIntRange(6, 36);
 
-			if (ch.isAlive()){
-				if (Level.puddle[ch.pos()]){
-					//20+(10*level)% chance
-					if (Random.Int(10) >= 8-level() )
-						Buff.affect(ch, curUser, Frost.class, Frost.duration(ch)*Random.LongRange(2, 4) * GameTime.TICK / GameTime.TICK);
-					else
-						Buff.prolong(ch, curUser, Chill.class, 6+level());
-				} else {
-					Buff.prolong(ch, curUser, Chill.class, 4+level());
-				}
-			}
-		}
-	}
+            /*
+            if (ch.buff(Chill.class) != null || ch.buff(Frost.class) != null) {
+                damage = (int) (damage * ch.buff(Chill.class).movementModifier() / GameTime.TICK);
+            } else {
+            }
+            */
+            ch.sprite.burst(0xFF99CCFF, level() / 2 + 2);
 
-	@Override
-	protected void fxEffect(Ballistica bolt, Callback callback) {
-		MagicMissile.blueLight(curUser.sprite.parent, bolt.sourcePos, bolt.collisionPos, callback);
-	}
+            processSoulMark(ch, curUser);
+            ch.damage(damage, MagicType.Cold, curUser, null);
+
+            if (ch.isAlive()) {
+                if (Level.puddle[ch.pos()]) {
+                    //20+(10*level)% chance
+                    if (Random.Int(10) >= 8 - level())
+                        Buff.affect(ch, curUser, Frost.class, Frost.duration(ch) * Random.LongRange(2, 4) * GameTime.TICK / GameTime.TICK);
+                    else
+                        Buff.prolong(ch, curUser, Chill.class, 6 + level());
+                } else {
+                    Buff.prolong(ch, curUser, Chill.class, 4 + level());
+                }
+            }
+        }
+    }
+
+    @Override
+    protected void fxEffect(int source, int destination, Callback callback) {
+        MagicMissile.blueLight(curUser.sprite.parent, source, destination, callback);
+    }
 
     /*
 	@Override
@@ -113,24 +121,52 @@ public class WandOfFrost extends Wand {
 	}
 	*/
 
-	@Override
-	public void staffFx(MagesStaff.StaffParticle particle) {
-		particle.color(0x88CCFF);
-		particle.am = 0.6f;
-		particle.setLifespan(1.5f);
-		float angle = Random.Float(PointF.PI2);
-		particle.speed.polar( angle, 2f);
-		particle.acc.set( 0f, 1f);
-		particle.setSize( 0f, 1.5f);
-		particle.radiateXY(Random.Float(2f));
-	}
+    @Override
+    public void staffFx(MagesStaff.StaffParticle particle) {
+        particle.color(0x88CCFF);
+        particle.am = 0.6f;
+        particle.setLifespan(1.5f);
+        float angle = Random.Float(PointF.PI2);
+        particle.speed.polar(angle, 2f);
+        particle.acc.set(0f, 1f);
+        particle.setSize(0f, 1.5f);
+        particle.radiateXY(Random.Float(2f));
+    }
 
-	@Override
-	public String desc() {
-		return "This wand seems to be made out of some kind of magical ice. It grows brighter towards its " +
-				"rounded tip. It feels very cold when held, but somehow your hand stays warm.\n\n" +
-				"This wand shoots blasts of icy energy toward your foes, dealing significant damage and chilling, " +
-				"which reduces speed. The effect seems stronger in water. Chilled and frozen enemies " +
-				"take less damage from this wand, as they are already cold.";
-	}
+    @Override
+    public void explode(Char user) {
+        super.explode(user);
+
+        int maxDamage = curCharges() * 4;
+
+        for (Integer offset : Level.NEIGHBOURS8) {
+            int pos = user.pos() + offset;
+
+            Char target = Dungeon.level.findMob(pos);
+
+            if (target != null) {
+                explode(target, maxDamage);
+            }
+
+            onZap(pos);
+        }
+
+        explode(curUser, maxDamage);
+    }
+
+    private void explode(Char target, int maxDamage) {
+        int damage = Random.IntRange(1, maxDamage);
+
+        target.damage(damage, MagicType.Cold, curUser, null);
+        onZap(target.pos());
+    }
+
+    @Override
+    public String desc() {
+        return "This wand seems to be made out of some kind of magical ice. It grows brighter towards its " +
+                "rounded tip. It feels very cold when held, but somehow your hand stays warm.\n\n" +
+                "This wand shoots blasts of icy energy toward your foes, dealing significant damage and chilling, " +
+                "which reduces speed. The effect seems stronger in water. Chilled and frozen enemies " +
+                "take less damage from this wand, as they are already cold.";
+    }
 }

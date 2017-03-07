@@ -32,6 +32,7 @@ import com.felayga.unpixeldungeon.actors.buffs.negative.Blindness;
 import com.felayga.unpixeldungeon.actors.hero.Hero;
 import com.felayga.unpixeldungeon.mechanics.Constant;
 import com.felayga.unpixeldungeon.mechanics.GameTime;
+import com.felayga.unpixeldungeon.mechanics.Material;
 import com.felayga.unpixeldungeon.sprites.ItemSpriteSheet;
 
 /**
@@ -45,6 +46,7 @@ public class Blindfold extends Mask {
 
         name = "Blindfold";
         image = ItemSpriteSheet.TOOL_BLINDFOLD;
+        material = Material.Cloth;
 
         hasLevels(false);
 

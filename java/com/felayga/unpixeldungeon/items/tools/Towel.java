@@ -28,11 +28,13 @@ package com.felayga.unpixeldungeon.items.tools;
 
 import com.felayga.unpixeldungeon.Dungeon;
 import com.felayga.unpixeldungeon.actors.Char;
+import com.felayga.unpixeldungeon.actors.buffs.hero.Encumbrance;
 import com.felayga.unpixeldungeon.actors.buffs.negative.Blindness;
 import com.felayga.unpixeldungeon.actors.hero.Hero;
 import com.felayga.unpixeldungeon.items.armor.amulet.mask.Mask;
 import com.felayga.unpixeldungeon.mechanics.Constant;
 import com.felayga.unpixeldungeon.mechanics.GameTime;
+import com.felayga.unpixeldungeon.mechanics.Material;
 import com.felayga.unpixeldungeon.sprites.ItemSpriteSheet;
 import com.felayga.unpixeldungeon.utils.GLog;
 
@@ -49,10 +51,14 @@ public class Towel extends Mask implements ITool {
 
         name = "Towel";
         image = ItemSpriteSheet.TOOL_TOWEL;
+        material = Material.Cloth;
 
         hasLevels(false);
 
         defaultAction = Constant.Action.APPLY;
+
+        price = 50;
+        weight(2 * Encumbrance.UNIT);
     }
 
     public String getToolClass() {

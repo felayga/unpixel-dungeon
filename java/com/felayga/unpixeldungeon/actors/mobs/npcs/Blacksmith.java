@@ -30,6 +30,7 @@ import com.felayga.unpixeldungeon.Badges;
 import com.felayga.unpixeldungeon.Dungeon;
 import com.felayga.unpixeldungeon.Journal;
 import com.felayga.unpixeldungeon.actors.Actor;
+import com.felayga.unpixeldungeon.actors.Char;
 import com.felayga.unpixeldungeon.actors.buffs.Buff;
 import com.felayga.unpixeldungeon.actors.hero.Hero;
 import com.felayga.unpixeldungeon.items.EquippableItem;
@@ -123,7 +124,7 @@ public class Blacksmith extends NPC {
 		} else if (!Quest.completed) {
 			if (Quest.alternative) {
 				
-				OldPickaxe pick = Dungeon.hero.belongings.getItem( OldPickaxe.class );
+				OldPickaxe pick = Dungeon.hero.belongings.getItem( OldPickaxe.class, true );
 				if (pick == null) {
 					tell( TXT2 );
 				} else if (!pick.bloodStained) {
@@ -141,8 +142,8 @@ public class Blacksmith extends NPC {
 				
 			} else {
 				
-				OldPickaxe pick = Dungeon.hero.belongings.getItem( OldPickaxe.class );
-				DarkGold gold = Dungeon.hero.belongings.getItem( DarkGold.class );
+				OldPickaxe pick = Dungeon.hero.belongings.getItem( OldPickaxe.class, true );
+				DarkGold gold = Dungeon.hero.belongings.getItem( DarkGold.class, true );
 				if (pick == null) {
 					tell( TXT2 );
 				} else if (gold == null || gold.quantity() < 15) {
@@ -238,7 +239,7 @@ public class Blacksmith extends NPC {
 	}
 	
 	@Override
-	public int damage( int dmg, MagicType type, Actor source) {
+	public int damage( int dmg, MagicType type, Char source, Item sourceItem) {
         return 0;
 	}
 	

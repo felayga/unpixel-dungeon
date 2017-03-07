@@ -30,7 +30,7 @@ import android.opengl.GLES20;
 import com.felayga.unpixeldungeon.Assets;
 import com.felayga.unpixeldungeon.Dungeon;
 import com.felayga.unpixeldungeon.DungeonTilemap;
-import com.felayga.unpixeldungeon.items.Torch;
+import com.felayga.unpixeldungeon.items.tools.Torch;
 import com.felayga.unpixeldungeon.levels.traps.BlazingTrap;
 import com.felayga.unpixeldungeon.levels.traps.CursingTrap;
 import com.felayga.unpixeldungeon.levels.traps.DisarmingTrap;

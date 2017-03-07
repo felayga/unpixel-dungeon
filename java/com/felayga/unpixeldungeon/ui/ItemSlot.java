@@ -26,9 +26,7 @@
 package com.felayga.unpixeldungeon.ui;
 
 import com.felayga.unpixeldungeon.items.Item;
-import com.felayga.unpixeldungeon.items.Torch;
 import com.felayga.unpixeldungeon.items.potions.Potion;
-import com.felayga.unpixeldungeon.items.potions.PotionOfOilLit;
 import com.felayga.unpixeldungeon.items.scrolls.Scroll;
 import com.felayga.unpixeldungeon.items.scrolls.ScrollOfMagicalInfusion;
 import com.felayga.unpixeldungeon.items.scrolls.ScrollOfUpgrade;

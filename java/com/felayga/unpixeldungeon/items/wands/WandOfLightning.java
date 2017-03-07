@@ -45,42 +45,48 @@ import com.watabou.utils.Random;
 import java.util.ArrayList;
 
 public class WandOfLightning extends Wand {
+    public WandOfLightning() {
+        super(8);
 
-    public WandOfLightning()
-	{
-        super(20);
-		name = "Wand of Lightning";
-	}
-	
+        name = "Wand of Lightning";
+
+        collisionProperties = Ballistica.Mode.MagicRay;
+        price = 175;
+    }
+
+    @Override
+    public int randomCharges() {
+        return Random.IntRange(4, 8);
+    }
+
 	private ArrayList<Char> affected = new ArrayList<>();
 
 	ArrayList<Lightning.Arc> arcs = new ArrayList<>();
 	
 	@Override
 	protected void onZap( Ballistica bolt ) {
-        setKnown();
+        onZap(bolt.collisionPos);
+    }
 
-		//lightning deals less damage per-target, the more targets that are hit.
-		float multipler = 0.4f + (0.6f/affected.size());
-		if (Level.puddle[bolt.collisionPos]) multipler *= 1.5f;
+    private void onZap(int pos) {
+        //lightning deals less damage per-target, the more targets that are hit.
+        float multipler = 0.4f + (0.6f / affected.size());
+        if (Level.puddle[pos]) multipler *= 1.5f;
 
-		int min = 5+level();
-		int max = Math.round(10 + (level() * level() / 4f));
+        for (Char ch : affected) {
+            processSoulMark(ch, curUser);
+            ch.damage(Math.round(Random.NormalIntRange(6, 36) * multipler), MagicType.Shock, curUser, null);
 
-		for (Char ch : affected){
-			processSoulMark(ch, curUser);
-			ch.damage(Math.round(Random.NormalIntRange(min, max) * multipler), MagicType.Shock, null);
+            if (ch == Dungeon.hero) Camera.main.shake(2, 0.3f);
+            ch.sprite.centerEmitter(-1).burst(SparkParticle.FACTORY, 3);
+            ch.sprite.flash();
+        }
 
-			if (ch == Dungeon.hero) Camera.main.shake( 2, 0.3f );
-			ch.sprite.centerEmitter(-1).burst( SparkParticle.FACTORY, 3 );
-			ch.sprite.flash();
-		}
-
-		if (!curUser.isAlive()) {
-			Dungeon.fail( Utils.format( ResultDescriptions.ITEM, name ) );
-			GLog.n( "You killed yourself with your own Wand of Lightning..." );
-		}
-	}
+        if (!curUser.isAlive()) {
+            Dungeon.fail(Utils.format(ResultDescriptions.ITEM, name));
+            GLog.n("You killed yourself with your own Wand of Lightning...");
+        }
+    }
 
     /*
 	@Override
@@ -120,13 +126,13 @@ public class WandOfLightning extends Wand {
 	}
 	
 	@Override
-	protected void fxEffect( Ballistica bolt, Callback callback ) {
+	protected void fxEffect(int source, int destination, Callback callback ) {
 
 		affected.clear();
 		arcs.clear();
-		arcs.add( new Lightning.Arc(bolt.sourcePos, bolt.collisionPos));
+		arcs.add( new Lightning.Arc(source, destination));
 
-		int cell = bolt.collisionPos;
+		int cell = destination;
 
 		Char ch = Actor.findChar( cell );
 		if (ch != null) {
@@ -154,6 +160,34 @@ public class WandOfLightning extends Wand {
 		particle.x -= dst;
 		particle.y += dst;
 	}
+
+    @Override
+    public void explode(Char user) {
+        super.explode(user);
+
+        int maxDamage = curCharges() * 16;
+
+        for (Integer offset : Level.NEIGHBOURS8) {
+            int pos = user.pos() + offset;
+            Char target = Dungeon.level.findMob(pos);
+
+            if (target == null) {
+                continue;
+            }
+
+            explode(target, maxDamage);
+        }
+
+        explode(user, maxDamage);
+    }
+
+    public void explode(Char target, int maxDamage) {
+        int damage = Random.IntRange(1, maxDamage);
+
+        target.damage(damage, MagicType.Shock, curUser, null);
+
+        fxEffect(curUser.pos(), target.pos(), null);
+    }
 
 	@Override
 	public String desc() {

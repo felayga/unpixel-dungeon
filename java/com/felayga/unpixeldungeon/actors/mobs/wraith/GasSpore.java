@@ -55,7 +55,7 @@ public class GasSpore extends Mob {
         defenseMagical = 0;
         weight = Encumbrance.UNIT * 10;
         nutrition = 0;
-        immunityMagical = MagicType.None.value;
+        resistanceMagical = MagicType.None.value;
         corpseEffects = CorpseEffect.None.value;
         corpseResistances = MagicType.None.value;
         characteristics = Characteristic.value(Characteristic.NonBreather, Characteristic.Brainless, Characteristic.CannotUseItems);
@@ -72,7 +72,7 @@ public class GasSpore extends Mob {
     public void die(Actor cause) {
         super.die(cause);
 
-        Bomb.explode(pos(), false, 4, 24);
+        Bomb.explode(this, null, pos(), false, MagicType.Mundane, 4, 24);
     }
 
 

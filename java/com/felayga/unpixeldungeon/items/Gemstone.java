@@ -30,6 +30,7 @@ import com.felayga.unpixeldungeon.actors.Char;
 import com.felayga.unpixeldungeon.actors.buffs.hero.Encumbrance;
 import com.felayga.unpixeldungeon.actors.hero.Hero;
 import com.felayga.unpixeldungeon.mechanics.BUCStatus;
+import com.felayga.unpixeldungeon.mechanics.Material;
 import com.felayga.unpixeldungeon.sprites.ItemSpriteSheet;
 import com.felayga.unpixeldungeon.sprites.MissileSprite;
 import com.felayga.unpixeldungeon.utils.GLog;
@@ -47,8 +48,6 @@ public class Gemstone extends Item {
     private boolean identified = false;
 
     public Gemstone(int price, boolean isHard, GemstoneColor... choices) {
-        super();
-
         this.price = price;
         this.hardness = isHard;
 
@@ -62,6 +61,7 @@ public class Gemstone extends Item {
 
         setColor(choices[index]);
         stackable = true;
+        material = Material.Gemstone;
 
         weight(Encumbrance.UNIT);
         hasBuc(false);
@@ -567,6 +567,8 @@ public class Gemstone extends Item {
                     GemstoneColor.Violet,
                     GemstoneColor.Black
             );
+
+            material = Material.GemstoneFake;
         }
 
         public int shopkeeperPriceJacking() {
@@ -673,6 +675,8 @@ public class Gemstone extends Item {
         public Flintstone() {
             super(1, true, GemstoneColor.Gray);
             weight(Encumbrance.UNIT * 10);
+
+            material = Material.Mineral;
         }
 
         @Override
@@ -687,6 +691,8 @@ public class Gemstone extends Item {
             weight(Encumbrance.UNIT * 500);
             hasBuc(true);
             bucStatus(BUCStatus.Cursed, false);
+
+            material = Material.Mineral;
         }
 
         //special pickup logic already implemented in Hero
@@ -697,15 +703,28 @@ public class Gemstone extends Item {
         }
 
         @Override
-        public void doDrop(final Hero hero) {
+        protected void doDrop(Hero hero, Item item) {
             if (bucStatus() == BUCStatus.Cursed) {
                 if (!bucStatusKnown()) {
                     bucStatus(true);
                 }
 
-                GLog.n("You can't drop the " + getDisplayName() + "!");
+                GLog.n("You can't drop the " + item.getDisplayName() + "!");
             } else {
-                super.doDrop(hero);
+                super.doDrop(hero, item);
+            }
+        }
+
+        @Override
+        protected void doDrop(Hero hero, Item item, int quantity) {
+            if (bucStatus() == BUCStatus.Cursed) {
+                if (!bucStatusKnown()) {
+                    bucStatus(true);
+                }
+
+                GLog.n("You can't drop the " + item.getDisplayName() + "!");
+            } else {
+                super.doDrop(hero, item, quantity);
             }
         }
 
@@ -729,6 +748,8 @@ public class Gemstone extends Item {
         public Luckstone() {
             super(60, true, GemstoneColor.Gray);
             weight(Encumbrance.UNIT * 10);
+
+            material = Material.Mineral;
         }
 
         @Override
@@ -741,6 +762,8 @@ public class Gemstone extends Item {
         public Touchstone() {
             super(45, true, GemstoneColor.Gray);
             weight(Encumbrance.UNIT * 10);
+
+            material = Material.Mineral;
         }
 
         //todo: touchstone application

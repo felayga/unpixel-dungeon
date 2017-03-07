@@ -27,6 +27,7 @@
 package com.felayga.unpixeldungeon.items.bags;
 
 import com.felayga.unpixeldungeon.actors.buffs.hero.Encumbrance;
+import com.felayga.unpixeldungeon.mechanics.Material;
 import com.felayga.unpixeldungeon.sprites.ItemSpriteSheet;
 import com.felayga.unpixeldungeon.ui.Icons;
 
@@ -39,6 +40,8 @@ public class LargeBox extends LargeChest {
 
         name = "large box";
         image = ItemSpriteSheet.LARGEBOX;
+        material = Material.Wood;
+
         tabIcon = Icons.LARGEBOX;
 
         size = 36;

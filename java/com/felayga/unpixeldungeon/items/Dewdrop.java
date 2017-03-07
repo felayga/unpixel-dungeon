@@ -38,50 +38,50 @@ import com.watabou.noosa.audio.Sample;
 
 public class Dewdrop extends Item {
 
-	private static final String TXT_VALUE	= "%+dHP";
-	
-	{
-		name = "dewdrop";
-		image = ItemSpriteSheet.DEWDROP;
-		
-		stackable = true;
-	}
-	
-	@Override
-	public boolean doPickUp( Hero hero ) {
-		DewVial vial = hero.belongings.getItem( DewVial.class );
-		
-		if (hero.HP < hero.HT || vial == null || vial.isFull()) {
-			
-			int value = 1 + (Dungeon.depthAdjusted - 1) / 5;
-			if (hero.subClass == HeroSubClass.WARDEN) {
-				value+=2;
-			}
-			
-			int effect = Math.min( hero.HT - hero.HP, value * quantity() );
-			if (effect > 0) {
-				hero.HP += effect;
-				hero.sprite.emitter().burst( Speck.factory( Speck.HEALING ), 1 );
-				hero.sprite.showStatus( CharSprite.POSITIVE, TXT_VALUE, effect );
-			} else {
-				GLog.i("You already have full health.");
-				return false;
-			}
-			
-		} else {
-			
-			vial.collectDew( this );
-			
-		}
-		
-		Sample.INSTANCE.play( Assets.SND_DEWDROP );
-		hero.spend_new(Constant.Time.ITEM_PICKUP, true);
-		
-		return true;
-	}
+    private static final String TXT_VALUE = "%+dHP";
 
-	@Override
-	public String info() {
-		return "A crystal clear dewdrop.\n\nDue to the magic of this place, pure water has minor restorative properties.";
-	}
+    {
+        name = "dewdrop";
+        image = ItemSpriteSheet.DEWDROP;
+
+        stackable = true;
+    }
+
+    @Override
+    public boolean doPickUp(Hero hero) {
+        DewVial vial = hero.belongings.getItem(DewVial.class, true);
+
+        if (hero.HP < hero.HT || vial == null || vial.isFull()) {
+
+            int value = 1 + (Dungeon.depthAdjusted - 1) / 5;
+            if (hero.subClass == HeroSubClass.WARDEN) {
+                value += 2;
+            }
+
+            int effect = Math.min(hero.HT - hero.HP, value * quantity());
+            if (effect > 0) {
+                hero.HP += effect;
+                hero.sprite.emitter().burst(Speck.factory(Speck.HEALING), 1);
+                hero.sprite.showStatus(CharSprite.POSITIVE, TXT_VALUE, effect);
+            } else {
+                GLog.i("You already have full health.");
+                return false;
+            }
+
+        } else {
+
+            vial.collectDew(this);
+
+        }
+
+        Sample.INSTANCE.play(Assets.SND_DEWDROP);
+        hero.spend_new(Constant.Time.ITEM_PICKUP, true);
+
+        return true;
+    }
+
+    @Override
+    public String info() {
+        return "A crystal clear dewdrop.\n\nDue to the magic of this place, pure water has minor restorative properties.";
+    }
 }

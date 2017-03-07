@@ -32,15 +32,17 @@ import com.watabou.noosa.ColorBlock;
  * Created by hello on 3/13/16.
  */
 public enum BUCStatus {
-    Unknown(-2),
-    Cursed(-1),
-    Uncursed(0),
-    Blessed(1);
+    Unknown(-2, ""),
+    Cursed(-1, "cursed"),
+    Uncursed(0, "uncursed"),
+    Blessed(1, "blessed");
 
     public final int value;
+    public final String name;
 
-    BUCStatus(int value) {
+    BUCStatus(int value, String name) {
         this.value = value;
+        this.name = name;
     }
 
     public static BUCStatus fromInt(int value)
@@ -76,19 +78,5 @@ public enum BUCStatus {
                 background.ra += 0.15f;
                 background.ga += 0.15f;
         }
-    }
-
-    public static String getName(BUCStatus status)
-    {
-        switch(status) {
-            case Cursed:
-                return "cursed";
-            case Uncursed:
-                return "uncursed";
-            case Blessed:
-                return "blessed";
-        }
-
-        return "";
     }
 }

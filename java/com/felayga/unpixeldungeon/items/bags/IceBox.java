@@ -33,6 +33,7 @@ import com.felayga.unpixeldungeon.actors.mobs.Mob;
 import com.felayga.unpixeldungeon.items.Item;
 import com.felayga.unpixeldungeon.items.food.Corpse;
 import com.felayga.unpixeldungeon.mechanics.Characteristic;
+import com.felayga.unpixeldungeon.mechanics.Material;
 import com.felayga.unpixeldungeon.mechanics.Roll;
 import com.felayga.unpixeldungeon.sprites.ItemSpriteSheet;
 import com.felayga.unpixeldungeon.ui.Icons;
@@ -47,6 +48,8 @@ public class IceBox extends LargeChest {
 
         name = "ice box";
         image = ItemSpriteSheet.ICEBOX;
+        material = Material.Plastic;
+
         tabIcon = Icons.ICEBOX;
 
         size = 36;

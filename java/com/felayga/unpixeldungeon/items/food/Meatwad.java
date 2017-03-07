@@ -27,6 +27,7 @@
 package com.felayga.unpixeldungeon.items.food;
 
 import com.felayga.unpixeldungeon.actors.buffs.hero.Encumbrance;
+import com.felayga.unpixeldungeon.mechanics.Material;
 import com.felayga.unpixeldungeon.sprites.ItemSpriteSheet;
 
 /**
@@ -36,10 +37,11 @@ public class Meatwad extends Food {
     public Meatwad() {
         super(2500, 125, Encumbrance.UNIT * 200);
 
-        stackable = true;
         name = "meatwad";
         image = ItemSpriteSheet.FOOD_MEATWAD;
+        material = Material.Flesh;
 
+        stackable = true;
         bones = true;
 
         price = 105;

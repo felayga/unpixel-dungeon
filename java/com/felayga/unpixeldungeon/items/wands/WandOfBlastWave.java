@@ -61,6 +61,7 @@ public class WandOfBlastWave extends Wand {
 		name = "Wand of Blast Wave";
 
 		collisionProperties = Ballistica.Mode.Projectile;
+        price = 150;
 	}
 
 	@Override
@@ -86,7 +87,7 @@ public class WandOfBlastWave extends Wand {
             Char ch = Actor.findChar(bolt.collisionPos + i);
 
             if (ch != null) {
-                ch.damage(damage, MagicType.Mundane, curUser);
+                ch.damage(damage, MagicType.Mundane, curUser, null);
 
                 if (ch.isAlive()) {
                     Ballistica trajectory = new Ballistica(ch.pos(), ch.pos() + i, Ballistica.Mode.MagicBolt);
@@ -99,7 +100,7 @@ public class WandOfBlastWave extends Wand {
 		//throws the char at the center of the blast
 		Char ch = Actor.findChar(bolt.collisionPos);
 		if (ch != null){
-			ch.damage(damage, MagicType.Mundane, curUser);
+			ch.damage(damage, MagicType.Mundane, curUser, null);
 
 			if (ch.isAlive() && bolt.path.size() > bolt.dist+1) {
 				Ballistica trajectory = new Ballistica(ch.pos(), bolt.path.get(bolt.dist + 1), Ballistica.Mode.MagicBolt);
@@ -144,7 +145,7 @@ public class WandOfBlastWave extends Wand {
 			public void call() {
 				ch.pos(newPos);
 				if (ch.pos() == trajectory.collisionPos) {
-					ch.damage(Random.NormalIntRange((finalDist + 1) / 2, finalDist), MagicType.Mundane, curUser);
+					ch.damage(Random.NormalIntRange((finalDist + 1) / 2, finalDist), MagicType.Mundane, curUser, null);
 					Paralysis.prolong(ch, curUser, Paralysis.class, Random.NormalIntRange((finalDist + 1) / 2, finalDist));
 				}
 				Dungeon.level.press(ch.pos(), ch);
@@ -170,8 +171,8 @@ public class WandOfBlastWave extends Wand {
 	*/
 
 	@Override
-	protected void fxEffect(Ballistica bolt, Callback callback) {
-		MagicMissile.slowness(curUser.sprite.parent, bolt.sourcePos, bolt.collisionPos, callback);
+	protected void fxEffect(int source, int destination, Callback callback) {
+		MagicMissile.slowness(curUser.sprite.parent, source, destination, callback);
 	}
 
 	@Override

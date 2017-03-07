@@ -53,7 +53,7 @@ public class Kobold extends Mob {
         defenseMagical = 0;
         weight = Encumbrance.UNIT * 400;
         nutrition = 100;
-        immunityMagical = MagicType.Poison.value;
+        resistanceMagical = MagicType.Poison.value;
         corpseEffects = CorpseEffect.Poisonous.value;
         characteristics = Characteristic.value(Characteristic.Humanoid, Characteristic.Omnivore, Characteristic.WarmBlooded);
 

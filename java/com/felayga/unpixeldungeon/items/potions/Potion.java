@@ -44,6 +44,7 @@ import com.felayga.unpixeldungeon.levels.Level;
 import com.felayga.unpixeldungeon.levels.Terrain;
 import com.felayga.unpixeldungeon.mechanics.Constant;
 import com.felayga.unpixeldungeon.mechanics.GameTime;
+import com.felayga.unpixeldungeon.mechanics.Material;
 import com.felayga.unpixeldungeon.scenes.GameScene;
 import com.felayga.unpixeldungeon.sprites.ItemSprite;
 import com.felayga.unpixeldungeon.sprites.ItemSpriteSheet;
@@ -156,67 +157,51 @@ full restoration
 			PotionOfWater.class
 	};
 
-	private static final String[] colors = {
+	private static final String[] potionColors = {
 			//RANDOMIZED
-			"ruby", "pink", "orange", "yellow", "emerald",
-			"dark green", "cyan", "sky blue", "brilliant blue", "magenta",
-			"purple-red", "puce", "milky", "swirly", "bubbly",
-			"smoky", "cloudy", "effervescent", "black", "golden",
-			"brown", "fizzy", "dark", "white", "murky",
-            "dingy", "indigo", "creamy", "glowing", "silvery",
-            "putrescent", "sea green", "rainbow", "aged", "coquelicot",
-            "olive", "mauve", "chartreuse", "flesh-colored",
+			"ruby", "pink", "orange", "yellow",
+            "emerald", "dark green", "cyan", "sky blue",
+            "brilliant blue", "magenta", "purple-red", "puce",
+            "milky", "swirly", "bubbly", "smoky",
+            "cloudy", "effervescent", "black", "golden",
+			"brown", "fizzy", "dark", "white",
+            "murky", "dingy", "indigo", "creamy",
+            "glowing", "silvery", "putrescent", "sea green",
+            "rainbow", "aged", "coquelicot", "olive",
+            "mauve", "chartreuse", "flesh-colored",
 			//NOT RANDOMIZED
 			"clear"
 	};
-	private static final Integer[] images = {
+	private static final Integer[] potionImages = {
 			//RANDOMIZED
-			ItemSpriteSheet.POTION_RUBY,
-			ItemSpriteSheet.POTION_PINK,
-			ItemSpriteSheet.POTION_ORANGE,
-			ItemSpriteSheet.POTION_YELLOW,
-			ItemSpriteSheet.POTION_EMERALD,
-			ItemSpriteSheet.POTION_DARKGREEN,
-			ItemSpriteSheet.POTION_CYAN,
-			ItemSpriteSheet.POTION_SKYBLUE,
-			ItemSpriteSheet.POTION_BRILLIANTBLUE,
-			ItemSpriteSheet.POTION_MAGENTA,
-
-			ItemSpriteSheet.POTION_PURPLERED,
-			ItemSpriteSheet.POTION_PUCE,
-			ItemSpriteSheet.POTION_MILKY,
-			ItemSpriteSheet.POTION_SWIRLY,
-			ItemSpriteSheet.POTION_BUBBLY,
-			ItemSpriteSheet.POTION_SMOKY,
-			ItemSpriteSheet.POTION_CLOUDY,
-			ItemSpriteSheet.POTION_EFFERVESCENT,
-			ItemSpriteSheet.POTION_BLACK,
-			ItemSpriteSheet.POTION_GOLDEN,
-
-			ItemSpriteSheet.POTION_BROWN,
-			ItemSpriteSheet.POTION_FIZZY,
-			ItemSpriteSheet.POTION_DARK,
-			ItemSpriteSheet.POTION_WHITE,
-			ItemSpriteSheet.POTION_MURKY,
-            ItemSpriteSheet.POTION_DINGY,
-            ItemSpriteSheet.POTION_INDIGO,
-            ItemSpriteSheet.POTION_CREAMY,
-            ItemSpriteSheet.POTION_GLOWING,
-            ItemSpriteSheet.POTION_SILVERY,
-
-            ItemSpriteSheet.POTION_PUTRESCENT,
-            ItemSpriteSheet.POTION_SEAGREEN,
-            ItemSpriteSheet.POTION_RAINBOW,
-            ItemSpriteSheet.POTION_CGA,
-            ItemSpriteSheet.POTION_ORANGERED,
-            ItemSpriteSheet.POTION_OLIVE,
-            ItemSpriteSheet.POTION_MAUVE,
-            ItemSpriteSheet.POTION_CHARTREUSE,
-            ItemSpriteSheet.POTION_FLESHCOLORED,
+			ItemSpriteSheet.POTION_RUBY, ItemSpriteSheet.POTION_PINK, ItemSpriteSheet.POTION_ORANGE, ItemSpriteSheet.POTION_YELLOW,
+            ItemSpriteSheet.POTION_EMERALD, ItemSpriteSheet.POTION_DARKGREEN, ItemSpriteSheet.POTION_CYAN, ItemSpriteSheet.POTION_SKYBLUE,
+			ItemSpriteSheet.POTION_BRILLIANTBLUE, ItemSpriteSheet.POTION_MAGENTA, ItemSpriteSheet.POTION_PURPLERED, ItemSpriteSheet.POTION_PUCE,
+			ItemSpriteSheet.POTION_MILKY, ItemSpriteSheet.POTION_SWIRLY, ItemSpriteSheet.POTION_BUBBLY, ItemSpriteSheet.POTION_SMOKY,
+			ItemSpriteSheet.POTION_CLOUDY, ItemSpriteSheet.POTION_EFFERVESCENT, ItemSpriteSheet.POTION_BLACK, ItemSpriteSheet.POTION_GOLDEN,
+			ItemSpriteSheet.POTION_BROWN, ItemSpriteSheet.POTION_FIZZY, ItemSpriteSheet.POTION_DARK, ItemSpriteSheet.POTION_WHITE,
+            ItemSpriteSheet.POTION_MURKY, ItemSpriteSheet.POTION_DINGY, ItemSpriteSheet.POTION_INDIGO, ItemSpriteSheet.POTION_CREAMY,
+            ItemSpriteSheet.POTION_GLOWING, ItemSpriteSheet.POTION_SILVERY, ItemSpriteSheet.POTION_PUTRESCENT, ItemSpriteSheet.POTION_SEAGREEN,
+            ItemSpriteSheet.POTION_RAINBOW, ItemSpriteSheet.POTION_CGA, ItemSpriteSheet.POTION_ORANGERED, ItemSpriteSheet.POTION_OLIVE,
+            ItemSpriteSheet.POTION_MAUVE, ItemSpriteSheet.POTION_CHARTREUSE, ItemSpriteSheet.POTION_FLESHCOLORED,
 
 			//NOT RANDOMIZED
 			ItemSpriteSheet.POTION_CLEAR
 	};
+    private static final Material[] potionMaterials = {
+            Material.Glass, Material.Glass, Material.Glass, Material.Glass,
+            Material.Glass, Material.Glass, Material.Glass, Material.Glass,
+            Material.Glass, Material.Glass, Material.Glass, Material.Glass,
+            Material.Glass, Material.Glass, Material.Glass, Material.Glass,
+            Material.Glass, Material.Glass, Material.Glass, Material.Glass,
+            Material.Glass, Material.Glass, Material.Glass, Material.Glass,
+            Material.Glass, Material.Glass, Material.Glass, Material.Glass,
+            Material.Glass, Material.Glass, Material.Glass, Material.Glass,
+            Material.Glass, Material.Glass, Material.Glass, Material.Glass,
+            Material.Glass, Material.Glass, Material.Glass,
+            //non-randomized
+            Material.Glass
+    };
 
 	protected static ItemRandomizationHandler<Potion> handler;
 
@@ -226,7 +211,7 @@ full restoration
 
 	@SuppressWarnings("unchecked")
 	public static void initColors() {
-		handler = new ItemRandomizationHandler<Potion>((Class<? extends Potion>[]) potions, colors, images, NONRANDOMPOTIONSATENDOFLISTS);
+		handler = new ItemRandomizationHandler<>((Class<? extends Potion>[]) potions, potionColors, potionImages, potionMaterials, NONRANDOMPOTIONSATENDOFLISTS);
 	}
 
 	public static void save(Bundle bundle) {
@@ -235,30 +220,28 @@ full restoration
 
 	@SuppressWarnings("unchecked")
 	public static void restore(Bundle bundle) {
-		handler = new ItemRandomizationHandler<Potion>((Class<? extends Potion>[]) potions, colors, images, bundle);
+		handler = new ItemRandomizationHandler<>((Class<? extends Potion>[]) potions, potionColors, potionImages, potionMaterials, bundle);
 	}
 
 	public Potion() {
 		super();
-		syncVisuals();
+        syncRandomizedProperties();
 
         pickupSound = Assets.SND_ITEM_POTION;
 
 		stackable = true;
 		defaultAction = Constant.Action.DRINK;
-		fragile = true;
         hasLevels(false);
 		weight(Encumbrance.UNIT * 20);
         price = 20;
 	}
 
 	@Override
-	public void syncVisuals() {
+	public void syncRandomizedProperties() {
 		image = handler.image(this);
 		color = handler.label(this);
+        material = handler.material(this);
 	}
-
-	;
 
 	@Override
 	public ArrayList<String> actions(Hero hero) {
@@ -305,8 +288,6 @@ full restoration
 								Potion.super.doThrow(hero);
 							}
 						}
-
-						;
 					}
 			);
 

@@ -30,16 +30,23 @@ import com.felayga.unpixeldungeon.items.bags.IBag;
 import com.felayga.unpixeldungeon.items.weapon.missiles.MissileWeapon;
 import com.felayga.unpixeldungeon.items.weapon.ranged.AmmunitionType;
 import com.felayga.unpixeldungeon.mechanics.GameTime;
+import com.felayga.unpixeldungeon.mechanics.Material;
 import com.felayga.unpixeldungeon.mechanics.WeaponSkill;
 import com.felayga.unpixeldungeon.sprites.ItemSpriteSheet;
 import com.felayga.unpixeldungeon.utils.GLog;
 import com.watabou.utils.Random;
 
 public class Dart extends MissileWeapon {
+    public Dart() {
+        super(WeaponSkill.Simple, GameTime.TICK, 1, 4, true, AmmunitionType.None);
 
-	public Dart() {
-		this( 1 );
-	}
+        name = "dart";
+        image = ItemSpriteSheet.MISSILE_DART;
+        material = Material.Iron;
+
+        bones = false; //Finding them in bones would be semi-frequent and disappointing.
+        price = 2;
+    }
 
     @Override
     public void parent(IBag what) {
@@ -54,16 +61,6 @@ public class Dart extends MissileWeapon {
 
         return retval;
     }
-	
-	public Dart( int number ) {
-		super(WeaponSkill.Simple, GameTime.TICK, 1, 4, number, true, AmmunitionType.None);
-
-		name = "dart";
-		image = ItemSpriteSheet.MISSILE_DART;
-
-		bones = false; //Finding them in bones would be semi-frequent and disappointing.
-        price = 2;
-	}
 	
 	@Override
 	public String desc() {

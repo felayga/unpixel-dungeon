@@ -27,6 +27,7 @@
 package com.felayga.unpixeldungeon.items.food;
 
 import com.felayga.unpixeldungeon.actors.buffs.hero.Encumbrance;
+import com.felayga.unpixeldungeon.mechanics.Material;
 import com.felayga.unpixeldungeon.sprites.ItemSpriteSheet;
 
 /**
@@ -36,10 +37,11 @@ public class CRation extends Food {
     public CRation() {
         super(300, 300 / 1, Encumbrance.UNIT * 10);
 
-        stackable = true;
         name = "C-ration";
         image = ItemSpriteSheet.FOOD_CRATION;
+        material = Material.Vegetable;
 
+        stackable = true;
         bones = true;
 
         price = 20;
@@ -47,11 +49,11 @@ public class CRation extends Food {
 
     @Override
     public String info() {
-        return "Nothing fancy here: dried meat, some biscuits - things like that." + super.info();
+        return "Everything a soldier needs to survive: hardtack, sugar, raisins, instant coffee, and powdered synthetic lemon drink." + super.info();
     }
 
     public String message() {
-        return "This food tastes delicious!";
+        return "That food tasted bland.";
     }
 }
 

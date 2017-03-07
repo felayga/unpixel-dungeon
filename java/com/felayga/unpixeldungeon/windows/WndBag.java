@@ -297,6 +297,7 @@ public class WndBag extends WndTabbed {
                             Item item = iterator.next();
                             if (hero.belongings.collect(item)) {
                                 iterator.remove();
+                                Dungeon.hero.spend_new(Constant.Time.ITEM_PICKUP, true);
                             }
                         }
                         break;

@@ -59,7 +59,7 @@ import com.felayga.unpixeldungeon.effects.CellEmitter;
 import com.felayga.unpixeldungeon.effects.CheckedCell;
 import com.felayga.unpixeldungeon.effects.Flare;
 import com.felayga.unpixeldungeon.effects.Speck;
-import com.felayga.unpixeldungeon.items.Amulet;
+import com.felayga.unpixeldungeon.items.AmuletOfYendor;
 import com.felayga.unpixeldungeon.items.Ankh;
 import com.felayga.unpixeldungeon.items.Dewdrop;
 import com.felayga.unpixeldungeon.items.EquippableItem;
@@ -77,10 +77,12 @@ import com.felayga.unpixeldungeon.items.bags.Bag;
 import com.felayga.unpixeldungeon.items.bags.IBag;
 import com.felayga.unpixeldungeon.items.bags.LargeChest;
 import com.felayga.unpixeldungeon.items.bags.backpack.Belongings;
+import com.felayga.unpixeldungeon.items.books.Book;
 import com.felayga.unpixeldungeon.items.food.Food;
 import com.felayga.unpixeldungeon.items.rings.RingOfMight;
 import com.felayga.unpixeldungeon.items.rings.RingOfTenacity;
 import com.felayga.unpixeldungeon.items.scrolls.ScrollOfMagicMapping;
+import com.felayga.unpixeldungeon.items.spells.Spell;
 import com.felayga.unpixeldungeon.items.tools.ITool;
 import com.felayga.unpixeldungeon.items.tools.digging.Pickaxe;
 import com.felayga.unpixeldungeon.items.tools.unlocking.UnlockingTool;
@@ -98,6 +100,7 @@ import com.felayga.unpixeldungeon.levels.features.Chasm;
 import com.felayga.unpixeldungeon.levels.features.Door;
 import com.felayga.unpixeldungeon.levels.features.Sign;
 import com.felayga.unpixeldungeon.mechanics.AttributeType;
+import com.felayga.unpixeldungeon.mechanics.Ballistica;
 import com.felayga.unpixeldungeon.mechanics.Constant;
 import com.felayga.unpixeldungeon.mechanics.GameTime;
 import com.felayga.unpixeldungeon.mechanics.MagicType;
@@ -312,8 +315,6 @@ public class Hero extends Char {
 
     public boolean weakened = false;
 
-    public float awareness;
-
     public int exp = 0;
 
     private ArrayList<Mob> visibleEnemies;
@@ -323,12 +324,10 @@ public class Hero extends Char {
 
         name = "you";
 
-        HP = HT = 20;
-        MP = MT = 20;
+        HP = HT = 12;
+        MP = MT = 12;
 
         resetAttributeUse();
-
-        awareness = 0.1f;
 
         motivation = 0;
 
@@ -403,8 +402,6 @@ public class Hero extends Char {
                 bundle.getInt(ATTRIBUTE2USE)
         };
 
-        updateAwareness();
-
         level = bundle.getInt(LEVEL);
         exp = bundle.getInt(EXPERIENCE);
 
@@ -418,7 +415,7 @@ public class Hero extends Char {
     }
 
     public String className() {
-        return subClass == null || subClass == HeroSubClass.NONE ? heroClass.title() : subClass.title();
+        return subClass == null || subClass == HeroSubClass.NONE ? heroClass.name : subClass.title();
     }
 
     public String givenName() {
@@ -612,9 +609,24 @@ public class Hero extends Char {
     }
 
     public void interrupt() {
+        if (curAction != null) {
+            if (curAction instanceof HeroAction.UseItem.SlowAction) {
+                HeroAction.UseItem.SlowAction slowAction = (HeroAction.UseItem.SlowAction)curAction;
+
+                if (slowAction.target instanceof Spell) {
+                    GLog.n("Your spellcasting was interrupted!");
+                    //todo: chance for spellcasting to not be interrupted
+                } else if (slowAction.target instanceof Book) {
+                    GLog.n(("Your reading was interrupted!"));
+                }
+            }
+        }
+
         if (isAlive() && curAction != null && (curAction instanceof HeroAction.Move && curAction.dst != pos())) {
             lastAction = curAction;
         } else if (curAction instanceof HeroAction.UseItem.EatItem) {
+            lastAction = null;
+
             HeroAction.UseItem.EatItem action = (HeroAction.UseItem.EatItem) curAction;
 
             if (!action.stoppedEating) {
@@ -628,6 +640,7 @@ public class Hero extends Char {
                 }
             }
         }
+
         curAction = null;
         resting = false;
     }
@@ -767,7 +780,7 @@ public class Hero extends Char {
 
                 int cell = Dungeon.level.map[dst];
 
-                if (cell == Terrain.LOCKED_DOOR || cell == Terrain.DOOR) {
+                if (cell == Terrain.LOCKED_DOOR || cell == Terrain.DOOR || cell == Terrain.SECRET_DOOR || cell == Terrain.SECRET_LOCKED_DOOR) {
                     curAction = new HeroAction.HandleDoor.KickDoor(dst, (EquippableItem) action.target);
                     return true;
                 }
@@ -781,8 +794,8 @@ public class Hero extends Char {
 
                     boolean messaged = false;
 
-                    if (Dungeon.level.passable[dst]) {
-                        distance = getAttributeModifier(AttributeType.STRCON) + 4 - item.weight() / Encumbrance.UNIT / 40;
+                    if (Level.passable[dst]) {
+                        distance = Ballistica.maxDistance(this, item, Ballistica.TravelCause.Kicked);
 
                         if (distance > 0) {
                             int direction = heap.pos - pos();
@@ -854,8 +867,8 @@ public class Hero extends Char {
                             }
                         }
                     }
-                } else if (Dungeon.level.passable[dst] || Dungeon.level.pit[dst]) {
-                    if (Random.Int(5) == 0) {
+                } else if (Level.passable[dst] ||Level.pit[dst]) {
+                    if (Random.Int(Constant.Chance.KICK_SPACE_CRIPPLE) == 0) {
                         GLog.n("Dumb move!  You strain a muscle.");
                         useAttribute(AttributeType.STRCON, -1);
                         Cripple.prolong(this, null, Cripple.class, GameTime.TICK * Random.IntRange(4, 12));
@@ -866,10 +879,14 @@ public class Hero extends Char {
                     Dungeon.level.setLight(dst, 5, true);
                 } else {
                     GLog.n("Ouch!  That hurts.");
-                    damage(Random.IntRange(1, 4), MagicType.Mundane, null);
-                    if (Random.Int(3) == 0) {
+                    damage(Random.IntRange(1, 4), MagicType.Mundane, null, null);
+                    if (Random.Int(Constant.Chance.KICK_SOLID_CRIPPLE) == 0) {
                         Cripple.prolong(this, null, Cripple.class, GameTime.TICK * Random.IntRange(4, 12));
                     }
+                    if (!this.isAlive()){
+                        Dungeon.fail("Died from kicking a wall");
+                    }
+
                 }
             }
 
@@ -980,7 +997,7 @@ public class Hero extends Char {
                                             Dungeon.level.setEmpty(digPos, true, true);
                                         }
 
-                                        switch(Random.Int(12)) {
+                                        switch(Random.Int(Constant.Chance.DIG_EXCAVATE_BOULDER)) {
                                             case 0:
                                                 GLog.w("You've dug out a boulder!");
                                                 Boulder npc = new Boulder();
@@ -1034,7 +1051,10 @@ public class Hero extends Char {
                                                 damage += rock.damageRoll();
                                             }
 
-                                            damage(damage, MagicType.Mundane, null);
+                                            damage(damage, MagicType.Mundane, null, rock);
+                                            if (!this.isAlive()){
+                                                Dungeon.fail("Died from falling rocks");
+                                            }
 
                                             Dungeon.level.drop(rock, pos());
                                         }
@@ -1228,8 +1248,11 @@ public class Hero extends Char {
                                     break;
                                 case 1:
                                     GLog.w("The water is contaminated!");
-                                    damage(Random.IntRange(1, 10), MagicType.Poison, null);
-                                    if ((immunityMagical & MagicType.Poison.value) != 0) {
+                                    damage(Random.IntRange(1, 10), MagicType.Poison, null, null);
+                                    if (!this.isAlive()){
+                                        Dungeon.fail("Died from drinking contaminated water");
+                                    }
+                                    if ((resistanceMagical & MagicType.Poison.value) != 0) {
                                         GLog.w("Perhaps it is runoff from a nearby farm.");
                                     } else {
                                         useAttribute(AttributeType.STRCON, -Random.Float(1.0f, 3.0f));
@@ -1580,18 +1603,31 @@ public class Hero extends Char {
     private boolean actKickDoor(final HeroAction.HandleDoor.KickDoor action) {
         final int doorCell = action.dst;
         if (Level.canStep(pos(), doorCell, Level.diagonal)) {
-
+            int door = Dungeon.level.map[doorCell];
+            boolean isSecret = door == Terrain.SECRET_DOOR || door == Terrain.SECRET_LOCKED_DOOR;
             switch(Door.tryKick(this, doorCell)) {
                 case 2:
-                    GLog.p("As you kick the door, it shatters to pieces!");
+                    if (isSecret) {
+                        GLog.p("Crash!  You uncover a secret door!");
+                    } else {
+                        GLog.p("As you kick the door, it shatters to pieces!");
+                    }
                     useAttribute(AttributeType.STRCON, 1);
                     break;
                 case 1:
-                    GLog.p("As you kick the door, it crashes open!");
+                    if (isSecret) {
+                        GLog.p("Crash!  You kick open a secret door!");
+                    }else {
+                        GLog.p("As you kick the door, it crashes open!");
+                    }
                     useAttribute(AttributeType.STRCON, 1);
                     break;
                 case 0:
-                    GLog.n("WHAMMM!!!");
+                    if (isSecret) {
+                        GLog.w("Thud!");
+                    } else {
+                        GLog.n("WHAMMM!!!");
+                    }
                     useAttribute(AttributeType.DEXCHA, 1);
                     break;
             }
@@ -1757,11 +1793,6 @@ public class Hero extends Char {
         int stairs = action.dst;
 
         if (pos() == stairs) {
-            /*
-            for (Mob mob : Dungeon.level.mobs.toArray( new Mob[0] ))
-                if (mob instanceof DriedRose.GhostHero) mob.destroy();
-            */
-
             Hunger hunger = buff(Hunger.class);
             if (hunger != null) {
                 hunger.satisfy_new(-2);
@@ -1803,11 +1834,13 @@ public class Hero extends Char {
             }
 
             if (action.direction > 0) {
+                spend_new(movementSpeed(), false);
+
                 InterlevelScene.mode = InterlevelScene.Mode.DESCEND;
                 Game.switchScene(InterlevelScene.class);
             } else if (action.direction < 0) {
                 if (Dungeon.depth() == 1) {
-                    if (belongings.getItem(Amulet.class) == null) {
+                    if (belongings.getItem(AmuletOfYendor.class, true) == null) {
                         GameScene.show(new WndMessage(TXT_LEAVE));
                         ready();
                     } else {
@@ -1816,6 +1849,8 @@ public class Hero extends Char {
                         Game.switchScene(SurfaceScene.class);
                     }
                 } else {
+                    spend_new(movementSpeed(), false);
+
                     InterlevelScene.mode = InterlevelScene.Mode.ASCEND;
                     Game.switchScene(InterlevelScene.class);
                 }
@@ -1958,7 +1993,7 @@ public class Hero extends Char {
     }
 
     @Override
-    public int damage(int dmg, MagicType type, Actor source) {
+    public int damage(int dmg, MagicType type, Char source, Item sourceItem) {
         if (buff(TimekeepersHourglass.timeStasis.class) != null)
             return 0;
 
@@ -1986,7 +2021,7 @@ public class Hero extends Char {
         if (tenacity != 0) //(HT - HP)/HT = heroes current % missing health.
             dmg = (int) Math.ceil((float) dmg * Math.pow(0.9, tenacity * ((float) (HT - HP) / HT)));
 
-        dmg = super.damage(dmg, type, source);
+        dmg = super.damage(dmg, type, source, sourceItem);
 
         if (subClass == HeroSubClass.BERSERKER && 0 < HP && HP <= HT * Fury.LEVEL) {
             Buff.affect(this, null, Fury.class);
@@ -2196,7 +2231,17 @@ public class Hero extends Char {
                 level++;
                 levelUp = true;
 
-                //todo: level up bonuses
+                int hp = hpPerLevel;
+                hp += getAttributeModifier(AttributeType.STRCON);
+
+                HP += hp;
+                HT += hp;
+
+                int mp = mpPerLevel;
+                mp += getAttributeModifier(AttributeType.INTWIS);
+
+                MP += mp;
+                MT += mp;
 
                 //HT += 5;
                 //HP += 5;
@@ -2209,10 +2254,6 @@ public class Hero extends Char {
 
                 GLog.p("You cannot grow stronger, but your experiences do give you a surge of power!");
                 Sample.INSTANCE.play(Assets.SND_LEVELUP);
-            }
-
-            if (level < 10) {
-                updateAwareness();
             }
         }
 
@@ -2234,13 +2275,6 @@ public class Hero extends Char {
         } else {
             return Integer.MAX_VALUE;
         }
-    }
-
-    void updateAwareness() {
-        awareness = (float) (1 - Math.pow(
-                (heroClass == HeroClass.ROGUE ? 0.85 : 0.90),
-                (1 + Math.min(level, 9)) * 0.5
-        ));
     }
 
     public boolean isStarving() {
@@ -2525,36 +2559,23 @@ public class Hero extends Char {
     }
 
     public boolean search(boolean intentional) {
+        boolean secretFound = false;
 
-        boolean smthFound = false;
+        int searchChance = luck() * 5 + INTWIS() * 7;
+        int distance = (INTWIS() - 3) / 5;
 
-        int positive = 0;
-        int negative = 0;
-
-        float level;
         if (intentional) {
-            level = 2 * awareness - awareness * awareness;
+            searchChance += 48;
 
-            int test = getAttributeModifier(AttributeType.INTWIS);
             useAttribute(AttributeType.INTWIS, 1);
-
-            if (test > 0) {
-                positive += test;
-            }
-            else {
-                negative += test;
-            }
         }
         else {
-            level = awareness;
+            searchChance -= 48;
 
-            positive++;
+            distance /= 2;
         }
 
-        int distance = positive + negative;
-
-        if (distance <= 0) {
-            level /= 2 - distance;
+        if (distance < 1) {
             distance = 1;
         }
 
@@ -2577,53 +2598,51 @@ public class Hero extends Char {
             by = Level.HEIGHT - 1;
         }
 
-        TalismanOfForesight.Foresight foresight = buff(TalismanOfForesight.Foresight.class);
-
-        //cursed talisman of foresight makes unintentionally finding things impossible.
-        if (foresight != null && foresight.isCursed()) {
-            level = -1;
-        }
-
-        boolean test;
-        int foundmonsters = 0;
-        int foundheaps = 0;
+        boolean visible;
+        boolean touchable;
+        int searchChanceModifier;
+        int foundMonsters = 0;
+        int foundHeaps = 0;
 
         for (int y = ay; y <= by; y++) {
             for (int x = ax, p = ax + y * Level.WIDTH; x <= bx; x++, p++) {
-                test = Dungeon.visible[p];
+                visible = Dungeon.visible[p];
+                touchable = Dungeon.touchable[p];
+                searchChanceModifier = 0;
 
-                if (Dungeon.touchable[p]) {
-                    test = true;
+                if (touchable && !visible) {
+                    searchChanceModifier -= 48;
 
-                    if (intentional) {
+                    if (Random.PassFail(searchChance)) {
                         if (Dungeon.level.findMob(p) != null) {
                             if (!Dungeon.level.warnings.findWarning(p)) {
                                 Dungeon.level.warnings.add(p);
-                                foundmonsters++;
+                                foundMonsters++;
                             }
                         } else {
                             if (Dungeon.level.warnings.findWarning(p)) {
                                 Dungeon.level.warnings.remove(p);
                             }
                         }
+                    }
 
+                    if (intentional) {
                         Heap heap;
                         if ((heap = Dungeon.level.heaps.get(p)) != null) {
                             if (!heap.seen) {
                                 heap.seen = true;
-                                foundheaps++;
+                                foundHeaps++;
                             }
                         }
                     }
                 }
 
-                if (test) {
+                if (touchable || visible) {
                     if (intentional) {
                         sprite.parent.addToBack(new CheckedCell(p));
                     }
 
-                    if (Level.secret[p] && (intentional || Random.Float() < level)) {
-
+                    if (Level.secret[p] && Random.PassFail(searchChance + searchChanceModifier)) {
                         int oldValue = Dungeon.level.map[p];
 
                         GameScene.discoverTile(p, oldValue);
@@ -2632,29 +2651,26 @@ public class Hero extends Char {
 
                         ScrollOfMagicMapping.discoverFx(p);
 
-                        smthFound = true;
-
-                        if (foresight != null && !foresight.isCursed())
-                            foresight.charge();
+                        secretFound = true;
                     }
                 }
             }
         }
 
-        if (foundmonsters > 1) {
-            if (foundheaps > 0) {
+        if (foundMonsters > 1) {
+            if (foundHeaps > 0) {
                 GLog.w("You feel unseen monsters and items!");
             }
             else {
                 GLog.w("You feel unseen monsters!");
             }
-        } else if (foundmonsters > 0) {
-            if (foundheaps > 0) {
+        } else if (foundMonsters > 0) {
+            if (foundHeaps > 0) {
                 GLog.w("You feel an unseen monster and items!");
             } else {
                 GLog.w("You feel an unseen monster!");
             }
-        } else if (foundheaps > 0) {
+        } else if (foundHeaps > 0) {
             GLog.i("You feel unseen items!");
         }
 
@@ -2662,21 +2678,16 @@ public class Hero extends Char {
         if (intentional) {
             sprite.showStatus(CharSprite.DEFAULT, TXT_SEARCH);
             sprite.operate(pos());
-            if (foresight != null && foresight.isCursed()) {
-                GLog.n("You can't concentrate, searching takes a while.");
-                spend_new(Constant.Time.HERO_SEARCH * 3, true);
-            } else {
-                spend_new(Constant.Time.HERO_SEARCH, true);
-            }
+            spend_new(Constant.Time.HERO_SEARCH, true);
         }
 
-        if (smthFound) {
+        if (secretFound) {
             GLog.w(TXT_NOTICED_SMTH);
             Sample.INSTANCE.play(Assets.SND_SECRET);
             interrupt();
         }
 
-        return smthFound;
+        return secretFound;
     }
 
     public void resurrect(int resetLevel) {

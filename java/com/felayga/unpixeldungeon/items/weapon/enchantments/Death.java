@@ -50,7 +50,7 @@ public class Death extends Weapon.Enchantment {
 		
 		if (Random.Int( level + 100 ) >= 92) {
 			
-			defender.damage( defender.HP, MagicType.Drain, null );
+			defender.damage( defender.HP, MagicType.Drain, null, null );
 			defender.sprite.emitter().burst( ShadowParticle.UP, 5 );
 			
 			if (!defender.isAlive() && attacker == Dungeon.hero) {

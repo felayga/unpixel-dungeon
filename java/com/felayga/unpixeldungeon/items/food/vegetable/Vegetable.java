@@ -27,6 +27,7 @@
 package com.felayga.unpixeldungeon.items.food.vegetable;
 
 import com.felayga.unpixeldungeon.items.food.Food;
+import com.felayga.unpixeldungeon.mechanics.Material;
 
 /**
  * Created by HELLO on 2/23/2017.
@@ -34,6 +35,8 @@ import com.felayga.unpixeldungeon.items.food.Food;
 public class Vegetable extends Food {
     public Vegetable(int energy, int weight) {
         super(energy, energy, weight);
+
+        material = Material.Vegetable;
     }
 
     @Override

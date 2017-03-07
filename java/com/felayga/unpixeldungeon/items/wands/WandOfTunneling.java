@@ -61,6 +61,7 @@ public class WandOfTunneling extends Wand {
         canTargetSelf = true;
 
         collisionProperties = Ballistica.Mode.NoCollision;
+        price = 150;
     }
 
     @Override
@@ -143,7 +144,7 @@ public class WandOfTunneling extends Wand {
     */
 
     @Override
-    protected void fxEffect(Ballistica beam, Callback callback) {
+    protected void fxEffect(int source, int destination, Callback callback) {
         //int cell = beam.path.get(Math.min(beam.dist, 9));
         //curUser.sprite.parent.add(new Beam.LightRay(curUser.sprite.center(), DungeonTilemap.tileCenterToWorld(cell)));
         callback.call();
@@ -157,7 +158,7 @@ public class WandOfTunneling extends Wand {
 
         for (Integer offset : Level.NEIGHBOURS8) {
             int pos = user.pos() + offset;
-            Char target = Dungeon.level.findMob(user.pos() + offset);
+            Char target = Dungeon.level.findMob(pos);
 
             boolean fall = digDown(pos);
 
@@ -168,7 +169,7 @@ public class WandOfTunneling extends Wand {
             explode(target, maxDamage, fall);
         }
 
-        explode(user, maxDamage, digDown(user.pos()));
+        explode(user, maxDamage, false);
     }
 
     private boolean digDown(int pos) {
@@ -194,7 +195,7 @@ public class WandOfTunneling extends Wand {
     public void explode(Char target, int maxDamage, boolean chasm) {
         int damage = Random.IntRange(1, maxDamage);
 
-        target.damage(damage, MagicType.Mundane, curUser);
+        target.damage(damage, MagicType.Magic, curUser, null);
 
         if (chasm) {
             if (target == Dungeon.hero) {

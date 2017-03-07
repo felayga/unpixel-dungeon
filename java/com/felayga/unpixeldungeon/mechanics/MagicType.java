@@ -36,18 +36,17 @@ public enum MagicType {
     None(0x0000, "None"),
     Acid(0x0001, "Acid"),
     Cold(0x0002, "Cold"),
-    Disintegration(0x0004, "Disintegration"),
-    Fire(0x0008, "Fire"),
-    Magic(0x0010, "Magic"),
-    Poison(0x0020, "Poison"),
-    Shock(0x0040, "Shock"),
-    Sleep(0x0080, "Sleep"),
-    Hallucination(0x0100, "Hallucination"),
-    Drain(0x0200, "Drain"),
-    Stoning(0x0400, "Stoning"),
-    Sliming(0x0800, "Sliming"),
-    Sickness(0x1000, "Sickness"),
-    Mundane(0x2000, "Mundane");
+    Fire(0x0004, "Fire"),
+    Magic(0x0008, "Magic"),
+    Poison(0x0010, "Poison"),
+    Shock(0x0020, "Shock"),
+    Sleep(0x0040, "Sleep"),
+    Hallucination(0x0080, "Hallucination"),
+    Drain(0x0100, "Drain"),
+    Stoning(0x0200, "Stoning"),
+    Sliming(0x0400, "Sliming"),
+    Sickness(0x0800, "Sickness"),
+    Mundane(0x1000, "Mundane");
 
     public final int value;
     public final String name;
@@ -64,28 +63,26 @@ public enum MagicType {
             case 1:
                 return Cold;
             case 2:
-                return Disintegration;
-            case 3:
                 return Fire;
-            case 4:
+            case 3:
                 return Magic;
-            case 5:
+            case 4:
                 return Poison;
-            case 6:
+            case 5:
                 return Shock;
-            case 7:
+            case 6:
                 return Sleep;
-            case 8:
+            case 7:
                 return Hallucination;
-            case 9:
+            case 8:
                 return Drain;
-            case 10:
+            case 9:
                 return Stoning;
-            case 11:
+            case 10:
                 return Sliming;
-            case 12:
+            case 11:
                 return Sickness;
-            case 13:
+            case 12:
                 return Mundane;
             default:
                 return None;
@@ -95,7 +92,7 @@ public enum MagicType {
     public static List<MagicType> toList(int flags) {
         List<MagicType> retval = new ArrayList<>();
 
-        for (int n = 0; n < 14; n++) {
+        for (int n = 0; n < 13; n++) {
             MagicType type = fromInt(n);
             if ((flags & type.value) != 0) {
                 retval.add(type);
@@ -104,6 +101,16 @@ public enum MagicType {
 
         if (flags == None.value) {
             retval.add(None);
+        }
+
+        return retval;
+    }
+
+    public static int value(MagicType... magicTypes) {
+        int retval = 0;
+
+        for (MagicType magicType : magicTypes) {
+            retval |= magicType.value;
         }
 
         return retval;

@@ -26,6 +26,7 @@
 package com.felayga.unpixeldungeon.items.food;
 
 import com.felayga.unpixeldungeon.actors.buffs.hero.Encumbrance;
+import com.felayga.unpixeldungeon.mechanics.Material;
 import com.felayga.unpixeldungeon.sprites.ItemSpriteSheet;
 
 public class Pasty extends Food {
@@ -36,6 +37,7 @@ public class Pasty extends Food {
 
 		name = "pasty";
 		image = ItemSpriteSheet.FOOD_PASTY;
+        material = Material.Flesh;
 
 		bones = true;
         price = 20;
