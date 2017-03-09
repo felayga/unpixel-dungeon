@@ -432,14 +432,14 @@ public class Shopkeeper extends NPC {
         }
 
         for (Integer pos : wallPos) {
-            if (Dungeon.level.map[pos] != Terrain.WALL) {
+            if (Dungeon.level.map(pos) != Terrain.WALL) {
                 if (autoRepair.get(pos) == null) {
                     autoRepair.put(pos, new LongWrapper(5 * GameTime.TICK));
                 }
             }
         }
 
-        switch (Dungeon.level.map[doorPos]) {
+        switch (Dungeon.level.map(doorPos)) {
             case Terrain.DOOR:
             case Terrain.SECRET_DOOR:
             case Terrain.LOCKED_DOOR:

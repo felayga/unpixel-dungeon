@@ -48,7 +48,7 @@ public class WandOfMakeInvisible extends Wand {
         super(8);
         name = "Wand of Make Invisible";
 
-        canTargetSelf = true;
+        ballisticaMode = Ballistica.Mode.value(Ballistica.Mode.MagicBolt, Ballistica.Mode.StopSelf);
         price = 150;
     }
 

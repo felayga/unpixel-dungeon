@@ -62,7 +62,7 @@ public class WaterOfAwareness extends WellWater {
 		
 		for (int i=0; i < Level.LENGTH; i++) {
 			
-			int terr = Dungeon.level.map[i];
+			int terr = Dungeon.level.map(i);
 			if ((Terrain.flags[terr] & Terrain.FLAG_SECRET) != 0) {
 				
 				Dungeon.level.discover( i );

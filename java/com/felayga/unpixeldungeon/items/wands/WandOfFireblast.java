@@ -52,7 +52,7 @@ public class WandOfFireblast extends Wand {
         super(8);
         name = "Wand of Fireblast";
 
-        collisionProperties = Ballistica.Mode.StopTerrain;
+        ballisticaMode = Ballistica.Mode.value(Ballistica.Mode.StopTerrain);
         price = 175;
     }
 

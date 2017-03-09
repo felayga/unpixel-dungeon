@@ -60,7 +60,7 @@ public class WandOfBlastWave extends Wand {
 
 		name = "Wand of Blast Wave";
 
-		collisionProperties = Ballistica.Mode.Projectile;
+        ballisticaMode = Ballistica.Mode.value(Ballistica.Mode.Projectile);
         price = 150;
 	}
 
@@ -90,7 +90,7 @@ public class WandOfBlastWave extends Wand {
                 ch.damage(damage, MagicType.Mundane, curUser, null);
 
                 if (ch.isAlive()) {
-                    Ballistica trajectory = new Ballistica(ch.pos(), ch.pos() + i, Ballistica.Mode.MagicBolt);
+                    Ballistica trajectory = new Ballistica(ch.pos(), ch.pos() + i, Ballistica.Mode.MagicBolt.value);
                     int strength = Random.Int(1, 4) + ((intwisModifier + 1) / 3);
                     throwChar(ch, trajectory, strength);
                 }
@@ -103,7 +103,7 @@ public class WandOfBlastWave extends Wand {
 			ch.damage(damage, MagicType.Mundane, curUser, null);
 
 			if (ch.isAlive() && bolt.path.size() > bolt.dist+1) {
-				Ballistica trajectory = new Ballistica(ch.pos(), bolt.path.get(bolt.dist + 1), Ballistica.Mode.MagicBolt);
+				Ballistica trajectory = new Ballistica(ch.pos(), bolt.path.get(bolt.dist + 1), Ballistica.Mode.MagicBolt.value);
 				int strength = Random.NormalIntRange(2, 8) + ((intwisModifier + 1) / 3);
 				throwChar(ch, trajectory, strength);
 			}
@@ -171,7 +171,7 @@ public class WandOfBlastWave extends Wand {
 	*/
 
 	@Override
-	protected void fxEffect(int source, int destination, Callback callback) {
+	public void fxEffect(int source, int destination, Callback callback) {
 		MagicMissile.slowness(curUser.sprite.parent, source, destination, callback);
 	}
 

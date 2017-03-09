@@ -23,32 +23,43 @@
  *
  *
  */
-package com.felayga.unpixeldungeon.items.spells.inventory;
+
+package com.felayga.unpixeldungeon.items.spells.position;
 
 import com.felayga.unpixeldungeon.items.Item;
 import com.felayga.unpixeldungeon.items.spells.Spell;
+import com.felayga.unpixeldungeon.items.spells.inventory.InventorySpell;
+import com.felayga.unpixeldungeon.mechanics.Constant;
+import com.felayga.unpixeldungeon.scenes.CellSelector;
 import com.felayga.unpixeldungeon.scenes.GameScene;
 import com.felayga.unpixeldungeon.windows.WndBackpack;
 
-public abstract class InventorySpell extends Spell {
+/**
+ * Created by HELLO on 3/7/2017.
+ */
+
+public abstract class PositionSpell extends Spell {
     protected WndBackpack.Mode mode = WndBackpack.Mode.ALL;
 
-    public InventorySpell(long castTime) {
+    public PositionSpell(long castTime) {
         super(castTime);
     }
 
     @Override
     protected void doCast() {
-        GameScene.selectItem(itemSelector, mode, "Cast " + name + " on item", null);
+        GameScene.selectCell(cellSelector, "Cast " + name);
     }
 
-    abstract protected void onItemSelected(Item item);
+    abstract protected void onPositionSelected(int pos);
 
-    protected static WndBackpack.Listener itemSelector = new WndBackpack.Listener() {
+    protected static CellSelector.Listener cellSelector = new CellSelector.Listener() {
         @Override
-        public void onSelect(Item item) {
-            InventorySpell spell = (InventorySpell) curItem;
-            spell.onItemSelected(item);
+        public boolean onSelect(Integer target) {
+            if (target != null && target != Constant.Position.NONE) {
+                PositionSpell spell = (PositionSpell)curItem;
+                spell.onPositionSelected(target);
+            }
+            return true;
         }
     };
 }

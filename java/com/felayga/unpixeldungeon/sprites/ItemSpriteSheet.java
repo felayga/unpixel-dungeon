@@ -480,7 +480,16 @@ public class ItemSpriteSheet {
 	public static final int SPELLBOOK_40	= ROW_BOOK + 39;
 
 	//fart
-	public static final int SPELL_IDENTIFY	= ROW_SPELL + 0;
+    public static final int ROW_SPELL0      = ROW_SPELL;
+    public static final int ROW_SPELL1      = ROW_SPELL0 + ROWSIZE;
+    public static final int ROW_SPELL2      = ROW_SPELL1 + ROWSIZE;
+    public static final int ROW_SPELL3      = ROW_SPELL2 + ROWSIZE;
+
+	public static final int SPELL_IDENTIFY      = ROW_SPELL0 + 0;
+    public static final int SPELL_LIGHT         = ROW_SPELL0 + 1;
+    public static final int SPELL_MAGIC_MAPPING = ROW_SPELL0 + 2;
+
+    public static final int SPELL_MAGIC_MISSILE = ROW_SPELL3 + 0;
 
 	//another fart
 	public static final int BOOTS_LEATHER	= ROW_BOOTS + 0;

@@ -48,6 +48,7 @@ public class WandOfFrost extends Wand {
         super(8);
         name = "Wand of Frost";
 
+        ballisticaMode = Ballistica.Mode.value(Ballistica.Mode.MagicBolt);
         price = 175;
     }
 

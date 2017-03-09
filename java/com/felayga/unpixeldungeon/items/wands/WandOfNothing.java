@@ -67,23 +67,17 @@ public class WandOfNothing extends Wand {
         super(8);
         name = "Wand of Nothing";
 
-        isOffensive = false;
-        directionalZap = false;
-        usesTargeting = false;
-
-        collisionProperties = Ballistica.Mode.StopTarget;
+        ballisticaMode = Ballistica.Mode.value(Ballistica.Mode.StopTarget, Ballistica.Mode.StopSelf);
         price = 100;
         weight(7 * Encumbrance.UNIT);
     }
 
-    private static final String DIRECTIONALZAP = "directionalZap";
     private static final String RANDOMPARTICLEINDEX = "randomParticleIndex";
     private static final String RANDOMBEAMINDEX = "randomBeamIndex";
 
     @Override
     public void storeInBundle(Bundle bundle) {
         super.storeInBundle(bundle);
-        bundle.put(DIRECTIONALZAP, directionalZap);
         bundle.put(RANDOMPARTICLEINDEX, randomParticleIndex);
         bundle.put(RANDOMBEAMINDEX, randomBeamIndex);
     }
@@ -91,7 +85,6 @@ public class WandOfNothing extends Wand {
     @Override
     public void restoreFromBundle(Bundle bundle) {
         super.restoreFromBundle(bundle);
-        directionalZap = isOffensive = usesTargeting = bundle.getBoolean(DIRECTIONALZAP);
         setParticleFactory(bundle.getInt(RANDOMPARTICLEINDEX));
         setBeamClass(bundle.getInt(RANDOMBEAMINDEX));
     }
@@ -192,7 +185,12 @@ public class WandOfNothing extends Wand {
 
         setParticleFactory(Random.Int(20));
         setBeamClass(Random.Int(4));
-        directionalZap = isOffensive = usesTargeting = Random.Int(2) == 0;
+
+        if (Random.Int(2)==0) {
+            ballisticaMode &= Ballistica.Mode.StopTarget.value ^ Ballistica.Mode.Mask.value;
+        } else {
+            ballisticaMode |= Ballistica.Mode.StopTarget.value;
+        }
 
         return this;
     }

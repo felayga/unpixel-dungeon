@@ -63,6 +63,7 @@ import com.felayga.unpixeldungeon.items.potions.PotionOfHealing;
 import com.felayga.unpixeldungeon.items.rings.RingOfWealth;
 import com.felayga.unpixeldungeon.items.scrolls.Scroll;
 import com.felayga.unpixeldungeon.items.scrolls.ScrollOfUpgrade;
+import com.felayga.unpixeldungeon.items.wands.WandOfLight;
 import com.felayga.unpixeldungeon.levels.features.Chasm;
 import com.felayga.unpixeldungeon.levels.features.HighGrass;
 import com.felayga.unpixeldungeon.levels.painters.Painter;
@@ -144,7 +145,60 @@ public abstract class Level implements Bundlable, IDecayable {
 
 
     public int version;
-    public int[] map;
+    private int[] _map;
+    private int[] _underMap;
+
+    public int[] rawMapAccess(boolean underMap) {
+        if (!underMap) {
+            return _map;
+        } else {
+            return _underMap;
+        }
+    }
+
+    public int map(int pos) {
+        int test = _map[pos];
+        if (test >= Terrain.OVERLAY_TILES) {
+            return _underMap[pos];
+        }
+
+        return test;
+    }
+
+    public void map(int pos, int terrain) {
+        if (terrain > Terrain.OVERLAY) {
+            map(pos, (terrain % Terrain.FACED_TILE_BLOCKSIZE) + Terrain.OVERLAY_TILES, terrain);
+        } else {
+            map(pos, terrain, Terrain.OVERLAY);
+        }
+    }
+
+    public void map(int pos, int terrain, int underTerrain) {
+        _map[pos] = terrain;
+        _underMap[pos] = underTerrain;
+    }
+
+    public void fill( int x, int y, int w, int h, int terrain ) {
+        int pos = y * WIDTH + x;
+        map(pos, terrain);
+        int mapValue = _map[pos];
+        int underMapValue = _underMap[pos];
+
+        for (int i = y; i < y + h; i++, pos += WIDTH) {
+            Arrays.fill(_map, pos, pos + w, mapValue);
+            Arrays.fill(_underMap, pos, pos + w, underMapValue);
+        }
+    }
+
+    public void fill(int terrain) {
+        map(0, terrain);
+        int mapValue = _map[0];
+        int underMapValue = _underMap[0];
+
+        Arrays.fill(_map, mapValue);
+        Arrays.fill(_underMap, underMapValue);
+    }
+
     public boolean[] visited;
     public boolean[] mapped;
     public long time;
@@ -165,6 +219,7 @@ public abstract class Level implements Bundlable, IDecayable {
     public static boolean[] solid = new boolean[LENGTH];
     public static boolean[] avoid = new boolean[LENGTH];
     public static boolean[] puddle = new boolean[LENGTH];
+    public static boolean[] chasm = new boolean[LENGTH];
     public static boolean[] pit = new boolean[LENGTH];
     public static boolean[] burnable = new boolean[LENGTH];
     public static boolean[] stone = new boolean[LENGTH];
@@ -176,10 +231,11 @@ public abstract class Level implements Bundlable, IDecayable {
     public static int flags = 0;
     private int flagsLocal = 0;
 
-    public static final int FLAG_UNDIGGABLEWALLS    = 0x0001;
-    public static final int FLAG_UNDIGGABLEFLOOR    = 0x0002;
-    public static final int FLAG_UNDIGGABLEBOULDERS = 0x0004;
-    public static final int FLAG_NOTELEPORTATION    = 0x0008;
+    public static final int FLAG_WALLS_NOT_DIGGABLE     = 0x0001;
+    public static final int FLAG_PIT_NOT_DIGGABLE       = 0x0002;
+    public static final int FLAG_CHASM_NOT_DIGGABLE     = 0x0004;
+    public static final int FLAG_BOULDERS_NOT_DIGGABLE  = 0x0008;
+    public static final int FLAG_NO_TELEPORTATION       = 0x0010;
 
 
     //lightMap: 0x01 dark 0x02 magiclit 0x04 magicdark
@@ -290,6 +346,7 @@ public abstract class Level implements Bundlable, IDecayable {
 
     private static final String VERSION = "version";
     private static final String MAP = "map";
+    private static final String UNDERMAP = "underMap";
     private static final String VISITED = "visited";
     private static final String MAPPED = "mapped";
     private static final String ENTRANCE = "entrance";
@@ -315,7 +372,8 @@ public abstract class Level implements Bundlable, IDecayable {
     public void create() {
         resizingNeeded = false;
 
-        map = new int[LENGTH];
+        _map = new int[LENGTH];
+        _underMap = new int[LENGTH];
         visited = new boolean[LENGTH];
         Arrays.fill(visited, false);
         mapped = new boolean[LENGTH];
@@ -401,7 +459,7 @@ public abstract class Level implements Bundlable, IDecayable {
                     retval = Feeling.DARK;
                     break;
                 case 3:
-                    if ((flagsLocal & FLAG_UNDIGGABLEFLOOR) == 0) {
+                    if ((flagsLocal & FLAG_CHASM_NOT_DIGGABLE) == 0) {
                         retval = Feeling.CHASM;
                     }
                     break;
@@ -428,7 +486,8 @@ public abstract class Level implements Bundlable, IDecayable {
     }
 
     protected void initializeMap() {
-        Arrays.fill(map, feeling == Feeling.CHASM ? fillBlockChasm() : fillBlockNormal());
+        Arrays.fill(_map, feeling == Feeling.CHASM ? fillBlockChasm() : fillBlockNormal());
+        Arrays.fill(_underMap, Terrain.OVERLAY);
     }
 
     protected int fillBlockNormal() {
@@ -509,7 +568,8 @@ public abstract class Level implements Bundlable, IDecayable {
         traps = new SparseArray<>();
         customTiles = new HashSet<>();
 
-        map = bundle.getIntArray(MAP);
+        _map = bundle.getIntArray(MAP);
+        _underMap = bundle.getIntArray(UNDERMAP);
         warnings.restoreFromBundle(bundle);
 
         visited = bundle.getBooleanArray(VISITED);
@@ -530,11 +590,6 @@ public abstract class Level implements Bundlable, IDecayable {
         weakFloorCreated = false;
 
         adjustMapSize();
-
-        //for pre-0.3.0c saves
-        if (version < 44) {
-            map = Terrain.convertTrapsFrom43(map, traps);
-        }
 
         Collection<Bundlable> collection = bundle.getCollection(HEAPS);
         for (Bundlable h : collection) {
@@ -574,18 +629,6 @@ public abstract class Level implements Bundlable, IDecayable {
             customTiles.add(vis);
         }
 
-        //for pre-0.3.1 saves
-        if (version < 52) {
-            for (int i = 0; i < map.length; i++) {
-                if (map[i] == Terrain.INACTIVE_TRAP) {
-                    Trap t = new WornTrap().reveal();
-                    t.active = false;
-                    t.pos = i;
-                    traps.put(i, t);
-                }
-            }
-        }
-
         collection = bundle.getCollection(MOBS);
         for (Bundlable m : collection) {
             Mob mob = (Mob) m;
@@ -618,7 +661,8 @@ public abstract class Level implements Bundlable, IDecayable {
     @Override
     public void storeInBundle(Bundle bundle) {
         bundle.put(VERSION, Game.versionCode);
-        bundle.put(MAP, map);
+        bundle.put(MAP, _map);
+        bundle.put(UNDERMAP, _underMap);
         warnings.storeInBundle(bundle);
         bundle.put(VISITED, visited);
         bundle.put(MAPPED, mapped);
@@ -646,13 +690,16 @@ public abstract class Level implements Bundlable, IDecayable {
     private void adjustMapSize() {
         // For levels saved before 1.6.3
         // Seeing as shattered started on 1.7.1 this is never used, but the code may be resused in future.
-        if (map.length < LENGTH) {
+        if (_map.length < LENGTH) {
 
             resizingNeeded = true;
-            loadedMapSize = (int) Math.sqrt(map.length);
+            loadedMapSize = (int) Math.sqrt(_map.length);
 
             int[] map = new int[LENGTH];
+            int[] underMap = new int[LENGTH];
+
             Arrays.fill(map, Terrain.WALL);
+            Arrays.fill(underMap, Terrain.OVERLAY);
 
             boolean[] visited = new boolean[LENGTH];
             Arrays.fill(visited, false);
@@ -661,12 +708,14 @@ public abstract class Level implements Bundlable, IDecayable {
             Arrays.fill(mapped, false);
 
             for (int i = 0; i < loadedMapSize; i++) {
-                System.arraycopy(this.map, i * loadedMapSize, map, i * WIDTH, loadedMapSize);
+                System.arraycopy(this._map, i * loadedMapSize, map, i * WIDTH, loadedMapSize);
+                System.arraycopy(this._underMap, i * loadedMapSize, underMap, i * WIDTH, loadedMapSize);
                 System.arraycopy(this.visited, i * loadedMapSize, visited, i * WIDTH, loadedMapSize);
                 System.arraycopy(this.mapped, i * loadedMapSize, mapped, i * WIDTH, loadedMapSize);
             }
 
-            this.map = map;
+            this._map = map;
+            this._underMap = underMap;
             this.visited = visited;
             this.mapped = mapped;
 
@@ -686,10 +735,6 @@ public abstract class Level implements Bundlable, IDecayable {
     }
 
     public String waterTex() {
-        return null;
-    }
-
-    public String waterUnderTex() {
         return null;
     }
 
@@ -721,17 +766,20 @@ public abstract class Level implements Bundlable, IDecayable {
             visuals.clear();
         }
         for (int i = 0; i < LENGTH; i++) {
-            if (pit[i]) {
+            if (chasm[i]) {
                 visuals.add(new WindParticle.Wind(i));
                 if (i >= WIDTH && puddle[i - WIDTH]) {
                     visuals.add(new FlowParticle.Flow(i - WIDTH));
                 }
             }
-            if (map[i] == Terrain.WELL || map[i] == Terrain.WELL_MAGIC) {
+
+            int cell = map(i);
+
+            if (cell == Terrain.WELL || cell == Terrain.WELL_MAGIC) {
                 visuals.add( new SewerLevel.Sink( i, -2.5f, -6.0f ) );
             }
             if ((lightMap[i] & LIGHTMAP_GLOWYSPOTSHOWN) == LIGHTMAP_GLOWYSPOTSHOWN) {
-                visuals.add(new PrisonLevel.Torch(i, false, true));
+                visuals.add(new WandOfLight.Aura(i, false, true));
             }
         }
         return visuals;
@@ -1004,7 +1052,7 @@ public abstract class Level implements Bundlable, IDecayable {
     }
 
     protected void updateFlagMap(int pos) {
-        int flags = Terrain.flags[map[pos]];
+        int flags = Terrain.flags[map(pos)];
         passable[pos] = (flags & Terrain.FLAG_PASSABLE) != 0;
         pathable[pos] = (flags & (Terrain.FLAG_PASSABLE | Terrain.FLAG_PATHABLE)) != 0;
         diagonal[pos] = (flags & Terrain.FLAG_DIAGONALPASSAGE) != 0;
@@ -1014,6 +1062,7 @@ public abstract class Level implements Bundlable, IDecayable {
         solid[pos] = (flags & Terrain.FLAG_SOLID) != 0;
         avoid[pos] = (flags & Terrain.FLAG_AVOID) != 0;
         puddle[pos] = (flags & Terrain.FLAG_LIQUID) != 0;
+        chasm[pos] = (flags & Terrain.FLAG_CHASM) != 0;
         pit[pos] = (flags & Terrain.FLAG_PIT) != 0;
         stone[pos] = (flags & Terrain.FLAG_STONE) != 0;
         lightMap[pos] = (lightMap[pos] & LIGHTMAP_NATURALMASK) | (((flags & Terrain.FLAG_LOSDARK) != 0) ? LIGHTMAP_NATURALDARK : LIGHTMAP_NATURALLIT);
@@ -1051,6 +1100,7 @@ public abstract class Level implements Bundlable, IDecayable {
         }
 
         for (int i = WIDTH; i < LENGTH - WIDTH; i++) {
+            int cell = map(i);
             /*
             if (water[i]) {
                 int t = Terrain.WATER_TILES;
@@ -1062,21 +1112,22 @@ public abstract class Level implements Bundlable, IDecayable {
                 map[i] = t;
             }
             */
-            if (map[i] >= Terrain.FACED_TILE_MIN && map[i] <= Terrain.FACED_TILE_MAX) {
+            if (cell >= Terrain.FACED_TILE_MIN && cell <= Terrain.FACED_TILE_MAX) {
                 repair(i, false, true);
             }
 
-            if (pit[i] && map[i] < Terrain.FACED_TILE_MIN) {
-                if (!pit[i - WIDTH]) {
-                    int c = map[i - WIDTH];
+            if (chasm[i] && cell < Terrain.FACED_TILE_MIN) {
+                if (!chasm[i - WIDTH]) {
+                    int c = map(i - WIDTH);
+
                     if (c == Terrain.EMPTY_SP || c == Terrain.STATUE_SP) {
-                        map[i] = Terrain.CHASM_FLOOR_SP;
+                        map(i, Terrain.CHASM_FLOOR_SP);
                     } else if (puddle[i - WIDTH]) {
-                        map[i] = Terrain.CHASM_WATER;
+                        map(i, Terrain.CHASM_WATER);
                     } else if ((Terrain.flags[c] & Terrain.FLAG_UNSTITCHABLE) != 0) {
-                        map[i] = Terrain.CHASM_WALL;
+                        map(i, Terrain.CHASM_WALL);
                     } else {
-                        map[i] = Terrain.CHASM_FLOOR;
+                        map(i, Terrain.CHASM_FLOOR);
                     }
                 }
             }
@@ -1095,23 +1146,23 @@ public abstract class Level implements Bundlable, IDecayable {
                     walls += 3;
                     i += 2;
                 } else {
-                    if (x <= 0 || map[i] == Terrain.WALL || map[i] == Terrain.WALL_STONE) walls++;
+                    if (x <= 0 || map(i) == Terrain.WALL || map(i) == Terrain.WALL_STONE) walls++;
                     i++;
-                    if (map[i] == Terrain.WALL || map[i] == Terrain.WALL_STONE) walls++;
+                    if (map(i) == Terrain.WALL || map(i) == Terrain.WALL_STONE) walls++;
                     i++;
-                    if (x >= WIDTH - 1 || map[i] == Terrain.WALL || map[i] == Terrain.WALL_STONE)
+                    if (x >= WIDTH - 1 || map(i) == Terrain.WALL || map(i) == Terrain.WALL_STONE)
                         walls++;
                 }
 
                 i += WIDTH - 2;
 
-                if (x <= 0 || map[i] == Terrain.WALL || map[i] == Terrain.WALL_STONE) walls++;
+                if (x <= 0 || map(i) == Terrain.WALL || map(i) == Terrain.WALL_STONE) walls++;
 
                 i++;
                 //if (map[index] == Terrain.WALL) walls++;
 
                 i++;
-                if (x >= WIDTH - 1 || map[i] == Terrain.WALL || map[i] == Terrain.WALL_STONE)
+                if (x >= WIDTH - 1 || map(i) == Terrain.WALL || map(i) == Terrain.WALL_STONE)
                     walls++;
 
 
@@ -1119,16 +1170,16 @@ public abstract class Level implements Bundlable, IDecayable {
                 if (y >= HEIGHT - 1) {
                     walls += 3;
                 } else {
-                    if (x <= 0 || map[i] == Terrain.WALL || map[i] == Terrain.WALL_STONE) walls++;
+                    if (x <= 0 || map(i) == Terrain.WALL || map(i) == Terrain.WALL_STONE) walls++;
                     i++;
-                    if (map[i] == Terrain.WALL || map[i] == Terrain.WALL_STONE) walls++;
+                    if (map(i) == Terrain.WALL || map(i) == Terrain.WALL_STONE) walls++;
                     i++;
-                    if (x >= WIDTH - 1 || map[i] == Terrain.WALL || map[i] == Terrain.WALL_STONE)
+                    if (x >= WIDTH - 1 || map(i) == Terrain.WALL || map(i) == Terrain.WALL_STONE)
                         walls++;
                 }
 
                 if (walls == 8) {
-                    map[index] = Terrain.WALL_STONE;
+                    map(index, Terrain.WALL_STONE);
                     discoverable[index] = false;
 
                     spawnGemstones(index);
@@ -1155,7 +1206,7 @@ public abstract class Level implements Bundlable, IDecayable {
 
             for (int j = 0; j < NEIGHBOURS9.length; j++) {
                 int n = i + NEIGHBOURS9[j];
-                if (n >= 0 && n < LENGTH && (Terrain.flags[map[n]] & Terrain.FLAG_UNDISCOVERABLE) == 0) {
+                if (n >= 0 && n < LENGTH && (Terrain.flags[map(n)] & Terrain.FLAG_UNDISCOVERABLE) == 0) {
                     d = true;
                     break;
                 }
@@ -1166,7 +1217,7 @@ public abstract class Level implements Bundlable, IDecayable {
 
                 for (int j = 0; j < NEIGHBOURS9.length; j++) {
                     int n = i + NEIGHBOURS9[j];
-                    if (n >= 0 && n < LENGTH && !pit[n]) {
+                    if (n >= 0 && n < LENGTH && !chasm[n]) {
                         d = true;
                         break;
                     }
@@ -1179,10 +1230,27 @@ public abstract class Level implements Bundlable, IDecayable {
 
 
     public void set(int cell, int terrain, boolean flagUpdates) {
-        Painter.set(this, cell, terrain);
+        //Painter.set(this, cell, terrain);
+
+        if (terrain > Terrain.OVERLAY) {
+            set(cell, (terrain % Terrain.FACED_TILE_BLOCKSIZE) + Terrain.OVERLAY_TILES, terrain, flagUpdates);
+        } else {
+            set(cell, terrain, Terrain.OVERLAY, flagUpdates);
+        }
+    }
+
+    public void set(int cell, int terrain, int underTerrain, boolean flagUpdates) {
+        map(cell, terrain, underTerrain);
 
         if (terrain != Terrain.TRAP && terrain != Terrain.SECRET_TRAP && terrain != Terrain.INACTIVE_TRAP) {
             traps.remove(cell);
+        }
+
+        if (visuals != null && (Terrain.flags[terrain] & Terrain.FLAG_CHASM) != 0) {
+            visuals.add(new WindParticle.Wind(cell));
+            if (cell >= WIDTH && (Terrain.flags[terrain] & Terrain.FLAG_LIQUID) != 0) {
+                visuals.add(new FlowParticle.Flow(cell - WIDTH));
+            }
         }
 
         if (flagUpdates) {
@@ -1192,8 +1260,24 @@ public abstract class Level implements Bundlable, IDecayable {
     }
 
     public void repair(int cell, boolean mapUpdates, boolean flagUpdates) {
-        int terrain = map[cell];
-        int cooperativeTerrain = cooperativeCell(terrain);
+        int oldTerrain = _map[cell];
+        int oldUnderTerrain = _underMap[cell];
+
+        int terrain = repair(_map, cell);
+        int underTerrain = repair(_underMap, cell);
+
+        if (terrain == oldTerrain && underTerrain == oldUnderTerrain) {
+            return;
+        }
+
+        set(cell, terrain, underTerrain, flagUpdates);
+        if (mapUpdates) {
+            GameScene.updateMap(cell);
+        }
+    }
+
+    private static int repair(int[] source, int cell) {
+        int terrain = source[cell];
 
         int terrainType = (terrain / Terrain.FACED_TILE_BLOCKSIZE) * Terrain.FACED_TILE_BLOCKSIZE;
         terrain = terrainType + Terrain.FACED_TILE_BLOCKSIZE - 1;
@@ -1204,16 +1288,16 @@ public abstract class Level implements Bundlable, IDecayable {
         boolean good;
 
         int placedTerrain = terrainType;
-        List<Integer> updates = new ArrayList<Integer>();
+        List<Integer> updates = new ArrayList<>();
 
         for (int n = 0; n < NEIGHBOURS4.length; n++) {
             good = false;
             index = cell + NEIGHBOURS4[n];
-            test = map[index];
+            test = source[index];
             if (test >= terrainType && test <= terrain) {
                 good = true;
                 updates.add(index);
-            } else if (test == cooperativeTerrain) {
+            } else if (isCooperative(terrain, test)) {
                 good = true;
             }
             if (good) {
@@ -1222,19 +1306,11 @@ public abstract class Level implements Bundlable, IDecayable {
             placedFlag <<= 1;
         }
 
-        test = map[cell];
-        if (test == placedTerrain) {
-            return;
-        }
-
-        set(cell, placedTerrain, flagUpdates);
-        if (mapUpdates) {
-            GameScene.updateMap(cell);
-        }
+        return placedTerrain;
     }
 
     private void setRepairing(int cell, int terrain, boolean mapUpdates, boolean flagUpdates) {
-        int test = map[cell];
+        int test = map(cell);
 
         if (test == terrain) {
             return;
@@ -1248,17 +1324,45 @@ public abstract class Level implements Bundlable, IDecayable {
         determineSpecialFixes(cell, terrain, terrain);
     }
 
-    private static int cooperativeCell(int cellType) {
-        if (cellType >= Terrain.DIRT_TILES && cellType <= Terrain.DIRT)
-        {
-            return Terrain.WALL_STONE;
-        }
-        else if (cellType >= Terrain.PUDDLE_TILES && cellType <= Terrain.PUDDLE)
-        {
-            return Terrain.WALL;
+    private static boolean isCooperative(int terrain, int test) {
+        if (terrain >= Terrain.FACED_TILE_OVERLAY_MIN) {
+            if (test == Terrain.WALL_STONE || test == Terrain.OVERLAY) {
+                return true;
+            }
+
+            if (terrain >= Terrain.UNDERLAY_DIRT_TILES && terrain <= Terrain.UNDERLAY_DIRT && test >= Terrain.UNDERLAY_PIT_TILES && test <= Terrain.UNDERLAY_PIT) {
+                return true;
+            }
+
+            if (terrain >= Terrain.UNDERLAY_PIT_TILES && terrain <= Terrain.UNDERLAY_PIT && test >= Terrain.UNDERLAY_CHASM_TILES && test <= Terrain.UNDERLAY_CHASM) {
+                return true;
+            }
+
+            /*
+            if (terrain >= Terrain.UNDERLAY_DIRT_TILES && terrain <= Terrain.UNDERLAY_DIRT && test >= Terrain.UNDERLAY_CHASM_TILES && test <= Terrain.UNDERLAY_CHASM) {
+                return false;
+            }
+            */
+
+            /*
+            return terrain / Terrain.FACED_TILE_BLOCKSIZE == test / Terrain.FACED_TILE_BLOCKSIZE;
+            */
+            /*
+            int testType = test / Terrain.FACED_TILE_BLOCKSIZE;
+            int terrainType = terrain / Terrain.FACED_TILE_BLOCKSIZE;
+
+            return terrainType == testType || terrainType-1 == testType  || terrainType == testType -1;
+            */
+            /*
+            if (test / Terrain.FACED_TILE_BLOCKSIZE == cellType / Terrain.FACED_TILE_BLOCKSIZE) {
+                return true;
+            }
+            */
+        } else if (terrain >= Terrain.PUDDLE_TILES && terrain <= Terrain.PUDDLE) {
+            return test == Terrain.WALL;
         }
 
-        return 0;
+        return false;
     }
 
     public void setEmpty(int cell, boolean mapUpdates, boolean flagUpdates) {
@@ -1275,7 +1379,7 @@ public abstract class Level implements Bundlable, IDecayable {
 
     public void setDirt(int cell, boolean mapUpdates, boolean flagUpdates) {
         setSetSpecialRecursiveInitialize();
-        setSpecialRecursive(cell, Terrain.DIRT, cooperativeCell(Terrain.DIRT), mapUpdates, flagUpdates);
+        setSpecialRecursive(cell, Terrain.UNDERLAY_DIRT, mapUpdates, flagUpdates);
         setSpecialFixes(mapUpdates, flagUpdates);
 
 		/*
@@ -1286,9 +1390,15 @@ public abstract class Level implements Bundlable, IDecayable {
 		*/
     }
 
-    public void setDirtDeep(int cell, boolean mapUpdates, boolean flagUpdates) {
+    public void setDirtPit(int cell, boolean mapUpdates, boolean flagUpdates) {
         setSetSpecialRecursiveInitialize();
-        setSpecialRecursive(cell, Terrain.DIRT_DEEP, cooperativeCell(Terrain.DIRT_DEEP), mapUpdates, flagUpdates);
+        setSpecialRecursive(cell, Terrain.UNDERLAY_PIT, mapUpdates, flagUpdates);
+        setSpecialFixes(mapUpdates, flagUpdates);
+    }
+
+    public void setDirtChasm(int cell, boolean mapUpdates, boolean flagUpdates) {
+        setSetSpecialRecursiveInitialize();
+        setSpecialRecursive(cell, Terrain.UNDERLAY_CHASM, mapUpdates, flagUpdates);
         setSpecialFixes(mapUpdates, flagUpdates);
     }
 
@@ -1305,7 +1415,7 @@ public abstract class Level implements Bundlable, IDecayable {
         for (int n = 0; n < NEIGHBOURS4.length; n++) {
             int subcell = cell + NEIGHBOURS4[n];
 
-            test = map[subcell];
+            test = map(subcell);
             if (test >= Terrain.FACED_TILE_MIN && test <= Terrain.FACED_TILE_MAX) {
                 //GLog.d(cell, subcell);
                 if (test >= terrainMin && test <= terrainMax) {
@@ -1318,14 +1428,16 @@ public abstract class Level implements Bundlable, IDecayable {
     }
 
     private void setSpecialFixes(boolean mapUpdates, boolean flagUpdates) {
-        for (Integer cell : setSpecialFixes.toArray(new Integer[]{})) {
-            int test = map[cell];
+        Integer[] array = setSpecialFixes.toArray(new Integer[]{});
+        for (int n = 0; n < array.length; n++) {
+            int cell = array[n];
+            int test = map(cell);
             //GLog.d("try fix cell="+cell);
-            setSpecialRecursive(cell, test, cooperativeCell(test), mapUpdates, flagUpdates);
+            setSpecialRecursive(cell, test, mapUpdates, flagUpdates);
         }
     }
 
-    private void setSpecialRecursive(int cell, int terrain, int cooperativeTerrain, boolean mapUpdates, boolean flagUpdates) {
+    private void setSpecialRecursive(int cell, int terrain, boolean mapUpdates, boolean flagUpdates) {
         setSpecialRecursive.add(cell);
 
         int terrainType = (terrain / Terrain.FACED_TILE_BLOCKSIZE) * Terrain.FACED_TILE_BLOCKSIZE;
@@ -1342,11 +1454,11 @@ public abstract class Level implements Bundlable, IDecayable {
         for (int n = 0; n < NEIGHBOURS4.length; n++) {
             good = false;
             index = cell + NEIGHBOURS4[n];
-            test = map[index];
+            test = map(index);
             if (test >= terrainType && test <= terrain) {
                 good = true;
                 updates.add(index);
-            } else if (test == cooperativeTerrain) {
+            } else if (isCooperative(terrain, test)) {
                 good = true;
             }
             if (good) {
@@ -1355,7 +1467,7 @@ public abstract class Level implements Bundlable, IDecayable {
             placedFlag <<= 1;
         }
 
-        test = map[cell];
+        test = map(cell);
         if (test == placedTerrain) {
             return;
         }
@@ -1373,10 +1485,11 @@ public abstract class Level implements Bundlable, IDecayable {
                 continue;
             }
 
-            setSpecialRecursive(newCell, terrain, cooperativeTerrain, mapUpdates, flagUpdates);
+            setSpecialRecursive(newCell, terrain, mapUpdates, flagUpdates);
         }
 
     }
+
 
 	/*
 
@@ -1547,7 +1660,7 @@ public abstract class Level implements Bundlable, IDecayable {
             return heap;
         }
 
-        if ((map[cell] == Terrain.ALCHEMY) && (
+        if ((map(cell) == Terrain.ALCHEMY) && (
                 !(item instanceof Plant.Seed || item instanceof Blandfruit) ||
                         item instanceof BlandfruitBush.Seed ||
                         (item instanceof Blandfruit && (((Blandfruit) item).potionAttrib != null || heaps.get(cell) != null)) ||
@@ -1555,7 +1668,7 @@ public abstract class Level implements Bundlable, IDecayable {
             int n;
             do {
                 n = cell + NEIGHBOURS8[Random.Int(8)];
-            } while (map[n] != Terrain.EMPTY_SP);
+            } while (map(n) != Terrain.EMPTY_SP);
             cell = n;
         }
 
@@ -1564,7 +1677,8 @@ public abstract class Level implements Bundlable, IDecayable {
             heap = new Heap();
             heap.seen = Dungeon.visible[cell];
             heap.pos = cell;
-            if (map[cell] == Terrain.CHASM || (Dungeon.level != null && pit[cell])) {
+            //todo: why the Dungeon.level != null check?
+            if (map(cell) == Terrain.CHASM || (Dungeon.level != null && chasm[cell])) {
                 Dungeon.dropToChasm(item);
                 GameScene.discard(heap);
             } else {
@@ -1589,11 +1703,13 @@ public abstract class Level implements Bundlable, IDecayable {
             plant.wither();
         }
 
-        if (map[pos] == Terrain.HIGH_GRASS ||
-                map[pos] == Terrain.EMPTY ||
-                map[pos] == Terrain.EMBERS ||
-                map[pos] == Terrain.EMPTY_DECO) {
-            map[pos] = Terrain.GRASS;
+        int cell = map(pos);
+
+        if (cell == Terrain.HIGH_GRASS ||
+                cell == Terrain.EMPTY ||
+                cell == Terrain.EMBERS ||
+                cell == Terrain.EMPTY_DECO) {
+            map(pos, Terrain.GRASS);
             burnable[pos] = true;
             GameScene.updateMap(pos);
         }
@@ -1633,7 +1749,7 @@ public abstract class Level implements Bundlable, IDecayable {
 
     public void discover(int cell, boolean terrain, boolean traps) {
         if (terrain) {
-            set(cell, Terrain.discover(map[cell]), true);
+            set(cell, Terrain.discover(map(cell)), true);
         }
         if (traps) {
             Trap trap = this.traps.get(cell);
@@ -1649,7 +1765,7 @@ public abstract class Level implements Bundlable, IDecayable {
     }
 
     public void press(int cell, Char ch) {
-        if (ch != null && pit[cell] && !ch.flying()) {
+        if (ch != null && chasm[cell] && !ch.flying()) {
             if (ch == Dungeon.hero) {
                 Chasm.heroFall(cell);
             } else if (ch instanceof Mob) {
@@ -1668,7 +1784,7 @@ public abstract class Level implements Bundlable, IDecayable {
 
         Trap trap = null;
 
-        switch (map[cell]) {
+        switch (map(cell)) {
             case Terrain.SECRET_TRAP:
                 GLog.i(TXT_HIDDEN_PLATE_CLICKS);
             case Terrain.TRAP:
@@ -1722,13 +1838,13 @@ public abstract class Level implements Bundlable, IDecayable {
 
         int cell = mob.pos();
 
-        if (pit[cell] && !mob.flying()) {
+        if (chasm[cell] && !mob.flying()) {
             Chasm.mobFall(mob);
             return;
         }
 
         Trap trap = null;
-        switch (map[cell]) {
+        switch (map(cell)) {
 
             case Terrain.TRAP:
                 trap = traps.get(cell);
@@ -1984,11 +2100,11 @@ public abstract class Level implements Bundlable, IDecayable {
             return tileName(Terrain.PUDDLE);
         }
 
-        if (tile >= Terrain.DIRT_TILES && tile <= Terrain.DIRT) {
+        if (tile >= Terrain.UNDERLAY_DIRT && tile <= Terrain.UNDERLAY_DIRT) {
             return "Dirt";
         }
 
-        if (tile != Terrain.CHASM && (Terrain.flags[tile] & Terrain.FLAG_PIT) != 0) {
+        if (tile != Terrain.CHASM && (Terrain.flags[tile] & Terrain.FLAG_CHASM) != 0) {
             return tileName(Terrain.CHASM);
         }
 
@@ -2003,7 +2119,7 @@ public abstract class Level implements Bundlable, IDecayable {
             case Terrain.GRASS:
                 return "Grass";
             case Terrain.PUDDLE:
-                return "Water Puddle";
+                return "Water puddle";
             case Terrain.WALL:
             case Terrain.WALL_DECO:
             case Terrain.SECRET_DOOR:
@@ -2067,7 +2183,7 @@ public abstract class Level implements Bundlable, IDecayable {
             case Terrain.CHASM:
                 return "You can't see the bottom.";
             case Terrain.PUDDLE:
-                return "In case of being on fire, you can bring yourself to a non-on-fire state instantly here.";
+                return "In case of being on fire, you can bring yourself to a not-on-fire state instantly here.";
             case Terrain.STAIRS_UP:
             case Terrain.STAIRS_UP_ALTERNATE:
                 return "Stairs lead up to the upper depth.";
@@ -2108,7 +2224,7 @@ public abstract class Level implements Bundlable, IDecayable {
                 if (tile >= Terrain.PUDDLE_TILES && tile <= Terrain.PUDDLE) {
                     return tileDesc(Terrain.PUDDLE);
                 }
-                if ((Terrain.flags[tile] & Terrain.FLAG_PIT) != 0) {
+                if ((Terrain.flags[tile] & Terrain.FLAG_CHASM) != 0) {
                     return tileDesc(Terrain.CHASM);
                 }
                 return "";

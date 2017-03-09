@@ -94,7 +94,7 @@ public class Heap implements Bundlable, IBag {
     public boolean collect(Item item) {
         boolean retval = false;
 
-        if (Dungeon.level != null && Dungeon.level.map[pos] == Terrain.ALTAR) {
+        if (Dungeon.level != null && Dungeon.level.map(pos) == Terrain.ALTAR) {
             if (!item.bucStatusKnown()) {
                 item.bucStatus(true);
 

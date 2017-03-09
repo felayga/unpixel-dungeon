@@ -113,10 +113,11 @@ public class CityLevel extends RegularLevel {
 	protected void decorate() {
 		
 		for (int i=0; i < LENGTH; i++) {
-			if (map[i] == Terrain.EMPTY && Random.Int( 10 ) == 0) {
-				map[i] = Terrain.EMPTY_DECO;
-			} else if (map[i] == Terrain.WALL && Random.Int( 8 ) == 0) {
-				map[i] = Terrain.WALL_DECO;
+            int terrain = map(i);
+			if (terrain == Terrain.EMPTY && Random.Int( 10 ) == 0) {
+				map(i, Terrain.EMPTY_DECO);
+			} else if (terrain == Terrain.WALL && Random.Int( 8 ) == 0) {
+				map(i, Terrain.WALL_DECO);
 			}
 		}
 		
@@ -134,7 +135,7 @@ public class CityLevel extends RegularLevel {
 	public String tileName( int tile ) {
 		switch (tile) {
 		case Terrain.PUDDLE:
-			return "Suspiciously colored water";
+			return "Suspiciously colored puddle";
 		case Terrain.HIGH_GRASS:
 			return "High blooming flowers";
 		default:
@@ -173,7 +174,7 @@ public class CityLevel extends RegularLevel {
 
 	public static void addCityVisuals( Level level, Group group ) {
 		for (int i=0; i < LENGTH; i++) {
-			if (level.map[i] == Terrain.WALL_DECO) {
+			if (level.map(i) == Terrain.WALL_DECO) {
 				group.add( new Smoke( i ) );
 			}
 		}

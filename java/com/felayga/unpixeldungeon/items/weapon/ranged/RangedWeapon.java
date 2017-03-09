@@ -118,7 +118,7 @@ public class RangedWeapon extends Weapon {
     }
 
     protected void doShoot(){
-        GameScene.selectCell(shooter);
+        GameScene.selectCell(shooter, "Choose direction of shot");
     }
 
     public void shoot(Hero hero, AmmunitionWeapon ammo, int target) {
@@ -172,11 +172,6 @@ public class RangedWeapon extends Weapon {
                 }
             }
             return true;
-        }
-
-        @Override
-        public String prompt() {
-            return "Choose direction of shot";
         }
     };
 

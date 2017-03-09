@@ -45,7 +45,7 @@ public class WandOfCreateMonster extends Wand {
         super(15);
         name = "Wand of Create Monster";
 
-        collisionProperties = Ballistica.Mode.Projectile;
+        ballisticaMode = Ballistica.Mode.value(Ballistica.Mode.Projectile);
         price = 200;
     }
 

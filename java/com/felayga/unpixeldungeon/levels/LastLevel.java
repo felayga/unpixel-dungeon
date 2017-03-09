@@ -65,8 +65,8 @@ public class LastLevel extends Level {
 	public void create() {
 		super.create();
 		for (int i=0; i < LENGTH; i++) {
-			int flags = Terrain.flags[map[i]];
-			if ((flags & Terrain.FLAG_PIT) != 0){
+			int flags = Terrain.flags[map(i)];
+			if ((flags & Terrain.FLAG_CHASM) != 0){
 				passable[i] = avoid[i] = false;
 				solid[i] = true;
 			}
@@ -75,51 +75,68 @@ public class LastLevel extends Level {
 
 	@Override
 	protected boolean build() {
+        fill(Terrain.CHASM);
 
-		Arrays.fill( map, Terrain.CHASM );
+        Painter.fill(this, 7, 31, 19, 1, Terrain.WALL);
+        Painter.fill(this, 15, 10, 3, 21, Terrain.EMPTY);
+        Painter.fill(this, 13, 30, 7, 1, Terrain.EMPTY);
+        Painter.fill(this, 14, 29, 5, 1, Terrain.EMPTY);
 
-		Painter.fill( this, 7, 31, 19, 1, Terrain.WALL );
-		Painter.fill( this, 15, 10, 3, 21, Terrain.EMPTY);
-		Painter.fill( this, 13, 30, 7, 1, Terrain.EMPTY);
-		Painter.fill( this, 14, 29, 5, 1, Terrain.EMPTY);
+        Painter.fill(this, 14, 9, 5, 7, Terrain.EMPTY);
+        Painter.fill(this, 13, 10, 7, 5, Terrain.EMPTY);
 
-		Painter.fill( this, 14, 9, 5, 7, Terrain.EMPTY);
-		Painter.fill( this, 13, 10, 7, 5, Terrain.EMPTY);
+        //Painter.fill( this, 2, 2, SIZE-2, SIZE-2, Terrain.EMPTY );
+        //Painter.fill( this, SIZE/2, SIZE/2, 3, 3, Terrain.EMPTY_SP );
 
-		//Painter.fill( this, 2, 2, SIZE-2, SIZE-2, Terrain.EMPTY );
-		//Painter.fill( this, SIZE/2, SIZE/2, 3, 3, Terrain.EMPTY_SP );
+        entrance = SIZE * WIDTH + SIZE / 2 + 1;
+        map(entrance, Terrain.STAIRS_UP);
 
-		entrance = SIZE * WIDTH + SIZE / 2 + 1;
-		map[entrance] = Terrain.STAIRS_UP;
+        pedestal = (SIZE / 2 + 1) * (WIDTH + 1) - 4 * WIDTH;
+        map(pedestal, Terrain.PEDESTAL);
 
-		pedestal = (SIZE / 2 + 1) * (WIDTH + 1) - 4*WIDTH;
-		map[pedestal] = Terrain.PEDESTAL;
-		map[pedestal-1-WIDTH] = map[pedestal+1-WIDTH] = map[pedestal-1+WIDTH] = map[pedestal+1+WIDTH] = Terrain.STATUE_SP;
+        map(pedestal - 1 - WIDTH, Terrain.STATUE_SP);
+        map(pedestal + 1 - WIDTH, Terrain.STATUE_SP);
+        map(pedestal - 1 + WIDTH, Terrain.STATUE_SP);
+        map(pedestal + 1 + WIDTH, Terrain.STATUE_SP);
 
-		exit = pedestal;
+        exit = pedestal;
 
-		int pos = pedestal;
+        int pos = pedestal;
 
-		map[pos-WIDTH] = map[pos-1] = map[pos+1] = map[pos-2] = map[pos+2] = Terrain.PUDDLE;
-		pos+=WIDTH;
-		map[pos] = map[pos-2] = map[pos+2] = map[pos-3] = map[pos+3] = Terrain.PUDDLE;
-		pos+=WIDTH;
-		map[pos-3] = map[pos-2] = map[pos-1] = map[pos] = map[pos+1] = map[pos+2] = map[pos+3] = Terrain.PUDDLE;
-		pos+=WIDTH;
-		map[pos-2] = map[pos+2] = Terrain.PUDDLE;
+        map(pos - WIDTH, Terrain.PUDDLE);
+        map(pos - 1, Terrain.PUDDLE);
+        map(pos + 1, Terrain.PUDDLE);
+        map(pos - 2, Terrain.PUDDLE);
+        map(pos + 2, Terrain.PUDDLE);
+        pos += WIDTH;
+        map(pos, Terrain.PUDDLE);
+        map(pos - 2, Terrain.PUDDLE);
+        map(pos + 2, Terrain.PUDDLE);
+        map(pos - 3, Terrain.PUDDLE);
+        map(pos + 3, Terrain.PUDDLE);
+        pos += WIDTH;
+        map(pos - 3, Terrain.PUDDLE);
+        map(pos - 2, Terrain.PUDDLE);
+        map(pos - 1, Terrain.PUDDLE);
+        map(pos, Terrain.PUDDLE);
+        map(pos + 1, Terrain.PUDDLE);
+        map(pos + 2, Terrain.PUDDLE);
+        map(pos + 3, Terrain.PUDDLE);
+        pos += WIDTH;
+        map(pos - 2, Terrain.PUDDLE);
+        map(pos + 2, Terrain.PUDDLE);
 
+        feeling = Feeling.NONE;
+        viewDistance = 8;
 
-		feeling = Feeling.NONE;
-		viewDistance = 8;
-
-		return true;
-	}
+        return true;
+    }
 
 	@Override
 	protected void decorate() {
 		for (int i=0; i < LENGTH; i++) {
-			if (map[i] == Terrain.EMPTY && Random.Int( 10 ) == 0) {
-				map[i] = Terrain.EMPTY_DECO;
+			if (map(i) == Terrain.EMPTY && Random.Int( 10 ) == 0) {
+				map(i, Terrain.EMPTY_DECO);
 			}
 		}
 	}
@@ -150,7 +167,7 @@ public class LastLevel extends Level {
 	public String tileName( int tile ) {
 		switch (tile) {
 		case Terrain.PUDDLE:
-			return "Cold lava";
+			return "Cold lava puddle";
 		case Terrain.GRASS:
 			return "Embermoss";
 		case Terrain.HIGH_GRASS:
@@ -187,8 +204,8 @@ public class LastLevel extends Level {
 	public void restoreFromBundle(Bundle bundle) {
 		super.restoreFromBundle(bundle);
 		for (int i=0; i < LENGTH; i++) {
-			int flags = Terrain.flags[map[i]];
-			if ((flags & Terrain.FLAG_PIT) != 0){
+			int flags = Terrain.flags[map(i)];
+			if ((flags & Terrain.FLAG_CHASM) != 0){
 				passable[i] = avoid[i] = false;
 				solid[i] = true;
 			}

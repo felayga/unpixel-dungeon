@@ -66,15 +66,17 @@ public class Boulder extends NPC {
     }
 
     @Override
-    protected Char chooseEnemy() { return null; }
+    protected Char chooseEnemy() {
+        return null;
+    }
 
     @Override
-    public int damage( int dmg, MagicType type, Char source, Item sourceItem ) {
+    public int damage(int dmg, MagicType type, Char source, Item sourceItem) {
         return 0;
     }
 
     @Override
-    public void add( Buff buff ) {
+    public void add(Buff buff) {
     }
 
     @Override
@@ -145,28 +147,29 @@ public class Boulder extends NPC {
 
     private void interactPush() {
         int newPos = this.pos() * 2 - Dungeon.hero.pos();
-        boolean mobBlock = false;
-
-        mobBlock = Actor.findChar(newPos) != null;
+        boolean mobBlock = Actor.findChar(newPos) != null;
 
         if (!mobBlock) {
-            if (Level.passable[newPos]) {
-                move(newPos);
-                Dungeon.hero.pushBoulder(this);
-                CellEmitter.get(newPos).burst(Speck.factory(Speck.DUST), 2);
-            } else if (Level.pit[newPos]) {
+            if (Level.chasm[newPos] || Level.pit[newPos]) {
                 pluggingPit = true;
 
                 move(newPos);
                 Dungeon.hero.pushBoulder(this);
                 CellEmitter.get(newPos).burst(Speck.factory(Speck.DUST), 2);
 
-                GLog.p("The boulder settles into the pit, filling a hole.");
+                if (Level.chasm[newPos]) {
+                    GLog.p("The boulder settles into the chasm, neatly plugging the hole.");
+                } else {
+                    GLog.p("The boulder settles into the pit, neatly plugging the hole.");
+                }
+            } else if (Level.passable[newPos]) {
+                move(newPos);
+                Dungeon.hero.pushBoulder(this);
+                CellEmitter.get(newPos).burst(Speck.factory(Speck.DUST), 2);
             } else {
                 GLog.n("You try to move the boulder, but in vain.");
             }
-        }
-        else {
+        } else {
             GLog.n("The boulder won't budge.");
         }
     }
@@ -176,8 +179,7 @@ public class Boulder extends NPC {
     boolean pluggingPit = false;
 
     @Override
-    public boolean visibilityOverride(boolean state)
-    {
+    public boolean visibilityOverride(boolean state) {
         return true;
     }
 
@@ -198,10 +200,9 @@ public class Boulder extends NPC {
     }
 
     private boolean initializing = false;
-    private void initializationCheck()
-    {
-        if (storedPos == -1 || (!Level.losBlocking[pos()]))
-        {
+
+    private void initializationCheck() {
+        if (storedPos == -1 || (!Level.losBlocking[pos()])) {
             initializing = true;
             move(pos());
             initializing = false;
@@ -210,8 +211,7 @@ public class Boulder extends NPC {
 
 
     @Override
-    public void move(int newPos)
-    {
+    public void move(int newPos) {
         int tempPos = storedPos;
         boolean tempFlag = storedFlag;
 
@@ -221,8 +221,7 @@ public class Boulder extends NPC {
         if (!initializing) {
             if (pluggingPit) {
                 Sample.INSTANCE.play(Assets.SND_BOULDER_PLUG);
-            }
-            else {
+            } else {
                 Sample.INSTANCE.play(Assets.SND_BOULDER_SCRAPE);
             }
         }
@@ -248,15 +247,13 @@ public class Boulder extends NPC {
     }
 
     @Override
-    public void onMotionComplete()
-    {
+    public void onMotionComplete() {
         super.onMotionComplete();
 
         if (!pluggingPit) {
             Level.losBlocking[pos()] = true;
             sprite.idle();
-        }
-        else {
+        } else {
             die(null);
 
             Dungeon.level.setDirt(pos(), true, true);
@@ -267,14 +264,13 @@ public class Boulder extends NPC {
     }
 
     @Override
-    public void die(Actor cause)
-    {
+    public void die(Actor cause) {
         sprite.interruptMotion();
 
-        if (!pluggingPit){
+        if (!pluggingPit) {
             Sample.INSTANCE.play(Assets.SND_BOULDER_SMASH);
             //Dungeon.level.spawnGemstones(pos);
-            Dungeon.level.drop(new Rock().quantity(Random.IntRange(3, 23)), pos());
+            Dungeon.level.drop(new Rock().quantity(Random.IntRange(3, 23)), pos()).rockBottom();
 
             Level.losBlocking[storedPos] = storedFlag;
             GameScene.updateMap(storedPos);
@@ -287,7 +283,7 @@ public class Boulder extends NPC {
     }
 
     @Override
-    public void storeInBundle( Bundle bundle ) {
+    public void storeInBundle(Bundle bundle) {
         super.storeInBundle(bundle);
 
         bundle.put(STOREDPOS, storedPos);
@@ -295,7 +291,7 @@ public class Boulder extends NPC {
     }
 
     @Override
-    public void restoreFromBundle( Bundle bundle ) {
+    public void restoreFromBundle(Bundle bundle) {
         super.restoreFromBundle(bundle);
 
         storedPos = bundle.getInt(STOREDPOS);

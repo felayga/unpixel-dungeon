@@ -232,7 +232,7 @@ public class Item implements Bundlable {
                     if (owner == Dungeon.hero) {
                         GLog.n("Your " + name + " rusts away!");
                     } else {
-                        GLog.n("The " + owner.name + "'s " + name + " rusts away!.");
+                        GLog.n("The " + owner.name + "'s " + name + " rusts away!");
                     }
                     parent.remove(this);
                     break;
@@ -279,7 +279,7 @@ public class Item implements Bundlable {
                     if (owner == Dungeon.hero) {
                         GLog.n("Your " + name + " corrodes away!");
                     } else {
-                        GLog.n("The " + owner.name + "'s " + name + " corrodes away!.");
+                        GLog.n("The " + owner.name + "'s " + name + " corrodes away!");
                     }
                     parent.remove(this);
                     break;
@@ -327,7 +327,7 @@ public class Item implements Bundlable {
                     if (owner == Dungeon.hero) {
                         GLog.n("Your " + name + " crumbles to ash!");
                     } else {
-                        GLog.n("The " + owner.name + "'s " + name + " crumbles to ash!.");
+                        GLog.n("The " + owner.name + "'s " + name + " crumbles to ash!");
                     }
                     parent.remove(this);
                     break;
@@ -540,7 +540,7 @@ public class Item implements Bundlable {
 
 	public void doThrow(Hero hero) {
         GLog.d("Item: doThrow");
-		GameScene.selectCell(thrower);
+		GameScene.selectCell(thrower, "Choose direction of throw");
 	}
 
 	public boolean execute(Hero hero, String action) {
@@ -961,7 +961,7 @@ public class Item implements Bundlable {
 	public void cast(final Char user, int pos, int dst) {
         //todo: make sure throwing item weights are right, etc.
 
-        Ballistica path = new Ballistica(pos, dst, Ballistica.Mode.Projectile);
+        Ballistica path = new Ballistica(pos, dst, Ballistica.Mode.Projectile.value);
         //int endPos = path.collisionPos;
 
         int distance = Ballistica.maxDistance(user, this, Ballistica.TravelCause.Thrown);
@@ -1048,11 +1048,6 @@ public class Item implements Bundlable {
 				curItem.cast(curUser, target);
 			}
             return true;
-		}
-
-		@Override
-		public String prompt() {
-			return "Choose direction of throw";
 		}
 	};
 }

@@ -44,7 +44,7 @@ public class Displacement extends Glyph {
 	@Override
 	public int proc( Armor armor, Char attacker, Char defender, int damage ) {
 
-		if ((Level.flags & Level.FLAG_NOTELEPORTATION) != 0) {
+		if ((Level.flags & Level.FLAG_NO_TELEPORTATION) != 0) {
 			return damage;
 		}
 		

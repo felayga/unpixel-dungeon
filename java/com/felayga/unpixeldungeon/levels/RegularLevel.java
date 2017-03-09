@@ -93,7 +93,7 @@ public abstract class RegularLevel extends Level {
             }
         }
 
-        if ((flags & FLAG_UNDIGGABLEFLOOR) != 0) {
+        if ((flags & FLAG_CHASM_NOT_DIGGABLE) != 0) {
             specials.remove(Room.Type.WEAK_FLOOR);
         }
 
@@ -203,7 +203,7 @@ public abstract class RegularLevel extends Level {
         while (true) {
             int pos = roomEntrance.random();
             if (pos != entrance && traps.get(pos) == null && findMob(pos) == null) {
-                map[pos] = Terrain.SIGN;
+                map(pos, Terrain.SIGN);
                 break;
             }
         }
@@ -348,8 +348,8 @@ public abstract class RegularLevel extends Level {
     protected void paintWater() {
         boolean[] lake = water();
         for (int i = 0; i < LENGTH; i++) {
-            if (map[i] == Terrain.EMPTY && lake[i]) {
-                map[i] = Terrain.PUDDLE;
+            if (map(i) == Terrain.EMPTY && lake[i]) {
+                map(i, Terrain.PUDDLE);
             }
         }
     }
@@ -370,14 +370,14 @@ public abstract class RegularLevel extends Level {
         }
 
         for (int i = WIDTH + 1; i < LENGTH - WIDTH - 1; i++) {
-            if (map[i] == Terrain.EMPTY && grass[i]) {
+            if (map(i) == Terrain.EMPTY && grass[i]) {
                 int count = 1;
                 for (int n : NEIGHBOURS8) {
                     if (grass[i + n]) {
                         count++;
                     }
                 }
-                map[i] = (Random.Float() < count / 12f) ? Terrain.HIGH_GRASS : Terrain.GRASS;
+                map(i, (Random.Float() < count / 12f) ? Terrain.HIGH_GRASS : Terrain.GRASS);
             }
         }
     }
@@ -394,7 +394,7 @@ public abstract class RegularLevel extends Level {
         LinkedList<Integer> validCells = new LinkedList<Integer>();
 
         for (int i = 0; i < LENGTH; i++) {
-            if (map[i] == Terrain.EMPTY) {
+            if (map(i) == Terrain.EMPTY) {
 
                 if (Dungeon.depth() == 1) {
                     //extra check to prevent annoying inactive traps in hallways on floor 1
@@ -420,7 +420,7 @@ public abstract class RegularLevel extends Level {
                 Trap trap = ((Trap) trapClasses[Random.chances(trapChances)].newInstance()).hide();
                 setTrap(null, trap, trapPos);
                 //some traps will not be hidden
-                map[trapPos] = trap.visible ? Terrain.TRAP : Terrain.SECRET_TRAP;
+                map(trapPos, trap.visible ? Terrain.TRAP : Terrain.SECRET_TRAP);
             } catch (Exception e) {
                 throw new RuntimeException(e);
             }
@@ -526,10 +526,10 @@ public abstract class RegularLevel extends Level {
     protected void paintDoor(int pos, Room.Door.Type doorType) {
         switch (doorType) {
             case EMPTY:
-                map[pos] = Terrain.EMPTY;
+                map(pos, Terrain.EMPTY);
                 break;
             case TUNNEL:
-                map[pos] = tunnelTile();
+                map(pos, tunnelTile());
                 break;
             case REGULAR:
                 assignDoor(pos, Terrain.DOOR, Terrain.SECRET_DOOR, Terrain.WOOD_DEBRIS, Terrain.LOCKED_DOOR, Terrain.SECRET_LOCKED_DOOR);
@@ -538,24 +538,25 @@ public abstract class RegularLevel extends Level {
                 assignDoor(pos, Terrain.DOOR, Terrain.SECRET_DOOR, Terrain.DOOR, Terrain.LOCKED_DOOR, Terrain.SECRET_LOCKED_DOOR);
                 break;
             case UNLOCKED:
-                map[pos] = Terrain.DOOR;
+                map(pos, Terrain.DOOR);
                 break;
             case HIDDEN:
-                map[pos] = Terrain.SECRET_DOOR;
+                map(pos, Terrain.SECRET_DOOR);
                 break;
             case HIDDENLOCKED:
-                map[pos] = Terrain.SECRET_LOCKED_DOOR;
+                map(pos, Terrain.SECRET_LOCKED_DOOR);
             case BARRICADE:
-                map[pos] = Terrain.BARRICADE;
+                map(pos, Terrain.BARRICADE);
                 break;
             case LOCKED:
                 assignDoor(pos, Terrain.LOCKED_DOOR, Terrain.SECRET_LOCKED_DOOR, Terrain.LOCKED_DOOR, Terrain.DOOR, Terrain.SECRET_DOOR);
                 break;
-        }    }
+        }
+    }
 
     private void assignDoor(int pos, int regular, int regularHidden, int regularBroken, int other, int otherHidden) {
         if (Dungeon.depth() <= 1) {
-            map[pos] = regular;
+            map(pos, regular);
         } else {
             if (Random.Int(4) == 0) {
                 regular = other;
@@ -565,14 +566,13 @@ public abstract class RegularLevel extends Level {
             boolean secret = (Dungeon.depthAdjusted < 6 ? Random.Int(12 - Dungeon.depthAdjusted) : Random.Int(6)) == 0;
 
             if (secret) {
-                map[pos] = regularHidden;
+                map(pos, regularHidden);
                 secretDoors++;
-            }
-            else {
+            } else {
                 if (Random.Int(4) == 0) {
-                    map[pos] = regularBroken;
+                    map(pos, regularBroken);
                 } else {
-                    map[pos] = regular;
+                    map(pos, regular);
                 }
             }
         }
@@ -800,7 +800,8 @@ public abstract class RegularLevel extends Level {
         for (Item item : itemsToSpawn) {
             int cell = randomDropCell();
             if (item instanceof Scroll) {
-                while ((map[cell] == Terrain.TRAP || map[cell] == Terrain.SECRET_TRAP)
+                int terrain = map(cell);
+                while ((terrain == Terrain.TRAP || terrain == Terrain.SECRET_TRAP)
                         && traps.get(cell) instanceof FireTrap) {
                     cell = randomDropCell();
                 }

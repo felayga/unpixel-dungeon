@@ -97,7 +97,7 @@ public class OldPickaxe extends Weapon {
 			
 			for (int i=0; i < Level.NEIGHBOURS8.length; i++) {
 				final int pos = hero.pos() + Level.NEIGHBOURS8[i];
-				if (Dungeon.level.map[pos] == Terrain.WALL_DECO) {
+				if (Dungeon.level.map(pos) == Terrain.WALL_DECO) {
 
                     hero.spend_new(TIME_TO_MINE, false);
                     hero.busy();

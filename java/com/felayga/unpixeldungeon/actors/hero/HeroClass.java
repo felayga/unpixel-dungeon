@@ -29,7 +29,7 @@ import com.felayga.unpixeldungeon.Badges;
 import com.felayga.unpixeldungeon.Challenges;
 import com.felayga.unpixeldungeon.Dungeon;
 import com.felayga.unpixeldungeon.actors.mobs.npcs.Spinach;
-import com.felayga.unpixeldungeon.items.books.IdentifyBook;
+import com.felayga.unpixeldungeon.items.books.spellbook.IdentifyBook;
 import com.felayga.unpixeldungeon.items.tools.Torch;
 import com.felayga.unpixeldungeon.items.armor.amulet.mask.Blindfold;
 import com.felayga.unpixeldungeon.items.armor.boots.LeatherBoots;
@@ -44,8 +44,6 @@ import com.felayga.unpixeldungeon.items.bags.SeedPouch;
 import com.felayga.unpixeldungeon.items.food.CannedFood;
 import com.felayga.unpixeldungeon.items.food.Corpse;
 import com.felayga.unpixeldungeon.items.food.Ration;
-import com.felayga.unpixeldungeon.items.potions.PotionOfOil;
-import com.felayga.unpixeldungeon.items.potions.PotionOfSeeInvisible;
 import com.felayga.unpixeldungeon.items.rings.RingOfWealth;
 import com.felayga.unpixeldungeon.items.scrolls.ScrollOfIdentify;
 import com.felayga.unpixeldungeon.items.scrolls.ScrollOfMagicMapping;
@@ -56,15 +54,13 @@ import com.felayga.unpixeldungeon.items.tools.CanningKit;
 import com.felayga.unpixeldungeon.items.tools.Towel;
 import com.felayga.unpixeldungeon.items.tools.Tricorder;
 import com.felayga.unpixeldungeon.items.tools.digging.Pickaxe;
-import com.felayga.unpixeldungeon.items.wands.WandOfChaos;
 import com.felayga.unpixeldungeon.items.wands.WandOfCreateMonster;
-import com.felayga.unpixeldungeon.items.wands.WandOfDeath;
 import com.felayga.unpixeldungeon.items.wands.WandOfHaste;
 import com.felayga.unpixeldungeon.items.wands.WandOfLight;
 import com.felayga.unpixeldungeon.items.wands.WandOfLightning;
 import com.felayga.unpixeldungeon.items.wands.WandOfMagicMissile;
-import com.felayga.unpixeldungeon.items.wands.WandOfMakeInvisible;
 import com.felayga.unpixeldungeon.items.wands.WandOfRegrowth;
+import com.felayga.unpixeldungeon.items.wands.WandOfTunneling;
 import com.felayga.unpixeldungeon.items.weapon.ammunition.martial.Arrow;
 import com.felayga.unpixeldungeon.items.weapon.ammunition.simple.Rock;
 import com.felayga.unpixeldungeon.items.weapon.melee.martial.BattleAxe;
@@ -228,7 +224,7 @@ public enum HeroClass {
         hero.mpPerLevel = 10;
 
         Dart darts = new Dart();
-        darts.quantity(8).bucStatus(BUCStatus.Cursed, true).identify();
+        darts.quantity(8).bucStatus(BUCStatus.Blessed, true).identify();
         hero.belongings.collectEquip(darts);
 
         hero.weaponSkill = WeaponSkill.Simple;
@@ -287,6 +283,7 @@ public enum HeroClass {
         hero.belongings.collect(new WandOfCreateMonster().random().bucStatus(BUCStatus.Blessed, true).identify());
         hero.belongings.collect(new WandOfHaste().random().bucStatus(BUCStatus.Blessed, true).identify());
         hero.belongings.collect(new WandOfLight().random().bucStatus(BUCStatus.Blessed, true).identify());
+        hero.belongings.collect(new WandOfTunneling().random().bucStatus(BUCStatus.Blessed, true).identify());
 
         hero.belongings.collect(new Blindfold());
         hero.belongings.collect(new Towel());

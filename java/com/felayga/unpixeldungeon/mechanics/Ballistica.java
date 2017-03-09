@@ -31,7 +31,6 @@ import com.felayga.unpixeldungeon.actors.buffs.hero.Encumbrance;
 import com.felayga.unpixeldungeon.items.EquippableItem;
 import com.felayga.unpixeldungeon.items.Item;
 import com.felayga.unpixeldungeon.levels.Level;
-import com.felayga.unpixeldungeon.utils.GLog;
 import com.watabou.utils.Random;
 
 import java.util.ArrayList;
@@ -50,7 +49,7 @@ public class Ballistica {
 
         EquippableItem item;
         int enchantment = 0;
-        switch(cause) {
+        switch (cause) {
             case Kicked:
                 item = thrower.belongings.boots();
 
@@ -74,55 +73,71 @@ public class Ballistica {
     }
 
 
-	//note that the path is the FULL path of the projectile, including tiles after collision.
-	//make sure to generate a subPath for the common case of going source to collision.
-	public ArrayList<Integer> path = new ArrayList<>();
+    //note that the path is the FULL path of the projectile, including tiles after collision.
+    //make sure to generate a subPath for the common case of going source to collision.
+    public ArrayList<Integer> path = new ArrayList<>();
     public ArrayList<Integer> bounces = new ArrayList<>();
-	public Integer sourcePos = null;
-	public Integer collisionPos = null;
-	public Integer dist = 0;
+    public Integer sourcePos = null;
+    public Integer collisionPos = null;
+    public Integer dist = 0;
+    public final int mode;
 
     //parameters to specify the colliding cell
     public enum Mode {
-        NoCollision     (0x0000),
-        StopTarget      (0x0001), //ballistica will stop at the target cell
-        StopChars       (0x0002), //ballistica will stop on first char hit
-        StopTerrain     (0x0004), //ballistica will stop on terrain(LOS blocking, impassable, etc.)
-        BounceTerrain   (0x0008), //since this value has both "bounce" and "terrain" in its name, it's fair to assume that it will bounce off terrain
-        Projectile      (StopTarget.value | StopChars.value | StopTerrain.value),
-        MagicBolt       (StopChars.value | StopTerrain.value),
-        SeekerBolt      (StopTarget.value | StopChars.value),
-        SplasherBolt    (StopTarget.value | StopTerrain.value),
-        MagicRay        (StopChars.value | StopTerrain.value | BounceTerrain.value);
+        NoCollision     (0x0001),
+        StopTarget      (0x0002), //ballistica will stop at the target cell
+        StopChars       (0x0004), //ballistica will stop on first char hit
+        StopTerrain     (0x0008), //ballistica will stop on terrain(LOS blocking, impassable, etc.)
+        BounceTerrain   (0x0010), //since this value has both "bounce" and "terrain" in its name, it's fair to assume that it will bounce off terrain
+        StopSelf        (0x0020),
+        Mask            (0x002F),
+
+        IsDirected      (value(StopTarget, StopChars, StopTerrain, NoCollision)),
+
+        Projectile      (value(StopTarget, StopChars, StopTerrain)),
+        MagicBolt       (value(StopChars, StopTerrain)),
+        SeekerBolt      (value(StopTarget, StopChars)),
+        SplasherBolt    (value(StopTarget, StopTerrain)),
+        MagicRay        (value(StopChars, StopTerrain, BounceTerrain));
 
         public final int value;
 
         Mode(int value) {
             this.value = value;
         }
+
+        public static int value(Mode... modes) {
+            int retval = 0;
+
+            for (Mode mode : modes) {
+                retval |= mode.value;
+            }
+
+            return retval;
+        }
     }
 
-	public Ballistica( int from, int to, Mode params ){
-		sourcePos = from;
-		build(from, to, params);
-		if (collisionPos != null) {
-			dist = path.indexOf(collisionPos);
-		}
-		else {
-			dist = path.size() - 1;
-			if (dist >= 0) {
-				collisionPos = path.get(dist);
-			}
-			else {
-				collisionPos = -1;
-			}
-		}
-	}
+    public Ballistica(int from, int to, int mode) {
+        this.mode = mode;
 
-	private void build( int from, int to, Mode params ) {
-        boolean stopTarget = (params.value & Mode.StopTarget.value) != 0;
-        boolean stopChars = (params.value & Mode.StopChars.value) != 0;
-        boolean stopTerrain = (params.value & Mode.StopTerrain.value) != 0;
+        sourcePos = from;
+        build(from, to);
+        if (collisionPos != null) {
+            dist = path.indexOf(collisionPos);
+        } else {
+            dist = path.size() - 1;
+            if (dist >= 0) {
+                collisionPos = path.get(dist);
+            } else {
+                collisionPos = -1;
+            }
+        }
+    }
+
+    private void build(int from, int to) {
+        boolean stopTarget = (mode & Mode.StopTarget.value) != 0;
+        boolean stopChars = (mode & Mode.StopChars.value) != 0;
+        boolean stopTerrain = (mode & Mode.StopTerrain.value) != 0;
 
         int w = Level.WIDTH;
 
@@ -161,7 +176,7 @@ public class Ballistica {
 
         int cell = from;
 
-        int bouncesLeft = (params.value & Mode.BounceTerrain.value) != 0 ? 2 : 0;
+        int bouncesLeft = (mode & Mode.BounceTerrain.value) != 0 ? 2 : 0;
         boolean firstRun = true;
 
         int err = dA / 2;
@@ -219,20 +234,20 @@ public class Ballistica {
         }
     }
 
-	//we only want to record the first position collision occurs at.
-	private void collide(int cell){
-		if (collisionPos == null)
-			collisionPos = cell;
-	}
+    //we only want to record the first position collision occurs at.
+    private void collide(int cell) {
+        if (collisionPos == null)
+            collisionPos = cell;
+    }
 
-	//returns a segment of the path from start to end, inclusive.
-	//if there is an error, returns an empty arraylist instead.
-	public List<Integer> subPath(int start, int end){
-		try {
-			end = Math.min( end, path.size()-1);
-			return path.subList(start, end+1);
-		} catch (Exception e){
-			return new ArrayList<>();
-		}
-	}
+    //returns a segment of the path from start to end, inclusive.
+    //if there is an error, returns an empty arraylist instead.
+    public List<Integer> subPath(int start, int end) {
+        try {
+            end = Math.min(end, path.size() - 1);
+            return path.subList(start, end + 1);
+        } catch (Exception e) {
+            return new ArrayList<>();
+        }
+    }
 }

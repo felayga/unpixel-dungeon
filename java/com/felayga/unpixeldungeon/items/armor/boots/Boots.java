@@ -150,7 +150,7 @@ public class Boots extends Armor implements IWeapon {
             switch (encumbrance.current) {
                 case UNENCUMBERED:
                 case BURDENED:
-                    GameScene.selectCell(kicker);
+                    GameScene.selectCell(kicker, "Choose a place to kick");
                     break;
                 default:
                     GLog.n("You're carrying too much to balance yourself for a proper kick.");
@@ -186,11 +186,6 @@ public class Boots extends Armor implements IWeapon {
                 curBoots.kick(curUser, target);
             }
             return true;
-        }
-
-        @Override
-        public String prompt() {
-            return "Choose a place to kick";
         }
     };
 

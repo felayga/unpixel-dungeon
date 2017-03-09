@@ -63,7 +63,7 @@ public class Acid extends Blob {
                 fire = cur[pos] - 1;
                 if (fire <= 0 && flamable[pos]) {
 
-                    int oldTile = Dungeon.level.map[pos];
+                    int oldTile = Dungeon.level.map(pos);
                     Dungeon.level.set(pos, Terrain.DENATURED_DEBRIS, true);
 
                     observe = true;

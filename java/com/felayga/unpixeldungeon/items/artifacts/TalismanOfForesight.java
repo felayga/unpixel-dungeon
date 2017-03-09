@@ -84,7 +84,7 @@ public class TalismanOfForesight extends Artifact_old {
 				charge = 0;
 				for (int i = 0; i < Level.LENGTH; i++) {
 
-					int terr = Dungeon.level.map[i];
+					int terr = Dungeon.level.map(i);
 					if ((Terrain.flags[terr] & Terrain.FLAG_SECRET) != 0) {
 
 						GameScene.updateMap(i);
@@ -160,9 +160,12 @@ public class TalismanOfForesight extends Artifact_old {
 
 			for (int y = ay; y <= by; y++) {
 				for (int x = ax, p = ax + y * Level.WIDTH; x <= bx; x++, p++) {
-
-					if (Dungeon.visible[p] && Level.secret[p] && Dungeon.level.map[p] != Terrain.SECRET_DOOR)
-							smthFound = true;
+					if (Dungeon.visible[p] && Level.secret[p]) {
+                        int terrain = Dungeon.level.map(p);
+                        if (terrain != Terrain.SECRET_DOOR && terrain != Terrain.SECRET_LOCKED_DOOR) {
+                            smthFound = true;
+                        }
+                    }
 				}
 			}
 

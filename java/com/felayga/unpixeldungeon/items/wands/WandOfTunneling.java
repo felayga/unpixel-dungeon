@@ -55,12 +55,7 @@ public class WandOfTunneling extends Wand {
         super(8);
         name = "Wand of Tunneling";
 
-        isOffensive = false;
-        directionalZap = true;
-        usesTargeting = false;
-        canTargetSelf = true;
-
-        collisionProperties = Ballistica.Mode.NoCollision;
+        ballisticaMode = Ballistica.Mode.value(Ballistica.Mode.NoCollision, Ballistica.Mode.StopSelf);
         price = 150;
     }
 
@@ -71,7 +66,7 @@ public class WandOfTunneling extends Wand {
 
     @Override
     protected void onZap(Ballistica beam) {
-        if ((Level.flags & Level.FLAG_UNDIGGABLEWALLS) != 0) {
+        if ((Level.flags & Level.FLAG_WALLS_NOT_DIGGABLE) != 0) {
             return;
         }
 
@@ -85,7 +80,7 @@ public class WandOfTunneling extends Wand {
                     break;
                 }
 
-                int terrain = Dungeon.level.map[digPos];
+                int terrain = Dungeon.level.map(digPos);
 
                 if (Level.stone[digPos]) {
                     if (terrain == Terrain.WALL_STONE) {
@@ -173,15 +168,19 @@ public class WandOfTunneling extends Wand {
     }
 
     private boolean digDown(int pos) {
-        if ((Level.flags & Level.FLAG_UNDIGGABLEFLOOR) != 0) {
+        if ((Terrain.flags[Dungeon.level.map(pos)] & Terrain.FLAG_UNDIGGABLE) != 0) {
             return false;
         }
 
-        if ((Terrain.flags[Dungeon.level.map[pos]] & Terrain.FLAG_UNDIGGABLE) != 0) {
-            return false;
-        }
+        boolean retval;
 
-        Dungeon.level.setDirtDeep(pos, true, true);
+        if ((Level.flags & Level.FLAG_CHASM_NOT_DIGGABLE) == 0) {
+            Dungeon.level.setDirtChasm(pos, true, true);
+            retval = true;
+        } else {
+            Dungeon.level.setDirtPit(pos, true, true);
+            retval = false;
+        }
         Dungeon.observe();
 
         if (Dungeon.audible[pos]) {
@@ -189,7 +188,8 @@ public class WandOfTunneling extends Wand {
         }
 
         CellEmitter.get(pos).burst(Speck.factory(Speck.DUST), 5);
-        return true;
+
+        return retval;
     }
 
     public void explode(Char target, int maxDamage, boolean chasm) {

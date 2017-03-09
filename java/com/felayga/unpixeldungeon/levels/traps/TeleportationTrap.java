@@ -70,7 +70,7 @@ public class TeleportationTrap extends Trap {
                 }
             } while (pos == -1);
 
-            if (pos == -1 || (Dungeon.level.flags & Level.FLAG_NOTELEPORTATION) != 0) {
+            if (pos == -1 || (Dungeon.level.flags & Level.FLAG_NO_TELEPORTATION) != 0) {
 
                 GLog.w(ScrollOfTeleportation.TXT_NO_TELEPORT);
 

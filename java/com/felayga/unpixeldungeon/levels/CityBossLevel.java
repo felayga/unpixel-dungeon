@@ -99,30 +99,31 @@ public class CityBossLevel extends Level {
 
         int y = TOP + 1;
         while (y < TOP + HALL_HEIGHT) {
-            map[y * WIDTH + CENTER - 2] = Terrain.STATUE_SP;
-            map[y * WIDTH + CENTER + 2] = Terrain.STATUE_SP;
+            map(y * WIDTH + CENTER - 2, Terrain.STATUE_SP);
+            map(y * WIDTH + CENTER + 2, Terrain.STATUE_SP);
             y += 2;
         }
 
         int left = pedestal(true);
         int right = pedestal(false);
-        map[left] = map[right] = Terrain.PEDESTAL;
+        map(left, Terrain.PEDESTAL);
+        map(right, Terrain.PEDESTAL);
         for (int i = left + 1; i < right; i++) {
-            map[i] = Terrain.EMPTY_SP;
+            map(i, Terrain.EMPTY_SP);
         }
 
         exit = (TOP - 1) * WIDTH + CENTER;
-        map[exit] = Terrain.LOCKED_EXIT;
+        map(exit, Terrain.LOCKED_EXIT);
 
         arenaDoor = (TOP + HALL_HEIGHT) * WIDTH + CENTER;
-        map[arenaDoor] = Terrain.DOOR;
+        map(arenaDoor, Terrain.DOOR);
 
         Painter.fill(this, LEFT, TOP + HALL_HEIGHT + 1, HALL_WIDTH, CHAMBER_HEIGHT, Terrain.EMPTY);
         Painter.fill(this, LEFT, TOP + HALL_HEIGHT + 1, 1, CHAMBER_HEIGHT, Terrain.BARRICADE);
         Painter.fill(this, LEFT + HALL_WIDTH - 1, TOP + HALL_HEIGHT + 1, 1, CHAMBER_HEIGHT, Terrain.BARRICADE);
 
         entrance = (TOP + HALL_HEIGHT + 2 + Random.Int(CHAMBER_HEIGHT - 1)) * WIDTH + LEFT + (/*1 +*/ Random.Int(HALL_WIDTH - 2));
-        map[entrance] = Terrain.STAIRS_UP;
+        map(entrance, Terrain.STAIRS_UP);
 
         return true;
     }
@@ -131,15 +132,17 @@ public class CityBossLevel extends Level {
     protected void decorate() {
 
         for (int i = 0; i < LENGTH; i++) {
-            if (map[i] == Terrain.EMPTY && Random.Int(10) == 0) {
-                map[i] = Terrain.EMPTY_DECO;
-            } else if (map[i] == Terrain.WALL && Random.Int(8) == 0) {
-                map[i] = Terrain.WALL_DECO;
+            int terrain = map(i);
+
+            if (terrain == Terrain.EMPTY && Random.Int(10) == 0) {
+                map(i, Terrain.EMPTY_DECO);
+            } else if (terrain == Terrain.WALL && Random.Int(8) == 0) {
+                map(i, Terrain.WALL_DECO);
             }
         }
 
         int sign = arenaDoor + WIDTH + 1;
-        map[sign] = Terrain.SIGN;
+        map(sign, Terrain.SIGN);
     }
 
     public static int pedestal(boolean left) {
@@ -167,7 +170,7 @@ public class CityBossLevel extends Level {
                 pos =
                         Random.IntRange(LEFT + 1, LEFT + HALL_WIDTH - 2) +
                                 Random.IntRange(TOP + HALL_HEIGHT + 1, TOP + HALL_HEIGHT + CHAMBER_HEIGHT) * WIDTH;
-            } while (pos == entrance || map[pos] == Terrain.SIGN);
+            } while (pos == entrance || map(pos) == Terrain.SIGN);
             drop(item, pos).type = Heap.Type.REMAINS;
         }
     }
@@ -241,7 +244,7 @@ public class CityBossLevel extends Level {
     public String tileName(int tile) {
         switch (tile) {
             case Terrain.PUDDLE:
-                return "Suspiciously colored water";
+                return "Suspiciously colored puddle";
             case Terrain.HIGH_GRASS:
                 return "High blooming flowers";
             default:

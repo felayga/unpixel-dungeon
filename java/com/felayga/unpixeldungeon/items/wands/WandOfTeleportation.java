@@ -44,9 +44,9 @@ public class WandOfTeleportation extends Wand {
     public WandOfTeleportation()
     {
         super(8);
-        name = "Wand of Create Monster";
+        name = "Wand of Teleportation";
 
-        collisionProperties = Ballistica.Mode.Projectile;
+        ballisticaMode = Ballistica.Mode.value(Ballistica.Mode.MagicRay, Ballistica.Mode.StopSelf);
         price = 200;
     }
 

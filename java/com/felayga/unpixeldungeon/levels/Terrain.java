@@ -37,46 +37,45 @@ import com.felayga.unpixeldungeon.levels.traps.Trap;
 import com.watabou.utils.SparseArray;
 
 public class Terrain {
+    public static final int CHASM                   = 0;
+    public static final int EMPTY                   = 1;
+    public static final int GRASS                   = 2;
+    public static final int EMPTY_WELL              = 3;
+    public static final int WALL                    = 4;
+    public static final int DOOR                    = 5;
+    public static final int OPEN_DOOR               = 6;
+    public static final int STAIRS_UP               = 7;
+    public static final int STAIRS_DOWN             = 8;
+    public static final int EMBERS                  = 9;
+    public static final int LOCKED_DOOR             = 10;
+    public static final int PEDESTAL                = 11;
+    public static final int WALL_DECO               = 12;
+    public static final int BARRICADE               = 13;
+    public static final int EMPTY_SP                = 14;
+    public static final int HIGH_GRASS              = 15;
 
-	public static final int CHASM				    = 0;
-	public static final int EMPTY				    = 1;
-	public static final int GRASS				    = 2;
-	public static final int EMPTY_WELL			    = 3;
-	public static final int WALL				    = 4;
-	public static final int DOOR				    = 5;
-	public static final int OPEN_DOOR			    = 6;
-	public static final int STAIRS_UP			    = 7;
-	public static final int STAIRS_DOWN			    = 8;
-	public static final int EMBERS				    = 9;
-	public static final int LOCKED_DOOR			    = 10;
-	public static final int PEDESTAL			    = 11;
-	public static final int WALL_DECO			    = 12;
-	public static final int BARRICADE			    = 13;
-	public static final int EMPTY_SP			    = 14;
-	public static final int HIGH_GRASS			    = 15;
+    public static final int SECRET_DOOR             = 16;
+    public static final int SECRET_LOCKED_DOOR      = 17;
+    public static final int SECRET_TRAP             = 18;
+    public static final int TRAP                    = 19;
+    public static final int INACTIVE_TRAP           = 20;
 
-	public static final int SECRET_DOOR	    	    = 16;
-    public static final int SECRET_LOCKED_DOOR 	    = 17;
-	public static final int SECRET_TRAP     	    = 18;
-	public static final int TRAP            	    = 19;
-	public static final int INACTIVE_TRAP   	    = 20;
+    public static final int EMPTY_DECO              = 21;
+    public static final int LOCKED_EXIT             = 22;
+    public static final int UNLOCKED_EXIT           = 23;
+    public static final int SIGN                    = 24;
+    public static final int WELL                    = 25;
+    public static final int STATUE                  = 26;
+    public static final int STATUE_SP               = 27;
+    public static final int ALCHEMY                 = 28;
 
-	public static final int EMPTY_DECO			    = 21;
-	public static final int LOCKED_EXIT			    = 22;
-	public static final int UNLOCKED_EXIT		    = 23;
-	public static final int SIGN				    = 24;
-	public static final int WELL				    = 25;
-	public static final int STATUE				    = 26;
-	public static final int STATUE_SP			    = 27;
-	public static final int ALCHEMY				    = 28;
-
-	public static final int CHASM_FLOOR			    = 29;
-	public static final int CHASM_FLOOR_SP		    = 30;
-	public static final int CHASM_WALL			    = 31;
-	public static final int CHASM_WATER			    = 32;
-	public static final int DENATURED_DEBRIS	    = 33;
-	public static final int WOOD_DEBRIS			    = 34;
-	public static final int WALL_STONE			    = 35;
+    public static final int CHASM_FLOOR             = 29;
+    public static final int CHASM_FLOOR_SP          = 30;
+    public static final int CHASM_WALL              = 31;
+    public static final int CHASM_WATER             = 32;
+    public static final int DENATURED_DEBRIS        = 33;
+    public static final int WOOD_DEBRIS             = 34;
+    public static final int WALL_STONE              = 35;
     public static final int WELL_MAGIC              = 36;
 
     public static final int STAIRS_UP_ALTERNATE     = 37;
@@ -90,43 +89,54 @@ public class Terrain {
     public static final int FACED_TILE_MAX          = 255;
     public static final int FACED_TILE_BLOCKSIZE    = 16;
 
-	public static final int PUDDLE_TILES	    	= 192;
-	public static final int PUDDLE		    	    = PUDDLE_TILES + FACED_TILE_BLOCKSIZE - 1;
+    public static final int PUDDLE_TILES            = FACED_TILE_MIN;
+    public static final int PUDDLE                  = PUDDLE_TILES + FACED_TILE_BLOCKSIZE - 1;
 
-    public static final int WATER_DEEP_TILES	    = PUDDLE_TILES + FACED_TILE_BLOCKSIZE;
-    public static final int WATER_DEEP			    = WATER_DEEP_TILES + FACED_TILE_BLOCKSIZE - 1;
+    public static final int WATER_DEEP_TILES        = PUDDLE_TILES + FACED_TILE_BLOCKSIZE;
+    public static final int WATER_DEEP              = WATER_DEEP_TILES + FACED_TILE_BLOCKSIZE - 1;
 
-    public static final int DIRT_TILES			    = WATER_DEEP_TILES + FACED_TILE_BLOCKSIZE;
-    public static final int DIRT				    = DIRT_TILES + FACED_TILE_BLOCKSIZE - 1;
+    public static final int FACED_TILE_OVERLAY_MIN  = 192;
 
-    public static final int DIRT_DEEP_TILES		    = DIRT_TILES + FACED_TILE_BLOCKSIZE;
-    public static final int DIRT_DEEP			    = DIRT_DEEP_TILES + FACED_TILE_BLOCKSIZE - 1;
+    public static final int OVERLAY_TILES           = FACED_TILE_OVERLAY_MIN;
+    public static final int OVERLAY                 = OVERLAY_TILES + FACED_TILE_BLOCKSIZE - 1;
+
+    public static final int UNDERLAY_DIRT_TILES     = OVERLAY_TILES + FACED_TILE_BLOCKSIZE;
+    public static final int UNDERLAY_DIRT           = UNDERLAY_DIRT_TILES + FACED_TILE_BLOCKSIZE - 1;
+
+    public static final int UNDERLAY_PIT_TILES      = UNDERLAY_DIRT_TILES + FACED_TILE_BLOCKSIZE;
+    public static final int UNDERLAY_PIT            = UNDERLAY_PIT_TILES + FACED_TILE_BLOCKSIZE - 1;
+
+    public static final int UNDERLAY_CHASM_TILES    = UNDERLAY_PIT_TILES + FACED_TILE_BLOCKSIZE;
+    public static final int UNDERLAY_CHASM          = UNDERLAY_CHASM_TILES + FACED_TILE_BLOCKSIZE - 1;
 
     public static final int TILE_MAX                = 255;
 
-	public static final int FLAG_PASSABLE		    = 0x0001;
-	public static final int FLAG_LOSBLOCKING	    = 0x0002;
-	public static final int FLAG_BURNABLE           = 0x0004;
-	public static final int FLAG_SECRET			    = 0x0008;
-	public static final int FLAG_SOLID			    = 0x0010;
-	public static final int FLAG_AVOID			    = 0x0020;
-	public static final int FLAG_LIQUID			    = 0x0040;
-	public static final int FLAG_PIT			    = 0x0080;
-	
-	public static final int FLAG_UNSTITCHABLE	    = 0x0100;
-	public static final int FLAG_PATHABLE		    = 0x0200;
-	public static final int FLAG_UNDISCOVERABLE	    = 0x0400;
-	public static final int FLAG_STONE			    = 0x0800;
-    public static final int FLAG_UNDIGGABLE         = 0x1000;
+    public static final int FLAG_PASSABLE           = 0x000001;
+    public static final int FLAG_LOSBLOCKING        = 0x000002;
+    public static final int FLAG_BURNABLE           = 0x000004;
+    public static final int FLAG_SECRET             = 0x000008;
+    public static final int FLAG_SOLID              = 0x000010;
+    public static final int FLAG_AVOID              = 0x000020;
+    public static final int FLAG_LIQUID             = 0x000040;
+    public static final int FLAG_CHASM              = 0x000080;
 
-    public static final int FLAG_LOSDARK            = 0x2000;
+    public static final int FLAG_UNSTITCHABLE       = 0x000100;
+    public static final int FLAG_PATHABLE           = 0x000200;
+    public static final int FLAG_UNDISCOVERABLE     = 0x000400;
+    public static final int FLAG_STONE              = 0x000800;
+    public static final int FLAG_UNDIGGABLE         = 0x001000;
 
-    public static final int FLAG_DIAGONALPASSAGE    = 0x8000;
+    public static final int FLAG_LOSDARK            = 0x002000;
+
+    public static final int FLAG_PIT                = 0x004000;
+
+    public static final int FLAG_DIAGONALPASSAGE    = 0x008000;
 
 
-	public static final int[] flags = new int[256];
-	static {
-        flags[CHASM] = FLAG_AVOID | FLAG_PIT | FLAG_UNSTITCHABLE | FLAG_DIAGONALPASSAGE;
+    public static final int[] flags = new int[256];
+
+    static {
+        flags[CHASM] = FLAG_AVOID | FLAG_CHASM | FLAG_UNSTITCHABLE | FLAG_DIAGONALPASSAGE | FLAG_PASSABLE;
         flags[EMPTY] = FLAG_PASSABLE | FLAG_DIAGONALPASSAGE;
         flags[GRASS] = FLAG_PASSABLE | FLAG_BURNABLE | FLAG_DIAGONALPASSAGE;
         flags[EMPTY_WELL] = FLAG_STONE | FLAG_DIAGONALPASSAGE;
@@ -176,20 +186,24 @@ public class Terrain {
             flags[n] = flags[PUDDLE];
         }
 
-        for (int n = DIRT_TILES; n <= DIRT; n++) {
+        for (int n = WATER_DEEP_TILES; n <= WATER_DEEP; n++) {
+            flags[n] = flags[PUDDLE] | FLAG_AVOID | FLAG_PIT;
+        }
+
+        for (int n = UNDERLAY_DIRT_TILES; n <= UNDERLAY_DIRT; n++) {
             flags[n] = flags[EMPTY] | FLAG_LOSDARK;
         }
 
-        for (int n = WATER_DEEP_TILES; n <= WATER_DEEP; n++) {
-
+        for (int n = UNDERLAY_PIT_TILES; n <= UNDERLAY_PIT; n++) {
+            flags[n] = flags[EMPTY] | FLAG_LOSDARK | FLAG_AVOID | FLAG_PIT;
         }
 
-        for (int n = DIRT_DEEP_TILES; n <= DIRT_DEEP; n++) {
-            flags[n] = FLAG_AVOID | FLAG_PIT | FLAG_DIAGONALPASSAGE;
+        for (int n = UNDERLAY_CHASM_TILES; n <= UNDERLAY_CHASM; n++) {
+            flags[n] = FLAG_AVOID | FLAG_CHASM | FLAG_DIAGONALPASSAGE | FLAG_PASSABLE;
         }
     }
 
-	public static int discover( int terr ) {
+    public static int discover(int terr) {
         switch (terr) {
             case SECRET_DOOR:
                 return DOOR;
@@ -201,73 +215,6 @@ public class Terrain {
                 return terr;
         }
     }
-
-	//converts terrain values from pre versioncode 44 (0.3.0c) saves
-	//TODO: remove when no longer supporting saves from 0.3.0b and under
-	public static int[] convertTrapsFrom43( int[] map, SparseArray<Trap> traps){
-		for (int i = 0; i < map.length; i++){
-
-			int c = map[i];
-
-			//non-trap tiles getting their values shifted around
-			if (c >= 24 && c <= 26) {
-				c -= 4; //24-26 becomes 20-22
-			} else if (c == 29) {
-				c = 23; //29 becomes 23
-			} else if ( c >= 34 && c <= 36) {
-				c -= 10; //34-36 becomes 24-26
-			} else if ( c >= 41 && c <= 46) {
-				c -= 14; //41-46 becomes 27-32
-			}
-
-			//trap tiles, must be converted to general trap tiles and specific traps instantiated
-			else if (c >= 17 && c <= 40){
-				//this is going to be messy...
-				Trap trap = null;
-				switch(c){
-					case 17: trap = new ToxicTrap().reveal(); break;
-					case 18: trap = new ToxicTrap().hide(); break;
-
-					case 19: trap = new FireTrap().reveal(); break;
-					case 20: trap = new FireTrap().hide(); break;
-
-					case 21: trap = new ParalyticTrap().reveal(); break;
-					case 22: trap = new ParalyticTrap().hide(); break;
-
-					case 23:
-						c = INACTIVE_TRAP;
-						trap = null;
-						break;
-
-					case 27: trap = new PoisonTrap().reveal(); break;
-					case 28: trap = new PoisonTrap().hide(); break;
-
-					case 30: trap = new AlarmTrap().reveal(); break;
-					case 31: trap = new AlarmTrap().hide(); break;
-
-					case 32: trap = new LightningTrap().reveal(); break;
-					case 33: trap = new LightningTrap().hide(); break;
-
-					case 37: trap = new GrippingTrap().reveal(); break;
-					case 38: trap = new GrippingTrap().hide(); break;
-
-					case 39: trap = new SummoningTrap().reveal(); break;
-					case 40: trap = new SummoningTrap().hide(); break;
-				}
-				if (trap != null){
-					trap.set( null, i );
-					traps.put( trap.pos, trap );
-					if (trap.visible)
-						c = TRAP;
-					else
-						c = SECRET_TRAP;
- 				}
-			}
-
-			map[i] = c;
-		}
-		return map;
-	}
 
 
 }

@@ -45,7 +45,7 @@ public class WandOfSlow extends Wand {
         super(8);
         name = "Wand of Slow";
 
-        canTargetSelf = true;
+        ballisticaMode = Ballistica.Mode.value(Ballistica.Mode.MagicRay, Ballistica.Mode.StopSelf);
         price = 150;
     }
 

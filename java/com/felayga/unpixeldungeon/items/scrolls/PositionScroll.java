@@ -40,7 +40,6 @@ import com.watabou.noosa.audio.Sample;
  * Created by HELLO on 7/5/2016.
  */
 public abstract class PositionScroll extends Scroll {
-    protected static String positionTitle = "Select a location";
     private static final String AC_PICKPOSITION = "PS_PICKPOS";
     private static final String AC_CANCELPICK = "PS_CANCELPOS";
 
@@ -66,7 +65,7 @@ public abstract class PositionScroll extends Scroll {
             hero._ready();
             curItem = this;
             curUser = hero;
-            GameScene.selectCell(positionSelector);
+            GameScene.selectCell(positionSelector, "Select a location");
             return false;
         }
         else if (AC_CANCELPICK.equals(action)) {
@@ -127,11 +126,6 @@ public abstract class PositionScroll extends Scroll {
             }
 
             return true;
-        }
-
-        @Override
-        public String prompt() {
-            return positionTitle;
         }
     };
 }

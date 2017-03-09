@@ -106,7 +106,7 @@ public class Toolbar extends Component {
 			@Override
 			protected void onClick() {
 				if (!examining) {
-					GameScene.selectCell(informer);
+					GameScene.selectCell(informer, "Press again to search\nPress a cell for info");
 					examining = true;
 				} else {
 					informer.onSelect(null);
@@ -300,10 +300,6 @@ public class Toolbar extends Component {
 			instance.examining = false;
 			GameScene.examineCell( cell );
             return true;
-		}
-		@Override
-		public String prompt() {
-			return "Press again to search\nPress a cell for info";
 		}
 	};
 

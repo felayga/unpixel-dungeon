@@ -25,9 +25,7 @@
  */
 package com.felayga.unpixeldungeon.items.wands;
 
-import com.felayga.unpixeldungeon.Assets;
 import com.felayga.unpixeldungeon.Dungeon;
-import com.felayga.unpixeldungeon.actors.Actor;
 import com.felayga.unpixeldungeon.actors.Char;
 import com.felayga.unpixeldungeon.actors.buffs.hero.Encumbrance;
 import com.felayga.unpixeldungeon.actors.buffs.hero.SoulMark;
@@ -45,17 +43,16 @@ import com.felayga.unpixeldungeon.mechanics.GameTime;
 import com.felayga.unpixeldungeon.mechanics.Material;
 import com.felayga.unpixeldungeon.scenes.CellSelector;
 import com.felayga.unpixeldungeon.scenes.GameScene;
+import com.felayga.unpixeldungeon.spellcasting.ISpellCast;
+import com.felayga.unpixeldungeon.spellcasting.SpellCaster;
 import com.felayga.unpixeldungeon.sprites.ItemSpriteSheet;
-import com.felayga.unpixeldungeon.ui.QuickSlotButton;
 import com.felayga.unpixeldungeon.utils.GLog;
-import com.watabou.noosa.audio.Sample;
 import com.watabou.utils.Bundle;
 import com.watabou.utils.Callback;
 import com.watabou.utils.PointF;
 import com.watabou.utils.Random;
 
 import java.util.ArrayList;
-import java.util.List;
 
 public abstract class Wand extends Item {
 
@@ -184,11 +181,7 @@ public abstract class Wand extends Item {
 
     protected int usagesToKnow = USAGES_TO_KNOW;
 
-    protected Ballistica.Mode collisionProperties;
-
-    protected boolean isOffensive;
-    protected boolean directionalZap;
-    protected boolean canTargetSelf;
+    protected int ballisticaMode;
 
     public Wand(int maxCharges) {
         syncRandomizedProperties();
@@ -203,10 +196,7 @@ public abstract class Wand extends Item {
         weight(Encumbrance.UNIT * 7);
         price = 75;
 
-        isOffensive = true;
-        directionalZap = true;
-        canTargetSelf = false;
-        collisionProperties = Ballistica.Mode.MagicBolt;
+        ballisticaMode = Ballistica.Mode.value(Ballistica.Mode.MagicBolt);
     }
 
     @Override
@@ -237,8 +227,8 @@ public abstract class Wand extends Item {
         curUser = hero;
         curItem = this;
 
-        if (directionalZap) {
-            GameScene.selectCell(zapper);
+        if ((ballisticaMode & Ballistica.Mode.IsDirected.value) != 0) {
+            GameScene.selectCell(zapper, "Choose a location to zap");
         } else {
             doZap(hero, hero.pos());
         }
@@ -359,45 +349,6 @@ public abstract class Wand extends Item {
         }
     }
 
-
-    private final void fx(Ballistica bolt, final Callback callback) {
-        if (bolt != null) {
-            if (bolt.bounces.size() > 0) {
-                bouncesLeft.clear();
-
-                bouncesLeft.add(bolt.sourcePos);
-                for (int n = 0; n < bolt.bounces.size(); n++) {
-                    bouncesLeft.add(bolt.bounces.get(n));
-                }
-                bouncesLeft.add(bolt.collisionPos);
-
-                final Callback subCallback = new Callback() {
-                    @Override
-                    public void call() {
-                        int start = bouncesLeft.remove(0);
-                        int end = bouncesLeft.get(0);
-
-                        if (bouncesLeft.size() == 1) {
-                            fxEffect(start, end, callback);
-                        } else {
-                            fxEffect(start, end, this);
-                        }
-                    }
-                };
-
-                subCallback.call();
-            } else {
-                fxEffect(bolt.sourcePos, bolt.collisionPos, callback);
-            }
-        } else {
-            if (callback != null) {
-                callback.call();
-            }
-        }
-        Sample.INSTANCE.play(Assets.SND_ZAP);
-    }
-
-    private static List<Integer> bouncesLeft = new ArrayList<>();
     protected void fxEffect(int source, int destination, Callback callback) {
         MagicMissile.whiteLight(curUser.sprite.parent, source, destination, callback);
     }
@@ -437,6 +388,7 @@ public abstract class Wand extends Item {
     private static final String UNFAMILIRIARITY = "unfamiliarity";
     private static final String CUR_CHARGES = "curCharges";
     private static final String CUR_CHARGE_KNOWN = "curChargeKnown";
+    private static final String BALLISTICAMODE = "ballisticaMode";
 
     @Override
     public void storeInBundle(Bundle bundle) {
@@ -444,6 +396,7 @@ public abstract class Wand extends Item {
         bundle.put(UNFAMILIRIARITY, usagesToKnow);
         bundle.put(CUR_CHARGES, curCharges);
         bundle.put(CUR_CHARGE_KNOWN, curChargeKnown);
+        bundle.put(BALLISTICAMODE, ballisticaMode);
     }
 
     @Override
@@ -454,6 +407,7 @@ public abstract class Wand extends Item {
         }
         curCharges = bundle.getInt(CUR_CHARGES);
         curChargeKnown = bundle.getBoolean(CUR_CHARGE_KNOWN);
+        ballisticaMode = bundle.getInt(BALLISTICAMODE);
     }
 
     protected static CellSelector.Listener zapper = new CellSelector.Listener() {
@@ -469,37 +423,17 @@ public abstract class Wand extends Item {
 
             return true;
         }
-
-        @Override
-        public String prompt() {
-            return "Choose a location to zap";
-        }
     };
 
-    protected boolean doZap(Char curUser, int target) {
-        Ballistica shot = new Ballistica(curUser.pos(), target, collisionProperties);
-        int cell = shot.collisionPos;
-
+    private boolean doZap(Char curUser, int target) {
         if (target == curUser.pos()) {
-            if (!canTargetSelf && directionalZap) {
+            if ((ballisticaMode & Ballistica.Mode.IsDirected.value) != 0 && (ballisticaMode & Ballistica.Mode.StopSelf.value) == 0) {
                 GLog.i(TXT_SELF_TARGET);
                 return false;
-            } else {
-                shot = null;
             }
         }
 
-        curUser.sprite.zap(cell);
-
-        if (isOffensive) {
-            //attempts to target the cell aimed at if something is there, otherwise targets the collision pos.
-            Char charTarget = Actor.findChar(target);
-            if (charTarget == null) {
-                charTarget = Actor.findChar(cell);
-            }
-
-            QuickSlotButton.target(charTarget);
-        }
+        curUser.sprite.zap(target);
 
         boolean hasCharges = curCharges > 0;
 
@@ -524,12 +458,15 @@ public abstract class Wand extends Item {
                 }
                 */
             } else {
-                final Ballistica finalShot = shot;
-
-                fx(finalShot, new Callback() {
-                    public void call() {
-                        onZap(finalShot);
-                        wandUsed();
+                SpellCaster.cast(curUser, target, ballisticaMode, new ISpellCast() {
+                    @Override
+                    public void fxEffect(int start, int end, Callback callback) {
+                        Wand.this.fxEffect(start, end, callback);
+                    }
+                    @Override
+                    public void onZap(Ballistica path) {
+                        Wand.this.wandUsed();
+                        Wand.this.onZap(path);
                     }
                 });
             }

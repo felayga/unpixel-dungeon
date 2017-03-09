@@ -417,20 +417,22 @@ public class Belongings implements Iterable<Item>, IDecayable, IBag {
             options.add(items[n].getName());
         }
 
-        options.add(Constant.Action.CANCEL);
+        if (items.length > 1) {
+            options.add(Constant.Action.CANCEL);
 
-        unPixelDungeon.scene().add(
-                new WndOptions("Unequip One Item", "No empty equipment slots for this item. Choose an item to swap out.", options) {
+            unPixelDungeon.scene().add(
+                    new WndOptions("Unequip One Item", "No empty equipment slots for this item. Choose an item to swap out.", options) {
 
-                    @Override
-                    protected void onSelect(int index) {
-                        if (index >= 0 && index < items.length) {
-                            if (tryReplaceSimple(slots[index], item)) {
-                                onItemEquipped(owner, item, quickslot, true);
+                        @Override
+                        protected void onSelect(int index) {
+                            if (index >= 0 && index < items.length) {
+                                if (tryReplaceSimple(slots[index], item)) {
+                                    onItemEquipped(owner, item, quickslot, true);
+                                }
                             }
                         }
-                    }
-                });
+                    });
+        }
 
         return false;
     }

@@ -43,20 +43,20 @@ public class Foliage extends Blob {
 
 		int from = WIDTH + 1;
 		int to = Level.LENGTH - WIDTH - 1;
-		
-		int[] map = Dungeon.level.map;
+
 		boolean regrowth = false;
 		
 		boolean visible = false;
 		
 		for (int pos=from; pos < to; pos++) {
 			if (cur[pos] > 0) {
-				
 				off[pos] = cur[pos];
 				volume += off[pos];
-				
-				if (map[pos] == Terrain.EMBERS) {
-					map[pos] = Terrain.GRASS;
+
+                int cell = Dungeon.level.map(pos);
+
+				if (cell == Terrain.EMBERS) {
+					Dungeon.level.set(pos, Terrain.GRASS, false);
 					regrowth = true;
 				}
 				

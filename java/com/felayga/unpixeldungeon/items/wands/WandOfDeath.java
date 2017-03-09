@@ -53,7 +53,7 @@ public class WandOfDeath extends Wand {
         super(8);
         name = "Wand of Death";
 
-        collisionProperties = Ballistica.Mode.MagicRay;
+        ballisticaMode = Ballistica.Mode.value(Ballistica.Mode.MagicRay, Ballistica.Mode.StopSelf);
         price = 500;
     }
 

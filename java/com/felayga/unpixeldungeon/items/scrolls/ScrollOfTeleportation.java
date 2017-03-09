@@ -92,7 +92,7 @@ public class ScrollOfTeleportation extends PositionScroll {
 	}
 
 	public static boolean canTeleport(Char user) {
-		if ((Level.flags & Level.FLAG_NOTELEPORTATION) != 0)
+		if ((Level.flags & Level.FLAG_NO_TELEPORTATION) != 0)
 		{
             if (user == Dungeon.hero) {
                 GLog.w(TXT_NO_TELEPORT);
@@ -106,7 +106,7 @@ public class ScrollOfTeleportation extends PositionScroll {
 	}
 
     public static boolean canTeleport(Heap heap) {
-        if ((Level.flags & Level.FLAG_NOTELEPORTATION) != 0)
+        if ((Level.flags & Level.FLAG_NO_TELEPORTATION) != 0)
         {
             return false;
         }
@@ -247,7 +247,9 @@ public class ScrollOfTeleportation extends PositionScroll {
 		}
 
 		ch.sprite.emitter().start( Speck.factory(Speck.LIGHT), 0.2f, 3 );
-		Sample.INSTANCE.play( Assets.SND_TELEPORT );
+        if (Level.fieldOfSound[pos]) {
+            Sample.INSTANCE.play(Assets.SND_TELEPORT);
+        }
 	}
 	
 	@Override

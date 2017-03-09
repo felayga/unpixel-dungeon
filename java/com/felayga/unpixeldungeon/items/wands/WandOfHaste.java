@@ -45,7 +45,7 @@ public class WandOfHaste extends Wand {
         super(8);
         name = "Wand of Haste";
 
-        canTargetSelf = true;
+        ballisticaMode = Ballistica.Mode.value(Ballistica.Mode.MagicBolt, Ballistica.Mode.StopSelf);
         price = 150;
     }
 

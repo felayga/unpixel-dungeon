@@ -30,6 +30,8 @@ import com.felayga.unpixeldungeon.actors.Char;
 import com.felayga.unpixeldungeon.actors.buffs.Buff;
 import com.felayga.unpixeldungeon.actors.buffs.FlavourBuff;
 import com.felayga.unpixeldungeon.actors.mobs.Mob;
+import com.felayga.unpixeldungeon.items.Item;
+import com.felayga.unpixeldungeon.items.tools.Torch;
 import com.felayga.unpixeldungeon.levels.Level;
 import com.felayga.unpixeldungeon.mechanics.GameTime;
 import com.felayga.unpixeldungeon.mechanics.ShadowCaster;
@@ -180,6 +182,16 @@ public class Light extends FlavourBuff {
                 "\n" +
                 "Light helps keep darkness at bay, allowing you to see a reasonable distance despite the environment.\n" +
                 "\n" +
-                "The light will last for " + dispTurns() + ".";
+                descDuration();//"The light will last for " + dispTurns() + ".";
+    }
+
+    protected String descDuration() {
+        Item item = Torch.Registry.get(registryFlag);
+
+        if (item != null) {
+            return "The light will last as long as the " + item.getName() + " is lit.";
+        } else {
+            return "You're not sure how long the light will last.";
+        }
     }
 }

@@ -42,8 +42,7 @@ import java.util.List;
 
 public class SewerBossLevel extends RegularLevel {
 
-    public SewerBossLevel()
-    {
+    public SewerBossLevel() {
         super(0);
 
         color1 = 0x48763c;
@@ -169,13 +168,13 @@ public class SewerBossLevel extends RegularLevel {
 
         //sticks the exit in the room entrance.
         exit = roomEntrance.top * Level.WIDTH + (roomEntrance.left + roomEntrance.right) / 2;
-        map[exit] = Terrain.LOCKED_EXIT;
+        map(exit, Terrain.LOCKED_EXIT);
 
         //make sure the exit is only visible in the entrance room.
         int count = 0;
         for (int i : NEIGHBOURS8) {
             //exit must have exactly 3 non-wall tiles around it.
-            if (map[exit + i] != Terrain.WALL)
+            if (map(exit + i) != Terrain.WALL)
                 count++;
         }
         if (count > 3)
@@ -201,11 +200,11 @@ public class SewerBossLevel extends RegularLevel {
         int start = roomExit.top * WIDTH + roomExit.left + 1;
         int end = start + roomExit.width() - 1;
         for (int i = start; i < end; i++) {
-            if (i != exit && map[i] == Terrain.WALL) {
-                map[i] = Terrain.WALL_DECO;
-                map[i + WIDTH] = Terrain.PUDDLE;
+            if (i != exit && map(i) == Terrain.WALL) {
+                map(i, Terrain.WALL_DECO);
+                map(i + WIDTH, Terrain.PUDDLE);
             } else {
-                map[i + WIDTH] = Terrain.EMPTY;
+                map(i + WIDTH, Terrain.EMPTY);
             }
         }
 
@@ -244,7 +243,7 @@ public class SewerBossLevel extends RegularLevel {
             int pos;
             do {
                 pos = roomEntrance.random();
-            } while (pos == entrance || map[pos] == Terrain.SIGN);
+            } while (pos == entrance || map(pos) == Terrain.SIGN);
             drop(item, pos).type = Heap.Type.REMAINS;
         }
     }
@@ -301,7 +300,7 @@ public class SewerBossLevel extends RegularLevel {
     public String tileName(int tile) {
         switch (tile) {
             case Terrain.PUDDLE:
-                return "Murky water";
+                return "Murky puddle";
             default:
                 return super.tileName(tile);
         }

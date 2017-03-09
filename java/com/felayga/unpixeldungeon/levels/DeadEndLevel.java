@@ -37,7 +37,7 @@ public class DeadEndLevel extends Level {
 
     public DeadEndLevel()
 	{
-        super(FLAG_UNDIGGABLEBOULDERS | FLAG_UNDIGGABLEFLOOR | FLAG_UNDIGGABLEWALLS);
+        super(FLAG_BOULDERS_NOT_DIGGABLE | FLAG_CHASM_NOT_DIGGABLE | FLAG_WALLS_NOT_DIGGABLE);
 
 		color1 = 0x534f3e;
 		color2 = 0xb9d661;
@@ -53,34 +53,27 @@ public class DeadEndLevel extends Level {
 		return Assets.WATER_HALLS;
 	}
 
-    @Override
-    public String waterUnderTex() {
-        //todo: not use this texture
-        return Assets.WATER_UNDERSEWERS;
-    }
-
 	@Override
 	protected boolean build() {
-		Arrays.fill( map, Terrain.WALL );
+		fill(Terrain.WALL);
 		
 		for (int i=2; i < SIZE; i++) {
 			for (int j=2; j < SIZE; j++) {
-				map[i * WIDTH + j] = Terrain.EMPTY;
+				map(i * WIDTH + j, Terrain.EMPTY);
 			}
 		}
 		
 		for (int i=1; i <= SIZE; i++) {
-			map[WIDTH + i] =
-			map[WIDTH * SIZE + i] =
-			map[WIDTH * i + 1] =
-			map[WIDTH * i + SIZE] =
-				Terrain.PUDDLE;
+            map(WIDTH + i, Terrain.PUDDLE);
+            map(WIDTH * SIZE + i, Terrain.PUDDLE);
+            map(WIDTH * i + 1, Terrain.PUDDLE);
+            map(WIDTH * i + SIZE, Terrain.PUDDLE);
 		}
 		
 		entrance = SIZE * WIDTH + SIZE / 2 + 1;
-		map[entrance] = Terrain.STAIRS_UP;
+		map(entrance, Terrain.STAIRS_UP);
 		
-		map[(SIZE / 2 + 1) * (WIDTH + 1)] = Terrain.SIGN;
+		map((SIZE / 2 + 1) * (WIDTH + 1), Terrain.SIGN);
 		
 		exit = 0;
 		
@@ -90,10 +83,11 @@ public class DeadEndLevel extends Level {
 	@Override
 	protected void decorate() {
 		for (int i=0; i < LENGTH; i++) {
-			if (map[i] == Terrain.EMPTY && Random.Int( 10 ) == 0) {
-				map[i] = Terrain.EMPTY_DECO;
-			} else if (map[i] == Terrain.WALL && Random.Int( 8 ) == 0) {
-				map[i] = Terrain.WALL_DECO;
+            int terrain = map(i);
+			if (terrain == Terrain.EMPTY && Random.Int( 10 ) == 0) {
+				map(i, Terrain.EMPTY_DECO);
+			} else if (terrain == Terrain.WALL && Random.Int( 8 ) == 0) {
+				map(i, Terrain.WALL_DECO);
 			}
 		}
 	}

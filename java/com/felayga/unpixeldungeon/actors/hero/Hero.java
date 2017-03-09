@@ -778,7 +778,7 @@ public class Hero extends Char {
                     return true;
                 }
 
-                int cell = Dungeon.level.map[dst];
+                int cell = Dungeon.level.map(dst);
 
                 if (cell == Terrain.LOCKED_DOOR || cell == Terrain.DOOR || cell == Terrain.SECRET_DOOR || cell == Terrain.SECRET_LOCKED_DOOR) {
                     curAction = new HeroAction.HandleDoor.KickDoor(dst, (EquippableItem) action.target);
@@ -867,7 +867,7 @@ public class Hero extends Char {
                             }
                         }
                     }
-                } else if (Level.passable[dst] ||Level.pit[dst]) {
+                } else if (Level.passable[dst] || Level.chasm[dst]) {
                     if (Random.Int(Constant.Chance.KICK_SPACE_CRIPPLE) == 0) {
                         GLog.n("Dumb move!  You strain a muscle.");
                         useAttribute(AttributeType.STRCON, -1);
@@ -904,192 +904,200 @@ public class Hero extends Char {
         int digPos = action.pos;
 
         if (action.effort > 0 && (Level.canReach(pos(), digPos) || pos() == digPos)) {
-            boolean digfailurebedrock = false;
+            boolean bedrock = false;
 
             if (pos() == digPos && action.direction == 0) {
-                if ((Level.flags & Level.FLAG_UNDIGGABLEFLOOR) != 0) {
-                    digfailurebedrock = true;
-                } else {
-                    unPixelDungeon.scene().add(
-                            new WndOptions("Dig Here", TXT_DIG_HERE, TXT_DIG_HERE_DOWN, TXT_DIG_HERE_UP, Constant.Action.CANCEL) {
-
-                                @Override
-                                protected void onSelect(int index) {
-                                    switch (index) {
-                                        case 0:
-                                            curAction = new HeroAction.Dig(action.tool, action.pos, action.effort, 1);
-                                            motivate(true);
-                                            break;
-                                        case 1:
-                                            curAction = new HeroAction.Dig(action.tool, action.pos, action.effort, -1);
-                                            motivate(true);
-                                            break;
-                                        default:
-                                            ready();
-                                            break;
-                                    }
+                unPixelDungeon.scene().add(
+                        new WndOptions("Dig Here", TXT_DIG_HERE, TXT_DIG_HERE_DOWN, TXT_DIG_HERE_UP, Constant.Action.CANCEL) {
+                            @Override
+                            protected void onSelect(int index) {
+                                switch (index) {
+                                    case 0:
+                                        curAction = new HeroAction.Dig(action.tool, action.pos, action.effort, 1);
+                                        motivate(true);
+                                        break;
+                                    case 1:
+                                        curAction = new HeroAction.Dig(action.tool, action.pos, action.effort, -1);
+                                        motivate(true);
+                                        break;
+                                    default:
+                                        ready();
+                                        break;
                                 }
-                            });
-
-                    return false;
-                }
+                            }
+                        });
+                return false;
             }
 
-            if (!digfailurebedrock) {
-                int x = digPos % Level.WIDTH;
-                int y = digPos / Level.WIDTH;
+            int x = digPos % Level.WIDTH;
+            int y = digPos / Level.WIDTH;
 
-                if (x <= 0 || x >= Level.WIDTH - 1 || y <= 0 || y >= Level.HEIGHT - 1) {
-                    digfailurebedrock = true;
-                }
+            if (x <= 0 || x >= Level.WIDTH - 1 || y <= 0 || y >= Level.HEIGHT - 1) {
+                bedrock = true;
+            }
 
-                int currentEffort = action.tool.effort(this, true);
-                action.effort -= currentEffort;
-                useAttribute(AttributeType.STRCON, 1);
+            int currentEffort = action.tool.effort(this, true);
+            action.effort -= currentEffort;
+            useAttribute(AttributeType.STRCON, 1);
 
-                Hunger hunger = buff(Hunger.class);
-                if (hunger != null) {
-                    hunger.satisfy_new(-1);
-                }
+            Hunger hunger = buff(Hunger.class);
+            if (hunger != null) {
+                hunger.satisfy_new(-1);
+            }
 
-                spend_new(attackSpeed(), false);
+            spend_new(attackSpeed(), false);
 
-                if (!digfailurebedrock) {
-                    if (action.boulder != null) {
-                        if ((Level.flags & Level.FLAG_UNDIGGABLEBOULDERS) != 0) {
-                            digfailurebedrock = true;
-                        } else {
-                            action.boulder.HP -= currentEffort;
+            if (!bedrock) {
+                if (action.boulder != null) {
+                    if ((Level.flags & Level.FLAG_BOULDERS_NOT_DIGGABLE) != 0) {
+                        bedrock = true;
+                    } else {
+                        action.boulder.HP -= currentEffort;
 
-                            if (action.boulder.HP <= 0) {
+                        if (action.boulder.HP <= 0) {
+                            sprite.turnTo(pos(), digPos);
+
+                            sprite.attack(digPos);
+
+                            action.boulder.die(this);
+
+                            return false;
+                        }
+                    }
+                } else {
+                    if ((Level.flags & Level.FLAG_WALLS_NOT_DIGGABLE) != 0) {
+                        bedrock = true;
+                    } else {
+                        int terrain = Dungeon.level.map(digPos);
+
+                        if (pos() != digPos && (Terrain.flags[terrain] & (Terrain.FLAG_BURNABLE | Terrain.FLAG_STONE)) == 0) {
+                            GLog.n("Your " + action.tool.getName() + " isn't strong enough for this.");
+                            ready();
+                            return false;
+                        }
+
+                        if (action.effort <= 0) {
+                            if (pos() != digPos) {
                                 sprite.turnTo(pos(), digPos);
 
                                 sprite.attack(digPos);
+                                spend_new(attackSpeed(), false);
 
-                                action.boulder.die(this);
-
-                                return false;
-                            }
-                        }
-                    } else {
-                        if ((Level.flags & Level.FLAG_UNDIGGABLEWALLS) != 0) {
-                            digfailurebedrock = true;
-                        } else {
-                            int terrain = Dungeon.level.map[digPos];
-
-                            if (pos() != digPos && (Terrain.flags[terrain] & (Terrain.FLAG_BURNABLE | Terrain.FLAG_STONE)) == 0) {
-                                GLog.n("Your " + action.tool.getName() + " isn't strong enough for this.");
-                                ready();
-                                return false;
-                            }
-
-                            if (action.effort <= 0) {
-                                if (pos() != digPos) {
-                                    sprite.turnTo(pos(), digPos);
-
-                                    sprite.attack(digPos);
-                                    spend_new(attackSpeed(), false);
-
-                                    if (Level.stone[digPos]) {
-                                        if (terrain == Terrain.WALL_STONE) {
-                                            Dungeon.level.setDirt(digPos, true, true);
-                                        } else {
-                                            Dungeon.level.setEmpty(digPos, true, true);
-                                        }
-
-                                        switch(Random.Int(Constant.Chance.DIG_EXCAVATE_BOULDER)) {
-                                            case 0:
-                                                GLog.w("You've dug out a boulder!");
-                                                Boulder npc = new Boulder();
-                                                npc.pos(digPos);
-                                                Dungeon.level.mobs.add(npc);
-                                                GameScene.add(npc);
-                                                break;
-                                            case 1:
-                                            case 2:
-                                                Dungeon.level.drop(new Rock().random(), digPos).rockBottom();
-                                                break;
-                                            default:
-                                                //nothing
-                                                break;
-                                        }
-
-                                        if (Dungeon.audible[digPos]) {
-                                            Sample.INSTANCE.play(Assets.SND_WALL_SMASH);
-                                        }
-                                        CellEmitter.get(digPos).burst(Speck.factory(Speck.DUST), 5);
-                                    } else if (Dungeon.level.burnable[digPos]) {
-                                        Dungeon.level.setWoodDebris(digPos, true, true);
-
-                                        if (Dungeon.audible[digPos]) {
-                                            Sample.INSTANCE.play(Assets.SND_DOOR_SMASH);
-                                        }
-                                        CellEmitter.get(digPos).burst(Speck.factory(Speck.WOOD), 5);
-                                    }
-
-                                    Dungeon.level.removeVisuals(digPos);
-
-                                    Dungeon.observe();
-                                } else {
-                                    if (action.direction == -1) {
-                                        GLog.n("You loosen some rocks from the ceiling.  They fall on your head!");
-                                        EquippableItem _helmet = belongings.helmet();
-
-                                        Armor helmet = null;
-                                        if (_helmet instanceof Armor) {
-                                            helmet = (Armor) _helmet;
-                                        }
-
-                                        if (helmet != null && helmet.armor > 0) {
-                                            GLog.p("Good thing you were wearing a sturdy helmet.");
-                                        } else {
-                                            Rock rock = new Rock();
-                                            rock.random();
-
-                                            int damage = 1;
-                                            for (int n = 0; n < rock.quantity(); n++) {
-                                                damage += rock.damageRoll();
-                                            }
-
-                                            damage(damage, MagicType.Mundane, null, rock);
-                                            if (!this.isAlive()){
-                                                Dungeon.fail("Died from falling rocks");
-                                            }
-
-                                            Dungeon.level.drop(rock, pos());
-                                        }
+                                if (Level.stone[digPos]) {
+                                    if (terrain == Terrain.WALL_STONE) {
+                                        Dungeon.level.setDirt(digPos, true, true);
                                     } else {
-                                        if ((Terrain.flags[Dungeon.level.map[pos()]] & Terrain.FLAG_UNDIGGABLE) != 0) {
-                                            GLog.n("Seems to be too tough to dig through here.");
-                                            digfailurebedrock = true;
-                                        } else {
-                                            GLog.w("You dig through the floor!");
-
-                                            Dungeon.level.setDirtDeep(pos(), true, true);
-                                            Dungeon.observe();
-
-                                            Chasm.heroFall(pos());
-                                        }
+                                        Dungeon.level.setEmpty(digPos, true, true);
                                     }
 
-                                    if (!digfailurebedrock) {
-                                        CellEmitter.get(digPos).burst(Speck.factory(Speck.DUST), 5);
-                                        if (Dungeon.audible[digPos]) {
-                                            Sample.INSTANCE.play(Assets.SND_WALL_SMASH);
-                                        }
+                                    switch (Random.Int(Constant.Chance.DIG_EXCAVATE_BOULDER)) {
+                                        case 0:
+                                            GLog.w("You've dug out a boulder!");
+                                            Boulder npc = new Boulder();
+                                            npc.pos(digPos);
+                                            Dungeon.level.mobs.add(npc);
+                                            GameScene.add(npc);
+                                            break;
+                                        case 1:
+                                        case 2:
+                                            Dungeon.level.drop(new Rock().random(), digPos).rockBottom();
+                                            break;
+                                        default:
+                                            //nothing
+                                            break;
                                     }
 
-                                    ready();
+                                    if (Dungeon.audible[digPos]) {
+                                        Sample.INSTANCE.play(Assets.SND_WALL_SMASH);
+                                    }
+                                    CellEmitter.get(digPos).burst(Speck.factory(Speck.DUST), 5);
+                                } else if (Level.burnable[digPos]) {
+                                    Dungeon.level.setWoodDebris(digPos, true, true);
+
+                                    if (Dungeon.audible[digPos]) {
+                                        Sample.INSTANCE.play(Assets.SND_DOOR_SMASH);
+                                    }
+                                    CellEmitter.get(digPos).burst(Speck.factory(Speck.WOOD), 5);
                                 }
 
-                                return false;
+                                Dungeon.level.removeVisuals(digPos);
+
+                                Dungeon.observe();
+                            } else {
+                                if (action.direction == -1) {
+                                    GLog.n("You loosen some rocks from the ceiling.  They fall on your head!");
+                                    EquippableItem _helmet = belongings.helmet();
+
+                                    Armor helmet = null;
+                                    if (_helmet instanceof Armor) {
+                                        helmet = (Armor) _helmet;
+                                    }
+
+                                    if (helmet != null && helmet.armor > 0) {
+                                        GLog.p("Good thing you were wearing a sturdy helmet.");
+                                    } else {
+                                        Rock rock = new Rock();
+                                        rock.random();
+
+                                        int damage = 1;
+                                        for (int n = 0; n < rock.quantity(); n++) {
+                                            damage += rock.damageRoll();
+                                        }
+
+                                        damage(damage, MagicType.Mundane, null, rock);
+                                        if (!this.isAlive()) {
+                                            Dungeon.fail("Died from falling rocks");
+                                        }
+
+                                        Dungeon.level.drop(rock, pos());
+                                    }
+                                } else {
+                                    if ((Terrain.flags[terrain] & Terrain.FLAG_UNDIGGABLE) != 0) {
+                                        bedrock = true;
+                                    } else {
+                                        if ((Terrain.flags[terrain] & Terrain.FLAG_PIT) != 0) {
+                                            if ((Level.flags & Level.FLAG_CHASM_NOT_DIGGABLE) == 0) {
+                                                GLog.w("You dig through the floor!");
+
+                                                Dungeon.level.setDirtChasm(pos(), true, true);
+                                                Dungeon.observe();
+
+                                                Chasm.heroFall(pos());
+                                            } else {
+                                                bedrock = true;
+                                            }
+                                        } else {
+                                            if ((Level.flags & Level.FLAG_PIT_NOT_DIGGABLE) == 0) {
+                                                GLog.w("You dig a pit.");
+
+                                                Dungeon.level.setDirtPit(pos(), true, true);
+                                                Dungeon.observe();
+                                            } else {
+                                                bedrock = true;
+                                            }
+                                        }
+                                    }
+                                }
+
+                                if (!bedrock) {
+                                    CellEmitter.get(digPos).burst(Speck.factory(Speck.DUST), 5);
+                                    if (Dungeon.audible[digPos]) {
+                                        Sample.INSTANCE.play(Assets.SND_WALL_SMASH);
+                                    }
+                                } else {
+                                    GLog.n("Seems to be too tough to dig through here.");
+                                }
+
+                                ready();
                             }
+
+                            return false;
                         }
                     }
                 }
             }
 
-            if (digfailurebedrock) {
+            if (bedrock) {
                 GLog.n("You seem to have hit bedrock.");
                 ready();
                 return false;
@@ -1205,7 +1213,7 @@ public class Hero extends Char {
             if (Constant.Action.DRINK.equals(action.action)) {
                 spend_new(GameTime.TICK, true);
 
-                if (Dungeon.level.map[dst] == Terrain.WELL_MAGIC) {
+                if (Dungeon.level.map(dst) == Terrain.WELL_MAGIC) {
                     if (Random.Int(10) < 7) {
                         GLog.p("Wow!  This makes you feel great!");
                         useAttribute(AttributeType.INTWIS, 16);
@@ -1574,7 +1582,7 @@ public class Hero extends Char {
     private boolean actOpenCloseDoor(final HeroAction.HandleDoor.OpenCloseDoor action) {
         final int doorCell = action.dst;
         if (Level.canStep(pos(), doorCell, Level.diagonal)) {
-            int door = Dungeon.level.map[doorCell];
+            int door = Dungeon.level.map(doorCell);
 
             if (Random.PassFail(280 - 512 / STRCON())) {
                 if (door == Terrain.DOOR) {
@@ -1603,7 +1611,7 @@ public class Hero extends Char {
     private boolean actKickDoor(final HeroAction.HandleDoor.KickDoor action) {
         final int doorCell = action.dst;
         if (Level.canStep(pos(), doorCell, Level.diagonal)) {
-            int door = Dungeon.level.map[doorCell];
+            int door = Dungeon.level.map(doorCell);
             boolean isSecret = door == Terrain.SECRET_DOOR || door == Terrain.SECRET_LOCKED_DOOR;
             switch(Door.tryKick(this, doorCell)) {
                 case 2:
@@ -1678,7 +1686,7 @@ public class Hero extends Char {
     private boolean actHandleDoor(final HeroAction.HandleDoor action) {
         final int doorCell = action.dst;
         if (Level.canStep(pos(), doorCell, Level.diagonal)) {
-            int door = Dungeon.level.map[doorCell];
+            int door = Dungeon.level.map(doorCell);
 
             if (door == Terrain.LOCKED_DOOR) {
                 final List<String> actions = new ArrayList<>();
@@ -1840,7 +1848,7 @@ public class Hero extends Char {
                 Game.switchScene(InterlevelScene.class);
             } else if (action.direction < 0) {
                 if (Dungeon.depth() == 1) {
-                    if (belongings.getItem(AmuletOfYendor.class, true) == null) {
+                    if (belongings.getItem(AmuletOfYendor.class, false) == null) {
                         GameScene.show(new WndMessage(TXT_LEAVE));
                         ready();
                     } else {
@@ -2105,7 +2113,7 @@ public class Hero extends Char {
 
         if (Level.canStep(pos(), target, Level.diagonal)) {
             if (Actor.findChar(target) == null) {
-                if (Level.pit[target] && flying <= 0 && !Level.solid[target]) {
+                if (Level.chasm[target] && flying <= 0 && !Level.solid[target]) {
                     if (!Chasm.jumpConfirmed) {
                         Chasm.heroJump(this);
                         interrupt();
@@ -2133,7 +2141,7 @@ public class Hero extends Char {
         if (step != Constant.Position.NONE && step != pos()) {
             //GLog.d("step");
             //GLog.d(pos, step);
-            if (Dungeon.level.map[step] == Terrain.DOOR || Dungeon.level.map[step] == Terrain.LOCKED_DOOR) {
+            if (Dungeon.level.map(step) == Terrain.DOOR || Dungeon.level.map(step) == Terrain.LOCKED_DOOR) {
                 if (!Random.PassFail(280 - 512 / DEXCHA())) {
                     GLog.w("Ouch!  You bump into a door.");
                     useAttribute(AttributeType.DEXCHA, -1);
@@ -2153,61 +2161,63 @@ public class Hero extends Char {
         }
     }
 
-    public boolean handle(int cell, boolean fromGameScene) {
-        if (cell == Constant.Position.NONE) {
+    public boolean handle(int pos, boolean fromGameScene) {
+        if (pos == Constant.Position.NONE) {
             return false;
         }
 
-        Char ch = Actor.findChar(cell);
-        boolean visible = Level.fieldOfView[cell];
+        Char ch = Actor.findChar(pos);
+        boolean visible = Level.fieldOfView[pos];
         Heap heap;
         ITool[] tools;
 
-        if (Dungeon.level.map[cell] == Terrain.ALCHEMY) {
-            curAction = new HeroAction.InteractPosition.Cook(cell);
-        } else if (Dungeon.level.map[cell] == Terrain.WELL || Dungeon.level.map[cell] == Terrain.WELL_MAGIC) {
-            curAction = new HeroAction.InteractPosition.Well(cell);
+        int cell = Dungeon.level.map(pos);
+
+        if (cell == Terrain.ALCHEMY) {
+            curAction = new HeroAction.InteractPosition.Cook(pos);
+        } else if (cell == Terrain.WELL || cell == Terrain.WELL_MAGIC) {
+            curAction = new HeroAction.InteractPosition.Well(pos);
         } else if (visible && ch instanceof Mob) {
             if (ch instanceof NPC) {
                 curAction = new HeroAction.Interact((NPC) ch);
             } else {
                 curAction = new HeroAction.Attack(ch);
             }
-        } else if (Dungeon.level.warnings.findWarning(cell)) {
-            curAction = new HeroAction.Attack(cell);
-        } else if ((heap = Dungeon.level.heaps.get(cell)) != null && !Dungeon.level.solid[cell]) {
+        } else if (Dungeon.level.warnings.findWarning(pos)) {
+            curAction = new HeroAction.Attack(pos);
+        } else if ((heap = Dungeon.level.heaps.get(pos)) != null && !Dungeon.level.solid[pos]) {
             switch (heap.type) {
                 case HEAP:
-                    if ((!fromGameScene) || unPixelDungeon.gameplay_autoPickup() || cell == pos()) {
-                        curAction = new HeroAction.HandleHeap(cell);
+                    if ((!fromGameScene) || unPixelDungeon.gameplay_autoPickup() || pos == pos()) {
+                        curAction = new HeroAction.HandleHeap(pos);
                     } else {
-                        curAction = new HeroAction.Move(cell);
+                        curAction = new HeroAction.Move(pos);
                     }
                     break;
                 case FOR_SALE:
                     curAction = heap.size() == 1 && heap.peek().price() > 0 ?
-                            new HeroAction.Buy(cell) :
-                            new HeroAction.HandleHeap(cell);
+                            new HeroAction.Buy(pos) :
+                            new HeroAction.HandleHeap(pos);
                     break;
                 default:
-                    curAction = new HeroAction.OpenChest(cell);
+                    curAction = new HeroAction.OpenChest(pos);
             }
-        } else if (Dungeon.level.map[cell] == Terrain.LOCKED_DOOR || Dungeon.level.map[cell] == Terrain.LOCKED_EXIT || Dungeon.level.map[cell] == Terrain.DOOR || (!fromGameScene && Dungeon.level.map[cell] == Terrain.OPEN_DOOR)) {
-            curAction = new HeroAction.HandleDoor(cell);
-        } else if (!fromGameScene && cell == Dungeon.level.exit) {
-            curAction = new HeroAction.MoveLevel(cell, 1, false);
-        } else if (!fromGameScene && cell == Dungeon.level.entrance) {
-            curAction = new HeroAction.MoveLevel(cell, -1, false);
-        } else if (!fromGameScene && cell == Dungeon.level.exitAlternate) {
-            curAction = new HeroAction.MoveLevel(cell, 1, true);
-        } else if (!fromGameScene && cell == Dungeon.level.entranceAlternate) {
-            curAction = new HeroAction.MoveLevel(cell, -1, true);
-        } else if (Dungeon.level.solid[cell] && ((tools = belongings.getToolTypes(true, false, Pickaxe.NAME)) != null && tools[0] != null)) {
-            curAction = new HeroAction.Dig((Pickaxe) tools[0], cell, 101);
-        } else if (!fromGameScene && Dungeon.level.map[cell] == Terrain.SIGN) {
+        } else if (cell == Terrain.LOCKED_DOOR || cell == Terrain.LOCKED_EXIT || cell == Terrain.DOOR || (!fromGameScene && cell == Terrain.OPEN_DOOR)) {
+            curAction = new HeroAction.HandleDoor(pos);
+        } else if (!fromGameScene && pos == Dungeon.level.exit) {
+            curAction = new HeroAction.MoveLevel(pos, 1, false);
+        } else if (!fromGameScene && pos == Dungeon.level.entrance) {
+            curAction = new HeroAction.MoveLevel(pos, -1, false);
+        } else if (!fromGameScene && pos == Dungeon.level.exitAlternate) {
+            curAction = new HeroAction.MoveLevel(pos, 1, true);
+        } else if (!fromGameScene && pos == Dungeon.level.entranceAlternate) {
+            curAction = new HeroAction.MoveLevel(pos, -1, true);
+        } else if (Level.solid[pos] && ((tools = belongings.getToolTypes(true, false, Pickaxe.NAME)) != null && tools[0] != null)) {
+            curAction = new HeroAction.Dig((Pickaxe) tools[0], pos, 101);
+        } else if (!fromGameScene && cell == Terrain.SIGN) {
             curAction = new HeroAction.ReadSign(pos());
         } else {
-            curAction = new HeroAction.Move(cell);
+            curAction = new HeroAction.Move(pos);
             lastAction = null;
         }
 
@@ -2415,18 +2425,14 @@ public class Hero extends Char {
     }
 
     public static void reallyDie(Object cause) {
-
         int length = Level.LENGTH;
-        int[] map = Dungeon.level.map;
         boolean[] visited = Dungeon.level.visited;
         boolean[] discoverable = Level.discoverable;
 
         for (int i = 0; i < length; i++) {
-
-            int terr = map[i];
+            int terr = Dungeon.level.map(i);
 
             if (discoverable[i]) {
-
                 visited[i] = true;
                 if ((Terrain.flags[terr] & Terrain.FLAG_SECRET) != 0) {
                     Dungeon.level.discover(i);
@@ -2643,7 +2649,7 @@ public class Hero extends Char {
                     }
 
                     if (Level.secret[p] && Random.PassFail(searchChance + searchChanceModifier)) {
-                        int oldValue = Dungeon.level.map[p];
+                        int oldValue = Dungeon.level.map(p);
 
                         GameScene.discoverTile(p, oldValue);
 

@@ -65,7 +65,7 @@ public class MineTownLevel extends RegularLevel {
         return Terrain.WALL_STONE;
     }
 
-    public int tunnelTile() { return Terrain.DIRT; }
+    public int tunnelTile() { return Terrain.UNDERLAY_DIRT; }
 
     @Override
     protected Feeling determineFeeling() {
@@ -257,11 +257,6 @@ public class MineTownLevel extends RegularLevel {
     @Override
     public String waterTex() {
         return Assets.WATER_PRISON;
-    }
-
-    @Override
-    public String waterUnderTex() {
-        return Assets.WATER_UNDERPRISON;
     }
 
     protected boolean[] water() {

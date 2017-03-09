@@ -43,7 +43,7 @@ public class WandOfVenom extends Wand {
         super(8);
 		name = "Wand of Venom";
 
-		collisionProperties = Ballistica.Mode.SplasherBolt;
+		ballisticaMode = Ballistica.Mode.value(Ballistica.Mode.SplasherBolt);
         price = 175;
 	}
 

@@ -65,6 +65,16 @@ public class Torch extends Tool implements IDecayable {
 
         private static Torch[] occupado = new Torch[12 + 8];
 
+        public static Torch get(int registryFlag) {
+            int index = lazylog2(registryFlag) - BITOFFSET;
+
+            if (index < 0 || index > occupado.length) {
+                return null;
+            }
+
+            return occupado[index];
+        }
+
         public static void register(Torch what) {
             if (what.registryFlag != 0) {
                 int index = lazylog2(what.registryFlag) - BITOFFSET;

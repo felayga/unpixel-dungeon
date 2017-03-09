@@ -331,9 +331,11 @@ public class Wandmaker extends NPC {
 				//we don't re-roll the quest, it will try to assign itself to that new level with the same type.
 				if (setRoom( rooms )){
 					Wandmaker npc = new Wandmaker();
+                    int terrain;
 					do {
 						npc.pos(room.random());
-					} while (level.map[npc.pos()] == Terrain.STAIRS_UP || level.map[npc.pos()] == Terrain.SIGN);
+                        terrain = level.map(npc.pos());
+					} while (terrain == Terrain.STAIRS_UP || terrain == Terrain.SIGN);
 					level.mobs.add( npc );
 
 					spawned = true;

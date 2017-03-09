@@ -214,13 +214,13 @@ public class QuickSlotButton extends Button implements WndBackpack.Listener {
 
     public static int autoAim(Char target) {
         //first try to directly target
-        if (new Ballistica(Dungeon.hero.pos(), target.pos(), Ballistica.Mode.Projectile).collisionPos == target.pos()) {
+        if (new Ballistica(Dungeon.hero.pos(), target.pos(), Ballistica.Mode.Projectile.value).collisionPos == target.pos()) {
             return target.pos();
         }
 
         //Otherwise pick nearby tiles to try and 'angle' the shot, auto-aim basically.
         for (int i : Level.NEIGHBOURS9DIST2) {
-            if (new Ballistica(Dungeon.hero.pos(), target.pos() + i, Ballistica.Mode.Projectile).collisionPos == target.pos()) {
+            if (new Ballistica(Dungeon.hero.pos(), target.pos() + i, Ballistica.Mode.Projectile.value).collisionPos == target.pos()) {
                 return target.pos() + i;
             }
         }

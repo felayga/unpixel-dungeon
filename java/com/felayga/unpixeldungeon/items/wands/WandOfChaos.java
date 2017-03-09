@@ -88,7 +88,7 @@ public class WandOfChaos extends Wand {
 
         name = "Wand of Chaos";
 
-        collisionProperties = Ballistica.Mode.MagicRay;
+        ballisticaMode = Ballistica.Mode.value(Ballistica.Mode.MagicRay, Ballistica.Mode.StopSelf);
         price = 500;
     }
 
@@ -107,85 +107,28 @@ public class WandOfChaos extends Wand {
         super.initiateZap(hero);
     }
 
+    private void directionalZap(boolean state) {
+        if (state) {
+            ballisticaMode |= Ballistica.Mode.MagicRay.value;
+        } else {
+            ballisticaMode &= Ballistica.Mode.MagicRay.value ^ Ballistica.Mode.Mask.value;
+        }
+    }
+
+    private static boolean[] effectIndexPile = new boolean[] {
+            true, true, false, false,
+            true, true, true, false,
+            true, false, false, false,
+            false, true, false, false
+    };
+
     private boolean randomizeEffect() {
         effectIndex = Random.Int(4);
+        rarityIndex = Random.chances(new float[]{COMMON_CHANCE, UNCOMMON_CHANCE, RARE_CHANCE, VERY_RARE_CHANCE});
 
-        switch(Random.chances(new float[]{COMMON_CHANCE, UNCOMMON_CHANCE, RARE_CHANCE, VERY_RARE_CHANCE})) {
-            default:
-                rarityIndex = 0;
-
-                switch(effectIndex) {
-                    default:
-                        directionalZap = true;
-                        break;
-                    case 1:
-                        directionalZap = true;
-                        break;
-                    case 2:
-                        directionalZap = false;
-                        break;
-                    case 3:
-                        directionalZap = false;
-                        break;
-                }
-                break;
-            case 1:
-                rarityIndex = 1;
-
-                switch(effectIndex) {
-                    default:
-                        directionalZap = true;
-                        break;
-                    case 1:
-                        directionalZap = true;
-                        break;
-                    case 2:
-                        directionalZap = true;
-                        break;
-                    case 3:
-                        directionalZap = false;
-                        break;
-                }
-                break;
-            case 2:
-                rarityIndex = 2;
-
-                switch(effectIndex) {
-                    default:
-                        directionalZap = true;
-                        break;
-                    case 1:
-                        directionalZap = false;
-                        break;
-                    case 2:
-                        directionalZap = false;
-                        break;
-                    case 3:
-                        directionalZap = false;
-                        break;
-                }
-                break;
-            case 3:
-                rarityIndex = 3;
-
-                switch(effectIndex) {
-                    default:
-                        directionalZap = false;
-                        break;
-                    case 1:
-                        directionalZap = true;
-                        break;
-                    case 2:
-                        directionalZap = false;
-                        break;
-                    case 3:
-                        directionalZap = false;
-                        break;
-                }
-                break;
-        }
-
-        return directionalZap;
+        boolean state = effectIndexPile[rarityIndex * 4 + effectIndex];
+        directionalZap(state);
+        return state;
     }
 
     @Override
@@ -306,7 +249,7 @@ public class WandOfChaos extends Wand {
 
             //spawns some regrowth
             case 1: // RANGED
-                int c = Dungeon.level.map[targetPos];
+                int c = Dungeon.level.map(targetPos);
                 if (c == Terrain.EMPTY ||
                         c == Terrain.EMBERS ||
                         c == Terrain.EMPTY_DECO ||
@@ -479,7 +422,7 @@ public class WandOfChaos extends Wand {
             //great forest fire!
             case 0: // SELF
                 for (int i = 0; i < Level.LENGTH; i++) {
-                    int c = Dungeon.level.map[i];
+                    int c = Dungeon.level.map(i);
                     if (c == Terrain.EMPTY ||
                             c == Terrain.EMBERS ||
                             c == Terrain.EMPTY_DECO ||

@@ -35,7 +35,7 @@ import java.util.Arrays;
 public class Painter {
 
 	public static void set( Level level, int cell, int value ) {
-		level.map[cell] = value;
+		level.map(cell, value);
 	}
 	
 	public static void set( Level level, int x, int y, int value ) {
@@ -47,13 +47,15 @@ public class Painter {
 	}
 	
 	public static void fill( Level level, int x, int y, int w, int h, int value ) {
-		
+		level.fill(x, y, w, h, value);
+        /*
 		int width = Level.WIDTH;
 		
 		int pos = y * width + x;
 		for (int i=y; i < y + h; i++, pos += width) {
 			Arrays.fill( level.map, pos, pos + w, value );
 		}
+		*/
 	}
 	
 	public static void fill( Level level, Rect rect, int value ) {

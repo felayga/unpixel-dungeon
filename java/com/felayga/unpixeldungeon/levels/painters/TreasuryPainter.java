@@ -36,19 +36,19 @@ import com.watabou.utils.Random;
 
 public class TreasuryPainter extends Painter {
 
-	public static void paint( Level level, Room room ) {
+    public static void paint(Level level, Room room) {
 
-		fill( level, room, Terrain.WALL );
-		fill( level, room, 1, Terrain.EMPTY );
-		
-		set( level, room.center(), Terrain.STATUE );
-		
-		int n = Random.IntRange( 2, 3 );
+        fill(level, room, Terrain.WALL);
+        fill(level, room, 1, Terrain.EMPTY);
+
+        set(level, room.center(), Terrain.STATUE);
+
+        int n = Random.IntRange(2, 3);
 
         int chestPos;
         do {
             chestPos = room.random();
-        } while (level.map[chestPos] != Terrain.EMPTY || level.heaps.get( chestPos ) != null);
+        } while (level.map(chestPos) != Terrain.EMPTY || level.heaps.get(chestPos) != null);
 
         Bag chest;
         if (Random.Int(15) > 7) {
@@ -59,11 +59,11 @@ public class TreasuryPainter extends Painter {
 
         chest.random();
 
-		while (n > 0) {
+        while (n > 0) {
             chest.collect(new Gold().random());
-			//level.drop( new Gold().random(), pos ).type = (Random.Int(20) == 0 && heapType == Heap.Type.CHEST ? Heap.Type.MIMIC : heapType);
+            //level.drop( new Gold().random(), pos ).type = (Random.Int(20) == 0 && heapType == Heap.Type.CHEST ? Heap.Type.MIMIC : heapType);
             n--;
-		}
+        }
 
         level.drop(chest, chestPos);
 
@@ -73,13 +73,13 @@ public class TreasuryPainter extends Painter {
             int pos;
             do {
                 pos = room.random();
-            } while (level.map[pos] != Terrain.EMPTY || pos == chestPos);
-            level.drop( new Gold( Random.IntRange( 5, 12 ) ), pos );
+            } while (level.map(pos) != Terrain.EMPTY || pos == chestPos);
+            level.drop(new Gold(Random.IntRange(5, 12)), pos);
             n--;
-		}
+        }
 
         for (Room.Door door : room.connected.values()) {
             door.set(Room.Door.Type.LOCKED);
         }
-	}
+    }
 }

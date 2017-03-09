@@ -51,7 +51,7 @@ public class BlazingTrap extends Trap {
 
         for (int i : Level.NEIGHBOURS9DIST2){
 			if (Level.insideMap(pos+i) && !Level.solid[pos+i]) {
-				if (Level.pit[pos+i] || Level.puddle[pos+i])
+				if (Level.chasm[pos+i] || Level.puddle[pos+i])
 					GameScene.add(Blob.seed(owner, pos + i, 1, Fire.class));
 				else
 					GameScene.add(Blob.seed(owner, pos + i, 5, Fire.class));

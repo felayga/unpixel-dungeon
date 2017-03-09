@@ -49,7 +49,7 @@ public class WandOfDisintegration extends Wand {
         super(20);
         name = "Wand of Disintegration";
 
-        collisionProperties = Ballistica.Mode.NoCollision;
+        ballisticaMode = Ballistica.Mode.value(Ballistica.Mode.NoCollision);
     }
 
     @Override

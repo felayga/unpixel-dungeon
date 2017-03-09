@@ -46,8 +46,8 @@ import java.util.ArrayList;
  */
 public class ActionIndicator extends Tag {
 
-    private static final float ENABLED	= 1.0f;
-    private static final float DISABLED	= 0.3f;
+    private static final float ENABLED = 1.0f;
+    private static final float DISABLED = 0.3f;
 
     private static float delay = 0.75f;
 
@@ -60,12 +60,12 @@ public class ActionIndicator extends Tag {
     private ArrayList<Mob> candidates = new ArrayList<>();
 
     public ActionIndicator() {
-        super( DangerIndicator.COLOR );
+        super(DangerIndicator.COLOR);
 
         instance = this;
 
-        setSize( 24, 24 );
-        visible( false );
+        setSize(24, 24);
+        visible(false);
         enable(false);
     }
 
@@ -88,7 +88,7 @@ public class ActionIndicator extends Tag {
     public void update() {
         super.update();
 
-        if (!bg.visible){
+        if (!bg.visible) {
             enable(false);
             if (delay > 0f) delay -= Game.elapsed;
             if (delay <= 0f) active = false;
@@ -101,8 +101,8 @@ public class ActionIndicator extends Tag {
                 enable(Dungeon.hero.ready);
 
             } else {
-                visible( false );
-                enable( false );
+                visible(false);
+                enable(false);
             }
         }
     }
@@ -112,22 +112,22 @@ public class ActionIndicator extends Tag {
 
         int heroPos = Dungeon.hero.pos();
 
-        switch (Dungeon.level.map[heroPos]) {
+        switch (Dungeon.level.map(heroPos)) {
             case Terrain.STAIRS_UP:
             case Terrain.STAIRS_UP_ALTERNATE:
             case Terrain.STAIRS_DOWN:
             case Terrain.STAIRS_DOWN_ALTERNATE:
             case Terrain.SIGN:
                 lastTargetPos = heroPos;
-                lastTargetTerrain = Dungeon.level.map[heroPos];
+                lastTargetTerrain = Dungeon.level.map(heroPos);
                 break;
             default:
                 for (Integer offset : Level.NEIGHBOURS4) {
                     int pos = heroPos + offset;
 
-                    if (Dungeon.level.map[pos] == Terrain.OPEN_DOOR && Dungeon.level.findMob(pos) == null && Dungeon.level.heaps.get(pos) == null) {
+                    if (Dungeon.level.map(pos) == Terrain.OPEN_DOOR && Dungeon.level.findMob(pos) == null && Dungeon.level.heaps.get(pos) == null) {
                         lastTargetPos = pos;
-                        lastTargetTerrain = Dungeon.level.map[pos];
+                        lastTargetTerrain = Dungeon.level.map(pos);
                         break;
                     }
                 }
@@ -151,7 +151,7 @@ public class ActionIndicator extends Tag {
         }
 
         try {
-            switch(lastTargetTerrain) {
+            switch (lastTargetTerrain) {
                 case Terrain.OPEN_DOOR:
                     sprite = new CloseDoorSprite();
                     break;
@@ -171,7 +171,7 @@ public class ActionIndicator extends Tag {
             active = true;
             sprite.idle();
             sprite.paused = false;
-            add( sprite );
+            add(sprite);
 
             sprite.x = x + (width - sprite.width()) / 2 + 1;
             sprite.y = y + (height - sprite.height()) / 2;
@@ -183,14 +183,15 @@ public class ActionIndicator extends Tag {
     }
 
     private boolean enabled = true;
-    private void enable( boolean value ) {
+
+    private void enable(boolean value) {
         enabled = value;
         if (sprite != null) {
-            sprite.alpha( value ? ENABLED : DISABLED );
+            sprite.alpha(value ? ENABLED : DISABLED);
         }
     }
 
-    private void visible( boolean value ) {
+    private void visible(boolean value) {
         bg.visible = value;
         if (sprite != null) {
             sprite.visible = value;
@@ -200,7 +201,7 @@ public class ActionIndicator extends Tag {
     @Override
     protected void onClick() {
         if (enabled) {
-            if (Dungeon.hero.handle( lastTargetPos, false )) {
+            if (Dungeon.hero.handle(lastTargetPos, false)) {
                 Dungeon.hero.next();
             }
         }

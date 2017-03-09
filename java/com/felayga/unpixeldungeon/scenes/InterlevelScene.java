@@ -83,7 +83,6 @@ public class InterlevelScene extends PixelScene {
         FADE_IN, STATIC, FADE_OUT
     }
 
-    ;
     private Phase phase;
     private float timeLeft;
 
@@ -321,7 +320,7 @@ public class InterlevelScene extends PixelScene {
             Dungeon.depth(Dungeon.depth() + 1);
             level = Dungeon.loadLevel(WndInitHero.savedGameIndex);
         } else {
-            level = Dungeon.newLevel(Dungeon.depth());
+            level = Dungeon.newLevel(Dungeon.depth() + 1);
         }
         Dungeon.switchLevel(level, fallIntoPit ? level.pitCell() : level.randomRespawnCell());
     }

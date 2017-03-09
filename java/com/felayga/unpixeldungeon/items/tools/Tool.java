@@ -80,7 +80,7 @@ public abstract class Tool extends Item implements ITool {
     protected void doApply(Hero hero) {
         if (applyCell && applyItem) {
         } else if (applyCell) {
-            GameScene.selectCell(cellApplier);
+            GameScene.selectCell(cellApplier, "Apply " + getToolClass());
         } else if (applyItem) {
             GameScene.selectItem(itemApplier, applyItemMode, applyItemClass, "Apply " + this.getToolClass(), true, null, this);
         } else {
@@ -101,11 +101,6 @@ public abstract class Tool extends Item implements ITool {
                 }
             }
             return true;
-        }
-
-        @Override
-        public String prompt() {
-            return "Apply " + curTool.getToolClass();
         }
     };
 

@@ -40,7 +40,7 @@ import com.felayga.unpixeldungeon.windows.WndBackpack;
  */
 public class IdentifySpell extends InventorySpell {
     public IdentifySpell() {
-        super(1, GameTime.TICK);
+        super(GameTime.TICK);
 
         name = "Identify";
         image = ItemSpriteSheet.SPELL_IDENTIFY;

@@ -44,7 +44,6 @@ import java.util.ArrayList;
  */
 public abstract class Spell extends Item {
     public long castTime;
-    public int spellLevel;
 
     protected long decay = -20000 * GameTime.TICK;
     protected long decayTime;
@@ -77,16 +76,15 @@ public abstract class Spell extends Item {
     }
 
 
-    public Spell(int spellLevel, long castTime)
+    public Spell(long castTime)
     {
         super();
 
-        this.spellLevel = spellLevel;
         this.castTime = castTime;
 
         droppable = false;
         hasBuc(false);
-        hasLevels(false);
+        hasLevels(true);
         defaultAction = Constant.Action.CAST;
     }
 
@@ -119,6 +117,8 @@ public abstract class Spell extends Item {
 
     @Override
     public boolean execute( Hero hero, String action ) {
+        int spellLevel = level();
+
         if (action.equals( Constant.Action.CAST )) {
             if (hero.MP >= spellLevel * 5) {
                 if (hero.tryCastSpell(spellLevel)) {

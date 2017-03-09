@@ -58,7 +58,7 @@ public class FlockTrap extends Trap {
 				int cell;
 				for (int i : Level.NEIGHBOURS9DIST2) {
 					cell = pos + i;
-					if (Level.insideMap(cell) && Actor.findChar(cell) == null && !(Level.solid[cell] || Level.pit[cell])) {
+					if (Level.insideMap(cell) && Actor.findChar(cell) == null && !(Level.solid[cell] || Level.chasm[cell])) {
 						Sheep sheep = new Sheep();
 						sheep.lifespan = GameTime.TICK * (2 + Random.Int(Dungeon.depthAdjusted + 10));
 						sheep.pos(cell);
@@ -66,7 +66,9 @@ public class FlockTrap extends Trap {
 					}
 					CellEmitter.get(cell).burst(Speck.factory(Speck.WOOL), 4);
 				}
-				Sample.INSTANCE.play(Assets.SND_PUFF);
+                if (Level.fieldOfSound[pos]) {
+                    Sample.INSTANCE.play(Assets.SND_PUFF);
+                }
 				Actor.remove(this);
 				return true;
 			}

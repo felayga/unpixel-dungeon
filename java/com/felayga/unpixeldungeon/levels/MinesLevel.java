@@ -63,8 +63,7 @@ import java.util.ArrayList;
  */
 public class MinesLevel extends RegularLevel {
 
-    public MinesLevel()
-    {
+    public MinesLevel() {
         super(0);
 
         color1 = 0x534f3e;
@@ -116,7 +115,7 @@ public class MinesLevel extends RegularLevel {
         int xmax = -1;
         for (int y = 0; y < HEIGHT; y++) {
             for (int x = 0; x < WIDTH; x++) {
-                if (map[pos] == biggest) {
+                if (map(pos) == biggest) {
                     if (xmin > x) {
                         xmin = x;
                     }
@@ -140,8 +139,8 @@ public class MinesLevel extends RegularLevel {
             exit = swap;
         }
 
-        map[entrance] = Terrain.STAIRS_UP;
-        map[exit] = Terrain.STAIRS_DOWN;
+        map(entrance, Terrain.STAIRS_UP);
+        map(exit, Terrain.STAIRS_DOWN);
 
         removeFillRegions();
 
@@ -153,13 +152,13 @@ public class MinesLevel extends RegularLevel {
     private int[] getAndFillRegions() {
         ArrayList<Integer> retval = new ArrayList<Integer>();
 
-        int offset = Terrain.TILE_MAX+1;
+        int offset = Terrain.TILE_MAX + 1;
         int index = 0;
 
         int pos = 0;
-        for (int y=0;y<HEIGHT;y++) {
-            for (int x=0;x<WIDTH;x++) {
-                if (map[pos] == Terrain.EMPTY) {
+        for (int y = 0; y < HEIGHT; y++) {
+            for (int x = 0; x < WIDTH; x++) {
+                if (map(pos) == Terrain.EMPTY) {
                     ghettorecursive.add(x + y * WIDTH);
                     setvalue = index + offset;
                     retval.add(fillRegionRecursive());
@@ -172,7 +171,7 @@ public class MinesLevel extends RegularLevel {
 
         int[] _retval = new int[index];
 
-        for (int n=0;n<index;n++) {
+        for (int n = 0; n < index; n++) {
             _retval[n] = retval.get(n);
         }
 
@@ -190,11 +189,10 @@ public class MinesLevel extends RegularLevel {
             int x = pos % WIDTH;
             int y = pos / WIDTH;
 
-            if (map[pos] != Terrain.EMPTY) {
+            if (map(pos) != Terrain.EMPTY) {
                 //return retval;
-            }
-            else {
-                map[pos] = setvalue;
+            } else {
+                map(pos, setvalue);
                 retval++;
 
                 for (int suby = -1; suby <= 1; suby++) {
@@ -216,10 +214,10 @@ public class MinesLevel extends RegularLevel {
     private void removeFillRegions() {
         int pos = 0;
 
-        for (int y=0;y<HEIGHT;y++) {
-            for (int x=0;x<WIDTH;x++) {
-                if (map[pos] > Terrain.TILE_MAX) {
-                    map[pos] = Terrain.EMPTY;
+        for (int y = 0; y < HEIGHT; y++) {
+            for (int x = 0; x < WIDTH; x++) {
+                if (map(pos) > Terrain.TILE_MAX) {
+                    map(pos, Terrain.EMPTY);
                 }
                 pos++;
             }
@@ -228,7 +226,7 @@ public class MinesLevel extends RegularLevel {
 
     private int randomDestination(int terrain, int xmin, int xmax) {
         int pos = -1;
-        while (pos < 0 || (map[pos] != terrain)) {
+        while (pos < 0 || (map(pos) != terrain)) {
             pos = Random.Int(xmin, xmax) + (Random.Int(HEIGHT - 1) + 1) * WIDTH;
         }
         return pos;
@@ -326,7 +324,7 @@ public class MinesLevel extends RegularLevel {
                 tested[pos] = true;
 
                 if (SimplexNoise.noise((double) x / (double) WIDTH * xscale + offset, (double) y / (double) HEIGHT * yscale) >= value) {
-                    map[pos] = Terrain.EMPTY;
+                    map(pos, Terrain.EMPTY);
 
                     for (int suby = -1; suby <= 1; suby++) {
                         for (int subx = -1; subx <= 1; subx++) {
@@ -353,23 +351,17 @@ public class MinesLevel extends RegularLevel {
         return Assets.WATER_CAVES;
     }
 
-    @Override
-    public String waterUnderTex() {
-        //todo: not use this texture
-        return Assets.WATER_UNDERPRISON;
-    }
-
     protected boolean[] water() {
-        return Patch.generate( feeling == Feeling.WATER ? 0.60f : 0.45f, 6 );
+        return Patch.generate(feeling == Feeling.WATER ? 0.60f : 0.45f, 6);
     }
 
     protected boolean[] grass() {
-        return Patch.generate( feeling == Feeling.GRASS ? 0.55f : 0.35f, 3 );
+        return Patch.generate(feeling == Feeling.GRASS ? 0.55f : 0.35f, 3);
     }
 
     @Override
     protected Class<?>[] trapClasses() {
-        return new Class[]{ FireTrap.class, FrostTrap.class, PoisonTrap.class, SpearTrap.class, VenomTrap.class,
+        return new Class[]{FireTrap.class, FrostTrap.class, PoisonTrap.class, SpearTrap.class, VenomTrap.class,
                 ExplosiveTrap.class, FlashingTrap.class, GrippingTrap.class, ParalyticTrap.class, LightningTrap.class, RockfallTrap.class, OozeTrap.class,
                 ConfusionTrap.class, FlockTrap.class, /*GuardianTrap.class,*/ PitfallTrap.class, SummoningTrap.class, TeleportationTrap.class,
                 WarpingTrap.class};
@@ -377,10 +369,10 @@ public class MinesLevel extends RegularLevel {
 
     @Override
     protected float[] trapChances() {
-        return new float[]{ 8, 8, 8, 8, 8,
+        return new float[]{8, 8, 8, 8, 8,
                 4, 4, 4, 4, 4, 4, 4,
                 2, 2, 2, 2, 2, 2,
-                1 };
+                1};
     }
 
     @Override
@@ -388,7 +380,7 @@ public class MinesLevel extends RegularLevel {
         super.assignRoomType();
 
 //        if (!Blacksmith.Quest.spawn( rooms ) && Dungeon.depth == 14)
-        if (!Blacksmith.Quest.spawn( rooms ))
+        if (!Blacksmith.Quest.spawn(rooms))
             return false;
 
         return true;
@@ -401,7 +393,7 @@ public class MinesLevel extends RegularLevel {
         RandomPositionValidator validator = new RandomPositionValidator() {
             @Override
             public boolean isValidPosition(int pos) {
-                return map[pos] == Terrain.EMPTY;
+                return map(pos) == Terrain.EMPTY;
             }
         };
 
@@ -430,19 +422,19 @@ public class MinesLevel extends RegularLevel {
                 default:
                     int count = Random.IntRange(4, 12);
                     while (count > 0) {
-                        map[pos] = Terrain.EMPTY_DECO;
+                        map(pos, Terrain.EMPTY_DECO);
                         decorationPlaces--;
                         count--;
                         pos = randomDestination(Terrain.EMPTY, 0, WIDTH);
                     }
-                    map[pos] = Terrain.EMPTY_DECO;
+                    map(pos, Terrain.EMPTY_DECO);
                     decorationPlaces--;
                     break;
             }
 
             if (spots != null) {
                 for (Integer subpos : spots) {
-                    map[subpos] = terrain;
+                    map(subpos, terrain);
                     decorationPlaces--;
                 }
             }
@@ -479,21 +471,21 @@ public class MinesLevel extends RegularLevel {
     }
 
     @Override
-    public String tileName( int tile ) {
+    public String tileName(int tile) {
         switch (tile) {
             case Terrain.GRASS:
                 return "Fluorescent moss";
             case Terrain.HIGH_GRASS:
                 return "Fluorescent mushrooms";
             case Terrain.PUDDLE:
-                return "Freezing cold water.";
+                return "Freezing cold puddle.";
             default:
-                return super.tileName( tile );
+                return super.tileName(tile);
         }
     }
 
     @Override
-    public String tileDesc( int tile ) {
+    public String tileDesc(int tile) {
         switch (tile) {
             case Terrain.STAIRS_UP:
             case Terrain.STAIRS_UP_ALTERNATE:
@@ -518,14 +510,14 @@ public class MinesLevel extends RegularLevel {
     @Override
     public Group addVisuals() {
         super.addVisuals();
-        addCavesVisuals( this, visuals );
+        addCavesVisuals(this, visuals);
         return visuals;
     }
 
-    public static void addCavesVisuals( Level level, Group group ) {
-        for (int i=0; i < LENGTH; i++) {
-            if (level.map[i] == Terrain.WALL_DECO) {
-                group.add( new Vein( i ) );
+    public static void addCavesVisuals(Level level, Group group) {
+        for (int i = 0; i < LENGTH; i++) {
+            if (level.map(i) == Terrain.WALL_DECO) {
+                group.add(new Vein(i));
             }
         }
     }
@@ -533,10 +525,10 @@ public class MinesLevel extends RegularLevel {
     private static class Vein extends Group {
         private float delay;
 
-        public Vein( int pos ) {
+        public Vein(int pos) {
             super(pos);
 
-            delay = Random.Float( 2 );
+            delay = Random.Float(2);
         }
 
         @Override
@@ -549,7 +541,7 @@ public class MinesLevel extends RegularLevel {
                 if ((delay -= Game.elapsed) <= 0) {
 
                     //pickaxe can remove the ore, should remove the sparkling too.
-                    if (Dungeon.level.map[pos] != Terrain.WALL_DECO){
+                    if (Dungeon.level.map(pos) != Terrain.WALL_DECO) {
                         kill();
                         return;
                     }
@@ -557,16 +549,16 @@ public class MinesLevel extends RegularLevel {
                     delay = Random.Float();
 
                     PointF p = DungeonTilemap.tileToWorld(pos);
-                    ((Sparkle)recycle( Sparkle.class )).reset(
-                            p.x + Random.Float( DungeonTilemap.SIZE ),
-                            p.y + Random.Float( DungeonTilemap.SIZE ) );
+                    ((Sparkle) recycle(Sparkle.class)).reset(
+                            p.x + Random.Float(DungeonTilemap.SIZE),
+                            p.y + Random.Float(DungeonTilemap.SIZE));
                 }
             }
         }
     }
 
     public static final class Sparkle extends PixelParticle {
-        public void reset( float x, float y ) {
+        public void reset(float x, float y) {
             revive();
 
             this.x = x;
@@ -580,7 +572,7 @@ public class MinesLevel extends RegularLevel {
             super.update();
 
             float p = left / lifespan;
-            size( (am = p < 0.5f ? p * 2 : (1 - p) * 2) * 2 );
+            size((am = p < 0.5f ? p * 2 : (1 - p) * 2) * 2);
         }
     }
 }

@@ -52,7 +52,7 @@ public class ScrollOfMagicMapping extends Scroll {
 	}
 
 	private boolean discoverCell(int index, boolean allowDiscovery) {
-		int terr = Dungeon.level.map[index];
+		int terr = Dungeon.level.map(index);
 
 		if (Level.discoverable[index]) {
 

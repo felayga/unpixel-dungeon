@@ -117,8 +117,8 @@ public class GameScene extends PixelScene {
     static GameScene scene;
 
     private SkinnedBlock water;
-    private SkinnedBlock waterUnder;
     private DungeonTilemap tiles;
+    private DungeonTilemap underTiles;
     private FogOfWar fog;
     private HallucinationOverlay hallucinationOverlay;
     private HeroSprite hero;
@@ -169,24 +169,19 @@ public class GameScene extends PixelScene {
         terrain = new Group(-1);
         add(terrain);
 
-
-        waterUnder = new SkinnedBlock(
-                Level.WIDTH * DungeonTilemap.SIZE,
-                Level.HEIGHT * DungeonTilemap.SIZE,
-                Dungeon.level.waterUnderTex());
-        terrain.add(waterUnder);
-
-
         water = new SkinnedBlock(
                 Level.WIDTH * DungeonTilemap.SIZE,
                 Level.HEIGHT * DungeonTilemap.SIZE,
                 Dungeon.level.waterTex());
         terrain.add(water);
 
+        underTiles = new DungeonTilemap(true);
+        terrain.add(underTiles);
+
         ripples = new Group(-1);
         terrain.add(ripples);
 
-        tiles = new DungeonTilemap();
+        tiles = new DungeonTilemap(false);
         terrain.add(tiles);
 
         customTiles = new Group(-1);
@@ -441,7 +436,9 @@ public class GameScene extends PixelScene {
 
         super.update();
 
-        if (!freezeEmitters) water.offset(0, -5 * Game.elapsed);
+        if (!freezeEmitters) {
+            water.offset(0, -5 * Game.elapsed);
+        }
 
         Actor.process();
 
@@ -698,19 +695,22 @@ public class GameScene extends PixelScene {
 
     public static void resetMap() {
         if (scene != null) {
-            scene.tiles.map(Dungeon.level.map, Level.WIDTH);
+            scene.tiles.map(Dungeon.level, Level.WIDTH);
+            scene.underTiles.map(Dungeon.level, Level.WIDTH);
         }
     }
 
     public static void updateMap() {
         if (scene != null) {
             scene.tiles.updated.set(0, 0, Level.WIDTH, Level.HEIGHT);
+            scene.underTiles.updated.set(0, 0, Level.WIDTH, Level.HEIGHT);
         }
     }
 
     public static void updateMap(int cell) {
         if (scene != null) {
             scene.tiles.updated.union(cell % Level.WIDTH, cell / Level.WIDTH);
+            scene.underTiles.updated.union(cell % Level.WIDTH, cell / Level.WIDTH);
         }
     }
 
@@ -762,9 +762,9 @@ public class GameScene extends PixelScene {
         cellSelector.select(cell);
     }
 
-    public static void selectCell(CellSelector.Listener listener) {
+    public static void selectCell(CellSelector.Listener listener, String prompt) {
         cellSelector.listener = listener;
-        scene.prompt(listener.prompt());
+        scene.prompt(prompt);
     }
 
     private static boolean cancelCellSelector() {
@@ -809,7 +809,7 @@ public class GameScene extends PixelScene {
     }
 
     public static void ready() {
-        selectCell(defaultCellListener);
+        selectCell(defaultCellListener, null);
         QuickSlotButton.cancel();
     }
 
@@ -877,11 +877,6 @@ public class GameScene extends PixelScene {
                 Dungeon.hero.next();
             }
             return true;
-        }
-
-        @Override
-        public String prompt() {
-            return null;
         }
     };
 }

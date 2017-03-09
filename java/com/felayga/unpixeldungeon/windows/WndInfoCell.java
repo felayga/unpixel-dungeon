@@ -38,80 +38,79 @@ import com.watabou.noosa.BitmapTextMultiline;
 import com.watabou.noosa.Image;
 
 public class WndInfoCell extends Window {
-	
-	private static final float GAP	= 2;
-	
-	private static final int WIDTH = 120;
-	
-	private static final String TXT_NOTHING	= "There is nothing here.";
-	
-	public WndInfoCell( int cell ) {
-		
-		super();
-		
-		int tile = Dungeon.level.map[cell];
-		if (Level.puddle[cell]) {
-			tile = Terrain.PUDDLE;
-		} else if (Level.pit[cell]) {
-			tile = Terrain.CHASM;
-		}
 
-		CustomTileVisual vis = null;
-		int x = cell % Level.WIDTH;
-		int y = cell / Level.WIDTH;
-		for (CustomTileVisual i : Dungeon.level.customTiles){
-			if ((x >= i.tileX && x < i.tileX+i.tileW) &&
-					(y >= i.tileY && y < i.tileY+i.tileH)){
-				if (i.desc() != null) {
-					vis = i;
-					break;
-				}
-			}
-		}
+    private static final float GAP = 2;
+
+    private static final int WIDTH = 120;
+
+    private static final String TXT_NOTHING = "There is nothing here.";
+
+    public WndInfoCell(int cell) {
+
+        super();
+
+        int tile = Dungeon.level.map(cell);
+        if (Level.puddle[cell]) {
+            tile = Terrain.PUDDLE;
+        } else if (Level.chasm[cell]) {
+            tile = Terrain.CHASM;
+        }
+
+        CustomTileVisual vis = null;
+        int x = cell % Level.WIDTH;
+        int y = cell / Level.WIDTH;
+        for (CustomTileVisual i : Dungeon.level.customTiles) {
+            if ((x >= i.tileX && x < i.tileX + i.tileW) &&
+                    (y >= i.tileY && y < i.tileY + i.tileH)) {
+                if (i.desc() != null) {
+                    vis = i;
+                    break;
+                }
+            }
+        }
 
 
-		String desc = "";
+        String desc = "";
 
-		IconTitle titlebar = new IconTitle();
-		if (vis != null){
-			titlebar.icon(new Image(vis));
-			titlebar.label(vis.name);
-			desc += vis.desc();
-		} else {
-			if (tile == Terrain.PUDDLE) {
-				Image water = new Image(Dungeon.level.waterTex());
-				water.frame(0, 0, DungeonTilemap.SIZE, DungeonTilemap.SIZE);
-				titlebar.icon(water);
-			} else {
-				titlebar.icon(DungeonTilemap.tile(tile));
-			}
-			titlebar.label(Dungeon.level.tileName(tile));
-			desc += Dungeon.level.tileDesc(tile);
+        IconTitle titlebar = new IconTitle();
+        if (vis != null) {
+            titlebar.icon(new Image(vis));
+            titlebar.label(vis.name);
+            desc += vis.desc();
+        } else {
+            if (tile == Terrain.PUDDLE) {
+                Image water = new Image(Dungeon.level.waterTex());
+                water.frame(0, 0, DungeonTilemap.SIZE, DungeonTilemap.SIZE);
+                titlebar.icon(water);
+            } else {
+                titlebar.icon(DungeonTilemap.tile(tile));
+            }
+            titlebar.label(Dungeon.level.tileName(tile));
+            desc += Dungeon.level.tileDesc(tile);
 
-            GLog.d("tilepos=("+x+","+y+") tile="+tile);
+            GLog.d("tilepos=" + cell + "(" + x + "," + y + ") tile=" + tile);
+        }
+        titlebar.setRect(0, 0, WIDTH, 0);
+        add(titlebar);
 
-		}
-		titlebar.setRect(0, 0, WIDTH, 0);
-		add(titlebar);
+        BitmapTextMultiline info = PixelScene.createMultiline(6);
+        add(info);
 
-		BitmapTextMultiline info = PixelScene.createMultiline(6);
-		add(info);
+        for (Blob blob : Dungeon.level.blobs.values()) {
+            if (blob.cur[cell] > 0 && blob.tileDesc() != null) {
+                if (desc.length() > 0) {
+                    desc += "\n\n";
+                }
+                desc += blob.tileDesc();
+            }
+        }
 
-		for (Blob blob:Dungeon.level.blobs.values()) {
-			if (blob.cur[cell] > 0 && blob.tileDesc() != null) {
-				if (desc.length() > 0) {
-					desc += "\n\n";
-				}
-				desc += blob.tileDesc();
-			}
-		}
-		
-		info.text( desc.length() > 0 ? desc : TXT_NOTHING );
-		info.maxWidth = WIDTH;
-		info.measure();
-		info.x = titlebar.left();
-		info.y = titlebar.bottom() + GAP;
-		
-		resize( WIDTH, (int)(info.y + info.height()) );
-	}
+        info.text(desc.length() > 0 ? desc : TXT_NOTHING);
+        info.maxWidth = WIDTH;
+        info.measure();
+        info.x = titlebar.left();
+        info.y = titlebar.bottom() + GAP;
+
+        resize(WIDTH, (int) (info.y + info.height()));
+    }
 }

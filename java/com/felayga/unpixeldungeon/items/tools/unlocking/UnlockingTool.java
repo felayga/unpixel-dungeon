@@ -78,7 +78,7 @@ public class UnlockingTool extends Tool implements ITool {
 
     @Override
     public void apply(Hero hero, int target) {
-        int cell = Dungeon.level.map[target];
+        int cell = Dungeon.level.map(target);
 
         if (cell == Terrain.LOCKED_DOOR) {
             hero.curAction = new HeroAction.HandleDoor.UnlockDoor(target, this);

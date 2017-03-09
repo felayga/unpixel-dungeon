@@ -126,7 +126,7 @@ public class CavesBossLevel extends Level {
             }
         }
 
-        map[exit] = Terrain.LOCKED_EXIT;
+        map(exit, Terrain.LOCKED_EXIT);
 
         Painter.fill(this, ROOM_LEFT - 1, ROOM_TOP - 1,
                 ROOM_RIGHT - ROOM_LEFT + 3, ROOM_BOTTOM - ROOM_TOP + 3, Terrain.WALL);
@@ -137,22 +137,22 @@ public class CavesBossLevel extends Level {
                 ROOM_RIGHT - ROOM_LEFT + 1, 1, Terrain.EMPTY_DECO);
 
         arenaDoor = Random.Int(ROOM_LEFT, ROOM_RIGHT) + (ROOM_BOTTOM + 1) * WIDTH;
-        map[arenaDoor] = Terrain.DOOR;
+        map(arenaDoor, Terrain.DOOR);
 
         entrance = Random.Int(ROOM_LEFT + 1, ROOM_RIGHT - 1) +
                 Random.Int(ROOM_TOP + 1, ROOM_BOTTOM - 1) * WIDTH;
-        map[entrance] = Terrain.STAIRS_UP;
+        map(entrance, Terrain.STAIRS_UP);
 
         boolean[] patch = Patch.generate(0.45f, 6);
         for (int i = 0; i < LENGTH; i++) {
-            if (map[i] == Terrain.EMPTY && patch[i]) {
-                map[i] = Terrain.PUDDLE;
+            if (map(i) == Terrain.EMPTY && patch[i]) {
+                map(i, Terrain.PUDDLE);
             }
         }
 
         for (int i = 0; i < LENGTH; i++) {
-            if (map[i] == Terrain.EMPTY && Random.Int(6) == 0) {
-                map[i] = Terrain.INACTIVE_TRAP;
+            if (map(i) == Terrain.EMPTY && Random.Int(6) == 0) {
+                map(i, Terrain.INACTIVE_TRAP);
                 Trap t = new ToxicTrap().reveal();
                 t.active = false;
                 //todo: boss level traps, owned by boss or not?
@@ -167,37 +167,37 @@ public class CavesBossLevel extends Level {
     protected void decorate() {
 
         for (int i = WIDTH + 1; i < LENGTH - WIDTH; i++) {
-            if (map[i] == Terrain.EMPTY) {
+            if (map(i) == Terrain.EMPTY) {
                 int n = 0;
-                if (map[i + 1] == Terrain.WALL) {
+                if (map(i + 1) == Terrain.WALL) {
                     n++;
                 }
-                if (map[i - 1] == Terrain.WALL) {
+                if (map(i - 1) == Terrain.WALL) {
                     n++;
                 }
-                if (map[i + WIDTH] == Terrain.WALL) {
+                if (map(i + WIDTH) == Terrain.WALL) {
                     n++;
                 }
-                if (map[i - WIDTH] == Terrain.WALL) {
+                if (map(i - WIDTH) == Terrain.WALL) {
                     n++;
                 }
                 if (Random.Int(8) <= n) {
-                    map[i] = Terrain.EMPTY_DECO;
+                    map(i, Terrain.EMPTY_DECO);
                 }
             }
         }
 
         for (int i = 0; i < LENGTH; i++) {
-            if (map[i] == Terrain.WALL && Random.Int(8) == 0) {
-                map[i] = Terrain.WALL_DECO;
+            if (map(i) == Terrain.WALL && Random.Int(8) == 0) {
+                map(i, Terrain.WALL_DECO);
             }
         }
 
         int sign;
         do {
             sign = Random.Int(ROOM_LEFT, ROOM_RIGHT) + Random.Int(ROOM_TOP, ROOM_BOTTOM) * WIDTH;
-        } while (sign == entrance || map[sign] == Terrain.INACTIVE_TRAP);
-        map[sign] = Terrain.SIGN;
+        } while (sign == entrance || map(sign) == Terrain.INACTIVE_TRAP);
+        map(sign, Terrain.SIGN);
     }
 
     @Override
@@ -215,7 +215,7 @@ public class CavesBossLevel extends Level {
             int pos;
             do {
                 pos = Random.IntRange(ROOM_LEFT, ROOM_RIGHT) + Random.IntRange(ROOM_TOP + 1, ROOM_BOTTOM) * WIDTH;
-            } while (pos == entrance || map[pos] == Terrain.SIGN);
+            } while (pos == entrance || map(pos) == Terrain.SIGN);
             drop(item, pos).type = Heap.Type.REMAINS;
         }
     }
@@ -294,7 +294,7 @@ public class CavesBossLevel extends Level {
             case Terrain.HIGH_GRASS:
                 return "Fluorescent mushrooms";
             case Terrain.PUDDLE:
-                return "Freezing cold water.";
+                return "Freezing cold puddle.";
             default:
                 return super.tileName(tile);
         }

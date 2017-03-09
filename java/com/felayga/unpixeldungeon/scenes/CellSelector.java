@@ -179,6 +179,5 @@ public class CellSelector extends TouchArea {
 
 	public interface Listener {
 		boolean onSelect(Integer cell);
-		String prompt();
 	}
 }

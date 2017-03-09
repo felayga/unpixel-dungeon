@@ -177,7 +177,7 @@ public abstract class Plant implements Bundlable {
 
         @Override
         protected void onThrow(Char thrower, int cell) {
-            if (Dungeon.level.map[cell] == Terrain.ALCHEMY || Level.pit[cell]) {
+            if (Dungeon.level.map(cell) == Terrain.ALCHEMY || Level.chasm[cell]) {
                 super.onThrow(thrower, cell);
             } else {
                 Dungeon.level.plant(thrower, this, cell);

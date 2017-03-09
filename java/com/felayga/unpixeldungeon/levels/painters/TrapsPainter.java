@@ -82,7 +82,7 @@ public class TrapsPainter extends Painter {
             door.set(Room.Door.Type.REGULAR);
         }
 
-        int lastRow = level.map[room.left + 1 + (room.top + 1) * Level.WIDTH] == Terrain.CHASM ? Terrain.CHASM : Terrain.EMPTY;
+        int lastRow = level.map(room.left + 1 + (room.top + 1) * Level.WIDTH) == Terrain.CHASM ? Terrain.CHASM : Terrain.EMPTY;
 
         /*
         int x = -1;
@@ -107,7 +107,7 @@ public class TrapsPainter extends Painter {
         */
 
         for (int cell : room.getCells()) {
-            if (level.map[cell] == Terrain.TRAP) {
+            if (level.map(cell) == Terrain.TRAP) {
                 try {
                     level.setTrap(null, trapClass.newInstance().reveal(), cell);
                 } catch (Exception e) {

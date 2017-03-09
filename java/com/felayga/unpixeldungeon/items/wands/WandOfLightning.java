@@ -50,7 +50,7 @@ public class WandOfLightning extends Wand {
 
         name = "Wand of Lightning";
 
-        collisionProperties = Ballistica.Mode.MagicRay;
+        ballisticaMode = Ballistica.Mode.value(Ballistica.Mode.MagicRay, Ballistica.Mode.StopSelf);
         price = 175;
     }
 

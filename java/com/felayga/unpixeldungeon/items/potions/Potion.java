@@ -310,14 +310,10 @@ full restoration
 
 	@Override
 	protected void onThrow(Char thrower, int cell) {
-		if (Dungeon.level.map[cell] == Terrain.WELL || Level.pit[cell]) {
-
+		if (Dungeon.level.map(cell) == Terrain.WELL || Level.chasm[cell]) {
 			super.onThrow(thrower, cell);
-
 		} else {
-
 			shatter(thrower, cell);
-
 		}
 	}
 

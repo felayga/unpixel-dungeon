@@ -36,6 +36,7 @@ import com.felayga.unpixeldungeon.actors.mobs.npcs.Boulder;
 import com.felayga.unpixeldungeon.items.EquippableItem;
 import com.felayga.unpixeldungeon.items.tools.ITool;
 import com.felayga.unpixeldungeon.items.weapon.melee.simple.SimpleMeleeWeapon;
+import com.felayga.unpixeldungeon.levels.Level;
 import com.felayga.unpixeldungeon.mechanics.AttributeType;
 import com.felayga.unpixeldungeon.mechanics.Constant;
 import com.felayga.unpixeldungeon.scenes.CellSelector;
@@ -84,7 +85,7 @@ public abstract class DiggingTool extends SimpleMeleeWeapon implements ITool {
         curTool = this;
 
         if (action.equals(Constant.Action.APPLY)) {
-            GameScene.selectCell(applier);
+            GameScene.selectCell(applier, "Apply " + getToolClass());
 
             return false;
         }
@@ -115,7 +116,7 @@ public abstract class DiggingTool extends SimpleMeleeWeapon implements ITool {
 
             Mob mob = Dungeon.level.findMob(target);
 
-            if (Dungeon.level.solid[target] || target == hero.pos()) {
+            if (Level.solid[target] || target == hero.pos()) {
                 hero.curAction = new HeroAction.Dig(this, target, 101);
                 hero.motivate(true);
             } else if (mob != null) {
@@ -138,11 +139,6 @@ public abstract class DiggingTool extends SimpleMeleeWeapon implements ITool {
                 curTool.apply(curUser, target);
             }
             return true;
-        }
-
-        @Override
-        public String prompt() {
-            return "Apply " + curTool.getToolClass();
         }
     };
 }

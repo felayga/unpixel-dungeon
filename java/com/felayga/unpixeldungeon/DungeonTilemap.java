@@ -40,15 +40,13 @@ public class DungeonTilemap extends Tilemap {
 	
 	private static DungeonTilemap instance;
 	
-	public DungeonTilemap() {
-		super(
-			Dungeon.level.tilesTex(),
-			new TextureFilm( Dungeon.level.tilesTex(), SIZE, SIZE ) );
-		map( Dungeon.level.map, Level.WIDTH );
-		
-		instance = this;
-	}
-	
+	public DungeonTilemap(boolean underMap) {
+        super(Dungeon.level.tilesTex(), new TextureFilm(Dungeon.level.tilesTex(), SIZE, SIZE), underMap);
+        map(Dungeon.level, Level.WIDTH);
+
+        instance = this;
+    }
+
 	public int screenToTile( int x, int y ) {
 		Point p = camera().screenToCamera( x, y ).
 			offset( this.point().negate() ).
@@ -63,7 +61,6 @@ public class DungeonTilemap extends Tilemap {
 	}
 	
 	public void discover( int pos, int oldValue ) {
-		
 		final Image tile = tile( oldValue );
 		tile.point( tileToWorld( pos ) );
 

@@ -23,32 +23,28 @@
  *
  *
  */
-package com.felayga.unpixeldungeon.items.spells.inventory;
 
-import com.felayga.unpixeldungeon.items.Item;
-import com.felayga.unpixeldungeon.items.spells.Spell;
-import com.felayga.unpixeldungeon.scenes.GameScene;
-import com.felayga.unpixeldungeon.windows.WndBackpack;
+package com.felayga.unpixeldungeon.items.spells.position;
 
-public abstract class InventorySpell extends Spell {
-    protected WndBackpack.Mode mode = WndBackpack.Mode.ALL;
+import com.felayga.unpixeldungeon.items.wands.WandOfMagicMissile;
+import com.felayga.unpixeldungeon.mechanics.GameTime;
+import com.felayga.unpixeldungeon.sprites.ItemSpriteSheet;
 
-    public InventorySpell(long castTime) {
-        super(castTime);
+/**
+ * Created by HELLO on 3/7/2017.
+ */
+
+public class MagicMissileSpell extends PositionSpell {
+    public MagicMissileSpell() {
+        super(GameTime.TICK);
+
+        name = "Magic Missile";
+        image = ItemSpriteSheet.SPELL_MAGIC_MISSILE;
+
     }
 
     @Override
-    protected void doCast() {
-        GameScene.selectItem(itemSelector, mode, "Cast " + name + " on item", null);
+    protected void onPositionSelected(int pos) {
+        //WandOfMagicMissile.
     }
-
-    abstract protected void onItemSelected(Item item);
-
-    protected static WndBackpack.Listener itemSelector = new WndBackpack.Listener() {
-        @Override
-        public void onSelect(Item item) {
-            InventorySpell spell = (InventorySpell) curItem;
-            spell.onItemSelected(item);
-        }
-    };
 }

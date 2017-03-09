@@ -111,39 +111,37 @@ public class HallsLevel extends RegularLevel {
 	
 	@Override
 	protected void decorate() {
-		
-		for (int i=WIDTH + 1; i < LENGTH - WIDTH - 1; i++) {
-			if (map[i] == Terrain.EMPTY) {
-				
-				int count = 0;
-				for (int j=0; j < NEIGHBOURS8.length; j++) {
-					if ((Terrain.flags[map[i + NEIGHBOURS8[j]]] & Terrain.FLAG_PASSABLE) > 0) {
-						count++;
-					}
-				}
-				
-				if (Random.Int( 80 ) < count) {
-					map[i] = Terrain.EMPTY_DECO;
-				}
-				
-			} else
-			if (map[i] == Terrain.WALL &&
-				map[i-1] != Terrain.WALL_DECO && map[i-WIDTH] != Terrain.WALL_DECO &&
-				Random.Int( 20 ) == 0) {
 
-				map[i] = Terrain.WALL_DECO;
+        for (int i = WIDTH + 1; i < LENGTH - WIDTH - 1; i++) {
+            int terrain = map(i);
 
-			}
-		}
-		
-		placeSign();
-	}
+            if (terrain == Terrain.EMPTY) {
+                int count = 0;
+                for (int j = 0; j < NEIGHBOURS8.length; j++) {
+                    if ((Terrain.flags[map(i + NEIGHBOURS8[j])] & Terrain.FLAG_PASSABLE) > 0) {
+                        count++;
+                    }
+                }
+
+                if (Random.Int(80) < count) {
+                    map(i, Terrain.EMPTY_DECO);
+                }
+            } else if (terrain == Terrain.WALL &&
+                    map(i - 1) != Terrain.WALL_DECO && map(i - WIDTH) != Terrain.WALL_DECO &&
+                    Random.Int(20) == 0) {
+
+                map(i, Terrain.WALL_DECO);
+            }
+        }
+
+        placeSign();
+    }
 	
 	@Override
 	public String tileName( int tile ) {
 		switch (tile) {
 		case Terrain.PUDDLE:
-			return "Cold lava";
+			return "Cold lava puddle";
 		case Terrain.GRASS:
 			return "Embermoss";
 		case Terrain.HIGH_GRASS:
@@ -178,7 +176,7 @@ public class HallsLevel extends RegularLevel {
 	
 	public static void addHallsVisuals( Level level, Group group ) {
 		for (int i=0; i < LENGTH; i++) {
-			if (level.map[i] == Terrain.PUDDLE) {
+			if (level.map(i) == Terrain.PUDDLE) {
 				group.add( new Stream( i ) );
 			}
 		}

@@ -54,148 +54,151 @@ import com.watabou.utils.Random;
 
 public class PrisonLevel extends RegularLevel {
 
-    public PrisonLevel()
-	{
+    public PrisonLevel() {
         super(0);
 
-		color1 = 0x6a723d;
-		color2 = 0x88924c;
-	}
-	
-	@Override
-	public String tilesTex() {
-		return Assets.TILES_PRISON;
-	}
-	
-	@Override
-	public String waterTex() {
-		return Assets.WATER_PRISON;
-	}
-	
-	protected boolean[] water() {
-		return Patch.generate( feeling == Feeling.WATER ? 0.65f : 0.45f, 4 );
-	}
-	
-	protected boolean[] grass() {
-		return Patch.generate( feeling == Feeling.GRASS ? 0.60f : 0.40f, 3 );
-	}
+        color1 = 0x6a723d;
+        color2 = 0x88924c;
+    }
 
-	@Override
-	protected Class<?>[] trapClasses() {
-		return new Class[]{ ChillingTrap.class, FireTrap.class, PoisonTrap.class, SpearTrap.class, ToxicTrap.class,
-				AlarmTrap.class, FlashingTrap.class, GrippingTrap.class, ParalyticTrap.class, LightningTrap.class, OozeTrap.class,
-				ConfusionTrap.class, FlockTrap.class, SummoningTrap.class, TeleportationTrap.class, };
-	}
+    @Override
+    public String tilesTex() {
+        return Assets.TILES_PRISON;
+    }
 
-	@Override
-	protected float[] trapChances() {
-		return new float[]{ 4, 4, 4, 4,
-				2, 2, 2, 2, 2, 2,
-				1, 1, 1, 1 };
-	}
+    @Override
+    public String waterTex() {
+        return Assets.WATER_PRISON;
+    }
 
-	@Override
-	protected boolean assignRoomType() {
-		super.assignRoomType();
-		
-		for (Room r : rooms) {
-			if (r.type == Type.TUNNEL) {
-				r.type = Type.PASSAGE;
-			}
-		}
+    protected boolean[] water() {
+        return Patch.generate(feeling == Feeling.WATER ? 0.65f : 0.45f, 4);
+    }
 
-		return Wandmaker.Quest.spawn( this, roomEntrance, rooms );
-	}
-	
-	@Override
-	protected void decorate() {
-		
-		for (int i=WIDTH + 1; i < LENGTH - WIDTH - 1; i++) {
-			if (map[i] == Terrain.EMPTY) {
-				
-				float c = 0.05f;
-				if (map[i + 1] == Terrain.WALL && map[i + WIDTH] == Terrain.WALL) {
-					c += 0.2f;
-				}
-				if (map[i - 1] == Terrain.WALL && map[i + WIDTH] == Terrain.WALL) {
-					c += 0.2f;
-				}
-				if (map[i + 1] == Terrain.WALL && map[i - WIDTH] == Terrain.WALL) {
-					c += 0.2f;
-				}
-				if (map[i - 1] == Terrain.WALL && map[i - WIDTH] == Terrain.WALL) {
-					c += 0.2f;
-				}
-				
-				if (Random.Float() < c) {
-					map[i] = Terrain.EMPTY_DECO;
-				}
-			}
-		}
-		
-		for (int i=0; i < WIDTH; i++) {
-			if (map[i] == Terrain.WALL &&
-				(map[i + WIDTH] == Terrain.EMPTY || map[i + WIDTH] == Terrain.EMPTY_SP) &&
-				Random.Int( 6 ) == 0) {
-				
-				map[i] = Terrain.WALL_DECO;
-			}
-		}
-		
-		for (int i=WIDTH; i < LENGTH - WIDTH; i++) {
-			if (map[i] == Terrain.WALL &&
-				map[i - WIDTH] == Terrain.WALL &&
-				(map[i + WIDTH] == Terrain.EMPTY || map[i + WIDTH] == Terrain.EMPTY_SP) &&
-				Random.Int( 3 ) == 0) {
-				
-				map[i] = Terrain.WALL_DECO;
-			}
-		}
-		
-		placeSign();
-	}
-	
-	@Override
-	public String tileName( int tile ) {
-		switch (tile) {
-		case Terrain.PUDDLE:
-			return "Dark cold water.";
-		default:
-			return super.tileName( tile );
-		}
-	}
-	
-	@Override
-	public String tileDesc(int tile) {
-		switch (tile) {
-		case Terrain.EMPTY_DECO:
-			return "There are old blood stains on the floor.";
-		default:
-			return super.tileDesc(tile);
-		}
-	}
-	
-	@Override
-	public Group addVisuals() {
-		super.addVisuals();
-		addPrisonVisuals(this, visuals);
-		return visuals;
-	}
+    protected boolean[] grass() {
+        return Patch.generate(feeling == Feeling.GRASS ? 0.60f : 0.40f, 3);
+    }
 
-	public static void addPrisonVisuals(Level level, Group group){
-		for (int i=0; i < LENGTH; i++) {
-			if (level.map[i] == Terrain.WALL_DECO) {
-				group.add( new Torch( i ) );
-			}
-		}
-	}
-	
-	public static class Torch extends Emitter {
+    @Override
+    protected Class<?>[] trapClasses() {
+        return new Class[]{ChillingTrap.class, FireTrap.class, PoisonTrap.class, SpearTrap.class, ToxicTrap.class,
+                AlarmTrap.class, FlashingTrap.class, GrippingTrap.class, ParalyticTrap.class, LightningTrap.class, OozeTrap.class,
+                ConfusionTrap.class, FlockTrap.class, SummoningTrap.class, TeleportationTrap.class,};
+    }
+
+    @Override
+    protected float[] trapChances() {
+        return new float[]{4, 4, 4, 4,
+                2, 2, 2, 2, 2, 2,
+                1, 1, 1, 1};
+    }
+
+    @Override
+    protected boolean assignRoomType() {
+        super.assignRoomType();
+
+        for (Room r : rooms) {
+            if (r.type == Type.TUNNEL) {
+                r.type = Type.PASSAGE;
+            }
+        }
+
+        return Wandmaker.Quest.spawn(this, roomEntrance, rooms);
+    }
+
+    @Override
+    protected void decorate() {
+        for (int i = WIDTH + 1; i < LENGTH - WIDTH - 1; i++) {
+            if (map(i) == Terrain.EMPTY) {
+                int left = map(i - 1);
+                int right = map(i + 1);
+                int top = map(i - WIDTH);
+                int bottom = map(i + WIDTH);
+                float c = 0.05f;
+                if (right == Terrain.WALL && bottom == Terrain.WALL) {
+                    c += 0.2f;
+                }
+                if (left == Terrain.WALL && bottom == Terrain.WALL) {
+                    c += 0.2f;
+                }
+                if (right == Terrain.WALL && top == Terrain.WALL) {
+                    c += 0.2f;
+                }
+                if (left == Terrain.WALL && top == Terrain.WALL) {
+                    c += 0.2f;
+                }
+
+                if (Random.Float() < c) {
+                    map(i, Terrain.EMPTY_DECO);
+                }
+            }
+        }
+
+        for (int i = 0; i < WIDTH; i++) {
+            int bottom = map(i + WIDTH);
+            if (map(i) == Terrain.WALL &&
+                    (bottom == Terrain.EMPTY || bottom == Terrain.EMPTY_SP) &&
+                    Random.Int(6) == 0) {
+
+                map(i, Terrain.WALL_DECO);
+            }
+        }
+
+        for (int i = WIDTH; i < LENGTH - WIDTH; i++) {
+            int bottom = map(i + WIDTH);
+            if (map(i) == Terrain.WALL &&
+                    map(i - WIDTH) == Terrain.WALL &&
+                    (bottom == Terrain.EMPTY || bottom == Terrain.EMPTY_SP) &&
+                    Random.Int(3) == 0) {
+
+                map(i, Terrain.WALL_DECO);
+            }
+        }
+
+        placeSign();
+    }
+
+    @Override
+    public String tileName(int tile) {
+        switch (tile) {
+            case Terrain.PUDDLE:
+                return "Dark cold puddle.";
+            default:
+                return super.tileName(tile);
+        }
+    }
+
+    @Override
+    public String tileDesc(int tile) {
+        switch (tile) {
+            case Terrain.EMPTY_DECO:
+                return "There are old blood stains on the floor.";
+            default:
+                return super.tileDesc(tile);
+        }
+    }
+
+    @Override
+    public Group addVisuals() {
+        super.addVisuals();
+        addPrisonVisuals(this, visuals);
+        return visuals;
+    }
+
+    public static void addPrisonVisuals(Level level, Group group) {
+        for (int i = 0; i < LENGTH; i++) {
+            if (level.map(i) == Terrain.WALL_DECO) {
+                group.add(new Torch(i));
+            }
+        }
+    }
+
+    public static class Torch extends Emitter {
         public Torch(int pos) {
             this(pos, true, true);
         }
 
-		public Torch( int pos, boolean flames, boolean halo ) {
+        public Torch(int pos, boolean flames, boolean halo) {
             super();
             this.pos = pos;
 
@@ -209,12 +212,12 @@ public class PrisonLevel extends RegularLevel {
                 add(new Halo(16, 0xFFFFCC, 0.2f).point(p.x, p.y));
             }
         }
-		
-		@Override
-		public void update() {
-			if (visible = Dungeon.visible[pos]) {
-				super.update();
-			}
-		}
-	}
+
+        @Override
+        public void update() {
+            if (visible = Dungeon.visible[pos]) {
+                super.update();
+            }
+        }
+    }
 }

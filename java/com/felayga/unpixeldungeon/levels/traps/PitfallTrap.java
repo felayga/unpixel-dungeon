@@ -81,7 +81,7 @@ public class PitfallTrap extends Trap {
         if (!(Dungeon.level.solid[pos - Level.WIDTH] && Dungeon.level.solid[pos + Level.WIDTH])
                 && !(Dungeon.level.solid[pos - 1] && Dungeon.level.solid[pos + 1])) {
 
-            int c = Dungeon.level.map[pos - Level.WIDTH];
+            int c = Dungeon.level.map(pos - Level.WIDTH);
 
             if (c == Terrain.WALL || c == Terrain.WALL_DECO) {
                 Dungeon.level.set(pos, Terrain.CHASM_WALL, true);

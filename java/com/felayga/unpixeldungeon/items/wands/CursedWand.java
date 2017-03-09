@@ -130,7 +130,7 @@ public class CursedWand {
             case 1:
                 cursedFX(user, bolt, new Callback() {
                     public void call() {
-                        int c = Dungeon.level.map[bolt.collisionPos];
+                        int c = Dungeon.level.map(bolt.collisionPos);
                         if (c == Terrain.EMPTY ||
                                 c == Terrain.EMBERS ||
                                 c == Terrain.EMPTY_DECO ||
@@ -362,7 +362,7 @@ public class CursedWand {
             //great forest fire!
             case 0:
                 for (int i = 0; i < Level.LENGTH; i++) {
-                    int c = Dungeon.level.map[i];
+                    int c = Dungeon.level.map(i);
                     if (c == Terrain.EMPTY ||
                             c == Terrain.EMBERS ||
                             c == Terrain.EMPTY_DECO ||

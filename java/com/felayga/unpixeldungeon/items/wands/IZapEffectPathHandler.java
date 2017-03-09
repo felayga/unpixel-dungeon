@@ -24,20 +24,15 @@
  *
  */
 
-package com.felayga.unpixeldungeon.items.books;
+package com.felayga.unpixeldungeon.items.wands;
 
-import com.felayga.unpixeldungeon.items.books.spellbook.SpellBook;
-import com.felayga.unpixeldungeon.items.spells.Spell;
-import com.felayga.unpixeldungeon.items.spells.inventory.IdentifySpell;
-import com.felayga.unpixeldungeon.mechanics.GameTime;
+import com.watabou.utils.Callback;
 
 /**
- * Created by HELLO on 3/6/2017.
+ * Created by HELLO on 3/7/2017.
  */
 
-public class IdentifyBook extends SpellBook {
-    public IdentifyBook() {
-        super("Identify", IdentifySpell.class, 3, 14 * GameTime.TICK);
-    }
-
+public interface IZapEffectPathHandler {
+    void fxEffect(int source, int destination, Callback callback);
 }
+

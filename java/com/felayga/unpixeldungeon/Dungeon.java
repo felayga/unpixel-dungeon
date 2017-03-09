@@ -316,7 +316,7 @@ public class Dungeon {
         } else if (pos == Constant.Position.ENTRANCE) {
             pos = level.entrance;
         } else if (pos == Constant.Position.RANDOM) {
-            while (pos < 0 || (Terrain.flags[level.map[pos]] & Terrain.FLAG_PASSABLE) == 0) {
+            while (pos < 0 || (Terrain.flags[level.map(pos)] & Terrain.FLAG_PASSABLE) == 0) {
                 pos = Random.Int(level.WIDTH - 1) + 1 + (Random.Int(level.HEIGHT - 1) + 1) * level.WIDTH;
             }
         } else if (pos == Constant.Position.EXIT) {
@@ -642,7 +642,7 @@ public class Dungeon {
 
     public static void fail(String desc) {
         resultDescription = desc;
-        if (hero.belongings.getItem(Ankh.class, true) == null) {
+        if (hero.belongings.getItem(Ankh.class, false) == null) {
             Rankings.INSTANCE.submit(false);
         }
     }

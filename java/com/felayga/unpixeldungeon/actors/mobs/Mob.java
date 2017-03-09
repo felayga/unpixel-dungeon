@@ -387,7 +387,7 @@ public abstract class Mob extends Char {
             int step = Dungeon.findPath(this, pos(), target, candidate, diagonal, Level.fieldOfView);
 
             if (step != Constant.Position.NONE) {
-                if (Dungeon.level.map[step] == Terrain.DOOR) {
+                if (Dungeon.level.map(step) == Terrain.DOOR) {
                     if (isEthereal()) {
                         //nothing
                     } else if (isAmorphous()) {

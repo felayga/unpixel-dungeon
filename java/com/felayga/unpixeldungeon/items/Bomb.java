@@ -109,7 +109,7 @@ public class Bomb extends Item implements IFlammable {
 
 	@Override
 	protected void onThrow( Char thrower, int cell ) {
-        if (!Level.pit[cell] && lightingFuse) {
+        if (!Level.chasm[cell] && lightingFuse) {
             Actor.addDelayed(fuse = new Fuse(thrower).ignite(this), 2);
         }
         if (Actor.findChar(cell) != null && !(Actor.findChar(cell) == Dungeon.hero)) {

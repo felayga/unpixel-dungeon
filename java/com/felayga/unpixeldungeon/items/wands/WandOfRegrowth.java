@@ -56,7 +56,7 @@ public class WandOfRegrowth extends Wand {
         super(15);
         name = "Wand of Regrowth";
 
-        collisionProperties = Ballistica.Mode.SplasherBolt;
+        ballisticaMode = Ballistica.Mode.value(Ballistica.Mode.SplasherBolt, Ballistica.Mode.StopSelf);
         price = 150;
     }
 
@@ -73,7 +73,7 @@ public class WandOfRegrowth extends Wand {
     private static Level.RandomPositionValidator onZapSpotValidator = new Level.RandomPositionValidator() {
         @Override
         public boolean isValidPosition(int pos) {
-            int c = Dungeon.level.map[pos];
+            int c = Dungeon.level.map(pos);
             return c == Terrain.EMPTY ||
                     c == Terrain.EMBERS ||
                     c == Terrain.EMPTY_DECO ||

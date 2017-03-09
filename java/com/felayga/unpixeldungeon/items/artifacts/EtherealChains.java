@@ -82,7 +82,7 @@ public class EtherealChains extends Artifact_old {
 			else if (charge < 1)                GLog.i("Your chains do not have any available charge.");
 			else if (bucStatus() == BUCStatus.Cursed)                    GLog.w("You can't use cursed chains.");
 			else {
-				GameScene.selectCell(caster);
+				GameScene.selectCell(caster, "Choose a location to target");
 			}
 
 			return true;
@@ -98,10 +98,10 @@ public class EtherealChains extends Artifact_old {
 			if (target != null && (Dungeon.level.visited[target] || Dungeon.level.mapped[target])){
 
 				//ballistica does not go through walls on pre-rework boss arenas
-                Ballistica.Mode missileProperties = (Level.flags & Level.FLAG_NOTELEPORTATION) != 0 ?
+                Ballistica.Mode missileProperties = (Level.flags & Level.FLAG_NO_TELEPORTATION) != 0 ?
 						Ballistica.Mode.Projectile : Ballistica.Mode.SeekerBolt;
 
-				final Ballistica chain = new Ballistica(curUser.pos(), target, missileProperties);
+				final Ballistica chain = new Ballistica(curUser.pos(), target, missileProperties.value);
 
 				//determine if we're grabbing an enemy, pulling to a location, or doing nothing.
 				if (Actor.findChar( chain.collisionPos ) != null){
@@ -180,11 +180,6 @@ public class EtherealChains extends Artifact_old {
 			}
 
             return true;
-		}
-
-		@Override
-		public String prompt() {
-			return "Choose a location to target";
 		}
 	};
 

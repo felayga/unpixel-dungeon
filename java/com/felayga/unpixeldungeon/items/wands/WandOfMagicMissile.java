@@ -41,7 +41,7 @@ public class WandOfMagicMissile extends Wand {
 
 		name = "Wand of Magic Missile";
 
-        collisionProperties = Ballistica.Mode.MagicRay;
+        ballisticaMode = Ballistica.Mode.value(Ballistica.Mode.MagicRay, Ballistica.Mode.StopSelf);
         price = 150;
 	}
 

@@ -183,6 +183,7 @@ public abstract class SpellBook extends Book {
             }
 
             if (spell != null) {
+                spell.level(spellLevel);
                 user.belongings.collect(spell);
             }
         }
