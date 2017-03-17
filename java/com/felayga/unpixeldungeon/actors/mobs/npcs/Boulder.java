@@ -46,9 +46,6 @@ import com.watabou.utils.Bundle;
 import com.watabou.utils.Random;
 
 public class Boulder extends NPC {
-    public final static String STOREDPOS = "storedPos";
-    public final static String STOREDFLAG = "storedFlag";
-
     public Boulder() {
         super(0);
 
@@ -115,8 +112,8 @@ public class Boulder extends NPC {
         }
     }
 
-    private int storedPos = Constant.Position.NONE;
-    private boolean storedFlag = false;
+    private int losBlockStoredPos = Constant.Position.NONE;
+    private boolean losBlockStoredFlag = false;
     private boolean pluggingPit = false;
 
     @Override
@@ -128,7 +125,7 @@ public class Boulder extends NPC {
     protected boolean act() {
         boolean retval = super.act();
 
-        initializationCheck();
+        losBlockInitializationCheck();
 
         return retval;
     }
@@ -137,13 +134,13 @@ public class Boulder extends NPC {
     protected void onAdd() {
         super.onAdd();
 
-        initializationCheck();
+        losBlockInitializationCheck();
     }
 
     private boolean initializing = false;
 
-    private void initializationCheck() {
-        if (storedPos < 0 || (!Level.losBlocking[pos()])) {
+    private void losBlockInitializationCheck() {
+        if (losBlockStoredPos < 0 || (!Level.losBlocking[pos()])) {
             initializing = true;
             move(pos());
             initializing = false;
@@ -153,11 +150,11 @@ public class Boulder extends NPC {
 
     @Override
     public void move(int newPos) {
-        int tempPos = storedPos;
-        boolean tempFlag = storedFlag;
+        int tempPos = losBlockStoredPos;
+        boolean tempFlag = losBlockStoredFlag;
 
-        storedPos = newPos;
-        storedFlag = Level.losBlocking[newPos];
+        losBlockStoredPos = newPos;
+        losBlockStoredFlag = Level.losBlocking[newPos];
 
         if (!initializing) {
             if (!pluggingPit) {
@@ -213,8 +210,8 @@ public class Boulder extends NPC {
             //Dungeon.level.spawnGemstones(pos);
             Dungeon.level.drop(new Rock().quantity(Random.IntRange(3, 23)), pos()).rockBottom();
 
-            Level.losBlocking[storedPos] = storedFlag;
-            GameScene.updateMap(storedPos);
+            Level.losBlocking[losBlockStoredPos] = losBlockStoredFlag;
+            GameScene.updateMap(losBlockStoredPos);
             Dungeon.observe();
         } else {
             sprite.alpha(0.0f);
@@ -226,20 +223,23 @@ public class Boulder extends NPC {
         sprite.die();
     }
 
+    private final static String LOSBLOCKSTOREDPOS = "losBlockStoredPos";
+    private final static String LOSBLOCKSTOREDFLAG = "losBlockStoredFlag";
+
     @Override
     public void storeInBundle(Bundle bundle) {
         super.storeInBundle(bundle);
 
-        bundle.put(STOREDPOS, storedPos);
-        bundle.put(STOREDFLAG, storedFlag);
+        bundle.put(LOSBLOCKSTOREDPOS, losBlockStoredPos);
+        bundle.put(LOSBLOCKSTOREDFLAG, losBlockStoredFlag);
     }
 
     @Override
     public void restoreFromBundle(Bundle bundle) {
         super.restoreFromBundle(bundle);
 
-        storedPos = bundle.getInt(STOREDPOS);
-        storedFlag = bundle.getBoolean(STOREDFLAG);
+        losBlockStoredPos = bundle.getInt(LOSBLOCKSTOREDPOS);
+        losBlockStoredFlag = bundle.getBoolean(LOSBLOCKSTOREDFLAG);
     }
 
     @Override

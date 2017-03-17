@@ -51,7 +51,8 @@ public enum Characteristic {
     Orc                 ("Orc", 0x002000),
     Concealer           ("Hides under items", 0x004000),
     NoExperience        ("Not worth fighting", 0x008000),
-    SilverVulnerable    ("Silver-vulnerable", 0x010000);
+    SilverVulnerable    ("Silver-vulnerable", 0x010000),
+    LOSBlocking         (null, 0x020000);
 
     public final String name;
     public final int value;
@@ -70,6 +71,8 @@ public enum Characteristic {
 
         return retval;
     }
+
+    public static final int MAXVALUE = 19;
 
     public static Characteristic fromInt(int value) {
         switch (value) {
@@ -109,6 +112,8 @@ public enum Characteristic {
                 return NoExperience;
             case 17:
                 return SilverVulnerable;
+            case 18:
+                return LOSBlocking;
             default:
                 return None;
         }
@@ -117,7 +122,7 @@ public enum Characteristic {
     public static List<Characteristic> toList(long flags) {
         List<Characteristic> retval = new ArrayList<>();
 
-        for (int n = 0; n < 18; n++) {
+        for (int n = 0; n < MAXVALUE; n++) {
             Characteristic type = fromInt(n);
             if ((flags & type.value) == type.value) {
                 retval.add(type);

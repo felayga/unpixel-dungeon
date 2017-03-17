@@ -65,8 +65,11 @@ public class IntrinsicAwareness extends FlavourBuff {
         String retval = "Characteristics:\n";
 
         List<Characteristic> characteristics = Characteristic.toList(target.characteristics);
-        for (int n=0;n<characteristics.size();n++) {
-            retval += characteristics.get(n).name + "\n";
+        for (int n = 0; n < characteristics.size(); n++) {
+            String name = characteristics.get(n).name;
+            if (name != null) {
+                retval += characteristics.get(n).name + "\n";
+            }
         }
 
         return retval;
