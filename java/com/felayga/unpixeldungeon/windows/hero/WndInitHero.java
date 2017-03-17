@@ -166,6 +166,8 @@ public class WndInitHero extends Window {
         hairfaces.add("NONE");
         hairfaces.add("BEARD");
         hairfaces.add("GOATEE");
+        hairfaces.add("BIGBEARD");
+        hairfaces.add("MUSTACHE");
 
         addLeftRightSelector("Face", hairfaces, hairFaceSelected, new LeftRightSelector.Listener() {
             @Override

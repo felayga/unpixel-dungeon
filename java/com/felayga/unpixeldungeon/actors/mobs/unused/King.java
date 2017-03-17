@@ -55,8 +55,8 @@ import com.felayga.unpixeldungeon.items.weapon.enchantments.Death;
 import com.felayga.unpixeldungeon.levels.CityBossLevel;
 import com.felayga.unpixeldungeon.levels.Level;
 import com.felayga.unpixeldungeon.scenes.GameScene;
-import com.felayga.unpixeldungeon.sprites.mobs.KingSprite;
-import com.felayga.unpixeldungeon.sprites.mobs.UndeadSprite;
+import com.felayga.unpixeldungeon.sprites.mobs.unused.KingSprite;
+import com.felayga.unpixeldungeon.sprites.mobs.unused.UndeadSprite;
 import com.watabou.utils.Bundle;
 import com.watabou.utils.PathFinder;
 

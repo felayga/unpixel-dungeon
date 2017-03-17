@@ -27,6 +27,7 @@ package com.felayga.unpixeldungeon.items.weapon.missiles.martial;
 
 import com.felayga.unpixeldungeon.Dungeon;
 import com.felayga.unpixeldungeon.actors.Char;
+import com.felayga.unpixeldungeon.actors.buffs.hero.Encumbrance;
 import com.felayga.unpixeldungeon.actors.hero.Hero;
 import com.felayga.unpixeldungeon.items.weapon.missiles.MissileWeapon;
 import com.felayga.unpixeldungeon.items.weapon.ranged.AmmunitionType;
@@ -40,7 +41,7 @@ public class Boomerang extends MissileWeapon {
 
 	public Boomerang()
 	{
-		super(WeaponSkill.Martial, GameTime.TICK, 1, 5, true, AmmunitionType.None);
+		super(WeaponSkill.Martial, GameTime.TICK, 1, 9, true, AmmunitionType.None);
 
 		name = "boomerang";
 		image = ItemSpriteSheet.RANGED_BOOMERANG;
@@ -52,6 +53,9 @@ public class Boomerang extends MissileWeapon {
 
 		unique = true;
 		bones = false;
+
+        weight(5 * Encumbrance.UNIT);
+        price = 20;
 	}
 
 	@Override

@@ -27,6 +27,7 @@ package com.felayga.unpixeldungeon.items.weapon.missiles.martial;
 
 import com.felayga.unpixeldungeon.actors.Char;
 import com.felayga.unpixeldungeon.actors.buffs.Buff;
+import com.felayga.unpixeldungeon.actors.buffs.hero.Encumbrance;
 import com.felayga.unpixeldungeon.actors.buffs.negative.Bleeding;
 import com.felayga.unpixeldungeon.items.Item;
 import com.felayga.unpixeldungeon.items.weapon.missiles.MissileWeapon;
@@ -40,14 +41,14 @@ import com.watabou.utils.Random;
 public class Tomahawk extends MissileWeapon {
 	
 	public Tomahawk() {
-		super(WeaponSkill.Martial, GameTime.TICK, 4, 20, true, AmmunitionType.None);
+		super(WeaponSkill.Martial, GameTime.TICK, 1, 6, true, AmmunitionType.None);
 
 		name = "tomahawk";
 		image = ItemSpriteSheet.MISSILE_TOMAHAWK;
         material = Material.Wood;
 
-		//STR = 17;
-        price = 15;
+		weight(15 * Encumbrance.UNIT);
+        price = 6;
 	}
 	
 	@Override

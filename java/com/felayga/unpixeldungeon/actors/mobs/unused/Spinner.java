@@ -36,7 +36,7 @@ import com.felayga.unpixeldungeon.items.food.unused.MysteryMeat;
 import com.felayga.unpixeldungeon.items.weapon.melee.mob.PoisonChance;
 import com.felayga.unpixeldungeon.mechanics.GameTime;
 import com.felayga.unpixeldungeon.scenes.GameScene;
-import com.felayga.unpixeldungeon.sprites.mobs.SpinnerSprite;
+import com.felayga.unpixeldungeon.sprites.mobs.unused.SpinnerSprite;
 import com.watabou.utils.Random;
 
 public class Spinner extends Mob {

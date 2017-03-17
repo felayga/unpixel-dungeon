@@ -43,7 +43,7 @@ public class ToxicTrap extends Trap{
 	@Override
 	public void activate() {
 
-		GameScene.add( Blob.seed( Char.Registry.get(ownerRegistryIndex()), pos, 300 + 20 * Dungeon.depthAdjusted, ToxicGas.class ) );
+		GameScene.add( Blob.seed( Char.Registry.get(ownerRegistryIndex()), pos, 100, ToxicGas.class ) );
 
 	}
 

@@ -27,23 +27,15 @@
 package com.felayga.unpixeldungeon.items.wands;
 
 import com.felayga.unpixeldungeon.Dungeon;
-import com.felayga.unpixeldungeon.DungeonTilemap;
+import com.felayga.unpixeldungeon.actors.Actor;
 import com.felayga.unpixeldungeon.actors.Char;
 import com.felayga.unpixeldungeon.actors.buffs.Buff;
-import com.felayga.unpixeldungeon.actors.buffs.hero.Encumbrance;
 import com.felayga.unpixeldungeon.actors.buffs.negative.Blindness;
-import com.felayga.unpixeldungeon.effects.CellEmitter;
-import com.felayga.unpixeldungeon.effects.Halo;
-import com.felayga.unpixeldungeon.effects.particles.FlameParticle;
-import com.felayga.unpixeldungeon.effects.particles.ShaftParticle;
 import com.felayga.unpixeldungeon.levels.Level;
-import com.felayga.unpixeldungeon.levels.PrisonLevel;
 import com.felayga.unpixeldungeon.mechanics.Ballistica;
 import com.felayga.unpixeldungeon.mechanics.GameTime;
 import com.felayga.unpixeldungeon.mechanics.MagicType;
-import com.watabou.noosa.Game;
-import com.watabou.noosa.particles.Emitter;
-import com.watabou.utils.PointF;
+import com.felayga.unpixeldungeon.spellcasting.LightSpellcaster;
 import com.watabou.utils.Random;
 
 /**
@@ -54,25 +46,21 @@ public class WandOfLight extends Wand {
         super(15);
         name = "Wand of Light";
 
-        ballisticaMode = Ballistica.Mode.value(Ballistica.Mode.StopSelf);
         price = 100;
+
+        spellcaster = new LightSpellcaster() {
+            @Override
+            public void onZap(Char source, Ballistica path, int targetPos) {
+                super.onZap(source, path, targetPos);
+
+                WandOfLight.this.wandUsed();
+            }
+        };
     }
 
     @Override
     public int randomCharges() {
         return Random.IntRange(11, 15);
-    }
-
-    @Override
-    protected void onZap(Ballistica beam) {
-        int pos = curUser.pos();
-
-        CellEmitter.get(pos).start(ShaftParticle.FACTORY, 0.2f, 6);
-        for (Integer offset : Level.NEIGHBOURS8) {
-            CellEmitter.get(pos + offset).start(ShaftParticle.FACTORY, 0.4f, 1);
-        }
-        Dungeon.level.setLight(pos, 5, true);
-        Dungeon.level.addVisual(new Aura(pos, false, true));
     }
 
     /*
@@ -94,7 +82,7 @@ public class WandOfLight extends Wand {
 
         for (Integer offset : Level.NEIGHBOURS8) {
             int pos = user.pos() + offset;
-            Char target = Dungeon.level.findMob(pos);
+            Char target = Actor.findChar(pos);
 
             if (target == null) {
                 continue;
@@ -123,52 +111,6 @@ public class WandOfLight extends Wand {
                         "Also dispels magical sources of darkness.";
     }
 
-    public static class Aura extends Emitter {
-        private Halo halo;
 
-        public Aura(int pos, boolean flames, boolean halo) {
-            super();
-            this.pos = pos;
-
-            PointF p = DungeonTilemap.tileCenterToWorld(pos);
-            pos(pos, p.x - 1, p.y + 3, 2, 0);
-
-            if (flames) {
-                pour(FlameParticle.FACTORY, 0.15f);
-            }
-            if (halo) {
-                this.halo = new Halo(16, 0xFFFFCC, 0.1f).point(p.x, p.y);
-                add(this.halo);
-            }
-        }
-
-        private float twitchTime = 0.0f;
-        private float twitchScale = 0.325f;
-        private float twitchDirection = 0.005f;
-
-        @Override
-        public void update() {
-            if (visible = Dungeon.visible[pos]) {
-                if (halo != null) {
-                    twitchTime += Game.elapsed;
-                    while(twitchTime >= 0.1) {
-                        twitchTime -= 0.1;
-                        twitchScale += twitchDirection;
-
-                        if (twitchScale >= 0.35f) {
-                            if (twitchDirection > 0) {
-                                twitchDirection = -twitchDirection;
-                            }
-                        } else if (twitchScale <= 0.3f) {
-                            if (twitchDirection < 0)
-                            twitchDirection = -twitchDirection;
-                        }
-                    }
-                    halo.scale(twitchScale);
-                }
-                super.update();
-            }
-        }
-    }
 }
 

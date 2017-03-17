@@ -50,6 +50,12 @@ import com.watabou.utils.Random;
 
 public class TrapsPainter extends Painter {
 
+    /*
+    public static boolean canUse(Room room) {
+        return room.connected.size() == 1;
+    }
+    */
+
     public static void paint(Level level, Room room) {
 
         fill(level, room, Terrain.WALL);

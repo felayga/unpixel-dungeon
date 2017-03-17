@@ -58,6 +58,9 @@ public class Bag extends Item implements Iterable<Item>, IBag {
 	public static final String AC_OPEN = "OPEN";
 
     protected int baseWeight;
+    public int baseWeight() {
+        return baseWeight;
+    }
 
 	public Bag(Char owner, boolean lockable, int weight) {
 		this.owner = owner;

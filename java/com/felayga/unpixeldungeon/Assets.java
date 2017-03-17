@@ -72,9 +72,11 @@ public class Assets {
 		public static final String ROTHE		= "mobs/rothe.png";
 		public static final String SNAKE		= "mobs/snake.png";
 		public static final String WEREJACKAL	= "mobs/werejackal.png";
+        public static final String HUMAN	    = "mobs/human.png";
 	}
 
-	public static final String ARCS_BG		= "arcs1.png";
+
+    public static final String ARCS_BG		= "arcs1.png";
 	public static final String ARCS_FG		= "arcs2.png";
 	public static final String DASHBOARD	= "dashboard.png";
 	
@@ -113,7 +115,6 @@ public class Assets {
 	public static final String EFFECTS		= "effects.png";
 	
 	public static final String SHEEP	= "sheep.png";
-	public static final String KEEPER	= "shopkeeper.png";
 
 	public static final String GHOST	= "ghost.png";
 	public static final String MAKER	= "wandmaker.png";
@@ -224,5 +225,5 @@ public class Assets {
     public static final String SND_ITEM_BOX = "snd_item_box.mp3";
 	public static final String SND_BOULDER_SMASH = "snd_boulder_smash.mp3";
 	public static final String SND_BOULDER_SCRAPE = "snd_boulder_scrape.mp3";
-    public static final String SND_BOULDER_PLUG = "snd_boulder.plug.mp3";
+    public static final String SND_BOULDER_PLUG = "snd_boulder_plug.mp3";
 }

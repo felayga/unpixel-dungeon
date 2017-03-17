@@ -41,24 +41,17 @@ public class ToxicGas extends Blob implements Hero.Doom {
 
 	@Override
 	protected void evolve() {
-		super.evolve();
+        super.evolve();
 
-		int levelDamage = 5 + Dungeon.depthAdjusted * 5;
-
-		Char ch;
-		for (int i=0; i < LENGTH; i++) {
-			if (cur[i] > 0 && (ch = Actor.findChar( i )) != null) {
+        Char ch;
+        for (int i = 0; i < LENGTH; i++) {
+            if (cur[i] > 0 && (ch = Actor.findChar(i)) != null) {
                 if (ch.canBreathe()) {
-                    int damage = (ch.HT + levelDamage) / 40;
-                    if (Random.Int(40) < (ch.HT + levelDamage) % 40) {
-                        damage++;
-                    }
-
-                    ch.damage(damage, MagicType.Poison, Char.Registry.get(ownerRegistryIndex()), null);
+                    ch.damage(Random.IntRange(1, 4), MagicType.Poison, Char.Registry.get(ownerRegistryIndex()), null);
                 }
-			}
-		}
-	}
+            }
+        }
+    }
 	
 	@Override
 	public void use( BlobEmitter emitter ) {

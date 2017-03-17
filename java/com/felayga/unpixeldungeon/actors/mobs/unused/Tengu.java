@@ -48,14 +48,14 @@ import com.felayga.unpixeldungeon.actors.buffs.negative.Poison;
 import com.felayga.unpixeldungeon.effects.CellEmitter;
 import com.felayga.unpixeldungeon.effects.Speck;
 import com.felayga.unpixeldungeon.items.TomeOfMastery;
-import com.felayga.unpixeldungeon.items.scrolls.ScrollOfMagicMapping;
+import com.felayga.unpixeldungeon.items.scrolls.spellscroll.ScrollOfMagicMapping;
 import com.felayga.unpixeldungeon.items.scrolls.ScrollOfPsionicBlast;
 import com.felayga.unpixeldungeon.items.weapon.enchantments.Death;
 import com.felayga.unpixeldungeon.levels.Level;
 import com.felayga.unpixeldungeon.levels.Terrain;
 import com.felayga.unpixeldungeon.mechanics.Ballistica;
 import com.felayga.unpixeldungeon.scenes.GameScene;
-import com.felayga.unpixeldungeon.sprites.mobs.TenguSprite;
+import com.felayga.unpixeldungeon.sprites.mobs.unused.TenguSprite;
 import com.watabou.utils.Bundle;
 import com.watabou.utils.Random;
 

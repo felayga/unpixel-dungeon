@@ -41,7 +41,11 @@ public class Fruit extends Food {
     }
 
     @Override
-    public String message() {
-        return "This " + name + " is juicy and delicious!";
+    public String message(boolean rotten) {
+        if (!rotten) {
+            return "This " + name + " is juicy and delicious!";
+        } else {
+            return "Blecch!  Rotten fruit.";
+        }
     }
 }

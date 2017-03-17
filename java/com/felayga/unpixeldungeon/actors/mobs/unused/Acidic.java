@@ -29,7 +29,7 @@ package com.felayga.unpixeldungeon.actors.mobs.unused;
 import com.felayga.unpixeldungeon.Badges;
 import com.felayga.unpixeldungeon.actors.Char;
 import com.felayga.unpixeldungeon.actors.mobs.unused.Scorpio;
-import com.felayga.unpixeldungeon.sprites.mobs.AcidicSprite;
+import com.felayga.unpixeldungeon.sprites.mobs.unused.AcidicSprite;
 import com.watabou.utils.Random;
 
 public class Acidic extends Scorpio {

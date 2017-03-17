@@ -53,8 +53,12 @@ public class Meatwad extends Food {
     }
 
     @Override
-    public String message() {
-        return "This " + name + " tastes okay.";
+    public String message(boolean rotten) {
+        if (!rotten) {
+            return "This " + name + " tastes okay.";
+        }else {
+            return super.message(rotten);
+        }
     }
 }
 

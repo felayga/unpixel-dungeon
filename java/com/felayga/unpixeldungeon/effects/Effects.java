@@ -38,7 +38,8 @@ public class Effects {
 		CHAIN,
 		DEATH_RAY,
 		LIGHT_RAY,
-		HEALTH_RAY
+		HEALTH_RAY,
+        CANCELLATION_RAY
 	};
 	
 	public static Image get( Type type ) {
@@ -68,6 +69,9 @@ public class Effects {
 			case HEALTH_RAY:
 				icon.frame(icon.texture.uvRect(16, 32, 32, 40));
 				break;
+            case CANCELLATION_RAY:
+                icon.frame(icon.texture.uvRect(16, 40, 32, 48));
+                break;
 		}
 		return icon;
 	}

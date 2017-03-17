@@ -54,8 +54,6 @@ public class Spinach extends NPC {
         spriteClass = SheepSprite.class;
     }
 
-    public long lifespan;
-
     private boolean initialized = false;
 
     @Override
@@ -68,7 +66,6 @@ public class Spinach extends NPC {
 
         } else {
             initialized = true;
-            spend_new(lifespan + Random.Long(GameTime.TICK * 3), false);
         }
         return true;
     }

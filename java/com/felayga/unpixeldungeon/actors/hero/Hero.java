@@ -71,7 +71,6 @@ import com.felayga.unpixeldungeon.items.armor.Armor;
 import com.felayga.unpixeldungeon.items.armor.boots.Boots;
 import com.felayga.unpixeldungeon.items.artifacts.CapeOfThorns;
 import com.felayga.unpixeldungeon.items.artifacts.EtherealChains;
-import com.felayga.unpixeldungeon.items.artifacts.TalismanOfForesight;
 import com.felayga.unpixeldungeon.items.artifacts.TimekeepersHourglass;
 import com.felayga.unpixeldungeon.items.bags.Bag;
 import com.felayga.unpixeldungeon.items.bags.IBag;
@@ -81,7 +80,6 @@ import com.felayga.unpixeldungeon.items.books.Book;
 import com.felayga.unpixeldungeon.items.food.Food;
 import com.felayga.unpixeldungeon.items.rings.RingOfMight;
 import com.felayga.unpixeldungeon.items.rings.RingOfTenacity;
-import com.felayga.unpixeldungeon.items.scrolls.ScrollOfMagicMapping;
 import com.felayga.unpixeldungeon.items.spells.Spell;
 import com.felayga.unpixeldungeon.items.tools.ITool;
 import com.felayga.unpixeldungeon.items.tools.digging.Pickaxe;
@@ -136,11 +134,6 @@ import java.util.List;
 //import com.felayga.unpixeldungeon.items.artifacts.DriedRose;
 
 public class Hero extends Char {
-
-    {
-        actPriority = 0; //acts at priority 0, baseline for the rest of behaviour.
-    }
-
     private static final String TXT_LEAVE = "One does not simply leave Pixel Dungeon.";
 
     public static final int MAX_LEVEL = 30;
@@ -169,8 +162,7 @@ public class Hero extends Char {
     public HeroSubClass subClass = HeroSubClass.NONE;
 
     public WeaponSkill weaponSkill = WeaponSkill.None;
-    private int defenseSkill = 0;
-    private int spellSkill = 0;
+    public int spellSkill = 0;
 
     public boolean ready = false;
     private boolean damageInterrupt = true;
@@ -322,6 +314,8 @@ public class Hero extends Char {
     public Hero() {
         super(1);
 
+        actPriority = 0; //acts at priority 0, baseline for the rest of behaviour.
+
         name = "you";
 
         HP = HT = 12;
@@ -330,6 +324,7 @@ public class Hero extends Char {
         resetAttributeUse();
 
         motivation = 0;
+        nutrition = 1450;
 
         belongings = new Belongings(this);
 
@@ -353,7 +348,7 @@ public class Hero extends Char {
 	}
 	*/
 
-    private static final String DEFENSE = "defenseSkill";
+    private static final String SPELLSKILL = "spellSkill";
     private static final String WEAPONSKILL = "weaponSkill";
     private static final String ATTRIBUTE0USE = "attribute0Use";
     private static final String ATTRIBUTE1USE = "attribute1Use";
@@ -369,7 +364,7 @@ public class Hero extends Char {
         heroClass.storeInBundle(bundle);
         subClass.storeInBundle(bundle);
 
-        bundle.put(DEFENSE, defenseSkill);
+        bundle.put(SPELLSKILL, spellSkill);
 
         bundle.put(WEAPONSKILL, weaponSkill.value);
 
@@ -392,7 +387,7 @@ public class Hero extends Char {
         heroClass = HeroClass.restoreInBundle(bundle);
         subClass = HeroSubClass.restoreInBundle(bundle);
 
-        defenseSkill = bundle.getInt(DEFENSE);
+        spellSkill = bundle.getInt(SPELLSKILL);
 
         weaponSkill = WeaponSkill.fromInt(bundle.getInt(WEAPONSKILL));
 
@@ -444,6 +439,8 @@ public class Hero extends Char {
         lastAction = null;
 
         act(); //keeps appearance of moving with pushed boulder
+        //unless mobs spawn (pushing boulder on summoning trap, etc) in which case the movement is interrupted
+        //todo: fix movement of non-summoning-trap mob sighting cases stopping the player here
     }
 
     @Override
@@ -522,7 +519,6 @@ public class Hero extends Char {
         checkVisibleMobs();
 
         if (curAction == null) {
-
             if (resting) {
                 spend_new(Constant.Time.HERO_REST, false);
                 next();
@@ -533,7 +529,6 @@ public class Hero extends Char {
             return false;
 
         } else {
-
             resting = false;
 
             ready = false;
@@ -683,7 +678,7 @@ public class Hero extends Char {
 
             if (hunger.isStuffed() && food.energyLeft() && !action.forced) {
                 unPixelDungeon.scene().add(
-                        new WndOptions(foodItem.getName(), "You're having a hard time getting it all down.  Stop eating?", "YES", "NO") {
+                        new WndOptions(foodItem.getName(false), "You're having a hard time getting it all down.  Stop eating?", "YES", "NO") {
                             @Override
                             protected void onSelect(int index) {
                                 switch (index) {
@@ -715,19 +710,6 @@ public class Hero extends Char {
             //ready();
             return false;
         }
-    }
-
-    public boolean tryCastSpell(int spellLevel) {
-        int difficulty = spellLevel * 4 - spellSkill * 6 - level / 3 - 5;
-        int chance = INTWIS() * 12 - belongings.getSpellFailure();
-
-        if (difficulty > 0) {
-            chance += -(int) (Math.sqrt(difficulty / 2) * 100);
-        } else {
-            chance += -difficulty * 42 / spellLevel;
-        }
-
-        return Random.PassFail(chance);
     }
 
     public void _ready() {
@@ -971,7 +953,14 @@ public class Hero extends Char {
                         int terrain = Dungeon.level.map(digPos);
 
                         if (pos() != digPos && (Terrain.flags[terrain] & (Terrain.FLAG_BURNABLE | Terrain.FLAG_STONE)) == 0) {
-                            GLog.n("Your " + action.tool.getName() + " isn't strong enough for this.");
+                            switch(terrain) {
+                                case Terrain.IRON_BARS:
+                                    GLog.n("Clang!");
+                                    break;
+                                default:
+                                    GLog.n("Your " + action.tool.getName() + " isn't strong enough for this.");
+                                    break;
+                            }
                             ready();
                             return false;
                         }
@@ -1104,7 +1093,7 @@ public class Hero extends Char {
             }
 
             return true;
-        } else if (Level.fieldOfView[digPos] && getCloser(digPos)) {
+        } else if (getCloser(digPos)) {
             return true;
         } else {
             ready();
@@ -1113,10 +1102,8 @@ public class Hero extends Char {
     }
 
     private boolean actMove(HeroAction.Move action) {
-
         if (getCloser(action.dst)) {
             return true;
-
         } else {
             ready();
 
@@ -2022,12 +2009,14 @@ public class Hero extends Char {
             dmg = thorns.proc(dmg, source, this);
         }
 
+        /*
         int tenacity = 0;
         for (Buff buff : buffs(RingOfTenacity.Tenacity.class)) {
             tenacity += ((RingOfTenacity.Tenacity) buff).level;
         }
         if (tenacity != 0) //(HT - HP)/HT = heroes current % missing health.
             dmg = (int) Math.ceil((float) dmg * Math.pow(0.9, tenacity * ((float) (HT - HP) / HT)));
+        */
 
         dmg = super.damage(dmg, type, source, sourceItem);
 
@@ -2102,6 +2091,7 @@ public class Hero extends Char {
     }
 
     private boolean getCloser(final int target) {
+        GLog.d("getCloser");
         long speed = movementSpeed();
 
         if (speed == 0) {
@@ -2131,7 +2121,8 @@ public class Hero extends Char {
             boolean[] diagonal = Level.diagonal;
 
             step = Dungeon.findPath(this, pos(), target, candidate, diagonal, Level.fieldOfView);
-            if (Dungeon.level.findMob(step) != null) {
+            Actor test = Actor.findChar(step);
+            if (test != null && test != this) {
                 GLog.w("Hmm.  Something is in the way.");
                 lastAction = curAction;
                 return false;
@@ -2161,64 +2152,58 @@ public class Hero extends Char {
         }
     }
 
-    public boolean handle(int pos, boolean fromGameScene) {
+    public boolean handle(int pos, HeroAction actionOverride) {
         if (pos == Constant.Position.NONE) {
             return false;
         }
 
-        Char ch = Actor.findChar(pos);
-        boolean visible = Level.fieldOfView[pos];
-        Heap heap;
-        ITool[] tools;
+        if (actionOverride == null) {
+            Char ch = Actor.findChar(pos);
+            boolean visible = Level.fieldOfView[pos];
+            Heap heap;
+            ITool[] tools;
 
-        int cell = Dungeon.level.map(pos);
+            int cell = Dungeon.level.map(pos);
 
-        if (cell == Terrain.ALCHEMY) {
-            curAction = new HeroAction.InteractPosition.Cook(pos);
-        } else if (cell == Terrain.WELL || cell == Terrain.WELL_MAGIC) {
-            curAction = new HeroAction.InteractPosition.Well(pos);
-        } else if (visible && ch instanceof Mob) {
-            if (ch instanceof NPC) {
-                curAction = new HeroAction.Interact((NPC) ch);
+            if (cell == Terrain.ALCHEMY) {
+                curAction = new HeroAction.InteractPosition.Cook(pos);
+            } else if (cell == Terrain.WELL || cell == Terrain.WELL_MAGIC) {
+                curAction = new HeroAction.InteractPosition.Well(pos);
+            } else if (visible && ch instanceof Mob) {
+                if (ch instanceof NPC) {
+                    curAction = new HeroAction.Interact((NPC) ch);
+                } else {
+                    curAction = new HeroAction.Attack(ch);
+                }
+            } else if (Dungeon.level.warnings.findWarning(pos)) {
+                curAction = new HeroAction.Attack(pos);
+            } else if ((heap = Dungeon.level.heaps.get(pos)) != null && !Dungeon.level.solid[pos]) {
+                switch (heap.type) {
+                    case HEAP:
+                        if (unPixelDungeon.gameplay_autoPickup()) {
+                            curAction = new HeroAction.HandleHeap(pos);
+                        } else {
+                            curAction = new HeroAction.Move(pos);
+                        }
+                        break;
+                    case FOR_SALE:
+                        curAction = heap.size() == 1 && heap.peek().price() > 0 ?
+                                new HeroAction.Buy(pos) :
+                                new HeroAction.HandleHeap(pos);
+                        break;
+                    default:
+                        curAction = new HeroAction.OpenChest(pos);
+                }
+            } else if (cell == Terrain.LOCKED_DOOR || cell == Terrain.LOCKED_EXIT || cell == Terrain.DOOR) {
+                curAction = new HeroAction.HandleDoor(pos);
+            } else if (Level.solid[pos] && (Dungeon.level.visited[pos] || Dungeon.level.mapped[pos]) && ((tools = belongings.getToolTypes(true, false, Pickaxe.NAME)) != null && tools.length > 0 && tools[0] != null)) {
+                curAction = new HeroAction.Dig((Pickaxe) tools[0], pos, 101);
             } else {
-                curAction = new HeroAction.Attack(ch);
+                curAction = new HeroAction.Move(pos);
+                lastAction = null;
             }
-        } else if (Dungeon.level.warnings.findWarning(pos)) {
-            curAction = new HeroAction.Attack(pos);
-        } else if ((heap = Dungeon.level.heaps.get(pos)) != null && !Dungeon.level.solid[pos]) {
-            switch (heap.type) {
-                case HEAP:
-                    if ((!fromGameScene) || unPixelDungeon.gameplay_autoPickup() || pos == pos()) {
-                        curAction = new HeroAction.HandleHeap(pos);
-                    } else {
-                        curAction = new HeroAction.Move(pos);
-                    }
-                    break;
-                case FOR_SALE:
-                    curAction = heap.size() == 1 && heap.peek().price() > 0 ?
-                            new HeroAction.Buy(pos) :
-                            new HeroAction.HandleHeap(pos);
-                    break;
-                default:
-                    curAction = new HeroAction.OpenChest(pos);
-            }
-        } else if (cell == Terrain.LOCKED_DOOR || cell == Terrain.LOCKED_EXIT || cell == Terrain.DOOR || (!fromGameScene && cell == Terrain.OPEN_DOOR)) {
-            curAction = new HeroAction.HandleDoor(pos);
-        } else if (!fromGameScene && pos == Dungeon.level.exit) {
-            curAction = new HeroAction.MoveLevel(pos, 1, false);
-        } else if (!fromGameScene && pos == Dungeon.level.entrance) {
-            curAction = new HeroAction.MoveLevel(pos, -1, false);
-        } else if (!fromGameScene && pos == Dungeon.level.exitAlternate) {
-            curAction = new HeroAction.MoveLevel(pos, 1, true);
-        } else if (!fromGameScene && pos == Dungeon.level.entranceAlternate) {
-            curAction = new HeroAction.MoveLevel(pos, -1, true);
-        } else if (Level.solid[pos] && ((tools = belongings.getToolTypes(true, false, Pickaxe.NAME)) != null && tools[0] != null)) {
-            curAction = new HeroAction.Dig((Pickaxe) tools[0], pos, 101);
-        } else if (!fromGameScene && cell == Terrain.SIGN) {
-            curAction = new HeroAction.ReadSign(pos());
         } else {
-            curAction = new HeroAction.Move(pos);
-            lastAction = null;
+            curAction = actionOverride;
         }
 
         //GLog.d("handle() set curAction="+(curAction != null ? curAction.getClass().toString() : "null"));
@@ -2620,7 +2605,7 @@ public class Hero extends Char {
                     searchChanceModifier -= 48;
 
                     if (Random.PassFail(searchChance)) {
-                        if (Dungeon.level.findMob(p) != null) {
+                        if (Actor.findChar(p) != null) {
                             if (!Dungeon.level.warnings.findWarning(p)) {
                                 Dungeon.level.warnings.add(p);
                                 foundMonsters++;
@@ -2655,7 +2640,7 @@ public class Hero extends Char {
 
                         Dungeon.level.discover(p);
 
-                        ScrollOfMagicMapping.discoverFx(p);
+                        CellEmitter.get(p).start(Speck.factory(Speck.DISCOVER), 0.1f, 4);
 
                         secretFound = true;
                     }

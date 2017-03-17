@@ -1238,27 +1238,24 @@ public class Belongings implements Iterable<Item>, IDecayable, IBag {
 
         boolean passableOrigin = Level.passable[pos];
 
-        List<Item> items = new ArrayList<Item>();
-
-        Iterator<Item> iterator = iterator(true, true, false);
-        while (iterator.hasNext()) {
-            Item item = iterator.next();
-            items.add(item);
-        }
-
         Collections.shuffle(passable);
         if (passableOrigin) {
             passable.add(0, pos);
         }
 
         int passableIndex = 0;
-        for (Item item : items) {
+
+        Iterator<Item> iterator = iterator(true, true, false);
+        while (iterator.hasNext()) {
+            Item item = iterator.next();
+
             if (!item.droppable) {
                 continue;
             }
 
             //GLog.d("drop " + item.getDisplayName());
-            Dungeon.level.drop(remove(item), passable.get(passableIndex)).sprite.drop(pos);
+            //todo: resolve item stack duplication on death drop
+            Dungeon.level.drop(item, passable.get(passableIndex)).sprite.drop(pos);
 
             passableIndex = (passableIndex + 1) % passable.size();
         }

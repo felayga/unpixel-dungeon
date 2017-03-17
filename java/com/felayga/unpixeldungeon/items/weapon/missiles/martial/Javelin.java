@@ -27,6 +27,7 @@ package com.felayga.unpixeldungeon.items.weapon.missiles.martial;
 
 import com.felayga.unpixeldungeon.actors.Char;
 import com.felayga.unpixeldungeon.actors.buffs.Buff;
+import com.felayga.unpixeldungeon.actors.buffs.hero.Encumbrance;
 import com.felayga.unpixeldungeon.actors.buffs.negative.Cripple;
 import com.felayga.unpixeldungeon.items.Item;
 import com.felayga.unpixeldungeon.items.weapon.missiles.MissileWeapon;
@@ -39,14 +40,14 @@ import com.watabou.utils.Random;
 
 public class Javelin extends MissileWeapon {
 	public Javelin() {
-		super(WeaponSkill.Martial, GameTime.TICK, 2, 15, true, AmmunitionType.None);
+		super(WeaponSkill.Martial, GameTime.TICK, 1, 6, true, AmmunitionType.None);
 
 		name = "javelin";
 		image = ItemSpriteSheet.MISSILE_JAVELIN;
         material = Material.Iron;
 
-		//STR = 15;
-        price = 12;
+		weight(20 * Encumbrance.UNIT);
+        price = 3;
 	}
 	
 	@Override

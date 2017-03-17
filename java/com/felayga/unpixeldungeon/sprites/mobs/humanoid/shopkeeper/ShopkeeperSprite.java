@@ -38,7 +38,7 @@ public class ShopkeeperSprite extends HumanoidSprite {
     }
 
 	public ShopkeeperSprite(int index) {
-		super(index, Assets.KEEPER, 14, 14, 18);
+		super(index, Assets.Mobs.HUMAN, 14, 15, 18);
 	}
 
     @Override

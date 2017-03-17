@@ -39,6 +39,7 @@ import com.felayga.unpixeldungeon.actors.buffs.Buff;
 import com.felayga.unpixeldungeon.actors.buffs.hero.LockedFloor;
 import com.felayga.unpixeldungeon.actors.buffs.hero.Shadows;
 import com.felayga.unpixeldungeon.actors.buffs.negative.Blindness;
+import com.felayga.unpixeldungeon.actors.buffs.negative.Fainting;
 import com.felayga.unpixeldungeon.actors.buffs.positive.ItemVision;
 import com.felayga.unpixeldungeon.actors.buffs.positive.Light;
 import com.felayga.unpixeldungeon.actors.buffs.positive.MindVision;
@@ -77,6 +78,7 @@ import com.felayga.unpixeldungeon.mechanics.ShadowCaster;
 import com.felayga.unpixeldungeon.plants.BlandfruitBush;
 import com.felayga.unpixeldungeon.plants.Plant;
 import com.felayga.unpixeldungeon.scenes.GameScene;
+import com.felayga.unpixeldungeon.spellcasting.LightSpellcaster;
 import com.felayga.unpixeldungeon.sprites.ItemSprite;
 import com.felayga.unpixeldungeon.ui.CustomTileVisual;
 import com.felayga.unpixeldungeon.utils.GLog;
@@ -87,6 +89,7 @@ import com.watabou.noosa.audio.Sample;
 import com.watabou.noosa.particles.Emitter;
 import com.watabou.utils.Bundlable;
 import com.watabou.utils.Bundle;
+import com.watabou.utils.Point;
 import com.watabou.utils.PointF;
 import com.watabou.utils.Random;
 import com.watabou.utils.SparseArray;
@@ -134,6 +137,66 @@ public abstract class Level implements Bundlable, IDecayable {
             +2, +1, 0, -1, -2,
             +2 - WIDTH, +1 - WIDTH, -WIDTH, -1 - WIDTH, -2 - WIDTH,
             +2 - 2 * WIDTH, +1 - 2 * WIDTH, -2 * WIDTH, -1 - 2 * WIDTH, -2 - 2 * WIDTH};
+
+    private static SparseArray<HashSet<Point>> radiusCalculations = new SparseArray<>();
+
+    public static HashSet<Integer> getRadius(int pos, int radius) {
+        HashSet<Integer> result = new HashSet<>();
+
+        if (radius > 1) {
+            HashSet<Point> subResult = radiusCalculations.get(radius);
+
+            if (subResult == null) {
+                subResult = new HashSet<>();
+                radiusCalculations.put(radius, subResult);
+
+                int y1 = radius;
+
+                for (int x1 = 0; x1 >= -radius; x1--) {
+                    while (distance(x1, y1, 0, 0) > radius) {
+                        y1--;
+                    }
+
+                    int x2 = -x1;
+                    int y2 = -y1;
+
+                    subResult.add(new Point(x1, y1));
+
+                    if (y2 != y1) {
+                        for (int suby2 = y2; suby2 < y1; suby2++) {
+                            subResult.add(new Point(x1, suby2));
+                        }
+                    }
+
+                    if (x2 != x1) {
+                        subResult.add(new Point(x2, y1));
+
+                        if (y2 != y1) {
+                            for (int suby2 = y2; suby2 < y1; suby2++) {
+                                subResult.add(new Point(x2, suby2));
+                            }
+                        }
+                    }
+                }
+            }
+
+            int x = pos % WIDTH;
+            int y = pos / WIDTH;
+
+            for (Point subPos : subResult) {
+                int subX = subPos.x + x;
+                int subY = subPos.y + y;
+
+                if (subX >= 0 && subX < WIDTH && subY >= 0 && subY < HEIGHT) {
+                    result.add(subX + subY * WIDTH);
+                }
+            }
+        } else {
+            result.add(pos);
+        }
+
+        return result;
+    }
 
 
     protected static final long TIME_TO_RESPAWN = GameTime.TICK * 25;
@@ -264,48 +327,8 @@ public abstract class Level implements Bundlable, IDecayable {
         if (radius > 1) {
             lightMap[pos] |= LIGHTMAP_GLOWYSPOT;
 
-            int centerx = pos % WIDTH;
-            int centery = pos / WIDTH;
-
-            int y1 = centery + radius;
-
-            for (int x1 = centerx; x1 >= centerx - radius; x1--) {
-                while (distance(x1, y1, centerx, centery) > radius) {
-                    y1--;
-                }
-
-                GLog.d("x1="+x1+" y1="+y1+" distance="+distance(x1, y1, centerx, centery));
-
-                int x2 = centerx + centerx - x1;
-                int y2 = centery + centery - y1;
-
-                if (x1 >= 0 && x1 < WIDTH) {
-                    if (y1 >= 0 && y1 < HEIGHT) {
-                        setLight(x1 + y1 * WIDTH, 0, light);
-                    }
-
-                    if (y2 != y1) {
-                        for (int suby2 = y2;suby2 < y1;suby2++) {
-                            if (suby2 >= 0 && suby2 < HEIGHT) {
-                                setLight(x1 + suby2 * WIDTH, 0, light);
-                            }
-                        }
-                    }
-                }
-
-                if (x2 != x1 && x1 >= 0 && x2 < WIDTH) {
-                    if (y1 >= 0 && y1 < HEIGHT) {
-                        setLight(x2 + y1 * WIDTH, 0, light);
-                    }
-
-                    if (y2 != y1) {
-                        for (int suby2 = y2;suby2 < y1;suby2++) {
-                            if (suby2 >= 0 && suby2 < HEIGHT) {
-                                setLight(x2 + suby2 * WIDTH, 0, light);
-                            }
-                        }
-                    }
-                }
+            for (Integer spot : getRadius(pos, radius)) {
+                setLight(spot, 0, light);
             }
 
             GameScene.updateMap();
@@ -691,7 +714,6 @@ public abstract class Level implements Bundlable, IDecayable {
         // For levels saved before 1.6.3
         // Seeing as shattered started on 1.7.1 this is never used, but the code may be resused in future.
         if (_map.length < LENGTH) {
-
             resizingNeeded = true;
             loadedMapSize = (int) Math.sqrt(_map.length);
 
@@ -779,7 +801,7 @@ public abstract class Level implements Bundlable, IDecayable {
                 visuals.add( new SewerLevel.Sink( i, -2.5f, -6.0f ) );
             }
             if ((lightMap[i] & LIGHTMAP_GLOWYSPOTSHOWN) == LIGHTMAP_GLOWYSPOTSHOWN) {
-                visuals.add(new WandOfLight.Aura(i, false, true));
+                visuals.add(new LightSpellcaster.Aura(i, false, true));
             }
         }
         return visuals;
@@ -807,7 +829,7 @@ public abstract class Level implements Bundlable, IDecayable {
     }
 
     public void replaceMob(int pos, final Class<? extends Mob> type) {
-
+        //todo: polymorph implementation
     }
 
     public void spawnMob(final int pos, final Class<? extends Mob> type, final int quantity) {
@@ -1233,7 +1255,11 @@ public abstract class Level implements Bundlable, IDecayable {
         //Painter.set(this, cell, terrain);
 
         if (terrain > Terrain.OVERLAY) {
-            set(cell, (terrain % Terrain.FACED_TILE_BLOCKSIZE) + Terrain.OVERLAY_TILES, terrain, flagUpdates);
+            set(cell, (terrain % Terrain.FACED_TILE_BLOCKSIZE) + Terrain.OVERLAY_TILES, terrain, false);
+            if (!repair(cell, false, flagUpdates) && flagUpdates) {
+                updateFlagMap(cell);
+                updateLightMap(cell);
+            }
         } else {
             set(cell, terrain, Terrain.OVERLAY, flagUpdates);
         }
@@ -1259,7 +1285,7 @@ public abstract class Level implements Bundlable, IDecayable {
         }
     }
 
-    public void repair(int cell, boolean mapUpdates, boolean flagUpdates) {
+    public boolean repair(int cell, boolean mapUpdates, boolean flagUpdates) {
         int oldTerrain = _map[cell];
         int oldUnderTerrain = _underMap[cell];
 
@@ -1267,13 +1293,15 @@ public abstract class Level implements Bundlable, IDecayable {
         int underTerrain = repair(_underMap, cell);
 
         if (terrain == oldTerrain && underTerrain == oldUnderTerrain) {
-            return;
+            return false;
         }
 
         set(cell, terrain, underTerrain, flagUpdates);
         if (mapUpdates) {
             GameScene.updateMap(cell);
         }
+
+        return true;
     }
 
     private static int repair(int[] source, int cell) {
@@ -1326,7 +1354,7 @@ public abstract class Level implements Bundlable, IDecayable {
 
     private static boolean isCooperative(int terrain, int test) {
         if (terrain >= Terrain.FACED_TILE_OVERLAY_MIN) {
-            if (test == Terrain.WALL_STONE || test == Terrain.OVERLAY) {
+            if (test == Terrain.WALL_STONE || test == Terrain.WALL_DECO || test == Terrain.OVERLAY) {
                 return true;
             }
 
@@ -1359,7 +1387,7 @@ public abstract class Level implements Bundlable, IDecayable {
             }
             */
         } else if (terrain >= Terrain.PUDDLE_TILES && terrain <= Terrain.PUDDLE) {
-            return test == Terrain.WALL;
+            return test == Terrain.WALL || test == Terrain.WALL_DECO;
         }
 
         return false;
@@ -1469,6 +1497,7 @@ public abstract class Level implements Bundlable, IDecayable {
 
         test = map(cell);
         if (test == placedTerrain) {
+            //todo: adjacent overlay cells not being assigned correctly
             return;
         }
 
@@ -1643,7 +1672,6 @@ public abstract class Level implements Bundlable, IDecayable {
 	*/
 
     public Heap drop(Item item, int cell) {
-
         //This messy if statement deals will items which should not drop in challenges primarily.
         if ((Dungeon.isChallenged(Challenges.NO_FOOD) && (item instanceof Food || item instanceof BlandfruitBush.Seed)) ||
                 (Dungeon.isChallenged(Challenges.NO_ARMOR) && item instanceof Armor) ||
@@ -1707,12 +1735,12 @@ public abstract class Level implements Bundlable, IDecayable {
 
         if (cell == Terrain.HIGH_GRASS ||
                 cell == Terrain.EMPTY ||
-                cell == Terrain.EMBERS ||
+                cell == Terrain.CHARCOAL ||
                 cell == Terrain.EMPTY_DECO) {
             map(pos, Terrain.GRASS);
             burnable[pos] = true;
             GameScene.updateMap(pos);
-        }
+        }//todo: grass on dirt?
 
         plant = seed.couch(pos);
         plants.put(pos, plant);
@@ -1879,9 +1907,10 @@ public abstract class Level implements Bundlable, IDecayable {
         int cx = c.pos() % WIDTH;
         int cy = c.pos() / WIDTH;
 
-        boolean hasVision = c.viewDistance > 0 && c.buff(Blindness.class) == null && c.buff(Shadows.class) == null
-                && c.buff(TimekeepersHourglass.timeStasis.class) == null && c.isAlive();
-        boolean hasHearing = c.hearDistance > 0;
+        boolean isAlive = c.isAlive();
+
+        boolean hasVision = isAlive && c.viewDistance > 0 && c.buff(Blindness.class) == null && c.buff(Shadows.class) == null;
+        boolean hasHearing = isAlive && c.hearDistance > 0 && c.buff(Fainting.class) == null;
         boolean hasFeeling = c.touchDistance > 0;
 
         if (c.viewDistance == c.hearDistance) {
@@ -2135,8 +2164,8 @@ public abstract class Level implements Bundlable, IDecayable {
             case Terrain.STAIRS_DOWN:
             case Terrain.STAIRS_DOWN_ALTERNATE:
                 return "Downward staircase";
-            case Terrain.EMBERS:
-                return "Embers";
+            case Terrain.CHARCOAL:
+                return "Charcoal";
             case Terrain.LOCKED_DOOR:
                 return "Locked door";
             case Terrain.PEDESTAL:
@@ -2162,8 +2191,6 @@ public abstract class Level implements Bundlable, IDecayable {
                 return "Triggered trap";
             case Terrain.ALCHEMY:
                 return "Brewing Station";
-            case Terrain.DENATURED_DEBRIS:
-                return "Denatured Debris";
             case Terrain.WOOD_DEBRIS:
                 return "Wooden Debris";
             case Terrain.WALL_STONE:
@@ -2172,6 +2199,8 @@ public abstract class Level implements Bundlable, IDecayable {
                 return "Empty Brewing Station";
             case Terrain.ALTAR:
                 return "Altar";
+            case Terrain.IRON_BARS:
+                return "Iron Bars";
             default:
                 return "???";
         }
@@ -2191,8 +2220,8 @@ public abstract class Level implements Bundlable, IDecayable {
             case Terrain.UNLOCKED_EXIT:
             case Terrain.STAIRS_DOWN_ALTERNATE:
                 return "Stairs lead down to the lower depth.";
-            case Terrain.EMBERS:
-                return "Embers cover the floor.";
+            case Terrain.CHARCOAL:
+                return "Whatever this was before, it's charcoal now.";
             case Terrain.HIGH_GRASS:
                 return "Dense vegetation blocks the view.";
             case Terrain.LOCKED_DOOR:
@@ -2214,12 +2243,12 @@ public abstract class Level implements Bundlable, IDecayable {
                 return "The brewing equipment here has been used up.";
             case Terrain.EMPTY_WELL:
                 return "The well has run dry.";
-            case Terrain.DENATURED_DEBRIS:
-                return "Unrecognizable debris covers the floor.";
             case Terrain.WOOD_DEBRIS:
                 return "Wooden debris covers the floor.";
             case Terrain.ALTAR:
                 return "Drop items here to determine their blessed or cursed status.";
+            case Terrain.IRON_BARS:
+                return "These iron bars were used to form a holding cell.";
             default:
                 if (tile >= Terrain.PUDDLE_TILES && tile <= Terrain.PUDDLE) {
                     return tileDesc(Terrain.PUDDLE);

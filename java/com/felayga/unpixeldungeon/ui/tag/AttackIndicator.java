@@ -27,6 +27,7 @@ package com.felayga.unpixeldungeon.ui.tag;
 
 import com.felayga.unpixeldungeon.Dungeon;
 import com.felayga.unpixeldungeon.actors.Char;
+import com.felayga.unpixeldungeon.actors.hero.HeroAction;
 import com.felayga.unpixeldungeon.actors.mobs.Mob;
 import com.felayga.unpixeldungeon.levels.Level;
 import com.felayga.unpixeldungeon.sprites.CharSprite;
@@ -170,7 +171,7 @@ public class AttackIndicator extends Tag {
 	@Override
 	protected void onClick() {
 		if (enabled) {
-			Dungeon.hero.handle( lastTarget.pos(), false );
+			Dungeon.hero.handle( lastTarget.pos(), new HeroAction.Attack(lastTarget.pos()) );
 		}
 	}
 	

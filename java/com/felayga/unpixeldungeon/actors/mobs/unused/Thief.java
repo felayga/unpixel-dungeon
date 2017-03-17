@@ -34,7 +34,7 @@ import com.felayga.unpixeldungeon.items.artifacts.MasterThievesArmband;
 import com.felayga.unpixeldungeon.items.weapon.melee.mob.StealChance;
 import com.felayga.unpixeldungeon.mechanics.GameTime;
 import com.felayga.unpixeldungeon.sprites.CharSprite;
-import com.felayga.unpixeldungeon.sprites.mobs.ThiefSprite;
+import com.felayga.unpixeldungeon.sprites.mobs.unused.ThiefSprite;
 import com.watabou.utils.Random;
 
 public class Thief extends Mob {

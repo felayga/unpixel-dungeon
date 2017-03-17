@@ -43,7 +43,7 @@ public class ParalyticTrap extends Trap{
 	@Override
 	public void activate() {
 
-		GameScene.add( Blob.seed( Char.Registry.get(ownerRegistryIndex()), pos, 80 + 5 * Dungeon.depthAdjusted, ParalyticGas.class ) );
+		GameScene.add( Blob.seed( Char.Registry.get(ownerRegistryIndex()), pos, 100, ParalyticGas.class ) );
 
 	}
 

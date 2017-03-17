@@ -37,7 +37,7 @@ import com.felayga.unpixeldungeon.items.weapon.Weapon.Enchantment;
 import com.felayga.unpixeldungeon.items.weapon.enchantments.Death;
 import com.felayga.unpixeldungeon.items.weapon.enchantments.Leech;
 import com.felayga.unpixeldungeon.items.weapon.melee.MeleeWeapon;
-import com.felayga.unpixeldungeon.sprites.mobs.StatueSprite;
+import com.felayga.unpixeldungeon.sprites.mobs.unused.StatueSprite;
 import com.watabou.utils.Bundle;
 
 public class Statue extends Mob {

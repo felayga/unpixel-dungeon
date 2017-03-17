@@ -27,51 +27,29 @@ package com.felayga.unpixeldungeon.actors.blobs;
 
 import com.felayga.unpixeldungeon.actors.Actor;
 import com.felayga.unpixeldungeon.actors.Char;
+import com.felayga.unpixeldungeon.actors.buffs.Buff;
 import com.felayga.unpixeldungeon.effects.BlobEmitter;
 import com.felayga.unpixeldungeon.effects.Speck;
 import com.watabou.utils.Bundle;
 
 public class VenomGas extends Blob {
 
-	private int strength = 0;
-
 	@Override
 	protected void evolve() {
-		super.evolve();
+        super.evolve();
 
-		if (volume == 0){
-			strength = 0;
-		} else {
-			Char ch;
-			for (int i = 0; i < LENGTH; i++) {
-				if (cur[i] > 0 && (ch = Actor.findChar(i)) != null) {
-					if (ch.canBreathe()) {
+        if (volume != 0) {
+            Char ch;
+            for (int i = 0; i < LENGTH; i++) {
+                if (cur[i] > 0 && (ch = Actor.findChar(i)) != null) {
+                    if (ch.canBreathe()) {
                         //todo: keep venom debuff?
                         //Buff.affect(ch, Venom.class).set(2f, strength);
                     }
-				}
-			}
-		}
-	}
-
-	public void setStrength(int str){
-		if (str > strength)
-			strength = str;
-	}
-
-	private static final String STRENGTH = "strength";
-
-	@Override
-	public void restoreFromBundle(Bundle bundle) {
-		super.restoreFromBundle(bundle);
-		strength = bundle.getInt( STRENGTH );
-	}
-
-	@Override
-	public void storeInBundle(Bundle bundle) {
-		super.storeInBundle(bundle);
-		bundle.put( STRENGTH, strength );
-	}
+                }
+            }
+        }
+    }
 
 	@Override
 	public void use( BlobEmitter emitter ) {

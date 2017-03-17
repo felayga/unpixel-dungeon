@@ -42,13 +42,22 @@ public class CramRation extends Food {
     }
 
     @Override
+    protected boolean determineRotten() {
+        return false;
+    }
+
+    @Override
     public String info() {
         return "A fair sized biscuit-like food ration." + super.info();
     }
 
     @Override
-    public String message() {
-        return "That food tasted bland.";
+    public String message(boolean rotten) {
+        if (!rotten) {
+            return "That food tasted bland.";
+        }
+
+        return super.message(rotten);
     }
 
 }

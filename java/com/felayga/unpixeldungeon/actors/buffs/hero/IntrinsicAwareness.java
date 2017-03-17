@@ -29,6 +29,7 @@ package com.felayga.unpixeldungeon.actors.buffs.hero;
 import com.felayga.unpixeldungeon.actors.buffs.Buff;
 import com.felayga.unpixeldungeon.actors.buffs.FlavourBuff;
 import com.felayga.unpixeldungeon.actors.buffs.IIntrinsicBuff;
+import com.felayga.unpixeldungeon.mechanics.Characteristic;
 import com.felayga.unpixeldungeon.mechanics.MagicType;
 import com.felayga.unpixeldungeon.ui.BuffIndicator;
 
@@ -51,15 +52,28 @@ public class IntrinsicAwareness extends FlavourBuff {
 
     @Override
     public String desc() {
-        return "You have been granted knowledge of this being's innate abilities and resistances.\n" +
+        return "You have been granted knowledge of this entity.\n" +
+                "\n" +
+                descCharacteristics() +
                 "\n" +
                 descResistances() +
                 "\n" +
                 descAbilities();
     }
 
+    protected String descCharacteristics() {
+        String retval = "Characteristics:\n";
+
+        List<Characteristic> characteristics = Characteristic.toList(target.characteristics);
+        for (int n=0;n<characteristics.size();n++) {
+            retval += characteristics.get(n).name + "\n";
+        }
+
+        return retval;
+    }
+
     protected String descResistances() {
-        String retval = "Current resistances:\n";
+        String retval = "Resistances:\n";
 
         List<MagicType> resistances = MagicType.toList(target.resistanceMagical);
         for (int n=0;n<resistances.size();n++) {
@@ -70,7 +84,7 @@ public class IntrinsicAwareness extends FlavourBuff {
     }
 
     protected String descAbilities() {
-        String retval = "Current abilities:\n";
+        String retval = "Abilities:\n";
 
         boolean found = false;
         for (Buff buff : target.buffs()) {

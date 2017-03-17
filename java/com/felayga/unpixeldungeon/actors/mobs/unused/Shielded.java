@@ -26,7 +26,7 @@
 package com.felayga.unpixeldungeon.actors.mobs.unused;
 /*
 import com.felayga.unpixeldungeon.Badges;
-import com.felayga.unpixeldungeon.sprites.mobs.ShieldedSprite;
+import com.felayga.unpixeldungeon.sprites.mobs.unused.ShieldedSprite;
 
 public class Shielded extends Brute {
 

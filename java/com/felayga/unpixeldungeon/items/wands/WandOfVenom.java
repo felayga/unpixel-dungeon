@@ -25,52 +25,33 @@
  */
 package com.felayga.unpixeldungeon.items.wands;
 
-import com.felayga.unpixeldungeon.actors.Actor;
 import com.felayga.unpixeldungeon.actors.Char;
-import com.felayga.unpixeldungeon.actors.blobs.Blob;
-import com.felayga.unpixeldungeon.actors.blobs.VenomGas;
-import com.felayga.unpixeldungeon.effects.MagicMissile;
 import com.felayga.unpixeldungeon.items.weapon.melee.simple.MagesStaff;
 import com.felayga.unpixeldungeon.mechanics.Ballistica;
-import com.felayga.unpixeldungeon.scenes.GameScene;
-import com.watabou.utils.Callback;
+import com.felayga.unpixeldungeon.spellcasting.VenomSpellcaster;
 import com.watabou.utils.Random;
 
 public class WandOfVenom extends Wand {
-
-    public WandOfVenom()
-	{
+    public WandOfVenom() {
         super(8);
-		name = "Wand of Venom";
+        name = "Wand of Venom";
 
-		ballisticaMode = Ballistica.Mode.value(Ballistica.Mode.SplasherBolt);
         price = 175;
-	}
+
+        spellcaster = new VenomSpellcaster() {
+            @Override
+            public void onZap(Char source, Ballistica path, int targetPos) {
+                super.onZap(source, path, targetPos);
+
+                WandOfVenom.this.wandUsed();
+            }
+        };
+    }
 
     @Override
     public int randomCharges() {
         return Random.IntRange(4, 8);
     }
-
-	@Override
-	protected void onZap(Ballistica bolt) {
-		Blob venomGas = Blob.seed(curUser, bolt.collisionPos, 50 + 10 * level(), VenomGas.class);
-		((VenomGas)venomGas).setStrength(level()+1);
-		GameScene.add(venomGas);
-
-		Char ch = Actor.findChar(bolt.collisionPos);
-		if (ch != null){
-			processSoulMark(ch, curUser);
-		}
-	}
-
-
-
-	@Override
-	protected void fxEffect(int source, int destination, Callback callback) {
-		MagicMissile.poison(curUser.sprite.parent, source, destination, callback);
-	}
-
     /*
 	@Override
 	public void onHit(MagesStaff staff, Char attacker, Char defender, int damage) {
@@ -78,21 +59,22 @@ public class WandOfVenom extends Wand {
 	}
 	*/
 
-	@Override
-	public void staffFx(MagesStaff.StaffParticle particle) {
-		particle.color( 0x8844FF ); particle.am = 0.6f;
-		particle.setLifespan(0.6f);
-		particle.acc.set(0, 40);
-		particle.setSize( 0f, 3f);
-		particle.shuffleXY(2f);
-	}
+    @Override
+    public void staffFx(MagesStaff.StaffParticle particle) {
+        particle.color(0x8844FF);
+        particle.am = 0.6f;
+        particle.setLifespan(0.6f);
+        particle.acc.set(0, 40);
+        particle.setSize(0f, 3f);
+        particle.shuffleXY(2f);
+    }
 
-	@Override
-	public String desc() {
-		return
-			"This wand has a purple body which opens to a brilliant green gem. " +
-			"A small amount of foul smelling gas leaks from the gem.\n\n" +
-			"This wand shoots a bolt which explodes into a cloud of vile venomous gas at a targeted location. " +
-			"Anything caught inside this cloud will take continual damage, increasing with time.";
-	}
+    @Override
+    public String desc() {
+        return
+                "This wand has a purple body which opens to a brilliant green gem. " +
+                        "A small amount of foul smelling gas leaks from the gem.\n\n" +
+                        "This wand shoots a bolt which explodes into a cloud of vile venomous gas at a targeted location. " +
+                        "Anything caught inside this cloud will take continual damage, increasing with time.";
+    }
 }

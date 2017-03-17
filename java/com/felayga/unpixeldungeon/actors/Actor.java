@@ -265,7 +265,7 @@ public abstract class Actor implements Bundlable {
                 chars.remove(lastPos);
                 chars.put(pos, c);
             } else {
-                GLog.d("UNEXPECTED WRONG CHARACTER");
+                GLog.d("UNEXPECTED WRONG CHARACTER FOUND="+(c!=null?c.name:"<null>")+" EXPECTED="+((Char)this).name);
                 chars.put(pos, (Char)this);
             }
         } else {

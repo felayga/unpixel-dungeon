@@ -26,6 +26,7 @@
 
 package com.felayga.unpixeldungeon.items.weapon.ranged.simple;
 
+import com.felayga.unpixeldungeon.actors.buffs.hero.Encumbrance;
 import com.felayga.unpixeldungeon.items.weapon.ranged.AmmunitionType;
 import com.felayga.unpixeldungeon.items.weapon.ranged.RangedWeapon;
 import com.felayga.unpixeldungeon.mechanics.GameTime;
@@ -43,5 +44,8 @@ public class Sling extends RangedWeapon {
         name = "sling";
         image = ItemSpriteSheet.RANGED_SLING;
         material = Material.Cloth;
+
+        weight(3 * Encumbrance.UNIT);
+        price = 20;
     }
 }

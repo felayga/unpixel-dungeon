@@ -31,7 +31,7 @@ import com.felayga.unpixeldungeon.actors.Char;
 import com.felayga.unpixeldungeon.actors.hero.Hero;
 import com.felayga.unpixeldungeon.items.Item;
 import com.felayga.unpixeldungeon.scenes.PixelScene;
-import com.felayga.unpixeldungeon.sprites.mobs.GreatCrabSprite;
+import com.felayga.unpixeldungeon.sprites.mobs.unused.GreatCrabSprite;
 import com.felayga.unpixeldungeon.sprites.mobs.unused.GnollTricksterSprite;
 import com.felayga.unpixeldungeon.ui.RedButton;
 import com.felayga.unpixeldungeon.ui.Window;

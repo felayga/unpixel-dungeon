@@ -60,7 +60,7 @@ public class PotionOfLevitation extends Potion {
             Sample.INSTANCE.play( Assets.SND_SHATTER );
         }
 
-		GameScene.add(Blob.seed(owner, cell, 1000, ConfusionGas.class));
+		GameScene.add(Blob.seed(owner, cell, 100, ConfusionGas.class));
 	}
 	
 	@Override

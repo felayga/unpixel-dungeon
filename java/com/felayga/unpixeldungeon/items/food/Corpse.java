@@ -338,6 +338,12 @@ public class Corpse extends Food implements IDecayable {
     }
 
     @Override
+    protected boolean determineRotten() {
+        //different meaning/usage for corpses
+        return false;
+    }
+
+    @Override
     public void stoppedEating(Hero hero) {
         super.stoppedEating(hero);
 
@@ -525,7 +531,7 @@ public class Corpse extends Food implements IDecayable {
     }
 
     @Override
-    public String message() {
+    public String message(boolean rotten) {
         if (isCanned()) {
             String variation = null;
             if (cannedVariation != null) {

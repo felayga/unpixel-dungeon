@@ -657,6 +657,10 @@ public abstract class Mob extends Char {
         }
     }
 
+    protected void dieAnnounce(Actor cause) {
+
+    }
+
     protected Object loot = null;
     protected float lootChance = 0;
 

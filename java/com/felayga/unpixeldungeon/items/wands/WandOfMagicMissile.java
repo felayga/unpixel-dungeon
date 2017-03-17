@@ -25,41 +25,33 @@
  */
 package com.felayga.unpixeldungeon.items.wands;
 
-import com.felayga.unpixeldungeon.actors.Actor;
 import com.felayga.unpixeldungeon.actors.Char;
-import com.felayga.unpixeldungeon.effects.CellEmitter;
-import com.felayga.unpixeldungeon.effects.particles.PurpleParticle;
 import com.felayga.unpixeldungeon.mechanics.Ballistica;
-import com.felayga.unpixeldungeon.mechanics.MagicType;
+import com.felayga.unpixeldungeon.spellcasting.MagicMissileSpellcaster;
 import com.watabou.utils.Random;
 
 public class WandOfMagicMissile extends Wand {
-
-    public WandOfMagicMissile()
-	{
+    public WandOfMagicMissile() {
         super(8);
 
-		name = "Wand of Magic Missile";
+        name = "Wand of Magic Missile";
 
-        ballisticaMode = Ballistica.Mode.value(Ballistica.Mode.MagicRay, Ballistica.Mode.StopSelf);
         price = 150;
-	}
+
+        spellcaster = new MagicMissileSpellcaster() {
+            @Override
+            public void onZap(Char source, Ballistica path, int targetPos) {
+                super.onZap(source, path, targetPos);
+
+                WandOfMagicMissile.this.wandUsed();
+            }
+        };
+    }
 
     @Override
     public int randomCharges() {
         return Random.IntRange(4, 8);
     }
-	
-	@Override
-	protected void onZap( Ballistica bolt ) {
-		Char ch = Actor.findChar( bolt.collisionPos );
-		if (ch != null) {
-			processSoulMark(ch, curUser);
-			ch.damage(Random.NormalIntRange(4 , 12), MagicType.Magic, curUser, null);
-
-			ch.sprite.burst(0xFFFFFFFF, 2);
-		}
-	}
 
     /*
 	@Override
@@ -71,10 +63,10 @@ public class WandOfMagicMissile extends Wand {
 		}
 	}
 	*/
-	
-	@Override
-	public String desc() {
-		return
-			"This wand launches missiles of pure magical energy, dealing moderate damage to a target creature.";
-	}
+
+    @Override
+    public String desc() {
+        return
+                "This wand launches missiles of pure magical energy, dealing moderate damage to a target creature.";
+    }
 }

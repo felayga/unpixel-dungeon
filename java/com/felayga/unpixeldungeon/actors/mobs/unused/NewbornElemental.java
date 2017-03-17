@@ -32,7 +32,7 @@ import com.felayga.unpixeldungeon.actors.buffs.negative.Frost;
 import com.felayga.unpixeldungeon.items.quest.Embers;
 import com.felayga.unpixeldungeon.items.weapon.melee.mob.IgniteChance;
 import com.felayga.unpixeldungeon.mechanics.GameTime;
-import com.felayga.unpixeldungeon.sprites.mobs.NewbornElementalSprite;
+import com.felayga.unpixeldungeon.sprites.mobs.unused.NewbornElementalSprite;
 
 public class NewbornElemental extends Elemental {
 

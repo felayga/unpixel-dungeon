@@ -39,7 +39,7 @@ import com.felayga.unpixeldungeon.items.food.unused.MysteryMeat;
 import com.felayga.unpixeldungeon.items.weapon.melee.mob.MeleeMobAttack;
 import com.felayga.unpixeldungeon.levels.Level;
 import com.felayga.unpixeldungeon.mechanics.GameTime;
-import com.felayga.unpixeldungeon.sprites.mobs.PiranhaSprite;
+import com.felayga.unpixeldungeon.sprites.mobs.unused.PiranhaSprite;
 
 public class Piranha extends Mob {
 	

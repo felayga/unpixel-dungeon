@@ -46,7 +46,8 @@ public enum MagicType {
     Stoning(0x0200, "Stoning"),
     Sliming(0x0400, "Sliming"),
     Sickness(0x0800, "Sickness"),
-    Mundane(0x1000, "Mundane");
+    Mundane(0x1000, "Mundane"),
+    Psionic(0x2000, "Psionic");
 
     public final int value;
     public final String name;
@@ -55,6 +56,8 @@ public enum MagicType {
         this.value = value;
         this.name = name;
     }
+
+    public static final int MAXVALUE = 14;
 
     public static MagicType fromInt(int index) {
         switch (index) {
@@ -84,6 +87,8 @@ public enum MagicType {
                 return Sickness;
             case 12:
                 return Mundane;
+            case 13:
+                return Psionic;
             default:
                 return None;
         }
@@ -92,7 +97,7 @@ public enum MagicType {
     public static List<MagicType> toList(int flags) {
         List<MagicType> retval = new ArrayList<>();
 
-        for (int n = 0; n < 13; n++) {
+        for (int n = 0; n < MAXVALUE; n++) {
             MagicType type = fromInt(n);
             if ((flags & type.value) != 0) {
                 retval.add(type);

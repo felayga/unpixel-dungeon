@@ -26,171 +26,74 @@
 
 package com.felayga.unpixeldungeon.items.wands;
 
-import com.felayga.unpixeldungeon.DungeonTilemap;
-import com.felayga.unpixeldungeon.actors.buffs.hero.Encumbrance;
-import com.felayga.unpixeldungeon.effects.Beam;
-import com.felayga.unpixeldungeon.effects.CellEmitter;
-import com.felayga.unpixeldungeon.effects.particles.AcidParticle;
-import com.felayga.unpixeldungeon.effects.particles.BlastParticle;
-import com.felayga.unpixeldungeon.effects.particles.BloodParticle;
-import com.felayga.unpixeldungeon.effects.particles.EarthParticle;
-import com.felayga.unpixeldungeon.effects.particles.ElmoParticle;
-import com.felayga.unpixeldungeon.effects.particles.EnergyParticle;
-import com.felayga.unpixeldungeon.effects.particles.FlameParticle;
-import com.felayga.unpixeldungeon.effects.particles.FlowParticle;
-import com.felayga.unpixeldungeon.effects.particles.LeafParticle;
-import com.felayga.unpixeldungeon.effects.particles.PoisonParticle;
-import com.felayga.unpixeldungeon.effects.particles.PurpleParticle;
-import com.felayga.unpixeldungeon.effects.particles.RainbowParticle;
-import com.felayga.unpixeldungeon.effects.particles.ShadowParticle;
-import com.felayga.unpixeldungeon.effects.particles.ShaftParticle;
-import com.felayga.unpixeldungeon.effects.particles.SmokeParticle;
-import com.felayga.unpixeldungeon.effects.particles.SnowParticle;
-import com.felayga.unpixeldungeon.effects.particles.SparkParticle;
-import com.felayga.unpixeldungeon.effects.particles.WebParticle;
-import com.felayga.unpixeldungeon.effects.particles.WindParticle;
-import com.felayga.unpixeldungeon.effects.particles.WoolParticle;
+import com.felayga.unpixeldungeon.actors.Char;
 import com.felayga.unpixeldungeon.items.Item;
 import com.felayga.unpixeldungeon.mechanics.Ballistica;
-import com.watabou.noosa.particles.Emitter;
+import com.felayga.unpixeldungeon.spellcasting.NothingSpellcaster;
 import com.watabou.utils.Bundle;
-import com.watabou.utils.Callback;
-import com.watabou.utils.PointF;
 import com.watabou.utils.Random;
 
 /**
  * Created by HELLO on 2/25/2017.
  */
 public class WandOfNothing extends Wand {
+    private NothingSpellcaster nothingSpellcaster;
 
     public WandOfNothing() {
         super(8);
         name = "Wand of Nothing";
 
-        ballisticaMode = Ballistica.Mode.value(Ballistica.Mode.StopTarget, Ballistica.Mode.StopSelf);
         price = 100;
-        weight(7 * Encumbrance.UNIT);
+
+        nothingSpellcaster = new NothingSpellcaster() {
+            @Override
+            public void onZap(Char source, Ballistica path, int targetPos) {
+                super.onZap(source, path, targetPos);
+
+                WandOfNothing.this.wandUsed();
+            }
+        };
+        spellcaster = nothingSpellcaster;
+
+        nothingSpellcaster.setCharacteristics(randomParticleIndex, randomBeamIndex, ballisticaModeIndex);
     }
+
+    private int randomParticleIndex;
+    private int randomBeamIndex;
+    private int ballisticaModeIndex;
 
     private static final String RANDOMPARTICLEINDEX = "randomParticleIndex";
     private static final String RANDOMBEAMINDEX = "randomBeamIndex";
+    private static final String BALLISTICAMODEINDEX = "ballisticaModeIndex";
 
     @Override
     public void storeInBundle(Bundle bundle) {
         super.storeInBundle(bundle);
         bundle.put(RANDOMPARTICLEINDEX, randomParticleIndex);
         bundle.put(RANDOMBEAMINDEX, randomBeamIndex);
+        bundle.put(BALLISTICAMODEINDEX, ballisticaModeIndex);
     }
 
     @Override
     public void restoreFromBundle(Bundle bundle) {
         super.restoreFromBundle(bundle);
-        setParticleFactory(bundle.getInt(RANDOMPARTICLEINDEX));
-        setBeamClass(bundle.getInt(RANDOMBEAMINDEX));
+        randomParticleIndex = bundle.getInt(RANDOMPARTICLEINDEX);
+        randomBeamIndex = bundle.getInt(RANDOMBEAMINDEX);
+        ballisticaModeIndex = bundle.getInt(BALLISTICAMODEINDEX);
+
+        nothingSpellcaster.setCharacteristics(randomParticleIndex, randomBeamIndex, ballisticaModeIndex);
     }
 
-    private int randomParticleIndex;
-    private Emitter.Factory randomParticleFactory;
-
-    private void setParticleFactory(int index) {
-        randomParticleIndex = index;
-        switch(randomParticleIndex) {
-            case 0:
-                randomParticleFactory = AcidParticle.FACTORY;
-                break;
-            case 1:
-                randomParticleFactory = BlastParticle.FACTORY;
-                break;
-            case 2:
-                randomParticleFactory = BloodParticle.FACTORY;
-                break;
-            case 3:
-                randomParticleFactory = EarthParticle.FACTORY;
-                break;
-            case 4:
-                randomParticleFactory = ElmoParticle.FACTORY;
-                break;
-            case 5:
-                randomParticleFactory = EnergyParticle.FACTORY;
-                break;
-            case 6:
-                randomParticleFactory = FlameParticle.FACTORY;
-                break;
-            case 7:
-                randomParticleFactory = FlowParticle.FACTORY;
-                break;
-            case 8:
-                randomParticleFactory = LeafParticle.GENERAL;
-                break;
-            case 9:
-                randomParticleFactory = PoisonParticle.MISSILE;
-                break;
-            case 10:
-                randomParticleFactory = PurpleParticle.MISSILE;
-                break;
-            case 11:
-                randomParticleFactory = RainbowParticle.BURST;
-                break;
-            case 12:
-                randomParticleFactory = ShadowParticle.MISSILE;
-                break;
-            case 13:
-                randomParticleFactory = ShaftParticle.FACTORY;
-                break;
-            case 14:
-                randomParticleFactory = SmokeParticle.FACTORY;
-                break;
-            case 15:
-                randomParticleFactory = SnowParticle.FACTORY;
-                break;
-            case 16:
-                randomParticleFactory = SparkParticle.FACTORY;
-                break;
-            case 17:
-                randomParticleFactory = WebParticle.FACTORY;
-                break;
-            case 18:
-                randomParticleFactory = WindParticle.FACTORY;
-                break;
-            default:
-                randomParticleFactory = WoolParticle.FACTORY;
-                break;
-        }
-    }
-
-    private int randomBeamIndex;
-    private Class<? extends Beam> randomBeamClass;
-
-    private void setBeamClass(int index) {
-        randomBeamIndex = index;
-        switch(randomBeamIndex) {
-            case 0:
-                randomBeamClass = Beam.DeathRay.class;
-                break;
-            case 1:
-                randomBeamClass = Beam.HealthRay.class;
-                break;
-            case 2:
-                randomBeamClass = null;
-                break;
-            default:
-                randomBeamClass = Beam.LightRay.class;
-                break;
-        }
-    }
 
     @Override
     public Item random() {
         super.random();
 
-        setParticleFactory(Random.Int(20));
-        setBeamClass(Random.Int(4));
+        randomParticleIndex = Random.Int(NothingSpellcaster.RANDOM_PARTICLE_MAX);
+        randomBeamIndex = Random.Int(NothingSpellcaster.RANDOM_BEAM_MAX);
+        ballisticaModeIndex = Random.Int(NothingSpellcaster.RANDOM_BALLISTICA_MAX);
 
-        if (Random.Int(2)==0) {
-            ballisticaMode &= Ballistica.Mode.StopTarget.value ^ Ballistica.Mode.Mask.value;
-        } else {
-            ballisticaMode |= Ballistica.Mode.StopTarget.value;
-        }
+        nothingSpellcaster.setCharacteristics(randomParticleIndex, randomBeamIndex, ballisticaModeIndex);
 
         return this;
     }
@@ -200,36 +103,12 @@ public class WandOfNothing extends Wand {
         return Random.IntRange(4, 8);
     }
 
-    @Override
-    protected void onZap(Ballistica beam) {
-        for (int pos : beam.path) {
-            CellEmitter.get(pos).start(randomParticleFactory, 0.2f, 6);
-        }
-    }
-
     /*
     @Override
     public void onHit(MagesStaff staff, Char attacker, Char defender, int damage) {
         //nothing
     }
     */
-
-    @Override
-    protected void fxEffect(int source, int destination, Callback callback) {
-        Beam beamRay = null;
-        if (randomBeamClass != null) {
-            try {
-                beamRay = randomBeamClass.getConstructor(PointF.class, PointF.class).newInstance(curUser.sprite.center(), DungeonTilemap.tileCenterToWorld(destination));
-            } catch (Exception e) {
-            }
-        }
-
-        if (beamRay != null) {
-            curUser.sprite.parent.add(beamRay);
-        } else if (callback != null) {
-            callback.call();
-        }
-    }
 
     @Override
     public String desc() {

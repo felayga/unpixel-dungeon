@@ -25,103 +25,39 @@
  */
 package com.felayga.unpixeldungeon.items.wands;
 
-import com.felayga.unpixeldungeon.Dungeon;
 import com.felayga.unpixeldungeon.actors.Actor;
 import com.felayga.unpixeldungeon.actors.Char;
-import com.felayga.unpixeldungeon.actors.blobs.Blob;
-import com.felayga.unpixeldungeon.actors.blobs.Regrowth;
-import com.felayga.unpixeldungeon.effects.MagicMissile;
-import com.felayga.unpixeldungeon.items.Dewdrop;
-import com.felayga.unpixeldungeon.items.Generator;
 import com.felayga.unpixeldungeon.items.weapon.melee.simple.MagesStaff;
 import com.felayga.unpixeldungeon.levels.Level;
-import com.felayga.unpixeldungeon.levels.Terrain;
 import com.felayga.unpixeldungeon.mechanics.Ballistica;
 import com.felayga.unpixeldungeon.mechanics.MagicType;
-import com.felayga.unpixeldungeon.plants.Plant;
-import com.felayga.unpixeldungeon.plants.Seedpod;
-import com.felayga.unpixeldungeon.plants.Starflower;
-import com.felayga.unpixeldungeon.scenes.GameScene;
-import com.felayga.unpixeldungeon.utils.GLog;
-import com.watabou.utils.Callback;
+import com.felayga.unpixeldungeon.spellcasting.RegrowthSpellcaster;
 import com.watabou.utils.ColorMath;
 import com.watabou.utils.Random;
 
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.Iterator;
-
 public class WandOfRegrowth extends Wand {
+    private RegrowthSpellcaster regrowthSpellcaster;
+
     public WandOfRegrowth() {
         super(15);
         name = "Wand of Regrowth";
 
-        ballisticaMode = Ballistica.Mode.value(Ballistica.Mode.SplasherBolt, Ballistica.Mode.StopSelf);
         price = 150;
+
+        regrowthSpellcaster = new RegrowthSpellcaster() {
+            @Override
+            public void onZap(Char source, Ballistica path, int targetPos) {
+                super.onZap(source, path, targetPos);
+
+                WandOfRegrowth.this.wandUsed();
+            }
+        };
+        spellcaster = regrowthSpellcaster;
     }
 
     @Override
     public int randomCharges() {
         return Random.IntRange(11, 15);
-    }
-
-    @Override
-    protected void onZap(Ballistica bolt) {
-        onZap(bolt.collisionPos, Random.IntRange(3, 12));
-    }
-
-    private static Level.RandomPositionValidator onZapSpotValidator = new Level.RandomPositionValidator() {
-        @Override
-        public boolean isValidPosition(int pos) {
-            int c = Dungeon.level.map(pos);
-            return c == Terrain.EMPTY ||
-                    c == Terrain.EMBERS ||
-                    c == Terrain.EMPTY_DECO ||
-                    c == Terrain.GRASS ||
-                    c == Terrain.HIGH_GRASS;
-        }
-    };
-
-    private void onZap(int pos, int spotCount) {
-        ArrayList<Integer> spots = Dungeon.level.randomPositionsNear(pos, spotCount, onZapSpotValidator);
-
-        if (spots != null) {
-            for (Integer subPos : spots) {
-                int terrain;
-                switch(Random.Int(3)) {
-                    case 0:
-                        terrain = Terrain.HIGH_GRASS;
-                        break;
-                    default:
-                        terrain = Terrain.GRASS;
-                        break;
-                }
-                Dungeon.level.set(subPos, terrain, true);
-                GameScene.add(Blob.seed(curUser, subPos, 10, Regrowth.class));
-
-                if (Random.Int(4) == 0) {
-                    Plant.Seed seed;
-                    if (Random.Int(16)==0) {
-                        seed = new Seedpod.Seed();
-                    } else {
-                        seed = (Plant.Seed) Generator.random(Generator.Category.SEED);
-                    }
-
-                    Dungeon.level.plant(curUser, seed, subPos);
-                }
-            }
-
-            for (Integer subPos : spots) {
-                if (Dungeon.visible[subPos]) {
-                    MagicMissile.foliage(curUser.sprite.parent, pos, subPos, null);
-                }
-            }
-        }
-    }
-
-    @Override
-    protected void fxEffect(int source, int destination, Callback callback) {
-        MagicMissile.foliage(curUser.sprite.parent, source, destination, callback);
     }
 
 
@@ -145,7 +81,7 @@ public class WandOfRegrowth extends Wand {
 
         for (Integer offset : Level.NEIGHBOURS8) {
             int pos = user.pos() + offset;
-            Char target = Dungeon.level.findMob(pos);
+            Char target = Actor.findChar(pos);
 
             if (target == null) {
                 continue;
@@ -156,7 +92,7 @@ public class WandOfRegrowth extends Wand {
 
         explode(user, maxDamage);
 
-        onZap(user.pos(), 24);
+        regrowthSpellcaster.onZap(user, user.pos(), 24);
     }
 
     public void explode(Char target, int maxDamage) {
@@ -164,7 +100,7 @@ public class WandOfRegrowth extends Wand {
 
         target.damage(damage, MagicType.Magic, curUser, null);
 
-        fxEffect(curUser.pos(), target.pos(), null);
+        regrowthSpellcaster.fxEffect(curUser, null, curUser.pos(), target.pos(), null);
     }
 
     @Override

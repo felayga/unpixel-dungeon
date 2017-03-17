@@ -26,8 +26,11 @@
 
 package com.felayga.unpixeldungeon.items.spells.position;
 
+import com.felayga.unpixeldungeon.actors.Char;
 import com.felayga.unpixeldungeon.items.wands.WandOfMagicMissile;
+import com.felayga.unpixeldungeon.mechanics.Ballistica;
 import com.felayga.unpixeldungeon.mechanics.GameTime;
+import com.felayga.unpixeldungeon.spellcasting.MagicMissileSpellcaster;
 import com.felayga.unpixeldungeon.sprites.ItemSpriteSheet;
 
 /**
@@ -41,6 +44,7 @@ public class MagicMissileSpell extends PositionSpell {
         name = "Magic Missile";
         image = ItemSpriteSheet.SPELL_MAGIC_MISSILE;
 
+        spellcaster = new MagicMissileSpellcaster();
     }
 
     @Override

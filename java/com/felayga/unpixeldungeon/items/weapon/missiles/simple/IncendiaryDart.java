@@ -30,6 +30,7 @@ import com.felayga.unpixeldungeon.actors.Char;
 import com.felayga.unpixeldungeon.actors.blobs.Blob;
 import com.felayga.unpixeldungeon.actors.blobs.Fire;
 import com.felayga.unpixeldungeon.actors.buffs.Buff;
+import com.felayga.unpixeldungeon.actors.buffs.hero.Encumbrance;
 import com.felayga.unpixeldungeon.actors.buffs.negative.Burning;
 import com.felayga.unpixeldungeon.items.Item;
 import com.felayga.unpixeldungeon.items.weapon.missiles.MissileWeapon;
@@ -50,8 +51,8 @@ public class IncendiaryDart extends MissileWeapon {
 		image = ItemSpriteSheet.MISSILE_INCENDIARY_DART;
         material = Material.Iron;
 
-		//STR = 12;
-        price = 5;
+        weight(1 * Encumbrance.UNIT);
+        price = 6;
 	}
 	
 	@Override

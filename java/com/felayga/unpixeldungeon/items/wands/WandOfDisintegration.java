@@ -25,23 +25,10 @@
  */
 package com.felayga.unpixeldungeon.items.wands;
 
-import com.felayga.unpixeldungeon.Dungeon;
-import com.felayga.unpixeldungeon.DungeonTilemap;
-import com.felayga.unpixeldungeon.actors.Actor;
 import com.felayga.unpixeldungeon.actors.Char;
-import com.felayga.unpixeldungeon.effects.Beam;
-import com.felayga.unpixeldungeon.effects.CellEmitter;
-import com.felayga.unpixeldungeon.effects.particles.PurpleParticle;
 import com.felayga.unpixeldungeon.items.weapon.melee.simple.MagesStaff;
-import com.felayga.unpixeldungeon.levels.Level;
-import com.felayga.unpixeldungeon.levels.Terrain;
 import com.felayga.unpixeldungeon.mechanics.Ballistica;
-import com.felayga.unpixeldungeon.mechanics.MagicType;
-import com.felayga.unpixeldungeon.scenes.GameScene;
-import com.watabou.utils.Callback;
-import com.watabou.utils.Random;
-
-import java.util.ArrayList;
+import com.felayga.unpixeldungeon.spellcasting.DisintegrationSpellcaster;
 
 public class WandOfDisintegration extends Wand {
 
@@ -49,61 +36,14 @@ public class WandOfDisintegration extends Wand {
         super(20);
         name = "Wand of Disintegration";
 
-        ballisticaMode = Ballistica.Mode.value(Ballistica.Mode.NoCollision);
-    }
+        spellcaster = new DisintegrationSpellcaster() {
+            @Override
+            public void onZap(Char source, Ballistica path, int targetPos) {
+                super.onZap(source, path, targetPos);
 
-    @Override
-    protected void onZap(Ballistica beam) {
-
-        boolean terrainAffected = false;
-
-        int level = 1;//level();
-
-        int maxDistance = Math.min(distance(), beam.dist);
-
-        ArrayList<Char> chars = new ArrayList<>();
-
-        int terrainPassed = 2, terrainBonus = 0;
-        for (int c : beam.subPath(1, maxDistance)) {
-
-            Char ch;
-            if ((ch = Actor.findChar(c)) != null) {
-
-                //we don't want to count passed terrain after the last enemy hit. That would be a lot of bonus levels.
-                //terrainPassed starts at 2, equivalent of rounding up when /3 for integer arithmetic.
-                terrainBonus += terrainPassed / 3;
-                terrainPassed = terrainPassed % 3;
-
-                chars.add(ch);
+                WandOfDisintegration.this.wandUsed();
             }
-
-            if (Level.burnable[c]) {
-
-                Dungeon.level.set(c, Terrain.EMBERS, true);
-                GameScene.updateMap(c);
-                terrainAffected = true;
-
-            }
-
-            if (Level.solid[c])
-                terrainPassed++;
-
-            CellEmitter.center(c).burst(PurpleParticle.BURST, Random.IntRange(1, 2));
-        }
-
-        if (terrainAffected) {
-            Dungeon.observe();
-        }
-
-        int lvl = level + chars.size() + terrainBonus;
-        int dmgMin = lvl;
-        int dmgMax = (int) (8 + lvl * lvl / 3f);
-        for (Char ch : chars) {
-            processSoulMark(ch, curUser);
-            ch.damage(Random.NormalIntRange(dmgMin, dmgMax), MagicType.Magic, curUser, null);
-            ch.sprite.centerEmitter(-1).burst(PurpleParticle.BURST, Random.IntRange(1, 2));
-            ch.sprite.flash();
-        }
+        };
     }
 
     /*
@@ -115,15 +55,7 @@ public class WandOfDisintegration extends Wand {
 	}
 	*/
 
-    private int distance() {
-        return 1/*level()*/ * 2 + 4;
-    }
-
-    protected void fxEffect(Ballistica beam, Callback callback) {
-        int cell = beam.path.get(Math.min(beam.dist, distance()));
-        curUser.sprite.parent.add(new Beam.DeathRay(curUser.sprite.center(), DungeonTilemap.tileCenterToWorld(cell)));
-        callback.call();
-    }
+    //todo: explosion, price, etc.
 
     @Override
     public void staffFx(MagesStaff.StaffParticle particle) {

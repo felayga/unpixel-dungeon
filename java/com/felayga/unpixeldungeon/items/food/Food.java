@@ -30,10 +30,15 @@ import com.felayga.unpixeldungeon.Badges;
 import com.felayga.unpixeldungeon.Dungeon;
 import com.felayga.unpixeldungeon.ResultDescriptions;
 import com.felayga.unpixeldungeon.Statistics;
+import com.felayga.unpixeldungeon.actors.buffs.Buff;
 import com.felayga.unpixeldungeon.actors.buffs.hero.Hunger;
+import com.felayga.unpixeldungeon.actors.buffs.negative.Blindness;
+import com.felayga.unpixeldungeon.actors.buffs.negative.Fainting;
+import com.felayga.unpixeldungeon.actors.buffs.negative.Vertigo;
 import com.felayga.unpixeldungeon.actors.hero.Hero;
 import com.felayga.unpixeldungeon.effects.SpellSprite;
 import com.felayga.unpixeldungeon.items.Item;
+import com.felayga.unpixeldungeon.mechanics.BUCStatus;
 import com.felayga.unpixeldungeon.mechanics.Constant;
 import com.felayga.unpixeldungeon.mechanics.GameTime;
 import com.felayga.unpixeldungeon.mechanics.MagicType;
@@ -42,6 +47,7 @@ import com.felayga.unpixeldungeon.utils.GLog;
 import com.felayga.unpixeldungeon.utils.Utils;
 import com.watabou.noosa.audio.Sample;
 import com.watabou.utils.Bundle;
+import com.watabou.utils.Random;
 
 import java.util.ArrayList;
 
@@ -64,6 +70,7 @@ public class Food extends Item {
     public boolean partiallyEaten = false;
     private int energyOriginal;
     private int weightOriginal;
+    private boolean rotten;
 
     public static final String TXT_EATING_RESUMED = "You resume eating the %s.";
     public static final String TXT_EATING_DONE = "You finish eating the %s.";
@@ -110,6 +117,7 @@ public class Food extends Item {
     private static final String STACKABLE = "stackable";
     private static final String ENERGYORIGINAL = "energyOriginal";
     private static final String WEIGHTORIGINAL = "weightOriginal";
+    private static final String ROTTEN = "rotten";
 
     @Override
     public void storeInBundle(Bundle bundle) {
@@ -120,6 +128,7 @@ public class Food extends Item {
         bundle.put(STACKABLE, stackable);
         bundle.put(ENERGYORIGINAL, energyOriginal);
         bundle.put(WEIGHTORIGINAL, weightOriginal);
+        bundle.put(ROTTEN, rotten);
     }
 
     @Override
@@ -131,6 +140,7 @@ public class Food extends Item {
         stackable = bundle.getBoolean(STACKABLE);
         energyOriginal = bundle.getInt(ENERGYORIGINAL);
         weightOriginal = bundle.getInt(WEIGHTORIGINAL);
+        rotten = bundle.getBoolean(ROTTEN);
     }
 
     @Override
@@ -140,11 +150,31 @@ public class Food extends Item {
         return actions;
     }
 
+    protected boolean determineRotten() {
+        return bucStatus() == BUCStatus.Cursed || Random.Int(7) == 0;
+    }
+
     @Override
     public boolean execute(final Hero hero, String action) {
         if (action.equals(Constant.Action.EAT_START)) {
             if (!partiallyEaten) {
-                GLog.i(message());
+                rotten = determineRotten();
+
+                GLog.i(message(rotten));
+
+                if (rotten) {
+                    switch(Random.Int(5)) {
+                        case 0:
+                            Buff.prolong(hero, hero, Vertigo.class, Random.NormalIntRange(2, 8) * GameTime.TICK);
+                            break;
+                        case 1:
+                            Buff.prolong(hero, hero, Blindness.class, Random.NormalIntRange(2, 20) * GameTime.TICK);
+                            break;
+                        case 2:
+                            Buff.prolong(hero, hero, Fainting.class, Random.IntRange(1, 10) * GameTime.TICK);
+                            break;
+                    }
+                }
             } else {
                 GLog.i(TXT_EATING_RESUMED, name);
             }
@@ -281,7 +311,7 @@ public class Food extends Item {
         return getName(partiallyEaten);
     }
 
-    protected String getName(boolean partiallyEaten) {
+    public String getName(boolean partiallyEaten) {
         if (partiallyEaten) {
             return "partially eaten " + super.getName();
         } else {
@@ -310,7 +340,11 @@ public class Food extends Item {
         }
     }
 
-    public String message() {
-        return "Om nom nom.";
+    public String message(boolean rotten) {
+        if (rotten) {
+            return "Blecch!  Rotten food!";
+        } else {
+            return "Om nom nom.";
+        }
     }
 }

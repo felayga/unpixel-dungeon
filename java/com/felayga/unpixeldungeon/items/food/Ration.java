@@ -34,8 +34,7 @@ import com.felayga.unpixeldungeon.sprites.ItemSpriteSheet;
  * Created by HELLO on 6/7/2016.
  */
 public class Ration extends Food {
-    public Ration()
-    {
+    public Ration() {
         super(800, 800 / 5, Encumbrance.UNIT * 20);
 
         stackable = true;
@@ -53,9 +52,13 @@ public class Ration extends Food {
         return "Nothing fancy here: cheese, biscuits, and some fresh fruit." + super.info();
     }
 
-    public String message()
-    {
-        return "This food tastes delicious!";
+    @Override
+    public String message(boolean rotten) {
+        if (!rotten) {
+            return "This food tastes delicious!";
+        } else {
+            return super.message(rotten);
+        }
     }
 
 }

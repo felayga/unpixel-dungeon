@@ -26,37 +26,38 @@
 
 package com.felayga.unpixeldungeon.items.wands;
 
-import com.felayga.unpixeldungeon.Assets;
 import com.felayga.unpixeldungeon.Dungeon;
+import com.felayga.unpixeldungeon.actors.Actor;
 import com.felayga.unpixeldungeon.actors.Char;
-import com.felayga.unpixeldungeon.actors.hero.Hero;
 import com.felayga.unpixeldungeon.actors.mobs.Mob;
-import com.felayga.unpixeldungeon.actors.mobs.npcs.Boulder;
-import com.felayga.unpixeldungeon.effects.CellEmitter;
-import com.felayga.unpixeldungeon.effects.Speck;
-import com.felayga.unpixeldungeon.items.weapon.ammunition.simple.Rock;
 import com.felayga.unpixeldungeon.levels.Level;
-import com.felayga.unpixeldungeon.levels.Terrain;
 import com.felayga.unpixeldungeon.levels.features.Chasm;
 import com.felayga.unpixeldungeon.mechanics.Ballistica;
 import com.felayga.unpixeldungeon.mechanics.MagicType;
-import com.felayga.unpixeldungeon.scenes.GameScene;
-import com.felayga.unpixeldungeon.utils.GLog;
-import com.watabou.noosa.audio.Sample;
-import com.watabou.utils.Callback;
+import com.felayga.unpixeldungeon.spellcasting.TunnelingSpellcaster;
 import com.watabou.utils.Random;
 
 /**
  * Created by HELLO on 2/25/2017.
  */
 public class WandOfTunneling extends Wand {
+    TunnelingSpellcaster tunnelingSpellcaster;
 
     public WandOfTunneling() {
         super(8);
         name = "Wand of Tunneling";
 
-        ballisticaMode = Ballistica.Mode.value(Ballistica.Mode.NoCollision, Ballistica.Mode.StopSelf);
         price = 150;
+
+        tunnelingSpellcaster = new TunnelingSpellcaster() {
+            @Override
+            public void onZap(Char source, Ballistica path, int targetPos) {
+                super.onZap(source, path, targetPos);
+
+                WandOfTunneling.this.wandUsed();
+            }
+        };
+        spellcaster = tunnelingSpellcaster;
     }
 
     @Override
@@ -64,72 +65,6 @@ public class WandOfTunneling extends Wand {
         return Random.IntRange(4, 8);
     }
 
-    @Override
-    protected void onZap(Ballistica beam) {
-        if ((Level.flags & Level.FLAG_WALLS_NOT_DIGGABLE) != 0) {
-            return;
-        }
-
-        if (beam != null) {
-            int distance = Random.IntRange(4, 6);
-            for (int digPos : beam.subPath(1, distance)) {
-                int x = digPos % Level.WIDTH;
-                int y = digPos / Level.WIDTH;
-
-                if (x <= 0 || x >= Level.WIDTH - 1 || y <= 0 || y >= Level.HEIGHT - 1) {
-                    break;
-                }
-
-                int terrain = Dungeon.level.map(digPos);
-
-                if (Level.stone[digPos]) {
-                    if (terrain == Terrain.WALL_STONE) {
-                        Dungeon.level.setDirt(digPos, true, true);
-                    } else {
-                        Dungeon.level.setEmpty(digPos, true, true);
-                    }
-
-                    switch (Random.Int(12)) {
-                        case 0:
-                            GLog.w("You've dug out a boulder!");
-                            Boulder npc = new Boulder();
-                            npc.pos(digPos);
-                            Dungeon.level.mobs.add(npc);
-                            GameScene.add(npc);
-                            break;
-                        case 1:
-                        case 2:
-                            Dungeon.level.drop(new Rock().random(), digPos).rockBottom();
-                            break;
-                        default:
-                            //nothing
-                            break;
-                    }
-
-                    if (Dungeon.audible[digPos]) {
-                        Sample.INSTANCE.play(Assets.SND_WALL_SMASH);
-                    }
-
-                    CellEmitter.get(digPos).burst(Speck.factory(Speck.DUST), 5);
-                } else if (Dungeon.level.burnable[digPos]) {
-                    Dungeon.level.setWoodDebris(digPos, true, true);
-
-                    if (Dungeon.audible[digPos]) {
-                        Sample.INSTANCE.play(Assets.SND_DOOR_SMASH);
-                    }
-
-                    CellEmitter.get(digPos).burst(Speck.factory(Speck.WOOD), 5);
-                }
-            }
-        } else {
-            if (digDown(curUser.pos())) {
-                Chasm.heroFall(curUser.pos());
-                if (!isKnown()) {
-                    setKnown();
-                }
-            }
-        }
-    }
 
     /*
     @Override
@@ -138,12 +73,6 @@ public class WandOfTunneling extends Wand {
     }
     */
 
-    @Override
-    protected void fxEffect(int source, int destination, Callback callback) {
-        //int cell = beam.path.get(Math.min(beam.dist, 9));
-        //curUser.sprite.parent.add(new Beam.LightRay(curUser.sprite.center(), DungeonTilemap.tileCenterToWorld(cell)));
-        callback.call();
-    }
 
     @Override
     public void explode(Char user) {
@@ -153,9 +82,9 @@ public class WandOfTunneling extends Wand {
 
         for (Integer offset : Level.NEIGHBOURS8) {
             int pos = user.pos() + offset;
-            Char target = Dungeon.level.findMob(pos);
+            Char target = Actor.findChar(pos);
 
-            boolean fall = digDown(pos);
+            boolean fall = tunnelingSpellcaster.digDown(pos);
 
             if (target == null) {
                 continue;
@@ -165,31 +94,6 @@ public class WandOfTunneling extends Wand {
         }
 
         explode(user, maxDamage, false);
-    }
-
-    private boolean digDown(int pos) {
-        if ((Terrain.flags[Dungeon.level.map(pos)] & Terrain.FLAG_UNDIGGABLE) != 0) {
-            return false;
-        }
-
-        boolean retval;
-
-        if ((Level.flags & Level.FLAG_CHASM_NOT_DIGGABLE) == 0) {
-            Dungeon.level.setDirtChasm(pos, true, true);
-            retval = true;
-        } else {
-            Dungeon.level.setDirtPit(pos, true, true);
-            retval = false;
-        }
-        Dungeon.observe();
-
-        if (Dungeon.audible[pos]) {
-            Sample.INSTANCE.play(Assets.SND_WALL_SMASH);
-        }
-
-        CellEmitter.get(pos).burst(Speck.factory(Speck.DUST), 5);
-
-        return retval;
     }
 
     public void explode(Char target, int maxDamage, boolean chasm) {

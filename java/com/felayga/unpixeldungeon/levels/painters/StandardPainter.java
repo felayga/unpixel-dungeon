@@ -101,7 +101,7 @@ public class StandardPainter extends Painter {
         for (int i = room.top + 1; i < room.bottom; i++) {
             for (int j = room.left + 1; j < room.right; j++) {
                 int cell = i * Level.WIDTH + j;
-                int t = Terrain.EMBERS;
+                int t = Terrain.CHARCOAL;
                 switch (Random.Int(5)) {
                     case 0:
                         t = Terrain.EMPTY;
@@ -191,7 +191,7 @@ public class StandardPainter extends Painter {
 
     private static void paintBridge(Level level, Room room) {
         fill(level, room.left + 1, room.top + 1, room.width() - 1, room.height() - 1,
-                (level.flags & Level.FLAG_CHASM_NOT_DIGGABLE) == 0 && Random.Int(3) == 0 ?
+                (Level.flags & Level.FLAG_CHASM_NOT_DIGGABLE) == 0 && Random.Int(3) == 0 ?
                         Terrain.CHASM :
                         Terrain.UNDERLAY_PIT);
 

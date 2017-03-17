@@ -50,17 +50,15 @@ public class ScrollOfRecharging extends Scroll {
 	
 	@Override
 	protected void doRead() {
+        super.doRead();
 
 		Buff.affect(curUser, curUser, Recharging.class, BUFF_DURATION);
 		charge(curUser);
-		
-		Sample.INSTANCE.play( Assets.SND_READ );
 
 		GLog.i( "a surge of energy courses through your body, invigorating your wands.");
 		SpellSprite.show( curUser, SpellSprite.CHARGE );
 		setKnown();
-		
-		curUser.spend_new(TIME_TO_READ, true);
+
 	}
 	
 	@Override

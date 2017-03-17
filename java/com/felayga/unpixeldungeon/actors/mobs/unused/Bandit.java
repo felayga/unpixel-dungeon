@@ -27,7 +27,7 @@ package com.felayga.unpixeldungeon.actors.mobs.unused;
 /*
 import com.felayga.unpixeldungeon.Badges;
 import com.felayga.unpixeldungeon.items.Item;
-import com.felayga.unpixeldungeon.sprites.mobs.BanditSprite;
+import com.felayga.unpixeldungeon.sprites.mobs.unused.BanditSprite;
 
 public class Bandit extends Thief {
 	

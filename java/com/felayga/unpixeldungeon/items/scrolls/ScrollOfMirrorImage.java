@@ -25,12 +25,11 @@
  */
 package com.felayga.unpixeldungeon.items.scrolls;
 
-import com.felayga.unpixeldungeon.Assets;
 import com.felayga.unpixeldungeon.actors.Actor;
 import com.felayga.unpixeldungeon.actors.mobs.npcs.MirrorImage;
+import com.felayga.unpixeldungeon.items.scrolls.positionscroll.ScrollOfTeleportation;
 import com.felayga.unpixeldungeon.levels.Level;
 import com.felayga.unpixeldungeon.scenes.GameScene;
-import com.watabou.noosa.audio.Sample;
 import com.watabou.utils.Random;
 
 import java.util.ArrayList;
@@ -46,7 +45,8 @@ public class ScrollOfMirrorImage extends Scroll {
 	
 	@Override
 	protected void doRead() {
-		
+        super.doRead();
+
 		ArrayList<Integer> respawnPoints = new ArrayList<>();
 		
 		for (int i=0; i < Level.NEIGHBOURS8.length; i++) {
@@ -59,23 +59,21 @@ public class ScrollOfMirrorImage extends Scroll {
 		int nImages = NIMAGES;
 		while (nImages > 0 && respawnPoints.size() > 0) {
 			int index = Random.index( respawnPoints );
-			
+            int pos = respawnPoints.get(index);
+            respawnPoints.remove( index );
+
 			MirrorImage mob = new MirrorImage(curUser.level);
+            mob.pos(pos);
 			mob.duplicate( curUser );
-			GameScene.add( mob );
-			ScrollOfTeleportation.appear( mob, respawnPoints.get( index ) );
-			
-			respawnPoints.remove( index );
+            GameScene.add( mob );
+			ScrollOfTeleportation.appear( mob, pos );
+
 			nImages--;
 		}
 		
 		if (nImages < NIMAGES) {
 			setKnown();
 		}
-		
-		Sample.INSTANCE.play( Assets.SND_READ );
-		
-		curUser.spend_new( TIME_TO_READ, true );
 	}
 	
 	@Override

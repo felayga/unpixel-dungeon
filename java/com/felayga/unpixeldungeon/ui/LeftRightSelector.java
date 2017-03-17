@@ -25,6 +25,8 @@
  */
 package com.felayga.unpixeldungeon.ui;
 
+import com.felayga.unpixeldungeon.Chrome;
+import com.felayga.unpixeldungeon.scenes.PixelScene;
 import com.watabou.input.Touchscreen;
 import com.watabou.noosa.Image;
 import com.watabou.noosa.TouchArea;
@@ -58,24 +60,27 @@ public class LeftRightSelector extends RedButton {
     @Override
     protected void createChildren()
     {
-        super.createChildren();
-
-        remove(hotArea);
         hotArea = new TouchArea( 0, 0, 0, 0 ) {
             @Override
             protected void onClickLeftSide( Touchscreen.Touch touch ) {
                 if (!processed) {
                     LeftRightSelector.this.onClickLeftSide();
                 }
-            };
+            }
             @Override
             protected void onClickRightSide( Touchscreen.Touch touch ) {
                 if (!processed) {
                     LeftRightSelector.this.onClickRightSide();
                 }
-            };
+            }
         };
         add(hotArea);
+
+        bg = Chrome.get( Chrome.Type.BUTTON );
+        add( bg );
+
+        text = PixelScene.createText( 8 );
+        add(text);
     }
 
     @Override

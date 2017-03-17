@@ -51,7 +51,10 @@ public class MirrorImage extends NPC {
 		state = HUNTING;
 
 		belongings.collectEquip(new SuicideAttack(GameTime.TICK, 1, 4));
-	}
+
+        HP = HT = 1;
+        MP = MT = 1;
+    }
 	
 	private static final String TIER			= "tier";
 
@@ -60,12 +63,14 @@ public class MirrorImage extends NPC {
         increaseAttribute(AttributeType.STRCON, hero.STRCON() - STRCON());
         increaseAttribute(AttributeType.DEXCHA, hero.DEXCHA() - DEXCHA());
         increaseAttribute(AttributeType.INTWIS, hero.INTWIS() - INTWIS());
+
+        HP = HT = 1;
+        MP = MT = 1;
 	}
 	
 	protected Char chooseEnemy() {
-		
 		if (enemy == null || !enemy.isAlive()) {
-			HashSet<Mob> enemies = new HashSet<Mob>();
+			HashSet<Mob> enemies = new HashSet<>();
 			for (Mob mob:Dungeon.level.mobs) {
 				if (mob.hostile && Level.fieldOfView[mob.pos()]) {
 					enemies.add( mob );

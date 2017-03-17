@@ -48,6 +48,11 @@ public class LembasWafer extends Food {
     }
 
     @Override
+    protected boolean determineRotten() {
+        return false;
+    }
+
+    @Override
     public String info() {
         return "Very thin cakes, baked brown and wrapped in leaves.  Highly nutritious." + super.info();
     }

@@ -25,6 +25,7 @@
  */
 package com.felayga.unpixeldungeon.items.weapon.missiles.simple;
 
+import com.felayga.unpixeldungeon.actors.buffs.hero.Encumbrance;
 import com.felayga.unpixeldungeon.items.Item;
 import com.felayga.unpixeldungeon.items.bags.IBag;
 import com.felayga.unpixeldungeon.items.weapon.missiles.MissileWeapon;
@@ -44,7 +45,7 @@ public class Dart extends MissileWeapon {
         image = ItemSpriteSheet.MISSILE_DART;
         material = Material.Iron;
 
-        bones = false; //Finding them in bones would be semi-frequent and disappointing.
+        weight(1 * Encumbrance.UNIT);
         price = 2;
     }
 

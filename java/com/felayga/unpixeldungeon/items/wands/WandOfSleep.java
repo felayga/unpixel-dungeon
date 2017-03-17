@@ -26,41 +26,39 @@
 
 package com.felayga.unpixeldungeon.items.wands;
 
-import com.felayga.unpixeldungeon.Dungeon;
 import com.felayga.unpixeldungeon.actors.Actor;
 import com.felayga.unpixeldungeon.actors.Char;
-import com.felayga.unpixeldungeon.items.scrolls.ScrollOfLullaby;
+import com.felayga.unpixeldungeon.items.scrolls.spellcasterscroll.ScrollOfLullaby;
 import com.felayga.unpixeldungeon.levels.Level;
 import com.felayga.unpixeldungeon.mechanics.Ballistica;
 import com.felayga.unpixeldungeon.mechanics.MagicType;
+import com.felayga.unpixeldungeon.spellcasting.SleepSpellcaster;
+import com.felayga.unpixeldungeon.spellcasting.Spellcaster;
 import com.watabou.utils.Random;
 
 /**
  * Created by HELLO on 3/2/2017.
  */
 public class WandOfSleep extends Wand {
-
-    public WandOfSleep()
-    {
+    public WandOfSleep() {
         super(8);
         name = "Wand of Sleep";
 
-        ballisticaMode = Ballistica.Mode.value(Ballistica.Mode.MagicRay, Ballistica.Mode.StopSelf);
         price = 175;
+
+        spellcaster = new SleepSpellcaster() {
+            @Override
+            public void onZap(Char source, Ballistica path, int targetPos) {
+                super.onZap(source, path, targetPos);
+
+                WandOfSleep.this.wandUsed();
+            }
+        };
     }
 
     @Override
     public int randomCharges() {
         return Random.IntRange(4, 8);
-    }
-
-    @Override
-    protected void onZap( Ballistica bolt ) {
-        Char ch = Actor.findChar( bolt.collisionPos );
-        if (ch != null) {
-            processSoulMark(ch, curUser);
-            ScrollOfLullaby.affect(ch, curUser);
-        }
     }
 
     @Override
@@ -71,7 +69,7 @@ public class WandOfSleep extends Wand {
 
         for (Integer offset : Level.NEIGHBOURS8) {
             int pos = user.pos() + offset;
-            Char target = Dungeon.level.findMob(pos);
+            Char target = Actor.findChar(pos);
 
             if (target == null) {
                 continue;
@@ -89,7 +87,7 @@ public class WandOfSleep extends Wand {
         target.damage(damage, MagicType.Magic, curUser, null);
 
         if (Random.Int(2) == 0) {
-            ScrollOfLullaby.affect(target, curUser);
+            Spellcaster.cast(curUser, target.pos(), spellcaster, Spellcaster.Origin.Silent);
         }
     }
 

@@ -40,7 +40,7 @@ import com.felayga.unpixeldungeon.items.Gold;
 import com.felayga.unpixeldungeon.items.Item;
 import com.felayga.unpixeldungeon.items.books.Book;
 import com.felayga.unpixeldungeon.items.scrolls.ScrollOfRage;
-import com.felayga.unpixeldungeon.items.scrolls.ScrollOfTeleportation;
+import com.felayga.unpixeldungeon.items.scrolls.positionscroll.ScrollOfTeleportation;
 import com.felayga.unpixeldungeon.items.spells.Spell;
 import com.felayga.unpixeldungeon.levels.Level;
 import com.felayga.unpixeldungeon.mechanics.AttributeType;
@@ -183,7 +183,6 @@ public abstract class SpellBook extends Book {
             }
 
             if (spell != null) {
-                spell.level(spellLevel);
                 user.belongings.collect(spell);
             }
         }

@@ -46,7 +46,7 @@ import com.felayga.unpixeldungeon.items.Item;
 import com.felayga.unpixeldungeon.items.scrolls.ScrollOfPsionicBlast;
 import com.felayga.unpixeldungeon.levels.Level;
 import com.felayga.unpixeldungeon.scenes.GameScene;
-import com.felayga.unpixeldungeon.sprites.mobs.MimicSprite;
+import com.felayga.unpixeldungeon.sprites.mobs.unused.MimicSprite;
 import com.watabou.utils.Bundle;
 import com.watabou.utils.Random;
 

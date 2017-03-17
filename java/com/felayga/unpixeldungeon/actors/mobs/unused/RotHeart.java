@@ -34,7 +34,7 @@ import com.felayga.unpixeldungeon.items.weapon.melee.mob.MeleeMobAttack;
 import com.felayga.unpixeldungeon.levels.Terrain;
 import com.felayga.unpixeldungeon.mechanics.GameTime;
 import com.felayga.unpixeldungeon.scenes.GameScene;
-import com.felayga.unpixeldungeon.sprites.mobs.RotHeartSprite;
+import com.felayga.unpixeldungeon.sprites.mobs.unused.RotHeartSprite;
 
 import java.util.HashSet;
 

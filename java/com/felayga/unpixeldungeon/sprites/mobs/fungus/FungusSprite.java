@@ -42,16 +42,16 @@ public abstract class FungusSprite extends MobSprite {
         int offset = index * FRAMES_PER_ROW;
 
         idle = new Animation( 1, true );
-        idle.frames( frames, 0 + offset );
+        idle.frames( frames, 0 + offset, 1 + offset );
 
         run = new Animation( 1, true );
         run.frames( frames, 0 + offset );
 
         attack = new Animation( 5, false );
-        attack.frames( frames, 1 + offset, 2 + offset );
+        attack.frames( frames, 2 + offset, 3 + offset, 0 + offset );
 
         die = new Animation( 20, false );
-        die.frames( frames, 3 + offset, 4 + offset, 5 + offset );
+        die.frames( frames, 4 + offset, 5 + offset, 6 + offset );
 
         play( idle );
     }

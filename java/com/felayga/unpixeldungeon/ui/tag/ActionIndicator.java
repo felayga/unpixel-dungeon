@@ -27,6 +27,8 @@
 package com.felayga.unpixeldungeon.ui.tag;
 
 import com.felayga.unpixeldungeon.Dungeon;
+import com.felayga.unpixeldungeon.actors.Actor;
+import com.felayga.unpixeldungeon.actors.hero.HeroAction;
 import com.felayga.unpixeldungeon.actors.mobs.Mob;
 import com.felayga.unpixeldungeon.levels.Level;
 import com.felayga.unpixeldungeon.levels.Terrain;
@@ -57,7 +59,6 @@ public class ActionIndicator extends Tag {
 
     private int lastTargetPos = Constant.Position.NONE;
     private int lastTargetTerrain;
-    private ArrayList<Mob> candidates = new ArrayList<>();
 
     public ActionIndicator() {
         super(DangerIndicator.COLOR);
@@ -125,7 +126,7 @@ public class ActionIndicator extends Tag {
                 for (Integer offset : Level.NEIGHBOURS4) {
                     int pos = heroPos + offset;
 
-                    if (Dungeon.level.map(pos) == Terrain.OPEN_DOOR && Dungeon.level.findMob(pos) == null && Dungeon.level.heaps.get(pos) == null) {
+                    if (Dungeon.level.map(pos) == Terrain.OPEN_DOOR && Actor.findChar(pos) == null && Dungeon.level.heaps.get(pos) == null) {
                         lastTargetPos = pos;
                         lastTargetTerrain = Dungeon.level.map(pos);
                         break;
@@ -144,27 +145,41 @@ public class ActionIndicator extends Tag {
         enable(bg.visible);
     }
 
+    private HeroAction actionOverride;
+
     private void updateImage() {
         if (sprite != null) {
             sprite.killAndErase();
             sprite = null;
         }
 
+        actionOverride = null;
+
         try {
             switch (lastTargetTerrain) {
                 case Terrain.OPEN_DOOR:
                     sprite = new CloseDoorSprite();
+                    actionOverride = new HeroAction.HandleDoor(lastTargetPos);
                     break;
                 case Terrain.STAIRS_UP:
+                    sprite = new UpStairsSprite();
+                    actionOverride = new HeroAction.MoveLevel(lastTargetPos, -1, false);
+                    break;
                 case Terrain.STAIRS_UP_ALTERNATE:
                     sprite = new UpStairsSprite();
+                    actionOverride = new HeroAction.MoveLevel(lastTargetPos, -1, true);
                     break;
                 case Terrain.STAIRS_DOWN:
+                    sprite = new DownStairsSprite();
+                    actionOverride = new HeroAction.MoveLevel(lastTargetPos, 1, false);
+                    break;
                 case Terrain.STAIRS_DOWN_ALTERNATE:
                     sprite = new DownStairsSprite();
+                    actionOverride = new HeroAction.MoveLevel(lastTargetPos, 1, true);
                     break;
                 case Terrain.SIGN:
                     sprite = new ReadSignSprite();
+                    actionOverride = new HeroAction.ReadSign(lastTargetPos);
                     break;
             }
 
@@ -201,7 +216,7 @@ public class ActionIndicator extends Tag {
     @Override
     protected void onClick() {
         if (enabled) {
-            if (Dungeon.hero.handle(lastTargetPos, false)) {
+            if (Dungeon.hero.handle(lastTargetPos, actionOverride)) {
                 Dungeon.hero.next();
             }
         }

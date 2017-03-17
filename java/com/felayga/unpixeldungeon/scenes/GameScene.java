@@ -45,7 +45,7 @@ import com.felayga.unpixeldungeon.effects.SpellSprite;
 import com.felayga.unpixeldungeon.items.Heap;
 import com.felayga.unpixeldungeon.items.Item;
 import com.felayga.unpixeldungeon.items.potions.Potion;
-import com.felayga.unpixeldungeon.items.scrolls.ScrollOfTeleportation;
+import com.felayga.unpixeldungeon.items.scrolls.positionscroll.ScrollOfTeleportation;
 import com.felayga.unpixeldungeon.levels.Level;
 import com.felayga.unpixeldungeon.levels.RegularLevel;
 import com.felayga.unpixeldungeon.levels.branches.DungeonBranch;
@@ -55,7 +55,6 @@ import com.felayga.unpixeldungeon.plants.Plant;
 import com.felayga.unpixeldungeon.sprites.CharSprite;
 import com.felayga.unpixeldungeon.sprites.DiscardedItemSprite;
 import com.felayga.unpixeldungeon.sprites.ItemSprite;
-import com.felayga.unpixeldungeon.sprites.ItemSpriteBase;
 import com.felayga.unpixeldungeon.sprites.PlantSprite;
 import com.felayga.unpixeldungeon.sprites.TrapSprite;
 import com.felayga.unpixeldungeon.sprites.hero.HeroSprite;
@@ -873,7 +872,7 @@ public class GameScene extends PixelScene {
     private static final CellSelector.Listener defaultCellListener = new CellSelector.Listener() {
         @Override
         public boolean onSelect(Integer cell) {
-            if (Dungeon.hero.handle(cell, true)) {
+            if (Dungeon.hero.handle(cell, null)) {
                 Dungeon.hero.next();
             }
             return true;

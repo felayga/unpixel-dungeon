@@ -51,6 +51,7 @@ import com.felayga.unpixeldungeon.levels.painters.TunnelPainter;
 import com.felayga.unpixeldungeon.levels.painters.VaultPainter;
 import com.felayga.unpixeldungeon.levels.painters.WeakFloorPainter;
 import com.felayga.unpixeldungeon.unPixelDungeon;
+import com.felayga.unpixeldungeon.utils.GLog;
 import com.watabou.utils.Bundlable;
 import com.watabou.utils.Bundle;
 import com.watabou.utils.Graph;
@@ -74,58 +75,83 @@ public class Room extends Rect implements Graph.Node, Bundlable {
 	public int price = 1;
 	
 	public enum Type {
-		NULL                (null),
-		STANDARD	        (StandardPainter.class),
-		ENTRANCE	        (EntrancePainter.class),
-		EXIT		        (ExitPainter.class),
-        ENTRANCE_ALTERNATE  (EntranceAlternatePainter.class),
-        EXIT_ALTERNATE      (ExitAlternatePainter.class),
-		BOSS_EXIT	        (BossExitPainter.class),
-		TUNNEL		        (TunnelPainter.class),
-		PASSAGE		        (PassagePainter.class),
-		SHOP		        (ShopPainter.class),
-		BLACKSMITH	        (BlacksmithPainter.class),
-		TREASURY	        (TreasuryPainter.class),
-		ARMORY		        (ArmoryPainter.class),
-		//LIBRARY		    (LibraryPainter.class),
-		LABORATORY	        (LaboratoryPainter.class),
-		VAULT		        (VaultPainter.class),
-		TRAPS		        (TrapsPainter.class),
-		STORAGE		        (StoragePainter.class),
-		MAGIC_WELL	        (MagicWellPainter.class),
-		GARDEN		        (GardenPainter.class),
-		CRYPT		        (CryptPainter.class),
-		//STATUE		    (StatuePainter.class),
-		//POOL		        (PoolPainter.class),
-		//RAT_KING	        (RatKingPainter.class),
-		WEAK_FLOOR	        (WeakFloorPainter.class),
-		PIT			        (PitPainter.class),
+        NULL(null),
+        STANDARD(StandardPainter.class),
+        ENTRANCE(EntrancePainter.class),
+        EXIT(ExitPainter.class),
+        ENTRANCE_ALTERNATE(EntranceAlternatePainter.class),
+        EXIT_ALTERNATE(ExitAlternatePainter.class),
+        BOSS_EXIT(BossExitPainter.class),
+        TUNNEL(TunnelPainter.class),
+        PASSAGE(PassagePainter.class),
+        SHOP(ShopPainter.class),
+        BLACKSMITH(BlacksmithPainter.class),
+        TREASURY(TreasuryPainter.class),
+        ARMORY(ArmoryPainter.class),
+        //LIBRARY		    (LibraryPainter.class),
+        LABORATORY(LaboratoryPainter.class),
+        VAULT(VaultPainter.class),
+        TRAPS(TrapsPainter.class),
+        STORAGE(StoragePainter.class),
+        MAGIC_WELL(MagicWellPainter.class),
+        GARDEN(GardenPainter.class),
+        CRYPT(CryptPainter.class),
+        //STATUE		    (StatuePainter.class),
+        //POOL		        (PoolPainter.class),
+        //RAT_KING	        (RatKingPainter.class),
+        WEAK_FLOOR(WeakFloorPainter.class),
+        PIT(PitPainter.class),
 
-		//prison quests
-		//MASS_GRAVE        (MassGravePainter.class),
-		//ROT_GARDEN        (RotGardenPainter.class),
-		RITUAL_SITE         (RitualSitePainter.class),
-        ALTAR               (AltarPainter.class),
-        PLAIN               (PlainPainter.class);
-		
-		private Method paint;
-		
-		Type( Class<? extends Painter> painter ) {
-			try {
-				paint = painter.getMethod( "paint", Level.class, Room.class );
-			} catch (Exception e) {
-				paint = null;
-			}
-		}
-		
-		public void paint( Level level, Room room ) {
-			try {
-				paint.invoke( null, level, room );
-			} catch (Exception e) {
-				unPixelDungeon.reportException(e);
-			}
-		}
-	}
+        //prison quests
+        //MASS_GRAVE        (MassGravePainter.class),
+        //ROT_GARDEN        (RotGardenPainter.class),
+        RITUAL_SITE(RitualSitePainter.class),
+        ALTAR(AltarPainter.class),
+        PLAIN(PlainPainter.class);
+
+        private Method paint;
+        private Method canUse;
+
+        Type(Class<? extends Painter> painter) {
+            if (painter != null) {
+                GLog.d("init " + painter.toString());
+            } else {
+                GLog.d("init null");
+            }
+            try {
+                this.paint = painter.getMethod("paint", Level.class, Room.class);
+            } catch (Exception e) {
+                this.paint = null;
+            }
+            try {
+                this.canUse = painter.getMethod("canUse", Room.class);
+            } catch (Exception e) {
+                GLog.d(e);
+                this.canUse = null;
+            }
+        }
+
+        public void paint(Level level, Room room) {
+            try {
+                paint.invoke(null, level, room);
+            } catch (Exception e) {
+                unPixelDungeon.reportException(e);
+            }
+        }
+
+        public boolean canUse(Room room) {
+            if (canUse != null) {
+                try {
+                    Object retval = canUse.invoke(null, room);
+                    return (boolean)retval;
+                } catch (Exception e) {
+                    GLog.d(e);
+                }
+            }
+
+            return room.connected.size() > 0;
+        }
+    }
 	
 	public static final ArrayList<Type> SPECIALS = new ArrayList<>( Arrays.asList(
 		/*Type.WEAK_FLOOR, Type.MAGIC_WELL, Type.CRYPT, Type.GARDEN, Type.ARMORY,
@@ -279,7 +305,7 @@ public class Room extends Rect implements Graph.Node, Bundlable {
 	public static class Door extends Point {
 		
 		public enum Type {
-			EMPTY, TUNNEL, REGULAR, REGULAR_UNBROKEN, UNLOCKED, HIDDEN, HIDDENLOCKED, BARRICADE, LOCKED
+			EMPTY, TUNNEL, REGULAR, REGULAR_UNBROKEN, UNLOCKED, BARRICADE, LOCKED, NICHE, JAIL
 		}
 		public Type type = Type.EMPTY;
 		

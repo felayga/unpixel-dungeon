@@ -116,8 +116,10 @@ public class Sign {
             if (index < TIPS.length) {
                 GameScene.show(new WndMessage(TIPS[index]));
 
+                /*
+                //todo: burning signs in certain levels?
                 if (index >= 21) {
-                    Dungeon.level.set(pos, Terrain.EMBERS, true);
+                    Dungeon.level.set(pos, Terrain.CHARCOAL, true);
                     GameScene.updateMap(pos);
                     GameScene.discoverTile(pos, Terrain.SIGN);
 
@@ -126,7 +128,7 @@ public class Sign {
                     CellEmitter.get(pos).burst(ElmoParticle.FACTORY, 6);
                     Sample.INSTANCE.play(Assets.SND_BURNING);
                 }
-
+                */
             }
         }
     }

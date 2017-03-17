@@ -27,6 +27,7 @@
 package com.felayga.unpixeldungeon.items.weapon.melee.simple;
 
 import com.felayga.unpixeldungeon.Assets;
+import com.felayga.unpixeldungeon.actors.buffs.hero.Encumbrance;
 import com.felayga.unpixeldungeon.mechanics.GameTime;
 import com.felayga.unpixeldungeon.mechanics.Material;
 import com.felayga.unpixeldungeon.sprites.ItemSpriteSheet;
@@ -42,6 +43,9 @@ public class CricketBat extends SimpleMeleeWeapon {
         image = ItemSpriteSheet.MELEE_CRICKETBAT;
         pickupSound = Assets.SND_ITEM_WOOD;
         material = Material.Plastic;
+
+        weight(20 * Encumbrance.UNIT);
+        price = 4;
     }
 
     @Override

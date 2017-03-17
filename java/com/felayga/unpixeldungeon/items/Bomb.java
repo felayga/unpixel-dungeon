@@ -153,7 +153,7 @@ public class Bomb extends Item implements IFlammable {
                 }
 
                 if (Level.burnable[c]) {
-                    Dungeon.level.set(c, Terrain.EMBERS, true);
+                    Dungeon.level.set(c, Terrain.CHARCOAL, true);
                     GameScene.updateMap(c);
                     terrainAffected = true;
                 }

@@ -52,9 +52,9 @@ public class ScrollOfRemoveCurse extends Scroll {
 	
 	@Override
 	protected void doRead() {
-		
+		super.doRead();
+
 		new Flare( 6, 32 ).show( curUser.sprite, 2f ) ;
-		Sample.INSTANCE.play( Assets.SND_READ );
 
 		boolean procced = false;
 		String passProc = null;
@@ -86,8 +86,6 @@ public class ScrollOfRemoveCurse extends Scroll {
 		}
 		
 		setKnown();
-		
-		curUser.spend_new(TIME_TO_READ, true);
 	}
 	
 	@Override

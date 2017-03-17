@@ -112,8 +112,8 @@ public class Item implements Bundlable {
     private int weight;
 
     public int weight() {
-        if (weight==0) {
-            GLog.d(getName()+" has no weight");
+        if (weight == 0) {
+            GLog.d(getName() + " has no weight");
         }
         return weight;
     }
@@ -1016,7 +1016,7 @@ public class Item implements Bundlable {
             GLog.d("not isammo? " + (test != null ? test.getDisplayName() : "<null>"));
         }
 
-        final Item item = user.belongings.remove(Item.this, 1);
+        final Item item = this.parent().remove(Item.this, 1);
 
         if (updateQuickslot) {
             updateQuickslot();

@@ -38,7 +38,7 @@ import com.felayga.unpixeldungeon.items.weapon.enchantments.Fire;
 import com.felayga.unpixeldungeon.items.weapon.melee.mob.IgniteChance;
 import com.felayga.unpixeldungeon.levels.Level;
 import com.felayga.unpixeldungeon.mechanics.GameTime;
-import com.felayga.unpixeldungeon.sprites.mobs.ElementalSprite;
+import com.felayga.unpixeldungeon.sprites.mobs.unused.ElementalSprite;
 import com.watabou.utils.Random;
 
 public class Elemental extends Mob {

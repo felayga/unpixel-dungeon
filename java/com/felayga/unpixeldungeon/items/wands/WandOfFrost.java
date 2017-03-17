@@ -25,20 +25,13 @@
  */
 package com.felayga.unpixeldungeon.items.wands;
 
-import com.felayga.unpixeldungeon.Dungeon;
 import com.felayga.unpixeldungeon.actors.Actor;
 import com.felayga.unpixeldungeon.actors.Char;
-import com.felayga.unpixeldungeon.actors.buffs.Buff;
-import com.felayga.unpixeldungeon.actors.buffs.negative.Chill;
-import com.felayga.unpixeldungeon.actors.buffs.negative.Frost;
-import com.felayga.unpixeldungeon.effects.MagicMissile;
-import com.felayga.unpixeldungeon.items.Heap;
 import com.felayga.unpixeldungeon.items.weapon.melee.simple.MagesStaff;
 import com.felayga.unpixeldungeon.levels.Level;
 import com.felayga.unpixeldungeon.mechanics.Ballistica;
-import com.felayga.unpixeldungeon.mechanics.GameTime;
 import com.felayga.unpixeldungeon.mechanics.MagicType;
-import com.watabou.utils.Callback;
+import com.felayga.unpixeldungeon.spellcasting.FrostSpellcaster;
 import com.watabou.utils.PointF;
 import com.watabou.utils.Random;
 
@@ -48,59 +41,21 @@ public class WandOfFrost extends Wand {
         super(8);
         name = "Wand of Frost";
 
-        ballisticaMode = Ballistica.Mode.value(Ballistica.Mode.MagicBolt);
         price = 175;
+
+        spellcaster = new FrostSpellcaster() {
+            @Override
+            public void onZap(Char source, Ballistica path, int targetPos) {
+                super.onZap(source, path, targetPos);
+
+                WandOfFrost.this.wandUsed();
+            }
+        };
     }
 
     @Override
     public int randomCharges() {
         return Random.IntRange(4, 8);
-    }
-
-    @Override
-    protected void onZap(Ballistica bolt) {
-        onZap(bolt.collisionPos);
-    }
-
-    private void onZap(int pos) {
-        Heap heap = Dungeon.level.heaps.get(pos);
-        if (heap != null) {
-            heap.freeze(curUser);
-        }
-
-        Char ch = Actor.findChar(pos);
-        if (ch != null) {
-
-            int damage = Random.NormalIntRange(6, 36);
-
-            /*
-            if (ch.buff(Chill.class) != null || ch.buff(Frost.class) != null) {
-                damage = (int) (damage * ch.buff(Chill.class).movementModifier() / GameTime.TICK);
-            } else {
-            }
-            */
-            ch.sprite.burst(0xFF99CCFF, level() / 2 + 2);
-
-            processSoulMark(ch, curUser);
-            ch.damage(damage, MagicType.Cold, curUser, null);
-
-            if (ch.isAlive()) {
-                if (Level.puddle[ch.pos()]) {
-                    //20+(10*level)% chance
-                    if (Random.Int(10) >= 8 - level())
-                        Buff.affect(ch, curUser, Frost.class, Frost.duration(ch) * Random.LongRange(2, 4) * GameTime.TICK / GameTime.TICK);
-                    else
-                        Buff.prolong(ch, curUser, Chill.class, 6 + level());
-                } else {
-                    Buff.prolong(ch, curUser, Chill.class, 4 + level());
-                }
-            }
-        }
-    }
-
-    @Override
-    protected void fxEffect(int source, int destination, Callback callback) {
-        MagicMissile.blueLight(curUser.sprite.parent, source, destination, callback);
     }
 
     /*
@@ -143,13 +98,13 @@ public class WandOfFrost extends Wand {
         for (Integer offset : Level.NEIGHBOURS8) {
             int pos = user.pos() + offset;
 
-            Char target = Dungeon.level.findMob(pos);
+            Char target = Actor.findChar(pos);
 
             if (target != null) {
                 explode(target, maxDamage);
             }
 
-            onZap(pos);
+            spellcaster.onZap(user, null, pos);
         }
 
         explode(curUser, maxDamage);
@@ -159,7 +114,7 @@ public class WandOfFrost extends Wand {
         int damage = Random.IntRange(1, maxDamage);
 
         target.damage(damage, MagicType.Cold, curUser, null);
-        onZap(target.pos());
+        spellcaster.onZap(curUser, null, target.pos());
     }
 
     @Override

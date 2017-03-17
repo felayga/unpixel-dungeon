@@ -34,6 +34,9 @@ import com.felayga.unpixeldungeon.actors.buffs.positive.Haste;
 import com.felayga.unpixeldungeon.mechanics.GameTime;
 import com.felayga.unpixeldungeon.ui.BuffIndicator;
 
+import java.util.ArrayList;
+import java.util.List;
+
 public class Slow extends FlavourBuff implements ISpeedModifierBuff {
     @Override
     public long movementModifier() {
@@ -47,6 +50,27 @@ public class Slow extends FlavourBuff implements ISpeedModifierBuff {
 
     public Slow() {
         type = buffType.NEGATIVE;
+    }
+
+    public static void detach(Char target, boolean intrinsic) {
+        List<Buff> pendingRemoval = new ArrayList<>();
+        for (Buff buff : target.buffs()) {
+            if (buff instanceof Slow) {
+                if (buff instanceof IIntrinsicBuff) {
+                    if (intrinsic) {
+                        pendingRemoval.add(buff);
+                    }
+                } else {
+                    if (!intrinsic) {
+                        pendingRemoval.add(buff);
+                    }
+                }
+            }
+        }
+
+        for (Buff buff : pendingRemoval) {
+            buff.detach();
+        }
     }
 
     /*

@@ -33,7 +33,7 @@ import com.felayga.unpixeldungeon.actors.mobs.npcs.Imp;
 import com.felayga.unpixeldungeon.items.food.Food;
 import com.felayga.unpixeldungeon.items.weapon.melee.mob.DisarmChance;
 import com.felayga.unpixeldungeon.mechanics.GameTime;
-import com.felayga.unpixeldungeon.sprites.mobs.MonkSprite;
+import com.felayga.unpixeldungeon.sprites.mobs.unused.MonkSprite;
 import com.watabou.utils.Bundle;
 
 public class Monk extends Mob {

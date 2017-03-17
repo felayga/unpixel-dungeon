@@ -27,6 +27,7 @@
 package com.felayga.unpixeldungeon.items.tools;
 
 import com.felayga.unpixeldungeon.Dungeon;
+import com.felayga.unpixeldungeon.actors.Actor;
 import com.felayga.unpixeldungeon.actors.Char;
 import com.felayga.unpixeldungeon.actors.buffs.Buff;
 import com.felayga.unpixeldungeon.actors.buffs.hero.Encumbrance;
@@ -34,6 +35,7 @@ import com.felayga.unpixeldungeon.actors.buffs.hero.IntrinsicAwareness;
 import com.felayga.unpixeldungeon.actors.hero.Hero;
 import com.felayga.unpixeldungeon.items.Heap;
 import com.felayga.unpixeldungeon.items.Item;
+import com.felayga.unpixeldungeon.items.bags.Bag;
 import com.felayga.unpixeldungeon.items.bags.IBag;
 import com.felayga.unpixeldungeon.items.food.CannedFood;
 import com.felayga.unpixeldungeon.items.food.Corpse;
@@ -88,7 +90,7 @@ public class Tricorder extends Tool {
     @Override
     public void apply(Hero hero, int pos) {
         GLog.d("apply pos");
-        Char c = Dungeon.level.findMob(pos);
+        Char c = Actor.findChar(pos);
 
         if (c != null) {
             scan(c);
@@ -109,7 +111,16 @@ public class Tricorder extends Tool {
                         wrapper = new IntegerWrapper(0);
                         materials.put(material, wrapper);
                     }
-                    wrapper.value += bagItem.weight() * bagItem.quantity();
+
+                    int weight;
+                    if (bagItem instanceof Bag) {
+                        Bag bag = (Bag) bagItem;
+                        weight = bag.baseWeight();
+                    } else {
+                        weight = bagItem.weight();
+                    }
+
+                    wrapper.value += weight * bagItem.quantity();
                 }
 
                 String message = "The tricorder scans the area.\n";
@@ -153,7 +164,7 @@ public class Tricorder extends Tool {
 
     @Override
     public String desc() {
-        return "This futuristic device is capable of probing for detailed information about a creature.";
+        return "This futuristic device is capable of probing for detailed information about things.";
     }
 
     private class IntegerWrapper {

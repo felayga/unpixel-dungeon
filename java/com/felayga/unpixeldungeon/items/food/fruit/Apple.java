@@ -27,6 +27,10 @@
 package com.felayga.unpixeldungeon.items.food.fruit;
 
 import com.felayga.unpixeldungeon.actors.buffs.hero.Encumbrance;
+import com.felayga.unpixeldungeon.actors.hero.Hero;
+import com.felayga.unpixeldungeon.mechanics.BUCStatus;
+import com.felayga.unpixeldungeon.spellcasting.SleepSpellcaster;
+import com.felayga.unpixeldungeon.spellcasting.Spellcaster;
 import com.felayga.unpixeldungeon.sprites.ItemSpriteSheet;
 
 /**
@@ -43,6 +47,15 @@ public class Apple extends Fruit {
         bones = true;
 
         price = 7;
+    }
+
+    @Override
+    public void doneEating(Hero hero, boolean stuffed) {
+        super.doneEating(hero, stuffed);
+
+        if (bucStatus() == BUCStatus.Cursed) {
+            Spellcaster.cast(hero, hero.pos(), new SleepSpellcaster(), Spellcaster.Origin.Silent);
+        }
     }
 
     @Override

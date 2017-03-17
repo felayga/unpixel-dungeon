@@ -46,7 +46,7 @@ public class Terrain {
     public static final int OPEN_DOOR               = 6;
     public static final int STAIRS_UP               = 7;
     public static final int STAIRS_DOWN             = 8;
-    public static final int EMBERS                  = 9;
+    public static final int CHARCOAL                = 9;
     public static final int LOCKED_DOOR             = 10;
     public static final int PEDESTAL                = 11;
     public static final int WALL_DECO               = 12;
@@ -73,7 +73,6 @@ public class Terrain {
     public static final int CHASM_FLOOR_SP          = 30;
     public static final int CHASM_WALL              = 31;
     public static final int CHASM_WATER             = 32;
-    public static final int DENATURED_DEBRIS        = 33;
     public static final int WOOD_DEBRIS             = 34;
     public static final int WALL_STONE              = 35;
     public static final int WELL_MAGIC              = 36;
@@ -83,6 +82,12 @@ public class Terrain {
 
     public static final int ALCHEMY_EMPTY           = 39;
     public static final int ALTAR                   = 40;
+
+    public static final int DIRT_HIGH_GRASS         = 41;
+    public static final int DIRT_GRASS              = 42;
+    public static final int DIRT_CHARCOAL           = 43;
+
+    public static final int IRON_BARS               = 44;
 
 
     public static final int FACED_TILE_MIN          = 128; //needs to be aligned to FACED_TILE_BLOCKSIZE
@@ -146,7 +151,7 @@ public class Terrain {
         flags[OPEN_DOOR] = FLAG_PASSABLE | FLAG_BURNABLE | FLAG_UNSTITCHABLE;
         flags[STAIRS_UP] = FLAG_PASSABLE | FLAG_DIAGONALPASSAGE | FLAG_UNDIGGABLE;
         flags[STAIRS_DOWN] = FLAG_PASSABLE | FLAG_DIAGONALPASSAGE | FLAG_UNDIGGABLE;
-        flags[EMBERS] = FLAG_PASSABLE | FLAG_DIAGONALPASSAGE;
+        flags[CHARCOAL] = FLAG_PASSABLE | FLAG_DIAGONALPASSAGE;
         flags[LOCKED_DOOR] = FLAG_PATHABLE | FLAG_LOSBLOCKING | FLAG_SOLID | FLAG_BURNABLE | FLAG_UNSTITCHABLE;
         flags[PEDESTAL] = FLAG_PASSABLE | FLAG_UNSTITCHABLE | FLAG_DIAGONALPASSAGE;
         flags[WALL_DECO] = FLAG_LOSBLOCKING | FLAG_SOLID | FLAG_STONE | FLAG_UNSTITCHABLE | FLAG_UNDISCOVERABLE;
@@ -168,12 +173,12 @@ public class Terrain {
         flags[STATUE] = FLAG_SOLID | FLAG_STONE;
         flags[STATUE_SP] = FLAG_SOLID | FLAG_STONE | FLAG_UNSTITCHABLE;
         flags[ALCHEMY] = FLAG_PASSABLE | FLAG_DIAGONALPASSAGE;
+        flags[IRON_BARS] = FLAG_SOLID | FLAG_UNSTITCHABLE;
 
         flags[CHASM_WALL] = flags[CHASM];
         flags[CHASM_FLOOR] = flags[CHASM];
         flags[CHASM_FLOOR_SP] = flags[CHASM];
         flags[CHASM_WATER] = flags[CHASM];
-        flags[DENATURED_DEBRIS] = flags[EMBERS];
         flags[WOOD_DEBRIS] = flags[OPEN_DOOR] | FLAG_DIAGONALPASSAGE;
         flags[WALL_STONE] = flags[WALL] | FLAG_LOSDARK;
         flags[WELL_MAGIC] = flags[EMPTY_WELL];
@@ -181,6 +186,10 @@ public class Terrain {
         flags[STAIRS_DOWN_ALTERNATE] = flags[STAIRS_DOWN];
         flags[ALCHEMY_EMPTY] = flags[ALCHEMY];
         flags[ALTAR] = flags[TRAP];
+
+        flags[DIRT_HIGH_GRASS] = flags[HIGH_GRASS];
+        flags[DIRT_GRASS] = flags[GRASS];
+        flags[DIRT_CHARCOAL] = flags[CHARCOAL];
 
         for (int n = PUDDLE_TILES; n <= PUDDLE; n++) {
             flags[n] = flags[PUDDLE];

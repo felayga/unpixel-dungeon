@@ -28,7 +28,7 @@ package com.felayga.unpixeldungeon.actors.mobs.unused;
 import com.felayga.unpixeldungeon.items.food.unused.MysteryMeat;
 import com.felayga.unpixeldungeon.items.weapon.melee.mob.MeleeMobAttack;
 import com.felayga.unpixeldungeon.mechanics.GameTime;
-import com.felayga.unpixeldungeon.sprites.mobs.CrabSprite;
+import com.felayga.unpixeldungeon.sprites.mobs.unused.CrabSprite;
 
 public class Crab extends Mob {
 

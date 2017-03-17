@@ -28,6 +28,7 @@ package com.felayga.unpixeldungeon.items.armor.amulet.mask;
 
 import com.felayga.unpixeldungeon.Dungeon;
 import com.felayga.unpixeldungeon.actors.Char;
+import com.felayga.unpixeldungeon.actors.buffs.hero.Encumbrance;
 import com.felayga.unpixeldungeon.actors.buffs.negative.Blindness;
 import com.felayga.unpixeldungeon.actors.hero.Hero;
 import com.felayga.unpixeldungeon.mechanics.Constant;
@@ -51,6 +52,9 @@ public class Blindfold extends Mask {
         hasLevels(false);
 
         defaultAction = Constant.Action.EQUIP;
+
+        weight(2 * Encumbrance.UNIT);
+        price = 20;
     }
 
     @Override

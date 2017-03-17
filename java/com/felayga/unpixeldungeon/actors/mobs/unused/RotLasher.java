@@ -32,7 +32,7 @@ import com.felayga.unpixeldungeon.items.weapon.melee.mob.CrippleChance;
 import com.felayga.unpixeldungeon.levels.Level;
 import com.felayga.unpixeldungeon.levels.Terrain;
 import com.felayga.unpixeldungeon.mechanics.GameTime;
-import com.felayga.unpixeldungeon.sprites.mobs.RotLasherSprite;
+import com.felayga.unpixeldungeon.sprites.mobs.unused.RotLasherSprite;
 import com.felayga.unpixeldungeon.utils.Utils;
 
 import java.util.HashSet;

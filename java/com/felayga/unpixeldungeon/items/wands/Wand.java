@@ -32,7 +32,6 @@ import com.felayga.unpixeldungeon.actors.buffs.hero.SoulMark;
 import com.felayga.unpixeldungeon.actors.buffs.positive.Invisibility;
 import com.felayga.unpixeldungeon.actors.hero.Hero;
 import com.felayga.unpixeldungeon.actors.hero.HeroSubClass;
-import com.felayga.unpixeldungeon.effects.MagicMissile;
 import com.felayga.unpixeldungeon.items.Item;
 import com.felayga.unpixeldungeon.items.ItemRandomizationHandler;
 import com.felayga.unpixeldungeon.items.weapon.melee.simple.MagesStaff;
@@ -43,19 +42,16 @@ import com.felayga.unpixeldungeon.mechanics.GameTime;
 import com.felayga.unpixeldungeon.mechanics.Material;
 import com.felayga.unpixeldungeon.scenes.CellSelector;
 import com.felayga.unpixeldungeon.scenes.GameScene;
-import com.felayga.unpixeldungeon.spellcasting.ISpellCast;
-import com.felayga.unpixeldungeon.spellcasting.SpellCaster;
+import com.felayga.unpixeldungeon.spellcasting.Spellcaster;
 import com.felayga.unpixeldungeon.sprites.ItemSpriteSheet;
 import com.felayga.unpixeldungeon.utils.GLog;
 import com.watabou.utils.Bundle;
-import com.watabou.utils.Callback;
 import com.watabou.utils.PointF;
 import com.watabou.utils.Random;
 
 import java.util.ArrayList;
 
 public abstract class Wand extends Item {
-
     private static final int USAGES_TO_KNOW = 20;
 
     public static final String AC_ZAP = "ZAP";
@@ -83,7 +79,7 @@ public abstract class Wand extends Item {
             WandOfLight.class,
             WandOfNothing.class,
             WandOfTunneling.class,
-            WandOfMakeInvisible.class,
+            WandOfInvisibility.class,
             WandOfHaste.class,
             WandOfSlow.class,
             WandOfBlastWave.class,
@@ -180,8 +176,7 @@ public abstract class Wand extends Item {
     private boolean curChargeKnown = false;
 
     protected int usagesToKnow = USAGES_TO_KNOW;
-
-    protected int ballisticaMode;
+    protected Spellcaster spellcaster;
 
     public Wand(int maxCharges) {
         syncRandomizedProperties();
@@ -196,7 +191,7 @@ public abstract class Wand extends Item {
         weight(Encumbrance.UNIT * 7);
         price = 75;
 
-        ballisticaMode = Ballistica.Mode.value(Ballistica.Mode.MagicBolt);
+        //ballisticaMode = Ballistica.Mode.value(Ballistica.Mode.MagicBolt);
     }
 
     @Override
@@ -213,28 +208,27 @@ public abstract class Wand extends Item {
         return actions;
     }
 
+    //todo: exploding needs an action and prepareZap
+
     @Override
     public boolean execute(Hero hero, String action) {
         if (action.equals(AC_ZAP)) {
-            initiateZap(hero);
+            curUser = hero;
+            curItem = this;
+
+            spellcaster.prepareZap(bucStatus().value);
+
+            if ((spellcaster.ballisticaMode & Ballistica.Mode.IsDirected.value) != 0) {
+                GameScene.selectCell(zapper, "Choose a location to zap");
+            } else {
+                doZap(hero, hero.pos());
+            }
+
             return false;
         } else {
             return super.execute(hero, action);
         }
     }
-
-    protected void initiateZap(Hero hero) {
-        curUser = hero;
-        curItem = this;
-
-        if ((ballisticaMode & Ballistica.Mode.IsDirected.value) != 0) {
-            GameScene.selectCell(zapper, "Choose a location to zap");
-        } else {
-            doZap(hero, hero.pos());
-        }
-    }
-
-    protected abstract void onZap(Ballistica attack);
 
 	/*
 	@Override
@@ -349,9 +343,11 @@ public abstract class Wand extends Item {
         }
     }
 
+    /*
     protected void fxEffect(int source, int destination, Callback callback) {
         MagicMissile.whiteLight(curUser.sprite.parent, source, destination, callback);
     }
+    */
 
     public void staffFx(MagesStaff.StaffParticle particle) {
         //todo: remove
@@ -388,7 +384,6 @@ public abstract class Wand extends Item {
     private static final String UNFAMILIRIARITY = "unfamiliarity";
     private static final String CUR_CHARGES = "curCharges";
     private static final String CUR_CHARGE_KNOWN = "curChargeKnown";
-    private static final String BALLISTICAMODE = "ballisticaMode";
 
     @Override
     public void storeInBundle(Bundle bundle) {
@@ -396,7 +391,6 @@ public abstract class Wand extends Item {
         bundle.put(UNFAMILIRIARITY, usagesToKnow);
         bundle.put(CUR_CHARGES, curCharges);
         bundle.put(CUR_CHARGE_KNOWN, curChargeKnown);
-        bundle.put(BALLISTICAMODE, ballisticaMode);
     }
 
     @Override
@@ -407,7 +401,6 @@ public abstract class Wand extends Item {
         }
         curCharges = bundle.getInt(CUR_CHARGES);
         curChargeKnown = bundle.getBoolean(CUR_CHARGE_KNOWN);
-        ballisticaMode = bundle.getInt(BALLISTICAMODE);
     }
 
     protected static CellSelector.Listener zapper = new CellSelector.Listener() {
@@ -427,7 +420,7 @@ public abstract class Wand extends Item {
 
     private boolean doZap(Char curUser, int target) {
         if (target == curUser.pos()) {
-            if ((ballisticaMode & Ballistica.Mode.IsDirected.value) != 0 && (ballisticaMode & Ballistica.Mode.StopSelf.value) == 0) {
+            if ((spellcaster.ballisticaMode & Ballistica.Mode.IsDirected.value) != 0 && (spellcaster.ballisticaMode & Ballistica.Mode.StopSelf.value) == 0) {
                 GLog.i(TXT_SELF_TARGET);
                 return false;
             }
@@ -458,17 +451,7 @@ public abstract class Wand extends Item {
                 }
                 */
             } else {
-                SpellCaster.cast(curUser, target, ballisticaMode, new ISpellCast() {
-                    @Override
-                    public void fxEffect(int start, int end, Callback callback) {
-                        Wand.this.fxEffect(start, end, callback);
-                    }
-                    @Override
-                    public void onZap(Ballistica path) {
-                        Wand.this.wandUsed();
-                        Wand.this.onZap(path);
-                    }
-                });
+                Spellcaster.cast(curUser, target, spellcaster, Spellcaster.Origin.Wand);
             }
 
         } else {

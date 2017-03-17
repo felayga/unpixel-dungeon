@@ -388,7 +388,7 @@ public class Shopkeeper extends NPC {
             if (value.value <= 0) {
                 value.value = 0;
 
-                Mob mob = Dungeon.level.findMob(key);
+                Char mob = Actor.findChar(key);
 
                 if (mob != null || key == Dungeon.hero.pos()) {
                     if (mob instanceof Boulder) {
@@ -556,7 +556,7 @@ public class Shopkeeper extends NPC {
                     for (int offset : Level.NEIGHBOURS8) {
                         int subPos = pos() + offset;
 
-                        if (fidgetPos.contains(subPos) && Dungeon.hero.pos() != subPos && Dungeon.level.findMob(subPos) == null) {
+                        if (fidgetPos.contains(subPos) && Dungeon.hero.pos() != subPos && Actor.findChar(subPos) == null) {
                             movePos.add(subPos);
                         }
                     }

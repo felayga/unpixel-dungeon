@@ -25,6 +25,7 @@
  */
 package com.felayga.unpixeldungeon.items.weapon.melee.simple;
 
+import com.felayga.unpixeldungeon.actors.buffs.hero.Encumbrance;
 import com.felayga.unpixeldungeon.mechanics.GameTime;
 import com.felayga.unpixeldungeon.mechanics.Material;
 import com.felayga.unpixeldungeon.sprites.ItemSpriteSheet;
@@ -32,11 +33,14 @@ import com.felayga.unpixeldungeon.sprites.ItemSpriteSheet;
 public class Knuckles extends SimpleMeleeWeapon {
 
 	public Knuckles() {
-		super(GameTime.TICK / 2, 1, 4);
+		super(GameTime.TICK / 2, 1, 2);
 
 		name = "knuckleduster";
 		image = ItemSpriteSheet.MELEE_KNUCKLEDUSTER;
         material = Material.Iron;
+
+        weight(5 * Encumbrance.UNIT);
+        price = 4;
     }
 	
 	@Override

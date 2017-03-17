@@ -32,10 +32,16 @@ import com.watabou.noosa.particles.PixelParticle;
  * Created by HELLO on 2/10/2017.
  */
 public class NihilistSprite extends ShopkeeperSprite {
-    public NihilistSprite() {
-        super(1);
+
+    public NihilistSprite(int index) {
+        super(index);
     }
 
+    public NihilistSprite() {
+        this(1);
+    }
+
+    @Override
     protected void coinReset(PixelParticle coin) {
         coin.reset( x + (flipHorizontal ? 1 : 12), y + 7, 0xFFFF00, 1, 0.5f );
     }

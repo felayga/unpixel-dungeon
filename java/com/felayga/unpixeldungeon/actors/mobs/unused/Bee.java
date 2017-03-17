@@ -36,7 +36,7 @@ import com.felayga.unpixeldungeon.actors.buffs.negative.Poison;
 import com.felayga.unpixeldungeon.items.weapon.melee.mob.TauntChance;
 import com.felayga.unpixeldungeon.levels.Level;
 import com.felayga.unpixeldungeon.mechanics.GameTime;
-import com.felayga.unpixeldungeon.sprites.mobs.BeeSprite;
+import com.felayga.unpixeldungeon.sprites.mobs.unused.BeeSprite;
 import com.watabou.utils.Bundle;
 import com.watabou.utils.Random;
 

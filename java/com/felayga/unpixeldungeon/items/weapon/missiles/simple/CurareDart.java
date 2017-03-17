@@ -27,6 +27,7 @@ package com.felayga.unpixeldungeon.items.weapon.missiles.simple;
 
 import com.felayga.unpixeldungeon.actors.Char;
 import com.felayga.unpixeldungeon.actors.buffs.Buff;
+import com.felayga.unpixeldungeon.actors.buffs.hero.Encumbrance;
 import com.felayga.unpixeldungeon.actors.buffs.negative.Paralysis;
 import com.felayga.unpixeldungeon.items.Item;
 import com.felayga.unpixeldungeon.items.weapon.missiles.MissileWeapon;
@@ -48,7 +49,7 @@ public class CurareDart extends MissileWeapon {
 		image = ItemSpriteSheet.MISSILE_CURARE_DART;
         material = Material.Iron;
 
-		//STR = 14;
+        weight(1 * Encumbrance.UNIT);
         price = 8;
 	}
 	

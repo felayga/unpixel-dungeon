@@ -28,6 +28,7 @@ package com.felayga.unpixeldungeon.items.tools.digging;
 
 import com.felayga.unpixeldungeon.Assets;
 import com.felayga.unpixeldungeon.Dungeon;
+import com.felayga.unpixeldungeon.actors.Actor;
 import com.felayga.unpixeldungeon.actors.Char;
 import com.felayga.unpixeldungeon.actors.hero.Hero;
 import com.felayga.unpixeldungeon.actors.hero.HeroAction;
@@ -114,7 +115,7 @@ public abstract class DiggingTool extends SimpleMeleeWeapon implements ITool {
         if (ch == Dungeon.hero) {
             Hero hero = (Hero)ch;
 
-            Mob mob = Dungeon.level.findMob(target);
+            Char mob = Actor.findChar(target);
 
             if (Level.solid[target] || target == hero.pos()) {
                 hero.curAction = new HeroAction.Dig(this, target, 101);

@@ -35,10 +35,18 @@ import com.felayga.unpixeldungeon.items.IFlammable;
 import com.felayga.unpixeldungeon.items.Item;
 import com.felayga.unpixeldungeon.items.ItemRandomizationHandler;
 import com.felayga.unpixeldungeon.items.artifacts.UnstableSpellbook;
+import com.felayga.unpixeldungeon.items.scrolls.inventoryscroll.ScrollOfMagicalInfusion;
+import com.felayga.unpixeldungeon.items.scrolls.positionscroll.ScrollOfTeleportation;
+import com.felayga.unpixeldungeon.items.scrolls.spellcasterscroll.ScrollOfIdentify;
+import com.felayga.unpixeldungeon.items.scrolls.spellcasterscroll.ScrollOfLullaby;
+import com.felayga.unpixeldungeon.items.scrolls.spellcasterscroll.ScrollOfMagicMapping;
+import com.felayga.unpixeldungeon.items.scrolls.spellcasterscroll.ScrollOfPsionicBlast;
+import com.felayga.unpixeldungeon.items.scrolls.spellcasterscroll.ScrollOfTerror;
 import com.felayga.unpixeldungeon.mechanics.GameTime;
 import com.felayga.unpixeldungeon.mechanics.Material;
 import com.felayga.unpixeldungeon.sprites.ItemSpriteSheet;
 import com.felayga.unpixeldungeon.utils.GLog;
+import com.watabou.noosa.audio.Sample;
 import com.watabou.utils.Bundle;
 
 import java.util.ArrayList;
@@ -116,7 +124,7 @@ public abstract class Scroll extends Item implements IFlammable {
 
 	@SuppressWarnings("unchecked")
 	public static void initLabels() {
-		handler = new ItemRandomizationHandler<Scroll>( (Class<? extends Scroll>[])scrolls, scrollRunes, scrollImages, scrollMaterials, 1 );
+		handler = new ItemRandomizationHandler<>( (Class<? extends Scroll>[])scrolls, scrollRunes, scrollImages, scrollMaterials, 1 );
 	}
 	
 	public static void save( Bundle bundle ) {
@@ -125,9 +133,9 @@ public abstract class Scroll extends Item implements IFlammable {
 	
 	@SuppressWarnings("unchecked")
 	public static void restore( Bundle bundle ) {
-		handler = new ItemRandomizationHandler<Scroll>( (Class<? extends Scroll>[])scrolls, scrollRunes, scrollImages, scrollMaterials, bundle );
+		handler = new ItemRandomizationHandler<>( (Class<? extends Scroll>[])scrolls, scrollRunes, scrollImages, scrollMaterials, bundle );
 	}
-	
+
 	public Scroll() {
 		super();
         syncRandomizedProperties();
@@ -187,7 +195,10 @@ public abstract class Scroll extends Item implements IFlammable {
 		curItem = hero.belongings.remove(this, 1);
 	}
 
-	abstract protected void doRead();
+	protected void doRead() {
+        Sample.INSTANCE.play( Assets.SND_READ );
+        curUser.spend_new(TIME_TO_READ, true);
+    }
 	
 	public boolean isKnown() {
 		return handler.isKnown( this );

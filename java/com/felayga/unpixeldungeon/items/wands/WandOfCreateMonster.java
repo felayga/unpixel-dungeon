@@ -26,14 +26,12 @@
 
 package com.felayga.unpixeldungeon.items.wands;
 
-import com.felayga.unpixeldungeon.Dungeon;
 import com.felayga.unpixeldungeon.actors.Actor;
 import com.felayga.unpixeldungeon.actors.Char;
 import com.felayga.unpixeldungeon.levels.Level;
-import com.felayga.unpixeldungeon.levels.traps.SummoningTrap;
 import com.felayga.unpixeldungeon.mechanics.Ballistica;
 import com.felayga.unpixeldungeon.mechanics.MagicType;
-import com.felayga.unpixeldungeon.utils.GLog;
+import com.felayga.unpixeldungeon.spellcasting.CreateMonsterSpellcaster;
 import com.watabou.utils.Random;
 
 /**
@@ -45,18 +43,21 @@ public class WandOfCreateMonster extends Wand {
         super(15);
         name = "Wand of Create Monster";
 
-        ballisticaMode = Ballistica.Mode.value(Ballistica.Mode.Projectile);
         price = 200;
+
+        spellcaster = new CreateMonsterSpellcaster() {
+            @Override
+            public void onZap(Char source, Ballistica path, int targetPos) {
+                super.onZap(source, path, targetPos);
+
+                WandOfCreateMonster.this.wandUsed();
+            }
+        };
     }
 
     @Override
     public int randomCharges() {
         return Random.IntRange(11, 15);
-    }
-
-    @Override
-    protected void onZap( Ballistica bolt ) {
-        SummoningTrap.spawnMobs(bolt.collisionPos, 1);
     }
 
     /*
@@ -78,10 +79,10 @@ public class WandOfCreateMonster extends Wand {
 
         for (Integer offset : Level.NEIGHBOURS8) {
             int pos = user.pos() + offset;
-            Char target = Dungeon.level.findMob(pos);
+            Char target = Actor.findChar(pos);
 
             if (target == null) {
-                SummoningTrap.spawnMobs(pos, 1);
+                spellcaster.onZap(user, null, pos);
                 continue;
             }
 

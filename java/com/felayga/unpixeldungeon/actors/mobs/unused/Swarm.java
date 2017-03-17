@@ -39,7 +39,7 @@ import com.felayga.unpixeldungeon.items.weapon.melee.mob.MeleeMobAttack;
 import com.felayga.unpixeldungeon.levels.Level;
 import com.felayga.unpixeldungeon.mechanics.GameTime;
 import com.felayga.unpixeldungeon.scenes.GameScene;
-import com.felayga.unpixeldungeon.sprites.mobs.SwarmSprite;
+import com.felayga.unpixeldungeon.sprites.mobs.unused.SwarmSprite;
 import com.watabou.utils.Bundle;
 import com.watabou.utils.Random;
 

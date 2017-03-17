@@ -26,27 +26,29 @@
 
 package com.felayga.unpixeldungeon.items.wands;
 
-import com.felayga.unpixeldungeon.actors.Actor;
 import com.felayga.unpixeldungeon.actors.Char;
-import com.felayga.unpixeldungeon.actors.buffs.Buff;
-import com.felayga.unpixeldungeon.actors.buffs.negative.Slow;
-import com.felayga.unpixeldungeon.actors.buffs.positive.Haste;
-import com.felayga.unpixeldungeon.effects.MagicMissile;
 import com.felayga.unpixeldungeon.mechanics.Ballistica;
-import com.watabou.utils.Callback;
+import com.felayga.unpixeldungeon.spellcasting.SlowSpellcaster;
 import com.watabou.utils.Random;
 
 /**
  * Created by HELLO on 2/26/2017.
  */
 public class WandOfSlow extends Wand {
-
     public WandOfSlow() {
         super(8);
         name = "Wand of Slow";
 
-        ballisticaMode = Ballistica.Mode.value(Ballistica.Mode.MagicRay, Ballistica.Mode.StopSelf);
         price = 150;
+
+        spellcaster = new SlowSpellcaster() {
+            @Override
+            public void onZap(Char source, Ballistica path, int targetPos) {
+                super.onZap(source, path, targetPos);
+
+                WandOfSlow.this.wandUsed();
+            }
+        };
     }
 
     @Override
@@ -54,33 +56,11 @@ public class WandOfSlow extends Wand {
         return Random.IntRange(4, 8);
     }
 
-    @Override
-    protected void fxEffect(int source, int destination, Callback callback) {
-        MagicMissile.slowness(curUser.sprite.parent, source, destination, callback);
-    }
-
-    @Override
-    protected void onZap(Ballistica bolt) {
-        Char ch;
-
-        if (bolt != null) {
-            ch = Actor.findChar(bolt.collisionPos);
-        } else {
-            ch = curUser;
-        }
-
-        if (ch != null) {
-            Buff.detach(ch, Haste.Intrinsic.class);
-            Buff.affect(ch, curUser, Slow.Intrinsic.class);
-
-            ch.sprite.burst(0xFFFF5533, 2);
-        }
-    }
 
     @Override
     public String desc() {
         return
-                "This wand launches a bolt which permanently slows down its target.";
+                "This wand launches a bolt which temporarily slows down its target.";
     }
 }
 

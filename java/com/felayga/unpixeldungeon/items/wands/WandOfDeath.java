@@ -26,35 +26,37 @@
 
 package com.felayga.unpixeldungeon.items.wands;
 
-import com.felayga.unpixeldungeon.Dungeon;
-import com.felayga.unpixeldungeon.DungeonTilemap;
 import com.felayga.unpixeldungeon.actors.Actor;
 import com.felayga.unpixeldungeon.actors.Char;
-import com.felayga.unpixeldungeon.effects.Beam;
-import com.felayga.unpixeldungeon.effects.CellEmitter;
-import com.felayga.unpixeldungeon.effects.particles.PurpleParticle;
 import com.felayga.unpixeldungeon.items.weapon.melee.simple.MagesStaff;
 import com.felayga.unpixeldungeon.levels.Level;
-import com.felayga.unpixeldungeon.levels.Terrain;
 import com.felayga.unpixeldungeon.mechanics.Ballistica;
 import com.felayga.unpixeldungeon.mechanics.MagicType;
-import com.felayga.unpixeldungeon.scenes.GameScene;
-import com.watabou.utils.Callback;
+import com.felayga.unpixeldungeon.spellcasting.DeathSpellcaster;
 import com.watabou.utils.Random;
-
-import java.util.ArrayList;
 
 /**
  * Created by HELLO on 3/3/2017.
  */
 public class WandOfDeath extends Wand {
+    private DeathSpellcaster deathSpellcaster;
+
     public WandOfDeath()
     {
         super(8);
         name = "Wand of Death";
 
-        ballisticaMode = Ballistica.Mode.value(Ballistica.Mode.MagicRay, Ballistica.Mode.StopSelf);
         price = 500;
+
+        deathSpellcaster = new DeathSpellcaster() {
+            @Override
+            public void onZap(Char source, Ballistica path, int targetPos) {
+                super.onZap(source, path, targetPos);
+
+                WandOfDeath.this.wandUsed();
+            }
+        };
+        spellcaster = deathSpellcaster;
     }
 
     @Override
@@ -62,28 +64,6 @@ public class WandOfDeath extends Wand {
         return Random.IntRange(4, 8);
     }
 
-    @Override
-    protected void onZap( Ballistica beam ) {
-        onZap(beam.collisionPos);
-
-        Char ch = Actor.findChar(beam.collisionPos);
-        if (ch != null) {
-            processSoulMark(ch, curUser);
-            ch.damage(ch.HP, MagicType.Magic, curUser, null);
-            ch.sprite.centerEmitter(-1).burst(PurpleParticle.BURST, Random.IntRange(1, 2));
-            ch.sprite.flash();
-        }
-    }
-
-    private void onZap(int pos) {
-        if (Level.burnable[pos]) {
-            Dungeon.level.set(pos, Terrain.EMBERS, true);
-            GameScene.updateMap(pos);
-            Dungeon.observe();
-            CellEmitter.center(pos).burst(PurpleParticle.BURST, Random.IntRange(1, 2));
-            Dungeon.observe();
-        }
-    }
 
     /*
 	@Override
@@ -93,12 +73,6 @@ public class WandOfDeath extends Wand {
 			new Death().proc( staff, attacker, defender, damage);
 	}
 	*/
-
-    @Override
-    protected void fxEffect( int start, int end, Callback callback ) {
-        curUser.sprite.parent.add(new Beam.DeathRay(DungeonTilemap.tileCenterToWorld( start ), DungeonTilemap.tileCenterToWorld( end )));
-        callback.call();
-    }
 
     @Override
     public void staffFx(MagesStaff.StaffParticle particle) {
@@ -118,10 +92,10 @@ public class WandOfDeath extends Wand {
 
         for (Integer offset : Level.NEIGHBOURS8) {
             int pos = user.pos() + offset;
-            Char target = Dungeon.level.findMob(pos);
+            Char target = Actor.findChar(pos);
 
             if (target == null) {
-                onZap(pos);
+                deathSpellcaster.burn(pos);
                 continue;
             }
 
@@ -136,7 +110,7 @@ public class WandOfDeath extends Wand {
 
         target.damage(damage, MagicType.Magic, curUser, null);
 
-        onZap(target.pos());
+        deathSpellcaster.burn(target.pos());
     }
 
     @Override

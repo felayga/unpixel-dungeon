@@ -573,6 +573,8 @@ public abstract class Char extends Actor {
     private static final String ATTRIBUTE2DAMAGE = "attribute2Damage";
     private static final String TAG_HP = "HP";
     private static final String TAG_HT = "HT";
+    private static final String TAG_MP = "MP";
+    private static final String TAG_MT = "MT";
     private static final String BUFFS = "buffs";
     private static final String CORPSEEFFECTS = "corpseEffects";
 
@@ -591,6 +593,8 @@ public abstract class Char extends Actor {
         bundle.put(POS, _pos);
         bundle.put(TAG_HP, HP);
         bundle.put(TAG_HT, HT);
+        bundle.put(TAG_MP, MP);
+        bundle.put(TAG_MT, MT);
         bundle.put(BUFFS, buffs);
         bundle.put(CORPSEEFFECTS, corpseEffects);
     }
@@ -612,6 +616,8 @@ public abstract class Char extends Actor {
         _pos = bundle.getInt(POS);
         HP = bundle.getInt(TAG_HP);
         HT = bundle.getInt(TAG_HT);
+        MP = bundle.getInt(TAG_MP);
+        MT = bundle.getInt(TAG_MT);
         corpseEffects = bundle.getLong(CORPSEEFFECTS);
 
         for (Bundlable b : bundle.getCollection(BUFFS)) {
@@ -950,7 +956,9 @@ public abstract class Char extends Actor {
     public final int defenseMagical(Char enemy, MagicType type) {
         int retval = getResistance(type);
 
-        retval += belongings.getResistance();
+        if (type != MagicType.Mundane) {
+            retval += belongings.getResistance();
+        }
 
         return Math.max(Math.min(retval, 9), -9);
     }

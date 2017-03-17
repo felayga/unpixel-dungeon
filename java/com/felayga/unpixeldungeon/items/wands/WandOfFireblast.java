@@ -25,26 +25,17 @@
  */
 package com.felayga.unpixeldungeon.items.wands;
 
-import com.felayga.unpixeldungeon.Dungeon;
 import com.felayga.unpixeldungeon.actors.Actor;
 import com.felayga.unpixeldungeon.actors.Char;
 import com.felayga.unpixeldungeon.actors.blobs.Blob;
 import com.felayga.unpixeldungeon.actors.blobs.Fire;
-import com.felayga.unpixeldungeon.actors.buffs.Buff;
-import com.felayga.unpixeldungeon.actors.buffs.negative.Burning;
-import com.felayga.unpixeldungeon.actors.buffs.negative.Cripple;
-import com.felayga.unpixeldungeon.actors.buffs.negative.Paralysis;
-import com.felayga.unpixeldungeon.effects.MagicMissile;
 import com.felayga.unpixeldungeon.items.weapon.melee.simple.MagesStaff;
 import com.felayga.unpixeldungeon.levels.Level;
 import com.felayga.unpixeldungeon.mechanics.Ballistica;
-import com.felayga.unpixeldungeon.mechanics.GameTime;
 import com.felayga.unpixeldungeon.mechanics.MagicType;
 import com.felayga.unpixeldungeon.scenes.GameScene;
-import com.watabou.utils.Callback;
+import com.felayga.unpixeldungeon.spellcasting.FireblastSpellcaster;
 import com.watabou.utils.Random;
-
-import java.util.HashSet;
 
 public class WandOfFireblast extends Wand {
 
@@ -52,76 +43,21 @@ public class WandOfFireblast extends Wand {
         super(8);
         name = "Wand of Fireblast";
 
-        ballisticaMode = Ballistica.Mode.value(Ballistica.Mode.StopTerrain);
         price = 175;
+
+        spellcaster = new FireblastSpellcaster() {
+            @Override
+            public void onZap(Char source, Ballistica path, int targetPos) {
+                super.onZap(source, path, targetPos);
+
+                WandOfFireblast.this.wandUsed();
+            }
+        };
     }
 
     @Override
     public int randomCharges() {
         return Random.IntRange(4, 8);
-    }
-
-    //the actual affected cells
-    private HashSet<Integer> affectedCells;
-    //the cells to trace fire shots to, for visual effects.
-    private HashSet<Integer> visualCells;
-    private int direction = 0;
-
-    @Override
-    protected void onZap(Ballistica bolt) {
-        onZap(bolt.sourcePos);
-    }
-
-    private void onZap(int pos) {
-        if (Level.burnable[pos]) {
-            GameScene.add(Blob.seed(curUser, pos, 2, Fire.class));
-        }
-
-        for (int cell : affectedCells) {
-            GameScene.add(Blob.seed(curUser, cell, 2, Fire.class));
-            Char ch = Actor.findChar(cell);
-            if (ch != null) {
-
-                ch.damage(Random.NormalIntRange(3, 18), MagicType.Fire, curUser, null);
-                Buff.affect(ch, curUser, Burning.class).reignite(ch);
-                /*
-				switch(1){
-					case 1:
-						Buff.affect(ch, curUser, Cripple.class, GameTime.TICK * 3); break;
-					case 2:
-						Buff.affect(ch, curUser, Cripple.class, GameTime.TICK * 6); break;
-					case 3:
-						Buff.affect(ch, curUser, Paralysis.class, GameTime.TICK * 3); break;
-					case 4:
-						Buff.affect(ch, curUser, Paralysis.class, GameTime.TICK * 6); break;
-				}
-				*/
-            }
-        }
-    }
-
-    //burn... BURNNNNN!.....
-    private void spreadFlames(int cell, float strength) {
-        if (strength >= 0 && Level.passable[cell]) {
-            affectedCells.add(cell);
-            if (strength >= 1.5f) {
-                visualCells.remove(cell);
-                spreadFlames(cell + Level.NEIGHBOURS8[left(direction)], strength - 1.5f);
-                spreadFlames(cell + Level.NEIGHBOURS8[direction], strength - 1.5f);
-                spreadFlames(cell + Level.NEIGHBOURS8[right(direction)], strength - 1.5f);
-            } else {
-                visualCells.add(cell);
-            }
-        } else if (!Level.passable[cell])
-            visualCells.add(cell);
-    }
-
-    private int left(int direction) {
-        return direction == 0 ? 7 : direction - 1;
-    }
-
-    private int right(int direction) {
-        return direction == 7 ? 0 : direction + 1;
     }
 
     /*
@@ -132,44 +68,6 @@ public class WandOfFireblast extends Wand {
 				.proc( staff, attacker, defender, damage);
 	}
 	*/
-
-    protected void fxEffect(Ballistica bolt, Callback callback) {
-        //need to perform flame spread logic here so we can determine what cells to put flames in.
-        affectedCells = new HashSet<>();
-        visualCells = new HashSet<>();
-
-        int maxDist = 3;
-        int dist = Math.min(bolt.dist, maxDist);
-
-        for (int i = 0; i < Level.NEIGHBOURS8.length; i++) {
-            if (bolt.sourcePos + Level.NEIGHBOURS8[i] == bolt.path.get(1)) {
-                direction = i;
-                break;
-            }
-        }
-
-        float strength = maxDist;
-        for (int c : bolt.subPath(1, dist)) {
-            strength--; //as we start at dist 1, not 0.
-            affectedCells.add(c);
-            if (strength > 1) {
-                spreadFlames(c + Level.NEIGHBOURS8[left(direction)], strength - 1);
-                spreadFlames(c + Level.NEIGHBOURS8[direction], strength - 1);
-                spreadFlames(c + Level.NEIGHBOURS8[right(direction)], strength - 1);
-            } else {
-                visualCells.add(c);
-            }
-        }
-
-        //going to call this one manually
-        visualCells.remove(bolt.path.get(dist));
-
-        for (int cell : visualCells) {
-            //this way we only get the cells at the tip, much better performance.
-            MagicMissile.fire(curUser.sprite.parent, bolt.sourcePos, cell, null);
-        }
-        MagicMissile.fire(curUser.sprite.parent, bolt.sourcePos, bolt.path.get(dist), callback);
-    }
 
     /*
 	@Override
@@ -199,13 +97,13 @@ public class WandOfFireblast extends Wand {
         for (Integer offset : Level.NEIGHBOURS8) {
             int pos = user.pos() + offset;
 
-            Char target = Dungeon.level.findMob(pos);
+            Char target = Actor.findChar(pos);
 
             if (target != null) {
                 explode(target, maxDamage);
             }
 
-            onZap(pos);
+            spellcaster.onZap(user, null, pos);
         }
 
         GameScene.add(Blob.seed(curUser, curUser.pos(), 2, Fire.class));

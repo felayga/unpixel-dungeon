@@ -25,6 +25,7 @@
  */
 package com.felayga.unpixeldungeon.items.weapon.missiles.martial;
 
+import com.felayga.unpixeldungeon.actors.buffs.hero.Encumbrance;
 import com.felayga.unpixeldungeon.items.Item;
 import com.felayga.unpixeldungeon.items.weapon.missiles.MissileWeapon;
 import com.felayga.unpixeldungeon.items.weapon.ranged.AmmunitionType;
@@ -38,14 +39,14 @@ public class Shuriken extends MissileWeapon {
 
 	public Shuriken()
 	{
-		super(WeaponSkill.Martial, GameTime.TICK/2, 2, 6, true, AmmunitionType.None);
+		super(WeaponSkill.Martial, GameTime.TICK, 1, 6, true, AmmunitionType.None);
 
 		name = "shuriken";
 		image = ItemSpriteSheet.MISSILE_SHURIKEN;
         material = Material.Iron;
 
-		//STR = 13;
-        price = 6;
+		weight(1 * Encumbrance.UNIT);
+        price = 5;
 	}
 	
 	@Override

@@ -29,7 +29,10 @@ import com.felayga.unpixeldungeon.Badges;
 import com.felayga.unpixeldungeon.Challenges;
 import com.felayga.unpixeldungeon.Dungeon;
 import com.felayga.unpixeldungeon.actors.mobs.npcs.Spinach;
+import com.felayga.unpixeldungeon.items.Bomb;
 import com.felayga.unpixeldungeon.items.books.spellbook.IdentifyBook;
+import com.felayga.unpixeldungeon.items.potions.PotionOfToxicGas;
+import com.felayga.unpixeldungeon.items.scrolls.ScrollOfMirrorImage;
 import com.felayga.unpixeldungeon.items.tools.Torch;
 import com.felayga.unpixeldungeon.items.armor.amulet.mask.Blindfold;
 import com.felayga.unpixeldungeon.items.armor.boots.LeatherBoots;
@@ -45,9 +48,9 @@ import com.felayga.unpixeldungeon.items.food.CannedFood;
 import com.felayga.unpixeldungeon.items.food.Corpse;
 import com.felayga.unpixeldungeon.items.food.Ration;
 import com.felayga.unpixeldungeon.items.rings.RingOfWealth;
-import com.felayga.unpixeldungeon.items.scrolls.ScrollOfIdentify;
-import com.felayga.unpixeldungeon.items.scrolls.ScrollOfMagicMapping;
-import com.felayga.unpixeldungeon.items.scrolls.ScrollOfTeleportation;
+import com.felayga.unpixeldungeon.items.scrolls.spellcasterscroll.ScrollOfIdentify;
+import com.felayga.unpixeldungeon.items.scrolls.spellcasterscroll.ScrollOfMagicMapping;
+import com.felayga.unpixeldungeon.items.scrolls.positionscroll.ScrollOfTeleportation;
 import com.felayga.unpixeldungeon.items.scrolls.ScrollOfUpgrade;
 import com.felayga.unpixeldungeon.items.tools.CanOpener;
 import com.felayga.unpixeldungeon.items.tools.CanningKit;
@@ -222,6 +225,8 @@ public enum HeroClass {
         hero.initAttributes(generateAttributes(10, 10, 10, 8, 33, 33, 33));
         hero.hpPerLevel = 10;
         hero.mpPerLevel = 10;
+        hero.MP = hero.MT = 100;
+        hero.spellSkill = 3;
 
         Dart darts = new Dart();
         darts.quantity(8).bucStatus(BUCStatus.Blessed, true).identify();
@@ -248,6 +253,11 @@ public enum HeroClass {
         hero.belongings.collect(new ScrollHolder());
 
         hero.belongings.collectEquip(new MasterThievesArmband());
+        hero.belongings.collect(new Bomb());
+        hero.belongings.collect(new Bomb());
+        hero.belongings.collect(new Bomb());
+
+        hero.belongings.collect(new PotionOfToxicGas().quantity(5));
 
         /*
         hero.belongings.collect(new PotionOfWater().bucStatus(BUCStatus.Blessed, false));
@@ -262,6 +272,7 @@ public enum HeroClass {
 
         hero.belongings.collect(new ScrollOfMagicMapping().bucStatus(BUCStatus.Blessed, true).quantity(5).identify());
         hero.belongings.collect(new ScrollOfTeleportation().bucStatus(BUCStatus.Blessed, true).quantity(5).identify());
+        hero.belongings.collect(new ScrollOfMirrorImage().bucStatus(BUCStatus.Blessed, true).quantity(5).identify());
 
         //hero.belongings.collect(new Sling());
         //hero.belongings.collect(new Rock(5));

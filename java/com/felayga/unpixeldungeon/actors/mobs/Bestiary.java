@@ -26,6 +26,7 @@
 package com.felayga.unpixeldungeon.actors.mobs;
 
 import com.felayga.unpixeldungeon.Dungeon;
+import com.felayga.unpixeldungeon.actors.Actor;
 import com.felayga.unpixeldungeon.actors.Char;
 import com.felayga.unpixeldungeon.actors.mobs.bat.Bat;
 import com.felayga.unpixeldungeon.actors.mobs.bug.GridBug;
@@ -41,6 +42,7 @@ import com.felayga.unpixeldungeon.actors.mobs.kobold.KoboldZombie;
 import com.felayga.unpixeldungeon.actors.mobs.lichen.BrownMold;
 import com.felayga.unpixeldungeon.actors.mobs.lichen.GreenMold;
 import com.felayga.unpixeldungeon.actors.mobs.lichen.Lichen;
+import com.felayga.unpixeldungeon.actors.mobs.lichen.PurpleMold;
 import com.felayga.unpixeldungeon.actors.mobs.lichen.RedMold;
 import com.felayga.unpixeldungeon.actors.mobs.lichen.Shrieker;
 import com.felayga.unpixeldungeon.actors.mobs.lichen.YellowMold;
@@ -114,7 +116,7 @@ public class Bestiary {
                     positions = level.randomPositionsNear(pos, quantity, new Level.RandomPositionValidator() {
                         @Override
                         public boolean isValidPosition(int pos) {
-                            return Level.passable[pos] && (!Level.avoid[pos]) && level.findMob(pos) == null && Dungeon.hero.pos() != pos;
+                            return Level.passable[pos] && (!Level.avoid[pos]) && Actor.findChar(pos) == null && Dungeon.hero.pos() != pos;
                         }
                     });
                 }
@@ -250,6 +252,7 @@ public class Bestiary {
         group.add(2.0f, BrownMold.class, MobSpawnGroup.Size.Individual);
         group.add(1.0f, GreenMold.class, MobSpawnGroup.Size.Individual);
         group.add(1.0f, RedMold.class, MobSpawnGroup.Size.Individual);
+        group.add(2.0f, PurpleMold.class, MobSpawnGroup.Size.Individual);
         group.add(1.0f, GasSpore.class, MobSpawnGroup.Size.Individual);
         group.add(2.0f, Hobbit.class, MobSpawnGroup.Size.Individual);
         group.add(1.0f, KoboldLarge.class, MobSpawnGroup.Size.Individual);

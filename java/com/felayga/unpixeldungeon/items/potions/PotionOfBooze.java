@@ -72,7 +72,7 @@ public class PotionOfBooze extends Potion {
         }
 
         hero.HP = Math.min(hero.HT, hero.HP + 1);
-		Buff.affect(hero, hero, Vertigo.class, Random.IntRange(3, 8) * GameTime.TICK);
+		Buff.prolong(hero, hero, Vertigo.class, Random.IntRange(3, 8) * GameTime.TICK);
 
         switch(bucStatus()) {
             case Cursed:

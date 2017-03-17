@@ -49,4 +49,14 @@ public class Grapes extends Fruit {
     public String info() {
         return "Cultivated for millenia, the grape has a long history of being used in wine production." + super.info();
     }
+
+    @Override
+    public String message(boolean rotten) {
+        if (!rotten) {
+            return "These " + name + " are juicy and delicious!";
+        } else {
+            return super.message(rotten);
+        }
+    }
+
 }

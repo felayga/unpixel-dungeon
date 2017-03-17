@@ -26,16 +26,20 @@
 
 package com.felayga.unpixeldungeon.items.spells;
 
+import com.felayga.unpixeldungeon.Dungeon;
 import com.felayga.unpixeldungeon.actors.hero.Hero;
 import com.felayga.unpixeldungeon.actors.hero.HeroAction;
 import com.felayga.unpixeldungeon.effects.Speck;
 import com.felayga.unpixeldungeon.items.Item;
+import com.felayga.unpixeldungeon.mechanics.AttributeType;
 import com.felayga.unpixeldungeon.mechanics.Constant;
 import com.felayga.unpixeldungeon.mechanics.GameTime;
 import com.felayga.unpixeldungeon.scenes.GameScene;
+import com.felayga.unpixeldungeon.spellcasting.Spellcaster;
 import com.felayga.unpixeldungeon.utils.GLog;
 import com.felayga.unpixeldungeon.windows.WndOptions;
 import com.watabou.utils.Bundle;
+import com.watabou.utils.Random;
 
 import java.util.ArrayList;
 
@@ -75,6 +79,7 @@ public abstract class Spell extends Item {
         return decay >= 0;
     }
 
+    protected Spellcaster spellcaster;
 
     public Spell(long castTime)
     {
@@ -85,11 +90,18 @@ public abstract class Spell extends Item {
         droppable = false;
         hasBuc(false);
         hasLevels(true);
+        levelKnown(true, false);
         defaultAction = Constant.Action.CAST;
+    }
+
+    @Override
+    public String status() {
+        return spellcaster.level + "";
     }
 
     private static final String DECAY = "decay";
     private static final String DECAYTIME = "decayTime";
+    private static final String SPELLCASTER = "spellcaster";
 
     @Override
     public void storeInBundle(Bundle bundle) {
@@ -97,6 +109,7 @@ public abstract class Spell extends Item {
 
         bundle.put(DECAY, decay);
         bundle.put(DECAYTIME, decayTime);
+        bundle.put(SPELLCASTER, spellcaster);
     }
 
     @Override
@@ -105,6 +118,7 @@ public abstract class Spell extends Item {
 
         decay = bundle.getLong(DECAY);
         decayTime = bundle.getLong(DECAYTIME);
+        spellcaster = (Spellcaster)bundle.get(SPELLCASTER);
     }
 
     @Override
@@ -115,15 +129,44 @@ public abstract class Spell extends Item {
         return retval;
     }
 
+    protected boolean tryCast(Hero caster) {
+        return Random.PassFail(tryCastChance(caster));
+    }
+
+    private int tryCastChance(Hero caster) {
+        int spellLevel = spellcaster.level;
+
+        int difficulty = spellLevel * 4 - caster.spellSkill * 6 - caster.level / 3 - 5;
+        int chance = caster.INTWIS() * 12 - caster.belongings.getSpellFailure();
+
+        if (difficulty > 0) {
+            chance += -(int) (Math.sqrt(difficulty / 2) * 100);
+        } else {
+            chance += -difficulty * 42 / spellLevel;
+        }
+
+        if (chance < 0) {
+            return 0;
+        }
+        if (chance > 255) {
+            return 255;
+        }
+        return chance;
+    }
+
     @Override
     public boolean execute( Hero hero, String action ) {
-        int spellLevel = level();
+        int spellLevel = spellcaster.level;
 
         if (action.equals( Constant.Action.CAST )) {
             if (hero.MP >= spellLevel * 5) {
-                if (hero.tryCastSpell(spellLevel)) {
+                if (tryCast(hero)) {
+                    hero.useAttribute(AttributeType.INTWIS, spellLevel);
+
                     hero.MP -= spellLevel * 5;
                 } else {
+                    hero.useAttribute(AttributeType.INTWIS, spellLevel / 2);
+
                     hero.MP -= (spellLevel * 5) / 2;
                     GLog.n("Your spell fizzles!");
                     hero.sprite.emitter().burst(Speck.factory(Speck.FIZZLE), 2);
@@ -159,15 +202,23 @@ public abstract class Spell extends Item {
     }
 
     private void forget() {
-        GLog.w("You forgot how to cast " + getName()+".");
+        GLog.w("You forget how to cast " + getName()+".");
         parent().remove(this);
     }
 
     protected void prepareCast(Hero hero) {
         curUser = hero;
         curItem = this;
+
+        spellcaster.prepareZap(level());
     }
 
-    abstract protected void doCast();
+    protected abstract void doCast();
 
+    @Override
+    public String desc() {
+        int chance = tryCastChance(Dungeon.hero);
+
+        return "Chance to cast: " + (chance / 2 - chance / 16 - chance / 32 - chance / 64)+"%";
+    }
 }

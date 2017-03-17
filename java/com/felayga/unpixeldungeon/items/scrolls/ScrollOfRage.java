@@ -64,6 +64,8 @@ public class ScrollOfRage extends Scroll {
 	
 	@Override
 	protected void doRead() {
+        super.doRead();
+
         enrage(curUser, curUser.pos(), Level.LENGTH);
 
 		GLog.w( "The scroll emits an enraging roar that echoes throughout the dungeon!" );
@@ -71,8 +73,6 @@ public class ScrollOfRage extends Scroll {
 		
 		curUser.sprite.centerEmitter(-1).start( Speck.factory( Speck.SCREAM ), 0.3f, 3 );
 		Sample.INSTANCE.play( Assets.SND_CHALLENGE );
-		
-		curUser.spend_new( TIME_TO_READ, true );
 	}
 	
 	@Override

@@ -25,6 +25,7 @@
  */
 package com.felayga.unpixeldungeon.items.weapon.melee.martial;
 
+import com.felayga.unpixeldungeon.actors.buffs.hero.Encumbrance;
 import com.felayga.unpixeldungeon.mechanics.GameTime;
 import com.felayga.unpixeldungeon.mechanics.Material;
 import com.felayga.unpixeldungeon.sprites.ItemSpriteSheet;
@@ -36,6 +37,9 @@ public class BattleAxe extends MartialMeleeWeapon {
 		name = "battle axe";
 		image = ItemSpriteSheet.MELEE_BATTLE_AXE;
         material = Material.Iron;
+
+        weight(120 * Encumbrance.UNIT);
+        price = 40;
     }
 	
 	@Override

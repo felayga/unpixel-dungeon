@@ -28,6 +28,7 @@ package com.felayga.unpixeldungeon.items.spells.inventory;
 import com.felayga.unpixeldungeon.items.Item;
 import com.felayga.unpixeldungeon.items.spells.Spell;
 import com.felayga.unpixeldungeon.scenes.GameScene;
+import com.felayga.unpixeldungeon.spellcasting.Spellcaster;
 import com.felayga.unpixeldungeon.windows.WndBackpack;
 
 public abstract class InventorySpell extends Spell {
@@ -39,7 +40,7 @@ public abstract class InventorySpell extends Spell {
 
     @Override
     protected void doCast() {
-        GameScene.selectItem(itemSelector, mode, "Cast " + name + " on item", null);
+        Spellcaster.cast(curUser, curUser.pos(), spellcaster, Spellcaster.Origin.Spell);
     }
 
     abstract protected void onItemSelected(Item item);

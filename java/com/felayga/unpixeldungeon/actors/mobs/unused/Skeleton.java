@@ -39,7 +39,7 @@ import com.felayga.unpixeldungeon.items.Generator;
 import com.felayga.unpixeldungeon.items.Item;
 import com.felayga.unpixeldungeon.items.weapon.enchantments.Death;
 import com.felayga.unpixeldungeon.levels.Level;
-import com.felayga.unpixeldungeon.sprites.mobs.SkeletonSprite;
+import com.felayga.unpixeldungeon.sprites.mobs.unused.SkeletonSprite;
 import com.felayga.unpixeldungeon.utils.GLog;
 import com.felayga.unpixeldungeon.utils.Utils;
 

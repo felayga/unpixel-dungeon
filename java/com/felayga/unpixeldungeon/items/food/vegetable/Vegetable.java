@@ -39,8 +39,12 @@ public class Vegetable extends Food {
         material = Material.Vegetable;
     }
 
-    @Override
-    public String message() {
-        return "This " + name + " tastes good.";
+        @Override
+        public String message(boolean rotten) {
+            if (!rotten) {
+                return "This " + name + " tastes good.";
+            } else {
+                return "Blecch!  Rotten vegetable!";
+            }
     }
 }

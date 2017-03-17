@@ -26,27 +26,29 @@
 
 package com.felayga.unpixeldungeon.items.wands;
 
-import com.felayga.unpixeldungeon.actors.Actor;
 import com.felayga.unpixeldungeon.actors.Char;
-import com.felayga.unpixeldungeon.actors.buffs.Buff;
-import com.felayga.unpixeldungeon.actors.buffs.negative.Slow;
-import com.felayga.unpixeldungeon.actors.buffs.positive.Haste;
-import com.felayga.unpixeldungeon.effects.MagicMissile;
 import com.felayga.unpixeldungeon.mechanics.Ballistica;
-import com.watabou.utils.Callback;
+import com.felayga.unpixeldungeon.spellcasting.HasteSpellcaster;
 import com.watabou.utils.Random;
 
 /**
  * Created by HELLO on 2/26/2017.
  */
 public class WandOfHaste extends Wand {
-
     public WandOfHaste() {
         super(8);
         name = "Wand of Haste";
 
-        ballisticaMode = Ballistica.Mode.value(Ballistica.Mode.MagicBolt, Ballistica.Mode.StopSelf);
         price = 150;
+
+        spellcaster = new HasteSpellcaster() {
+            @Override
+            public void onZap(Char source, Ballistica path, int targetPos) {
+                super.onZap(source, path, targetPos);
+
+                WandOfHaste.this.wandUsed();
+            }
+        };
     }
 
     @Override
@@ -55,32 +57,9 @@ public class WandOfHaste extends Wand {
     }
 
     @Override
-    protected void fxEffect(int source, int destination, Callback callback) {
-        MagicMissile.haste(curUser.sprite.parent, source, destination, callback);
-    }
-
-    @Override
-    protected void onZap(Ballistica bolt) {
-        Char ch;
-
-        if (bolt != null) {
-            ch = Actor.findChar(bolt.collisionPos);
-        } else {
-            ch = curUser;
-        }
-
-        if (ch != null) {
-            Buff.detach(ch, Slow.Intrinsic.class);
-            Buff.affect(ch, curUser, Haste.Intrinsic.class);
-
-            ch.sprite.burst(0xFFEF93CE, 2);
-        }
-    }
-
-    @Override
     public String desc() {
         return
-                "This wand launches a bolt which permanently speeds up its target.";
+                "This wand launches a bolt which temporarily speeds up its target.";
     }
 }
 

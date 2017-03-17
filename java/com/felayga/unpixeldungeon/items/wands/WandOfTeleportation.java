@@ -26,57 +26,37 @@
 
 package com.felayga.unpixeldungeon.items.wands;
 
-import com.felayga.unpixeldungeon.Dungeon;
 import com.felayga.unpixeldungeon.actors.Actor;
 import com.felayga.unpixeldungeon.actors.Char;
-import com.felayga.unpixeldungeon.items.Heap;
-import com.felayga.unpixeldungeon.items.scrolls.ScrollOfTeleportation;
 import com.felayga.unpixeldungeon.levels.Level;
 import com.felayga.unpixeldungeon.mechanics.Ballistica;
-import com.felayga.unpixeldungeon.mechanics.Constant;
 import com.felayga.unpixeldungeon.mechanics.MagicType;
+import com.felayga.unpixeldungeon.spellcasting.TeleportationSpellcaster;
 import com.watabou.utils.Random;
 
 /**
  * Created by HELLO on 3/3/2017.
  */
 public class WandOfTeleportation extends Wand {
-    public WandOfTeleportation()
-    {
+    public WandOfTeleportation() {
         super(8);
         name = "Wand of Teleportation";
 
-        ballisticaMode = Ballistica.Mode.value(Ballistica.Mode.MagicRay, Ballistica.Mode.StopSelf);
         price = 200;
+
+        spellcaster = new TeleportationSpellcaster() {
+            @Override
+            public void onZap(Char source, Ballistica path, int targetPos) {
+                super.onZap(source, path, targetPos);
+
+                WandOfTeleportation.this.wandUsed();
+            }
+        };
     }
 
     @Override
     public int randomCharges() {
         return Random.IntRange(4, 8);
-    }
-
-    @Override
-    protected void onZap( Ballistica bolt ) {
-        onZap(bolt.collisionPos);
-    }
-
-    private void onZap(int pos) {
-        Char target = Actor.findChar(pos);
-
-        if (target != null) {
-            if (ScrollOfTeleportation.canTeleport(target)) {
-                ScrollOfTeleportation.doTeleport(target, Constant.Position.RANDOM);
-            }
-            return;
-        }
-
-        Heap heap = Dungeon.level.heaps.get(pos);
-
-        if (heap != null) {
-            if (ScrollOfTeleportation.canTeleport(heap)) {
-                ScrollOfTeleportation.doTeleport(heap, Constant.Position.RANDOM);
-            }
-        }
     }
 
     /*
@@ -98,25 +78,25 @@ public class WandOfTeleportation extends Wand {
 
         for (Integer offset : Level.NEIGHBOURS8) {
             int pos = user.pos() + offset;
-            Char target = Dungeon.level.findMob(pos);
+            Char target = Actor.findChar(pos);
 
             if (target == null) {
-                onZap(pos);
+                spellcaster.onZap(user, null, pos);
                 continue;
             }
 
-            explode(target, maxDamage);
+            explode(user, target, maxDamage);
         }
 
-        explode(user, maxDamage);
+        explode(user, user, maxDamage);
     }
 
-    public void explode(Char target, int maxDamage) {
+    public void explode(Char user, Char target, int maxDamage) {
         int damage = Random.IntRange(1, maxDamage);
 
-        target.damage(damage, MagicType.Magic, curUser, null);
+        target.damage(damage, MagicType.Magic, user, null);
 
-        onZap(target.pos());
+        spellcaster.onZap(user, null, target.pos());
     }
 
     @Override

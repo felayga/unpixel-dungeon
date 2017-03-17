@@ -50,17 +50,22 @@ public class LootIndicator extends Tag {
 	
 	@Override
 	protected void createChildren() {
-		super.createChildren();
-		
-		slot = new ItemSlot() {
-			protected void onClick() {
+        super.createChildren();
+
+        slot = new ItemSlot() {
+            protected void onClick() {
+                if (Dungeon.hero.handle(Dungeon.hero.pos(), new HeroAction.HandleHeap(Dungeon.hero.pos()))) {
+                    Dungeon.hero.next();
+                }
+                /*
                 Dungeon.hero.curAction = new HeroAction.HandleHeap(Dungeon.hero.pos());
                 Dungeon.hero.motivate(true);
-			}
-		};
-		slot.showParams( true, true, false );
-		add( slot );
-	}
+                */
+            }
+        };
+        slot.showParams(true, true, false);
+        add(slot);
+    }
 	
 	@Override
 	protected void layout() {

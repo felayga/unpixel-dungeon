@@ -55,7 +55,8 @@ public class Foliage extends Blob {
 
                 int cell = Dungeon.level.map(pos);
 
-				if (cell == Terrain.EMBERS) {
+                //todo: foliage dirtgrass growth?
+				if (cell == Terrain.CHARCOAL) {
 					Dungeon.level.set(pos, Terrain.GRASS, false);
 					regrowth = true;
 				}

@@ -136,7 +136,7 @@ public abstract class RegularLevel extends Level {
         roomEntrance.type = Type.ENTRANCE;
         roomExit.type = Type.EXIT;
 
-        HashSet<Room> connected = new HashSet<Room>();
+        HashSet<Room> connected = new HashSet<>();
         connected.add(roomEntrance);
 
         Graph.buildDistanceMap(rooms, roomExit);
@@ -166,7 +166,6 @@ public abstract class RegularLevel extends Level {
             Room cr = Random.element(connected);
             Room or = Random.element(cr.neigbours);
             if (!connected.contains(or)) {
-
                 cr.connect(or);
                 connected.add(or);
             }
@@ -213,7 +212,7 @@ public abstract class RegularLevel extends Level {
         rooms = new HashSet<>();
         splitRooms();
 
-        if (rooms.size() < 8) {
+        if (rooms.size() < 10) {
             return false;
         }
 
@@ -240,14 +239,9 @@ public abstract class RegularLevel extends Level {
 
             Room r = null;
             for (Room subr : rooms) {
-                if (subr.type == Type.NULL && subr.width() >= 3 && subr.height() >= 3 && subr.connected.size() > 0) {
-                    if (type == Type.SHOP) {
-                        if (ShopPainter.canUse(subr)) {
-                            r = subr;
-                        }
-                    } else {
-                        r = subr;
-                    }
+                GLog.d("test type="+type.toString());
+                if (r.width() > 3 && r.height() > 3 && type.canUse(subr)) {
+                    r = subr;
                     break;
                 }
             }
@@ -268,8 +262,10 @@ public abstract class RegularLevel extends Level {
                         r.width() > 3 && r.height() > 3 &&
                         Random.Int(specialRooms * specialRooms + 2) == 0) {
 
+                    Room.Type type;
+
                     if (pitRoomNeeded && !pitMade) {
-                        r.type = Type.PIT;
+                        type = Type.PIT;
                         pitMade = true;
 
                         specials.remove(Type.ARMORY);
@@ -280,23 +276,26 @@ public abstract class RegularLevel extends Level {
                         specials.remove(Type.TREASURY);
                         specials.remove(Type.VAULT);
                         specials.remove(Type.WEAK_FLOOR);
-
                     } else if (specials.contains(Type.LABORATORY)) {
-                        r.type = Type.LABORATORY;
+                        type = Type.LABORATORY;
                     } else if (specials.contains(Type.MAGIC_WELL)) {
-                        r.type = Type.MAGIC_WELL;
+                        type = Type.MAGIC_WELL;
                     } else {
                         int n = specials.size();
-                        r.type = specials.get(Math.min(Random.Int(n), Random.Int(n)));
+                        type = specials.get(Math.min(Random.Int(n), Random.Int(n)));
                         if (r.type == Type.WEAK_FLOOR) {
                             weakFloorCreated = true;
                         }
                     }
 
-                    Room.useType(r.type);
-                    specials.remove(r.type);
-                    specialRooms++;
-
+                    if (type.canUse(r)) {
+                        r.type = type;
+                        Room.useType(r.type);
+                        specials.remove(r.type);
+                        specialRooms++;
+                    } else {
+                        GLog.d("can't use " + type.toString());
+                    }
                 } else if (Random.Int(2) == 0) {
                     HashSet<Room> neigbours = new HashSet<Room>();
                     for (Room n : r.neigbours) {
@@ -335,6 +334,12 @@ public abstract class RegularLevel extends Level {
             if (r != null) {
                 r.type = Type.STANDARD;
                 count++;
+            }
+        }
+
+        for (Room r : rooms) {
+            if (r.type == Type.NULL) {
+                fill(r.left, r.top, r.width(), r.height(), Terrain.WALL);
             }
         }
 
@@ -532,49 +537,59 @@ public abstract class RegularLevel extends Level {
                 map(pos, tunnelTile());
                 break;
             case REGULAR:
-                assignDoor(pos, Terrain.DOOR, Terrain.SECRET_DOOR, Terrain.WOOD_DEBRIS, Terrain.LOCKED_DOOR, Terrain.SECRET_LOCKED_DOOR);
+                assignDoor(pos, Terrain.DOOR, Terrain.SECRET_DOOR, Terrain.OPEN_DOOR, Terrain.LOCKED_DOOR, Terrain.SECRET_LOCKED_DOOR, Terrain.WOOD_DEBRIS);
                 break;
             case REGULAR_UNBROKEN:
-                assignDoor(pos, Terrain.DOOR, Terrain.SECRET_DOOR, Terrain.DOOR, Terrain.LOCKED_DOOR, Terrain.SECRET_LOCKED_DOOR);
+                assignDoor(pos, Terrain.DOOR, Terrain.SECRET_DOOR, Terrain.OPEN_DOOR, Terrain.LOCKED_DOOR, Terrain.SECRET_LOCKED_DOOR, Terrain.DOOR);
                 break;
             case UNLOCKED:
                 map(pos, Terrain.DOOR);
                 break;
-            case HIDDEN:
-                map(pos, Terrain.SECRET_DOOR);
-                break;
-            case HIDDENLOCKED:
-                map(pos, Terrain.SECRET_LOCKED_DOOR);
             case BARRICADE:
                 map(pos, Terrain.BARRICADE);
                 break;
             case LOCKED:
-                assignDoor(pos, Terrain.LOCKED_DOOR, Terrain.SECRET_LOCKED_DOOR, Terrain.LOCKED_DOOR, Terrain.DOOR, Terrain.SECRET_DOOR);
+                assignDoor(pos, Terrain.LOCKED_DOOR, Terrain.SECRET_LOCKED_DOOR, Terrain.LOCKED_DOOR, Terrain.DOOR, Terrain.SECRET_DOOR, Terrain.LOCKED_DOOR);
+                break;
+            case NICHE:
+                assignDoor(pos, Terrain.WALL, Terrain.LOCKED_DOOR, Terrain.SECRET_LOCKED_DOOR, Terrain.LOCKED_DOOR, Terrain.DOOR, Terrain.SECRET_DOOR);
+                break;
+            case JAIL:
+                map(pos, Terrain.IRON_BARS);
                 break;
         }
     }
 
-    private void assignDoor(int pos, int regular, int regularHidden, int regularBroken, int other, int otherHidden) {
-        if (Dungeon.depth() <= 1) {
-            map(pos, regular);
-        } else {
-            if (Random.Int(4) == 0) {
-                regular = other;
-                regularHidden = otherHidden;
-            }
+    private void assignDoor(int pos, int regular, int regularHidden, int regularBroken, int other, int otherHidden, int otherBroken) {
+        /* selection probabilities based on depthAdjusted
+            depth<2 {0.44, 0.00, 0.22, 0.22, 0.00, 0.11}
+            depth=2 {0.40, 0.07, 0.20, 0.20, 0.03, 0.10}
+            depth=3 {0.40, 0.07, 0.20, 0.19, 0.04, 0.10}
+            depth=4 {0.39, 0.08, 0.19, 0.19, 0.04, 0.10}
+            depth=5 {0.38, 0.09, 0.19, 0.19, 0.05, 0.09}
+            depth>5 {0.37, 0.11, 0.18, 0.18, 0.06, 0.09}
+        */
 
+        if (Random.Int(3) == 0) {
+            regular = other;
+            regularHidden = otherHidden;
+            regularBroken = otherBroken;
+        }
+
+        if (Dungeon.depthAdjusted > 1) {
             boolean secret = (Dungeon.depthAdjusted < 6 ? Random.Int(12 - Dungeon.depthAdjusted) : Random.Int(6)) == 0;
 
             if (secret) {
                 map(pos, regularHidden);
                 secretDoors++;
-            } else {
-                if (Random.Int(4) == 0) {
-                    map(pos, regularBroken);
-                } else {
-                    map(pos, regular);
-                }
+                return;
             }
+        }
+
+        if (Random.Int(3) == 0) {
+            map(pos, regularBroken);
+        } else {
+            map(pos, regular);
         }
     }
 

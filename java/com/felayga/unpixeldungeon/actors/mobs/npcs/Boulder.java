@@ -36,6 +36,7 @@ import com.felayga.unpixeldungeon.items.Item;
 import com.felayga.unpixeldungeon.items.weapon.ammunition.simple.Rock;
 import com.felayga.unpixeldungeon.levels.Level;
 import com.felayga.unpixeldungeon.mechanics.Characteristic;
+import com.felayga.unpixeldungeon.mechanics.Constant;
 import com.felayga.unpixeldungeon.mechanics.MagicType;
 import com.felayga.unpixeldungeon.scenes.GameScene;
 import com.felayga.unpixeldungeon.sprites.npcs.BoulderSprite;
@@ -86,66 +87,6 @@ public class Boulder extends NPC {
 
     @Override
     public void interact() {
-        interactPush();
-
-        /*
-        final Boulder boulder = this;
-        final Hero hero = Dungeon.hero;
-
-        final List<String> actions = new ArrayList<String>();
-        List<Boolean> actionOptions = new ArrayList<Boolean>();
-
-        actions.add(TXT_PUSH);
-        actionOptions.add(false);
-
-        ITool[] tools = hero.belongings.getToolTypes(true, true, Pickaxe.NAME);
-
-
-        Pickaxe diggingTool = null;
-        String diggingToolName = null;
-        if (tools[0] != null)
-        {
-            diggingTool = (Pickaxe)tools[0];
-            diggingToolName = diggingTool.getName().toUpperCase();
-
-            actions.add(diggingToolName);
-            actionOptions.add(false);
-        }
-
-        final Pickaxe diggingTool_WTFJAVA = diggingTool;
-        final String diggingToolName_WTFJAVA = diggingToolName;
-
-
-        actions.add(Constant.Action.CANCEL);
-        actionOptions.add(true);
-
-
-        final int actionsLength = actions.size();
-
-        unPixelDungeon.scene().add(
-                new WndOptions("Boulder", "A large boulder is in your way.",
-                        actions.toArray(new String[actionsLength]),
-                        actionOptions.toArray(new Boolean[actionsLength])) {
-
-                    @Override
-                    protected void onSelect(int index) {
-                        String selection = index >= 0 ? actions.get(index) : "";
-
-                        if (selection == TXT_PUSH) {
-                            interactPush();
-                        }
-                        else if (selection == diggingToolName_WTFJAVA) {
-                            diggingTool_WTFJAVA.apply(hero, Boulder.this.pos);
-                        }
-                        else {
-                            GLog.i("You leave the boulder alone.");
-                        }
-                    }
-                });
-        */
-    }
-
-    private void interactPush() {
         int newPos = this.pos() * 2 - Dungeon.hero.pos();
         boolean mobBlock = Actor.findChar(newPos) != null;
 
@@ -174,9 +115,9 @@ public class Boulder extends NPC {
         }
     }
 
-    int storedPos = -1;
-    boolean storedFlag = false;
-    boolean pluggingPit = false;
+    private int storedPos = Constant.Position.NONE;
+    private boolean storedFlag = false;
+    private boolean pluggingPit = false;
 
     @Override
     public boolean visibilityOverride(boolean state) {
@@ -202,7 +143,7 @@ public class Boulder extends NPC {
     private boolean initializing = false;
 
     private void initializationCheck() {
-        if (storedPos == -1 || (!Level.losBlocking[pos()])) {
+        if (storedPos < 0 || (!Level.losBlocking[pos()])) {
             initializing = true;
             move(pos());
             initializing = false;
@@ -219,10 +160,10 @@ public class Boulder extends NPC {
         storedFlag = Level.losBlocking[newPos];
 
         if (!initializing) {
-            if (pluggingPit) {
-                Sample.INSTANCE.play(Assets.SND_BOULDER_PLUG);
-            } else {
+            if (!pluggingPit) {
                 Sample.INSTANCE.play(Assets.SND_BOULDER_SCRAPE);
+            } else {
+                Sample.INSTANCE.play(Assets.SND_BOULDER_PLUG);
             }
         }
 
@@ -236,13 +177,13 @@ public class Boulder extends NPC {
 
         if (!initializing) {
             Dungeon.observe();
-            Dungeon.level.press(newPos, this);
         }
 
-        if (pos() != newPos) {
-            Dungeon.level.press(newPos, this);
+        int oldPos = pos();
+        if (oldPos != newPos) {
+            //GLog.d("boulder moving to " + newPos);
             super.move(newPos);
-            sprite.move(pos(), newPos);
+            sprite.move(oldPos, newPos);
         }
     }
 
@@ -275,11 +216,14 @@ public class Boulder extends NPC {
             Level.losBlocking[storedPos] = storedFlag;
             GameScene.updateMap(storedPos);
             Dungeon.observe();
+        } else {
+            sprite.alpha(0.0f);
         }
 
         CellEmitter.get(pos()).burst(Speck.factory(Speck.DUST), 5);
 
-        super.die(cause);
+        destroy(cause);
+        sprite.die();
     }
 
     @Override

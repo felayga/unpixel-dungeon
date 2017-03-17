@@ -25,17 +25,21 @@
  */
 package com.felayga.unpixeldungeon.items.weapon.melee.martial;
 
+import com.felayga.unpixeldungeon.actors.buffs.hero.Encumbrance;
 import com.felayga.unpixeldungeon.mechanics.GameTime;
 import com.felayga.unpixeldungeon.mechanics.Material;
 import com.felayga.unpixeldungeon.sprites.ItemSpriteSheet;
 
 public class Sword extends MartialMeleeWeapon {
 	public Sword() {
-		super( GameTime.TICK, 1, 8 );
+		super( GameTime.TICK, 2, 8 );
 
 		name = "sword";
 		image = ItemSpriteSheet.MELEE_SWORD;
         material = Material.Iron;
+
+        weight(70 * Encumbrance.UNIT);
+        price = 10;
     }
 	
 	@Override

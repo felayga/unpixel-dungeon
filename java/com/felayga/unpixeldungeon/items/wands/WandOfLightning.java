@@ -25,67 +25,35 @@
  */
 package com.felayga.unpixeldungeon.items.wands;
 
-import com.felayga.unpixeldungeon.Dungeon;
-import com.felayga.unpixeldungeon.ResultDescriptions;
 import com.felayga.unpixeldungeon.actors.Actor;
 import com.felayga.unpixeldungeon.actors.Char;
-import com.felayga.unpixeldungeon.effects.CellEmitter;
-import com.felayga.unpixeldungeon.effects.Lightning;
-import com.felayga.unpixeldungeon.effects.particles.SparkParticle;
 import com.felayga.unpixeldungeon.items.weapon.melee.simple.MagesStaff;
 import com.felayga.unpixeldungeon.levels.Level;
 import com.felayga.unpixeldungeon.mechanics.Ballistica;
 import com.felayga.unpixeldungeon.mechanics.MagicType;
-import com.felayga.unpixeldungeon.utils.GLog;
-import com.felayga.unpixeldungeon.utils.Utils;
-import com.watabou.noosa.Camera;
-import com.watabou.utils.Callback;
+import com.felayga.unpixeldungeon.spellcasting.LightningSpellcaster;
 import com.watabou.utils.Random;
-
-import java.util.ArrayList;
 
 public class WandOfLightning extends Wand {
     public WandOfLightning() {
         super(8);
-
         name = "Wand of Lightning";
 
-        ballisticaMode = Ballistica.Mode.value(Ballistica.Mode.MagicRay, Ballistica.Mode.StopSelf);
         price = 175;
+
+        spellcaster = new LightningSpellcaster() {
+            @Override
+            public void onZap(Char source, Ballistica path, int targetPos) {
+                super.onZap(source, path, targetPos);
+
+                WandOfLightning.this.wandUsed();
+            }
+        };
     }
 
     @Override
     public int randomCharges() {
         return Random.IntRange(4, 8);
-    }
-
-	private ArrayList<Char> affected = new ArrayList<>();
-
-	ArrayList<Lightning.Arc> arcs = new ArrayList<>();
-	
-	@Override
-	protected void onZap( Ballistica bolt ) {
-        onZap(bolt.collisionPos);
-    }
-
-    private void onZap(int pos) {
-        //lightning deals less damage per-target, the more targets that are hit.
-        float multipler = 0.4f + (0.6f / affected.size());
-        if (Level.puddle[pos]) multipler *= 1.5f;
-
-        for (Char ch : affected) {
-            processSoulMark(ch, curUser);
-            ch.damage(Math.round(Random.NormalIntRange(6, 36) * multipler), MagicType.Shock, curUser, null);
-
-            if (ch == Dungeon.hero) Camera.main.shake(2, 0.3f);
-            ch.sprite.centerEmitter(-1).burst(SparkParticle.FACTORY, 3);
-            ch.sprite.flash();
-        }
-
-        if (!curUser.isAlive()) {
-            Dungeon.fail(Utils.format(ResultDescriptions.ITEM, name));
-            GLog.n("You killed yourself with your own Wand of Lightning...");
-        }
     }
 
     /*
@@ -95,56 +63,6 @@ public class WandOfLightning extends Wand {
 		new Shock().proc(staff, attacker, defender, damage);
 	}
 	*/
-
-	private void arc( Char ch ) {
-		
-		affected.add( ch );
-
-		for (int i : Level.NEIGHBOURS8) {
-			int cell = ch.pos() + i;
-
-			Char n = Actor.findChar( cell );
-			if (n != null && !affected.contains( n )) {
-				arcs.add(new Lightning.Arc(ch.pos(), n.pos()));
-				arc(n);
-			}
-		}
-
-		if (Level.puddle[ch.pos()] && !ch.flying()){
-			for (int i : Level.NEIGHBOURS8DIST2) {
-				int cell = ch.pos() + i;
-				//player can only be hit by lightning from an adjacent enemy.
-				if (!Level.insideMap(cell) || Actor.findChar(cell) == Dungeon.hero) continue;
-
-				Char n = Actor.findChar( ch.pos() + i );
-				if (n != null && !affected.contains( n )) {
-					arcs.add(new Lightning.Arc(ch.pos(), n.pos()));
-					arc(n);
-				}
-			}
-		}
-	}
-	
-	@Override
-	protected void fxEffect(int source, int destination, Callback callback ) {
-
-		affected.clear();
-		arcs.clear();
-		arcs.add( new Lightning.Arc(source, destination));
-
-		int cell = destination;
-
-		Char ch = Actor.findChar( cell );
-		if (ch != null) {
-			arc(ch);
-		} else {
-			CellEmitter.center( cell ).burst( SparkParticle.FACTORY, 3 );
-		}
-
-		//don't want to wait for the effect before processing damage.
-		curUser.sprite.parent.add( new Lightning( arcs, null ) );
-		callback.call();
-	}
 
 	@Override
 	public void staffFx(MagesStaff.StaffParticle particle) {
@@ -169,7 +87,7 @@ public class WandOfLightning extends Wand {
 
         for (Integer offset : Level.NEIGHBOURS8) {
             int pos = user.pos() + offset;
-            Char target = Dungeon.level.findMob(pos);
+            Char target = Actor.findChar(pos);
 
             if (target == null) {
                 continue;
@@ -186,7 +104,8 @@ public class WandOfLightning extends Wand {
 
         target.damage(damage, MagicType.Shock, curUser, null);
 
-        fxEffect(curUser.pos(), target.pos(), null);
+        spellcaster.fxEffect(curUser, null, curUser.pos(), target.pos(), null);
+        spellcaster.onZap(curUser, null, target.pos());
     }
 
 	@Override
