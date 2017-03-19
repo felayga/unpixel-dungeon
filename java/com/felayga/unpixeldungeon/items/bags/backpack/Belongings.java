@@ -245,7 +245,7 @@ public class Belongings implements Iterable<Item>, IDecayable, IBag {
 
         if (equipped && retval == null) {
             if (items.containsValue(item) && unequip((EquippableItem) item, false)) {
-                //GLog.d("remove equipped");
+                GLog.d("remove equipped");
                 retval = item;
             }
         }

@@ -41,6 +41,7 @@ public class OilskinCloak extends Cloak {
         name = "oilskin cloak";
         image = ItemSpriteSheet.CLOAK_OILSKIN;
         material = Material.Cloth;
+        spriteTextureIndex = 6;
 
         price = 50;
         weight(Encumbrance.UNIT * 10);

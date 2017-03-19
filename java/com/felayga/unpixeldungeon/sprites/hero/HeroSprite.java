@@ -45,7 +45,7 @@ import com.watabou.noosa.TextureFilm;
 import com.watabou.utils.Callback;
 
 public class HeroSprite extends CharSprite {
-	private static final int FRAME_WIDTH	= 12;
+	private static final int FRAME_WIDTH	= 13;
 	public static final int FRAME_HEIGHT	= 15;
 
 	public static final int RUN_FRAMERATE	= 20;
@@ -59,11 +59,15 @@ public class HeroSprite extends CharSprite {
 	private HeroSubSprite armorTexture;
 	private HeroSubSprite hairTexture;
 	private HeroSubSprite hairFaceTexture;
+    private HeroSubSprite cloakTexture;
 
 	private int heroGender = HEROINDEX_DEAD;
 	private int armorIndex = 0;
+    private int cloakIndex = 0;
 	private int hairIndex = 0;
 	private int hairFaceIndex = 0;
+
+    private boolean cloakHidesHair = false;
 
 	private float rHair;
 	private float gHair;
@@ -83,6 +87,7 @@ public class HeroSprite extends CharSprite {
 		armorTexture = new HeroSubSprite(Assets.HERO_ARMOR);
 		hairTexture = new HeroSubSprite(Assets.HERO_HAIR);
 		hairFaceTexture = new HeroSubSprite(Assets.HERO_HAIRFACE);
+        cloakTexture = new HeroSubSprite(Assets.HERO_CLOAK);
 		texture(Assets.HERO_HEAD);
 
 		updateGender();
@@ -99,9 +104,9 @@ public class HeroSprite extends CharSprite {
 
 	@Override
 	public void link(Char ch) {
-		super.link(ch);
+        super.link(ch);
 
-		if (ch == Dungeon.hero) {
+        if (ch == Dungeon.hero) {
             Hero hero = (Hero) ch;
 
             heroGender = WndInitHero.genderSelected;
@@ -112,12 +117,20 @@ public class HeroSprite extends CharSprite {
             EquippableItem test = hero.belongings.armor();
             if (test != null) {
                 Armor armor = (Armor) test;
-                armorIndex = armor.textureIndex;
+                armorIndex = armor.spriteTextureIndex;
             } else {
                 armorIndex = heroGender;
             }
+
+            test = hero.belongings.cloak();
+            if (test != null) {
+                Armor cloak = (Armor) test;
+                cloakIndex = cloak.spriteTextureIndex;
+            } else {
+                cloakIndex = 0;
+            }
         }
-	}
+    }
 
 
 	@Override
@@ -140,6 +153,7 @@ public class HeroSprite extends CharSprite {
 			verticesBuffer.put(vertices);
 
 			armorTexture.refreshBuffer();
+            cloakTexture.refreshBuffer();
 			hairTexture.refreshBuffer();
 			hairFaceTexture.refreshBuffer();
 
@@ -149,7 +163,10 @@ public class HeroSprite extends CharSprite {
 
 		if (heroGender != HEROINDEX_DEAD) {
 			armorTexture.draw(script, matrix, rm, gm, bm, am, ra, ga, ba, aa);
-			hairTexture.draw(script, matrix, rHair, gHair, bHair, am, ra, ga, ba, aa);
+            if (!cloakHidesHair) {
+                hairTexture.draw(script, matrix, rHair, gHair, bHair, am, ra, ga, ba, aa);
+            }
+            cloakTexture.draw(script, matrix, rm, gm, bm, am, ra, ga, ba, aa);
 			hairFaceTexture.draw(script, matrix, rHair, gHair, bHair, am, ra, ga, ba, aa);
 		}
 	}
@@ -159,6 +176,7 @@ public class HeroSprite extends CharSprite {
 		super.updateFrame();
 
 		armorTexture.updateFrame(armorIndex, frame, flipHorizontal, flipVertical);
+        cloakTexture.updateFrame(cloakIndex, frame, flipHorizontal, flipVertical);
 		hairTexture.updateFrame(hairIndex, frame, flipHorizontal, flipVertical);
 		hairFaceTexture.updateFrame(hairFaceIndex, frame, flipHorizontal, flipVertical);
 	}
@@ -168,15 +186,17 @@ public class HeroSprite extends CharSprite {
 		super.updateVertices();
 
 		armorTexture.updateVertices(width, height);
+        cloakTexture.updateVertices(width, height);
 		hairTexture.updateVertices(width, height);
 		hairFaceTexture.updateVertices(width, height);
 	}
 
 	/////////////////////////////////////////////////////////////////////////////
 
-	public void setAppearance(int heroGender, int armorIndex, int hairIndex, int hairFaceIndex, int hairColorIndex) {
+	public void setAppearance(int heroGender, int armorIndex, int cloakIndex, int hairIndex, int hairFaceIndex, int hairColorIndex) {
 		setGender(heroGender);
 		setArmor(armorIndex);
+        setCloak(cloakIndex);
 		setHair(hairIndex);
 		setHairFace(hairFaceIndex);
 		setHairColor(hairColorIndex);
@@ -205,6 +225,32 @@ public class HeroSprite extends CharSprite {
 
 		updateSubSprites();
 	}
+
+    public void setCloak(int cloakIndex) {
+        GLog.d("setCloak("+cloakIndex+")");
+        if (this.cloakIndex == cloakIndex) {
+            return;
+        }
+
+        this.cloakIndex = cloakIndex;
+
+        switch(cloakIndex) {
+            case 1:
+            case 2:
+            case 4:
+            case 6:
+            case 7:
+            case 9:
+            case 11:
+                cloakHidesHair = true;
+                break;
+            default:
+                cloakHidesHair = false;
+                break;
+        }
+
+        updateSubSprites();
+    }
 
 	public void setHair(int hairIndex) {
 		if (this.hairIndex == hairIndex) {
@@ -258,22 +304,35 @@ public class HeroSprite extends CharSprite {
 	private void updateGender() {
 		TextureFilm film = new TextureFilm( tiers(), heroGender, FRAME_WIDTH, FRAME_HEIGHT );
 
-		idle = new Animation( 1, true );
-		idle.frames( film, 0, 0, 0, 1, 0, 0, 1, 1 );
+        // 0 1 8 9 10 11 12
 
-		run = new Animation( RUN_FRAMERATE, true );
+        if (heroGender == 1) {
+            idle = new Animation(1, true);
+            idle.frames(film, 14, 14, 14, 15, 14, 14, 15, 15);
+
+            attack = new Animation(15, false);
+            attack.frames(film, 16, 17, 18); // 8, 9, 10, 0
+
+            operate = new Animation(8, false);
+            operate.frames(film, 19, 20, 19, 20);
+        } else {
+            idle = new Animation(1, true);
+            idle.frames(film, 0, 0, 0, 1, 0, 0, 1, 1);
+
+            attack = new Animation(15, false);
+            attack.frames(film, 8, 9, 10); // 8, 9, 10, 0
+
+            operate = new Animation(8, false);
+            operate.frames(film, 11, 12, 11, 12);
+        }
+
+        run = new Animation( RUN_FRAMERATE, true );
 		run.frames( film, 2, 3, 4, 5, 6, 7 );
 
 		die = new Animation( 20, false );
 		die.frames( film, 0, 1, 2, 3, 4, 3 );
 
-		attack = new Animation( 15, false );
-		attack.frames( film, 8, 9, 10, 0 );
-
 		zap = attack.clone();
-
-		operate = new Animation( 8, false );
-		operate.frames(film, 11, 12, 11, 12);
 
 		fly = new Animation( 1, true );
 		fly.frames(film, 13);

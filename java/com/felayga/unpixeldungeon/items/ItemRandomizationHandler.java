@@ -62,7 +62,6 @@ public class ItemRandomizationHandler<T extends Item> {
 
         int index;
         for (int i = 0; i < items.length - endlistnonrandomcount; i++) {
-
             Class<? extends T> item = items[i];
 
             index = Random.Int(labelsLeft.size() - endlistnonrandomcount);
@@ -133,7 +132,6 @@ public class ItemRandomizationHandler<T extends Item> {
             String itemName = item.toString();
 
             if (bundle.contains(itemName + SUFFIX_LABEL) && Dungeon.version > 4) {
-
                 String label = bundle.getString(itemName + SUFFIX_LABEL);
                 labels.put(item, label);
                 labelsLeft.remove(label);
@@ -149,11 +147,7 @@ public class ItemRandomizationHandler<T extends Item> {
                 if (bundle.getBoolean(itemName + SUFFIX_KNOWN)) {
                     known.add(item);
                 }
-
-                //if there's a new item, give it a random image
-                //or.. if we're loading from an untrusted version, randomize the image to be safe.
             } else {
-
                 int index = Random.Int(labelsLeft.size());
 
                 labels.put(item, labelsLeft.get(index));

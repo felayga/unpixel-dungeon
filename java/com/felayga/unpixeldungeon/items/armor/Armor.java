@@ -71,7 +71,7 @@ public class Armor extends EquippableItem {
 	public int armorBonusMaximum;
 	public long speedModifier;
 	public int price;
-	public int textureIndex;
+	public int spriteTextureIndex;
 	public int spellFailure;
 
 
@@ -87,7 +87,7 @@ public class Armor extends EquippableItem {
 		this.armorMagic = armorMagic;
 		this.speedModifier = speedModifier;
 		this.spellFailure = spellFailure;
-		textureIndex = 1;
+        spriteTextureIndex = 1;
 	}
 
 	private static final String UNFAMILIRIARITY	= "unfamiliarity";
@@ -159,7 +159,7 @@ public class Armor extends EquippableItem {
             return;
         }
 		if (equip) {
-			heroSprite.setArmor(this.textureIndex);
+			heroSprite.setArmor(this.spriteTextureIndex);
 		}
 		else {
 			heroSprite.setArmor(0);

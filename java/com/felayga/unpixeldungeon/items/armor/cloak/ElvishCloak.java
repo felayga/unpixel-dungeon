@@ -41,6 +41,7 @@ public class ElvishCloak extends Cloak {
         name = "elvish cloak";
         image = ItemSpriteSheet.CLOAK_ELVISH;
         material = Material.Cloth;
+        spriteTextureIndex = 4;
 
         price = 60;
         weight(Encumbrance.UNIT * 10);

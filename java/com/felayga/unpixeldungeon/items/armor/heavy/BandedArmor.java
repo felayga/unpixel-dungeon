@@ -38,7 +38,7 @@ public class BandedArmor extends HeavyArmor {
         material = Material.Iron;
 
         price = 250;
-        textureIndex = 10;
+        spriteTextureIndex = 10;
 
         weight(Encumbrance.UNIT * 315);
     }

@@ -41,6 +41,7 @@ public class LeatherCloak extends Cloak {
         name = "leather cloak";
         image = ItemSpriteSheet.CLOAK_LEATHER;
         material = Material.Leather;
+        spriteTextureIndex = 1;
 
         price = 40;
         weight(Encumbrance.UNIT * 15);

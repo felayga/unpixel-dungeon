@@ -65,6 +65,7 @@ import com.felayga.unpixeldungeon.mechanics.CorpseEffect;
 import com.felayga.unpixeldungeon.mechanics.GameTime;
 import com.felayga.unpixeldungeon.mechanics.MagicType;
 import com.felayga.unpixeldungeon.mechanics.Material;
+import com.felayga.unpixeldungeon.scenes.GameScene;
 import com.felayga.unpixeldungeon.sprites.CharSprite;
 import com.felayga.unpixeldungeon.utils.GLog;
 import com.felayga.unpixeldungeon.utils.Utils;
@@ -232,6 +233,11 @@ public abstract class Char extends Actor {
     public int stealthy = 0;
 
     public int level;
+
+    private int posBlockStoredPos = Constant.Position.NONE;
+    private boolean posBlockFlagLosBlock = false;
+    private boolean posBlockFlagPassable = false;
+    private boolean posBlockFlagPathable = false;
 
 
     private int charRegistryIndex = -1;
@@ -550,17 +556,22 @@ public abstract class Char extends Actor {
         initAttributes(new int[]{10, 10, 10});
     }
 
-    public boolean visibilityOverride(boolean state) {
+    public final boolean fxSpriteVisible() {
+        if ((characteristics & Characteristic.AlwaysVisible.value) != 0) {
+            return true;
+        }
+
         if (invisible > 0 && Dungeon.hero.buff(SeeInvisible.class) == null) {
             return false;
         }
-        return state;
+        return Dungeon.visible[pos()];
     }
 
     @Override
     protected boolean act() {
         belongings.decay(getTime(), true, false);
         Dungeon.level.updateFieldOfSenses(this);
+        //posBlockInitializationCheck();
         return false;
     }
 
@@ -577,6 +588,10 @@ public abstract class Char extends Actor {
     private static final String TAG_MT = "MT";
     private static final String BUFFS = "buffs";
     private static final String CORPSEEFFECTS = "corpseEffects";
+    private final static String POSBLOCKSTOREDPOS = "posBlockStoredPos";
+    private final static String POSBLOCKFLAGLOSBLOCK = "posBlockFlagLosBlock";
+    private final static String POSBLOCKFLAGPASSABLE = "posBlockFlagPassable";
+    private final static String POSBLOCKFLAGPATHABLE = "posBlockFlagPathable";
 
     @Override
     public void storeInBundle(Bundle bundle) {
@@ -597,6 +612,11 @@ public abstract class Char extends Actor {
         bundle.put(TAG_MT, MT);
         bundle.put(BUFFS, buffs);
         bundle.put(CORPSEEFFECTS, corpseEffects);
+
+        bundle.put(POSBLOCKSTOREDPOS, posBlockStoredPos);
+        bundle.put(POSBLOCKFLAGLOSBLOCK, posBlockFlagLosBlock);
+        bundle.put(POSBLOCKFLAGPASSABLE, posBlockFlagPassable);
+        bundle.put(POSBLOCKFLAGPATHABLE, posBlockFlagPathable);
     }
 
     @Override
@@ -625,6 +645,11 @@ public abstract class Char extends Actor {
                 ((Buff) b).restore(this);
             }
         }
+
+        posBlockStoredPos = bundle.getInt(POSBLOCKSTOREDPOS);
+        posBlockFlagLosBlock = bundle.getBoolean(POSBLOCKFLAGLOSBLOCK);
+        posBlockFlagPassable = bundle.getBoolean(POSBLOCKFLAGPASSABLE);
+        posBlockFlagPathable = bundle.getBoolean(POSBLOCKFLAGPATHABLE);
     }
 
     protected boolean canAttack(Char enemy) {
@@ -1188,14 +1213,45 @@ public abstract class Char extends Actor {
         }
     }
 
+    @Override
+    protected void onAdd() {
+        super.onAdd();
+
+        posBlockInitializationCheck();
+    }
+
+    private void posBlockInitializationCheck() {
+        if ((characteristics & Characteristic.PositionBlocking.value) != 0) {
+            GLog.d("losBlockInitializationCheck()");
+            int pos = pos();
+
+            if (posBlockStoredPos < 0) {
+                posBlockStoredPos = pos;
+                GLog.d("init posBlockStoredPos x="+(pos%Level.WIDTH)+" y="+(pos/Level.WIDTH));
+
+                posBlockFlagLosBlock = Level.losBlocking[pos];
+                posBlockFlagPassable = Level.passable[pos];
+                posBlockFlagPathable = Level.pathable[pos];
+
+                Level.losBlocking[pos] = true;
+                Level.passable[pos] = false;
+                Level.pathable[pos] = false;
+
+                GameScene.updateMap(pos);
+            }
+        }
+    }
+
     public void move(int step) {
-        if (Level.canStep(step, pos(), Level.diagonal) && buff(Vertigo.class) != null) {
+        int oldPos = pos();
+
+        if (Level.canStep(step, oldPos, Level.diagonal) && buff(Vertigo.class) != null) {
             sprite.interruptMotion();
-            int newPos = pos() + Level.NEIGHBOURS8[Random.Int(8)];
+            int newPos = oldPos + Level.NEIGHBOURS8[Random.Int(8)];
             if (!(Level.passable[newPos] || Level.pathable[newPos] || Level.avoid[newPos]) || Actor.findChar(newPos) != null)
                 return;
             else {
-                sprite.move(pos(), newPos);
+                sprite.move(oldPos, newPos);
                 step = newPos;
             }
         }
@@ -1205,15 +1261,45 @@ public abstract class Char extends Actor {
 			Door.leave( pos );
 		}
 		*/
-        super.move(_pos, step);
-        _pos = step;
+
+        if (_pos != step) {
+            super.move(_pos, step);
+            _pos = step;
+
+            if ((characteristics & Characteristic.PositionBlocking.value) != 0) {
+                if (posBlockStoredPos >= 0) {
+                    GLog.d("set old posBlockStoredPos x="+(posBlockStoredPos%Level.WIDTH)+" y="+(posBlockStoredPos/Level.WIDTH));
+
+                    Level.losBlocking[posBlockStoredPos] = posBlockFlagLosBlock;
+                    Level.passable[posBlockStoredPos] = posBlockFlagPassable;
+                    Level.pathable[posBlockStoredPos] = posBlockFlagPathable;
+
+                    GameScene.updateMap(posBlockStoredPos);
+                }
+
+                posBlockStoredPos = step;
+                GLog.d("set new posBlockStoredPos x="+(posBlockStoredPos%Level.WIDTH)+" y="+(posBlockStoredPos/Level.WIDTH));
+
+                posBlockFlagLosBlock = Level.losBlocking[step];
+                posBlockFlagPassable = Level.passable[step];
+                posBlockFlagPathable = Level.pathable[step];
+
+                Level.losBlocking[step] = true;
+                Level.passable[step] = false;
+                Level.pathable[step] = false;
+
+                GameScene.updateMap(step);
+
+                Dungeon.observe();
+            }
+        }
 		/*
 		if (flying && Dungeon.level.map[pos] == Terrain.DOOR) {
 			Door.enter( pos );
 		}
 		*/
         if (this != Dungeon.hero) {
-            sprite.visible = visibilityOverride(Dungeon.visible[pos()]);
+            sprite.visible = fxSpriteVisible();
         }
     }
 
@@ -1223,6 +1309,16 @@ public abstract class Char extends Actor {
 
     public void onMotionComplete() {
         next();
+
+        /*
+        if ((characteristics & Characteristic.PositionBlocking.value) != 0) {
+            int pos = pos();
+
+            Level.losBlocking[pos] = true;
+            GameScene.updateMap(pos);
+            Dungeon.observe();
+        }
+        */
     }
 
     public void onAttackComplete() {

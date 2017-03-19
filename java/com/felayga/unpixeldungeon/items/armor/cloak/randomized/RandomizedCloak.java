@@ -83,6 +83,24 @@ public class RandomizedCloak extends Cloak {
         image = handler.image(this);
         cloakType = handler.label(this);
         material = handler.material(this);
+
+        switch(image) {
+            case ItemSpriteSheet.CLOAK_PLAIN:
+                spriteTextureIndex = 9;
+                break;
+            case ItemSpriteSheet.CLOAK_OPERA:
+                spriteTextureIndex = 10;
+                break;
+            case ItemSpriteSheet.CLOAK_FANCY:
+                spriteTextureIndex = 11;
+                break;
+            case ItemSpriteSheet.CLOAK_TATTERED:
+                spriteTextureIndex = 12;
+                break;
+            default:
+                spriteTextureIndex = 0;
+                break;
+        }
     }
 
     public boolean isKnown() {

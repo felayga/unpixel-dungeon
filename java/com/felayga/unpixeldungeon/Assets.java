@@ -98,6 +98,7 @@ public class Assets {
 	public static final String HERO_HEAD		= "hero/head.png";
 	public static final String HERO_HAIR		= "hero/hair.png";
 	public static final String HERO_HAIRFACE	= "hero/hairface.png";
+    public static final String HERO_CLOAK   	= "hero/cloak.png";
 	public static final String HERO_INTROPLOT	= "hero/introplot.png";
 	/*
 	public static final String WARRIOR	= "warrior.png";

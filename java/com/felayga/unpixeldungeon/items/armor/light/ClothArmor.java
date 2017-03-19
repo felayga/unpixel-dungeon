@@ -38,7 +38,7 @@ public class ClothArmor extends LightArmor {
         material = Material.Cloth;
 
 		price = 5;
-		textureIndex = 2;
+        spriteTextureIndex = 2;
 
 		bones = false; //Finding them in bones would be semi-frequent and disappointing.
 

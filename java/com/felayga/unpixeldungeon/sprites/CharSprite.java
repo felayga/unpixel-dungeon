@@ -154,7 +154,13 @@ public class CharSprite extends MovieClip implements Tweener.Listener, MovieClip
     }
 
     public void move(int from, int to) {
-        turnTo(from, to);
+        move(from, to, true);
+    }
+
+    public void move(int from, int to, boolean face) {
+        if (face) {
+            turnTo(from, to);
+        }
 
         play(run);
 

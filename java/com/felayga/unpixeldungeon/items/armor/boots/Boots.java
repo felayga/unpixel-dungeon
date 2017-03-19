@@ -150,6 +150,7 @@ public class Boots extends Armor implements IWeapon {
             switch (encumbrance.current) {
                 case UNENCUMBERED:
                 case BURDENED:
+                case STRESSED:
                     GameScene.selectCell(kicker, "Choose a place to kick");
                     break;
                 default:

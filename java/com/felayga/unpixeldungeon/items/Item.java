@@ -512,12 +512,14 @@ public class Item implements Bundlable {
                 }
             });
         } else {
+            GLog.d("dodrop fullstack");
             doDrop(hero, this);
         }
     }
 
     protected void doDrop(Hero hero, Item item) {
         Item removed = hero.belongings.remove(item);
+        GLog.d("removed="+(removed!=null?removed.name:"<null>"));
         Heap heap = Dungeon.level.drop(removed, hero.pos());
         if (heap != null) {
             heap.sprite.drop(hero.pos());

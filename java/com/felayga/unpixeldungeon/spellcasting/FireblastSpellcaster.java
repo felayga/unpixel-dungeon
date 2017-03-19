@@ -63,7 +63,7 @@ public class FireblastSpellcaster extends Spellcaster {
 
         final int maxDist = 3;
 
-        int dist = Math.min(path.dist, maxDist);
+        int dist = Math.min(path.path.size() - 1, maxDist);
 
         for (int i = 0; i < Level.NEIGHBOURS8.length; i++) {
             if (path.sourcePos + Level.NEIGHBOURS8[i] == path.path.get(1)) {

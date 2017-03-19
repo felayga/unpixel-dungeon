@@ -41,6 +41,7 @@ public class DwarvenCloak extends Cloak {
         name = "orcish cloak";
         image = ItemSpriteSheet.CLOAK_DWARVEN;
         material = Material.Cloth;
+        spriteTextureIndex = 2;
 
         price = 50;
         weight(Encumbrance.UNIT * 10);

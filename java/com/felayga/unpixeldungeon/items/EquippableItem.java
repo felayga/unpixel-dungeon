@@ -27,6 +27,7 @@ package com.felayga.unpixeldungeon.items;
 
 import com.felayga.unpixeldungeon.actors.Char;
 import com.felayga.unpixeldungeon.actors.hero.Hero;
+import com.felayga.unpixeldungeon.mechanics.BUCStatus;
 import com.felayga.unpixeldungeon.mechanics.Constant;
 import com.felayga.unpixeldungeon.utils.GLog;
 
@@ -148,7 +149,9 @@ public abstract class EquippableItem extends Item {
 
 	@Override
 	protected void doDrop( Hero hero, Item item ) {
-        if (!isEquipped(hero) || (!cursedCannotUnequip && hero.belongings.unequip(this, true))) {
+        if (!isEquipped(hero)) {
+            super.doDrop(hero, item);
+        } else if (hero.belongings.unequip(this, true)) {
             super.doDrop(hero, item);
         }
     }

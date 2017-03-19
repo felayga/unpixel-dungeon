@@ -92,7 +92,7 @@ public class Invisibility extends FlavourBuff {
 
         if (target != Dungeon.hero) {
             boolean oldVisible = target.sprite.visible;
-            target.sprite.visible = target.visibilityOverride(Dungeon.visible[target.pos()]);
+            target.sprite.visible = target.fxSpriteVisible();
             GLog.d("target.sprite.visible old="+oldVisible+" new="+target.sprite.visible);
             if (Dungeon.level != null && oldVisible && !target.sprite.visible) {
                 Dungeon.level.warnings.add(target.pos(), false);

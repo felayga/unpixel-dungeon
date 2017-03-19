@@ -38,7 +38,7 @@ public class MailArmor extends MediumArmor {
         material = Material.Iron;
 
 		price = 150;
-		textureIndex = 4;
+        spriteTextureIndex = 4;
 
 		weight(Encumbrance.UNIT * 360);
 	}

@@ -41,6 +41,7 @@ public class Apron extends Cloak {
         name = "apron";
         image = ItemSpriteSheet.CLOAK_APRON;
         material = Material.Cloth;
+        spriteTextureIndex = 5;
 
         price = 50;
         weight(Encumbrance.UNIT * 10);

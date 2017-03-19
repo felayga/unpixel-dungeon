@@ -38,7 +38,7 @@ public class ScaleArmor extends MediumArmor {
         material = Material.Iron;
 
 		price = 50;
-		textureIndex = 5;
+        spriteTextureIndex = 5;
 
 		weight(Encumbrance.UNIT * 270);
 	}

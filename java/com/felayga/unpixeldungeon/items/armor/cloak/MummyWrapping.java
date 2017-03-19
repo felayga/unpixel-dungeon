@@ -41,6 +41,7 @@ public class MummyWrapping extends Cloak {
         name = "mummy wrapping";
         image = ItemSpriteSheet.CLOAK_MUMMY;
         material = Material.Cloth;
+        spriteTextureIndex = 7;
 
         price = 2;
         weight(Encumbrance.UNIT * 3);

@@ -38,7 +38,7 @@ public class StuddedLeatherArmor extends LightArmor {
         material = Material.Leather;
 
         price = 25;
-        textureIndex = 8;
+        spriteTextureIndex = 8;
 
         weight(Encumbrance.UNIT * 180);
     }

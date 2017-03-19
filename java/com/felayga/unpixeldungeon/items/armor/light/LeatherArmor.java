@@ -38,7 +38,7 @@ public class LeatherArmor extends LightArmor {
         material = Material.Leather;
 
 		price = 10;
-		textureIndex = 3;
+        spriteTextureIndex = 3;
 
 		weight(Encumbrance.UNIT * 135);
 	}

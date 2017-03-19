@@ -578,7 +578,7 @@ public class GameScene extends PixelScene {
 
     private void addMobSprite(Mob mob) {
         CharSprite sprite = mob.sprite();
-        sprite.visible = mob.visibilityOverride(Dungeon.visible[mob.pos()]);
+        sprite.visible = mob.fxSpriteVisible();
         mobs.add(sprite);
         sprite.link(mob);
     }
@@ -729,7 +729,7 @@ public class GameScene extends PixelScene {
             scene.fog.updateVisibility(Dungeon.visible, Dungeon.level.visited, Dungeon.level.mapped);
 
             for (Mob mob : Dungeon.level.mobs) {
-                mob.sprite.visible = mob.visibilityOverride(Dungeon.visible[mob.pos()]);
+                mob.sprite.visible = mob.fxSpriteVisible();
             }
         }
     }

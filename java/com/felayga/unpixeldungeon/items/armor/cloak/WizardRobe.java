@@ -41,6 +41,7 @@ public class WizardRobe extends Cloak {
         name = "wizard robe";
         image = ItemSpriteSheet.CLOAK_ROBE;
         material = Material.Cloth;
+        spriteTextureIndex = 8;
 
         price = 50;
         weight(Encumbrance.UNIT * 15);

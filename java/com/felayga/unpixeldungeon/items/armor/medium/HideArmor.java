@@ -38,7 +38,7 @@ public class HideArmor extends MediumArmor {
         material = Material.Leather;
 
         price = 15;
-        textureIndex = 9;
+        spriteTextureIndex = 9;
 
         weight(Encumbrance.UNIT * 225);
     }

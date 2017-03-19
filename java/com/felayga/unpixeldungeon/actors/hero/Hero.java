@@ -99,6 +99,7 @@ import com.felayga.unpixeldungeon.levels.features.Door;
 import com.felayga.unpixeldungeon.levels.features.Sign;
 import com.felayga.unpixeldungeon.mechanics.AttributeType;
 import com.felayga.unpixeldungeon.mechanics.Ballistica;
+import com.felayga.unpixeldungeon.mechanics.Characteristic;
 import com.felayga.unpixeldungeon.mechanics.Constant;
 import com.felayga.unpixeldungeon.mechanics.GameTime;
 import com.felayga.unpixeldungeon.mechanics.MagicType;
@@ -2091,7 +2092,6 @@ public class Hero extends Char {
     }
 
     private boolean getCloser(final int target) {
-        GLog.d("getCloser");
         long speed = movementSpeed();
 
         if (speed == 0) {
@@ -2159,7 +2159,7 @@ public class Hero extends Char {
 
         if (actionOverride == null) {
             Char ch = Actor.findChar(pos);
-            boolean visible = Level.fieldOfView[pos];
+            boolean visible = Level.fieldOfView[pos] | Level.fieldOfTouch[pos] | (ch != null && (ch.characteristics & Characteristic.AlwaysVisible.value) != 0);
             Heap heap;
             ITool[] tools;
 
@@ -2570,8 +2570,9 @@ public class Hero extends Char {
             distance = 1;
         }
 
-        int cx = pos() % Level.WIDTH;
-        int cy = pos() / Level.WIDTH;
+        int pos = pos();
+        int cx = pos % Level.WIDTH;
+        int cy = pos / Level.WIDTH;
         int ax = cx - distance;
         if (ax < 0) {
             ax = 0;
@@ -2604,7 +2605,7 @@ public class Hero extends Char {
                 if (touchable && !visible) {
                     searchChanceModifier -= 48;
 
-                    if (Random.PassFail(searchChance)) {
+                    if (p != pos && Random.PassFail(searchChance)) {
                         if (Actor.findChar(p) != null) {
                             if (!Dungeon.level.warnings.findWarning(p)) {
                                 Dungeon.level.warnings.add(p);

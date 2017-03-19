@@ -45,7 +45,15 @@ public class Cloak extends Armor {
 
     @Override
     protected void setHeroSpriteArmor(HeroSprite heroSprite, boolean equip) {
-        //empty
+        if (heroSprite == null) {
+            return;
+        }
+        if (equip) {
+            heroSprite.setCloak(this.spriteTextureIndex);
+        }
+        else {
+            heroSprite.setCloak(0);
+        }
     }
 
 

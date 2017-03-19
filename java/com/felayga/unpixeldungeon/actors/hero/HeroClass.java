@@ -30,6 +30,10 @@ import com.felayga.unpixeldungeon.Challenges;
 import com.felayga.unpixeldungeon.Dungeon;
 import com.felayga.unpixeldungeon.actors.mobs.npcs.Spinach;
 import com.felayga.unpixeldungeon.items.Bomb;
+import com.felayga.unpixeldungeon.items.armor.cloak.LeatherCloak;
+import com.felayga.unpixeldungeon.items.armor.cloak.randomized.CloakOfDisplacement;
+import com.felayga.unpixeldungeon.items.armor.cloak.randomized.CloakOfMagicResistance;
+import com.felayga.unpixeldungeon.items.armor.cloak.randomized.CloakOfProtection;
 import com.felayga.unpixeldungeon.items.books.spellbook.IdentifyBook;
 import com.felayga.unpixeldungeon.items.potions.PotionOfToxicGas;
 import com.felayga.unpixeldungeon.items.scrolls.ScrollOfMirrorImage;
@@ -247,7 +251,7 @@ public enum HeroClass {
         hero.belongings.collectEquip(new RingOfWealth());
         hero.belongings.ring1().upgrade(darts, 20);
 
-        hero.belongings.collect(new Pickaxe());
+        hero.belongings.collect(new Pickaxe().upgrade(darts, 20));
 
         hero.belongings.collect(new SeedPouch());
         hero.belongings.collect(new ScrollHolder());
@@ -302,20 +306,19 @@ public enum HeroClass {
         hero.belongings.collect(new Tricorder());
 
         hero.belongings.collect(new ScrollOfIdentify().bucStatus(BUCStatus.Uncursed, true).quantity(5).identify());
-        hero.belongings.collect(new CloakOfInvisibility().identify());
 
-        hero.belongings.collect(new CannedFood(new Corpse(new Spinach()), false).bucStatus(BUCStatus.Blessed, true));
-        hero.belongings.collect(new CannedFood(new Corpse(new Spinach()), false).bucStatus(BUCStatus.Uncursed, true));
-        hero.belongings.collect(new CannedFood(new Corpse(new Spinach()), false).bucStatus(BUCStatus.Cursed, true));
+        hero.belongings.collect(new CannedFood(new Corpse(new Spinach()), false).bucStatus(BUCStatus.Blessed, false));
+        hero.belongings.collect(new CannedFood(new Corpse(new Spinach()), false).bucStatus(BUCStatus.Uncursed, false));
+        hero.belongings.collect(new CannedFood(new Corpse(new Spinach()), false).bucStatus(BUCStatus.Cursed, false));
         hero.belongings.collect(new CanOpener());
         //hero.belongings.collect(new Corpse(new KoboldZombie()));
-        /*
+
         hero.belongings.collect(new LeatherCloak());
-        hero.belongings.collect(new CloakOfDisplacement().random());
-        hero.belongings.collect(new CloakOfInvisibility().random());
-        hero.belongings.collect(new CloakOfMagicResistance().random());
-        hero.belongings.collect(new CloakOfProtection().random());
-        */
+        hero.belongings.collect(new CloakOfDisplacement());
+        hero.belongings.collect(new CloakOfInvisibility());
+        hero.belongings.collect(new CloakOfMagicResistance());
+        hero.belongings.collect(new CloakOfProtection());
+
     }
 
     private static void initWarrior(Hero hero) {

@@ -52,7 +52,7 @@ public class Boulder extends NPC {
         name = "boulder";
         spriteClass = BoulderSprite.class;
         HP = HT = 101;
-        characteristics = Characteristic.value(Characteristic.Brainless, Characteristic.NonBreather, Characteristic.NoExperience);
+        characteristics = Characteristic.value(Characteristic.Brainless, Characteristic.NonBreather, Characteristic.NoExperience, Characteristic.PositionBlocking, Characteristic.AlwaysVisible);
 
         state = PASSIVE;
         actPriority = -1; // gotta be before the hero if pushed
@@ -112,75 +112,29 @@ public class Boulder extends NPC {
         }
     }
 
-    private int losBlockStoredPos = Constant.Position.NONE;
-    private boolean losBlockStoredFlag = false;
     private boolean pluggingPit = false;
 
     @Override
-    public boolean visibilityOverride(boolean state) {
-        return true;
+    public void updateSpriteState() {
+        super.updateSpriteState();
+
+        sprite.flipHorizontal = false;
     }
-
-    @Override
-    protected boolean act() {
-        boolean retval = super.act();
-
-        losBlockInitializationCheck();
-
-        return retval;
-    }
-
-    @Override
-    protected void onAdd() {
-        super.onAdd();
-
-        losBlockInitializationCheck();
-    }
-
-    private boolean initializing = false;
-
-    private void losBlockInitializationCheck() {
-        if (losBlockStoredPos < 0 || (!Level.losBlocking[pos()])) {
-            initializing = true;
-            move(pos());
-            initializing = false;
-        }
-    }
-
 
     @Override
     public void move(int newPos) {
-        int tempPos = losBlockStoredPos;
-        boolean tempFlag = losBlockStoredFlag;
-
-        losBlockStoredPos = newPos;
-        losBlockStoredFlag = Level.losBlocking[newPos];
-
-        if (!initializing) {
-            if (!pluggingPit) {
-                Sample.INSTANCE.play(Assets.SND_BOULDER_SCRAPE);
-            } else {
-                Sample.INSTANCE.play(Assets.SND_BOULDER_PLUG);
-            }
+        if (pluggingPit) {
+            Sample.INSTANCE.play(Assets.SND_BOULDER_PLUG);
         }
-
-        if (!initializing) {
-            Level.losBlocking[tempPos] = tempFlag;
-            GameScene.updateMap(tempPos);
-        }
-
-        Level.losBlocking[newPos] = true;
-        GameScene.updateMap(newPos);
-
-        if (!initializing) {
-            Dungeon.observe();
+        else {
+            Sample.INSTANCE.play(Assets.SND_BOULDER_SCRAPE);
         }
 
         int oldPos = pos();
         if (oldPos != newPos) {
             //GLog.d("boulder moving to " + newPos);
             super.move(newPos);
-            sprite.move(oldPos, newPos);
+            sprite.move(oldPos, newPos, false);
         }
     }
 
@@ -189,58 +143,29 @@ public class Boulder extends NPC {
         super.onMotionComplete();
 
         if (!pluggingPit) {
-            Level.losBlocking[pos()] = true;
             sprite.idle();
         } else {
             die(null);
-
             Dungeon.level.setDirt(pos(), true, true);
+            Dungeon.observe();
         }
-
-        GameScene.updateMap(pos());
-        Dungeon.observe();
     }
 
     @Override
     public void die(Actor cause) {
-        sprite.interruptMotion();
+        super.die(cause);
 
         if (!pluggingPit) {
             Sample.INSTANCE.play(Assets.SND_BOULDER_SMASH);
             //Dungeon.level.spawnGemstones(pos);
             Dungeon.level.drop(new Rock().quantity(Random.IntRange(3, 23)), pos()).rockBottom();
-
-            Level.losBlocking[losBlockStoredPos] = losBlockStoredFlag;
-            GameScene.updateMap(losBlockStoredPos);
-            Dungeon.observe();
         } else {
             sprite.alpha(0.0f);
         }
 
         CellEmitter.get(pos()).burst(Speck.factory(Speck.DUST), 5);
-
-        destroy(cause);
-        sprite.die();
     }
 
-    private final static String LOSBLOCKSTOREDPOS = "losBlockStoredPos";
-    private final static String LOSBLOCKSTOREDFLAG = "losBlockStoredFlag";
-
-    @Override
-    public void storeInBundle(Bundle bundle) {
-        super.storeInBundle(bundle);
-
-        bundle.put(LOSBLOCKSTOREDPOS, losBlockStoredPos);
-        bundle.put(LOSBLOCKSTOREDFLAG, losBlockStoredFlag);
-    }
-
-    @Override
-    public void restoreFromBundle(Bundle bundle) {
-        super.restoreFromBundle(bundle);
-
-        losBlockStoredPos = bundle.getInt(LOSBLOCKSTOREDPOS);
-        losBlockStoredFlag = bundle.getBoolean(LOSBLOCKSTOREDFLAG);
-    }
 
     @Override
     public String description() {

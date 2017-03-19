@@ -38,7 +38,7 @@ public class FullPlateArmor extends HeavyArmor {
         material = Material.Iron;
 
         price = 1500;
-        textureIndex = 7;
+        spriteTextureIndex = 7;
 
         weight(Encumbrance.UNIT * 450);
     }

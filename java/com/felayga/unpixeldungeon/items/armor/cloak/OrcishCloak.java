@@ -41,6 +41,7 @@ public class OrcishCloak extends Cloak {
         name = "orcish cloak";
         image = ItemSpriteSheet.CLOAK_ORCISH;
         material = Material.Cloth;
+        spriteTextureIndex = 3;
 
         price = 40;
         weight(Encumbrance.UNIT * 10);

@@ -52,7 +52,8 @@ public enum Characteristic {
     Concealer           ("Hides under items", 0x004000),
     NoExperience        ("Not worth fighting", 0x008000),
     SilverVulnerable    ("Silver-vulnerable", 0x010000),
-    LOSBlocking         (null, 0x020000);
+    PositionBlocking    (null, 0x020000),
+    AlwaysVisible       (null, 0x040000);
 
     public final String name;
     public final int value;
@@ -72,7 +73,7 @@ public enum Characteristic {
         return retval;
     }
 
-    public static final int MAXVALUE = 19;
+    public static final int MAXVALUE = 20;
 
     public static Characteristic fromInt(int value) {
         switch (value) {
@@ -113,7 +114,9 @@ public enum Characteristic {
             case 17:
                 return SilverVulnerable;
             case 18:
-                return LOSBlocking;
+                return PositionBlocking;
+            case 19:
+                return AlwaysVisible;
             default:
                 return None;
         }
