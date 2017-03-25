@@ -26,15 +26,12 @@
 
 package com.felayga.unpixeldungeon.actors.mobs.npcs;
 
-import com.felayga.unpixeldungeon.actors.Actor;
 import com.felayga.unpixeldungeon.actors.Char;
 import com.felayga.unpixeldungeon.items.Item;
 import com.felayga.unpixeldungeon.mechanics.Characteristic;
 import com.felayga.unpixeldungeon.mechanics.CorpseEffect;
-import com.felayga.unpixeldungeon.mechanics.GameTime;
 import com.felayga.unpixeldungeon.mechanics.MagicType;
-import com.felayga.unpixeldungeon.sprites.SheepSprite;
-import com.watabou.utils.Random;
+import com.felayga.unpixeldungeon.sprites.mobs.unused.SpinachSprite;
 
 /**
  * Created by HELLO on 2/23/2017.
@@ -43,15 +40,12 @@ public class Spinach extends NPC {
     //fake NPC for canning purposes only, should never be seen otherwise
 
     public Spinach() {
-        super(0);
+        super(0, SpinachSprite.class);
 
         defenseMundane = 32767;
         defenseMagical = 32767;
         characteristics = Characteristic.value(Characteristic.NoExperience);
         corpseEffects = CorpseEffect.value(CorpseEffect.Spinach, CorpseEffect.Vegetable);
-
-        name = "spinach";
-        spriteClass = SheepSprite.class;
     }
 
     private boolean initialized = false;

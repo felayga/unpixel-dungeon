@@ -27,7 +27,7 @@ package com.felayga.unpixeldungeon.actors.mobs.rat;
 
 import com.felayga.unpixeldungeon.actors.buffs.hero.Encumbrance;
 import com.felayga.unpixeldungeon.actors.mobs.Mob;
-import com.felayga.unpixeldungeon.items.weapon.melee.mob.MeleeMobAttack;
+import com.felayga.unpixeldungeon.items.equippableitem.weapon.melee.mob.MeleeMobAttack;
 import com.felayga.unpixeldungeon.mechanics.Characteristic;
 import com.felayga.unpixeldungeon.mechanics.CorpseEffect;
 import com.felayga.unpixeldungeon.mechanics.GameTime;
@@ -35,12 +35,8 @@ import com.felayga.unpixeldungeon.mechanics.MagicType;
 import com.felayga.unpixeldungeon.sprites.mobs.rat.RatSprite;
 
 public class SewerRat extends Mob {
-    public SewerRat()
-    {
-        super(0);
-
-        name = "sewer rat";
-        spriteClass = RatSprite.class;
+    public SewerRat() {
+        super(0, RatSprite.class);
 
         movementSpeed(GameTime.TICK);
         attackSpeed(GameTime.TICK);

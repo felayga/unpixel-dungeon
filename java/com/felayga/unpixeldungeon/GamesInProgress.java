@@ -27,120 +27,125 @@ package com.felayga.unpixeldungeon;
 
 import com.felayga.unpixeldungeon.actors.hero.Hero;
 import com.felayga.unpixeldungeon.actors.hero.HeroClass;
+import com.felayga.unpixeldungeon.scenes.AboutScene;
 import com.felayga.unpixeldungeon.windows.hero.WndInitHero;
 import com.watabou.utils.Bundlable;
 import com.watabou.utils.Bundle;
 import com.watabou.utils.SparseArray;
 
 public class GamesInProgress {
-	public static final int MAXIMUM = 4;
+    public static final int MAXIMUM = 4;
 
-	private static SparseArray<Info> state = new SparseArray<>();
-	
-	public static Info check( int index ) {
+    private static SparseArray<Info> state = new SparseArray<>();
+
+    public static Info check(int index) {
         Info retval;
-		if ((retval = state.get( index )) != null) {
-			return retval;
-		} else {
-			try {
-				Bundle bundle = Dungeon.gameBundle( Dungeon.gameFile( index ) );
+        if ((retval = state.get(index)) != null) {
+            return retval;
+        } else {
+            try {
+                Bundle bundle = Dungeon.gameBundle(Dungeon.gameFile(index));
                 retval = new Info();
                 retval.restoreFromBundle(bundle);
-			} catch (Exception e) {
+            } catch (Exception e) {
                 retval = null;
-			}
-			
-			state.put( index, retval );
-			return retval;
-		}
-	}
+            }
 
-	public static void set( int index, HeroClass heroClass, int level, int depth ) {
-		Info info = new Info();
-		info.heroClass = heroClass.value;
-		info.gender = WndInitHero.genderSelected;
-		info.hair = WndInitHero.hairSelected;
-		info.hairFace = WndInitHero.hairFaceSelected;
-		info.hairColor = WndInitHero.hairColorSelected;
-		info.level = level;
-		info.depth = depth;
-		info.dead = false;
-		state.put( index, info );
-	}
-	
-	public static void setUnknown( int index ) {
-		Info test = state.get(index);
-		if (test != null) {
-			test.dead = true;
-		}
-	}
-	
-	public static void delete( int index ) {
-		Info test = state.get(index);
-		if (test != null) {
-			test.dead = true;
-		}
-	}
-	
-	public static class Info implements Bundlable {
-		public int heroClass;
-		public int gender;
-		public int hair;
-		public int hairFace;
-		public int hairColor;
+            state.put(index, retval);
+            return retval;
+        }
+    }
 
-		public int level;
-		public int depth;
-		public boolean dead;
+    public static void set(int index, HeroClass heroClass, int level, int depth) {
+        Info info = new Info();
+        info.heroClass = heroClass.value;
+        info.gender = WndInitHero.genderSelected;
+        info.hair = WndInitHero.hairSelected;
+        info.hairFace = WndInitHero.hairFaceSelected;
+        info.hairColor = WndInitHero.hairColorSelected;
+        info.level = level;
+        info.depth = depth;
+        info.dead = false;
+        state.put(index, info);
+    }
 
-		public void toWndHeroInit()
-		{
-			WndInitHero.heroClassSelected = heroClass;
-			WndInitHero.genderSelected = gender;
-			WndInitHero.hairSelected = hair;
-			WndInitHero.hairFaceSelected = hairFace;
-			WndInitHero.hairColorSelected = hairColor;
-		}
+    public static void setUnknown(int index) {
+        Info test = state.get(index);
+        if (test != null) {
+            test.dead = true;
+        }
+    }
 
-		public void fromWndHeroInit() {
-			heroClass = WndInitHero.heroClassSelected;
-			gender = WndInitHero.genderSelected;
-			hair = WndInitHero.hairSelected;
-			hairFace = WndInitHero.hairFaceSelected;
-			hairColor = WndInitHero.hairColorSelected;
-		}
+    public static void delete(int index, boolean dead) {
+        Info test = state.get(index);
+        if (test != null) {
+            test.dead = true;
+            test.ascended = !dead;
+        }
+    }
 
-		private static final String CLASS		= "hero_class";
-		private static final String GENDER		= "hero_gender";
-		private static final String HAIR		= "hero_hair";
-		private static final String HAIRFACE	= "hero_hairFace";
-		private static final String HAIRCOLOR	= "hero_hairColor";
-		private static final String DEAD		= "hero_dead";
+    public static class Info implements Bundlable {
+        public int heroClass;
+        public int gender;
+        public int hair;
+        public int hairFace;
+        public int hairColor;
 
-		public void storeInBundle( Bundle bundle ) {
-			bundle.put(CLASS, heroClass);
-			bundle.put(GENDER, gender);
-			bundle.put(HAIR, hair);
-			bundle.put(HAIRFACE, hairFace);
-			bundle.put(HAIRCOLOR, hairColor);
+        public int level;
+        public int depth;
+        public boolean dead;
+        public boolean ascended;
+
+        public void toWndHeroInit() {
+            WndInitHero.heroClassSelected = heroClass;
+            WndInitHero.genderSelected = gender;
+            WndInitHero.hairSelected = hair;
+            WndInitHero.hairFaceSelected = hairFace;
+            WndInitHero.hairColorSelected = hairColor;
+        }
+
+        public void fromWndHeroInit() {
+            heroClass = WndInitHero.heroClassSelected;
+            gender = WndInitHero.genderSelected;
+            hair = WndInitHero.hairSelected;
+            hairFace = WndInitHero.hairFaceSelected;
+            hairColor = WndInitHero.hairColorSelected;
+        }
+
+        private static final String CLASS = "hero_class";
+        private static final String GENDER = "hero_gender";
+        private static final String HAIR = "hero_hair";
+        private static final String HAIRFACE = "hero_hairFace";
+        private static final String HAIRCOLOR = "hero_hairColor";
+        private static final String DEAD = "hero_dead";
+        private static final String ASCENDED = "hero_ascended";
+
+        public void storeInBundle(Bundle bundle) {
+            bundle.put(CLASS, heroClass);
+            bundle.put(GENDER, gender);
+            bundle.put(HAIR, hair);
+            bundle.put(HAIRFACE, hairFace);
+            bundle.put(HAIRCOLOR, hairColor);
 
             bundle.put(DEAD, dead);
-		}
+            bundle.put(ASCENDED, ascended);
+        }
 
-		public void restoreFromBundle( Bundle bundle ) {
-			heroClass = bundle.getInt( CLASS );
-			gender = bundle.getInt( GENDER );
-			hair = bundle.getInt( HAIR );
-			hairFace = bundle.getInt( HAIRFACE );
-			hairColor = bundle.getInt( HAIRCOLOR );
+        public void restoreFromBundle(Bundle bundle) {
+            heroClass = bundle.getInt(CLASS);
+            gender = bundle.getInt(GENDER);
+            hair = bundle.getInt(HAIR);
+            hairFace = bundle.getInt(HAIRFACE);
+            hairColor = bundle.getInt(HAIRCOLOR);
 
-			Hero.preview(this, bundle.getBundle(Dungeon.HERO));
-			depth = bundle.getInt( Dungeon.DEPTH );
-			dead = bundle.getBoolean( DEAD );
+            Hero.preview(this, bundle.getBundle(Dungeon.HERO));
+            depth = bundle.getInt(Dungeon.DEPTH);
+            dead = bundle.getBoolean(DEAD);
+            ascended = bundle.getBoolean(ASCENDED);
 
-			if (depth == -1) {
-				depth = bundle.getInt( "maxDepth" );
-			}
-		}
-	}
+            if (depth == -1) {
+                depth = bundle.getInt("maxDepth");
+            }
+        }
+    }
 }

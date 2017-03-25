@@ -26,7 +26,7 @@
 package com.felayga.unpixeldungeon.sprites.mobs.werejackal;
 
 import com.felayga.unpixeldungeon.Assets;
-import com.felayga.unpixeldungeon.sprites.MobSprite;
+import com.felayga.unpixeldungeon.sprites.mobs.MobSprite;
 import com.felayga.unpixeldungeon.sprites.hero.HeroSprite;
 import com.watabou.noosa.TextureFilm;
 

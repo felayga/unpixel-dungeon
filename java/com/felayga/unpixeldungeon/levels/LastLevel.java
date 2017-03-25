@@ -27,13 +27,11 @@ package com.felayga.unpixeldungeon.levels;
 
 import com.felayga.unpixeldungeon.Assets;
 import com.felayga.unpixeldungeon.actors.Actor;
-import com.felayga.unpixeldungeon.items.AmuletOfYendor;
+import com.felayga.unpixeldungeon.items.equippableitem.amulet.AmuletOfYendor;
 import com.felayga.unpixeldungeon.levels.painters.Painter;
 import com.watabou.noosa.Group;
 import com.watabou.utils.Bundle;
 import com.watabou.utils.Random;
-
-import java.util.Arrays;
 
 public class LastLevel extends Level {
 

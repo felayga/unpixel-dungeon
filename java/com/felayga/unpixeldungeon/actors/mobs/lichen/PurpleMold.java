@@ -47,10 +47,7 @@ import com.watabou.utils.Random;
 
 public class PurpleMold extends Mob {
     public PurpleMold() {
-        super(1);
-
-        name = "purple mold";
-        spriteClass = PurpleMoldSprite.class;
+        super(1, PurpleMoldSprite.class);
 
         movementSpeed(0);
         attackSpeed(GameTime.TICK);

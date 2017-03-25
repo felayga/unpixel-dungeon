@@ -33,7 +33,7 @@ import com.felayga.unpixeldungeon.effects.CellEmitter;
 import com.felayga.unpixeldungeon.effects.Speck;
 import com.felayga.unpixeldungeon.items.Heap;
 import com.felayga.unpixeldungeon.items.Item;
-import com.felayga.unpixeldungeon.items.scrolls.positionscroll.ScrollOfTeleportation;
+import com.felayga.unpixeldungeon.items.consumable.scrolls.positionscroll.ScrollOfTeleportation;
 import com.felayga.unpixeldungeon.sprites.TrapSprite;
 import com.watabou.noosa.audio.Sample;
 

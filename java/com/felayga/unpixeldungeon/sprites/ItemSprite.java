@@ -101,7 +101,7 @@ public class ItemSprite extends MovieClip {
     public void link(Heap heap) {
         this.heap = heap;
         view(heap.peek());
-        place(heap.pos);
+        place(heap.pos());
     }
 
     @Override
@@ -141,7 +141,6 @@ public class ItemSprite extends MovieClip {
     }
 
     public void drop() {
-
         if (heap.size() <= 0) {
             return;
         }
@@ -152,14 +151,14 @@ public class ItemSprite extends MovieClip {
         acc.set(0, -speed.y / DROP_INTERVAL * 2);
 
         if (visible && heap != null && heap.contains(Gold.class, false)) {
-            CellEmitter.center(heap.pos).burst(Speck.factory(Speck.COIN), 5);
+            CellEmitter.center(heap.pos()).burst(Speck.factory(Speck.COIN), 5);
             Sample.INSTANCE.play(Assets.SND_GOLD, 1, 1, Random.Float(0.9f, 1.1f));
         }
     }
 
     public void drop(int from) {
 
-        if (heap.pos == from) {
+        if (heap.pos() == from) {
             drop();
         } else {
 
@@ -229,15 +228,15 @@ public class ItemSprite extends MovieClip {
 
             speed.set(0);
             acc.set(0);
-            place(heap.pos);
+            place(heap.pos());
 
             if (visible) {
-                boolean water = Level.puddle[heap.pos];
+                boolean water = Level.puddle[heap.pos()];
 
                 if (water) {
-                    GameScene.ripple(heap.pos);
+                    GameScene.ripple(heap.pos());
                 } else {
-                    int cell = Dungeon.level.map(heap.pos);
+                    int cell = Dungeon.level.map(heap.pos());
                     water = (cell == Terrain.WELL || cell == Terrain.ALCHEMY);
                 }
 

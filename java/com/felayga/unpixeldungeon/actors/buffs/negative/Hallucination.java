@@ -28,8 +28,12 @@ package com.felayga.unpixeldungeon.actors.buffs.negative;
 import com.felayga.unpixeldungeon.Dungeon;
 import com.felayga.unpixeldungeon.actors.buffs.FlavourBuff;
 import com.felayga.unpixeldungeon.actors.hero.Hero;
+import com.felayga.unpixeldungeon.actors.mobs.Mob;
 import com.felayga.unpixeldungeon.scenes.GameScene;
+import com.felayga.unpixeldungeon.sprites.mobs.MobSprite;
 import com.felayga.unpixeldungeon.ui.BuffIndicator;
+import com.watabou.noosa.Visual;
+import com.watabou.noosa.tweeners.AlphaTweener;
 
 public class Hallucination extends FlavourBuff {
 
@@ -63,7 +67,7 @@ public class Hallucination extends FlavourBuff {
     @Override
     public String attachedMessage(boolean isHero) {
         if (isHero) {
-            return "Whoa!  Everything's all trippy!";
+            return "Whoa!";
         }
 
         return super.attachedMessage(isHero);
@@ -71,6 +75,18 @@ public class Hallucination extends FlavourBuff {
 
     @Override
     public String desc() {
-        return "Whoa.  Everything's all, like, trippy, dude.";
+        return "Whoa.  Everything's all, like, trippy, dude.\n" +
+                "\n" +
+                "The munchies will last for " + dispTurns() + ".";
+    }
+
+    public static class Tweener extends AlphaTweener {
+        public final float targetAlpha;
+
+        public Tweener(Visual image, float alpha) {
+            super(image, alpha, 0.4f);
+
+            targetAlpha = alpha;
+        }
     }
 }

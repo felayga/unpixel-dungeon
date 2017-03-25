@@ -40,7 +40,6 @@ import com.felayga.unpixeldungeon.mechanics.Material;
 import com.felayga.unpixeldungeon.scenes.CellSelector;
 import com.felayga.unpixeldungeon.scenes.GameScene;
 import com.felayga.unpixeldungeon.sprites.ItemSprite;
-import com.felayga.unpixeldungeon.sprites.ItemSpriteBase;
 import com.felayga.unpixeldungeon.sprites.ItemSpriteSheet;
 import com.felayga.unpixeldungeon.sprites.MissileSprite;
 import com.felayga.unpixeldungeon.ui.QuickSlotButton;
@@ -357,7 +356,7 @@ public class Item implements Bundlable {
             levelKnown = state;
 
             if (state && verbose) {
-                GLog.i(TXT_IDENTIFY, getDisplayName());
+                GLog.p(TXT_IDENTIFY, getDisplayName());
             }
         }
     }
@@ -876,7 +875,7 @@ public class Item implements Bundlable {
             Heap heap = (Heap)parent_whut;
             heap.updateImage();
 
-            if (heap.pos == Dungeon.hero.pos()) {
+            if (heap.pos() == Dungeon.hero.pos()) {
                 GameScene.updateLootIndicator();
             }
         }
@@ -1008,7 +1007,7 @@ public class Item implements Bundlable {
         boolean updateQuickslot = false;
 
         if (user.belongings.ammo() == this) {
-            GLog.d("isammo quantity="+this.quantity());
+            GLog.d("isammo quantity=" + this.quantity());
             if (this.quantity() == 1) {
                 user.belongings.ranOutOfAmmo(this);
                 updateQuickslot = true;

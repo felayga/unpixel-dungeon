@@ -29,13 +29,14 @@ import com.felayga.unpixeldungeon.Assets;
 import com.felayga.unpixeldungeon.Dungeon;
 import com.felayga.unpixeldungeon.actors.buffs.Buff;
 import com.felayga.unpixeldungeon.actors.buffs.hero.LockedFloor;
-import com.felayga.unpixeldungeon.actors.buffs.positive.ItemVision;
 import com.felayga.unpixeldungeon.actors.hero.Hero;
 import com.felayga.unpixeldungeon.levels.Level;
 import com.felayga.unpixeldungeon.levels.Terrain;
 import com.felayga.unpixeldungeon.mechanics.BUCStatus;
 import com.felayga.unpixeldungeon.mechanics.GameTime;
 import com.felayga.unpixeldungeon.scenes.GameScene;
+import com.felayga.unpixeldungeon.spellcasting.ObjectDetectionSpellcaster;
+import com.felayga.unpixeldungeon.spellcasting.Spellcaster;
 import com.felayga.unpixeldungeon.sprites.ItemSpriteSheet;
 import com.felayga.unpixeldungeon.ui.BuffIndicator;
 import com.felayga.unpixeldungeon.utils.GLog;
@@ -97,8 +98,7 @@ public class TalismanOfForesight extends Artifact_old {
 
 				GLog.p("The Talisman floods your mind with knowledge about the current floor.");
 
-				Buff.affect(hero, hero, ItemVision.class, GameTime.TICK * 4);
-				Dungeon.observe();
+                Spellcaster.cast(hero, hero.pos(), new ObjectDetectionSpellcaster(), Spellcaster.Origin.Silent);
 			}
 		}
 

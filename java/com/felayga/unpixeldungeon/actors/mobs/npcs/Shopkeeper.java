@@ -37,13 +37,13 @@ import com.felayga.unpixeldungeon.items.Gemstone;
 import com.felayga.unpixeldungeon.items.Gold;
 import com.felayga.unpixeldungeon.items.Heap;
 import com.felayga.unpixeldungeon.items.Item;
-import com.felayga.unpixeldungeon.items.potions.PotionOfFullHealing;
-import com.felayga.unpixeldungeon.items.potions.PotionOfHealing;
+import com.felayga.unpixeldungeon.items.consumable.potions.PotionOfFullHealing;
+import com.felayga.unpixeldungeon.items.consumable.potions.PotionOfHealing;
 import com.felayga.unpixeldungeon.items.tools.unlocking.SkeletonKey;
-import com.felayga.unpixeldungeon.items.wands.WandOfBlastWave;
-import com.felayga.unpixeldungeon.items.wands.WandOfMagicMissile;
-import com.felayga.unpixeldungeon.items.weapon.ammunition.simple.Rock;
-import com.felayga.unpixeldungeon.items.weapon.melee.mob.MeleeMobAttack;
+import com.felayga.unpixeldungeon.items.consumable.wands.WandOfBlastWave;
+import com.felayga.unpixeldungeon.items.consumable.wands.WandOfMagicMissile;
+import com.felayga.unpixeldungeon.items.equippableitem.weapon.ammunition.simple.Rock;
+import com.felayga.unpixeldungeon.items.equippableitem.weapon.melee.mob.MeleeMobAttack;
 import com.felayga.unpixeldungeon.levels.Level;
 import com.felayga.unpixeldungeon.levels.Terrain;
 import com.felayga.unpixeldungeon.mechanics.Characteristic;
@@ -51,6 +51,7 @@ import com.felayga.unpixeldungeon.mechanics.CorpseEffect;
 import com.felayga.unpixeldungeon.mechanics.GameTime;
 import com.felayga.unpixeldungeon.mechanics.MagicType;
 import com.felayga.unpixeldungeon.scenes.GameScene;
+import com.felayga.unpixeldungeon.sprites.mobs.MobSprite;
 import com.felayga.unpixeldungeon.sprites.mobs.humanoid.shopkeeper.ShopkeeperSprite;
 import com.felayga.unpixeldungeon.utils.GLog;
 import com.felayga.unpixeldungeon.utils.Utils;
@@ -83,8 +84,8 @@ public class Shopkeeper extends NPC {
 
         public static void add(Shopkeeper shopkeeper) {
             if (shopkeeper.shopkeeperRegistryIndex != -1) {
-                GLog.d("tried to register shopkeeper, already has index="+shopkeeper.shopkeeperRegistryIndex);
-                GLog.d(""+1/0);
+                GLog.d("tried to register shopkeeper, already has index=" + shopkeeper.shopkeeperRegistryIndex);
+                GLog.d("" + 1 / 0);
             }
 
             shopkeeper.shopkeeperRegistryIndex = index;
@@ -98,14 +99,14 @@ public class Shopkeeper extends NPC {
         }
 
         public static void register(Level level) {
-            for (Mob mob: level.mobs) {
+            for (Mob mob : level.mobs) {
                 if (mob instanceof Shopkeeper) {
-                    Shopkeeper shopkeeper = (Shopkeeper)mob;
+                    Shopkeeper shopkeeper = (Shopkeeper) mob;
 
                     if (shopkeeper.shopkeeperRegistryIndex != -1) {
                         fromIndex.put(shopkeeper.shopkeeperRegistryIndex, shopkeeper);
                     } else {
-                        GLog.d("TRIED TO REGISTER UNKNOWN SHOPKEEPER FOUND AT POS="+shopkeeper.pos());
+                        GLog.d("TRIED TO REGISTER UNKNOWN SHOPKEEPER FOUND AT POS=" + shopkeeper.pos());
                     }
                 }
             }
@@ -114,12 +115,12 @@ public class Shopkeeper extends NPC {
         public static void unregister(Level level) {
             for (Mob mob : level.mobs) {
                 if (mob instanceof Shopkeeper) {
-                    Shopkeeper shopkeeper = (Shopkeeper)mob;
+                    Shopkeeper shopkeeper = (Shopkeeper) mob;
 
                     if (shopkeeper.shopkeeperRegistryIndex != -1) {
                         fromIndex.remove(shopkeeper.shopkeeperRegistryIndex);
                     } else {
-                        GLog.d("TRIED TO UNREGISTER UNKNOWN SHOPKEEPER FOUND AT POS="+shopkeeper.pos());
+                        GLog.d("TRIED TO UNREGISTER UNKNOWN SHOPKEEPER FOUND AT POS=" + shopkeeper.pos());
                     }
                 }
             }
@@ -147,14 +148,17 @@ public class Shopkeeper extends NPC {
     public static final String TXT_THIEF = "Thief, Thief!";
 
     private int shopkeeperRegistryIndex = -1;
-    public int shopkeeperRegistryIndex() { return shopkeeperRegistryIndex; }
 
-	public Shopkeeper()
-	{
-		super(12);
+    public int shopkeeperRegistryIndex() {
+        return shopkeeperRegistryIndex;
+    }
 
-		name = "shopkeeper";
-		spriteClass = ShopkeeperSprite.class;
+    public Shopkeeper() {
+        this(12, ShopkeeperSprite.class);
+    }
+
+    public Shopkeeper(int level, Class<? extends MobSprite> type) {
+        super(level, type);
 
         movementSpeed(GameTime.TICK * 2 / 3);
         attackSpeed(GameTime.TICK);
@@ -167,10 +171,10 @@ public class Shopkeeper extends NPC {
         characteristics = Characteristic.value(Characteristic.Humanoid, Characteristic.Omnivore, Characteristic.WarmBlooded);
 
         belongings.collectEquip(new MeleeMobAttack(GameTime.TICK, 4, 16));
-        belongings.collect(new Gold(1000 + 30 * Random.IntRange(1,100)));
+        belongings.collect(new Gold(1000 + 30 * Random.IntRange(1, 100)));
         belongings.collect(new SkeletonKey());
 
-        int extras = Random.IntRange(1,4);
+        int extras = Random.IntRange(1, 4);
 
         if (extras > 0) {
             belongings.collect(new WandOfBlastWave().random());
@@ -190,7 +194,7 @@ public class Shopkeeper extends NPC {
         }
 
         state = STOREMANAGER;
-	}
+    }
 
     private static final String SHOPKEEPERREGISTRYINDEX = "shopkeeperRegistryIndex";
     private static final String DOORWAYPOS = "doorwayPos";
@@ -221,7 +225,7 @@ public class Shopkeeper extends NPC {
         int[] autoRepairKey = new int[autoRepair.size()];
         long[] autoRepairValue = new long[autoRepair.size()];
 
-        for (n=0;n<autoRepair.size();n++) {
+        for (n = 0; n < autoRepair.size(); n++) {
             autoRepairKey[n] = autoRepair.keyAt(n);
             autoRepairValue[n] = autoRepair.valueAt(n).value;
             n++;
@@ -276,7 +280,7 @@ public class Shopkeeper extends NPC {
 
             if (item instanceof Gemstone) {
                 if (item instanceof Gemstone.Glass && !item.isIdentified()) {
-                    Gemstone.Glass glass = (Gemstone.Glass)item;
+                    Gemstone.Glass glass = (Gemstone.Glass) item;
 
                     value = glass.shopkeeperPriceJacking();
                 }
@@ -309,7 +313,7 @@ public class Shopkeeper extends NPC {
             if (item instanceof Gemstone) {
                 if (!item.isIdentified()) {
                     if (item instanceof Gemstone.Glass) {
-                        Gemstone.Glass glass = (Gemstone.Glass)item;
+                        Gemstone.Glass glass = (Gemstone.Glass) item;
 
                         value = glass.shopkeeperPriceJacking();
                     }
@@ -357,7 +361,7 @@ public class Shopkeeper extends NPC {
         }
 
         this.fidgetPos = new HashSet<>();
-        for(Integer pos : fidgetPos) {
+        for (Integer pos : fidgetPos) {
             this.fidgetPos.add(pos);
         }
 
@@ -365,22 +369,22 @@ public class Shopkeeper extends NPC {
     }
 
     @Override
-	protected boolean act() {
-		//throwItem();
+    protected boolean act() {
+        //throwItem();
         //removed flee-if-not-in-original-position crap
 
-        long oldTime = getTime();
+        long oldTime = time();
         boolean retval = super.act();
 
-        tryRepairShop(getTime() - oldTime);
+        tryRepairShop(time() - oldTime);
 
         return retval;
-	}
+    }
 
     private void tryRepairShop(long timeChange) {
         List<Integer> pendingRemoval = new ArrayList<>();
 
-        for (int n=0;n<autoRepair.size();n++) {
+        for (int n = 0; n < autoRepair.size(); n++) {
             int key = autoRepair.keyAt(n);
             LongWrapper value = autoRepair.valueAt(n);
 
@@ -455,75 +459,75 @@ public class Shopkeeper extends NPC {
         }
     }
 
-	//todo: shopkeeper ain't no pansy
-	@Override
-	public int damage( int dmg, MagicType type, Char source, Item sourceItem ) {
-		flee();
+    //todo: shopkeeper ain't no pansy
+    @Override
+    public int damage(int dmg, MagicType type, Char source, Item sourceItem) {
+        flee();
         return 0;
-	}
-	
-	@Override
-	public void add( Buff buff ) {
-		flee();
-	}
-	
-	public void flee() {
-		for (Heap heap: Dungeon.level.heaps.values()) {
-			if (heap.type == Heap.Type.FOR_SALE && heap.owner() == this) {
-				CellEmitter.get( heap.pos ).burst( ElmoParticle.FACTORY, 4 );
-				heap.destroy();
-			}
-		}
-		
-		destroy(null);
-		
-		sprite.killAndErase();
-		CellEmitter.get( pos() ).burst( ElmoParticle.FACTORY, 6 );
-	}
-	
-	@Override
-	public boolean reset() {
-		return true;
-	}
-	
-	@Override
-	public String description() {
-		return
-			"This stout guy looks more appropriate for a trade district in some large city " +
-			"than for a dungeon. His prices explain why he prefers to do business here.";
-	}
+    }
+
+    @Override
+    public void add(Buff buff) {
+        flee();
+    }
+
+    public void flee() {
+        for (Heap heap : Dungeon.level.heaps.values()) {
+            if (heap.type == Heap.Type.FOR_SALE && heap.owner() == this) {
+                CellEmitter.get(heap.pos()).burst(ElmoParticle.FACTORY, 4);
+                heap.destroy();
+            }
+        }
+
+        destroy(null);
+
+        sprite.killAndErase();
+        CellEmitter.get(pos()).burst(ElmoParticle.FACTORY, 6);
+    }
+
+    @Override
+    public boolean reset() {
+        return true;
+    }
+
+    @Override
+    public String description() {
+        return
+                "This stout guy looks more appropriate for a trade district in some large city " +
+                        "than for a dungeon. His prices explain why he prefers to do business here.";
+    }
 
     public static Shopkeeper currentShopkeeper;
-	
-	public static WndBackpack sell(Shopkeeper shopkeeper) {
+
+    public static WndBackpack sell(Shopkeeper shopkeeper) {
         currentShopkeeper = shopkeeper;
 
-		return GameScene.selectItem( itemSelector, WndBackpack.Mode.FOR_SALE, "Select an item to sell", null );
-	}
-	
-	private static WndBackpack.Listener itemSelector = new WndBackpack.Listener() {
-		@Override
-		public void onSelect( Item item ) {
-			if (item != null) {
-				WndBackpack parentWnd = sell(currentShopkeeper);
-				GameScene.show( new WndTradeItem( item, parentWnd ) );
-			}
-		}
-	};
+        return GameScene.selectItem(itemSelector, WndBackpack.Mode.FOR_SALE, "Select an item to sell", null);
+    }
 
-	@Override
-	public void interact() {
-		sell(this);
-	}
+    private static WndBackpack.Listener itemSelector = new WndBackpack.Listener() {
+        @Override
+        public void onSelect(Item item) {
+            if (item != null) {
+                WndBackpack parentWnd = sell(currentShopkeeper);
+                GameScene.show(new WndTradeItem(item, parentWnd));
+            }
+        }
+    };
+
+    @Override
+    public void interact() {
+        sell(this);
+    }
 
 
     public AiState STOREMANAGER = new StoreManager();
 
     protected class StoreManager implements AiState {
-        public static final String TAG	= "STOREMANAGER";
+        public static final String TAG = "STOREMANAGER";
 
         @Override
-        public boolean act( boolean enemyVisible, boolean enemyAudible, boolean enemyTouchable, boolean justAlerted ) {
+        public boolean act(boolean enemyVisible, boolean enemyAudible, boolean enemyTouchable, boolean justAlerted) {
             if (Level.fieldOfView[Dungeon.hero.pos()]) {
                 boolean forceMove = false;
 

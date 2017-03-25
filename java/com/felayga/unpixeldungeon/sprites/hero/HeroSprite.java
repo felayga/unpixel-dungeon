@@ -31,8 +31,8 @@ import com.felayga.unpixeldungeon.Assets;
 import com.felayga.unpixeldungeon.Dungeon;
 import com.felayga.unpixeldungeon.actors.Char;
 import com.felayga.unpixeldungeon.actors.hero.Hero;
-import com.felayga.unpixeldungeon.items.EquippableItem;
-import com.felayga.unpixeldungeon.items.armor.Armor;
+import com.felayga.unpixeldungeon.items.equippableitem.EquippableItem;
+import com.felayga.unpixeldungeon.items.equippableitem.armor.Armor;
 import com.felayga.unpixeldungeon.sprites.CharSprite;
 import com.felayga.unpixeldungeon.utils.GLog;
 import com.felayga.unpixeldungeon.windows.hero.WndInitHero;
@@ -62,12 +62,10 @@ public class HeroSprite extends CharSprite {
     private HeroSubSprite cloakTexture;
 
 	private int heroGender = HEROINDEX_DEAD;
-	private int armorIndex = 0;
-    private int cloakIndex = 0;
+	private ArmorIndex armorIndex = ArmorIndex.NakedMale;
+    private ArmorIndex cloakIndex = ArmorIndex.CloakNone;
 	private int hairIndex = 0;
 	private int hairFaceIndex = 0;
-
-    private boolean cloakHidesHair = false;
 
 	private float rHair;
 	private float gHair;
@@ -119,7 +117,7 @@ public class HeroSprite extends CharSprite {
                 Armor armor = (Armor) test;
                 armorIndex = armor.spriteTextureIndex;
             } else {
-                armorIndex = heroGender;
+                armorIndex = ArmorIndex.fromGender(heroGender);
             }
 
             test = hero.belongings.cloak();
@@ -127,7 +125,7 @@ public class HeroSprite extends CharSprite {
                 Armor cloak = (Armor) test;
                 cloakIndex = cloak.spriteTextureIndex;
             } else {
-                cloakIndex = 0;
+                cloakIndex = ArmorIndex.CloakNone;
             }
         }
     }
@@ -163,7 +161,7 @@ public class HeroSprite extends CharSprite {
 
 		if (heroGender != HEROINDEX_DEAD) {
 			armorTexture.draw(script, matrix, rm, gm, bm, am, ra, ga, ba, aa);
-            if (!cloakHidesHair) {
+            if (!cloakIndex.hooded) {
                 hairTexture.draw(script, matrix, rHair, gHair, bHair, am, ra, ga, ba, aa);
             }
             cloakTexture.draw(script, matrix, rm, gm, bm, am, ra, ga, ba, aa);
@@ -175,8 +173,8 @@ public class HeroSprite extends CharSprite {
 	protected void updateFrame() {
 		super.updateFrame();
 
-		armorTexture.updateFrame(armorIndex, frame, flipHorizontal, flipVertical);
-        cloakTexture.updateFrame(cloakIndex, frame, flipHorizontal, flipVertical);
+		armorTexture.updateFrame(armorIndex.value, frame, flipHorizontal, flipVertical);
+        cloakTexture.updateFrame(cloakIndex.value, frame, flipHorizontal, flipVertical);
 		hairTexture.updateFrame(hairIndex, frame, flipHorizontal, flipVertical);
 		hairFaceTexture.updateFrame(hairFaceIndex, frame, flipHorizontal, flipVertical);
 	}
@@ -193,7 +191,7 @@ public class HeroSprite extends CharSprite {
 
 	/////////////////////////////////////////////////////////////////////////////
 
-	public void setAppearance(int heroGender, int armorIndex, int cloakIndex, int hairIndex, int hairFaceIndex, int hairColorIndex) {
+	public void setAppearance(int heroGender, ArmorIndex armorIndex, ArmorIndex cloakIndex, int hairIndex, int hairFaceIndex, int hairColorIndex) {
 		setGender(heroGender);
 		setArmor(armorIndex);
         setCloak(cloakIndex);
@@ -212,10 +210,62 @@ public class HeroSprite extends CharSprite {
 		updateGender();
 	}
 
-	public void setArmor(int armorIndex) {
+    public enum ArmorIndex {
+        Naked(-1, true, false),
+        NakedMale(0, true, false),
+        NakedFemale(1, true, false),
+        Cloth(2, false, false),
+        Leather(3, false, false),
+        Chainmail(4, false, false),
+        Scale(5, false, false),
+        HalfPlate(6, false, false),
+        FullPlate(7, false, false),
+        StuddedLeather(8, false, false),
+        Hide(9, false, false),
+        Banded(10, false, false),
+        ElvishChainmail(11, false, false),
+        OrcishChainmail(12, false, false),
+        Ringmail(13, false, false),
+
+        CloakNone(0, false, false),
+        CloakLeather(1, false, true),
+        CloakDwarvish(2, false, true),
+        CloakOrcish(3, false, false),
+        CloakElvish(4, false, true),
+        CloakApron(5, false, false),
+        CloakOilskin(6, false, true),
+        CloakMummyWrapping(7, false, true),
+        CloakWizardRobe(8, false, false),
+        CloakPlain(9, false, true),
+        CloakOpera(10, false, false),
+        CloakFancy(11, false, true),
+        CloakTattered(12, false, false);
+
+
+        public final int value;
+        public final boolean naked;
+        public final boolean hooded;
+
+        ArmorIndex(int value, boolean naked, boolean hooded) {
+            this.value = value;
+            this.naked = naked;
+            this.hooded = hooded;
+        }
+
+        public static ArmorIndex fromGender(int genderIndex) {
+            switch(genderIndex) {
+                case 1:
+                    return NakedFemale;
+                default:
+                    return NakedMale;
+            }
+        }
+    }
+
+	public void setArmor(ArmorIndex armorIndex) {
         GLog.d("setArmor("+armorIndex+")");
-		if (armorIndex < 2) {
-			armorIndex = heroGender;
+		if (armorIndex.naked) {
+            armorIndex = ArmorIndex.fromGender(heroGender);
 		}
 		if (this.armorIndex == armorIndex) {
 			return;
@@ -226,7 +276,7 @@ public class HeroSprite extends CharSprite {
 		updateSubSprites();
 	}
 
-    public void setCloak(int cloakIndex) {
+    public void setCloak(ArmorIndex cloakIndex) {
         GLog.d("setCloak("+cloakIndex+")");
         if (this.cloakIndex == cloakIndex) {
             return;
@@ -234,20 +284,6 @@ public class HeroSprite extends CharSprite {
 
         this.cloakIndex = cloakIndex;
 
-        switch(cloakIndex) {
-            case 1:
-            case 2:
-            case 4:
-            case 6:
-            case 7:
-            case 9:
-            case 11:
-                cloakHidesHair = true;
-                break;
-            default:
-                cloakHidesHair = false;
-                break;
-        }
 
         updateSubSprites();
     }

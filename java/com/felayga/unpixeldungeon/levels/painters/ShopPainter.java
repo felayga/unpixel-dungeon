@@ -28,7 +28,7 @@ package com.felayga.unpixeldungeon.levels.painters;
 import com.felayga.unpixeldungeon.actors.mobs.npcs.ImpShopkeeper;
 import com.felayga.unpixeldungeon.actors.mobs.npcs.Shopkeeper;
 import com.felayga.unpixeldungeon.items.Item;
-import com.felayga.unpixeldungeon.items.scrolls.spellcasterscroll.ScrollOfMagicMapping;
+import com.felayga.unpixeldungeon.items.consumable.scrolls.spellcasterscroll.ScrollOfMagicMapping;
 import com.felayga.unpixeldungeon.levels.LastShopLevel;
 import com.felayga.unpixeldungeon.levels.Level;
 import com.felayga.unpixeldungeon.levels.Room;

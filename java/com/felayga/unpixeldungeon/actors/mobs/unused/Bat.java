@@ -27,9 +27,9 @@ package com.felayga.unpixeldungeon.actors.mobs.unused;
 /*
 import java.util.HashSet;
 
-import com.felayga.unpixeldungeon.items.potions.PotionOfHealing;
-import com.felayga.unpixeldungeon.items.weapon.enchantments.Leech;
-import com.felayga.unpixeldungeon.items.weapon.melee.mob.LeechChance;
+import com.felayga.unpixeldungeon.items.consumable.potions.PotionOfHealing;
+import com.felayga.unpixeldungeon.items.equippableitem.weapon.enchantments.Leech;
+import com.felayga.unpixeldungeon.items.equippableitem.weapon.melee.mob.LeechChance;
 import com.felayga.unpixeldungeon.mechanics.GameTime;
 import com.felayga.unpixeldungeon.sprites.mobs.bat.BatSprite;
 

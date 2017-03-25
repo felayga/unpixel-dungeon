@@ -31,7 +31,7 @@ import java.util.HashSet;
 import java.util.List;
 
 import com.felayga.unpixeldungeon.items.Generator;
-import com.felayga.unpixeldungeon.items.weapon.melee.mob.MeleeMobAttack;
+import com.felayga.unpixeldungeon.items.equippableitem.weapon.melee.mob.MeleeMobAttack;
 import com.felayga.unpixeldungeon.mechanics.GameTime;
 import com.watabou.noosa.audio.Sample;
 import com.felayga.unpixeldungeon.Assets;
@@ -43,7 +43,7 @@ import com.felayga.unpixeldungeon.effects.Pushing;
 import com.felayga.unpixeldungeon.effects.Speck;
 import com.felayga.unpixeldungeon.items.Gold;
 import com.felayga.unpixeldungeon.items.Item;
-import com.felayga.unpixeldungeon.items.scrolls.ScrollOfPsionicBlast;
+import com.felayga.unpixeldungeon.items.consumable.scrolls.ScrollOfPsionicBlast;
 import com.felayga.unpixeldungeon.levels.Level;
 import com.felayga.unpixeldungeon.scenes.GameScene;
 import com.felayga.unpixeldungeon.sprites.mobs.unused.MimicSprite;

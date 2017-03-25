@@ -26,7 +26,7 @@
 package com.felayga.unpixeldungeon.actors.mobs.unused;
 /*
 import com.felayga.unpixeldungeon.items.Gold;
-import com.felayga.unpixeldungeon.items.weapon.melee.mob.MeleeMobAttack;
+import com.felayga.unpixeldungeon.items.equippableitem.weapon.melee.mob.MeleeMobAttack;
 import com.felayga.unpixeldungeon.mechanics.GameTime;
 import com.felayga.unpixeldungeon.sprites.mobs.unused.GnollSprite;
 

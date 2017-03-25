@@ -41,6 +41,7 @@ import com.felayga.unpixeldungeon.levels.painters.Painter;
 import com.felayga.unpixeldungeon.levels.painters.PassagePainter;
 import com.felayga.unpixeldungeon.levels.painters.PitPainter;
 import com.felayga.unpixeldungeon.levels.painters.PlainPainter;
+import com.felayga.unpixeldungeon.levels.painters.RatKingPainter;
 import com.felayga.unpixeldungeon.levels.painters.RitualSitePainter;
 import com.felayga.unpixeldungeon.levels.painters.ShopPainter;
 import com.felayga.unpixeldungeon.levels.painters.StandardPainter;
@@ -98,7 +99,7 @@ public class Room extends Rect implements Graph.Node, Bundlable {
         CRYPT(CryptPainter.class),
         //STATUE		    (StatuePainter.class),
         //POOL		        (PoolPainter.class),
-        //RAT_KING	        (RatKingPainter.class),
+        RAT_KING	        (RatKingPainter.class),
         WEAK_FLOOR(WeakFloorPainter.class),
         PIT(PitPainter.class),
 
@@ -118,16 +119,33 @@ public class Room extends Rect implements Graph.Node, Bundlable {
             } else {
                 GLog.d("init null");
             }
-            try {
-                this.paint = painter.getMethod("paint", Level.class, Room.class);
-            } catch (Exception e) {
-                this.paint = null;
-            }
-            try {
-                this.canUse = painter.getMethod("canUse", Room.class);
-            } catch (Exception e) {
-                GLog.d(e);
-                this.canUse = null;
+
+            this.paint = null;
+            this.canUse = null;
+
+            if (painter != null) {
+                Method[] methods = painter.getMethods();
+
+                for (int n = 0; n < methods.length; n++) {
+                    Method method = methods[n];
+                    String name = method.getName();
+                    Class<?>[] types;
+
+                    switch (name) {
+                        case "paint":
+                            types = method.getParameterTypes();
+                            if (types.length == 2 && types[0] == Level.class && types[1] == Room.class) {
+                                this.paint = method;
+                            }
+                            break;
+                        case "canUse":
+                            types = method.getParameterTypes();
+                            if (types.length == 1 && types[0] == Room.class) {
+                                this.canUse = method;
+                            }
+                            break;
+                    }
+                }
             }
         }
 
@@ -305,7 +323,7 @@ public class Room extends Rect implements Graph.Node, Bundlable {
 	public static class Door extends Point {
 		
 		public enum Type {
-			EMPTY, TUNNEL, REGULAR, REGULAR_UNBROKEN, UNLOCKED, BARRICADE, LOCKED, NICHE, JAIL
+			EMPTY, TUNNEL, REGULAR, REGULAR_UNBROKEN, UNLOCKED, BARRICADE, LOCKED, NICHE, JAIL, SECRET
 		}
 		public Type type = Type.EMPTY;
 		

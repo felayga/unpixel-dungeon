@@ -30,6 +30,7 @@ import android.opengl.GLES20;
 import com.felayga.unpixeldungeon.DungeonTilemap;
 import com.felayga.unpixeldungeon.FogOfWar;
 import com.watabou.noosa.Image;
+import com.watabou.utils.Random;
 
 import java.util.Arrays;
 
@@ -68,7 +69,8 @@ public class HallucinationOverlay extends Image {
     private double hue = 0.0;
     private double saturation = 1.0;
     private double value = 0.0;
-    private double valueStep = 0.0055;
+    private double valueStep = 0.0055 * 1.5;
+    private double hueStep = 360.0 * valueStep / 2.5;
 
     private void HSV(double hue, double saturation, double value) {
         int hi = (int) Math.floor(hue / 60.0) % 6;
@@ -114,6 +116,9 @@ public class HallucinationOverlay extends Image {
     }
 
     private boolean stopHallucinating = true;
+    public boolean isHallucinating() {
+        return visible && !stopHallucinating;
+    }
 
     public void startHallucinating() {
         stopHallucinating = false;
@@ -128,10 +133,12 @@ public class HallucinationOverlay extends Image {
 
     @Override
     public void update() {
-        hue += 1.0;
+        hue += hueStep;
         value += valueStep;
         if (hue >= 360.0) {
             hue -= 360.0;
+            //eh, too jerky
+            //hueStep = 360.0 * valueStep / Random.Float(2.0f, 3.0f);
         }
         if (value > 1.0) {
             value = 1.0;

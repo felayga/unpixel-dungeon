@@ -29,7 +29,7 @@ import com.felayga.unpixeldungeon.Dungeon;
 import com.felayga.unpixeldungeon.actors.buffs.hero.Encumbrance;
 import com.felayga.unpixeldungeon.actors.hero.Hero;
 import com.felayga.unpixeldungeon.actors.mobs.npcs.Shopkeeper;
-import com.felayga.unpixeldungeon.items.EquippableItem;
+import com.felayga.unpixeldungeon.items.equippableitem.EquippableItem;
 import com.felayga.unpixeldungeon.items.Gold;
 import com.felayga.unpixeldungeon.items.Heap;
 import com.felayga.unpixeldungeon.items.Item;
@@ -201,7 +201,7 @@ public class WndTradeItem extends Window {
                             hide();
 
                             if (!item.doPickUp(hero)) {
-                                Dungeon.level.drop(item, heap.pos).sprite.drop();
+                                Dungeon.level.drop(item, heap.pos()).sprite.drop();
                             }
                         } else if (notCaught) {
                             GLog.w("Couldn't steal it, but you didn't get caught trying.  Wew.");
@@ -317,7 +317,7 @@ public class WndTradeItem extends Window {
 		GLog.i( TXT_BOUGHT, item.getDisplayName(), price );
 		
 		if (!hero.belongings.collect(item)) {
-			Dungeon.level.drop( item, heap.pos ).sprite.drop();
+			Dungeon.level.drop( item, heap.pos() ).sprite.drop();
 		}
 	}
 }

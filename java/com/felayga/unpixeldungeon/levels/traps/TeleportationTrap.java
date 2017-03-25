@@ -33,7 +33,7 @@ import com.felayga.unpixeldungeon.effects.CellEmitter;
 import com.felayga.unpixeldungeon.effects.Speck;
 import com.felayga.unpixeldungeon.items.Heap;
 import com.felayga.unpixeldungeon.items.Item;
-import com.felayga.unpixeldungeon.items.scrolls.positionscroll.ScrollOfTeleportation;
+import com.felayga.unpixeldungeon.items.consumable.scrolls.positionscroll.ScrollOfTeleportation;
 import com.felayga.unpixeldungeon.levels.Level;
 import com.felayga.unpixeldungeon.mechanics.Constant;
 import com.felayga.unpixeldungeon.sprites.TrapSprite;
@@ -50,9 +50,12 @@ public class TeleportationTrap extends Trap {
 
 	@Override
 	public void activate() {
-
-        CellEmitter.get(pos).start(Speck.factory(Speck.LIGHT), 0.2f, 3);
-        Sample.INSTANCE.play(Assets.SND_TELEPORT);
+        if (Dungeon.visible[pos]) {
+            CellEmitter.get(pos).start(Speck.factory(Speck.LIGHT), 0.2f, 3);
+        }
+        if (Dungeon.audible[pos]) {
+            Sample.INSTANCE.play(Assets.SND_TELEPORT);
+        }
 
         Char ch = Actor.findChar(pos);
         if (ch == Dungeon.hero) {

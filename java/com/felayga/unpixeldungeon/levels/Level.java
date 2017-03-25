@@ -28,7 +28,6 @@ package com.felayga.unpixeldungeon.levels;
 import com.felayga.unpixeldungeon.Assets;
 import com.felayga.unpixeldungeon.Challenges;
 import com.felayga.unpixeldungeon.Dungeon;
-import com.felayga.unpixeldungeon.DungeonTilemap;
 import com.felayga.unpixeldungeon.Statistics;
 import com.felayga.unpixeldungeon.WarningHandler;
 import com.felayga.unpixeldungeon.actors.Actor;
@@ -40,36 +39,30 @@ import com.felayga.unpixeldungeon.actors.buffs.hero.LockedFloor;
 import com.felayga.unpixeldungeon.actors.buffs.hero.Shadows;
 import com.felayga.unpixeldungeon.actors.buffs.negative.Blindness;
 import com.felayga.unpixeldungeon.actors.buffs.negative.Fainting;
-import com.felayga.unpixeldungeon.actors.buffs.positive.ItemVision;
-import com.felayga.unpixeldungeon.actors.buffs.positive.Light;
 import com.felayga.unpixeldungeon.actors.buffs.positive.MindVision;
 import com.felayga.unpixeldungeon.actors.mobs.Bestiary;
 import com.felayga.unpixeldungeon.actors.mobs.Mob;
-import com.felayga.unpixeldungeon.actors.mobs.npcs.Shopkeeper;
 import com.felayga.unpixeldungeon.effects.particles.FlowParticle;
 import com.felayga.unpixeldungeon.effects.particles.WindParticle;
-import com.felayga.unpixeldungeon.items.Dewdrop;
+import com.felayga.unpixeldungeon.items.unused.Dewdrop;
 import com.felayga.unpixeldungeon.items.Gemstone;
 import com.felayga.unpixeldungeon.items.Generator;
 import com.felayga.unpixeldungeon.items.Heap;
 import com.felayga.unpixeldungeon.items.Item;
-import com.felayga.unpixeldungeon.items.armor.Armor;
+import com.felayga.unpixeldungeon.items.equippableitem.armor.Armor;
 import com.felayga.unpixeldungeon.items.artifacts.AlchemistsToolkit;
 import com.felayga.unpixeldungeon.items.artifacts.TimekeepersHourglass;
 import com.felayga.unpixeldungeon.items.bags.ScrollHolder;
 import com.felayga.unpixeldungeon.items.bags.SeedPouch;
-import com.felayga.unpixeldungeon.items.food.Blandfruit;
-import com.felayga.unpixeldungeon.items.food.Food;
-import com.felayga.unpixeldungeon.items.potions.PotionOfHealing;
-import com.felayga.unpixeldungeon.items.rings.RingOfWealth;
-import com.felayga.unpixeldungeon.items.scrolls.Scroll;
-import com.felayga.unpixeldungeon.items.scrolls.ScrollOfUpgrade;
-import com.felayga.unpixeldungeon.items.wands.WandOfLight;
+import com.felayga.unpixeldungeon.items.consumable.food.Blandfruit;
+import com.felayga.unpixeldungeon.items.consumable.food.Food;
+import com.felayga.unpixeldungeon.items.consumable.potions.PotionOfHealing;
+import com.felayga.unpixeldungeon.items.equippableitem.ring.RingOfWealth;
+import com.felayga.unpixeldungeon.items.consumable.scrolls.Scroll;
+import com.felayga.unpixeldungeon.items.consumable.scrolls.ScrollOfUpgrade;
 import com.felayga.unpixeldungeon.levels.features.Chasm;
 import com.felayga.unpixeldungeon.levels.features.HighGrass;
-import com.felayga.unpixeldungeon.levels.painters.Painter;
 import com.felayga.unpixeldungeon.levels.traps.Trap;
-import com.felayga.unpixeldungeon.levels.traps.WornTrap;
 import com.felayga.unpixeldungeon.mechanics.Characteristic;
 import com.felayga.unpixeldungeon.mechanics.Constant;
 import com.felayga.unpixeldungeon.mechanics.GameTime;
@@ -86,11 +79,9 @@ import com.watabou.noosa.Game;
 import com.watabou.noosa.Gizmo;
 import com.watabou.noosa.Group;
 import com.watabou.noosa.audio.Sample;
-import com.watabou.noosa.particles.Emitter;
 import com.watabou.utils.Bundlable;
 import com.watabou.utils.Bundle;
 import com.watabou.utils.Point;
-import com.watabou.utils.PointF;
 import com.watabou.utils.Random;
 import com.watabou.utils.SparseArray;
 
@@ -509,16 +500,16 @@ public abstract class Level implements Bundlable, IDecayable {
     }
 
     protected void initializeMap() {
-        Arrays.fill(_map, feeling == Feeling.CHASM ? fillBlockChasm() : fillBlockNormal());
+        Arrays.fill(_map, fillBlock());
         Arrays.fill(_underMap, Terrain.OVERLAY);
     }
 
-    protected int fillBlockNormal() {
-        return Terrain.WALL;
+    protected int fillBlock() {
+        return feeling == Feeling.CHASM ? Terrain.CHASM : Terrain.WALL;
     }
 
-    protected int fillBlockChasm() {
-        return Terrain.CHASM;
+    public int tunnelTile() {
+        return feeling == Feeling.CHASM ? Terrain.EMPTY_SP : Terrain.EMPTY;
     }
 
     public void reset() {
@@ -618,10 +609,10 @@ public abstract class Level implements Bundlable, IDecayable {
         for (Bundlable h : collection) {
             Heap heap = (Heap) h;
             if (resizingNeeded) {
-                heap.pos = adjustPos(heap.pos);
+                heap.pos(adjustPos(heap.pos()));
             }
-            if (heap.size() > 0) {
-                heaps.put(heap.pos, heap);
+            if (!heap.isEmpty()) {
+                heaps.put(heap.pos(), heap);
             }
         }
 
@@ -704,10 +695,6 @@ public abstract class Level implements Bundlable, IDecayable {
         bundle.put(FEELING, feeling);
         bundle.put(FLAGSLOCAL, flagsLocal);
         bundle.put(TIME, time);
-    }
-
-    public int tunnelTile() {
-        return feeling == Feeling.CHASM ? Terrain.EMPTY_SP : Terrain.EMPTY;
     }
 
     private void adjustMapSize() {
@@ -950,14 +937,6 @@ public abstract class Level implements Bundlable, IDecayable {
         return pos;
     }
 
-    private static class PositionUsed {
-        public boolean state;
-
-        public PositionUsed(boolean state) {
-            this.state = state;
-        }
-    }
-
     public ArrayList<Integer> randomPositionsNear(int pos, int quantity, RandomPositionValidator validator) {
         ArrayList<Integer> retval = new ArrayList<>();
         ArrayList<Integer> positionOffsets = new ArrayList<>();
@@ -1041,7 +1020,6 @@ public abstract class Level implements Bundlable, IDecayable {
     public interface RandomPositionValidator {
         boolean isValidPosition(int pos);
     }
-
 
     public void addItemToSpawn(Item item) {
         if (item != null) {
@@ -1250,6 +1228,7 @@ public abstract class Level implements Bundlable, IDecayable {
         }
     }
 
+    //region cell assignment functions
 
     public void set(int cell, int terrain, boolean flagUpdates) {
         //Painter.set(this, cell, terrain);
@@ -1671,6 +1650,8 @@ public abstract class Level implements Bundlable, IDecayable {
 	}
 	*/
 
+    //endregion
+
     public Heap drop(Item item, int cell) {
         //This messy if statement deals will items which should not drop in challenges primarily.
         if ((Dungeon.isChallenged(Challenges.NO_FOOD) && (item instanceof Food || item instanceof BlandfruitBush.Seed)) ||
@@ -1704,7 +1685,7 @@ public abstract class Level implements Bundlable, IDecayable {
         if (heap == null) {
             heap = new Heap();
             heap.seen = Dungeon.visible[cell];
-            heap.pos = cell;
+            heap.pos(cell);
             //todo: why the Dungeon.level != null check?
             if (map(cell) == Terrain.CHASM || (Dungeon.level != null && chasm[cell])) {
                 Dungeon.dropToChasm(item);
@@ -1988,7 +1969,6 @@ public abstract class Level implements Bundlable, IDecayable {
 
         if (c.isAlive()) {
             boolean creatureVision = c.buff(MindVision.class) != null;
-            boolean itemVision = c.buff(ItemVision.class) != null;
 
             if (creatureVision) {
                 for (Mob mob : mobs) {
@@ -2037,38 +2017,12 @@ public abstract class Level implements Bundlable, IDecayable {
             }
             */
 
-            if (itemVision) {
-                for (Heap heap : heaps.values()) {
-                    int p = heap.pos;
-                    fieldOfView[p] = true;
-                    fieldOfTouch[p] = true;
-                    fieldOfTouch[p + 1] = true;
-                    fieldOfTouch[p - 1] = true;
-                    fieldOfTouch[p + WIDTH + 1] = true;
-                    fieldOfTouch[p + WIDTH - 1] = true;
-                    fieldOfTouch[p - WIDTH + 1] = true;
-                    fieldOfTouch[p - WIDTH - 1] = true;
-                    fieldOfTouch[p + WIDTH] = true;
-                    fieldOfTouch[p - WIDTH] = true;
-                    /*
-                    fieldOfView[p] = true;
-                    fieldOfView[p + 1] = true;
-                    fieldOfView[p - 1] = true;
-                    fieldOfView[p + WIDTH + 1] = true;
-                    fieldOfView[p + WIDTH - 1] = true;
-                    fieldOfView[p - WIDTH + 1] = true;
-                    fieldOfView[p - WIDTH - 1] = true;
-                    fieldOfView[p + WIDTH] = true;
-                    fieldOfView[p - WIDTH] = true;
-                    */
-                }
-            }
         }
 
         if (c == Dungeon.hero) {
             for (Heap heap : heaps.values()) {
                 if (!heap.seen) {
-                    if (fieldOfView[heap.pos]) {
+                    if (fieldOfView[heap.pos()]) {
                         heap.seen = true;
                     }
                 }
@@ -2115,7 +2069,6 @@ public abstract class Level implements Bundlable, IDecayable {
     //returns true if the input is a valid tile within the level
     public static boolean insideMap(int tile) {
         //outside map array
-        //WHY THE FLYING FUCK WAS WIDTH-1 HARDCODED?
         return !((tile <= -1 || tile >= LENGTH) ||
                 //top and bottom row
                 (tile <= WIDTH - 1 || tile >= LENGTH - WIDTH) ||
@@ -2124,19 +2077,6 @@ public abstract class Level implements Bundlable, IDecayable {
     }
 
     public String tileName(int tile) {
-
-        if (tile >= Terrain.PUDDLE_TILES && tile <= Terrain.PUDDLE) {
-            return tileName(Terrain.PUDDLE);
-        }
-
-        if (tile >= Terrain.UNDERLAY_DIRT && tile <= Terrain.UNDERLAY_DIRT) {
-            return "Dirt";
-        }
-
-        if (tile != Terrain.CHASM && (Terrain.flags[tile] & Terrain.FLAG_CHASM) != 0) {
-            return tileName(Terrain.CHASM);
-        }
-
         switch (tile) {
             case Terrain.CHASM:
                 return "Chasm";
@@ -2201,13 +2141,28 @@ public abstract class Level implements Bundlable, IDecayable {
                 return "Altar";
             case Terrain.IRON_BARS:
                 return "Iron Bars";
-            default:
-                return "???";
         }
+
+        if (tile >= Terrain.PUDDLE_TILES && tile <= Terrain.PUDDLE) {
+            return tileName(Terrain.PUDDLE);
+        }
+
+        if (tile >= Terrain.UNDERLAY_DIRT && tile <= Terrain.UNDERLAY_DIRT) {
+            return "Dirt";
+        }
+
+        if ((Terrain.flags[tile] & Terrain.FLAG_PIT) != 0) {
+            return "Pit";
+        }
+
+        if ((Terrain.flags[tile] & Terrain.FLAG_CHASM) != 0) {
+            return tileName(Terrain.CHASM);
+        }
+
+        return "???";
     }
 
     public String tileDesc(int tile) {
-
         switch (tile) {
             case Terrain.CHASM:
                 return "You can't see the bottom.";
@@ -2249,14 +2204,24 @@ public abstract class Level implements Bundlable, IDecayable {
                 return "Drop items here to determine their blessed or cursed status.";
             case Terrain.IRON_BARS:
                 return "These iron bars were used to form a holding cell.";
-            default:
-                if (tile >= Terrain.PUDDLE_TILES && tile <= Terrain.PUDDLE) {
-                    return tileDesc(Terrain.PUDDLE);
-                }
-                if ((Terrain.flags[tile] & Terrain.FLAG_CHASM) != 0) {
-                    return tileDesc(Terrain.CHASM);
-                }
-                return "";
         }
+
+        if (tile >= Terrain.PUDDLE_TILES && tile <= Terrain.PUDDLE) {
+            return tileDesc(Terrain.PUDDLE);
+        }
+
+        if (tile >= Terrain.UNDERLAY_DIRT && tile <= Terrain.UNDERLAY_DIRT) {
+            return tileDesc(Terrain.EMPTY);
+        }
+
+        if ((Terrain.flags[tile] & Terrain.FLAG_PIT) != 0) {
+            return "That's a pretty deep hole.  You could climb down.";
+        }
+
+        if ((Terrain.flags[tile] & Terrain.FLAG_CHASM) != 0) {
+            return tileDesc(Terrain.CHASM);
+        }
+
+        return "";
     }
 }

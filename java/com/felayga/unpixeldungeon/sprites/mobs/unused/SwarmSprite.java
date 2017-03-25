@@ -25,9 +25,9 @@
  */
 
 package com.felayga.unpixeldungeon.sprites.mobs.unused;
-
+/*
 import com.felayga.unpixeldungeon.Assets;
-import com.felayga.unpixeldungeon.sprites.MobSprite;
+import com.felayga.unpixeldungeon.sprites.mobs.MobSprite;
 import com.watabou.noosa.TextureFilm;
 
 public class SwarmSprite extends MobSprite {
@@ -59,3 +59,4 @@ public class SwarmSprite extends MobSprite {
 		return 0xFF8BA077;
 	}
 }
+*/

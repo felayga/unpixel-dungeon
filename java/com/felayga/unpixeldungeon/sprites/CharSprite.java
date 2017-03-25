@@ -39,7 +39,6 @@ import com.felayga.unpixeldungeon.effects.TorchHalo;
 import com.felayga.unpixeldungeon.effects.particles.AcidParticle;
 import com.felayga.unpixeldungeon.effects.particles.FlameParticle;
 import com.felayga.unpixeldungeon.effects.particles.SnowParticle;
-import com.felayga.unpixeldungeon.items.potions.PotionOfInvisibility;
 import com.felayga.unpixeldungeon.levels.Level;
 import com.felayga.unpixeldungeon.scenes.GameScene;
 import com.felayga.unpixeldungeon.utils.Utils;
@@ -55,7 +54,6 @@ import com.watabou.utils.PointF;
 import com.watabou.utils.Random;
 
 public class CharSprite extends MovieClip implements Tweener.Listener, MovieClip.Listener {
-
     // Color constants for floating text
     public static final int DEFAULT = 0xFFFFFF;
     public static final int POSITIVE = 0x00FF00;
@@ -113,16 +111,22 @@ public class CharSprite extends MovieClip implements Tweener.Listener, MovieClip
 
     public void link(Char ch) {
         this.ch = ch;
+        CharSprite oldSprite = ch.sprite;
+
         ch.sprite = this;
 
-        place(ch.pos());
-        turnTo(ch.pos(), Random.Int(Level.LENGTH));
+        if (oldSprite != null) {
+            place(ch.pos());
+            flipHorizontal = oldSprite.flipHorizontal;
+        } else {
+            place(ch.pos());
+            turnTo(ch.pos(), Random.Int(Level.LENGTH));
+        }
 
         ch.updateSpriteState();
     }
 
     public PointF worldToCamera(int cell) {
-
         final int csize = DungeonTilemap.SIZE;
 
         return new PointF(
@@ -371,7 +375,6 @@ public class CharSprite extends MovieClip implements Tweener.Listener, MovieClip
 
     @Override
     public void update() {
-
         super.update();
 
         if (paused && listener != null) {
@@ -407,6 +410,54 @@ public class CharSprite extends MovieClip implements Tweener.Listener, MovieClip
         }
         if (emo != null) {
             emo.visible = visible;
+        }
+    }
+
+    public final void update(CharSprite source) {
+        if (source != null) {
+            x = source.x;
+            y = source.y;
+
+            flashTime = source.flashTime;
+
+            burning = source.burning;
+            source.burning = null;
+
+            acidBurning = source.acidBurning;
+            source.acidBurning = null;
+
+            levitation = source.levitation;
+            source.levitation = null;
+
+            iceBlock = source.iceBlock;
+            source.iceBlock = null;
+
+            chilled = source.chilled;
+            source.chilled = null;
+
+            visible = source.visible;
+            invisible = source.invisible;
+
+            if (source.emo != null) {
+                if (source.emo instanceof EmoIcon.Sleep) {
+                    showSleep();
+                } else if (source.emo instanceof EmoIcon.Alert) {
+                    showAlert();
+                } else {
+                    hideAlert();
+                }
+
+                source.emo.killAndErase();
+                source.emo = null;
+            }
+
+            if (source.curAnim == source.run) {
+                play(run);
+            } else {
+                play(idle);
+            }
+        } else {
+            play(idle);
         }
     }
 
@@ -460,8 +511,8 @@ public class CharSprite extends MovieClip implements Tweener.Listener, MovieClip
     @Override
     public void onComplete(Tweener tweener) {
         if (tweener == jumpTweener) {
-
-            if (visible && Level.puddle[ch.pos()] && !ch.flying()) {
+            //todo: make sure ripples from invisible enemies work right
+            if (Level.puddle[ch.pos()] && !ch.flying()) {
                 GameScene.ripple(ch.pos());
             }
             if (jumpCallback != null) {
@@ -469,7 +520,6 @@ public class CharSprite extends MovieClip implements Tweener.Listener, MovieClip
             }
 
         } else if (tweener == motion) {
-
             isMoving = false;
 
             motion.killAndErase();
@@ -480,22 +530,16 @@ public class CharSprite extends MovieClip implements Tweener.Listener, MovieClip
 
     @Override
     public void onComplete(Animation anim) {
-
         if (animCallback != null) {
             animCallback.call();
             animCallback = null;
         } else {
-
             if (anim == attack) {
-
                 idle();
                 ch.onAttackComplete();
-
             } else if (anim == operate) {
-
                 idle();
                 ch.onOperateComplete();
-
             }
 
         }

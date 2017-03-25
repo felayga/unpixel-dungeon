@@ -29,6 +29,7 @@ import com.felayga.unpixeldungeon.Dungeon;
 import com.felayga.unpixeldungeon.Statistics;
 import com.felayga.unpixeldungeon.actors.blobs.Blob;
 import com.felayga.unpixeldungeon.actors.buffs.Buff;
+import com.felayga.unpixeldungeon.actors.buffs.negative.Hallucination;
 import com.felayga.unpixeldungeon.actors.mobs.Mob;
 import com.felayga.unpixeldungeon.utils.GLog;
 import com.watabou.utils.Bundlable;
@@ -40,11 +41,9 @@ import java.util.HashSet;
 public abstract class Actor implements Bundlable {
     private long time;
 
-    public long getTime() {
+    public long time() {
         return time;
     }
-
-    private int id = 0;
 
     //used to determine what order actors act in.
     //hero should always act on 0, therefore negative is before hero, positive is after hero
@@ -115,6 +114,9 @@ public abstract class Actor implements Bundlable {
                 min = a.time;
             }
         }
+
+        GLog.d("FIXTIME_NEW min="+min);
+
         for (Actor a : all) {
             a.time -= min;
             if (a instanceof Char) {
@@ -128,7 +130,7 @@ public abstract class Actor implements Bundlable {
     }
 
     public static void init() {
-        addDelayed(Dungeon.hero, -1); //originally float.minvalue
+        addDelayed(Dungeon.hero, 0); //originally float.minvalue
 
         for (Mob mob : Dungeon.level.mobs) {
             add(mob);
@@ -205,12 +207,14 @@ public abstract class Actor implements Bundlable {
         }
 
         all.add(actor);
-        actor.time = time;
+        if (!(actor instanceof Buff)) {
+            actor.time = time;
+        }
         actor.onAdd();
 
         if (actor instanceof Char) {
             Char ch = (Char) actor;
-            GLog.d("add char at pos=" + ch.pos() + " type=" + ch.getClass().toString());
+            //GLog.d("add char at pos=" + ch.pos() + " type=" + ch.getClass().toString());
             chars.put(ch.pos(), ch);
             Char.Registry.register(ch);
             for (Buff buff : ch.buffs()) {

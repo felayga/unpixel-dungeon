@@ -224,7 +224,7 @@ public class Invisibility extends FlavourBuff {
 
     public static void meltFx(Char ch) {
         if (ch.sprite.parent != null) {
-            ch.sprite.parent.removeAll(InvisibilityTweener.class);
+            ch.sprite.parent.remove(InvisibilityTweener.class, ch.sprite);
             ch.sprite.parent.add(new InvisibilityTweener(ch.sprite, Invisibility.ALPHA_INVISIBLE));
         } else {
             ch.sprite.alpha(Invisibility.ALPHA_INVISIBLE);
@@ -233,7 +233,7 @@ public class Invisibility extends FlavourBuff {
 
     public static void unmeltFx(Char ch) {
         if (ch.sprite.parent != null) {
-            ch.sprite.parent.removeAll(InvisibilityTweener.class);
+            ch.sprite.parent.remove(InvisibilityTweener.class, ch.sprite);
             ch.sprite.parent.add(new InvisibilityTweener(ch.sprite, Invisibility.ALPHA_VISIBLE));
         } else {
             ch.sprite.alpha(Invisibility.ALPHA_VISIBLE);

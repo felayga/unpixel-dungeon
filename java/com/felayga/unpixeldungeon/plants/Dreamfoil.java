@@ -30,10 +30,9 @@ import com.felayga.unpixeldungeon.actors.Actor;
 import com.felayga.unpixeldungeon.actors.Char;
 import com.felayga.unpixeldungeon.actors.buffs.Buff;
 import com.felayga.unpixeldungeon.actors.buffs.positive.MagicalSleep;
-import com.felayga.unpixeldungeon.actors.hero.Hero;
-import com.felayga.unpixeldungeon.items.potions.IAlchemyComponent;
-import com.felayga.unpixeldungeon.items.potions.PotionOfBrewing;
-import com.felayga.unpixeldungeon.items.potions.PotionOfHealing;
+import com.felayga.unpixeldungeon.items.consumable.potions.IAlchemyComponent;
+import com.felayga.unpixeldungeon.items.consumable.potions.PotionOfBrewing;
+import com.felayga.unpixeldungeon.items.consumable.potions.PotionOfHealing;
 import com.felayga.unpixeldungeon.sprites.ItemSpriteSheet;
 import com.felayga.unpixeldungeon.utils.GLog;
 

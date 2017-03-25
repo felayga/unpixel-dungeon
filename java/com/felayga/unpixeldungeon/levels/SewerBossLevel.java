@@ -137,7 +137,6 @@ public class SewerBossLevel extends RegularLevel {
                 }
 
                 //todo: rat king room
-				/*
 				//if we have candidates, pick a room and put the king there
 				if (candidates.size() > 0) {
 					Room kingsRoom = Random.element(candidates);
@@ -148,7 +147,6 @@ public class SewerBossLevel extends RegularLevel {
 				} else {
 					return false;
 				}
-				*/
             }
             lastRoom = curRoom;
         }

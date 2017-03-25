@@ -26,7 +26,7 @@
 package com.felayga.unpixeldungeon.sprites.mobs.bat;
 
 import com.felayga.unpixeldungeon.Assets;
-import com.felayga.unpixeldungeon.sprites.MobSprite;
+import com.felayga.unpixeldungeon.sprites.mobs.MobSprite;
 import com.watabou.noosa.TextureFilm;
 
 public class BatSprite extends MobSprite {
@@ -43,16 +43,16 @@ public class BatSprite extends MobSprite {
 
 		int offset = index * FRAMES_PER_ROW;
 		
-		idle = new Animation( 8, true );
+		idle = new Animation( 6, true );
 		idle.frames( frames, offset + 0, offset + 1 );
 		
-		run = new Animation( 12, true );
+		run = new Animation( 8, true );
 		run.frames( frames, offset + 0, offset + 1 );
 		
 		attack = new Animation( 12, false );
 		attack.frames( frames, offset + 2, offset + 3, offset + 0, offset + 1 );
 		
-		die = new Animation( 12, false );
+		die = new Animation( 6, false );
 		die.frames( frames, offset + 4, offset + 5, offset + 6 );
 		
 		play( idle );

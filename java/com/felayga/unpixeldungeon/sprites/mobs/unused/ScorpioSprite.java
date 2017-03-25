@@ -27,10 +27,10 @@
 package com.felayga.unpixeldungeon.sprites.mobs.unused;
 
 import com.felayga.unpixeldungeon.Assets;
-import com.felayga.unpixeldungeon.items.weapon.missiles.simple.Dart;
+import com.felayga.unpixeldungeon.items.equippableitem.weapon.missiles.simple.Dart;
 import com.felayga.unpixeldungeon.levels.Level;
 import com.felayga.unpixeldungeon.sprites.MissileSprite;
-import com.felayga.unpixeldungeon.sprites.MobSprite;
+import com.felayga.unpixeldungeon.sprites.mobs.MobSprite;
 import com.watabou.noosa.TextureFilm;
 import com.watabou.utils.Callback;
 

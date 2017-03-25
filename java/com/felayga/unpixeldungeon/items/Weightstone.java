@@ -27,9 +27,8 @@ package com.felayga.unpixeldungeon.items;
 
 import com.felayga.unpixeldungeon.Assets;
 import com.felayga.unpixeldungeon.actors.hero.Hero;
-import com.felayga.unpixeldungeon.items.weapon.Weapon;
+import com.felayga.unpixeldungeon.items.equippableitem.weapon.Weapon;
 import com.felayga.unpixeldungeon.mechanics.GameTime;
-import com.felayga.unpixeldungeon.mechanics.Material;
 import com.felayga.unpixeldungeon.scenes.GameScene;
 import com.felayga.unpixeldungeon.scenes.PixelScene;
 import com.felayga.unpixeldungeon.sprites.ItemSpriteSheet;

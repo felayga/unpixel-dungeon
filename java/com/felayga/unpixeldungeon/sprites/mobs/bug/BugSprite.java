@@ -26,10 +26,10 @@
 package com.felayga.unpixeldungeon.sprites.mobs.bug;
 
 import com.felayga.unpixeldungeon.Assets;
-import com.felayga.unpixeldungeon.sprites.MobSprite;
+import com.felayga.unpixeldungeon.sprites.mobs.MobSprite;
 import com.watabou.noosa.TextureFilm;
 
-public class BugSprite extends MobSprite {
+public abstract class BugSprite extends MobSprite {
     private static int FRAMES_PER_ROW = 16;
 
     public BugSprite(int index) {
@@ -47,10 +47,10 @@ public class BugSprite extends MobSprite {
         run = new Animation( 10, true );
         run.frames( frames,  offset + 6,  offset + 7,  offset + 8,  offset + 7 );
 
-        attack = new Animation( 15, false );
+        attack = new Animation( 12, false );
         attack.frames( frames,  offset + 3,  offset + 4,  offset + 5,  offset + 0 );
 
-        die = new Animation( 10, false );
+        die = new Animation( 8, false );
         die.frames( frames,  offset + 9,  offset + 10,  offset + 11,  offset + 12 );
 
         play( idle );

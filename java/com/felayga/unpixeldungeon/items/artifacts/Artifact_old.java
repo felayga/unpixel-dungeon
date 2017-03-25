@@ -29,7 +29,7 @@ import com.felayga.unpixeldungeon.Dungeon;
 import com.felayga.unpixeldungeon.actors.Char;
 import com.felayga.unpixeldungeon.actors.buffs.Buff;
 import com.felayga.unpixeldungeon.actors.hero.Hero;
-import com.felayga.unpixeldungeon.items.EquippableItem;
+import com.felayga.unpixeldungeon.items.equippableitem.EquippableItem;
 import com.felayga.unpixeldungeon.mechanics.BUCStatus;
 import com.felayga.unpixeldungeon.mechanics.Constant;
 import com.felayga.unpixeldungeon.mechanics.GameTime;
@@ -90,8 +90,6 @@ public class Artifact_old extends EquippableItem {
 
 	@Override
 	public void onEquip(Char owner, boolean cursed) {
-		super.onEquip(owner, cursed);
-
         passiveBuff = passiveBuff();
         passiveBuff.attachTo(owner, null);
 

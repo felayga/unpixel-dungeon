@@ -226,37 +226,37 @@ public class Bestiary {
         MobSpawnGroup group;
 
         group = new MobSpawnGroup();
-        group.add(1.0f, GridBug.class, MobSpawnGroup.Size.Individual);
+        group.add(1, GridBug.class, MobSpawnGroup.Size.Individual);
         spawnGroups.put(-1, group);
 
         group = new MobSpawnGroup();
-        group.add(3.0f, GridBug.class, MobSpawnGroup.Size.Small);
-        group.add(3.0f, Jackal.class, MobSpawnGroup.Size.Small);
-        group.add(1.0f, KoboldZombie.class, MobSpawnGroup.Size.Individual);
-        group.add(5.0f, Newt.class, MobSpawnGroup.Size.Individual);
-        group.add(1.0f, SewerRat.class, MobSpawnGroup.Size.Small);
-        group.add(1.0f, Fox.class, MobSpawnGroup.Size.Individual);
-        group.add(4.0f, Lichen.class, MobSpawnGroup.Size.Individual);
-        group.add(2.0f, Goblin.class, MobSpawnGroup.Size.Individual);
-        group.add(1.0f, Kobold.class, MobSpawnGroup.Size.Individual);
+        group.add(3, GridBug.class, MobSpawnGroup.Size.Small);
+        group.add(3, Jackal.class, MobSpawnGroup.Size.Small);
+        group.add(1, KoboldZombie.class, MobSpawnGroup.Size.Individual);
+        group.add(5, Newt.class, MobSpawnGroup.Size.Individual);
+        group.add(1, SewerRat.class, MobSpawnGroup.Size.Small);
+        group.add(1, Fox.class, MobSpawnGroup.Size.Individual);
+        group.add(4, Lichen.class, MobSpawnGroup.Size.Individual);
+        group.add(2, Goblin.class, MobSpawnGroup.Size.Individual);
+        group.add(1, Kobold.class, MobSpawnGroup.Size.Individual);
         spawnGroups.put(0, group);
 
         group = new MobSpawnGroup();
-        group.add(1.0f, Bat.class, MobSpawnGroup.Size.Small);
-        group.add(1.0f, Coyote.class, MobSpawnGroup.Size.Small);
-        group.add(5.0f, Gecko.class, MobSpawnGroup.Size.Individual);
-        group.add(2.0f, GiantRat.class, MobSpawnGroup.Size.Small);
-        group.add(1.0f, GnomeZombie.class, MobSpawnGroup.Size.Individual);
-        group.add(2.0f, YellowMold.class, MobSpawnGroup.Size.Individual);
-        group.add(2.0f, AcidBlob.class, MobSpawnGroup.Size.Individual);
-        group.add(2.0f, BrownMold.class, MobSpawnGroup.Size.Individual);
-        group.add(1.0f, GreenMold.class, MobSpawnGroup.Size.Individual);
-        group.add(1.0f, RedMold.class, MobSpawnGroup.Size.Individual);
-        group.add(2.0f, PurpleMold.class, MobSpawnGroup.Size.Individual);
-        group.add(1.0f, GasSpore.class, MobSpawnGroup.Size.Individual);
-        group.add(2.0f, Hobbit.class, MobSpawnGroup.Size.Individual);
-        group.add(1.0f, KoboldLarge.class, MobSpawnGroup.Size.Individual);
-        group.add(1.0f, Shrieker.class, MobSpawnGroup.Size.Individual);
+        group.add(1, Bat.class, MobSpawnGroup.Size.Small);
+        group.add(1, Coyote.class, MobSpawnGroup.Size.Small);
+        group.add(5, Gecko.class, MobSpawnGroup.Size.Individual);
+        group.add(2, GiantRat.class, MobSpawnGroup.Size.Small);
+        group.add(1, GnomeZombie.class, MobSpawnGroup.Size.Individual);
+        group.add(2, YellowMold.class, MobSpawnGroup.Size.Individual);
+        group.add(2, AcidBlob.class, MobSpawnGroup.Size.Individual);
+        group.add(2, BrownMold.class, MobSpawnGroup.Size.Individual);
+        group.add(1, GreenMold.class, MobSpawnGroup.Size.Individual);
+        group.add(1, RedMold.class, MobSpawnGroup.Size.Individual);
+        group.add(2, PurpleMold.class, MobSpawnGroup.Size.Individual);
+        group.add(1, GasSpore.class, MobSpawnGroup.Size.Individual);
+        group.add(2, Hobbit.class, MobSpawnGroup.Size.Individual);
+        group.add(1, KoboldLarge.class, MobSpawnGroup.Size.Individual);
+        group.add(1, Shrieker.class, MobSpawnGroup.Size.Individual);
         spawnGroups.put(1, group);
     }
 

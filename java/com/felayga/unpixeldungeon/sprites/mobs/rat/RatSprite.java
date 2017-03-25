@@ -26,7 +26,7 @@
 package com.felayga.unpixeldungeon.sprites.mobs.rat;
 
 import com.felayga.unpixeldungeon.Assets;
-import com.felayga.unpixeldungeon.sprites.MobSprite;
+import com.felayga.unpixeldungeon.sprites.mobs.MobSprite;
 import com.watabou.noosa.TextureFilm;
 
 public class RatSprite extends MobSprite {
@@ -41,9 +41,11 @@ public class RatSprite extends MobSprite {
 
         texture(Assets.Mobs.RAT);
 
-        TextureFilm frames = new TextureFilm(texture, 16, 15);
+        TextureFilm frames = new TextureFilm(texture, 16, 17);
 
         int offset = index * FRAMES_PER_ROW;
+
+        isFestive(index);
 
         initIdleFrames(frames, offset);
         initRunFrames(frames, offset);
@@ -53,6 +55,10 @@ public class RatSprite extends MobSprite {
         die.frames(frames, offset + 11, offset + 12, offset + 13, offset + 14);
 
         play(idle);
+    }
+
+    protected void isFestive(int index) {
+
     }
 
     protected void initIdleFrames(TextureFilm frames, int offset) {

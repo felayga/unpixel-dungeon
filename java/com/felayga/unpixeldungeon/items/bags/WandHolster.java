@@ -27,7 +27,7 @@ package com.felayga.unpixeldungeon.items.bags;
 
 import com.felayga.unpixeldungeon.actors.buffs.hero.Encumbrance;
 import com.felayga.unpixeldungeon.items.Item;
-import com.felayga.unpixeldungeon.items.wands.Wand;
+import com.felayga.unpixeldungeon.items.consumable.wands.Wand;
 import com.felayga.unpixeldungeon.sprites.ItemSpriteSheet;
 
 public class WandHolster extends Bag {

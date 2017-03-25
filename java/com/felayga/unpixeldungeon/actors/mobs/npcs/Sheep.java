@@ -35,54 +35,49 @@ import com.felayga.unpixeldungeon.sprites.SheepSprite;
 import com.watabou.utils.Random;
 
 public class Sheep extends NPC {
+    private static final String[] QUOTES = {"Baa!", "Baa?", "Baa.", "Baa..."};
 
-	private static final String[] QUOTES = {"Baa!", "Baa?", "Baa.", "Baa..."};
-
-	public Sheep()
-	{
-		super(0);
+    public Sheep() {
+        super(0, SheepSprite.class);
 
         defenseMundane = 32767;
         defenseMagical = 32767;
         characteristics = Characteristic.value(Characteristic.NoExperience);
+    }
 
-		name = "sheep";
-		spriteClass = SheepSprite.class;
-	}
+    public long lifespan;
 
-	public long lifespan;
+    private boolean initialized = false;
 
-	private boolean initialized = false;
+    @Override
+    protected boolean act() {
+        if (initialized) {
+            HP = 0;
 
-	@Override
-	protected boolean act() {
-		if (initialized) {
-			HP = 0;
+            destroy(null);
+            sprite.die();
 
-			destroy(null);
-			sprite.die();
+        } else {
+            initialized = true;
+            spend_new(lifespan + Random.Long(GameTime.TICK * 3), false);
+        }
+        return true;
+    }
 
-		} else {
-			initialized = true;
-			spend_new(lifespan + Random.Long(GameTime.TICK * 3), false);
-		}
-		return true;
-	}
-
-	@Override
-	public int damage( int dmg, MagicType type, Char source, Item sourceItem) {
+    @Override
+    public int damage(int dmg, MagicType type, Char source, Item sourceItem) {
         return 0;
-	}
+    }
 
-	@Override
-	public String description() {
-		return
-				"This is a magic sheep. What's so magical about it? You can't kill it. " +
-						"It will stand there until it magcially fades away, all the while chewing cud with a blank stare.";
-	}
+    @Override
+    public String description() {
+        return
+                "This is a magic sheep. What's so magical about it? You can't kill it. " +
+                        "It will stand there until it magcially fades away, all the while chewing cud with a blank stare.";
+    }
 
-	@Override
-	public void interact() {
-		yell( Random.element( QUOTES ) );
-	}
+    @Override
+    public void interact() {
+        yell(Random.element(QUOTES));
+    }
 }

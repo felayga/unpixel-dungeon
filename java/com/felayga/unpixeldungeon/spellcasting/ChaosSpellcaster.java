@@ -46,12 +46,12 @@ import com.felayga.unpixeldungeon.effects.MagicMissile;
 import com.felayga.unpixeldungeon.effects.Speck;
 import com.felayga.unpixeldungeon.effects.SpellSprite;
 import com.felayga.unpixeldungeon.effects.particles.ShadowParticle;
-import com.felayga.unpixeldungeon.items.Bomb;
+import com.felayga.unpixeldungeon.items.consumable.Bomb;
 import com.felayga.unpixeldungeon.items.Generator;
 import com.felayga.unpixeldungeon.items.Item;
-import com.felayga.unpixeldungeon.items.scrolls.ScrollOfRecharging;
-import com.felayga.unpixeldungeon.items.scrolls.positionscroll.ScrollOfTeleportation;
-import com.felayga.unpixeldungeon.items.weapon.missiles.MissileWeapon;
+import com.felayga.unpixeldungeon.items.consumable.scrolls.ScrollOfRecharging;
+import com.felayga.unpixeldungeon.items.consumable.scrolls.positionscroll.ScrollOfTeleportation;
+import com.felayga.unpixeldungeon.items.equippableitem.weapon.missiles.MissileWeapon;
 import com.felayga.unpixeldungeon.levels.Level;
 import com.felayga.unpixeldungeon.levels.Terrain;
 import com.felayga.unpixeldungeon.levels.traps.LightningTrap;
@@ -101,10 +101,10 @@ public class ChaosSpellcaster extends Spellcaster {
     private int effectIndex;
 
     protected boolean randomizeEffect() {
-        float common_chance = (60.0f - levelBoost * 5.0f) / 100f;
-        float uncommon_chance = (1.0f - common_chance) / 2.0f;
-        float rare_chance = (1.0f - common_chance - uncommon_chance) * 2.0f / 3.0f;
-        float very_rare_chance = 1.0f - common_chance - uncommon_chance - rare_chance;
+        float common_chance = (60.0f - levelBoost * 5.0f);
+        float uncommon_chance = (100.0f - common_chance) / 2.0f;
+        float rare_chance = (100.0f - common_chance - uncommon_chance) * 2.0f / 3.0f;
+        float very_rare_chance = 100.0f - common_chance - uncommon_chance - rare_chance;
 
         effectIndex = Random.Int(4);
         rarityIndex = Random.chances(new float[]{common_chance, uncommon_chance, rare_chance, very_rare_chance});

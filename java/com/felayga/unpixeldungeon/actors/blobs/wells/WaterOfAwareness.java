@@ -32,7 +32,6 @@ import com.felayga.unpixeldungeon.DungeonTilemap;
 import com.felayga.unpixeldungeon.Journal;
 import com.felayga.unpixeldungeon.Journal.Feature;
 import com.felayga.unpixeldungeon.actors.buffs.Buff;
-import com.felayga.unpixeldungeon.actors.buffs.positive.ItemVision;
 import com.felayga.unpixeldungeon.actors.hero.Hero;
 import com.felayga.unpixeldungeon.effects.BlobEmitter;
 import com.felayga.unpixeldungeon.effects.Identification;
@@ -42,6 +41,8 @@ import com.felayga.unpixeldungeon.levels.Level;
 import com.felayga.unpixeldungeon.levels.Terrain;
 import com.felayga.unpixeldungeon.mechanics.GameTime;
 import com.felayga.unpixeldungeon.scenes.GameScene;
+import com.felayga.unpixeldungeon.spellcasting.ObjectDetectionSpellcaster;
+import com.felayga.unpixeldungeon.spellcasting.Spellcaster;
 import com.felayga.unpixeldungeon.utils.GLog;
 import com.watabou.noosa.audio.Sample;
 
@@ -72,9 +73,8 @@ public class WaterOfAwareness extends WellWater {
 				}
 			}
 		}
-		
-		Buff.affect( hero, null, ItemVision.class, GameTime.TICK * 4 );
-		Dungeon.observe();
+
+        Spellcaster.cast(hero, hero.pos(), new ObjectDetectionSpellcaster(), Spellcaster.Origin.Silent);
 
 		Dungeon.hero.interrupt();
 	

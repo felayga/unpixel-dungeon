@@ -30,8 +30,8 @@ import com.felayga.unpixeldungeon.Dungeon;
 import com.felayga.unpixeldungeon.actors.Char;
 import com.felayga.unpixeldungeon.actors.buffs.hero.Encumbrance;
 import com.felayga.unpixeldungeon.actors.mobs.Mob;
-import com.felayga.unpixeldungeon.items.scrolls.ScrollOfRage;
-import com.felayga.unpixeldungeon.items.weapon.IWeapon;
+import com.felayga.unpixeldungeon.items.consumable.scrolls.ScrollOfRage;
+import com.felayga.unpixeldungeon.items.equippableitem.weapon.IWeapon;
 import com.felayga.unpixeldungeon.mechanics.Characteristic;
 import com.felayga.unpixeldungeon.mechanics.CorpseEffect;
 import com.felayga.unpixeldungeon.mechanics.GameTime;
@@ -45,10 +45,7 @@ import com.watabou.utils.Random;
  */
 public class Shrieker extends Mob {
     public Shrieker() {
-        super(3);
-
-        name = "shrieker";
-        spriteClass = ShriekerSprite.class;
+        super(3, ShriekerSprite.class);
 
         movementSpeed(GameTime.TICK * 12);
         attackSpeed(GameTime.TICK);

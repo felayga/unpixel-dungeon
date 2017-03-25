@@ -29,8 +29,8 @@ import com.felayga.unpixeldungeon.Dungeon;
 import com.felayga.unpixeldungeon.actors.Actor;
 import com.felayga.unpixeldungeon.actors.Char;
 import com.felayga.unpixeldungeon.actors.hero.Hero;
-import com.felayga.unpixeldungeon.items.food.Blandfruit;
-import com.felayga.unpixeldungeon.items.potions.PotionOfBrewing;
+import com.felayga.unpixeldungeon.items.consumable.food.Blandfruit;
+import com.felayga.unpixeldungeon.items.consumable.potions.PotionOfBrewing;
 import com.felayga.unpixeldungeon.mechanics.Constant;
 import com.felayga.unpixeldungeon.sprites.ItemSpriteSheet;
 

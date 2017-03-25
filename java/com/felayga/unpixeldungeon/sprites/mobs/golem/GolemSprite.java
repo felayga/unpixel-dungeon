@@ -27,7 +27,7 @@ package com.felayga.unpixeldungeon.sprites.mobs.golem;
 
 import com.felayga.unpixeldungeon.Assets;
 import com.felayga.unpixeldungeon.effects.particles.ElmoParticle;
-import com.felayga.unpixeldungeon.sprites.MobSprite;
+import com.felayga.unpixeldungeon.sprites.mobs.MobSprite;
 import com.watabou.noosa.TextureFilm;
 
 public class GolemSprite extends MobSprite {

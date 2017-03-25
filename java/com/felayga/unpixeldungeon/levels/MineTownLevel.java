@@ -61,7 +61,7 @@ public class MineTownLevel extends RegularLevel {
     }
 
     @Override
-    protected int fillBlockNormal() {
+    protected int fillBlock() {
         return Terrain.WALL_STONE;
     }
 

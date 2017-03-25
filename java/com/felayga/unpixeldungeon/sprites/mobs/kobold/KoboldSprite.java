@@ -26,7 +26,7 @@
 package com.felayga.unpixeldungeon.sprites.mobs.kobold;
 
 import com.felayga.unpixeldungeon.Assets;
-import com.felayga.unpixeldungeon.sprites.MobSprite;
+import com.felayga.unpixeldungeon.sprites.mobs.MobSprite;
 import com.watabou.noosa.TextureFilm;
 
 public class KoboldSprite extends MobSprite {

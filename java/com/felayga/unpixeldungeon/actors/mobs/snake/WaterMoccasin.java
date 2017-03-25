@@ -28,7 +28,7 @@ package com.felayga.unpixeldungeon.actors.mobs.snake;
 
 import com.felayga.unpixeldungeon.actors.buffs.hero.Encumbrance;
 import com.felayga.unpixeldungeon.actors.mobs.Mob;
-import com.felayga.unpixeldungeon.items.weapon.melee.mob.PoisonChance;
+import com.felayga.unpixeldungeon.items.equippableitem.weapon.melee.mob.PoisonChance;
 import com.felayga.unpixeldungeon.mechanics.Characteristic;
 import com.felayga.unpixeldungeon.mechanics.CorpseEffect;
 import com.felayga.unpixeldungeon.mechanics.GameTime;
@@ -39,13 +39,8 @@ import com.felayga.unpixeldungeon.sprites.mobs.snake.WaterMoccasinSprite;
  * Created by HELLO on 6/15/2016.
  */
 public class WaterMoccasin extends Mob {
-
-    public WaterMoccasin()
-    {
-        super(4);
-
-        name = "water moccasin";
-        spriteClass = WaterMoccasinSprite.class;
+    public WaterMoccasin() {
+        super(4, WaterMoccasinSprite.class);
 
         movementSpeed(GameTime.TICK * 4 / 5);
         attackSpeed(GameTime.TICK);

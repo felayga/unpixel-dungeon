@@ -101,7 +101,7 @@ public class MagicMappingSpellcaster extends Spellcaster {
         }
     }
 
-    private boolean discoverCell(int index, boolean allowDiscovery) {
+    private static boolean discoverCell(int index, boolean allowDiscovery) {
         int terr = Dungeon.level.map(index);
 
         if (Level.discoverable[index]) {

@@ -31,7 +31,7 @@ import com.felayga.unpixeldungeon.actors.buffs.negative.Terror;
 import com.felayga.unpixeldungeon.items.Gold;
 import com.felayga.unpixeldungeon.items.Item;
 import com.felayga.unpixeldungeon.items.artifacts.MasterThievesArmband;
-import com.felayga.unpixeldungeon.items.weapon.melee.mob.StealChance;
+import com.felayga.unpixeldungeon.items.equippableitem.weapon.melee.mob.StealChance;
 import com.felayga.unpixeldungeon.mechanics.GameTime;
 import com.felayga.unpixeldungeon.sprites.CharSprite;
 import com.felayga.unpixeldungeon.sprites.mobs.unused.ThiefSprite;

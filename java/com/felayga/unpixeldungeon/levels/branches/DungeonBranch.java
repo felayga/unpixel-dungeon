@@ -34,7 +34,8 @@ import com.watabou.utils.Random;
  * Created by HELLO on 6/17/2016.
  */
 public enum DungeonBranch {
-    Normal      ("", 1, 30, 0, 0, true),
+    Elemental   ("E", -4, 0, -5, -5, false),
+    Normal      ("", 1, 30, -5, -5, true),
     Mines       ("M", 32, 40, 2, 4, true),
     Puzzle      ("P", 42, 45, 5, 9, false);
 
@@ -63,7 +64,8 @@ public enum DungeonBranch {
         this.branchDown = branchDown;
     }
 
-    public static final int MAXLEVEL = 256;
+    public static final int MINLEVEL = -4;
+    public static final int MAXLEVEL = 256 + MINLEVEL;
 
     public static String getDepthText(int depth) {
         for (DungeonBranch branch : DungeonBranch.values()) {

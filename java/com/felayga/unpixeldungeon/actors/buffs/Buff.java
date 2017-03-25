@@ -53,11 +53,15 @@ public class Buff extends Actor {
 
     @Override
     public void storeInBundle(Bundle bundle) {
+        super.storeInBundle(bundle);
+
         bundle.put(OWNERREGISTRYINDEX, ownerRegistryIndex);
     }
 
     @Override
     public void restoreFromBundle(Bundle bundle) {
+        super.restoreFromBundle(bundle);
+
         ownerRegistryIndex = bundle.getInt(OWNERREGISTRYINDEX);
     }
 

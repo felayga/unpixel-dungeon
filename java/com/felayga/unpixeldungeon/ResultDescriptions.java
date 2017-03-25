@@ -40,14 +40,15 @@ public class ResultDescriptions {
 	public static final String TRAP		= "Killed by a %s";
 	
 	// Debuffs & blobs
-	public static final String BURNING	    = "Burned to Ash";
-    public static final String ACIDBURNING	= "Dissolved in Acid";
-	public static final String HUNGER	    = "Starved to Death";
-	public static final String POISON	    = "Succumbed to Poison";
+	public static final String BURNING	    = "Burned to ash";
+    public static final String ACIDBURNING	= "Dissolved in acid";
+	public static final String HUNGER	    = "Starved to death";
+    public static final String EXHAUSTION   = "Died from exhaustion";
+	public static final String POISON	    = "Succumbed to poison";
 	public static final String GAS		    = "Suffocated";
-	public static final String BLEEDING	    = "Bled to Death";
-	public static final String OOZE		    = "Melted Away";
-	public static final String FALL		    = "Died on Impact";
-	
+	public static final String BLEEDING	    = "Bled to death";
+	public static final String OOZE		    = "Melted away";
+	public static final String FALL		    = "Died on impact";
+
 	public static final String WIN	= "Obtained the Amulet of Yendor";
 }

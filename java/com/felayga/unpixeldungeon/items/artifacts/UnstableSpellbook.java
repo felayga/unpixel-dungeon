@@ -33,10 +33,10 @@ import com.felayga.unpixeldungeon.actors.hero.Hero;
 import com.felayga.unpixeldungeon.effects.particles.ElmoParticle;
 import com.felayga.unpixeldungeon.items.Generator;
 import com.felayga.unpixeldungeon.items.Item;
-import com.felayga.unpixeldungeon.items.scrolls.Scroll;
-import com.felayga.unpixeldungeon.items.scrolls.spellcasterscroll.ScrollOfIdentify;
-import com.felayga.unpixeldungeon.items.scrolls.spellcasterscroll.ScrollOfMagicMapping;
-import com.felayga.unpixeldungeon.items.scrolls.ScrollOfRemoveCurse;
+import com.felayga.unpixeldungeon.items.consumable.scrolls.Scroll;
+import com.felayga.unpixeldungeon.items.consumable.scrolls.spellcasterscroll.ScrollOfIdentify;
+import com.felayga.unpixeldungeon.items.consumable.scrolls.spellcasterscroll.ScrollOfMagicMapping;
+import com.felayga.unpixeldungeon.items.consumable.scrolls.ScrollOfRemoveCurse;
 import com.felayga.unpixeldungeon.mechanics.BUCStatus;
 import com.felayga.unpixeldungeon.mechanics.GameTime;
 import com.felayga.unpixeldungeon.scenes.GameScene;
@@ -77,7 +77,7 @@ public class UnstableSpellbook extends Artifact_old {
 		super();
 
 		Class<?>[] scrollClasses = Generator.Category.SCROLL.classes;
-		float[] probs = Generator.Category.SCROLL.probs.clone(); //array of primitives, clone gives deep copy.
+        float[] probs = Generator.Category.SCROLL.probs.clone(); //array of primitives, clone gives deep copy.
 		int i = Random.chances(probs);
 
 		while (i != -1){

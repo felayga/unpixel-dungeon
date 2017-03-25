@@ -35,7 +35,8 @@ import com.felayga.unpixeldungeon.actors.mobs.Mob;
 import com.felayga.unpixeldungeon.actors.mobs.npcs.Boulder;
 import com.felayga.unpixeldungeon.effects.CellEmitter;
 import com.felayga.unpixeldungeon.effects.Speck;
-import com.felayga.unpixeldungeon.items.weapon.ammunition.simple.Rock;
+import com.felayga.unpixeldungeon.items.Heap;
+import com.felayga.unpixeldungeon.items.equippableitem.weapon.ammunition.simple.Rock;
 import com.felayga.unpixeldungeon.levels.Level;
 import com.felayga.unpixeldungeon.levels.Terrain;
 import com.felayga.unpixeldungeon.levels.features.Chasm;
@@ -123,6 +124,11 @@ public class TunnelingSpellcaster extends Spellcaster {
             }
         } else {
             if (digDown(targetPos)) {
+                Heap heap = Dungeon.level.heaps.get(targetPos);
+                if (heap != null) {
+                    Dungeon.dropToChasm(heap);
+                }
+
                 Char target = Actor.findChar(targetPos);
 
                 if (target instanceof Hero) {

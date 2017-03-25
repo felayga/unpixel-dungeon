@@ -44,10 +44,7 @@ import com.watabou.utils.Random;
  */
 public class YellowMold extends Mob {
     public YellowMold() {
-        super(1);
-
-        name = "yellow mold";
-        spriteClass = YellowMoldSprite.class;
+        super(1, YellowMoldSprite.class);
 
         movementSpeed(0);
         attackSpeed(GameTime.TICK);

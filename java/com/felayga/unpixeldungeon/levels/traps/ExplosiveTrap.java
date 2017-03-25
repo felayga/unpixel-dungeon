@@ -26,7 +26,7 @@
 package com.felayga.unpixeldungeon.levels.traps;
 
 import com.felayga.unpixeldungeon.actors.Char;
-import com.felayga.unpixeldungeon.items.Bomb;
+import com.felayga.unpixeldungeon.items.consumable.Bomb;
 import com.felayga.unpixeldungeon.sprites.TrapSprite;
 
 public class ExplosiveTrap extends Trap {

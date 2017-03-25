@@ -32,11 +32,11 @@ import com.felayga.unpixeldungeon.Journal;
 import com.felayga.unpixeldungeon.actors.blobs.ToxicGas;
 import com.felayga.unpixeldungeon.actors.buffs.negative.Poison;
 import com.felayga.unpixeldungeon.items.Generator;
-import com.felayga.unpixeldungeon.items.weapon.Weapon;
-import com.felayga.unpixeldungeon.items.weapon.Weapon.Enchantment;
-import com.felayga.unpixeldungeon.items.weapon.enchantments.Death;
-import com.felayga.unpixeldungeon.items.weapon.enchantments.Leech;
-import com.felayga.unpixeldungeon.items.weapon.melee.MeleeWeapon;
+import com.felayga.unpixeldungeon.items.equippableitem.weapon.Weapon;
+import com.felayga.unpixeldungeon.items.equippableitem.weapon.Weapon.Enchantment;
+import com.felayga.unpixeldungeon.items.equippableitem.weapon.enchantments.Death;
+import com.felayga.unpixeldungeon.items.equippableitem.weapon.enchantments.Leech;
+import com.felayga.unpixeldungeon.items.equippableitem.weapon.melee.MeleeWeapon;
 import com.felayga.unpixeldungeon.sprites.mobs.unused.StatueSprite;
 import com.watabou.utils.Bundle;
 

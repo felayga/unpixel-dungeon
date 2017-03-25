@@ -31,7 +31,7 @@ import com.felayga.unpixeldungeon.items.Generator;
 import com.felayga.unpixeldungeon.items.Gold;
 import com.felayga.unpixeldungeon.items.Heap;
 import com.felayga.unpixeldungeon.items.Item;
-import com.felayga.unpixeldungeon.items.potions.PotionOfLiquidFlame;
+import com.felayga.unpixeldungeon.items.consumable.potions.PotionOfLiquidFlame;
 import com.felayga.unpixeldungeon.items.quest.CorpseDust;
 import com.felayga.unpixeldungeon.levels.Level;
 import com.felayga.unpixeldungeon.levels.Room;

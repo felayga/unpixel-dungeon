@@ -27,7 +27,7 @@
 package com.felayga.unpixeldungeon.items.bags.backpack;
 
 import com.felayga.unpixeldungeon.actors.Char;
-import com.felayga.unpixeldungeon.items.EquippableItem;
+import com.felayga.unpixeldungeon.items.equippableitem.EquippableItem;
 import com.felayga.unpixeldungeon.items.Item;
 import com.felayga.unpixeldungeon.items.tools.ITool;
 import com.felayga.unpixeldungeon.ui.Icons;

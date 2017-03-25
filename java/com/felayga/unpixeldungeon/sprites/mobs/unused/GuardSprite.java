@@ -28,7 +28,7 @@ package com.felayga.unpixeldungeon.sprites.mobs.unused;
 
 import com.felayga.unpixeldungeon.Assets;
 import com.felayga.unpixeldungeon.effects.particles.ShadowParticle;
-import com.felayga.unpixeldungeon.sprites.MobSprite;
+import com.felayga.unpixeldungeon.sprites.mobs.MobSprite;
 import com.watabou.noosa.MovieClip;
 import com.watabou.noosa.TextureFilm;
 

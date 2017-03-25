@@ -29,15 +29,14 @@ import com.felayga.unpixeldungeon.Assets;
 import com.felayga.unpixeldungeon.Badges;
 import com.felayga.unpixeldungeon.Dungeon;
 import com.felayga.unpixeldungeon.Journal;
-import com.felayga.unpixeldungeon.actors.Actor;
 import com.felayga.unpixeldungeon.actors.Char;
 import com.felayga.unpixeldungeon.actors.buffs.Buff;
 import com.felayga.unpixeldungeon.actors.hero.Hero;
-import com.felayga.unpixeldungeon.items.EquippableItem;
+import com.felayga.unpixeldungeon.items.equippableitem.EquippableItem;
 import com.felayga.unpixeldungeon.items.Item;
 import com.felayga.unpixeldungeon.items.quest.DarkGold;
 import com.felayga.unpixeldungeon.items.quest.OldPickaxe;
-import com.felayga.unpixeldungeon.items.scrolls.ScrollOfUpgrade;
+import com.felayga.unpixeldungeon.items.consumable.scrolls.ScrollOfUpgrade;
 import com.felayga.unpixeldungeon.levels.Room;
 import com.felayga.unpixeldungeon.levels.Room.Type;
 import com.felayga.unpixeldungeon.mechanics.BUCStatus;
@@ -81,10 +80,7 @@ public class Blacksmith extends NPC {
 
 	public Blacksmith()
 	{
-		super(10);
-
-		name = "troll blacksmith";
-		spriteClass = BlacksmithSprite.class;
+		super(10, BlacksmithSprite.class);
 	}
 	
 	@Override

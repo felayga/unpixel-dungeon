@@ -26,6 +26,7 @@
 
 package com.felayga.unpixeldungeon.actors.buffs.hero;
 
+import com.felayga.unpixeldungeon.Dungeon;
 import com.felayga.unpixeldungeon.actors.buffs.Buff;
 import com.felayga.unpixeldungeon.actors.buffs.FlavourBuff;
 import com.felayga.unpixeldungeon.actors.buffs.IIntrinsicBuff;
@@ -58,7 +59,8 @@ public class IntrinsicAwareness extends FlavourBuff {
                 "\n" +
                 descResistances() +
                 "\n" +
-                descAbilities();
+                descAbilities() +
+                descDuration();
     }
 
     protected String descCharacteristics() {
@@ -101,5 +103,13 @@ public class IntrinsicAwareness extends FlavourBuff {
             retval += "None\n";
         }
         return retval;
+    }
+
+    protected String descDuration() {
+        if (target == Dungeon.hero) {
+            return "\n\nThis awareness will last for " + dispTurns() + ".";
+        } else {
+            return "";
+        }
     }
 }

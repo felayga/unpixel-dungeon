@@ -26,10 +26,10 @@
 package com.felayga.unpixeldungeon.ui;
 
 import com.felayga.unpixeldungeon.items.Item;
-import com.felayga.unpixeldungeon.items.potions.Potion;
-import com.felayga.unpixeldungeon.items.scrolls.Scroll;
-import com.felayga.unpixeldungeon.items.scrolls.inventoryscroll.ScrollOfMagicalInfusion;
-import com.felayga.unpixeldungeon.items.scrolls.ScrollOfUpgrade;
+import com.felayga.unpixeldungeon.items.consumable.potions.Potion;
+import com.felayga.unpixeldungeon.items.consumable.scrolls.Scroll;
+import com.felayga.unpixeldungeon.items.consumable.scrolls.inventoryscroll.ScrollOfMagicalInfusion;
+import com.felayga.unpixeldungeon.items.consumable.scrolls.ScrollOfUpgrade;
 import com.felayga.unpixeldungeon.scenes.PixelScene;
 import com.felayga.unpixeldungeon.sprites.ItemSprite;
 import com.felayga.unpixeldungeon.sprites.ItemSpriteSheet;

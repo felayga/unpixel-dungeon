@@ -47,12 +47,8 @@ import java.util.List;
  * Created by HELLO on 5/22/2016.
  */
 public class Lichen extends Mob {
-
     public Lichen() {
-        super(0);
-
-        name = "lichen";
-        spriteClass = LichenSprite.class;
+        super(0, LichenSprite.class);
 
         movementSpeed(GameTime.TICK * 12 / 1);
         attackSpeed(GameTime.TICK);
@@ -88,7 +84,7 @@ public class Lichen extends Mob {
 
         int[] _touchedVictims = bundle.getIntArray(TOUCHEDVICTIMS);
 
-        for (int n=0;n<_touchedVictims.length;n++) {
+        for (int n = 0; n < _touchedVictims.length; n++) {
             touchedVictims.add(_touchedVictims[n]);
         }
     }
@@ -116,7 +112,7 @@ public class Lichen extends Mob {
             if (c != null) {
                 for (Buff buff : c.buffs()) {
                     if (buff instanceof Held) {
-                        Held held = (Held)buff;
+                        Held held = (Held) buff;
 
                         if (held.ownerRegistryIndex() == charRegistryIndex()) {
                             pendingRemoval.add(held);

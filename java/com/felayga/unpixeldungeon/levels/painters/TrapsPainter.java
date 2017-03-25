@@ -28,7 +28,7 @@ package com.felayga.unpixeldungeon.levels.painters;
 import com.felayga.unpixeldungeon.Dungeon;
 import com.felayga.unpixeldungeon.items.Generator;
 import com.felayga.unpixeldungeon.items.Item;
-import com.felayga.unpixeldungeon.items.potions.PotionOfLevitation;
+import com.felayga.unpixeldungeon.items.consumable.potions.PotionOfLevitation;
 import com.felayga.unpixeldungeon.levels.Level;
 import com.felayga.unpixeldungeon.levels.Room;
 import com.felayga.unpixeldungeon.levels.Terrain;

@@ -29,7 +29,7 @@ import com.felayga.unpixeldungeon.Dungeon;
 import com.felayga.unpixeldungeon.actors.Char;
 import com.felayga.unpixeldungeon.actors.hero.Hero;
 import com.felayga.unpixeldungeon.actors.mobs.Mob;
-import com.felayga.unpixeldungeon.items.weapon.melee.mob.SuicideAttack;
+import com.felayga.unpixeldungeon.items.equippableitem.weapon.melee.mob.SuicideAttack;
 import com.felayga.unpixeldungeon.levels.Level;
 import com.felayga.unpixeldungeon.mechanics.AttributeType;
 import com.felayga.unpixeldungeon.mechanics.GameTime;
@@ -40,75 +40,70 @@ import com.watabou.utils.Random;
 import java.util.HashSet;
 
 public class MirrorImage extends NPC {
+    public MirrorImage(int level) {
+        super(level, MirrorSprite.class);
 
-	public MirrorImage(int level)
-	{
-		super(level);
+        state = HUNTING;
 
-		name = "mirror image";
-		spriteClass = MirrorSprite.class;
-		
-		state = HUNTING;
-
-		belongings.collectEquip(new SuicideAttack(GameTime.TICK, 1, 4));
+        belongings.collectEquip(new SuicideAttack(GameTime.TICK, 1, 4));
 
         HP = HT = 1;
         MP = MT = 1;
     }
-	
-	private static final String TIER			= "tier";
 
-	
-	public void duplicate( Hero hero ) {
+    private static final String TIER = "tier";
+
+
+    public void duplicate(Hero hero) {
         increaseAttribute(AttributeType.STRCON, hero.STRCON() - STRCON());
         increaseAttribute(AttributeType.DEXCHA, hero.DEXCHA() - DEXCHA());
         increaseAttribute(AttributeType.INTWIS, hero.INTWIS() - INTWIS());
 
         HP = HT = 1;
         MP = MT = 1;
-	}
-	
-	protected Char chooseEnemy() {
-		if (enemy == null || !enemy.isAlive()) {
-			HashSet<Mob> enemies = new HashSet<>();
-			for (Mob mob:Dungeon.level.mobs) {
-				if (mob.hostile && Level.fieldOfView[mob.pos()]) {
-					enemies.add( mob );
-				}
-			}
-			
-			enemy = enemies.size() > 0 ? Random.element( enemies ) : null;
-		}
-		
-		return enemy;
-	}
-	
-	@Override
-	public String description() {
-		return
-			"This illusion bears a close resemblance to you, " +
-			"but it's paler and twitches a little.";
-	}
-	
-	@Override
-	public CharSprite sprite() {
-		CharSprite s = super.sprite();
-		//((MirrorSprite)s).updateArmor( tier );
-		return s;
-	}
+    }
 
-	@Override
-	public void interact() {
-		int curPos = pos();
-		
-		moveSprite( pos(), Dungeon.hero.pos() );
-		move( Dungeon.hero.pos() );
-		
-		Dungeon.hero.sprite.move( Dungeon.hero.pos(), curPos );
-		Dungeon.hero.move( curPos );
-		
-		Dungeon.hero.spend_new(Dungeon.hero.movementSpeed(), false);
-		Dungeon.hero.busy();
-	}
+    protected Char chooseEnemy() {
+        if (enemy == null || !enemy.isAlive()) {
+            HashSet<Mob> enemies = new HashSet<>();
+            for (Mob mob : Dungeon.level.mobs) {
+                if (mob.hostile && Level.fieldOfView[mob.pos()]) {
+                    enemies.add(mob);
+                }
+            }
+
+            enemy = enemies.size() > 0 ? Random.element(enemies) : null;
+        }
+
+        return enemy;
+    }
+
+    @Override
+    public String description() {
+        return
+                "This illusion bears a close resemblance to you, " +
+                        "but it's paler and twitches a little.";
+    }
+
+    @Override
+    public CharSprite sprite() {
+        CharSprite s = super.sprite();
+        //((MirrorSprite)s).updateArmor( tier );
+        return s;
+    }
+
+    @Override
+    public void interact() {
+        int curPos = pos();
+
+        moveSprite(pos(), Dungeon.hero.pos());
+        move(Dungeon.hero.pos());
+
+        Dungeon.hero.sprite.move(Dungeon.hero.pos(), curPos);
+        Dungeon.hero.move(curPos);
+
+        Dungeon.hero.spend_new(Dungeon.hero.movementSpeed(), false);
+        Dungeon.hero.busy();
+    }
 
 }

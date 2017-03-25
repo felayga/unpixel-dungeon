@@ -29,32 +29,31 @@ import com.felayga.unpixeldungeon.Dungeon;
 import com.felayga.unpixeldungeon.actors.mobs.Mob;
 import com.felayga.unpixeldungeon.items.Heap;
 import com.felayga.unpixeldungeon.levels.Level;
+import com.felayga.unpixeldungeon.sprites.mobs.MobSprite;
 import com.watabou.utils.Random;
 
 public abstract class NPC extends Mob {
+    public NPC(int level, Class<? extends MobSprite> mobSprite) {
+        super(level, mobSprite);
 
-	public NPC(int level)
-	{
-		super(level);
+        hostile = false;
+        state = PASSIVE;
+    }
 
-		hostile = false;
-		state = PASSIVE;
-	}
+    protected void throwItem() {
+        Heap heap = Dungeon.level.heaps.get(pos());
+        if (heap != null) {
+            int n;
+            do {
+                n = pos() + Level.NEIGHBOURS8[Random.Int(8)];
+            } while (!Level.passable[n] && !Level.avoid[n]);
+            Dungeon.level.drop(heap.pickUp(), n).sprite.drop(pos());
+        }
+    }
 
-	protected void throwItem() {
-		Heap heap = Dungeon.level.heaps.get( pos() );
-		if (heap != null) {
-			int n;
-			do {
-				n = pos() + Level.NEIGHBOURS8[Random.Int( 8 )];
-			} while (!Level.passable[n] && !Level.avoid[n]);
-			Dungeon.level.drop( heap.pickUp(), n ).sprite.drop( pos() );
-		}
-	}
+    @Override
+    public void beckon(int cell) {
+    }
 
-	@Override
-	public void beckon( int cell ) {
-	}
-
-	abstract public void interact();
+    abstract public void interact();
 }

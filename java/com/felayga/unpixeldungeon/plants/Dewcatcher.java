@@ -27,7 +27,7 @@
 package com.felayga.unpixeldungeon.plants;
 
 import com.felayga.unpixeldungeon.Dungeon;
-import com.felayga.unpixeldungeon.items.Dewdrop;
+import com.felayga.unpixeldungeon.items.unused.Dewdrop;
 import com.felayga.unpixeldungeon.levels.Level;
 import com.watabou.utils.Random;
 

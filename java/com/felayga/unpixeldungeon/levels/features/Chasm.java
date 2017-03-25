@@ -29,6 +29,7 @@ package com.felayga.unpixeldungeon.levels.features;
 
 import com.felayga.unpixeldungeon.Assets;
 import com.felayga.unpixeldungeon.Dungeon;
+import com.felayga.unpixeldungeon.ResultDescriptions;
 import com.felayga.unpixeldungeon.actors.buffs.Buff;
 import com.felayga.unpixeldungeon.actors.buffs.negative.Cripple;
 import com.felayga.unpixeldungeon.actors.hero.Hero;
@@ -39,7 +40,7 @@ import com.felayga.unpixeldungeon.levels.Room;
 import com.felayga.unpixeldungeon.mechanics.MagicType;
 import com.felayga.unpixeldungeon.scenes.GameScene;
 import com.felayga.unpixeldungeon.scenes.InterlevelScene;
-import com.felayga.unpixeldungeon.sprites.MobSprite;
+import com.felayga.unpixeldungeon.sprites.mobs.MobSprite;
 import com.felayga.unpixeldungeon.windows.WndOptions;
 import com.watabou.noosa.Camera;
 import com.watabou.noosa.Game;
@@ -99,7 +100,6 @@ public class Chasm {
 	}
 	
 	public static void heroLand() {
-		
 		Hero hero = Dungeon.hero;
 		
 		hero.sprite.burst(hero.sprite.blood(), 10);
@@ -107,7 +107,9 @@ public class Chasm {
 		
 		Buff.prolong(hero, null, Cripple.class, Cripple.DURATION);
 		hero.damage( Random.IntRange( 1, 8 ), MagicType.Mundane, null, null);
-		//todo: fix message from falling to death
+        if (!hero.isAlive()) {
+            Dungeon.fail(ResultDescriptions.FALL);
+        }
 		/*
 		new Hero.Doom() {
 			@Override

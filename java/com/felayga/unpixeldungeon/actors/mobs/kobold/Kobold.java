@@ -28,7 +28,7 @@ package com.felayga.unpixeldungeon.actors.mobs.kobold;
 
 import com.felayga.unpixeldungeon.actors.buffs.hero.Encumbrance;
 import com.felayga.unpixeldungeon.actors.mobs.Mob;
-import com.felayga.unpixeldungeon.items.weapon.melee.mob.MeleeMobAttack;
+import com.felayga.unpixeldungeon.items.equippableitem.weapon.melee.mob.MeleeMobAttack;
 import com.felayga.unpixeldungeon.mechanics.Characteristic;
 import com.felayga.unpixeldungeon.mechanics.CorpseEffect;
 import com.felayga.unpixeldungeon.mechanics.GameTime;
@@ -39,13 +39,8 @@ import com.felayga.unpixeldungeon.sprites.mobs.kobold.KoboldSprite;
  * Created by HELLO on 5/22/2016.
  */
 public class Kobold extends Mob {
-
-    public Kobold()
-    {
-        super(0);
-
-        name = "kobold";
-        spriteClass = KoboldSprite.class;
+    public Kobold() {
+        super(0, KoboldSprite.class);
 
         movementSpeed(GameTime.TICK * 2);
         attackSpeed(GameTime.TICK);

@@ -29,7 +29,7 @@ package com.felayga.unpixeldungeon.actors.mobs.goo;
 import com.felayga.unpixeldungeon.actors.Char;
 import com.felayga.unpixeldungeon.actors.buffs.hero.Encumbrance;
 import com.felayga.unpixeldungeon.actors.mobs.Mob;
-import com.felayga.unpixeldungeon.items.weapon.melee.mob.MeleeMobAttack;
+import com.felayga.unpixeldungeon.items.equippableitem.weapon.melee.mob.MeleeMobAttack;
 import com.felayga.unpixeldungeon.levels.Level;
 import com.felayga.unpixeldungeon.mechanics.Characteristic;
 import com.felayga.unpixeldungeon.mechanics.CorpseEffect;
@@ -43,10 +43,7 @@ import com.watabou.utils.Random;
  */
 public class AcidBlob extends Mob {
     public AcidBlob() {
-        super(1);
-
-        name = "acid blob";
-        spriteClass = AcidBlobSprite.class;
+        super(1, AcidBlobSprite.class);
 
         movementSpeed(GameTime.TICK * 4);
         attackSpeed(GameTime.TICK);

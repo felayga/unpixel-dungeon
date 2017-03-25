@@ -28,7 +28,7 @@ package com.felayga.unpixeldungeon.actors.mobs.rat;
 
 import com.felayga.unpixeldungeon.actors.buffs.hero.Encumbrance;
 import com.felayga.unpixeldungeon.actors.mobs.Mob;
-import com.felayga.unpixeldungeon.items.weapon.melee.mob.MeleeMobAttack;
+import com.felayga.unpixeldungeon.items.equippableitem.weapon.melee.mob.MeleeMobAttack;
 import com.felayga.unpixeldungeon.mechanics.Characteristic;
 import com.felayga.unpixeldungeon.mechanics.CorpseEffect;
 import com.felayga.unpixeldungeon.mechanics.GameTime;
@@ -39,12 +39,8 @@ import com.felayga.unpixeldungeon.sprites.mobs.rat.GiantRatSprite;
  * Created by HELLO on 6/3/2016.
  */
 public class GiantRat extends Mob {
-    public GiantRat()
-    {
-        super(1);
-
-        name = "giant rat";
-        spriteClass = GiantRatSprite.class;
+    public GiantRat() {
+        super(1, GiantRatSprite.class);
 
         movementSpeed(GameTime.TICK * 12 / 10);
         attackSpeed(GameTime.TICK);

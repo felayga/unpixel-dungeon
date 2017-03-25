@@ -28,7 +28,7 @@ package com.felayga.unpixeldungeon.actors.mobs.unused;
 import com.felayga.unpixeldungeon.Dungeon;
 import com.felayga.unpixeldungeon.actors.blobs.ToxicGas;
 import com.felayga.unpixeldungeon.items.Generator;
-import com.felayga.unpixeldungeon.items.weapon.melee.mob.CrippleChance;
+import com.felayga.unpixeldungeon.items.equippableitem.weapon.melee.mob.CrippleChance;
 import com.felayga.unpixeldungeon.levels.Level;
 import com.felayga.unpixeldungeon.levels.Terrain;
 import com.felayga.unpixeldungeon.mechanics.GameTime;

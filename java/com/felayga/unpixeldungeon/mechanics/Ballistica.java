@@ -28,7 +28,7 @@ package com.felayga.unpixeldungeon.mechanics;
 import com.felayga.unpixeldungeon.actors.Actor;
 import com.felayga.unpixeldungeon.actors.Char;
 import com.felayga.unpixeldungeon.actors.buffs.hero.Encumbrance;
-import com.felayga.unpixeldungeon.items.EquippableItem;
+import com.felayga.unpixeldungeon.items.equippableitem.EquippableItem;
 import com.felayga.unpixeldungeon.items.Item;
 import com.felayga.unpixeldungeon.levels.Level;
 import com.watabou.utils.Random;
@@ -180,7 +180,7 @@ public class Ballistica {
         boolean firstRun = true;
 
         int err = dA / 2;
-        while (Level.insideMap(cell)) {
+        while (Level.insideMap(cell) || firstRun) {
             boolean bounced = false;
 
             //if we're in a wall, collide with the previous cell along the path.

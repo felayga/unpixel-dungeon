@@ -27,7 +27,7 @@ package com.felayga.unpixeldungeon.actors.mobs.bug;
 
 import com.felayga.unpixeldungeon.actors.buffs.hero.Encumbrance;
 import com.felayga.unpixeldungeon.actors.mobs.Mob;
-import com.felayga.unpixeldungeon.items.weapon.melee.mob.MeleeMobAttack;
+import com.felayga.unpixeldungeon.items.equippableitem.weapon.melee.mob.MeleeMobAttack;
 import com.felayga.unpixeldungeon.mechanics.Characteristic;
 import com.felayga.unpixeldungeon.mechanics.CorpseEffect;
 import com.felayga.unpixeldungeon.mechanics.GameTime;
@@ -35,13 +35,8 @@ import com.felayga.unpixeldungeon.mechanics.MagicType;
 import com.felayga.unpixeldungeon.sprites.mobs.bug.GridBugSprite;
 
 public class GridBug extends Mob {
-
-    public GridBug()
-    {
-        super(0);
-
-        name = "grid bug";
-        spriteClass = GridBugSprite.class;
+    public GridBug() {
+        super(0, GridBugSprite.class);
 
         movementSpeed(GameTime.TICK);
         attackSpeed(GameTime.TICK);

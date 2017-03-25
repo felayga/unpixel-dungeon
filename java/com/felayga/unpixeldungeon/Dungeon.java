@@ -35,20 +35,24 @@ import com.felayga.unpixeldungeon.actors.mobs.npcs.Shopkeeper;
 import com.felayga.unpixeldungeon.actors.mobs.npcs.Wandmaker;
 import com.felayga.unpixeldungeon.items.Ankh;
 import com.felayga.unpixeldungeon.items.Generator;
+import com.felayga.unpixeldungeon.items.Heap;
 import com.felayga.unpixeldungeon.items.Item;
-import com.felayga.unpixeldungeon.items.books.Book;
+import com.felayga.unpixeldungeon.items.equippableitem.amulet.Amulet;
+import com.felayga.unpixeldungeon.items.consumable.books.Book;
 import com.felayga.unpixeldungeon.items.tools.Torch;
-import com.felayga.unpixeldungeon.items.armor.cloak.randomized.RandomizedCloak;
-import com.felayga.unpixeldungeon.items.food.CannedFood;
-import com.felayga.unpixeldungeon.items.potions.Potion;
-import com.felayga.unpixeldungeon.items.rings.Ring;
-import com.felayga.unpixeldungeon.items.scrolls.Scroll;
-import com.felayga.unpixeldungeon.items.wands.Wand;
+import com.felayga.unpixeldungeon.items.equippableitem.armor.cloak.randomized.RandomizedCloak;
+import com.felayga.unpixeldungeon.items.consumable.food.CannedFood;
+import com.felayga.unpixeldungeon.items.consumable.potions.Potion;
+import com.felayga.unpixeldungeon.items.equippableitem.ring.Ring;
+import com.felayga.unpixeldungeon.items.consumable.scrolls.Scroll;
+import com.felayga.unpixeldungeon.items.consumable.wands.Wand;
 import com.felayga.unpixeldungeon.levels.DeadEndLevel;
+import com.felayga.unpixeldungeon.levels.ElementalEarthLevel;
 import com.felayga.unpixeldungeon.levels.Level;
 import com.felayga.unpixeldungeon.levels.MineTownLevel;
 import com.felayga.unpixeldungeon.levels.MinesLevel;
 import com.felayga.unpixeldungeon.levels.Room;
+import com.felayga.unpixeldungeon.levels.SewerBossLevel;
 import com.felayga.unpixeldungeon.levels.SewerLevel;
 import com.felayga.unpixeldungeon.levels.Terrain;
 import com.felayga.unpixeldungeon.levels.branches.DungeonBranch;
@@ -74,6 +78,7 @@ import java.io.OutputStream;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashSet;
+import java.util.Iterator;
 
 //import com.felayga.unpixeldungeon.actors.mobs.npcs.Ghost;
 //import com.felayga.unpixeldungeon.actors.mobs.npcs.Imp;
@@ -135,6 +140,7 @@ public class Dungeon {
         Scroll.initLabels();
         Potion.initColors();
         Ring.initGems();
+        Amulet.initNames();
         Wand.initLabels();
         RandomizedCloak.initNames();
         Book.initLabels();
@@ -204,11 +210,26 @@ public class Dungeon {
             int offset = __depth - DungeonBranch.Mines.levelMin;
 
             switch(offset) {
+                case 0:
+                    level = new SewerBossLevel();
+                    break;
                 case 2:
                     level = new MineTownLevel();
                     break;
                 default:
                     level = new MinesLevel();
+                    break;
+            }
+        } else if (__depth >= DungeonBranch.Elemental.levelMin && __depth <= DungeonBranch.Elemental.levelMax) {
+            int offset = __depth - DungeonBranch.Elemental.levelMin;
+
+            switch(offset) {
+                case 4:
+                    level = new ElementalEarthLevel();
+                    break;
+                default:
+                    level = new DeadEndLevel();
+                    break;
             }
         } else {
             level = new DeadEndLevel();
@@ -351,9 +372,34 @@ public class Dungeon {
         int depth = Dungeon.__depth + 1;
         ArrayList<Item> dropped = Dungeon.droppedItems.get(depth);
         if (dropped == null) {
-            Dungeon.droppedItems.put(depth, dropped = new ArrayList<Item>());
+            dropped = new ArrayList<>();
+            Dungeon.droppedItems.put(depth, dropped);
         }
         dropped.add(item);
+    }
+
+    public static void dropToChasm(Heap heap) {
+        int depth = Dungeon.__depth + 1;
+        ArrayList<Item> dropped = Dungeon.droppedItems.get(depth);
+        if (dropped == null) {
+            dropped = new ArrayList<>();
+            Dungeon.droppedItems.put(depth, dropped);
+        }
+
+        Iterator<Item> iterator = heap.iterator(false);
+        while (iterator.hasNext()) {
+            Item item = iterator.next();
+            dropped.add(item);
+        }
+        iterator = heap.iteratorBuried(false);
+        while (iterator.hasNext()) {
+            Item item = iterator.next();
+            dropped.add(item);
+        }
+
+        Dungeon.level.heaps.remove(heap.pos());
+        heap.sprite.kill();
+        GameScene.discard(heap);
     }
 
     private static final String RG_GAME_FILE = "game.dat";
@@ -440,6 +486,7 @@ public class Dungeon {
             Book.save(bundle);
             Potion.save(bundle);
             Ring.save(bundle);
+            Amulet.save(bundle);
             Wand.save(bundle);
             RandomizedCloak.save(bundle);
             CannedFood.save(bundle);
@@ -530,6 +577,7 @@ public class Dungeon {
         Book.restore(bundle);
         Potion.restore(bundle);
         Ring.restore(bundle);
+        Amulet.restore(bundle);
         Wand.restore(bundle);
         RandomizedCloak.restore(bundle);
         CannedFood.restore(bundle);
@@ -614,7 +662,7 @@ public class Dungeon {
     }
 
     public static void deleteGame(int index, boolean dead, boolean deleteLevels) {
-        GamesInProgress.delete(index);
+        GamesInProgress.delete(index, dead);
 
         try {
             saveGame(gameFile(index));
@@ -691,7 +739,7 @@ public class Dungeon {
         for (int n = 0; n < chars.size(); n++) {
             Char c = chars.valueAt(n);
 
-            if (visible[c.pos()]) {
+            if (c.fxSpriteVisible()) {
                 passable[c.pos()] = false;
             }
         }

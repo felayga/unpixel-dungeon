@@ -28,7 +28,7 @@ package com.felayga.unpixeldungeon.actors.mobs.bat;
 
 import com.felayga.unpixeldungeon.actors.buffs.hero.Encumbrance;
 import com.felayga.unpixeldungeon.actors.mobs.Mob;
-import com.felayga.unpixeldungeon.items.weapon.melee.mob.MeleeMobAttack;
+import com.felayga.unpixeldungeon.items.equippableitem.weapon.melee.mob.MeleeMobAttack;
 import com.felayga.unpixeldungeon.mechanics.Characteristic;
 import com.felayga.unpixeldungeon.mechanics.CorpseEffect;
 import com.felayga.unpixeldungeon.mechanics.GameTime;
@@ -39,13 +39,8 @@ import com.felayga.unpixeldungeon.sprites.mobs.bat.BatSprite;
  * Created by HELLO on 6/3/2016.
  */
 public class Bat extends Mob {
-
-    public Bat()
-    {
-        super(0);
-
-        name = "bat";
-        spriteClass = BatSprite.class;
+    public Bat() {
+        super(0, BatSprite.class);
 
         movementSpeed(GameTime.TICK * 6 / 11);
         attackSpeed(GameTime.TICK);

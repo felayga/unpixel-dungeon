@@ -28,7 +28,7 @@ package com.felayga.unpixeldungeon.actors.mobs.unused;
 import java.util.HashSet;
 
 import com.felayga.unpixeldungeon.items.KindOfWeapon;
-import com.felayga.unpixeldungeon.items.weapon.melee.mob.MeleeMobAttack;
+import com.felayga.unpixeldungeon.items.equippableitem.weapon.melee.mob.MeleeMobAttack;
 import com.felayga.unpixeldungeon.mechanics.GameTime;
 import com.watabou.noosa.Camera;
 import com.felayga.unpixeldungeon.Dungeon;

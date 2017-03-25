@@ -32,25 +32,21 @@ import com.felayga.unpixeldungeon.actors.Char;
 import com.felayga.unpixeldungeon.actors.buffs.Buff;
 import com.felayga.unpixeldungeon.effects.CellEmitter;
 import com.felayga.unpixeldungeon.effects.Speck;
+import com.felayga.unpixeldungeon.items.Heap;
 import com.felayga.unpixeldungeon.items.Item;
-import com.felayga.unpixeldungeon.items.weapon.ammunition.simple.Rock;
+import com.felayga.unpixeldungeon.items.equippableitem.weapon.ammunition.simple.Rock;
 import com.felayga.unpixeldungeon.levels.Level;
 import com.felayga.unpixeldungeon.mechanics.Characteristic;
-import com.felayga.unpixeldungeon.mechanics.Constant;
 import com.felayga.unpixeldungeon.mechanics.MagicType;
-import com.felayga.unpixeldungeon.scenes.GameScene;
 import com.felayga.unpixeldungeon.sprites.npcs.BoulderSprite;
 import com.felayga.unpixeldungeon.utils.GLog;
 import com.watabou.noosa.audio.Sample;
-import com.watabou.utils.Bundle;
 import com.watabou.utils.Random;
 
 public class Boulder extends NPC {
     public Boulder() {
-        super(0);
+        super(0, BoulderSprite.class);
 
-        name = "boulder";
-        spriteClass = BoulderSprite.class;
         HP = HT = 101;
         characteristics = Characteristic.value(Characteristic.Brainless, Characteristic.NonBreather, Characteristic.NoExperience, Characteristic.PositionBlocking, Characteristic.AlwaysVisible);
 
@@ -99,6 +95,11 @@ public class Boulder extends NPC {
                     GLog.p("The boulder settles into the chasm, neatly plugging the hole.");
                 } else {
                     GLog.p("The boulder settles into the pit, neatly plugging the hole.");
+
+                    Heap test = Dungeon.level.heaps.get(newPos);
+                    if (test != null) {
+                        test.bury();
+                    }
                 }
             } else if (Level.passable[newPos]) {
                 move(newPos);

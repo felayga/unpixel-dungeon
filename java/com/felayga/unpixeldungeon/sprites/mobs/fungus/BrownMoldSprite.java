@@ -26,7 +26,6 @@
 package com.felayga.unpixeldungeon.sprites.mobs.fungus;
 
 public class BrownMoldSprite extends FungusSprite {
-
     public BrownMoldSprite() {
         super(1);
     }

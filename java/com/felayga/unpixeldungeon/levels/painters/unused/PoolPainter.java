@@ -29,7 +29,7 @@ import com.felayga.unpixeldungeon.actors.mobs.Piranha;
 import com.felayga.unpixeldungeon.items.Generator;
 import com.felayga.unpixeldungeon.items.Heap;
 import com.felayga.unpixeldungeon.items.Item;
-import com.felayga.unpixeldungeon.items.potions.PotionOfInvisibility;
+import com.felayga.unpixeldungeon.items.consumable.potions.PotionOfInvisibility;
 import com.felayga.unpixeldungeon.levels.Level;
 import com.felayga.unpixeldungeon.levels.Room;
 import com.felayga.unpixeldungeon.levels.Terrain;

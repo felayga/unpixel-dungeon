@@ -26,8 +26,8 @@
 package com.felayga.unpixeldungeon.windows;
 
 import com.felayga.unpixeldungeon.items.Item;
-import com.felayga.unpixeldungeon.items.potions.Potion;
-import com.felayga.unpixeldungeon.items.scrolls.Scroll;
+import com.felayga.unpixeldungeon.items.consumable.potions.Potion;
+import com.felayga.unpixeldungeon.items.consumable.scrolls.Scroll;
 import com.felayga.unpixeldungeon.scenes.GameScene;
 import com.felayga.unpixeldungeon.scenes.PixelScene;
 import com.felayga.unpixeldungeon.sprites.ItemSprite;

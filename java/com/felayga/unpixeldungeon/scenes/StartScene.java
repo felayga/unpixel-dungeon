@@ -398,17 +398,20 @@ public class StartScene extends PixelScene {
 
                 text += "Level " + info.level;
 
-                if (info.dead) {
-                    text += " (DEAD)";
-                }
-
-                if (index == 0) {
-                    GLog.d("asdf");
-                }
-
                 text += "\n";
 
                 text += (info.gender == 0 ? "Male" : "Female") + " " + HeroClass.fromInt(info.heroClass).name.toLowerCase();
+                text += "\n";
+
+                if (info.dead) {
+                    if (info.ascended) {
+                        text += "ASCENDED";
+                    } else {
+                        text += "DEAD";
+                    }
+                }
+
+                text += "\n";
                 text += "\n";
 
                 text += "Depth " + DungeonBranch.getDepthText(info.depth);

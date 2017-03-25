@@ -128,7 +128,9 @@ public class Encumbrance extends Buff implements Hero.Doom, ISpeedModifierBuff {
     }
 
     public void updateAppearance(Hero hero) {
-        if ((hero.belongings.weight != level || hero.STRCON() != strcon) && weightChanged(hero.belongings.weight, hero.STRCON())) {
+        int weight = hero.belongings.weight();
+
+        if ((weight != level || hero.STRCON() != strcon) && weightChanged(weight, hero.STRCON())) {
             current = getEncumbranceLevel();
 
             Hunger hunger = hero.buff(Hunger.class);
@@ -179,6 +181,9 @@ public class Encumbrance extends Buff implements Hero.Doom, ISpeedModifierBuff {
 
             if (hpDecreaseTick >= 60) {
                 target.damage(1, MagicType.Mundane, null, null);
+                if (!hero.isAlive()) {
+                    Dungeon.fail(ResultDescriptions.EXHAUSTION);
+                }
                 hpDecreaseTick -= 30;
             }
 
@@ -399,10 +404,5 @@ public class Encumbrance extends Buff implements Hero.Doom, ISpeedModifierBuff {
 
     @Override
     public void onDeath() {
-
-        Badges.validateDeathFromHunger();
-
-        Dungeon.fail(ResultDescriptions.HUNGER);
-        //GLog.n( TXT_DECREASETO_DEAD );
     }
 }

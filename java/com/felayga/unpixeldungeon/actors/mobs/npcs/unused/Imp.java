@@ -33,7 +33,7 @@ import com.felayga.unpixeldungeon.actors.mobs.Mob;
 import com.felayga.unpixeldungeon.actors.mobs.Monk;
 import com.felayga.unpixeldungeon.items.Generator;
 import com.felayga.unpixeldungeon.items.quest.DwarfToken;
-import com.felayga.unpixeldungeon.items.rings.Ring;
+import com.felayga.unpixeldungeon.items.equippableitem.rings.Ring;
 import com.felayga.unpixeldungeon.levels.CityLevel;
 import com.felayga.unpixeldungeon.mechanics.BUCStatus;
 import com.felayga.unpixeldungeon.scenes.GameScene;

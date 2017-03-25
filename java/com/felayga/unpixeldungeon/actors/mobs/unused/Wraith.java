@@ -27,14 +27,14 @@ package com.felayga.unpixeldungeon.actors.mobs.unused;
 /*
 import java.util.HashSet;
 
-import com.felayga.unpixeldungeon.items.weapon.melee.mob.MeleeMobAttack;
+import com.felayga.unpixeldungeon.items.equippableitem.weapon.melee.mob.MeleeMobAttack;
 import com.felayga.unpixeldungeon.mechanics.GameTime;
 import com.watabou.noosa.tweeners.AlphaTweener;
 import com.felayga.unpixeldungeon.Dungeon;
 import com.felayga.unpixeldungeon.actors.Actor;
 import com.felayga.unpixeldungeon.actors.buffs.negative.Terror;
 import com.felayga.unpixeldungeon.effects.particles.ShadowParticle;
-import com.felayga.unpixeldungeon.items.weapon.enchantments.Death;
+import com.felayga.unpixeldungeon.items.equippableitem.weapon.enchantments.Death;
 import com.felayga.unpixeldungeon.levels.Level;
 import com.felayga.unpixeldungeon.scenes.GameScene;
 import com.felayga.unpixeldungeon.sprites.mobs.wraith.WraithSprite;

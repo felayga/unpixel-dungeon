@@ -31,7 +31,7 @@ import com.felayga.unpixeldungeon.actors.buffs.hero.Encumbrance;
 import com.felayga.unpixeldungeon.actors.mobs.Bestiary;
 import com.felayga.unpixeldungeon.actors.mobs.Mob;
 import com.felayga.unpixeldungeon.items.Item;
-import com.felayga.unpixeldungeon.items.food.Corpse;
+import com.felayga.unpixeldungeon.items.consumable.food.Corpse;
 import com.felayga.unpixeldungeon.mechanics.Characteristic;
 import com.felayga.unpixeldungeon.mechanics.Material;
 import com.felayga.unpixeldungeon.mechanics.Roll;

@@ -34,7 +34,7 @@ import com.felayga.unpixeldungeon.effects.Lightning;
 import com.felayga.unpixeldungeon.effects.particles.SparkParticle;
 import com.felayga.unpixeldungeon.items.Heap;
 import com.felayga.unpixeldungeon.items.Item;
-import com.felayga.unpixeldungeon.items.wands.Wand;
+import com.felayga.unpixeldungeon.items.consumable.wands.Wand;
 import com.felayga.unpixeldungeon.levels.Level;
 import com.felayga.unpixeldungeon.mechanics.MagicType;
 import com.felayga.unpixeldungeon.sprites.TrapSprite;

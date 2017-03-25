@@ -25,7 +25,7 @@
  */
 package com.felayga.unpixeldungeon.levels.painters;
 
-import com.felayga.unpixeldungeon.items.Bomb;
+import com.felayga.unpixeldungeon.items.consumable.Bomb;
 import com.felayga.unpixeldungeon.items.Generator;
 import com.felayga.unpixeldungeon.items.Item;
 import com.felayga.unpixeldungeon.levels.Level;

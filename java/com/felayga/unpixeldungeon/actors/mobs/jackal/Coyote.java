@@ -28,7 +28,7 @@ package com.felayga.unpixeldungeon.actors.mobs.jackal;
 
 import com.felayga.unpixeldungeon.actors.buffs.hero.Encumbrance;
 import com.felayga.unpixeldungeon.actors.mobs.Mob;
-import com.felayga.unpixeldungeon.items.weapon.melee.mob.MeleeMobAttack;
+import com.felayga.unpixeldungeon.items.equippableitem.weapon.melee.mob.MeleeMobAttack;
 import com.felayga.unpixeldungeon.mechanics.Characteristic;
 import com.felayga.unpixeldungeon.mechanics.CorpseEffect;
 import com.felayga.unpixeldungeon.mechanics.GameTime;
@@ -39,12 +39,8 @@ import com.felayga.unpixeldungeon.sprites.mobs.jackal.CoyoteSprite;
  * Created by HELLO on 6/3/2016.
  */
 public class Coyote extends Mob {
-    public Coyote()
-    {
-        super(1);
-
-        name = "coyote";
-        spriteClass = CoyoteSprite.class;
+    public Coyote() {
+        super(1, CoyoteSprite.class);
 
         movementSpeed(GameTime.TICK);
         attackSpeed(GameTime.TICK);

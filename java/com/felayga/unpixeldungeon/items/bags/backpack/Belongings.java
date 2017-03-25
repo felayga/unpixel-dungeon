@@ -30,19 +30,18 @@ import com.felayga.unpixeldungeon.Assets;
 import com.felayga.unpixeldungeon.Badges;
 import com.felayga.unpixeldungeon.Dungeon;
 import com.felayga.unpixeldungeon.actors.Char;
-import com.felayga.unpixeldungeon.actors.hero.Hero;
 import com.felayga.unpixeldungeon.effects.particles.ShadowParticle;
-import com.felayga.unpixeldungeon.items.EquippableItem;
+import com.felayga.unpixeldungeon.items.equippableitem.EquippableItem;
 import com.felayga.unpixeldungeon.items.Gold;
 import com.felayga.unpixeldungeon.items.Item;
-import com.felayga.unpixeldungeon.items.armor.Armor;
+import com.felayga.unpixeldungeon.items.equippableitem.armor.Armor;
 import com.felayga.unpixeldungeon.items.bags.Bag;
 import com.felayga.unpixeldungeon.items.bags.IBag;
 import com.felayga.unpixeldungeon.items.keys.OldKey;
-import com.felayga.unpixeldungeon.items.potions.Potion;
+import com.felayga.unpixeldungeon.items.consumable.potions.Potion;
 import com.felayga.unpixeldungeon.items.tools.ITool;
-import com.felayga.unpixeldungeon.items.wands.Wand;
-import com.felayga.unpixeldungeon.items.weapon.missiles.martial.Boomerang;
+import com.felayga.unpixeldungeon.items.consumable.wands.Wand;
+import com.felayga.unpixeldungeon.items.equippableitem.weapon.missiles.martial.Boomerang;
 import com.felayga.unpixeldungeon.levels.Level;
 import com.felayga.unpixeldungeon.mechanics.BUCStatus;
 import com.felayga.unpixeldungeon.mechanics.Constant;
@@ -488,12 +487,12 @@ public class Belongings implements Iterable<Item>, IDecayable, IBag {
 
     public boolean collectEquip(EquippableItem item, EquippableItem.Slot bestChoice) {
         if (equip(item, bestChoice)) {
-            GLog.d("collectequip: equip (true)");
+            //GLog.d("collectequip: equip (true)");
             return true;
         }
 
         boolean retval = collect(item);
-        GLog.d("collectequip: equip (" + retval + ")");
+        //GLog.d("collectequip: equip (" + retval + ")");
         return retval;
     }
 
@@ -507,10 +506,10 @@ public class Belongings implements Iterable<Item>, IDecayable, IBag {
         int slot;
         if (owner == Dungeon.hero) {
             slot = Dungeon.quickslot.getSlot(item);
-            GLog.d("equip: quickslot="+slot);
+            //GLog.d("equip: quickslot="+slot);
         } else {
             slot = -1;
-            GLog.d("equip: quickslot=none");
+            //GLog.d("equip: quickslot=none");
         }
 
         EquippableItem.Slot[] slots = item.getSlots();
@@ -518,19 +517,19 @@ public class Belongings implements Iterable<Item>, IDecayable, IBag {
         boolean good = false;
         if (slots.length == 1 && tryReplaceSimple(slots[0], item)) {
             good = true;
-            GLog.d("tryReplaceSimple worked");
+            //GLog.d("tryReplaceSimple worked");
         } else if (!item.twoHanded && tryReplaceOneHanded(slots, item, slot, bestChoice)) {
             good = true;
-            GLog.d("tryReplaceOneHanded worked");
+            //GLog.d("tryReplaceOneHanded worked");
         } else if (item.twoHanded && tryReplaceTwoHanded(slots, item, slot)) {
             good = true;
-            GLog.d("tryReplaceTwoHanded worked");
+            //GLog.d("tryReplaceTwoHanded worked");
         } else {
-            GLog.d("equip failure");
+            //GLog.d("equip failure");
         }
 
         if (good) {
-            GLog.d("equip " + item.getDisplayName());
+            //GLog.d("equip " + item.getDisplayName());
 
             remove(item, false, true);
 
@@ -696,7 +695,10 @@ public class Belongings implements Iterable<Item>, IDecayable, IBag {
         return items.get(EquippableItem.Slot.Ring2);
     }
 
-    public int weight = 0;
+    private int weight = 0;
+    public int weight() {
+        return weight;
+    }
 
     public Belongings(Char owner) {
         this.owner = owner;

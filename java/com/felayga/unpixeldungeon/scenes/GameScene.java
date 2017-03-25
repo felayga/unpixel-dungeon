@@ -34,6 +34,7 @@ import com.felayga.unpixeldungeon.Statistics;
 import com.felayga.unpixeldungeon.WarningSpriteHandler;
 import com.felayga.unpixeldungeon.actors.Actor;
 import com.felayga.unpixeldungeon.actors.blobs.Blob;
+import com.felayga.unpixeldungeon.actors.buffs.negative.Hallucination;
 import com.felayga.unpixeldungeon.actors.mobs.Mob;
 import com.felayga.unpixeldungeon.effects.BannerSprites;
 import com.felayga.unpixeldungeon.effects.BlobEmitter;
@@ -44,8 +45,8 @@ import com.felayga.unpixeldungeon.effects.Ripple;
 import com.felayga.unpixeldungeon.effects.SpellSprite;
 import com.felayga.unpixeldungeon.items.Heap;
 import com.felayga.unpixeldungeon.items.Item;
-import com.felayga.unpixeldungeon.items.potions.Potion;
-import com.felayga.unpixeldungeon.items.scrolls.positionscroll.ScrollOfTeleportation;
+import com.felayga.unpixeldungeon.items.consumable.potions.Potion;
+import com.felayga.unpixeldungeon.items.consumable.scrolls.positionscroll.ScrollOfTeleportation;
 import com.felayga.unpixeldungeon.levels.Level;
 import com.felayga.unpixeldungeon.levels.RegularLevel;
 import com.felayga.unpixeldungeon.levels.branches.DungeonBranch;
@@ -58,6 +59,7 @@ import com.felayga.unpixeldungeon.sprites.ItemSprite;
 import com.felayga.unpixeldungeon.sprites.PlantSprite;
 import com.felayga.unpixeldungeon.sprites.TrapSprite;
 import com.felayga.unpixeldungeon.sprites.hero.HeroSprite;
+import com.felayga.unpixeldungeon.sprites.mobs.MobSprite;
 import com.felayga.unpixeldungeon.ui.Banner;
 import com.felayga.unpixeldungeon.ui.BusyIndicator;
 import com.felayga.unpixeldungeon.ui.CustomTileVisual;
@@ -94,6 +96,9 @@ import com.watabou.noosa.Visual;
 import com.watabou.noosa.audio.Music;
 import com.watabou.noosa.audio.Sample;
 import com.watabou.noosa.particles.Emitter;
+import com.watabou.noosa.tweeners.AlphaTweener;
+import com.watabou.noosa.tweeners.Tweener;
+import com.watabou.utils.Callback;
 import com.watabou.utils.GameMath;
 import com.watabou.utils.Random;
 
@@ -224,6 +229,9 @@ public class GameScene extends PixelScene {
         mobs = new Group(-1);
         add(mobs);
 
+        //placement to prevent null object reference
+        hallucinationOverlay = new HallucinationOverlay(Level.WIDTH, Level.HEIGHT);
+
         for (Mob mob : Dungeon.level.mobs) {
             addMobSprite(mob);
             if (Statistics.amuletObtained) {
@@ -242,7 +250,6 @@ public class GameScene extends PixelScene {
             addBlobSprite(blob);
         }
 
-        hallucinationOverlay = new HallucinationOverlay(Level.WIDTH, Level.HEIGHT);
         add(hallucinationOverlay);
 
         fog = new FogOfWar(Level.WIDTH, Level.HEIGHT);
@@ -304,7 +311,7 @@ public class GameScene extends PixelScene {
 
         layoutTags();
 
-        if (Statistics.floorsVisited[Dungeon.depth()]) {
+        if (Statistics.floorsVisited[Dungeon.depth() - DungeonBranch.MINLEVEL]) {
             GLog.i(TXT_WELCOME_BACK, DungeonBranch.getDepthText(Dungeon.depth()));
         } else {
             GLog.i(TXT_WELCOME, DungeonBranch.getDepthText(Dungeon.depth()));
@@ -314,7 +321,7 @@ public class GameScene extends PixelScene {
 
         Dungeon.hero.updateEncumbrance();
 
-        Statistics.floorsVisited[Dungeon.depth()] = true;
+        Statistics.floorsVisited[Dungeon.depth() - DungeonBranch.MINLEVEL] = true;
 
         switch (Dungeon.level.feeling) {
             case CHASM:
@@ -577,10 +584,16 @@ public class GameScene extends PixelScene {
     }
 
     private void addMobSprite(Mob mob) {
-        CharSprite sprite = mob.sprite();
-        sprite.visible = mob.fxSpriteVisible();
-        mobs.add(sprite);
-        sprite.link(mob);
+        if (hallucinationOverlay.isHallucinating()) {
+            //GLog.d("already hallucinating, add new mobsprite");
+            mob.sprite = mob.sprite();
+            polymorph(mob, MobSprite.Hallucination.getRandom());
+        } else {
+            CharSprite sprite = mob.sprite();
+            sprite.visible = mob.fxSpriteVisible();
+            mobs.add(sprite);
+            sprite.link(mob);
+        }
     }
 
     private void prompt(String text) {
@@ -656,6 +669,75 @@ public class GameScene extends PixelScene {
 
     public static void add(EmoIcon icon) {
         scene.emoicons.add(icon);
+    }
+
+    public void polymorph(Mob mob, MobSprite.Hallucination hallucination) {
+        final CharSprite oldSprite = mob.sprite;
+
+        CharSprite newSprite;
+
+        Hallucination.Tweener tweener = new Hallucination.Tweener(oldSprite, 0.0f);
+
+        if (hallucination != MobSprite.Hallucination.None) {
+            newSprite = hallucination.getSprite();
+            if (mob.originalSprite != null) {
+                tweener.listener = new Tweener.Listener() {
+                    @Override
+                    public void onComplete(Tweener tweener) {
+                        mobs.remove(oldSprite);
+                        oldSprite.killAndErase();
+                    }
+                };
+            } else {
+                mob.originalSprite = oldSprite;
+                mob.originalName = mob.name;
+                //GLog.d("store originalsprite");
+
+                tweener.listener = new Tweener.Listener() {
+                    @Override
+                    public void onComplete(Tweener tweener) {
+                        mobs.remove(oldSprite);
+                    }
+                };
+            }
+
+            mob.name = hallucination.name;
+        } else {
+            if (mob.originalSprite == null) {
+                //GLog.d("originalsprite null, who cares");
+                return;
+            }
+
+            newSprite = mob.originalSprite;
+            mob.name = mob.originalName;
+            //GLog.d("frestore originalsprite="+newSprite.getClass().getName()+" from hallucinated="+oldSprite.getClass().getName());
+            //GLog.d("relative position");
+            //GLog.d(Dungeon.hero.pos(), mob.pos());
+
+            mob.originalSprite = null;
+            mob.originalName = null;
+        }
+
+        Tweener oldTweener = mobs.remove(Hallucination.Tweener.class, oldSprite);
+        float targetAlpha;
+        if (oldTweener != null) {
+            targetAlpha = ((Hallucination.Tweener)oldTweener).targetAlpha;
+        } else {
+            targetAlpha = oldSprite.alpha();
+        }
+
+        newSprite.alpha(0.0f);
+        Hallucination.Tweener newSpriteTweener = new Hallucination.Tweener(newSprite, targetAlpha);
+        newSprite.update(oldSprite);
+        newSprite.visible = mob.fxSpriteVisible();
+
+        mobs.add(newSprite);
+        newSprite.link(mob);
+
+        mobs.remove(Hallucination.Tweener.class, tweener.target);
+        mobs.add(tweener);
+        mobs.remove(Hallucination.Tweener.class, newSpriteTweener.target);
+        mobs.add(newSpriteTweener);
     }
 
     public static void effect(Visual effect) {
@@ -836,7 +918,7 @@ public class GameScene extends PixelScene {
         }
 
         Heap heap = Dungeon.level.heaps.get(cell);
-        if (heap != null && heap.seen) {
+        if (heap != null && heap.seen && heap.size() > 0) {
             if (heap.type == Heap.Type.FOR_SALE && heap.size() == 1 && heap.peek().price() > 0) {
                 GameScene.show(new WndTradeItem(heap, false));
             } else {
@@ -861,11 +943,19 @@ public class GameScene extends PixelScene {
     }
 
     public static void startHallucinating() {
+        //GLog.d("START HALLUCINATING");
         scene.hallucinationOverlay.startHallucinating();
+        for (Mob mob : Dungeon.level.mobs) {
+            scene.polymorph(mob, MobSprite.Hallucination.getRandom());
+        }
     }
 
     public static void stopHallucinating() {
+        //GLog.d("STOP HALLUCINATING");
         scene.hallucinationOverlay.stopHallucinating();
+        for (Mob mob : Dungeon.level.mobs) {
+            scene.polymorph(mob, MobSprite.Hallucination.None);
+        }
     }
 
 

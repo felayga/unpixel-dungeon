@@ -37,7 +37,7 @@ import com.felayga.unpixeldungeon.effects.Speck;
 import com.felayga.unpixeldungeon.effects.particles.ShaftParticle;
 import com.felayga.unpixeldungeon.items.DewVial;
 import com.felayga.unpixeldungeon.items.Item;
-import com.felayga.unpixeldungeon.items.potions.PotionOfFullHealing;
+import com.felayga.unpixeldungeon.items.consumable.potions.PotionOfFullHealing;
 import com.felayga.unpixeldungeon.utils.GLog;
 import com.watabou.noosa.audio.Sample;
 

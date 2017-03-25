@@ -28,12 +28,12 @@ package com.felayga.unpixeldungeon.actors.mobs.dwarf;
 
 import com.felayga.unpixeldungeon.actors.buffs.hero.Encumbrance;
 import com.felayga.unpixeldungeon.actors.mobs.Mob;
-import com.felayga.unpixeldungeon.items.weapon.Weapon;
-import com.felayga.unpixeldungeon.items.weapon.ammunition.AmmunitionWeapon;
-import com.felayga.unpixeldungeon.items.weapon.ammunition.simple.Rock;
-import com.felayga.unpixeldungeon.items.weapon.melee.simple.dagger.Dagger;
-import com.felayga.unpixeldungeon.items.weapon.melee.simple.dagger.DaggerRuned;
-import com.felayga.unpixeldungeon.items.weapon.ranged.simple.Sling;
+import com.felayga.unpixeldungeon.items.equippableitem.weapon.Weapon;
+import com.felayga.unpixeldungeon.items.equippableitem.weapon.ammunition.AmmunitionWeapon;
+import com.felayga.unpixeldungeon.items.equippableitem.weapon.ammunition.simple.Rock;
+import com.felayga.unpixeldungeon.items.equippableitem.weapon.melee.simple.dagger.Dagger;
+import com.felayga.unpixeldungeon.items.equippableitem.weapon.melee.simple.dagger.DaggerRuned;
+import com.felayga.unpixeldungeon.items.equippableitem.weapon.ranged.simple.Sling;
 import com.felayga.unpixeldungeon.mechanics.Characteristic;
 import com.felayga.unpixeldungeon.mechanics.CorpseEffect;
 import com.felayga.unpixeldungeon.mechanics.GameTime;
@@ -45,13 +45,8 @@ import com.watabou.utils.Random;
  * Created by HELLO on 6/9/2016.
  */
 public class Hobbit extends Mob {
-
-    public Hobbit()
-    {
-        super(1);
-
-        name = "hobbit";
-        spriteClass = HobbitSprite.class;
+    public Hobbit() {
+        super(1, HobbitSprite.class);
 
         movementSpeed(GameTime.TICK * 4 / 3);
         attackSpeed(GameTime.TICK);
@@ -65,7 +60,7 @@ public class Hobbit extends Mob {
 
         Weapon weapon;
         AmmunitionWeapon ammo = null;
-        switch(Random.Int(3)) {
+        switch (Random.Int(3)) {
             case 1:
                 weapon = new Dagger();
                 break;
@@ -86,12 +81,12 @@ public class Hobbit extends Mob {
             belongings.collectEquip(ammo);
         }
 
-        if (Random.Int(10)==0) {
+        if (Random.Int(10) == 0) {
             //todo: elven mithril coat
             //belongings.collectEquip(armor);
         }
 
-        if (Random.Int(10)==0) {
+        if (Random.Int(10) == 0) {
             //todo: dwarvish cloak
             //belongings.collectEquip(armor);
         }

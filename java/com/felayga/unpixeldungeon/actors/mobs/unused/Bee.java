@@ -33,7 +33,7 @@ import com.felayga.unpixeldungeon.actors.Actor;
 import com.felayga.unpixeldungeon.actors.Char;
 import com.felayga.unpixeldungeon.actors.buffs.negative.Amok;
 import com.felayga.unpixeldungeon.actors.buffs.negative.Poison;
-import com.felayga.unpixeldungeon.items.weapon.melee.mob.TauntChance;
+import com.felayga.unpixeldungeon.items.equippableitem.weapon.melee.mob.TauntChance;
 import com.felayga.unpixeldungeon.levels.Level;
 import com.felayga.unpixeldungeon.mechanics.GameTime;
 import com.felayga.unpixeldungeon.sprites.mobs.unused.BeeSprite;

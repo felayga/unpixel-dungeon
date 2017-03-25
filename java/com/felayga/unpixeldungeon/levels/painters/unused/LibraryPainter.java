@@ -29,7 +29,7 @@ import com.felayga.unpixeldungeon.Dungeon;
 import com.felayga.unpixeldungeon.items.Generator;
 import com.felayga.unpixeldungeon.items.Item;
 import com.felayga.unpixeldungeon.items.keys.IronOldKey;
-import com.felayga.unpixeldungeon.items.scrolls.Scroll;
+import com.felayga.unpixeldungeon.items.consumable.scrolls.Scroll;
 import com.felayga.unpixeldungeon.levels.Level;
 import com.felayga.unpixeldungeon.levels.Room;
 import com.felayga.unpixeldungeon.levels.Terrain;

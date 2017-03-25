@@ -25,11 +25,11 @@
  */
 package com.felayga.unpixeldungeon.sprites.mobs.humanoid;
 
-import com.felayga.unpixeldungeon.sprites.MobSprite;
+import com.felayga.unpixeldungeon.sprites.mobs.MobSprite;
 import com.felayga.unpixeldungeon.sprites.hero.HeroSprite;
 import com.watabou.noosa.TextureFilm;
 
-public class HumanoidSprite extends MobSprite {
+public abstract class HumanoidSprite extends MobSprite {
 
     public HumanoidSprite(int index, Object textureSource, int width, int height, int framesPerRow) {
         super();

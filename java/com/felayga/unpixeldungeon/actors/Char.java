@@ -35,6 +35,7 @@ import com.felayga.unpixeldungeon.actors.buffs.hero.FireImbue;
 import com.felayga.unpixeldungeon.actors.buffs.negative.Blindness;
 import com.felayga.unpixeldungeon.actors.buffs.negative.Charm;
 import com.felayga.unpixeldungeon.actors.buffs.negative.Frost;
+import com.felayga.unpixeldungeon.actors.buffs.negative.Hallucination;
 import com.felayga.unpixeldungeon.actors.buffs.negative.Held;
 import com.felayga.unpixeldungeon.actors.buffs.negative.Paralysis;
 import com.felayga.unpixeldungeon.actors.buffs.negative.Vertigo;
@@ -44,19 +45,18 @@ import com.felayga.unpixeldungeon.actors.buffs.positive.Invisibility;
 import com.felayga.unpixeldungeon.actors.buffs.positive.MagicalSleep;
 import com.felayga.unpixeldungeon.actors.buffs.positive.MindVision;
 import com.felayga.unpixeldungeon.actors.buffs.positive.SeeInvisible;
-import com.felayga.unpixeldungeon.actors.hero.Hero;
 import com.felayga.unpixeldungeon.actors.mobs.Bestiary;
 import com.felayga.unpixeldungeon.actors.mobs.Mob;
-import com.felayga.unpixeldungeon.items.EquippableItem;
+import com.felayga.unpixeldungeon.items.equippableitem.EquippableItem;
 import com.felayga.unpixeldungeon.items.Item;
-import com.felayga.unpixeldungeon.items.armor.Armor;
-import com.felayga.unpixeldungeon.items.armor.glyphs.Bounce;
+import com.felayga.unpixeldungeon.items.equippableitem.armor.Armor;
+import com.felayga.unpixeldungeon.items.equippableitem.armor.glyphs.Bounce;
 import com.felayga.unpixeldungeon.items.bags.backpack.Belongings;
-import com.felayga.unpixeldungeon.items.food.Corpse;
-import com.felayga.unpixeldungeon.items.weapon.IWeapon;
-import com.felayga.unpixeldungeon.items.weapon.Weapon;
-import com.felayga.unpixeldungeon.items.weapon.missiles.MissileWeapon;
-import com.felayga.unpixeldungeon.items.weapon.ranged.RangedWeapon;
+import com.felayga.unpixeldungeon.items.consumable.food.Corpse;
+import com.felayga.unpixeldungeon.items.equippableitem.weapon.IWeapon;
+import com.felayga.unpixeldungeon.items.equippableitem.weapon.Weapon;
+import com.felayga.unpixeldungeon.items.equippableitem.weapon.missiles.MissileWeapon;
+import com.felayga.unpixeldungeon.items.equippableitem.weapon.ranged.RangedWeapon;
 import com.felayga.unpixeldungeon.levels.Level;
 import com.felayga.unpixeldungeon.mechanics.AttributeType;
 import com.felayga.unpixeldungeon.mechanics.Characteristic;
@@ -201,8 +201,10 @@ public abstract class Char extends Actor {
     public int resistanceMagical = 0;
 
     public CharSprite sprite;
+    public CharSprite originalSprite;
 
     public String name = "mob";
+    public String originalName;
 
     public int HT;
     public int HP;
@@ -343,7 +345,7 @@ public abstract class Char extends Actor {
             attribute = 1;
         }
 
-        switch(type) {
+        switch (type) {
             case STRCON:
                 adjustHP(this.attribute[type.value], attribute);
                 break;
@@ -367,7 +369,7 @@ public abstract class Char extends Actor {
         attribute -= amount;
         damage += amount;
 
-        switch(type) {
+        switch (type) {
             case STRCON:
                 adjustHP(this.attribute[type.value], attribute);
                 break;
@@ -392,7 +394,7 @@ public abstract class Char extends Actor {
         attribute[type.value] += attributeDamage[type.value];
         attributeDamage[type.value] = 0;
 
-        switch(type) {
+        switch (type) {
             case STRCON:
                 adjustHP(oldattribute, this.attribute[type.value]);
                 break;
@@ -413,7 +415,7 @@ public abstract class Char extends Actor {
         } else {
             attribute[type.value] += value;
         }
-        switch(type) {
+        switch (type) {
             case STRCON:
                 adjustHP(oldattribute, this.attribute[type.value]);
                 break;
@@ -569,7 +571,7 @@ public abstract class Char extends Actor {
 
     @Override
     protected boolean act() {
-        belongings.decay(getTime(), true, false);
+        belongings.decay(time(), true, false);
         Dungeon.level.updateFieldOfSenses(this);
         //posBlockInitializationCheck();
         return false;
@@ -642,7 +644,8 @@ public abstract class Char extends Actor {
 
         for (Bundlable b : bundle.getCollection(BUFFS)) {
             if (b != null) {
-                ((Buff) b).restore(this);
+                Buff buff = (Buff)b;
+                buff.restore(this);
             }
         }
 
@@ -977,7 +980,6 @@ public abstract class Char extends Actor {
     }
 
 
-
     public final int defenseMagical(Char enemy, MagicType type) {
         int retval = getResistance(type);
 
@@ -1016,7 +1018,7 @@ public abstract class Char extends Actor {
         }
 
         int modifier = defenseMagical(source, type);
-        dmg = (int)Math.round(Math.sqrt((9.0 - (double)modifier) / 9.0) * (double)dmg);
+        dmg = (int) Math.round(Math.sqrt((9.0 - (double) modifier) / 9.0) * (double) dmg);
 
         //else if (resistances().contains( srcClass )) {
         //	dmg = Random.IntRange( 0, dmg );
@@ -1042,7 +1044,6 @@ public abstract class Char extends Actor {
 
         return dmg;
     }
-
 
 
     public void polymorph(Class<? extends Char> targetClass) {
@@ -1084,7 +1085,6 @@ public abstract class Char extends Actor {
             replacement.touchDistance = swapTouchDistance;
 
 
-
         }
     }
 
@@ -1115,6 +1115,18 @@ public abstract class Char extends Actor {
         }
 
         dropAll();
+
+        if ((characteristics & Characteristic.PositionBlocking.value) != 0) {
+            if (posBlockStoredPos >= 0) {
+                Level.losBlocking[posBlockStoredPos] = posBlockFlagLosBlock;
+                Level.passable[posBlockStoredPos] = posBlockFlagPassable;
+                Level.pathable[posBlockStoredPos] = posBlockFlagPathable;
+
+                GameScene.updateMap(posBlockStoredPos);
+
+                posBlockStoredPos = Constant.Position.NONE;
+            }
+        }
 
         destroy(src);
         sprite.die();
@@ -1156,7 +1168,7 @@ public abstract class Char extends Actor {
     public boolean isCharmedBy(Char ch) {
         for (Buff b : buffs) {
             if (b instanceof Charm) {
-                Charm charm = (Charm)b;
+                Charm charm = (Charm) b;
                 if (charm.ownerRegistryIndex() == ch.charRegistryIndex()) {
                     return true;
                 }
@@ -1227,7 +1239,7 @@ public abstract class Char extends Actor {
 
             if (posBlockStoredPos < 0) {
                 posBlockStoredPos = pos;
-                GLog.d("init posBlockStoredPos x="+(pos%Level.WIDTH)+" y="+(pos/Level.WIDTH));
+                GLog.d("init posBlockStoredPos x=" + (pos % Level.WIDTH) + " y=" + (pos / Level.WIDTH));
 
                 posBlockFlagLosBlock = Level.losBlocking[pos];
                 posBlockFlagPassable = Level.passable[pos];
@@ -1268,7 +1280,7 @@ public abstract class Char extends Actor {
 
             if ((characteristics & Characteristic.PositionBlocking.value) != 0) {
                 if (posBlockStoredPos >= 0) {
-                    GLog.d("set old posBlockStoredPos x="+(posBlockStoredPos%Level.WIDTH)+" y="+(posBlockStoredPos/Level.WIDTH));
+                    GLog.d("set old posBlockStoredPos x=" + (posBlockStoredPos % Level.WIDTH) + " y=" + (posBlockStoredPos / Level.WIDTH));
 
                     Level.losBlocking[posBlockStoredPos] = posBlockFlagLosBlock;
                     Level.passable[posBlockStoredPos] = posBlockFlagPassable;
@@ -1278,7 +1290,7 @@ public abstract class Char extends Actor {
                 }
 
                 posBlockStoredPos = step;
-                GLog.d("set new posBlockStoredPos x="+(posBlockStoredPos%Level.WIDTH)+" y="+(posBlockStoredPos/Level.WIDTH));
+                GLog.d("set new posBlockStoredPos x=" + (posBlockStoredPos % Level.WIDTH) + " y=" + (posBlockStoredPos / Level.WIDTH));
 
                 posBlockFlagLosBlock = Level.losBlocking[step];
                 posBlockFlagPassable = Level.passable[step];

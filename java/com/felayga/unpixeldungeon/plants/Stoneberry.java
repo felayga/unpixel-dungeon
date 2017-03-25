@@ -33,8 +33,8 @@ import com.felayga.unpixeldungeon.actors.buffs.Buff;
 import com.felayga.unpixeldungeon.actors.buffs.positive.MindVision;
 import com.felayga.unpixeldungeon.effects.CellEmitter;
 import com.felayga.unpixeldungeon.effects.Speck;
-import com.felayga.unpixeldungeon.items.potions.IAlchemyComponent;
-import com.felayga.unpixeldungeon.items.potions.PotionOfBrewing;
+import com.felayga.unpixeldungeon.items.consumable.potions.IAlchemyComponent;
+import com.felayga.unpixeldungeon.items.consumable.potions.PotionOfBrewing;
 import com.felayga.unpixeldungeon.mechanics.GameTime;
 import com.felayga.unpixeldungeon.sprites.ItemSpriteSheet;
 

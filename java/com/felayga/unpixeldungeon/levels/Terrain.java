@@ -204,11 +204,11 @@ public class Terrain {
         }
 
         for (int n = UNDERLAY_PIT_TILES; n <= UNDERLAY_PIT; n++) {
-            flags[n] = flags[EMPTY] | FLAG_LOSDARK | FLAG_AVOID | FLAG_PIT;
+            flags[n] = flags[EMPTY] | FLAG_LOSDARK | FLAG_PIT;
         }
 
         for (int n = UNDERLAY_CHASM_TILES; n <= UNDERLAY_CHASM; n++) {
-            flags[n] = FLAG_AVOID | FLAG_CHASM | FLAG_DIAGONALPASSAGE | FLAG_PASSABLE;
+            flags[n] = FLAG_CHASM | FLAG_AVOID | FLAG_DIAGONALPASSAGE | FLAG_PASSABLE;
         }
     }
 

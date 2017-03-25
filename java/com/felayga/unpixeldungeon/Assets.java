@@ -31,7 +31,6 @@ public class Assets {
 		public static final String KOBOLD		= "mobs/kobold.png";
 		public static final String CRAB			= "mobs/crab.png";
 		public static final String GOO			= "mobs/goo.png";
-		public static final String SWARM		= "mobs/swarm.png";
 		public static final String SKELETON		= "mobs/skeleton.png";
 		public static final String THIEF		= "mobs/thief.png";
 		public static final String TENGU		= "mobs/tengu.png";
@@ -117,11 +116,9 @@ public class Assets {
 	
 	public static final String SHEEP	= "sheep.png";
 
-	public static final String GHOST	= "ghost.png";
 	public static final String MAKER	= "wandmaker.png";
 	public static final String TROLL	= "blacksmith.png";
 	public static final String IMP		= "demon.png";
-	public static final String RATKING	= "ratking.png";
 
 	public static final String BOULDER	= "boulder.png";
 

@@ -31,7 +31,7 @@ import com.felayga.unpixeldungeon.actors.mobs.npcs.Wandmaker;
 import com.felayga.unpixeldungeon.items.Item;
 import com.felayga.unpixeldungeon.items.quest.CorpseDust;
 import com.felayga.unpixeldungeon.items.quest.Embers;
-import com.felayga.unpixeldungeon.items.wands.Wand;
+import com.felayga.unpixeldungeon.items.consumable.wands.Wand;
 import com.felayga.unpixeldungeon.scenes.PixelScene;
 import com.felayga.unpixeldungeon.sprites.ItemSprite;
 import com.felayga.unpixeldungeon.ui.RedButton;

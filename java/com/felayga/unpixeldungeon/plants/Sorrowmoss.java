@@ -31,8 +31,8 @@ import com.felayga.unpixeldungeon.actors.Char;
 import com.felayga.unpixeldungeon.actors.buffs.negative.Poison;
 import com.felayga.unpixeldungeon.effects.CellEmitter;
 import com.felayga.unpixeldungeon.effects.particles.PoisonParticle;
-import com.felayga.unpixeldungeon.items.potions.IAlchemyComponent;
-import com.felayga.unpixeldungeon.items.potions.PotionOfBrewing;
+import com.felayga.unpixeldungeon.items.consumable.potions.IAlchemyComponent;
+import com.felayga.unpixeldungeon.items.consumable.potions.PotionOfBrewing;
 import com.felayga.unpixeldungeon.sprites.ItemSpriteSheet;
 import com.watabou.utils.Random;
 

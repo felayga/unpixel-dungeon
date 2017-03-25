@@ -31,7 +31,7 @@ import com.felayga.unpixeldungeon.actors.buffs.negative.Amok;
 import com.felayga.unpixeldungeon.actors.buffs.negative.Sleep;
 import com.felayga.unpixeldungeon.actors.buffs.negative.Terror;
 import com.felayga.unpixeldungeon.actors.mobs.npcs.Imp;
-import com.felayga.unpixeldungeon.items.weapon.melee.mob.MeleeMobAttack;
+import com.felayga.unpixeldungeon.items.equippableitem.weapon.melee.mob.MeleeMobAttack;
 import com.felayga.unpixeldungeon.mechanics.GameTime;
 import com.felayga.unpixeldungeon.sprites.mobs.golem.GolemSprite;
 

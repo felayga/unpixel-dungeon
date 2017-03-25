@@ -42,10 +42,7 @@ import com.watabou.utils.Random;
  */
 public class RedMold extends Mob {
     public RedMold() {
-        super(1);
-
-        name = "red mold";
-        spriteClass = RedMoldSprite.class;
+        super(1, RedMoldSprite.class);
 
         movementSpeed(0);
         attackSpeed(GameTime.TICK);
@@ -71,7 +68,7 @@ public class RedMold extends Mob {
 
         if (Level.canReach(pos(), enemy.pos()) && Random.Int(2) == 0) {
             int dmg = 0;
-            for (int n=0;n<=level;n++) {
+            for (int n = 0; n <= level; n++) {
                 dmg += Random.IntRange(1, 4);
             }
             dmg = enemy.damage(dmg, MagicType.Fire, this, null);

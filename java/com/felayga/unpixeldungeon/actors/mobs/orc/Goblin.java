@@ -28,11 +28,11 @@ package com.felayga.unpixeldungeon.actors.mobs.orc;
 
 import com.felayga.unpixeldungeon.actors.buffs.hero.Encumbrance;
 import com.felayga.unpixeldungeon.actors.mobs.Mob;
-import com.felayga.unpixeldungeon.items.armor.helmet.Helmet;
-import com.felayga.unpixeldungeon.items.armor.helmet.HelmetCrude;
-import com.felayga.unpixeldungeon.items.weapon.Weapon;
-import com.felayga.unpixeldungeon.items.weapon.melee.mob.MeleeMobAttack;
-import com.felayga.unpixeldungeon.items.weapon.melee.simple.dagger.DaggerCrude;
+import com.felayga.unpixeldungeon.items.equippableitem.armor.helmet.Helmet;
+import com.felayga.unpixeldungeon.items.equippableitem.armor.helmet.HelmetCrude;
+import com.felayga.unpixeldungeon.items.equippableitem.weapon.Weapon;
+import com.felayga.unpixeldungeon.items.equippableitem.weapon.melee.mob.MeleeMobAttack;
+import com.felayga.unpixeldungeon.items.equippableitem.weapon.melee.simple.dagger.DaggerCrude;
 import com.felayga.unpixeldungeon.mechanics.Characteristic;
 import com.felayga.unpixeldungeon.mechanics.CorpseEffect;
 import com.felayga.unpixeldungeon.mechanics.GameTime;
@@ -44,13 +44,8 @@ import com.watabou.utils.Random;
  * Created by HELLO on 5/22/2016.
  */
 public class Goblin extends Mob {
-
-    public Goblin()
-    {
-        super(0);
-
-        name = "goblin";
-        spriteClass = GoblinSprite.class;
+    public Goblin() {
+        super(0, GoblinSprite.class);
 
         movementSpeed(GameTime.TICK * 4 / 3);
         attackSpeed(GameTime.TICK);
@@ -62,17 +57,16 @@ public class Goblin extends Mob {
         corpseEffects = CorpseEffect.None.value;
         characteristics = Characteristic.value(Characteristic.Humanoid, Characteristic.Orc, Characteristic.Omnivore, Characteristic.WarmBlooded);
 
-        if (Random.Int(2)==0) {
+        if (Random.Int(2) == 0) {
             belongings.collectEquip(new MeleeMobAttack(GameTime.TICK, 1, 4));
-        }
-        else {
+        } else {
             Weapon weapon = new DaggerCrude();
             weapon.random();
 
             belongings.collectEquip(weapon);
         }
 
-        if (Random.Int(2)==0) {
+        if (Random.Int(2) == 0) {
             Helmet helmet = new HelmetCrude();
             helmet.random();
 

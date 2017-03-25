@@ -28,7 +28,7 @@ package com.felayga.unpixeldungeon.actors.mobs.jackal;
 
 import com.felayga.unpixeldungeon.actors.buffs.hero.Encumbrance;
 import com.felayga.unpixeldungeon.actors.mobs.Mob;
-import com.felayga.unpixeldungeon.items.weapon.melee.mob.MeleeMobAttack;
+import com.felayga.unpixeldungeon.items.equippableitem.weapon.melee.mob.MeleeMobAttack;
 import com.felayga.unpixeldungeon.mechanics.Characteristic;
 import com.felayga.unpixeldungeon.mechanics.CorpseEffect;
 import com.felayga.unpixeldungeon.mechanics.GameTime;
@@ -39,12 +39,8 @@ import com.felayga.unpixeldungeon.sprites.mobs.jackal.FoxSprite;
  * Created by HELLO on 5/22/2016.
  */
 public class Fox extends Mob {
-    public Fox()
-    {
-        super(0);
-
-        name = "fox";
-        spriteClass = FoxSprite.class;
+    public Fox() {
+        super(0, FoxSprite.class);
 
         movementSpeed(GameTime.TICK * 4 / 5);
         attackSpeed(GameTime.TICK);

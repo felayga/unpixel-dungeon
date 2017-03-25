@@ -26,10 +26,10 @@
 package com.felayga.unpixeldungeon.sprites.mobs.foocubus;
 
 import com.felayga.unpixeldungeon.Assets;
-import com.felayga.unpixeldungeon.sprites.MobSprite;
+import com.felayga.unpixeldungeon.sprites.mobs.MobSprite;
 import com.watabou.noosa.TextureFilm;
 
-public class FoocubusSprite extends MobSprite {
+public abstract class FoocubusSprite extends MobSprite {
     private static int FRAMES_PER_ROW = 21;
 
     public FoocubusSprite(int index) {

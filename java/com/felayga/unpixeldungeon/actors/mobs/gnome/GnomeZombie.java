@@ -28,7 +28,7 @@ package com.felayga.unpixeldungeon.actors.mobs.gnome;
 
 import com.felayga.unpixeldungeon.actors.buffs.hero.Encumbrance;
 import com.felayga.unpixeldungeon.actors.mobs.Mob;
-import com.felayga.unpixeldungeon.items.weapon.melee.mob.MeleeMobAttack;
+import com.felayga.unpixeldungeon.items.equippableitem.weapon.melee.mob.MeleeMobAttack;
 import com.felayga.unpixeldungeon.mechanics.Characteristic;
 import com.felayga.unpixeldungeon.mechanics.CorpseEffect;
 import com.felayga.unpixeldungeon.mechanics.GameTime;
@@ -39,12 +39,8 @@ import com.felayga.unpixeldungeon.sprites.mobs.humanoid.gnome.GnomeZombieSprite;
  * Created by HELLO on 6/3/2016.
  */
 public class GnomeZombie extends Mob {
-    public GnomeZombie()
-    {
-        super(1);
-
-        name = "gnome zombie";
-        spriteClass = GnomeZombieSprite.class;
+    public GnomeZombie() {
+        super(1, GnomeZombieSprite.class);
 
         movementSpeed(GameTime.TICK * 2);
         attackSpeed(GameTime.TICK);

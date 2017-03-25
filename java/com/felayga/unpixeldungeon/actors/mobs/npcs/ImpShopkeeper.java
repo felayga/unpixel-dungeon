@@ -40,8 +40,7 @@ public class ImpShopkeeper extends Shopkeeper {
 
 	public ImpShopkeeper()
 	{
-		name = "ambitious imp";
-		spriteClass = ImpSprite.class;
+        super(12, ImpSprite.class);
 	}
 	
 	private boolean seenBefore = false;
@@ -61,7 +60,7 @@ public class ImpShopkeeper extends Shopkeeper {
 	public void flee() {
 		for (Heap heap: Dungeon.level.heaps.values()) {
 			if (heap.type == Heap.Type.FOR_SALE) {
-				CellEmitter.get( heap.pos ).burst( ElmoParticle.FACTORY, 4 );
+				CellEmitter.get( heap.pos() ).burst( ElmoParticle.FACTORY, 4 );
 				heap.destroy();
 			}
 		}

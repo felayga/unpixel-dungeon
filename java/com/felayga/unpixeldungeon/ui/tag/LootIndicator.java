@@ -78,7 +78,7 @@ public class LootIndicator extends Tag {
 	public void update() {
 		if (Dungeon.hero.ready) {
 			Heap heap = Dungeon.level.heaps.get( Dungeon.hero.pos());
-			if (heap != null) {
+			if (heap != null && heap.size() > 0) {
 				Item item =
 					heap.type == Heap.Type.TOMB ? ItemSlot.TOMB :
 					heap.type == Heap.Type.SKELETON ? ItemSlot.SKELETON :

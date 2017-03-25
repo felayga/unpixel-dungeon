@@ -33,7 +33,7 @@ import com.felayga.unpixeldungeon.actors.buffs.Buff;
 import com.felayga.unpixeldungeon.actors.hero.Hero;
 import com.felayga.unpixeldungeon.effects.CellEmitter;
 import com.felayga.unpixeldungeon.effects.particles.PoisonParticle;
-import com.felayga.unpixeldungeon.items.rings.RingOfElements.Resistance;
+import com.felayga.unpixeldungeon.items.equippableitem.ring.RingOfElements.Resistance;
 import com.felayga.unpixeldungeon.mechanics.GameTime;
 import com.felayga.unpixeldungeon.mechanics.MagicType;
 import com.felayga.unpixeldungeon.ui.BuffIndicator;

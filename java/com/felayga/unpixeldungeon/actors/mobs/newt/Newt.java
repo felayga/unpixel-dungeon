@@ -28,7 +28,7 @@ package com.felayga.unpixeldungeon.actors.mobs.newt;
 
 import com.felayga.unpixeldungeon.actors.buffs.hero.Encumbrance;
 import com.felayga.unpixeldungeon.actors.mobs.Mob;
-import com.felayga.unpixeldungeon.items.weapon.melee.mob.MeleeMobAttack;
+import com.felayga.unpixeldungeon.items.equippableitem.weapon.melee.mob.MeleeMobAttack;
 import com.felayga.unpixeldungeon.mechanics.Characteristic;
 import com.felayga.unpixeldungeon.mechanics.CorpseEffect;
 import com.felayga.unpixeldungeon.mechanics.GameTime;
@@ -39,12 +39,8 @@ import com.felayga.unpixeldungeon.sprites.mobs.newt.NewtSprite;
  * Created by HELLO on 5/21/2016.
  */
 public class Newt extends Mob {
-    public Newt()
-    {
-        super(0);
-
-        name = "newt";
-        spriteClass = NewtSprite.class;
+    public Newt() {
+        super(0, NewtSprite.class);
 
         movementSpeed(GameTime.TICK * 2);
         attackSpeed(GameTime.TICK);

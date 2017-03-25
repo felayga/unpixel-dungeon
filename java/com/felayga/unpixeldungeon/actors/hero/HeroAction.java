@@ -28,16 +28,15 @@ package com.felayga.unpixeldungeon.actors.hero;
 import com.felayga.unpixeldungeon.actors.Char;
 import com.felayga.unpixeldungeon.actors.mobs.npcs.Boulder;
 import com.felayga.unpixeldungeon.actors.mobs.npcs.NPC;
-import com.felayga.unpixeldungeon.items.EquippableItem;
+import com.felayga.unpixeldungeon.items.equippableitem.EquippableItem;
 import com.felayga.unpixeldungeon.items.Item;
 import com.felayga.unpixeldungeon.items.bags.IBag;
-import com.felayga.unpixeldungeon.items.spells.Spell;
 import com.felayga.unpixeldungeon.items.tools.digging.DiggingTool;
 import com.felayga.unpixeldungeon.items.tools.unlocking.UnlockingTool;
-import com.felayga.unpixeldungeon.items.weapon.IWeapon;
-import com.felayga.unpixeldungeon.items.weapon.ammunition.AmmunitionWeapon;
-import com.felayga.unpixeldungeon.items.weapon.missiles.MissileWeapon;
-import com.felayga.unpixeldungeon.items.weapon.ranged.RangedWeapon;
+import com.felayga.unpixeldungeon.items.equippableitem.weapon.IWeapon;
+import com.felayga.unpixeldungeon.items.equippableitem.weapon.ammunition.AmmunitionWeapon;
+import com.felayga.unpixeldungeon.items.equippableitem.weapon.missiles.MissileWeapon;
+import com.felayga.unpixeldungeon.items.equippableitem.weapon.ranged.RangedWeapon;
 import com.felayga.unpixeldungeon.mechanics.Constant;
 
 

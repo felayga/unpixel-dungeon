@@ -31,6 +31,7 @@ import com.felayga.unpixeldungeon.Dungeon;
 import com.felayga.unpixeldungeon.DungeonTilemap;
 import com.felayga.unpixeldungeon.actors.Actor;
 import com.felayga.unpixeldungeon.actors.mobs.npcs.Blacksmith;
+import com.felayga.unpixeldungeon.levels.generators.SimplexLevel;
 import com.felayga.unpixeldungeon.levels.traps.ConfusionTrap;
 import com.felayga.unpixeldungeon.levels.traps.ExplosiveTrap;
 import com.felayga.unpixeldungeon.levels.traps.FireTrap;
@@ -57,14 +58,14 @@ import com.watabou.utils.PointF;
 import com.watabou.utils.Random;
 
 import java.util.ArrayList;
+import java.util.Map;
 
 /**
  * Created by HELLO on 6/29/2016.
  */
-public class MinesLevel extends RegularLevel {
-
+public class MinesLevel extends SimplexLevel {
     public MinesLevel() {
-        super(0);
+        super();
 
         color1 = 0x534f3e;
         color2 = 0xb9d661;
@@ -78,267 +79,38 @@ public class MinesLevel extends RegularLevel {
     }
 
     @Override
-    protected int fillBlockNormal() {
+    protected int fillBlock() {
         return Terrain.WALL_STONE;
     }
 
-    private int decorationPlaces;
-
     @Override
-    public boolean build() {
-        value = 0.0;
-        xscale = 7.5;
-        yscale = 750000.0;
-        offset = Random.Float() * 524288.0;
-
-        ghettorecursive = new ArrayList<>();
-        simplexPlain();
-        ghettorecursive.clear();
-        int[] regions = getAndFillRegions();
-        ghettorecursive = null;
-
-        int biggest = 0;
-        decorationPlaces = regions[0];
-        for (int n = 1; n < regions.length; n++) {
-            decorationPlaces += regions[n];
-            if (regions[biggest] < regions[n]) {
-                biggest = n;
-            }
-        }
-
-        decorationPlaces /= 4;
-
-        biggest += Terrain.TILE_MAX + 1;
-
-        int pos = 0;
-        int xmin = WIDTH + 1;
-        int xmax = -1;
-        for (int y = 0; y < HEIGHT; y++) {
-            for (int x = 0; x < WIDTH; x++) {
-                if (map(pos) == biggest) {
-                    if (xmin > x) {
-                        xmin = x;
-                    }
-                    if (xmax < x) {
-                        xmax = x;
-                    }
-                }
-                pos++;
-            }
-        }
-
-        entrance = randomDestination(biggest, xmin, xmax - (xmax - xmin) * 2 / 3);
-        exit = entrance;
-        while (exit == entrance) {
-            exit = randomDestination(biggest, xmin + (xmax - xmin) * 2 / 3, xmax);
-        }
-
-        if (Random.Int(2) == 0) {
-            int swap = entrance;
-            entrance = exit;
-            exit = swap;
-        }
-
-        map(entrance, Terrain.STAIRS_UP);
-        map(exit, Terrain.STAIRS_DOWN);
-
-        removeFillRegions();
-
-        return true;
-    }
-
-    private ArrayList<Integer> ghettorecursive;
-
-    private int[] getAndFillRegions() {
-        ArrayList<Integer> retval = new ArrayList<Integer>();
-
-        int offset = Terrain.TILE_MAX + 1;
-        int index = 0;
-
-        int pos = 0;
-        for (int y = 0; y < HEIGHT; y++) {
-            for (int x = 0; x < WIDTH; x++) {
-                if (map(pos) == Terrain.EMPTY) {
-                    ghettorecursive.add(x + y * WIDTH);
-                    setvalue = index + offset;
-                    retval.add(fillRegionRecursive());
-                    index++;
-                }
-
-                pos++;
-            }
-        }
-
-        int[] _retval = new int[index];
-
-        for (int n = 0; n < index; n++) {
-            _retval[n] = retval.get(n);
-        }
-
-        return _retval;
-    }
-
-    private int setvalue;
-
-    private int fillRegionRecursive() {
-        int retval = 0;
-
-        while (ghettorecursive.size() > 0) {
-            int pos = ghettorecursive.remove(0);
-
-            int x = pos % WIDTH;
-            int y = pos / WIDTH;
-
-            if (map(pos) != Terrain.EMPTY) {
-                //return retval;
-            } else {
-                map(pos, setvalue);
-                retval++;
-
-                for (int suby = -1; suby <= 1; suby++) {
-                    for (int subx = -1; subx <= 1; subx++) {
-                        if (subx == 0 && suby == 0) {
-                            continue;
-                        }
-
-                        ghettorecursive.add(x + subx + (y + suby) * WIDTH);
-                        //retval += fillRegionRecursive(x + subx, y + suby, value);
-                    }
-                }
-            }
-        }
-
-        return retval;
-    }
-
-    private void removeFillRegions() {
-        int pos = 0;
-
-        for (int y = 0; y < HEIGHT; y++) {
-            for (int x = 0; x < WIDTH; x++) {
-                if (map(pos) > Terrain.TILE_MAX) {
-                    map(pos, Terrain.EMPTY);
-                }
-                pos++;
-            }
-        }
-    }
-
-    private int randomDestination(int terrain, int xmin, int xmax) {
-        int pos = -1;
-        while (pos < 0 || (map(pos) != terrain)) {
-            pos = Random.Int(xmin, xmax) + (Random.Int(HEIGHT - 1) + 1) * WIDTH;
-        }
-        return pos;
+    protected int emptyBlock() {
+        return Terrain.EMPTY;
     }
 
     @Override
-    public int randomDestination() {
-        int pos = -1;
-        while (pos < 0 || (!passable[pos])) {
-            pos = Random.Int(WIDTH - 1) + 1 + (Random.Int(HEIGHT - 1) + 1) * WIDTH;
-        }
-        return pos;
+    protected double generatorValue() {
+        return 0.0;
     }
 
-    private void simplexPlain() {
-        int pos = 0;
-
-        tested = new boolean[LENGTH];
-
-        for (int n = 0; n < LENGTH; n++) {
-            tested[n] = false;
-        }
-
-        for (int y = 0; y < EDGEBUFFER; y++) {
-            for (int x = 0; x < WIDTH; x++) {
-                pos = x + y * WIDTH;
-                tested[pos] = true;
-
-                pos = (WIDTH - 1 - x) + y * WIDTH;
-                tested[pos] = true;
-
-                pos = x + (HEIGHT - 1 - y) * WIDTH;
-                tested[pos] = true;
-
-                pos = (WIDTH - 1 - x) + (HEIGHT - 1 - y) * WIDTH;
-                tested[pos] = true;
-            }
-        }
-
-        for (int x = 0; x < EDGEBUFFER; x++) {
-            for (int y = 0; y < HEIGHT; y++) {
-                pos = x + y * WIDTH;
-                tested[pos] = true;
-
-                pos = (WIDTH - 1 - x) + y * WIDTH;
-                tested[pos] = true;
-
-                pos = x + (HEIGHT - 1 - y) * WIDTH;
-                tested[pos] = true;
-
-                pos = (WIDTH - 1 - x) + (HEIGHT - 1 - y) * WIDTH;
-                tested[pos] = true;
-            }
-        }
-
-        for (int y = EDGEBUFFER * 2; y < HEIGHT - EDGEBUFFER * 2; y++) {
-            int x = EDGEBUFFER * 2;
-            ghettorecursive.add(x + y * WIDTH);
-            //simplexRecurse(x, y);
-
-            x = WIDTH - 1 - EDGEBUFFER * 2;
-            ghettorecursive.add(x + y * WIDTH);
-            //simplexRecurse(x, y);
-        }
-
-        for (int x = EDGEBUFFER * 2; x < WIDTH - EDGEBUFFER * 2; x++) {
-            int y = EDGEBUFFER * 2;
-            ghettorecursive.add(x + y * WIDTH);
-            //simplexRecurse(x, y);
-
-            y = HEIGHT - 1 - EDGEBUFFER * 2;
-            ghettorecursive.add(x + y * WIDTH);
-            //simplexRecurse(x, y);
-        }
-
-        simplexRecurse();
+    @Override
+    protected double generatorXScale() {
+        return 7.5;
     }
 
-    private double xscale;
-    private double yscale;
-    private double offset;
-    private double value;
-    private boolean[] tested;
+    @Override
+    protected double generatorYScale() {
+        return 750000.0;
+    }
 
-    private void simplexRecurse() {
-        while (ghettorecursive.size() > 0) {
-            int pos = ghettorecursive.remove(0);
+    @Override
+    protected double generatorOffset() {
+        return 524288.0;
+    }
 
-            int x = pos % WIDTH;
-            int y = pos / WIDTH;
-
-            if (pos < 0 || pos >= LENGTH || x < 0 || x >= WIDTH || tested[pos]) {
-                //return;
-            } else {
-                tested[pos] = true;
-
-                if (SimplexNoise.noise((double) x / (double) WIDTH * xscale + offset, (double) y / (double) HEIGHT * yscale) >= value) {
-                    map(pos, Terrain.EMPTY);
-
-                    for (int suby = -1; suby <= 1; suby++) {
-                        for (int subx = -1; subx <= 1; subx++) {
-                            if (subx == 0 && suby == 0) {
-                                continue;
-                            }
-
-                            ghettorecursive.add(x + subx + (y + suby) * WIDTH);
-                            //simplexRecurse(x + subx, y + suby);
-                        }
-                    }
-                }
-            }
-        }
+    @Override
+    protected FillMapMethod fillMapMethod(){
+        return FillMapMethod.EdgeBufferSeeded;
     }
 
     @Override
@@ -387,60 +159,57 @@ public class MinesLevel extends RegularLevel {
     }
 
     @Override
-    protected void decorate() {
-        int pos;
+    protected Map.Entry<Integer, ArrayList<Integer>> decorate(int pos, RandomPositionValidator validator) {
+        ArrayList<Integer> spots = null;
+        int terrain = 0;
 
-        RandomPositionValidator validator = new RandomPositionValidator() {
+        switch (pos % 6) {
+            case 0:
+            case 3:
+                spots = randomPositionsNear(pos, Random.IntRange(4, 16), validator);
+                terrain = Terrain.HIGH_GRASS;
+                break;
+            case 1:
+            case 4:
+                spots = randomPositionsNear(pos, Random.IntRange(4, 8), validator);
+                terrain = Terrain.GRASS;
+                break;
+            case 2:
+                spots = randomPositionsNear(pos, Random.IntRange(4, 12), validator);
+                terrain = Terrain.EMPTY_DECO;
+                break;
+            default:
+                spots = new ArrayList<>();
+                terrain = Terrain.EMPTY_DECO;
+                int count = Random.IntRange(4, 12);
+                while (count > 0) {
+                    spots.add(pos);
+                    count--;
+                    pos = randomDestination(Terrain.EMPTY, 0, WIDTH);
+                }
+                spots.add(pos);
+                break;
+        }
+
+        final int _terrain = terrain;
+        final ArrayList<Integer> _spots = spots;
+
+        return new Map.Entry<Integer, ArrayList<Integer>>() {
             @Override
-            public boolean isValidPosition(int pos) {
-                return map(pos) == Terrain.EMPTY;
+            public Integer getKey() {
+                return _terrain;
+            }
+
+            @Override
+            public ArrayList<Integer> getValue() {
+                return _spots;
+            }
+
+            @Override
+            public ArrayList<Integer> setValue(ArrayList<Integer> object) {
+                return null;
             }
         };
-
-        int what = 0;
-        while (decorationPlaces > 0) {
-            pos = randomDestination(Terrain.EMPTY, 0, WIDTH);
-
-            ArrayList<Integer> spots = null;
-            int terrain = 0;
-
-            switch (what % 6) {
-                case 0:
-                case 3:
-                    spots = randomPositionsNear(pos, Random.IntRange(4, 16), validator);
-                    terrain = Terrain.HIGH_GRASS;
-                    break;
-                case 1:
-                case 4:
-                    spots = randomPositionsNear(pos, Random.IntRange(4, 8), validator);
-                    terrain = Terrain.GRASS;
-                    break;
-                case 2:
-                    spots = randomPositionsNear(pos, Random.IntRange(4, 12), validator);
-                    terrain = Terrain.EMPTY_DECO;
-                    break;
-                default:
-                    int count = Random.IntRange(4, 12);
-                    while (count > 0) {
-                        map(pos, Terrain.EMPTY_DECO);
-                        decorationPlaces--;
-                        count--;
-                        pos = randomDestination(Terrain.EMPTY, 0, WIDTH);
-                    }
-                    map(pos, Terrain.EMPTY_DECO);
-                    decorationPlaces--;
-                    break;
-            }
-
-            if (spots != null) {
-                for (Integer subpos : spots) {
-                    map(subpos, terrain);
-                    decorationPlaces--;
-                }
-            }
-
-            what++;
-        }
     }
 
     @Override

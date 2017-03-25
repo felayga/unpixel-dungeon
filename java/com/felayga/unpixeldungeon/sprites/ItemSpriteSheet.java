@@ -39,21 +39,22 @@ public class ItemSpriteSheet {
 	private static final int ROW_WAND           = 7 * ROWSIZE;
     private static final int ROW_ARMOR          = 9 * ROWSIZE;
 	private static final int ROW_RING           = 10 * ROWSIZE;
-	private static final int ROW_ARTIFACT       = 12 * ROWSIZE;
-	private static final int ROW_SCROLL         = 14 * ROWSIZE;
-	private static final int ROW_POTION         = 16 * ROWSIZE;
-	private static final int ROW_SEED           = 19 * ROWSIZE;
-    private static final int ROW_ALCHEMY        = 20 * ROWSIZE;
-	private static final int ROW_FOOD           = 21 * ROWSIZE;
-	private static final int ROW_QUEST          = 23 * ROWSIZE;
-	private static final int ROW_TOOLS          = 24 * ROWSIZE;
-	private static final int ROW_GEMSTONE       = 25 * ROWSIZE;
-	private static final int ROW_BOOK           = 26 * ROWSIZE;
-	private static final int ROW_SPELL          = 29 * ROWSIZE;
-	private static final int ROW_BOOTS          = 33 * ROWSIZE;
-	private static final int ROW_GLOVES         = 34 * ROWSIZE;
-	private static final int ROW_HELMET         = 35 * ROWSIZE;
-    private static final int ROW_CLOAK          = 36 * ROWSIZE;
+    private static final int ROW_AMULET         = 12 * ROWSIZE;
+	private static final int ROW_ARTIFACT       = 13 * ROWSIZE;
+	private static final int ROW_SCROLL         = 15 * ROWSIZE;
+	private static final int ROW_POTION         = 17 * ROWSIZE;
+	private static final int ROW_SEED           = 20 * ROWSIZE;
+    private static final int ROW_ALCHEMY        = 21 * ROWSIZE;
+	private static final int ROW_FOOD           = 22 * ROWSIZE;
+	private static final int ROW_QUEST          = 24 * ROWSIZE;
+	private static final int ROW_TOOLS          = 25 * ROWSIZE;
+	private static final int ROW_GEMSTONE       = 26 * ROWSIZE;
+	private static final int ROW_BOOK           = 27 * ROWSIZE;
+	private static final int ROW_SPELL          = 30 * ROWSIZE;
+	private static final int ROW_BOOTS          = 34 * ROWSIZE;
+	private static final int ROW_GLOVES         = 35 * ROWSIZE;
+	private static final int ROW_HELMET         = 36 * ROWSIZE;
+    private static final int ROW_CLOAK          = 37 * ROWSIZE;
 
 	//Row One: Items which can't be obtained
 	//null warning occupies space 0, should only show up if there's a bug.
@@ -152,13 +153,17 @@ public class ItemSpriteSheet {
 	//Row Five: Armors
 	public static final int ARMOR_CLOTH				= ROW_ARMOR + 0;
 	public static final int ARMOR_LEATHER			= ROW_ARMOR + 1;
-	public static final int ARMOR_MAIL				= ROW_ARMOR + 2;
+	public static final int ARMOR_CHAINMAIL			= ROW_ARMOR + 2;
 	public static final int ARMOR_SCALE				= ROW_ARMOR + 3;
 	public static final int ARMOR_HALFPLATE 		= ROW_ARMOR + 4;
 	public static final int ARMOR_FULLPLATE			= ROW_ARMOR + 5;
 	public static final int ARMOR_STUDDEDLEATHER	= ROW_ARMOR + 6;
 	public static final int ARMOR_HIDE				= ROW_ARMOR + 7;
 	public static final int ARMOR_BANDED			= ROW_ARMOR + 8;
+    public static final int ARMOR_CHAINMAIL_ELVISH  = ROW_ARMOR + 9;
+    public static final int ARMOR_CHAINMAIL_DWARVISH= ROW_ARMOR + 10;
+    public static final int ARMOR_CHAINMAIL_ORCISH  = ROW_ARMOR + 11;
+    public static final int ARMOR_RINGMAIL 			= ROW_ARMOR + 12;
 
 	//Row Six: Wands
     public static final int WAND_GLASS      = ROW_WAND + 0;
@@ -234,6 +239,19 @@ public class ItemSpriteSheet {
 	public static final int RING_VINE		= ROW_RING + 28;
 	public static final int RING_AMMOLITE	= ROW_RING + 29;
 	public static final int RING_SPINEL		= ROW_RING + 30;
+
+
+    public static final int AMULET_YENDOR       = ROW_AMULET + 0;
+    public static final int AMULET_YENDOR_FAKE  = ROW_AMULET + 1;
+    public static final int AMULET_CIRCULAR     = ROW_AMULET + 2;
+    public static final int AMULET_DELTA        = ROW_AMULET + 3;
+    public static final int AMULET_OVAL         = ROW_AMULET + 4;
+    public static final int AMULET_SQUARE       = ROW_AMULET + 5;
+    public static final int AMULET_OCTAGONAL    = ROW_AMULET + 6;
+    public static final int AMULET_PYRAMIDAL    = ROW_AMULET + 7;
+    public static final int AMULET_MITHRIL      = ROW_AMULET + 8;
+    public static final int AMULET_CONCAVE      = ROW_AMULET + 9;
+    public static final int AMULET_SPHERICAL    = ROW_AMULET + 10;
 
 
 	//Row Eight: Artifacts with Static Images

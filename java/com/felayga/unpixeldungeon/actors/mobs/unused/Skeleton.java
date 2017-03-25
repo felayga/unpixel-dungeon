@@ -28,7 +28,7 @@ package com.felayga.unpixeldungeon.actors.mobs.unused;
 import java.util.HashSet;
 
 import com.felayga.unpixeldungeon.items.KindOfWeapon;
-import com.felayga.unpixeldungeon.items.weapon.melee.mob.MeleeMobAttack;
+import com.felayga.unpixeldungeon.items.equippableitem.weapon.melee.mob.MeleeMobAttack;
 import com.felayga.unpixeldungeon.mechanics.GameTime;
 import com.watabou.noosa.audio.Sample;
 import com.felayga.unpixeldungeon.Assets;
@@ -37,7 +37,7 @@ import com.felayga.unpixeldungeon.ResultDescriptions;
 import com.felayga.unpixeldungeon.actors.Char;
 import com.felayga.unpixeldungeon.items.Generator;
 import com.felayga.unpixeldungeon.items.Item;
-import com.felayga.unpixeldungeon.items.weapon.enchantments.Death;
+import com.felayga.unpixeldungeon.items.equippableitem.weapon.enchantments.Death;
 import com.felayga.unpixeldungeon.levels.Level;
 import com.felayga.unpixeldungeon.sprites.mobs.unused.SkeletonSprite;
 import com.felayga.unpixeldungeon.utils.GLog;

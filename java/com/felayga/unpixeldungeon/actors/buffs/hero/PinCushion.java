@@ -28,7 +28,7 @@ package com.felayga.unpixeldungeon.actors.buffs.hero;
 import com.felayga.unpixeldungeon.Dungeon;
 import com.felayga.unpixeldungeon.actors.buffs.Buff;
 import com.felayga.unpixeldungeon.items.Item;
-import com.felayga.unpixeldungeon.items.weapon.missiles.MissileWeapon;
+import com.felayga.unpixeldungeon.items.equippableitem.weapon.missiles.MissileWeapon;
 import com.watabou.utils.Bundle;
 
 import java.util.ArrayList;

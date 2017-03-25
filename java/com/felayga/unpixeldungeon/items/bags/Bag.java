@@ -32,14 +32,13 @@ import com.felayga.unpixeldungeon.actors.Char;
 import com.felayga.unpixeldungeon.actors.hero.Hero;
 import com.felayga.unpixeldungeon.items.Heap;
 import com.felayga.unpixeldungeon.items.Item;
-import com.felayga.unpixeldungeon.items.potions.Potion;
-import com.felayga.unpixeldungeon.items.wands.Wand;
-import com.felayga.unpixeldungeon.items.weapon.missiles.martial.Boomerang;
+import com.felayga.unpixeldungeon.items.consumable.potions.Potion;
+import com.felayga.unpixeldungeon.items.consumable.wands.Wand;
+import com.felayga.unpixeldungeon.items.equippableitem.weapon.missiles.martial.Boomerang;
 import com.felayga.unpixeldungeon.mechanics.Constant;
 import com.felayga.unpixeldungeon.mechanics.IDecayable;
 import com.felayga.unpixeldungeon.scenes.GameScene;
 import com.felayga.unpixeldungeon.ui.Icons;
-import com.felayga.unpixeldungeon.ui.Toolbar;
 import com.felayga.unpixeldungeon.utils.GLog;
 import com.felayga.unpixeldungeon.windows.WndBackpack;
 import com.felayga.unpixeldungeon.windows.WndBag;
@@ -241,7 +240,7 @@ public class Bag extends Item implements Iterable<Item>, IBag {
         } else {
             if (parent() instanceof Heap) {
                 Heap heap = (Heap) parent();
-                GameScene.show(new WndBag(this, null, WndBackpack.Mode.ALL, null, null, heap.pos, closeToBackpack));
+                GameScene.show(new WndBag(this, null, WndBackpack.Mode.ALL, null, null, heap.pos(), closeToBackpack));
             } else {
                 GameScene.show(new WndBag(this, null, WndBackpack.Mode.ALL, null, null, Constant.Position.NONE, closeToBackpack));
             }

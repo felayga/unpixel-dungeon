@@ -28,6 +28,7 @@ package com.felayga.unpixeldungeon.sprites;
 import com.felayga.unpixeldungeon.Assets;
 import com.felayga.unpixeldungeon.actors.Char;
 import com.felayga.unpixeldungeon.sprites.hero.HeroSprite;
+import com.felayga.unpixeldungeon.sprites.mobs.MobSprite;
 import com.watabou.noosa.TextureFilm;
 
 public class MirrorSprite extends MobSprite {

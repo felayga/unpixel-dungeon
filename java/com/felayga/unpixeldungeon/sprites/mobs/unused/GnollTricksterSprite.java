@@ -25,7 +25,7 @@
  */
 package com.felayga.unpixeldungeon.sprites.mobs.unused;
 
-import com.felayga.unpixeldungeon.items.weapon.missiles.simple.CurareDart;
+import com.felayga.unpixeldungeon.items.equippableitem.weapon.missiles.simple.CurareDart;
 import com.felayga.unpixeldungeon.levels.Level;
 import com.felayga.unpixeldungeon.sprites.MissileSprite;
 import com.watabou.utils.Callback;

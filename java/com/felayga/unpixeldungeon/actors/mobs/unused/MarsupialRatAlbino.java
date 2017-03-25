@@ -27,7 +27,7 @@ package com.felayga.unpixeldungeon.actors.mobs.unused;
 
 /*
 import com.felayga.unpixeldungeon.Badges;
-import com.felayga.unpixeldungeon.items.weapon.melee.mob.BleedChance;
+import com.felayga.unpixeldungeon.items.equippableitem.weapon.melee.mob.BleedChance;
 import com.felayga.unpixeldungeon.mechanics.GameTime;
 //import com.felayga.unpixeldungeon.sprites.mobs.rat.MarsupialRatAlbinoSprite;
 

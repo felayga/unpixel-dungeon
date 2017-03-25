@@ -43,13 +43,13 @@ import com.felayga.unpixeldungeon.actors.hero.HeroSubClass;
 import com.felayga.unpixeldungeon.effects.Speck;
 import com.felayga.unpixeldungeon.effects.Surprise;
 import com.felayga.unpixeldungeon.effects.Wound;
-import com.felayga.unpixeldungeon.items.EquippableItem;
+import com.felayga.unpixeldungeon.items.equippableitem.EquippableItem;
 import com.felayga.unpixeldungeon.items.Generator;
 import com.felayga.unpixeldungeon.items.Item;
 import com.felayga.unpixeldungeon.items.artifacts.TimekeepersHourglass;
-import com.felayga.unpixeldungeon.items.rings.RingOfWealth;
-import com.felayga.unpixeldungeon.items.weapon.IWeapon;
-import com.felayga.unpixeldungeon.items.weapon.Weapon;
+import com.felayga.unpixeldungeon.items.equippableitem.ring.RingOfWealth;
+import com.felayga.unpixeldungeon.items.equippableitem.weapon.IWeapon;
+import com.felayga.unpixeldungeon.items.equippableitem.weapon.Weapon;
 import com.felayga.unpixeldungeon.levels.Level;
 import com.felayga.unpixeldungeon.levels.Level.Feeling;
 import com.felayga.unpixeldungeon.levels.Terrain;
@@ -58,8 +58,8 @@ import com.felayga.unpixeldungeon.mechanics.Characteristic;
 import com.felayga.unpixeldungeon.mechanics.Constant;
 import com.felayga.unpixeldungeon.mechanics.GameTime;
 import com.felayga.unpixeldungeon.mechanics.MagicType;
-import com.felayga.unpixeldungeon.mechanics.Roll;
 import com.felayga.unpixeldungeon.sprites.CharSprite;
+import com.felayga.unpixeldungeon.sprites.mobs.MobSprite;
 import com.felayga.unpixeldungeon.utils.GLog;
 import com.felayga.unpixeldungeon.utils.Utils;
 import com.watabou.utils.Bundle;
@@ -69,9 +69,13 @@ import java.util.Arrays;
 import java.util.HashSet;
 
 public abstract class Mob extends Char {
-
-    public Mob(int level) {
+    public Mob(int level, Class<? extends MobSprite> spriteClass) {
         super(level);
+
+        this.spriteClass = spriteClass;
+        this.name = MobSprite.Hallucination.getName(spriteClass);
+
+        GLog.d("class="+this.getClass().getName());
 
         actPriority = 2; //hero gets priority over mobs.
 
@@ -367,6 +371,7 @@ public abstract class Mob extends Char {
     private long movementBudget = 0;
 
     protected boolean getCloser_new(int target) {
+        int oldPos = pos();
         long speed = movementSpeed();
 
         if (speed == 0) {
@@ -384,7 +389,7 @@ public abstract class Mob extends Char {
             boolean[] candidate = getCloserStepCandidate();
             boolean[] diagonal = Level.diagonal;
 
-            int step = Dungeon.findPath(this, pos(), target, candidate, diagonal, Level.fieldOfView);
+            int step = Dungeon.findPath(this, oldPos, target, candidate, diagonal, Level.fieldOfView);
 
             if (step != Constant.Position.NONE) {
                 if (Dungeon.level.map(step) == Terrain.DOOR) {
@@ -393,7 +398,7 @@ public abstract class Mob extends Char {
                     } else if (isAmorphous()) {
                         //todo: invisible when squeezing through door logic
                     } else {
-                        if ((characteristics & Characteristic.CannotUseItems.value) != 0) {
+                        if ((characteristics & Characteristic.Humanoid.value) != 0) {
                             if ((characteristics & Characteristic.Brainless.value) != 0) {
                                 int result = Door.tryKick(this, step);
 
@@ -424,16 +429,30 @@ public abstract class Mob extends Char {
                         return true;
                     }
                 }
-                /*else if (Dungeon.level.map[lastPos] == Terrain.OPEN_DOOR) {
-                    if (!enemySeen) {
-                        Door.close(lastPos);
-                        spend_new(Door.TIME_TO_INTERACT, false);
-                        return true;
-                    }
-                }*/
 
-                moveSprite(pos(), step);
+                if (Level.pit[oldPos] != Level.pit[step]) {
+                    if (Level.pit[step]) {
+                        if (!Random.PassFail(DEXCHA() * 14)) {
+                            if (enemySeen && ((characteristics & Characteristic.Brainless.value) == 0 || HP / 3 >= 6)) {
+                                damage(Random.IntRange(1, 6), MagicType.Mundane, null, null);
+                            } else {
+                                step = oldPos;
+                            }
+                        }
+                    } else {
+                        if (!Random.PassFail(STRCON() * 8)) {
+                            step = oldPos;
+                        }
+                    }
+                }
+
+                moveSprite(oldPos, step);
                 move(step);
+
+                if (!enemySeen && (characteristics & Characteristic.Humanoid.value) != 0 && Dungeon.level.map(oldPos) == Terrain.OPEN_DOOR) {
+                    Door.close(lastPos);
+                    spend_new(Door.TIME_TO_INTERACT, false);
+                }
             } else {
                 return false;
             }

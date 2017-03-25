@@ -33,11 +33,10 @@ import com.felayga.unpixeldungeon.actors.mobs.Mob;
 import com.felayga.unpixeldungeon.items.Generator;
 import com.felayga.unpixeldungeon.items.Heap;
 import com.felayga.unpixeldungeon.items.Item;
-import com.felayga.unpixeldungeon.items.scrolls.Scroll;
+import com.felayga.unpixeldungeon.items.consumable.scrolls.Scroll;
 import com.felayga.unpixeldungeon.levels.Room.Type;
 import com.felayga.unpixeldungeon.levels.branches.DungeonBranch;
 import com.felayga.unpixeldungeon.levels.painters.Painter;
-import com.felayga.unpixeldungeon.levels.painters.ShopPainter;
 import com.felayga.unpixeldungeon.levels.traps.FireTrap;
 import com.felayga.unpixeldungeon.levels.traps.Trap;
 import com.felayga.unpixeldungeon.levels.traps.WornTrap;
@@ -240,7 +239,7 @@ public abstract class RegularLevel extends Level {
             Room r = null;
             for (Room subr : rooms) {
                 GLog.d("test type="+type.toString());
-                if (r.width() > 3 && r.height() > 3 && type.canUse(subr)) {
+                if (subr.width() > 3 && subr.height() > 3 && type.canUse(subr)) {
                     r = subr;
                     break;
                 }
@@ -556,6 +555,9 @@ public abstract class RegularLevel extends Level {
                 break;
             case JAIL:
                 map(pos, Terrain.IRON_BARS);
+                break;
+            case SECRET:
+                assignDoor(pos, Terrain.SECRET_DOOR, Terrain.SECRET_LOCKED_DOOR, Terrain.SECRET_LOCKED_DOOR, Terrain.SECRET_DOOR, Terrain.SECRET_LOCKED_DOOR, Terrain.SECRET_LOCKED_DOOR);
                 break;
         }
     }

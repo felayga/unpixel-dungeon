@@ -33,30 +33,34 @@ import com.watabou.utils.Signal;
 
 public class GLog {
 
-	public static final String TAG = "GAME";
-	
-	public static final String POSITIVE		= "++ ";
-	public static final String NEGATIVE		= "-- ";
-	public static final String WARNING		= "** ";
-	public static final String HIGHLIGHT	= "@@ ";
-    public static final String DEBUG        = "!! ";
-	
-	public static Signal<String> update = new Signal<>();
-	
-	public static void i( String text, Object... args ) {
-        if (args.length > 0) {
-			text = Utils.format( text, args );
-		}
-		
-		Log.i( TAG, text );
-		update.dispatch( text );
-	}
+    public static final String TAG = "GAME";
 
-	public static void d( String text, Object... args ) {
+    public static final String POSITIVE     = "++ ";
+    public static final String NEGATIVE     = "-- ";
+    public static final String WARNING      = "** ";
+    public static final String HIGHLIGHT    = "@@ ";
+    public static final String DEBUG        = "!! ";
+
+    public static Signal<String> update = new Signal<>();
+
+    public static void i(String text, Object... args) {
+        if (args.length > 0) {
+            text = Utils.format(text, args);
+        }
+
+        Log.i(TAG, text);
+        update.dispatch(text);
+    }
+
+    public static void d(String text, Object... args) {
         i(DEBUG + text, args);
     }
-    public static void d( Throwable throwable) { d(Log.getStackTraceString(throwable)); }
-    public static void d( int pos, int relativePos ) {
+
+    public static void d(Throwable throwable) {
+        d(Log.getStackTraceString(throwable));
+    }
+
+    public static void d(int pos, int relativePos) {
         int x = pos % Level.WIDTH;
         int y = pos / Level.WIDTH;
 
@@ -65,25 +69,24 @@ public class GLog {
             int ry = relativePos / Level.WIDTH;
 
             d("pos=" + x + "," + y + " relative=" + (rx - x) + "," + (ry - y));
-        }
-        else {
+        } else {
             d("pos=" + x + "," + y);
         }
     }
-	
-	public static void p( String text, Object... args ) {
-		i( POSITIVE + text, args );
-	}
-	
-	public static void n( String text, Object... args ) {
-		i( NEGATIVE + text, args );
-	}
-	
-	public static void w( String text, Object... args ) {
-		i( WARNING + text, args );
-	}
-	
-	public static void h( String text, Object... args ) {
-		i( HIGHLIGHT + text, args );
-	}
+
+    public static void p(String text, Object... args) {
+        i(POSITIVE + text, args);
+    }
+
+    public static void n(String text, Object... args) {
+        i(NEGATIVE + text, args);
+    }
+
+    public static void w(String text, Object... args) {
+        i(WARNING + text, args);
+    }
+
+    public static void h(String text, Object... args) {
+        i(HIGHLIGHT + text, args);
+    }
 }

@@ -28,14 +28,14 @@ package com.felayga.unpixeldungeon.actors.mobs.unused;
 import java.util.ArrayList;
 import java.util.HashSet;
 
-import com.felayga.unpixeldungeon.items.scrolls.ScrollOfTeleportation;
-import com.felayga.unpixeldungeon.items.weapon.melee.mob.CharmChance;
+import com.felayga.unpixeldungeon.items.consumable.scrolls.ScrollOfTeleportation;
+import com.felayga.unpixeldungeon.items.equippableitem.weapon.melee.mob.CharmChance;
 import com.felayga.unpixeldungeon.mechanics.GameTime;
 import com.felayga.unpixeldungeon.actors.Actor;
 import com.felayga.unpixeldungeon.actors.buffs.positive.Light;
 import com.felayga.unpixeldungeon.actors.buffs.negative.Sleep;
-import com.felayga.unpixeldungeon.items.scrolls.ScrollOfLullaby;
-import com.felayga.unpixeldungeon.items.weapon.enchantments.Leech;
+import com.felayga.unpixeldungeon.items.consumable.scrolls.ScrollOfLullaby;
+import com.felayga.unpixeldungeon.items.equippableitem.weapon.enchantments.Leech;
 import com.felayga.unpixeldungeon.levels.Level;
 import com.felayga.unpixeldungeon.mechanics.Ballistica;
 import com.felayga.unpixeldungeon.sprites.mobs.foocubus.IncubusSprite;

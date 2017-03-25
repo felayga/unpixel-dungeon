@@ -28,7 +28,7 @@ package com.felayga.unpixeldungeon.actors.mobs.jackal;
 
 import com.felayga.unpixeldungeon.actors.buffs.hero.Encumbrance;
 import com.felayga.unpixeldungeon.actors.mobs.Mob;
-import com.felayga.unpixeldungeon.items.weapon.melee.mob.MeleeMobAttack;
+import com.felayga.unpixeldungeon.items.equippableitem.weapon.melee.mob.MeleeMobAttack;
 import com.felayga.unpixeldungeon.mechanics.Characteristic;
 import com.felayga.unpixeldungeon.mechanics.CorpseEffect;
 import com.felayga.unpixeldungeon.mechanics.GameTime;
@@ -39,12 +39,8 @@ import com.felayga.unpixeldungeon.sprites.mobs.jackal.JackalSprite;
  * Created by HELLO on 5/21/2016.
  */
 public class Jackal extends Mob {
-    public Jackal()
-    {
-        super(0);
-
-        name = "jackal";
-        spriteClass = JackalSprite.class;
+    public Jackal() {
+        super(0, JackalSprite.class);
 
         movementSpeed(GameTime.TICK);
         attackSpeed(GameTime.TICK);

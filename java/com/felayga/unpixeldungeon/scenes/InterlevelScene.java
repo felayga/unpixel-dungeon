@@ -29,6 +29,7 @@ import com.felayga.unpixeldungeon.Dungeon;
 import com.felayga.unpixeldungeon.Statistics;
 import com.felayga.unpixeldungeon.items.Generator;
 import com.felayga.unpixeldungeon.levels.Level;
+import com.felayga.unpixeldungeon.levels.branches.DungeonBranch;
 import com.felayga.unpixeldungeon.mechanics.Constant;
 import com.felayga.unpixeldungeon.mechanics.GameTime;
 import com.felayga.unpixeldungeon.unPixelDungeon;
@@ -255,13 +256,14 @@ public class InterlevelScene extends PixelScene {
         }
 
         Level level;
-        if (Statistics.floorsVisited[teleportDepth]) {
+        if (Statistics.floorsVisited[teleportDepth - DungeonBranch.MINLEVEL]) {
             Dungeon.depth(teleportDepth);
             level = Dungeon.loadLevel(WndInitHero.savedGameIndex);
         } else {
             level = Dungeon.newLevel(teleportDepth);
         }
 
+        int oldPos = pos;
         switch (pos) {
             case Constant.Position.ENTRANCE:
                 pos = level.entrance;
@@ -284,7 +286,12 @@ public class InterlevelScene extends PixelScene {
                 break;
         }
 
-        Dungeon.switchLevel(level, pos);
+        if (pos != 0) {
+            Dungeon.switchLevel(level, pos);
+        } else {
+            GLog.d("bad entrance position="+oldPos);
+            GLog.d(""+1/0);
+        }
     }
 
     /*
@@ -316,7 +323,7 @@ public class InterlevelScene extends PixelScene {
         Dungeon.saveLevel(true);
 
         Level level;
-        if (Statistics.floorsVisited[Dungeon.depth() + 1]) {
+        if (Statistics.floorsVisited[Dungeon.depth() + 1 - DungeonBranch.MINLEVEL]) {
             Dungeon.depth(Dungeon.depth() + 1);
             level = Dungeon.loadLevel(WndInitHero.savedGameIndex);
         } else {
@@ -410,7 +417,7 @@ public class InterlevelScene extends PixelScene {
 
         Level level;
 
-        if (Statistics.floorsVisited[teleportDepth]) {
+        if (Statistics.floorsVisited[teleportDepth - DungeonBranch.MINLEVEL]) {
             Dungeon.depth(teleportDepth);
             level = Dungeon.loadLevel(WndInitHero.savedGameIndex);
         } else {

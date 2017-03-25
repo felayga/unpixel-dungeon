@@ -137,7 +137,7 @@ public class WndInitHero extends Window {
             public void onSelected(int selected) {
                 genderSelected = selected;
                 sprite.setGender(genderSelected);
-                sprite.setArmor(genderSelected);
+                sprite.setArmor(HeroSprite.ArmorIndex.Cloth);
                 sprite.idle();
             }
         });
@@ -201,7 +201,7 @@ public class WndInitHero extends Window {
 
         sprite = new HeroSprite(null, false);
         sprite.point(new PointF(GAP + 16.0f, GAP + layoutY + 16.0f));
-        sprite.setAppearance(genderSelected, 2, 0, hairSelected, hairFaceSelected, hairColorSelected);
+        sprite.setAppearance(genderSelected, HeroSprite.ArmorIndex.Cloth, HeroSprite.ArmorIndex.CloakNone, hairSelected, hairFaceSelected, hairColorSelected);
         sprite.idle();
         add(sprite);
 

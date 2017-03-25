@@ -59,16 +59,17 @@ import com.felayga.unpixeldungeon.effects.CellEmitter;
 import com.felayga.unpixeldungeon.effects.CheckedCell;
 import com.felayga.unpixeldungeon.effects.Flare;
 import com.felayga.unpixeldungeon.effects.Speck;
-import com.felayga.unpixeldungeon.items.AmuletOfYendor;
+import com.felayga.unpixeldungeon.items.equippableitem.amulet.AmuletOfYendor;
 import com.felayga.unpixeldungeon.items.Ankh;
-import com.felayga.unpixeldungeon.items.Dewdrop;
-import com.felayga.unpixeldungeon.items.EquippableItem;
+import com.felayga.unpixeldungeon.items.unused.Dewdrop;
+import com.felayga.unpixeldungeon.items.equippableitem.EquippableItem;
 import com.felayga.unpixeldungeon.items.Gemstone;
 import com.felayga.unpixeldungeon.items.Heap;
 import com.felayga.unpixeldungeon.items.Heap.Type;
 import com.felayga.unpixeldungeon.items.Item;
-import com.felayga.unpixeldungeon.items.armor.Armor;
-import com.felayga.unpixeldungeon.items.armor.boots.Boots;
+import com.felayga.unpixeldungeon.items.equippableitem.armor.Armor;
+import com.felayga.unpixeldungeon.items.equippableitem.amulet.AmuletOfYendorFake;
+import com.felayga.unpixeldungeon.items.equippableitem.armor.boots.Boots;
 import com.felayga.unpixeldungeon.items.artifacts.CapeOfThorns;
 import com.felayga.unpixeldungeon.items.artifacts.EtherealChains;
 import com.felayga.unpixeldungeon.items.artifacts.TimekeepersHourglass;
@@ -76,20 +77,19 @@ import com.felayga.unpixeldungeon.items.bags.Bag;
 import com.felayga.unpixeldungeon.items.bags.IBag;
 import com.felayga.unpixeldungeon.items.bags.LargeChest;
 import com.felayga.unpixeldungeon.items.bags.backpack.Belongings;
-import com.felayga.unpixeldungeon.items.books.Book;
-import com.felayga.unpixeldungeon.items.food.Food;
-import com.felayga.unpixeldungeon.items.rings.RingOfMight;
-import com.felayga.unpixeldungeon.items.rings.RingOfTenacity;
+import com.felayga.unpixeldungeon.items.consumable.books.Book;
+import com.felayga.unpixeldungeon.items.consumable.food.Food;
+import com.felayga.unpixeldungeon.items.equippableitem.ring.RingOfMight;
 import com.felayga.unpixeldungeon.items.spells.Spell;
 import com.felayga.unpixeldungeon.items.tools.ITool;
 import com.felayga.unpixeldungeon.items.tools.digging.Pickaxe;
 import com.felayga.unpixeldungeon.items.tools.unlocking.UnlockingTool;
-import com.felayga.unpixeldungeon.items.weapon.IWeapon;
-import com.felayga.unpixeldungeon.items.weapon.Weapon;
-import com.felayga.unpixeldungeon.items.weapon.ammunition.AmmunitionWeapon;
-import com.felayga.unpixeldungeon.items.weapon.ammunition.simple.Rock;
-import com.felayga.unpixeldungeon.items.weapon.missiles.MissileWeapon;
-import com.felayga.unpixeldungeon.items.weapon.ranged.RangedWeapon;
+import com.felayga.unpixeldungeon.items.equippableitem.weapon.IWeapon;
+import com.felayga.unpixeldungeon.items.equippableitem.weapon.Weapon;
+import com.felayga.unpixeldungeon.items.equippableitem.weapon.ammunition.AmmunitionWeapon;
+import com.felayga.unpixeldungeon.items.equippableitem.weapon.ammunition.simple.Rock;
+import com.felayga.unpixeldungeon.items.equippableitem.weapon.missiles.MissileWeapon;
+import com.felayga.unpixeldungeon.items.equippableitem.weapon.ranged.RangedWeapon;
 import com.felayga.unpixeldungeon.levels.Level;
 import com.felayga.unpixeldungeon.levels.Terrain;
 import com.felayga.unpixeldungeon.levels.branches.DungeonBranch;
@@ -430,11 +430,11 @@ public class Hero extends Char {
         spend_new(movementSpeed(), true);
         useAttribute(AttributeType.STRCON, 1);
 
-        if (lastBoulder != boulder || getTime() - lastBoulderTime > GameTime.TICK * 8) {
+        if (lastBoulder != boulder || time() - lastBoulderTime > GameTime.TICK * 8) {
             GLog.i("With great effort you move the boulder.");
             lastBoulder = boulder;
         }
-        lastBoulderTime = getTime();
+        lastBoulderTime = time();
 
         curAction = new HeroAction.Move(boulder.pos());
         lastAction = null;
@@ -541,18 +541,18 @@ public class Hero extends Char {
             } else if (curAction instanceof HeroAction.Buy) {
                 return actBuy((HeroAction.Buy) curAction);
             } else if (curAction instanceof HeroAction.HandleHeap) {
-                //GLog.d("curaction is HandleHeap");
+                GLog.d("curaction is HandleHeap");
                 if (curAction instanceof HeroAction.HandleHeap.PickUp) {
-                    //GLog.d("curaction is PickUp");
+                    GLog.d("curaction is PickUp");
                     return actPickUp((HeroAction.HandleHeap.PickUp) curAction);
                 } else if (curAction instanceof HeroAction.HandleHeap.OpenBag) {
-                    //GLog.d("curaction is OpenBag");
+                    GLog.d("curaction is OpenBag");
                     return actOpenBag((HeroAction.HandleHeap.OpenBag) curAction);
                 } else if (curAction instanceof HeroAction.HandleHeap.InteractItem) {
-                    //GLog.d("curaction is InteractItem");
+                    GLog.d("curaction is InteractItem");
                     return actInteractItem((HeroAction.HandleHeap.InteractItem) curAction);
                 } else {
-                    //GLog.d("curaction is base");
+                    GLog.d("curaction is base");
                     return actHandleHeap((HeroAction.HandleHeap) curAction);
                 }
             } else if (curAction instanceof HeroAction.OpenChest) {
@@ -781,19 +781,23 @@ public class Hero extends Char {
                         distance = Ballistica.maxDistance(this, item, Ballistica.TravelCause.Kicked);
 
                         if (distance > 0) {
-                            int direction = heap.pos - pos();
-                            int target = heap.pos + direction * distance;
-                            item.cast(this, heap.pos, target);
+                            int direction = heap.pos() - pos();
+                            int target = heap.pos() + direction * distance;
+                            item.cast(this, heap.pos(), target);
                         }
                     } else {
-                        heap.remove(item);
-                        Dungeon.level.drop(item, pos());
+                        item.cast(this, heap.pos(), pos());
+                        //Dungeon.level.drop(item, pos());
 
+                        /*
                         if (item.quantity() == 1) {
+                        */
                             GLog.p("The " + item.getName() + " comes loose.");
+                        /*
                         } else {
                             GLog.p("The " + item.getName() + "s come loose.");
                         }
+                        */
 
                         messaged = true;
                     }
@@ -835,6 +839,14 @@ public class Hero extends Char {
                                 if (Dungeon.audible[pos()]) {
                                     Sample.INSTANCE.play(Assets.SND_DOOR_KICKOPEN);
                                 }
+                            } else {
+                                if (!messaged) {
+                                    GLog.w("Thud!");
+                                }
+
+                                if (Dungeon.audible[pos()]) {
+                                    Sample.INSTANCE.play(Assets.SND_DOOR_THUMP);
+                                }
                             }
                         }
 
@@ -842,12 +854,21 @@ public class Hero extends Char {
                     } else {
                         if (distance < 1) {
                             if (!messaged) {
-                                GLog.w("Thud!");
+                                GLog.n("Ouch! That hurts.");
                             }
 
                             if (Dungeon.audible[pos()]) {
                                 Sample.INSTANCE.play(Assets.SND_DOOR_THUMP);
                             }
+
+                            damage(Random.IntRange(1, 4), MagicType.Mundane, null, null);
+                            if (Random.Int(Constant.Chance.KICK_SOLID_CRIPPLE) == 0) {
+                                Cripple.prolong(this, null, Cripple.class, GameTime.TICK * Random.IntRange(4, 12));
+                            }
+                            if (!this.isAlive()){
+                                Dungeon.fail("Died from kicking a heavy " + item.getName());
+                            }
+
                         }
                     }
                 } else if (Level.passable[dst] || Level.chasm[dst]) {
@@ -862,6 +883,11 @@ public class Hero extends Char {
                     Dungeon.level.setLight(dst, 5, true);
                 } else {
                     GLog.n("Ouch!  That hurts.");
+
+                    if (Dungeon.audible[pos()]) {
+                        Sample.INSTANCE.play(Assets.SND_DOOR_THUMP);
+                    }
+
                     damage(Random.IntRange(1, 4), MagicType.Mundane, null, null);
                     if (Random.Int(Constant.Chance.KICK_SOLID_CRIPPLE) == 0) {
                         Cripple.prolong(this, null, Cripple.class, GameTime.TICK * Random.IntRange(4, 12));
@@ -869,7 +895,6 @@ public class Hero extends Char {
                     if (!this.isAlive()){
                         Dungeon.fail("Died from kicking a wall");
                     }
-
                 }
             }
 
@@ -1059,6 +1084,11 @@ public class Hero extends Char {
                                         } else {
                                             if ((Level.flags & Level.FLAG_PIT_NOT_DIGGABLE) == 0) {
                                                 GLog.w("You dig a pit.");
+
+                                                Heap heap = Dungeon.level.heaps.get(pos());
+                                                if (heap != null) {
+                                                    heap.unbury();
+                                                }
 
                                                 Dungeon.level.setDirtPit(pos(), true, true);
                                                 Dungeon.observe();
@@ -1481,7 +1511,7 @@ public class Hero extends Char {
             IBag bag = action.bag;
 
             if (bag.locked()) {
-
+                GLog.n("The " + bag.getDisplayName() + " is locked.");
             } else {
                 GameScene.show(new WndBag(bag, null, WndBackpack.Mode.ALL, null, null, dst, false));
             }
@@ -1837,19 +1867,29 @@ public class Hero extends Char {
             } else if (action.direction < 0) {
                 if (Dungeon.depth() == 1) {
                     if (belongings.getItem(AmuletOfYendor.class, false) == null) {
-                        GameScene.show(new WndMessage(TXT_LEAVE));
-                        ready();
-                    } else {
-                        Dungeon.win(ResultDescriptions.WIN);
-                        Dungeon.deleteGame(WndInitHero.savedGameIndex, false, true);
-                        Game.switchScene(SurfaceScene.class);
+                        if (belongings.getItem(AmuletOfYendorFake.class, false) != null) {
+                            GLog.n("IT'S A FAKE!");
+                            damage(HT, MagicType.Mundane, this, null);
+                            Dungeon.fail("Fooled by an imitation Amulet of Yendor");
+                            return false;
+                        } else {
+                            GameScene.show(new WndMessage(TXT_LEAVE));
+                            ready();
+                            return false;
+                        }
                     }
-                } else {
-                    spend_new(movementSpeed(), false);
-
-                    InterlevelScene.mode = InterlevelScene.Mode.ASCEND;
-                    Game.switchScene(InterlevelScene.class);
                 }
+                if (Dungeon.depth() == DungeonBranch.Elemental.levelMin) {
+                    Dungeon.win(ResultDescriptions.WIN);
+                    Dungeon.deleteGame(WndInitHero.savedGameIndex, false, true);
+                    Game.switchScene(SurfaceScene.class);
+                    return false;
+                }
+
+                spend_new(movementSpeed(), false);
+
+                InterlevelScene.mode = InterlevelScene.Mode.ASCEND;
+                Game.switchScene(InterlevelScene.class);
             } else {
                 GLog.d("whut" + 1 / 0);
             }
@@ -2073,19 +2113,27 @@ public class Hero extends Char {
         return visibleEnemies.get(index % visibleEnemies.size());
     }
 
+    private boolean[] getCloserStepCandidateTemp = new boolean[0];
     protected boolean[] getCloserStepCandidate() {
         int len = Level.LENGTH;
-        boolean[] retval = new boolean[len];
+
+        if (getCloserStepCandidateTemp.length != len) {
+            getCloserStepCandidateTemp = new boolean[len];
+        }
+        boolean[] retval = getCloserStepCandidateTemp;
 
         boolean[] passable = Level.passable;
         boolean[] pathable = Level.pathable;
+        boolean[] avoid = Level.avoid;
+        boolean[] pit = Level.pit;
 
         boolean[] visited = Dungeon.level.visited;
         boolean[] mapped = Dungeon.level.mapped;
-        boolean[] avoid = Dungeon.level.avoid;
+
+        boolean inPit = Level.pit[pos()];
 
         for (int i = 0; i < len; i++) {
-            retval[i] = (passable[i] || pathable[i]) && (visited[i] || mapped[i]) && (!avoid[i]);
+            retval[i] = (passable[i] || pathable[i]) && (visited[i] || mapped[i]) && (!avoid[i]) && (pit[i] == inPit);
         }
 
         return retval;
@@ -2100,8 +2148,9 @@ public class Hero extends Char {
         }
 
         int step = Constant.Position.NONE;
+        int oldPos = pos();
 
-        if (Level.canStep(pos(), target, Level.diagonal)) {
+        if (Level.canStep(oldPos, target, Level.diagonal)) {
             if (Actor.findChar(target) == null) {
                 if (Level.chasm[target] && flying <= 0 && !Level.solid[target]) {
                     if (!Chasm.jumpConfirmed) {
@@ -2120,7 +2169,7 @@ public class Hero extends Char {
             boolean[] candidate = getCloserStepCandidate();
             boolean[] diagonal = Level.diagonal;
 
-            step = Dungeon.findPath(this, pos(), target, candidate, diagonal, Level.fieldOfView);
+            step = Dungeon.findPath(this, oldPos, target, candidate, diagonal, Level.fieldOfView);
             Actor test = Actor.findChar(step);
             if (test != null && test != this) {
                 GLog.w("Hmm.  Something is in the way.");
@@ -2129,7 +2178,7 @@ public class Hero extends Char {
             }
         }
 
-        if (step != Constant.Position.NONE && step != pos()) {
+        if (step != Constant.Position.NONE && step != oldPos) {
             //GLog.d("step");
             //GLog.d(pos, step);
             if (Dungeon.level.map(step) == Terrain.DOOR || Dungeon.level.map(step) == Terrain.LOCKED_DOOR) {
@@ -2141,7 +2190,35 @@ public class Hero extends Char {
                 return false;
             }
 
-            sprite.move(pos(), step);
+            if (Level.pit[oldPos] != Level.pit[step]) {
+                if (Level.pit[step]) {
+                    if (Random.PassFail(DEXCHA() * 14)) {
+                        useAttribute(AttributeType.DEXCHA, 1);
+                        GLog.w("You climb into the pit.");
+                    } else {
+                        if (visibleEnemies() > 0) {
+                            GLog.n("You fall into the pit.");
+                            damage(Random.IntRange(1,6), MagicType.Mundane, null, null);
+                            if (!isAlive()) {
+                                Dungeon.fail(ResultDescriptions.FALL);
+                            }
+                            useAttribute(AttributeType.STRCON, -1);
+                            useAttribute(AttributeType.DEXCHA, -1);
+                        } else {
+                            step = oldPos;
+                        }
+                    }
+                } else {
+                    if (Random.PassFail(STRCON() * 8)) {
+                        useAttribute(AttributeType.STRCON, 1);
+                        GLog.w("You climb out of the pit.");
+                    } else {
+                        step = oldPos;
+                    }
+                }
+            }
+
+            sprite.move(oldPos, step);
             move(step);
             attributeIncreaseCheck();
             spend_new(speed, false);

@@ -30,7 +30,7 @@ import com.felayga.unpixeldungeon.actors.buffs.Buff;
 import com.felayga.unpixeldungeon.actors.buffs.negative.Chill;
 import com.felayga.unpixeldungeon.actors.buffs.negative.Frost;
 import com.felayga.unpixeldungeon.items.quest.Embers;
-import com.felayga.unpixeldungeon.items.weapon.melee.mob.IgniteChance;
+import com.felayga.unpixeldungeon.items.equippableitem.weapon.melee.mob.IgniteChance;
 import com.felayga.unpixeldungeon.mechanics.GameTime;
 import com.felayga.unpixeldungeon.sprites.mobs.unused.NewbornElementalSprite;
 

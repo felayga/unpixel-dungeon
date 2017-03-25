@@ -26,6 +26,7 @@
 package com.felayga.unpixeldungeon.sprites;
 
 import com.felayga.unpixeldungeon.Assets;
+import com.felayga.unpixeldungeon.sprites.mobs.MobSprite;
 import com.watabou.noosa.TextureFilm;
 import com.watabou.utils.Random;
 

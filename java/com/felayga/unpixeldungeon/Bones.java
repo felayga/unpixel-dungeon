@@ -30,7 +30,7 @@ import com.felayga.unpixeldungeon.items.Generator;
 import com.felayga.unpixeldungeon.items.Gold;
 import com.felayga.unpixeldungeon.items.Item;
 import com.felayga.unpixeldungeon.items.artifacts.Artifact_old;
-import com.felayga.unpixeldungeon.items.weapon.missiles.MissileWeapon;
+import com.felayga.unpixeldungeon.items.equippableitem.weapon.missiles.MissileWeapon;
 import com.felayga.unpixeldungeon.mechanics.BUCStatus;
 import com.watabou.noosa.Game;
 import com.watabou.utils.Bundle;

@@ -28,7 +28,7 @@ package com.felayga.unpixeldungeon.actors.buffs.negative;
 import com.felayga.unpixeldungeon.actors.Char;
 import com.felayga.unpixeldungeon.actors.buffs.FlavourBuff;
 import com.felayga.unpixeldungeon.actors.hero.Hero;
-import com.felayga.unpixeldungeon.items.rings.RingOfElements.Resistance;
+import com.felayga.unpixeldungeon.items.equippableitem.ring.RingOfElements.Resistance;
 import com.felayga.unpixeldungeon.mechanics.GameTime;
 import com.felayga.unpixeldungeon.ui.BuffIndicator;
 

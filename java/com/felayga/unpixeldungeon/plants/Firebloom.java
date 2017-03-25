@@ -31,8 +31,8 @@ import com.felayga.unpixeldungeon.actors.blobs.Blob;
 import com.felayga.unpixeldungeon.actors.blobs.Fire;
 import com.felayga.unpixeldungeon.effects.CellEmitter;
 import com.felayga.unpixeldungeon.effects.particles.FlameParticle;
-import com.felayga.unpixeldungeon.items.potions.IAlchemyComponent;
-import com.felayga.unpixeldungeon.items.potions.PotionOfBrewing;
+import com.felayga.unpixeldungeon.items.consumable.potions.IAlchemyComponent;
+import com.felayga.unpixeldungeon.items.consumable.potions.PotionOfBrewing;
 import com.felayga.unpixeldungeon.scenes.GameScene;
 import com.felayga.unpixeldungeon.sprites.ItemSpriteSheet;
 

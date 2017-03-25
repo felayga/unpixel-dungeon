@@ -71,11 +71,14 @@ public class DeadEndLevel extends Level {
 		}
 		
 		entrance = SIZE * WIDTH + SIZE / 2 + 1;
+        exit = entrance;
+
+        entranceAlternate = entrance;
+        exitAlternate = exit;
+
 		map(entrance, Terrain.STAIRS_UP);
 		
 		map((SIZE / 2 + 1) * (WIDTH + 1), Terrain.SIGN);
-		
-		exit = 0;
 		
 		return true;
 	}

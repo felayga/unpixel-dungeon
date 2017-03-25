@@ -28,7 +28,7 @@ package com.felayga.unpixeldungeon.items;
 import com.felayga.unpixeldungeon.Assets;
 import com.felayga.unpixeldungeon.actors.hero.Hero;
 import com.felayga.unpixeldungeon.effects.particles.PurpleParticle;
-import com.felayga.unpixeldungeon.items.armor.Armor;
+import com.felayga.unpixeldungeon.items.equippableitem.armor.Armor;
 import com.felayga.unpixeldungeon.mechanics.GameTime;
 import com.felayga.unpixeldungeon.scenes.GameScene;
 import com.felayga.unpixeldungeon.sprites.ItemSpriteSheet;

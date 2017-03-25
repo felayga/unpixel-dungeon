@@ -30,8 +30,8 @@ import com.felayga.unpixeldungeon.actors.Actor;
 import com.felayga.unpixeldungeon.actors.Char;
 import com.felayga.unpixeldungeon.actors.buffs.hero.Encumbrance;
 import com.felayga.unpixeldungeon.actors.mobs.Mob;
-import com.felayga.unpixeldungeon.items.Bomb;
-import com.felayga.unpixeldungeon.items.weapon.melee.mob.MeleeMobAttack;
+import com.felayga.unpixeldungeon.items.consumable.Bomb;
+import com.felayga.unpixeldungeon.items.equippableitem.weapon.melee.mob.MeleeMobAttack;
 import com.felayga.unpixeldungeon.mechanics.Characteristic;
 import com.felayga.unpixeldungeon.mechanics.CorpseEffect;
 import com.felayga.unpixeldungeon.mechanics.GameTime;
@@ -43,10 +43,7 @@ import com.felayga.unpixeldungeon.sprites.mobs.wraith.GasSporeSprite;
  */
 public class GasSpore extends Mob {
     public GasSpore() {
-        super(1);
-
-        name = "gas spore";
-        spriteClass = GasSporeSprite.class;
+        super(1, GasSporeSprite.class);
 
         movementSpeed(GameTime.TICK * 12);
         attackSpeed(GameTime.TICK);
