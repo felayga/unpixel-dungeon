@@ -61,11 +61,11 @@ public class WndInfoItem extends Window {
 	private static final int WIDTH = 120;
 	
 	public WndInfoItem( Heap heap ) {
-		
 		super();
-		
+
+        /*
 		if (heap.type == Heap.Type.HEAP || heap.type == Heap.Type.FOR_SALE) {
-			
+        */
 			Item item = heap.peek();
 			
 			int color = TITLE_COLOR;
@@ -75,7 +75,7 @@ public class WndInfoItem extends Window {
 				color = ItemSlot.DEGRADED;
 			}
 			fillFields( item.image(), item.glowing(), color, item.getDisplayName(), item.info() );
-			
+        /*
 		} else {
 			
 			String title;
@@ -98,8 +98,8 @@ public class WndInfoItem extends Window {
             Item item = heap.peek();
 			
 			fillFields( item.image(), item.glowing(), TITLE_COLOR, title, info );
-			
 		}
+		*/
 	}
 	
 	public WndInfoItem( Item item ) {

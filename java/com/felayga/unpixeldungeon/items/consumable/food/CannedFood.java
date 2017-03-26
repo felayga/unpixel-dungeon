@@ -256,8 +256,6 @@ public class CannedFood extends Food {
     @Override
     public boolean execute(final Hero hero, String action) {
         if (action.equals(Constant.Action.OPEN)) {
-            hero.sprite.operate(hero.pos());
-
             EquippableItem weapon = hero.belongings.weapon();
 
             long effort;
@@ -285,7 +283,7 @@ public class CannedFood extends Food {
                 GLog.w("You wrestle the can open with your bare hands.");
             }
 
-            hero.curAction = new HeroAction.UseItem.SlowAction(this, Constant.Action.SLOW_ACTION, effort);
+            hero.curAction = new HeroAction.UseItem.SlowAction(this, Constant.Action.SLOW_ACTION, effort, HeroAction.Display.Operate);
             hero.motivate(true);
             return true;
         } else if (action.equals(Constant.Action.SLOW_ACTION)) {

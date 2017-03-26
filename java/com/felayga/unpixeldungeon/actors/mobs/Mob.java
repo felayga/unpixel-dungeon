@@ -73,9 +73,7 @@ public abstract class Mob extends Char {
         super(level);
 
         this.spriteClass = spriteClass;
-        this.name = MobSprite.Hallucination.getName(spriteClass);
-
-        GLog.d("class="+this.getClass().getName());
+        this.name = MobSprite.Registry.getInfo(spriteClass).name;
 
         actPriority = 2; //hero gets priority over mobs.
 
@@ -420,13 +418,13 @@ public abstract class Mob extends Char {
                                 //sprite.attack(step);
                                 return true;
                             } else {
-                                return false;
+                                Door.open(step);
+                                spend_new(Door.TIME_TO_INTERACT, false);
+                                return true;
                             }
                         }
 
-                        Door.open(step);
-                        spend_new(Door.TIME_TO_INTERACT, false);
-                        return true;
+                        return false;
                     }
                 }
 

@@ -26,20 +26,12 @@
 
 package com.felayga.unpixeldungeon.sprites.mobs.humanoid.shopkeeper;
 
-import com.felayga.unpixeldungeon.Assets;
-import com.felayga.unpixeldungeon.sprites.mobs.humanoid.HumanoidSprite;
-
 /**
- * Created by HELLO on 3/14/2017.
+ * Created by HELLO on 3/25/2017.
  */
 
-public class HumanSprite extends HumanoidSprite{
-    public HumanSprite() {
-        this(4);
+public class Nihilist3Sprite extends NihilistSprite {
+    public Nihilist3Sprite() {
+        super(3);
     }
-
-    public HumanSprite(int index) {
-        super(index, Assets.Mobs.HUMAN, 14, 15, 18);
-    }
-
 }

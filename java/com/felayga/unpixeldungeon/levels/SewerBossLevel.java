@@ -236,6 +236,8 @@ public class SewerBossLevel extends RegularLevel {
 
     @Override
     protected void createItems() {
+        //todo: sewer boss level bones
+        /*
         Item item = Bones.get();
         if (item != null) {
             int pos;
@@ -244,6 +246,7 @@ public class SewerBossLevel extends RegularLevel {
             } while (pos == entrance || map(pos) == Terrain.SIGN);
             drop(item, pos).type = Heap.Type.REMAINS;
         }
+        */
     }
 
     @Override

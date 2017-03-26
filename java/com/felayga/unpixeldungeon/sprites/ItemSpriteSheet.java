@@ -65,10 +65,7 @@ public class ItemSpriteSheet {
     public static final int HOLDER	        = ROW_HEAPS + 2;
     public static final int BANDOLIER       = ROW_HEAPS + 3;
     public static final int HOLSTER	        = ROW_HEAPS + 4;
-	public static final int BONES			= ROW_HEAPS + 5;
-	public static final int REMAINS         = ROW_HEAPS + 6;
-	public static final int TOMB			= ROW_HEAPS + 7;
-	public static final int GRAVE			= ROW_HEAPS + 8;
+	public static final int HEADSTONE		= ROW_HEAPS + 7;
 	public static final int CHEST			= ROW_HEAPS + 9;
 	public static final int CHEST_LOCKED	= ROW_HEAPS + 10;
     public static final int LARGEBOX        = ROW_HEAPS + 11;
@@ -442,6 +439,7 @@ public class ItemSpriteSheet {
     public static final int TOOL_TOWEL      = ROW_TOOLS + 5;
     public static final int TOOL_CANOPENER  = ROW_TOOLS + 6;
     public static final int TOOL_TRICORDER  = ROW_TOOLS + 7;
+    public static final int TOOL_COWBELL    = ROW_TOOLS + 8;
 
 	//Row Sixteen: Unused
 	public static final int GEMSTONE_WHITE	= ROW_GEMSTONE + 0;

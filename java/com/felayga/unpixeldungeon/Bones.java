@@ -30,6 +30,8 @@ import com.felayga.unpixeldungeon.items.Generator;
 import com.felayga.unpixeldungeon.items.Gold;
 import com.felayga.unpixeldungeon.items.Item;
 import com.felayga.unpixeldungeon.items.artifacts.Artifact_old;
+import com.felayga.unpixeldungeon.items.equippableitem.amulet.AmuletOfYendor;
+import com.felayga.unpixeldungeon.items.equippableitem.amulet.AmuletOfYendorFake;
 import com.felayga.unpixeldungeon.items.equippableitem.weapon.missiles.MissileWeapon;
 import com.felayga.unpixeldungeon.mechanics.BUCStatus;
 import com.watabou.noosa.Game;
@@ -41,45 +43,63 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.util.ArrayList;
 import java.util.Iterator;
+import java.util.List;
 
 public class Bones {
 
 	private static final String BONES_FILE	= "bones.dat";
 	
-	private static final String LEVEL	= "level";
-	private static final String ITEM	= "item";
+	private static final String LEVEL       = "level";
+	private static final String ITEM        = "item";
+    private static final String ITEMCOUNT   = "itemCount";
 	
 	private static int depth = -1;
 	private static Item item;
+
+    //todo: overhaul bones
 	
 	public static void leave() {
+        depth = Dungeon.depth();
 
-		depth = Dungeon.depth();
+        //heroes which have won the game, who die far above their farthest depth, or who are challenged drop no bones.
+        if (Statistics.amuletObtained || /*(Statistics.deepestFloor - 5) >= depth ||*/ Dungeon.challenges > 0) {
+            depth = -1;
+            return;
+        }
 
-		//heroes which have won the game, who die far above their farthest depth, or who are challenged drop no bones.
-		if (Statistics.amuletObtained || /*(Statistics.deepestFloor - 5) >= depth ||*/ Dungeon.challenges > 0) {
-			depth = -1;
-			return;
-		}
+        List<Item> items = new ArrayList<Item>();
+        Iterator<Item> iterator = Dungeon.hero.belongings.iterator(true, true, false);
+        while (iterator.hasNext()) {
+            Item item = iterator.next();
 
-		item = pickItem(Dungeon.hero);
+            if (item instanceof AmuletOfYendor) {
+                item = new AmuletOfYendorFake().bucStatus(item);
+            }
 
-		Bundle bundle = new Bundle();
-		bundle.put( LEVEL, depth );
-		bundle.put( ITEM, item );
+            item.bucStatus(false);
+            items.add(item);
+        }
 
-		try {
-			OutputStream output = Game.instance.openFileOutput( BONES_FILE, Game.MODE_PRIVATE );
-			Bundle.write( bundle, output );
-			output.close();
-		} catch (IOException e) {
+        Bundle bundle = new Bundle();
 
-		}
-	}
+        bundle.put(LEVEL, depth);
+        bundle.put(ITEMCOUNT, items.size());
+        for (int n = 0; n < items.size(); n++) {
+            bundle.put(ITEM + n, items.get(n));
+        }
 
-	private static Item pickItem(Hero hero){
-		Item item = null;
-		if (Random.Int(2) == 0) {
+        try {
+            OutputStream output = Game.instance.openFileOutput(BONES_FILE, Game.MODE_PRIVATE);
+            Bundle.write(bundle, output);
+            output.close();
+        } catch (IOException e) {
+
+        }
+    }
+
+	private static Item pickItem(Hero hero) {
+        Item item = null;
+        if (Random.Int(2) == 0) {
             item = hero.belongings.randomUnequipped();
 
             if (item == null) {
@@ -91,28 +111,28 @@ public class Bones {
             }
         } else {
 
-			Iterator<Item> iterator = hero.belongings.iterator();
-			Item curItem;
-			ArrayList<Item> items = new ArrayList<Item>();
-			while (iterator.hasNext()){
-				curItem = iterator.next();
-				if (curItem.bones)
-					items.add(curItem);
-			}
+            Iterator<Item> iterator = hero.belongings.iterator();
+            Item curItem;
+            ArrayList<Item> items = new ArrayList<Item>();
+            while (iterator.hasNext()) {
+                curItem = iterator.next();
+                if (curItem.bones)
+                    items.add(curItem);
+            }
 
-			if (Random.Int(3) < items.size()) {
-				item = Random.element(items);
-				if (item.stackable){
-					if (item instanceof MissileWeapon){
-						item.quantity(Random.NormalIntRange(1, item.quantity()));
-					} else {
-						item.quantity(Random.NormalIntRange(1, (item.quantity() + 1) / 2));
-					}
-				}
-			}
-		}
-		if (item == null) {
-			item = new Gold(Random.IntRange(50, 250));
+            if (Random.Int(3) < items.size()) {
+                item = Random.element(items);
+                if (item.stackable) {
+                    if (item instanceof MissileWeapon) {
+                        item.quantity(Random.NormalIntRange(1, item.quantity()));
+                    } else {
+                        item.quantity(Random.NormalIntRange(1, (item.quantity() + 1) / 2));
+                    }
+                }
+            }
+        }
+        if (item == null) {
+            item = new Gold(Random.IntRange(50, 250));
 			/*
 			if (Dungeon.gold > 50) {
 				item = new Gold( Random.NormalIntRange( 50, Dungeon.gold ) );
@@ -120,9 +140,9 @@ public class Bones {
 				item = new Gold( 50 );
 			}
 			*/
-		}
-		return item;
-	}
+        }
+        return item;
+    }
 
 	public static Item get() {
 		if (depth == -1) {

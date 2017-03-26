@@ -587,7 +587,7 @@ public class GameScene extends PixelScene {
         if (hallucinationOverlay.isHallucinating()) {
             //GLog.d("already hallucinating, add new mobsprite");
             mob.sprite = mob.sprite();
-            polymorph(mob, MobSprite.Hallucination.getRandom());
+            polymorph(mob, MobSprite.Registry.getHallucination());
         } else {
             CharSprite sprite = mob.sprite();
             sprite.visible = mob.fxSpriteVisible();
@@ -671,14 +671,14 @@ public class GameScene extends PixelScene {
         scene.emoicons.add(icon);
     }
 
-    public void polymorph(Mob mob, MobSprite.Hallucination hallucination) {
+    public void polymorph(Mob mob, MobSprite.Registry hallucination) {
         final CharSprite oldSprite = mob.sprite;
 
         CharSprite newSprite;
 
         Hallucination.Tweener tweener = new Hallucination.Tweener(oldSprite, 0.0f);
 
-        if (hallucination != MobSprite.Hallucination.None) {
+        if (hallucination != MobSprite.Registry.None) {
             newSprite = hallucination.getSprite();
             if (mob.originalSprite != null) {
                 tweener.listener = new Tweener.Listener() {
@@ -919,11 +919,12 @@ public class GameScene extends PixelScene {
 
         Heap heap = Dungeon.level.heaps.get(cell);
         if (heap != null && heap.seen && heap.size() > 0) {
+            /*
             if (heap.type == Heap.Type.FOR_SALE && heap.size() == 1 && heap.peek().price() > 0) {
                 GameScene.show(new WndTradeItem(heap, false));
             } else {
-                GameScene.show(new WndInfoItem(heap));
-            }
+            */
+            GameScene.show(new WndInfoItem(heap));
             return;
         }
 
@@ -942,11 +943,15 @@ public class GameScene extends PixelScene {
         GameScene.show(new WndInfoCell(cell));
     }
 
+    public static boolean isHallucinating() {
+        return scene.hallucinationOverlay.isHallucinating();
+    }
+
     public static void startHallucinating() {
         //GLog.d("START HALLUCINATING");
         scene.hallucinationOverlay.startHallucinating();
         for (Mob mob : Dungeon.level.mobs) {
-            scene.polymorph(mob, MobSprite.Hallucination.getRandom());
+            scene.polymorph(mob, MobSprite.Registry.getHallucination());
         }
     }
 
@@ -954,7 +959,7 @@ public class GameScene extends PixelScene {
         //GLog.d("STOP HALLUCINATING");
         scene.hallucinationOverlay.stopHallucinating();
         for (Mob mob : Dungeon.level.mobs) {
-            scene.polymorph(mob, MobSprite.Hallucination.None);
+            scene.polymorph(mob, MobSprite.Registry.None);
         }
     }
 

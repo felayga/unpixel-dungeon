@@ -820,7 +820,7 @@ public abstract class Level implements Bundlable, IDecayable {
     }
 
     public void spawnMob(final int pos, final Class<? extends Mob> type, final int quantity) {
-        Bestiary.spawn(Dungeon.depthAdjusted, Dungeon.hero.level, true, new Bestiary.SpawnParams() {
+        Bestiary.spawn(new Bestiary.SpawnParams(Dungeon.depthAdjusted, Dungeon.hero.level, true) {
             @Override
             public Level level() {
                 return Level.this;
@@ -829,16 +829,6 @@ public abstract class Level implements Bundlable, IDecayable {
             @Override
             public int position() {
                 return pos;
-            }
-
-            @Override
-            public Class<?> type(Class<?> _type) {
-                return type;
-            }
-
-            @Override
-            public int quantity(int _quantity) {
-                return quantity;
             }
 
             @Override
@@ -853,7 +843,7 @@ public abstract class Level implements Bundlable, IDecayable {
     }
 
     public void spawnMob() {
-        Bestiary.spawn(Dungeon.depthAdjusted, Dungeon.hero.level, true, new Bestiary.SpawnParams() {
+        Bestiary.spawn(new Bestiary.SpawnParams(Dungeon.depthAdjusted, Dungeon.hero.level, true) {
             @Override
             public Level level() {
                 return Level.this;
@@ -862,16 +852,6 @@ public abstract class Level implements Bundlable, IDecayable {
             @Override
             public int position() {
                 return randomRespawnCell();
-            }
-
-            @Override
-            public Class<?> type(Class<?> type) {
-                return type;
-            }
-
-            @Override
-            public int quantity(int quantity) {
-                return quantity;
             }
 
             @Override
@@ -1894,30 +1874,17 @@ public abstract class Level implements Bundlable, IDecayable {
         boolean hasHearing = isAlive && c.hearDistance > 0 && c.buff(Fainting.class) == null;
         boolean hasFeeling = c.touchDistance > 0;
 
-        if (c.viewDistance == c.hearDistance) {
-            if (hasVision) {
-                ShadowCaster.castShadow(cx, cy, fieldOfView, c.viewDistance, c.touchDistance);
 
-                if (hasHearing) {
-                    System.arraycopy(fieldOfView, 0, fieldOfSound, 0, fieldOfView.length);
-                } else {
-                    Arrays.fill(fieldOfSound, false);
-                }
-            } else if (hasHearing) {
-                Arrays.fill(fieldOfView, false);
-                ShadowCaster.castShadow(cx, cy, fieldOfSound, c.viewDistance, c.touchDistance);
-            }
+        if (hasVision) {
+            ShadowCaster.castShadow(cx, cy, fieldOfView, c.viewDistance, c.touchDistance);
         } else {
-            if (hasVision) {
-                ShadowCaster.castShadow(cx, cy, fieldOfView, c.viewDistance, c.touchDistance);
-            } else {
-                Arrays.fill(fieldOfView, false);
-            }
-            if (hasHearing) {
-                ShadowCaster.castShadow(cx, cy, fieldOfSound, c.hearDistance, c.touchDistance);
-            } else {
-                Arrays.fill(fieldOfSound, false);
-            }
+            Arrays.fill(fieldOfView, false);
+        }
+
+        if (hasHearing) {
+            ShadowCaster.castSound(cx, cy, fieldOfSound, c.hearDistance);
+        } else {
+            Arrays.fill(fieldOfSound, false);
         }
 
         if (hasFeeling) {
@@ -1975,15 +1942,10 @@ public abstract class Level implements Bundlable, IDecayable {
                     if ((mob.characteristics & Characteristic.Brainless.value) == 0) {
                         int p = mob.pos();
                         fieldOfView[p] = true;
-                        fieldOfTouch[p] = true;
-                        fieldOfTouch[p + 1] = true;
-                        fieldOfTouch[p - 1] = true;
-                        fieldOfTouch[p + WIDTH + 1] = true;
-                        fieldOfTouch[p + WIDTH - 1] = true;
-                        fieldOfTouch[p - WIDTH + 1] = true;
-                        fieldOfTouch[p - WIDTH - 1] = true;
-                        fieldOfTouch[p + WIDTH] = true;
-                        fieldOfTouch[p - WIDTH] = true;
+
+                        for (Integer offset : NEIGHBOURS9) {
+                            fieldOfTouch[p + offset] = true;
+                        }
                         /*
                         fieldOfView[p] = true;
                         fieldOfView[p + 1] = true;

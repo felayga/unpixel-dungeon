@@ -429,15 +429,15 @@ public class Generator {
 
 	public static Item random() {
         Category category = Random.chances(categoryProbs);
-        GLog.d("try category="+category);
 		return random(category);
 	}
 
-	public static Item random(Category cat) {
+	public static Item random(Category category) {
 		try {
-			categoryProbs.put(cat, categoryProbs.get(cat) / 2.0f);
+            //todo: category probability reduction, here or elsewhere?
+            categoryProbs.put(category, categoryProbs.get(category) / 2.0f);
 
-			switch (cat) {
+			switch (category) {
 				case ARMOR:
 					return randomArmor();
 				case WEAPON:
@@ -449,7 +449,7 @@ public class Generator {
                 case GEMSTONE:
                     return randomGemstone();
 				default:
-					return ((Item) cat.classes[Random.chances(cat.probs)].newInstance()).random();
+					return ((Item) category.classes[Random.chances(category.probs)].newInstance()).random();
 			}
 
 		} catch (Exception e) {

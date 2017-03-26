@@ -79,18 +79,18 @@ public class MagicMappingSpellcaster extends Spellcaster {
         if (levelBoost < 0) {
             for (int i = 0; i < length / 14; i++) {
                 int index = Random.Int(Level.WIDTH - 1) + Random.Int(Level.HEIGHT - 1) * Level.WIDTH;
-                noticed |= discoverCell(index, false);
-                noticed |= discoverCell(index + 1, false);
-                noticed |= discoverCell(index + Level.WIDTH, false);
-                noticed |= discoverCell(index + Level.WIDTH + 1, false);
+                noticed |= discoverCell(index, false, false);
+                noticed |= discoverCell(index + 1, false, false);
+                noticed |= discoverCell(index + Level.WIDTH, false, false);
+                noticed |= discoverCell(index + Level.WIDTH + 1, false, false);
             }
         } else if (levelBoost > 0) {
             for (int i = 0; i < length; i++) {
-                noticed |= discoverCell(i, true);
+                noticed |= discoverCell(i, true, false);
             }
         } else {
             for (int i = 0; i < length; i++) {
-                noticed |= discoverCell(i, false);
+                noticed |= discoverCell(i, false, false);
             }
         }
 
@@ -101,16 +101,14 @@ public class MagicMappingSpellcaster extends Spellcaster {
         }
     }
 
-    private static boolean discoverCell(int index, boolean allowDiscovery) {
+    public static boolean discoverCell(int index, boolean findTraps, boolean forced) {
         int terr = Dungeon.level.map(index);
 
-        if (Level.discoverable[index]) {
-
+        if (Level.discoverable[index] || forced) {
             Dungeon.level.mapped[index] = true;
 
-            if (allowDiscovery && (Terrain.flags[terr] & Terrain.FLAG_SECRET) != 0) {
-
-                Dungeon.level.discover(index, true, allowDiscovery);
+            if (findTraps && (Terrain.flags[terr] & Terrain.FLAG_SECRET) != 0) {
+                Dungeon.level.discover(index, true, findTraps);
 
                 if (Dungeon.visible[index]) {
                     GameScene.discoverTile(index, terr);

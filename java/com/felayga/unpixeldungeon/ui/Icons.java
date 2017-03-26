@@ -195,7 +195,7 @@ public enum Icons {
                 icon.frame(icon.texture.uvRect(112, 26, 122, 36));
                 break;
             case ICEBOX:
-                icon.frame(icon.texture.uvRect(112, 36, 112, 46));
+                icon.frame(icon.texture.uvRect(112, 36, 122, 46));
                 break;
             /*
             //tiny

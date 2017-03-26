@@ -155,7 +155,7 @@ public abstract class Book extends Item {
                 GLog.w("Being blind, you're unable to read the runes in the book.");
                 return false;
             } else {
-                hero.curAction = new HeroAction.UseItem.SlowAction(this, Constant.Action.SLOW_ACTION, readTime);
+                hero.curAction = new HeroAction.UseItem.SlowAction(this, Constant.Action.SLOW_ACTION, readTime, HeroAction.Display.Operate);
                 hero.motivate(true);
                 return true;
             }

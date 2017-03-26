@@ -30,6 +30,8 @@ import com.felayga.unpixeldungeon.levels.Level;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 
 public final class ShadowCaster {
@@ -124,6 +126,70 @@ public final class ShadowCaster {
 			obs.nextRow();
 		}
 	}
+
+    private static boolean[] soundPassable;
+    private static boolean[] soundPathable;
+
+    private static boolean[] fieldOfSound;
+    private static HashSet<Integer> soundUntested;
+
+    public static void castSound( int x, int y, boolean[] fieldOfSound, int audibleDistance ) {
+        Arrays.fill( fieldOfSound, false );
+
+        if (audibleDistance < 1) {
+            return;
+        }
+
+        ShadowCaster.soundPassable = Level.passable;
+        ShadowCaster.soundPathable = Level.pathable;
+        ShadowCaster.fieldOfSound = fieldOfSound;
+        ShadowCaster.soundUntested = Level.getRadius(x + y * WIDTH, audibleDistance);
+
+        scanSpotSound(x, y);
+    }
+
+    private static void scanSpotSound(int x, int y) {
+        int pos = x + y * WIDTH;
+        if (!soundUntested.contains(pos)) {
+            return;
+        }
+
+        soundUntested.remove(pos);
+        fieldOfSound[pos] = true;
+
+        pos--;
+        if (x > 0) {
+            if (soundPassable[pos] || soundPathable[pos]) {
+                scanSpotSound(x - 1, y);
+            } else {
+                fieldOfSound[pos] = true;
+            }
+        }
+        pos += 2;
+        if (x < WIDTH - 1) {
+            if (soundPassable[pos] || soundPathable[pos]) {
+                scanSpotSound(x + 1, y);
+            } else {
+                fieldOfSound[pos] = true;
+            }
+        }
+        pos -= WIDTH + 1;
+        if (y > 0) {
+            if (soundPassable[pos] || soundPathable[pos]) {
+                scanSpotSound(x, y - 1);
+            } else {
+                fieldOfSound[pos] = true;
+            }
+        }
+        pos += WIDTH * 2;
+        if (y < HEIGHT - 1) {
+            if (soundPassable[pos] || soundPathable[pos]) {
+                scanSpotSound(x, y + 1);
+            } else {
+                fieldOfSound[pos] = true;
+            }
+        }
+    }
 
     private static int lightDistance;
     private static int lightFlag;

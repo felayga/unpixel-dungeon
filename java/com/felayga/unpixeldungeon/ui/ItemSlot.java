@@ -68,6 +68,7 @@ public class ItemSlot extends Button {
 	private static final String TXT_LEVEL	= "%+d";
 	private static final String TXT_CURSED    = "";//"-";
 
+    /*
 	// Special "virtual items"
 	public static final Item TOMB = new Item() {
 		public int image() { return ItemSpriteSheet.TOMB; };
@@ -78,6 +79,7 @@ public class ItemSlot extends Button {
 	public static final Item REMAINS = new Item() {
 		public int image() { return ItemSpriteSheet.REMAINS; };
 	};
+	*/
 	
 	public ItemSlot() {
 		super();

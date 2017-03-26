@@ -472,12 +472,14 @@ public class Shopkeeper extends NPC {
     }
 
     public void flee() {
+        /*
         for (Heap heap : Dungeon.level.heaps.values()) {
             if (heap.type == Heap.Type.FOR_SALE && heap.owner() == this) {
                 CellEmitter.get(heap.pos()).burst(ElmoParticle.FACTORY, 4);
                 heap.destroy();
             }
         }
+        */
 
         destroy(null);
 

@@ -73,19 +73,18 @@ public class Bestiary {
         }
     }
 
-    public static void spawn(int depth, int heroLevel, boolean rares, final SpawnParams params) {
+    public static void spawn(final SpawnParams params) {
         if (!Dungeon.hero.isAlive()) {
             GLog.d("refused spawn, hero dead");
             return;
         }
 
-        MobSpawn spawner = getMobSpawn(depth, heroLevel);
         Mob mob;
 
         try {
-            Class<?> classType = params.type(spawner.classType);
+            Class<?> classType = params.type();
 
-            if (rares) {
+            if (params.rares) {
                 /*
                 if (Random.Int( 30 ) == 0) {
                     if (cl == MarsupialRat.class) {
@@ -107,7 +106,7 @@ public class Bestiary {
             int pos;
             ArrayList<Integer> positions = null;
 
-            int quantity = params.quantity(spawner.quantity);
+            int quantity = params.quantity();
 
             while (retries > 0 && positions == null) {
                 pos = params.position();
@@ -143,14 +142,35 @@ public class Bestiary {
         }
     }
 
-    public interface SpawnParams {
-        Level level();
-        int position();
+    public static abstract class SpawnParams {
+        protected final int depth;
+        protected final int heroLevel;
+        public final boolean rares;
 
-        Class<?> type(Class<?> type);
-        int quantity(int quantity);
+        public SpawnParams(int depth, int heroLevel, boolean rares) {
+            this.depth = depth;
+            this.heroLevel = heroLevel;
+            this.rares = rares;
 
-        void initialize(Mob mob);
+            initialize();
+        }
+
+        protected MobSpawn spawner;
+
+        protected void initialize() {
+            spawner = getMobSpawn(depth, heroLevel);
+        }
+
+        public Class<?> type() {
+            return spawner.classType;
+        }
+        public int quantity() {
+            return spawner.quantity;
+        }
+
+        public abstract Level level();
+        public abstract int position();
+        public abstract void initialize(Mob mob);
     }
 
     private static class MobSpawnGroup {

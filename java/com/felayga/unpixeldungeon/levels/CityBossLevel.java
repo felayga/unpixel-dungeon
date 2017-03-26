@@ -163,6 +163,8 @@ public class CityBossLevel extends Level {
 
     @Override
     protected void createItems() {
+        //todo: bones in city boss level
+        /*
         Item item = Bones.get();
         if (item != null) {
             int pos;
@@ -173,6 +175,7 @@ public class CityBossLevel extends Level {
             } while (pos == entrance || map(pos) == Terrain.SIGN);
             drop(item, pos).type = Heap.Type.REMAINS;
         }
+        */
     }
 
     @Override

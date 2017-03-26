@@ -145,7 +145,9 @@ public class unPixelDungeon extends Game {
                 Assets.SND_ITEM_BOX,
                 Assets.SND_BOULDER_SMASH,
                 Assets.SND_BOULDER_SCRAPE,
-                Assets.SND_BOULDER_PLUG
+                Assets.SND_BOULDER_PLUG,
+                Assets.SND_ITEM_COWBELL,
+                Assets.SND_ITEM_SCAN
         );
     }
 

@@ -538,8 +538,10 @@ public class Hero extends Char {
                 return actMove((HeroAction.Move) curAction);
             } else if (curAction instanceof HeroAction.Interact) {
                 return actInteract((HeroAction.Interact) curAction);
+            /*
             } else if (curAction instanceof HeroAction.Buy) {
                 return actBuy((HeroAction.Buy) curAction);
+            */
             } else if (curAction instanceof HeroAction.HandleHeap) {
                 GLog.d("curaction is HandleHeap");
                 if (curAction instanceof HeroAction.HandleHeap.PickUp) {
@@ -555,8 +557,10 @@ public class Hero extends Char {
                     GLog.d("curaction is base");
                     return actHandleHeap((HeroAction.HandleHeap) curAction);
                 }
+            /*
             } else if (curAction instanceof HeroAction.OpenChest) {
                 return actOpenChest((HeroAction.OpenChest) curAction);
+            */
             } else if (curAction instanceof HeroAction.HandleDoor) {
                 if (curAction instanceof HeroAction.HandleDoor.OpenCloseDoor) {
                     return actOpenCloseDoor((HeroAction.HandleDoor.OpenCloseDoor) curAction);
@@ -739,9 +743,11 @@ public class Hero extends Char {
         if (action.time > GameTime.TICK) {
             action.time -= GameTime.TICK;
             spend_new(GameTime.TICK, true);
+            action.handleDisplay(this);
             return true;
         } else {
             spend_new(action.time, true);
+            action.handleDisplay(this);
             action.target.execute(this, action.action);
             curAction = null;
             return false;
@@ -1087,7 +1093,7 @@ public class Hero extends Char {
 
                                                 Heap heap = Dungeon.level.heaps.get(pos());
                                                 if (heap != null) {
-                                                    heap.unbury();
+                                                    heap.unbury(true);
                                                 }
 
                                                 Dungeon.level.setDirtPit(pos(), true, true);
@@ -1179,6 +1185,7 @@ public class Hero extends Char {
         }
     }
 
+    /*
     private boolean actBuy(HeroAction.Buy action) {
         int dst = action.dst;
 
@@ -1199,6 +1206,7 @@ public class Hero extends Char {
             return false;
         }
     }
+    */
 
     private boolean actInteractPosition(HeroAction.InteractPosition action) {
         int dst = action.dst;
@@ -1545,13 +1553,13 @@ public class Hero extends Char {
         }
     }
 
+    /*
     private boolean actOpenChest(HeroAction.OpenChest action) {
         int dst = action.dst;
         if (Level.canReach(pos(), dst) || pos() == dst) {
 
             Heap heap = Dungeon.level.heaps.get(dst);
             if (heap != null && (heap.type != Type.HEAP && heap.type != Type.FOR_SALE)) {
-				/*
 				theKey = null;
 				
 				if (heap.type == Type.LOCKED_CHEST || heap.type == Type.CRYSTAL_CHEST) {
@@ -1564,7 +1572,6 @@ public class Hero extends Char {
 						return false;
 					}
 				}
-				*/
 
                 switch (heap.type) {
                     case TOMB:
@@ -1596,6 +1603,7 @@ public class Hero extends Char {
             return false;
         }
     }
+    */
 
     private boolean actOpenCloseDoor(final HeroAction.HandleDoor.OpenCloseDoor action) {
         final int doorCell = action.dst;
@@ -2254,14 +2262,13 @@ public class Hero extends Char {
                 }
             } else if (Dungeon.level.warnings.findWarning(pos)) {
                 curAction = new HeroAction.Attack(pos);
-            } else if ((heap = Dungeon.level.heaps.get(pos)) != null && !Dungeon.level.solid[pos]) {
-                switch (heap.type) {
-                    case HEAP:
-                        if (unPixelDungeon.gameplay_autoPickup()) {
-                            curAction = new HeroAction.HandleHeap(pos);
-                        } else {
-                            curAction = new HeroAction.Move(pos);
-                        }
+            } else if ((heap = Dungeon.level.heaps.get(pos)) != null && heap.size() > 0 && !Level.solid[pos]) {
+                if (unPixelDungeon.gameplay_autoPickup()) {
+                    curAction = new HeroAction.HandleHeap(pos);
+                } else {
+                    curAction = new HeroAction.Move(pos);
+                }
+                /*
                         break;
                     case FOR_SALE:
                         curAction = heap.size() == 1 && heap.peek().price() > 0 ?
@@ -2271,6 +2278,7 @@ public class Hero extends Char {
                     default:
                         curAction = new HeroAction.OpenChest(pos);
                 }
+                */
             } else if (cell == Terrain.LOCKED_DOOR || cell == Terrain.LOCKED_EXIT || cell == Terrain.DOOR) {
                 curAction = new HeroAction.HandleDoor(pos);
             } else if (Level.solid[pos] && (Dungeon.level.visited[pos] || Dungeon.level.mapped[pos]) && ((tools = belongings.getToolTypes(true, false, Pickaxe.NAME)) != null && tools.length > 0 && tools[0] != null)) {
@@ -2608,29 +2616,34 @@ public class Hero extends Char {
 				GameScene.updateMap(doorCell);
 			}
 		} else */
+        /*
         if (curAction instanceof HeroAction.OpenChest) {
-			/*
 			if (theKey != null) {
 				belongings.detach(theKey);
 				theKey = null;
 			}
-			*/
+
             Heap heap = Dungeon.level.heaps.get(((HeroAction.OpenChest) curAction).dst);
             if (heap.type == Type.SKELETON || heap.type == Type.REMAINS) {
                 Sample.INSTANCE.play(Assets.SND_BONES);
             }
             heap.open(this);
         }
+        */
         curAction = null;
 
         super.onOperateComplete();
     }
 
     public boolean search(boolean intentional) {
+        return search(pos(), INTWIS(), INTWIS(), intentional);
+    }
+
+    public boolean search(int pos, int distanceIntelligence, int detectionIntelligence, boolean intentional) {
         boolean secretFound = false;
 
-        int searchChance = luck() * 5 + INTWIS() * 7;
-        int distance = (INTWIS() - 3) / 5;
+        int searchChance = luck() * 5 + detectionIntelligence * 7;
+        int distance = (distanceIntelligence - 3) / 5;
 
         if (intentional) {
             searchChance += 48;
@@ -2647,7 +2660,6 @@ public class Hero extends Char {
             distance = 1;
         }
 
-        int pos = pos();
         int cx = pos % Level.WIDTH;
         int cy = pos / Level.WIDTH;
         int ax = cx - distance;

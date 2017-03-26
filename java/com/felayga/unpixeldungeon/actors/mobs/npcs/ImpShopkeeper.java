@@ -58,12 +58,14 @@ public class ImpShopkeeper extends Shopkeeper {
 	
 	@Override
 	public void flee() {
+        /*
 		for (Heap heap: Dungeon.level.heaps.values()) {
 			if (heap.type == Heap.Type.FOR_SALE) {
 				CellEmitter.get( heap.pos() ).burst( ElmoParticle.FACTORY, 4 );
 				heap.destroy();
 			}
 		}
+		*/
 		
 		destroy(null);
 		

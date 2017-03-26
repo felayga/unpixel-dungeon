@@ -173,7 +173,7 @@ public abstract class Spell extends Item {
                     return false;
                 }
 
-                hero.curAction = new HeroAction.UseItem.SlowAction(this, Constant.Action.SLOW_ACTION, castTime);
+                hero.curAction = new HeroAction.UseItem.SlowAction(this, Constant.Action.SLOW_ACTION, castTime, HeroAction.Display.Operate);
                 hero.motivate(true);
                 return true;
             } else {

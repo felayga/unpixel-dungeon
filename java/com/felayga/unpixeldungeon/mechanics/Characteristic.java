@@ -42,7 +42,7 @@ public enum Characteristic {
     Humanoid            ("Humanoid", 0x000010),
     Animal              ("Animal", 0x000020),
     Corpseless          ("Leaves no corpse", 0x000040),
-    CannotUseItems      ("Cannot use items", 0x000080),
+    CannotUseItems      ("Cannot use items", 0x000080), //todo: consider relying on other characteristics to determine this one after all enemies are in
     Swimmer             ("Swimmer", 0x000100),
     WaterBreather       ("Water breather", 0x000200),
     NonBreather         ("Doesn't breathe", 0x000400),

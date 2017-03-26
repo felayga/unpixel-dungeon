@@ -521,7 +521,11 @@ public class Corpse extends Food implements IDecayable {
                 retval = "This is a can of " + variation + name + " meat.";
             }
         } else {
-            retval = "This is a " + name + "'s corpse.";
+            if (isVegetable()) {
+                retval = "This is a dead " + name + ".";
+            } else {
+                retval = "This is a " + name + "'s corpse.";
+            }
         }
 
         if (isRotten()) {

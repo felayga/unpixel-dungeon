@@ -170,6 +170,8 @@ public class LastShopLevel extends RegularLevel {
 
     @Override
     protected void createItems() {
+        //todo: bones in last shop level
+        /*
         Item item = Bones.get();
         if (item != null) {
             int pos;
@@ -178,6 +180,7 @@ public class LastShopLevel extends RegularLevel {
             } while (pos == entrance || map(pos) == Terrain.SIGN);
             drop(item, pos).type = Heap.Type.REMAINS;
         }
+        */
     }
 
     @Override

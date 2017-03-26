@@ -35,6 +35,7 @@ import com.felayga.unpixeldungeon.items.consumable.Bomb;
 import com.felayga.unpixeldungeon.items.consumable.potions.PotionOfAwareness;
 import com.felayga.unpixeldungeon.items.consumable.potions.PotionOfHallucination;
 import com.felayga.unpixeldungeon.items.consumable.potions.PotionOfIpecac;
+import com.felayga.unpixeldungeon.items.consumable.potions.PotionOfMonsterDetection;
 import com.felayga.unpixeldungeon.items.equippableitem.amulet.AmuletOfYendor;
 import com.felayga.unpixeldungeon.items.equippableitem.amulet.AmuletOfYendorFake;
 import com.felayga.unpixeldungeon.items.consumable.potions.PotionOfObjectDetection;
@@ -56,6 +57,8 @@ import com.felayga.unpixeldungeon.items.consumable.scrolls.spellcasterscroll.Scr
 import com.felayga.unpixeldungeon.items.consumable.scrolls.positionscroll.ScrollOfTeleportation;
 import com.felayga.unpixeldungeon.items.consumable.scrolls.ScrollOfUpgrade;
 import com.felayga.unpixeldungeon.items.tools.CanOpener;
+import com.felayga.unpixeldungeon.items.tools.Cowbell;
+import com.felayga.unpixeldungeon.items.tools.Tricorder;
 import com.felayga.unpixeldungeon.items.tools.digging.Pickaxe;
 import com.felayga.unpixeldungeon.items.consumable.wands.WandOfMagicMissile;
 import com.felayga.unpixeldungeon.items.equippableitem.weapon.ammunition.martial.Arrow;
@@ -267,7 +270,7 @@ public enum HeroClass {
         hero.belongings.collect(new ScrollOfTeleportation().bucStatus(BUCStatus.Blessed, true).quantity(5).identify());
         //hero.belongings.collect(new ScrollOfMirrorImage().bucStatus(BUCStatus.Blessed, true).quantity(5).identify());
 
-        hero.belongings.collect(new PotionOfObjectDetection().bucStatus(BUCStatus.Blessed, true).quantity(5).identify());
+        hero.belongings.collect(new PotionOfMonsterDetection().bucStatus(BUCStatus.Blessed, true).quantity(5).identify());
 
         hero.belongings.collect(new PotionOfHallucination().bucStatus(BUCStatus.Blessed, true).quantity(5).identify());
         hero.belongings.collect(new PotionOfAwareness().bucStatus(BUCStatus.Blessed, true).quantity(5).identify());
@@ -305,8 +308,9 @@ public enum HeroClass {
         hero.belongings.collect(new Blindfold());
         hero.belongings.collect(new Towel());
         hero.belongings.collect(new Torch().random());
-        hero.belongings.collect(new Tricorder());
         */
+        hero.belongings.collect(new Tricorder());
+        hero.belongings.collect(new Cowbell());
 
         hero.belongings.collect(new ScrollOfIdentify().bucStatus(BUCStatus.Uncursed, true).quantity(5).identify());
 

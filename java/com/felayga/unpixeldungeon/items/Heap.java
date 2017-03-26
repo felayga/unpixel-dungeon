@@ -49,6 +49,7 @@ import com.felayga.unpixeldungeon.mechanics.BUCStatus;
 import com.felayga.unpixeldungeon.mechanics.Constant;
 import com.felayga.unpixeldungeon.mechanics.IDecayable;
 import com.felayga.unpixeldungeon.mechanics.MagicType;
+import com.felayga.unpixeldungeon.scenes.GameScene;
 import com.felayga.unpixeldungeon.sprites.ItemSprite;
 import com.felayga.unpixeldungeon.sprites.ItemSpriteSheet;
 import com.felayga.unpixeldungeon.ui.Icons;
@@ -173,12 +174,52 @@ public class Heap implements Bundlable, IBag {
         updateImage();
     }
 
-    public void unbury() {
+    public void unbury(boolean verbose) {
         for (Item item : itemsBuried) {
             collect(item);
         }
 
         itemsBuried.clear();
+
+        if (type == Type.GRAVE) {
+            switch(Random.Int(5)) {
+                case 0:
+                case 1:
+                    if (verbose) {
+                        GLog.w("You unearth a corpse.");
+                    }
+                    //todo: random corpse
+                    break;
+                case 2:
+                    if (verbose) {
+                        if (GameScene.isHallucinating()) {
+                            GLog.w("Dude!  The living dead!");
+                        } else {
+                            GLog.w("The grave's owner is very upset!");
+                        }
+                    }
+                    //todo: spawn zombie
+                    break;
+                case 3:
+                    if (verbose) {
+                        if (GameScene.isHallucinating()) {
+                            GLog.w("Are you my mummy?");
+                        } else {
+                            GLog.w("You've disturbed a tomb!");
+                        }
+                    }
+                    //todo: spawn mummy
+                    break;
+                default:
+                    if (verbose) {
+                        GLog.w("The grave seems unused.  Strange...");
+                    }
+                    //nothing
+                    break;
+            }
+
+            type = Type.HEAP;
+        }
 
         updateImage();
     }
@@ -329,10 +370,7 @@ public class Heap implements Bundlable, IBag {
 
     public enum Type {
         HEAP,
-        FOR_SALE,
-        TOMB,
-        SKELETON,
-        REMAINS
+        GRAVE
     }
 
     public Type type = Type.HEAP;
@@ -380,6 +418,7 @@ public class Heap implements Bundlable, IBag {
 	*/
 
     public void open(Hero hero) {
+        /*
         switch (type) {
             case TOMB:
                 //todo: wraith spawn maybe?
@@ -391,7 +430,7 @@ public class Heap implements Bundlable, IBag {
                 for (Item item : items) {
                     if (item.bucStatus() == BUCStatus.Cursed) {
                         //todo: wraith spawn from opening remains maybe?
-                        if (false/*Wraith.spawnAt( pos ) == null*/) {
+                        if (false) { //Wraith.spawnAt( pos ) == null) {
                             hero.sprite.emitter().burst(ShadowParticle.CURSE, 6);
                             hero.damage(hero.HP / 2, MagicType.Magic, null, null);
                         }
@@ -403,6 +442,7 @@ public class Heap implements Bundlable, IBag {
                 break;
             default:
         }
+        */
 
         type = Type.HEAP;
         sprite.link();
@@ -495,6 +535,7 @@ public class Heap implements Bundlable, IBag {
     //Note: should not be called to initiate an explosion, but rather by an explosion that is happening.
     public void explode(Char cause) {
         //breaks open most standard containers, mimics die.
+        /*
         if (type == Type.SKELETON) {
             type = Type.HEAP;
             sprite.link();
@@ -505,27 +546,28 @@ public class Heap implements Bundlable, IBag {
         if (type != Type.HEAP) {
             return;
         } else {
-            Iterator<Item> iterator = iterator(false);
+        */
 
-            while (iterator.hasNext()) {
-                Item item = iterator.next();
+        Iterator<Item> iterator = iterator(false);
 
-                if (item instanceof Potion) {
-                    iterator.remove();
-                    ((Potion) item).shatter(null, pos);
-                } else if (item instanceof Bomb) {
-                    iterator.remove();
-                    ((Bomb) item).explode(cause, pos);
-                    //stop processing current explosion, it will be replaced by the new one.
-                    return;
-                    //unique and upgraded items can endure the blast
-                } else if (!(item.level() > 0 || item.unique)) {
-                    iterator.remove();
-                }
+        while (iterator.hasNext()) {
+            Item item = iterator.next();
+
+            if (item instanceof Potion) {
+                iterator.remove();
+                ((Potion) item).shatter(null, pos);
+            } else if (item instanceof Bomb) {
+                iterator.remove();
+                ((Bomb) item).explode(cause, pos);
+                //stop processing current explosion, it will be replaced by the new one.
+                return;
+                //unique and upgraded items can endure the blast
+            } else if (!(item.level() > 0 || item.unique)) {
+                iterator.remove();
             }
-
-            updateImage();
         }
+
+        updateImage();
     }
 
     public void freeze(Char source) {

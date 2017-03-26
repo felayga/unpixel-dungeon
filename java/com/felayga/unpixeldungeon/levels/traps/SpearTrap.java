@@ -58,23 +58,23 @@ public class SpearTrap extends Trap {
 
 	@Override
 	public void activate() {
-		if (Dungeon.visible[pos]){
-			Wound.hit(pos);
-		}
+        if (Dungeon.visible[pos]) {
+            Wound.hit(pos);
+        }
         if (Dungeon.audible[pos]) {
             Sample.INSTANCE.play(Assets.SND_HIT);
         }
 
-		Char ch = Actor.findChar( pos);
-		if (ch != null){
-			int damage = Random.NormalIntRange(Dungeon.depthAdjusted, Dungeon.depthAdjusted*2);
-			ch.damage( Math.max(damage, 0) , MagicType.Mundane, null, null);
-			if (!ch.isAlive() && ch == Dungeon.hero){
-				Dungeon.fail(Utils.format(ResultDescriptions.TRAP, name));
-				GLog.n("You were skewered by the spear trap...");
-			}
-		}
-	}
+        Char ch = Actor.findChar(pos);
+        if (ch != null && ch.isAlive()) {
+            int damage = Random.NormalIntRange(Dungeon.depthAdjusted, Dungeon.depthAdjusted * 2);
+            ch.damage(Math.max(damage, 0), MagicType.Mundane, null, null);
+            if (!ch.isAlive() && ch == Dungeon.hero) {
+                Dungeon.fail(Utils.format(ResultDescriptions.TRAP, name));
+                GLog.n("You were skewered by the spear trap...");
+            }
+        }
+    }
 
 	@Override
 	public String desc() {

@@ -46,7 +46,7 @@ public class GridBug extends Mob {
         nutrition = 10;
         resistanceMagical = MagicType.value(MagicType.Shock, MagicType.Poison);
         corpseEffects = CorpseEffect.None.value;
-        characteristics = Characteristic.value(Characteristic.Animal, Characteristic.WarmBlooded, Characteristic.Corpseless);
+        characteristics = Characteristic.value(Characteristic.Animal, Characteristic.CannotUseItems, Characteristic.WarmBlooded, Characteristic.Corpseless);
 
         belongings.collectEquip(new MeleeMobAttack(GameTime.TICK, 1, 1, MagicType.Shock));
     }

@@ -26,41 +26,51 @@
 
 package com.felayga.unpixeldungeon.items.tools;
 
+import com.felayga.unpixeldungeon.Assets;
+import com.felayga.unpixeldungeon.Dungeon;
 import com.felayga.unpixeldungeon.actors.buffs.hero.Encumbrance;
 import com.felayga.unpixeldungeon.actors.hero.Hero;
+import com.felayga.unpixeldungeon.actors.mobs.Mob;
 import com.felayga.unpixeldungeon.items.Item;
-import com.felayga.unpixeldungeon.items.consumable.food.CannedFood;
+import com.felayga.unpixeldungeon.mechanics.BUCStatus;
 import com.felayga.unpixeldungeon.mechanics.Constant;
-import com.felayga.unpixeldungeon.mechanics.GameTime;
 import com.felayga.unpixeldungeon.mechanics.Material;
 import com.felayga.unpixeldungeon.sprites.ItemSpriteSheet;
-import com.felayga.unpixeldungeon.windows.WndBackpack;
+import com.watabou.noosa.audio.Sample;
 
 import java.util.ArrayList;
 
 /**
- * Created by HELLO on 2/23/2017.
+ * Created by HELLO on 3/25/2017.
  */
 
-public class CanOpener extends Tool {
-    public CanOpener() {
-        super(false, true, WndBackpack.Mode.INSTANCEOF, CannedFood.class);
+public class Cowbell extends Tool {
+    public Cowbell() {
+        super(false, false);
 
-        name = "can opener";
-        image = ItemSpriteSheet.TOOL_CANOPENER;
-        material = Material.Iron;
+        name = "cowbell";
+        image = ItemSpriteSheet.TOOL_COWBELL;
+        material = Material.Copper;
 
         hasLevels(false);
-        hasBuc(false);
 
         defaultAction = Constant.Action.APPLY;
 
-        price = 30;
-        weight(4 * Encumbrance.UNIT);
+        price = 50;
+        weight(30 * Encumbrance.UNIT);
+    }
+
+    @Override
+    public Item random() {
+        super.random();
+
+        bucStatus(BUCStatus.Uncursed);
+
+        return this;
     }
 
     public String getToolClass() {
-        return "can opener";
+        return "cowbell";
     }
 
     @Override
@@ -77,22 +87,25 @@ public class CanOpener extends Tool {
 
     @Override
     public void apply(Hero hero, Item item){
-        if (!(item instanceof CannedFood)) {
-            return;
-        }
-
-        CannedFood can = (CannedFood)item;
-        can.execute(hero, Constant.Action.OPEN);
-    }
-
-    @Override
-    public void apply(Hero hero) {
         //nothing
     }
 
     @Override
+    public void apply(Hero hero) {
+        Sample.INSTANCE.play(Assets.SND_ITEM_COWBELL);
+        hero.sprite.operate(hero.pos());
+
+        for (Mob mob : Dungeon.level.mobs) {
+            if (Dungeon.audible[mob.pos()]) {
+                mob.beckon(hero.pos());
+            }
+        }
+    }
+
+    @Override
     public String desc() {
-        return "This tool is designed for efficiently opening canned foods.\nIt's not useful for much else.";
+        return "A bell worn by free-roaming livestock to make them easier to locate.";
     }
 
 }
+

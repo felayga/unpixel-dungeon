@@ -215,7 +215,7 @@ public abstract class Char extends Actor {
     public int mpPerLevel;
 
     public int viewDistance = 8;
-    public int hearDistance = 8;
+    public int hearDistance = 12;
     public int touchDistance = 1;
 
     public int weight;
@@ -663,20 +663,30 @@ public abstract class Char extends Actor {
         return false;
     }
 
-    protected boolean canSee(Char enemy) {
+    public enum VisibilityState {
+        Visible,
+        NotVisible,
+        Invisible
+    }
+
+    public VisibilityState canSee(Char enemy) {
         if (buff(MindVision.class) != null) {
             if ((enemy.characteristics & Characteristic.Brainless.value) == 0) {
-                return true;
+                return VisibilityState.NotVisible;
             }
         }
-        if (buff(Blindness.class) != null) {
-            return false;
-        }
-        if (enemy.buff(Invisibility.class) != null) {
-            return buff(SeeInvisible.class) != null;
-        }
 
-        return true;
+        if (Dungeon.visible[enemy.pos()]) {
+            if (enemy.buff(Invisibility.class) != null) {
+                if (buff(SeeInvisible.class) == null) {
+                    return VisibilityState.Invisible;
+                }
+            }
+
+            return VisibilityState.Visible;
+        } else {
+            return VisibilityState.NotVisible;
+        }
     }
 
     public boolean attack(IWeapon weapon, Char enemy) {
@@ -715,7 +725,7 @@ public abstract class Char extends Actor {
         } else if (tryHit(this, weapon, ranged, enemy, touch)) {
             if (!touch) {
                 retval = false;
-                if (!canSee(enemy)) {
+                if (canSee(enemy) != VisibilityState.Visible) {
                     if (Random.Int(Constant.Chance.CHAR_MISS_INVISIBLE_ENEMY) == 0) {
                         if (this == Dungeon.hero) {
                             GLog.n("You swing wildly and miss!");

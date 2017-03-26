@@ -67,10 +67,7 @@ public class CreateMonsterSpellcaster extends Spellcaster {
     private static final long READINESS_DELAY = GameTime.TICK * 2;
 
     public static void spawnMobs(int pos, int count) {
-        //GLog.d("spawnMobs x="+(pos%Level.WIDTH)+" y="+(pos/Level.WIDTH)+" count="+count);
-
         HashSet<Integer> tested = new HashSet<>();
-
         HashSet<Integer> candidates = new HashSet<>();
 
         int originGood = 0;
@@ -91,7 +88,7 @@ public class CreateMonsterSpellcaster extends Spellcaster {
 
         ArrayList<Integer> spawnPoints = new ArrayList<>();
 
-        for(Integer candidate : candidates) {
+        for (Integer candidate : candidates) {
             spawnPoints.add(candidate);
             tested.add(candidate);
 
@@ -105,7 +102,6 @@ public class CreateMonsterSpellcaster extends Spellcaster {
 
         if (count > originGood) {
             //not enough spawn points, check surrounding tiles of valid points
-
             candidates.clear();
 
             for (Integer spawnPoint : spawnPoints) {
@@ -139,7 +135,7 @@ public class CreateMonsterSpellcaster extends Spellcaster {
         final ArrayList<Mob> mobs = new ArrayList<>();
 
         for (final Integer spawnPoint : spawnPoints) {
-            Bestiary.spawn(Dungeon.depthAdjusted, Dungeon.hero.level, true, new Bestiary.SpawnParams() {
+            Bestiary.spawn(new Bestiary.SpawnParams(Dungeon.depthAdjusted, Dungeon.hero.level, true) {
                 @Override
                 public Level level() {
                     return Dungeon.level;
@@ -148,16 +144,6 @@ public class CreateMonsterSpellcaster extends Spellcaster {
                 @Override
                 public int position() {
                     return spawnPoint;
-                }
-
-                @Override
-                public Class<?> type(Class<?> type) {
-                    return type;
-                }
-
-                @Override
-                public int quantity(int quantity) {
-                    return quantity;
                 }
 
                 @Override

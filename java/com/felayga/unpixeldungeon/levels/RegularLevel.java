@@ -677,7 +677,7 @@ public abstract class RegularLevel extends Level {
 
             final Room roomToSpawn = stdRoomIter.next();
 
-            Bestiary.spawn(Dungeon.depthAdjusted, Dungeon.hero.level, true, new Bestiary.SpawnParams() {
+            Bestiary.spawn(new Bestiary.SpawnParams(Dungeon.depthAdjusted, Dungeon.hero.level, true) {
                 @Override
                 public Level level() {
                     return RegularLevel.this;
@@ -686,16 +686,6 @@ public abstract class RegularLevel extends Level {
                 @Override
                 public int position() {
                     return roomToSpawn.random();
-                }
-
-                @Override
-                public Class<?> type(Class<?> type) {
-                    return type;
-                }
-
-                @Override
-                public int quantity(int quantity) {
-                    return quantity;
                 }
 
                 @Override
@@ -788,9 +778,6 @@ public abstract class RegularLevel extends Level {
             Heap.Type type = null;
 
             switch (Random.Int(20)) {
-                case 0:
-                    type = Heap.Type.SKELETON;
-                    break;
                 case 1:
                     if (Dungeon.depthAdjusted > 1) {
                         //todo: mimic spawning
@@ -826,10 +813,13 @@ public abstract class RegularLevel extends Level {
             drop(item, cell).type = Heap.Type.HEAP;
         }
 
+        //todo: placement of bones after overhaul
+        /*
         Item item = Bones.get();
         if (item != null) {
             drop(item, randomDropCell()).type = Heap.Type.REMAINS;
         }
+        */
     }
 
     protected Room randomRoom(Room.Type type, int tries) {

@@ -88,6 +88,8 @@ public class Terrain {
     public static final int DIRT_CHARCOAL           = 43;
 
     public static final int IRON_BARS               = 44;
+    public static final int TOMBSTONE_GRAY          = 45;
+    public static final int TOMBSTONE_WHITE         = 46;
 
 
     public static final int FACED_TILE_MIN          = 128; //needs to be aligned to FACED_TILE_BLOCKSIZE

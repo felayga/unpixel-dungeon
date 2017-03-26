@@ -403,7 +403,9 @@ public class Bag extends Item implements Iterable<Item>, IBag {
 		super.restoreFromBundle(bundle);
 
 		locked = bundle.getBoolean(LOCKED);
-        onLockedChanged();
+        if (lockable) {
+            onLockedChanged();
+        }
         baseWeight = bundle.getInt(BASEWEIGHT);
 
         weight(baseWeight);

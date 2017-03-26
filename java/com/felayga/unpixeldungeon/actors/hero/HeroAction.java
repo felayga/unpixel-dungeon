@@ -41,6 +41,10 @@ import com.felayga.unpixeldungeon.mechanics.Constant;
 
 
 public class HeroAction {
+    public enum Display {
+        None,
+        Operate
+    }
 
     public int dst;
 
@@ -96,6 +100,7 @@ public class HeroAction {
         }
     }
 
+    /*
     public static class OpenChest extends HeroAction {
         public OpenChest(int dst) {
             this.dst = dst;
@@ -107,6 +112,7 @@ public class HeroAction {
             this.dst = dst;
         }
     }
+    */
 
     public static class Interact extends HeroAction {
         public NPC npc;
@@ -248,11 +254,24 @@ public class HeroAction {
 
         public static class SlowAction extends UseItem {
             public long time;
+            private Display display;
 
-            public SlowAction(Item target, String action, long time) {
+            public SlowAction(Item target, String action, long time, Display display) {
                 super(target, action);
 
                 this.time = time;
+                this.display = display;
+            }
+
+            public void handleDisplay(Hero hero) {
+                switch(display) {
+                    case Operate:
+                        hero.sprite.operate(hero.pos());
+                        break;
+                    default:
+                        hero.sprite.idle();
+                        break;
+                }
             }
         }
 

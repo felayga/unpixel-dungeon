@@ -27,6 +27,7 @@
 package com.felayga.unpixeldungeon.sprites.mobs;
 
 import com.felayga.unpixeldungeon.DungeonTilemap;
+import com.felayga.unpixeldungeon.actors.Char;
 import com.felayga.unpixeldungeon.actors.mobs.Mob;
 import com.felayga.unpixeldungeon.sprites.CharSprite;
 import com.felayga.unpixeldungeon.sprites.MirrorSprite;
@@ -87,6 +88,7 @@ import com.felayga.unpixeldungeon.sprites.mobs.humanoid.orc.OrcZombieSprite;
 import com.felayga.unpixeldungeon.sprites.mobs.humanoid.orc.UrukhaiOrcSprite;
 import com.felayga.unpixeldungeon.sprites.mobs.humanoid.shopkeeper.HumanSprite;
 import com.felayga.unpixeldungeon.sprites.mobs.humanoid.shopkeeper.Nihilist2Sprite;
+import com.felayga.unpixeldungeon.sprites.mobs.humanoid.shopkeeper.Nihilist3Sprite;
 import com.felayga.unpixeldungeon.sprites.mobs.humanoid.shopkeeper.NihilistSprite;
 import com.felayga.unpixeldungeon.sprites.mobs.jackal.CoyoteSprite;
 import com.felayga.unpixeldungeon.sprites.mobs.jackal.FoxSprite;
@@ -142,7 +144,7 @@ import com.watabou.utils.Random;
 import java.util.HashMap;
 
 public class MobSprite extends CharSprite {
-    public enum Hallucination {
+    public enum Registry {
         None(null, null, false),
 
         Bat("bat", BatSprite.class),
@@ -205,7 +207,7 @@ public class MobSprite extends CharSprite {
         Goblin("goblin", GoblinSprite.class),
         HillOrc("hill orc", HillOrcSprite.class),
         Hobgoblin("hobgoblin", HobgoblinSprite.class),
-        Manbearpig("MANBEARPIG", ManbearpigSprite.class),
+        Manbearpig("manbearpig", ManbearpigSprite.class),
         MordorOrc("Mordor orc", MordorOrcSprite.class),
         OrcShaman("orc shaman", OrcShamanSprite.class),
         Orc("orc", OrcSprite.class),
@@ -213,8 +215,9 @@ public class MobSprite extends CharSprite {
         UrukhaiOrc("Uruk-hai", UrukhaiOrcSprite.class),
 
         Human("human", HumanSprite.class),
-        Nihilist2("nihilist", Nihilist2Sprite.class),
-        Nihilist("nihilist", NihilistSprite.class),
+        Nihilist2("unruly nihilist", Nihilist2Sprite.class, false),
+        Nihilist3("nihilist", Nihilist3Sprite.class, false),
+        Nihilist("head nihilist", NihilistSprite.class, false),
         Shopkeeper("shopkeeper", ShopkeeperSprite.class, false),
 
 
@@ -276,19 +279,28 @@ public class MobSprite extends CharSprite {
 
         public final String name;
         public final Class<? extends MobSprite> type;
+        public final boolean hallucination;
 
-        Hallucination(String name, Class<? extends MobSprite> type) {
+        Registry(String name, Class<? extends MobSprite> type) {
             this(name, type, true);
         }
 
-        Hallucination(String name, Class<? extends MobSprite> type, boolean hallucination) {
+        Registry(String name, Class<? extends MobSprite> type, boolean hallucination) {
             this.name = name;
             this.type = type;
+            this.hallucination = hallucination;
         }
 
-        public static Hallucination getRandom() {
-            Hallucination[] values = Hallucination.values();
-            return values[Random.IntRange(1, values.length - 1)];
+        public static Registry getHallucination() {
+            Registry[] values = Registry.values();
+
+            Registry retval;
+
+            do {
+                retval = values[Random.IntRange(1, values.length - 1)];
+            } while (!retval.hallucination);
+
+            return retval;
         }
 
         public MobSprite getSprite() {
@@ -299,23 +311,19 @@ public class MobSprite extends CharSprite {
             }
         }
 
-        private static HashMap<Class<? extends MobSprite>, Hallucination> fromType;
+        private static HashMap<Class<? extends MobSprite>, Registry> fromType;
 
-        public static Hallucination getHallucination(Class<? extends MobSprite> type) {
+        public static Registry getInfo(Class<? extends MobSprite> type) {
             if (fromType == null) {
                 fromType = new HashMap<>();
 
-                Hallucination[] values = Hallucination.values();
+                Registry[] values = Registry.values();
                 for (int n = 0; n < values.length; n++) {
                     fromType.put(values[n].type, values[n]);
                 }
             }
 
             return fromType.get(type);
-        }
-
-        public static String getName(Class<? extends MobSprite> type) {
-            return getHallucination(type).name;
         }
     }
 
